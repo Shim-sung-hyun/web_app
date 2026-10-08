@@ -472,19 +472,41 @@ function prefetchVoice(lines,urgent){
 }
 /* 문장 단위로 나눔 → 같은 문장은 다시 만들지 않음 */
 function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim()).filter(Boolean); }
+/* 기기 목소리: 좋은 한국어 목소리를 고르고, 끊은 직후 바로 말하면 앞이 뭉개지는 사파리 문제를 피하려고 잠깐 쉬었다 말함 */
+let koVoice=null;
+function pickKoVoice(){
+  const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.replace('_','-').toLowerCase().startsWith('ko')):[];
+  if(!vs.length) return null;
+  const score=v=>(/premium|프리미엄/i.test(v.name)?4:0)+(/enhanced|향상/i.test(v.name)?3:0)+(/google/i.test(v.name)?2:0)+(/yuna|유나/i.test(v.name)?1:0)+(v.localService?0.5:0);
+  return vs.sort((a,b)=>score(b)-score(a))[0];
+}
+if('speechSynthesis' in window){ koVoice=pickKoVoice(); speechSynthesis.addEventListener?.('voiceschanged',()=>{ koVoice=pickKoVoice(); }); }
 function deviceSay(text,id,done){
   if(!('speechSynthesis' in window)){ done(); return; }
-  try{
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang='ko-KR'; u.rate=0.85; u.volume=0.7;
-    const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith('ko')); if(v) u.voice=v;
-    u.onend=u.onerror=()=>{ if(id===speakSeq) done(); };
-    speechSynthesis.speak(u);
-  }catch(e){ done(); }
+  const go=()=>{
+    if(id!==speakSeq) return;
+    try{
+      if(!koVoice) koVoice=pickKoVoice();
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang='ko-KR'; u.rate=0.78; u.pitch=1; u.volume=0.8;
+      if(koVoice) u.voice=koVoice;
+      u.onend=u.onerror=()=>{ if(id===speakSeq) done(); };
+      speechSynthesis.speak(u);
+    }catch(e){ done(); }
+  };
+  try{ speechSynthesis.cancel(); }catch(e){}
+  setTimeout(go, 280);
 }
 function showVoiceNote(){ const n=$('voiceNote'); if(n){ n.textContent=S.voiceNote||''; n.hidden=!S.voiceNote; } }
 /* 바로 말하기 */
+/* 다른 탭으로 가 있으면 말하지 않고 기다렸다가, 돌아오면 말함 (여러 탭이 한꺼번에 말해 소리가 겹치는 것 방지) */
+let hiddenSay=null;
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ stopVoice(); speakSeq++; }
+  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; speak(h[0],h[1]); }
+});
 function speak(text,onEnd){
+  if(document.hidden){ hiddenSay=[text||lastSay,onEnd]; return; }
   if(text) lastSay=text;
   if(softTimer){ clearTimeout(softTimer); softTimer=null; }
   stopVoice();
@@ -865,11 +887,13 @@ function showSetup(){
     }
     const was=S.sound; S.sound=true; speak(line); S.sound=was;
   };
-  $('demoBtn').onclick=async()=>{goFull(); unlockAudio(); readKeyFields(); if(S.apiKey&&!S.modelChecked) await checkKey(); chooseEngine(); prefetchVoice(FIXED_LINES()); startDemo();};
+  const needCloudKey=()=>{ if(S.engine==='cloud' && !S.cloudKey){ const st=$('voiceStatus'); st.textContent='Google 음성을 쓰려면 Google Cloud 키를 넣어 주세요. 키가 없으면 "기기 목소리"를 고르세요.'; st.className='status bad'; $('cloudKey')?.focus(); st.scrollIntoView?.({block:'center'}); return true; } return false; };
+  $('demoBtn').onclick=async()=>{ readKeyFields(); if(needCloudKey()) return; goFull(); unlockAudio(); if(S.apiKey&&!S.modelChecked) await checkKey(); chooseEngine(); prefetchVoice(FIXED_LINES()); startDemo();};
   $('startBtn').onclick=async()=>{
     unlockAudio();
     readKeyFields();
     if(!S.apiKey){setStatus('키를 넣어 주세요. 키가 없으면 "예시 사진으로 해 보기"를 누르세요.','bad'); keyInput.focus(); return;}
+    if(needCloudKey()) return;
     if(!S.modelChecked){ $('startBtn').disabled=true; const ok=await checkKey(); $('startBtn').disabled=false; if(!ok){keyInput.focus(); return;} }
     chooseEngine(); prefetchVoice(FIXED_LINES());
     newSession(); showPhoto();
