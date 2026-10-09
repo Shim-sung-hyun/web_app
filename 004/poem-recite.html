@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>시 암송</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 원래 앱의 모습(종이 바탕·명조체·초록)을 그대로 살림 */
+:root{
+  --paper:#FAF7EF; --panel:#FFFFFF; --ink:#2B2A26; --ink-soft:#8B8676; --line:#E3DED0;
+  --accent:#3F6B52; --accent-tint:#E7EEE7; --warm:#F4E7C6;
+  --shadow:0 8px 26px -14px rgba(43,42,38,.28);
+  --f-poem:"Nanum Myeongjo",serif;
+  --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-display:"Jua","Noto Sans KR",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%;background:var(--paper);color:var(--ink);font-family:var(--f-body);-webkit-tap-highlight-color:transparent}
+body.easyfont{--f-poem:"Jua","Noto Sans KR",sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+svg.ic{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- 첫 화면: 큰 제목만 (관리 버튼을 누르면 시와 메뉴가 나옴) ---------- */
+#cover{display:none;position:fixed;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+body.cover #cover{display:flex}
+body.cover #app{display:none}
+#cover h1{font-family:"Nanum Myeongjo",serif;font-weight:800;font-size:clamp(52px,8vw,104px);letter-spacing:4px;margin:0;color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* ---------- 시 화면 ---------- */
+#app{position:relative;min-height:100vh;display:flex;flex-direction:column}
+.content{flex:1;display:flex;flex-direction:column;padding-top:clamp(40px,5vh,56px)}
+body.admin .content{padding-top:var(--dockTopH,120px);padding-bottom:var(--dockBotH,80px)}
+.head{text-align:center;padding:0 16px clamp(12px,2.4vh,20px)}
+.title-line{font-family:var(--f-poem);font-weight:800;font-size:clamp(26px,4.2vw,42px);letter-spacing:1px}
+.author-line{font-family:var(--f-poem);font-weight:400;font-size:clamp(14px,1.9vw,17px);color:var(--ink-soft);margin-top:2px}
+.stage{flex:1;padding:20px clamp(16px,4vw,48px) 0}
+.poem-columns{display:grid;gap:clamp(20px,4vw,56px);max-width:1100px;margin:0 auto}
+.col{min-width:0}
+.pline{font-family:var(--f-poem);font-weight:700;line-height:2.05;white-space:nowrap;border-radius:8px;transition:background .25s ease, box-shadow .25s ease}
+.headline{display:inline-block;border-radius:8px;padding:0 6px;transition:background .25s ease}
+.pline.blank-line{height:1.2em}
+/* 읽는 줄 / 따라 읽을 줄 표시 (번쩍임 없이 바탕색만) */
+.reading{background:var(--accent-tint)}
+.echo{background:var(--warm);box-shadow:inset 5px 0 0 #C9A44C}
+.tok{cursor:pointer;border-radius:4px;padding:0 1px}
+.tok:hover{background:var(--accent-tint)}
+.tok-space{white-space:pre}
+.hidden-run{color:var(--ink-soft);cursor:pointer;border-radius:4px}
+.hidden-run:hover{background:var(--accent-tint)}
+.hidden-run .tok-hidden{letter-spacing:1px}
+.paren{color:var(--ink-soft)}
+.foot-space{height:30px}
+#echoTag{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:15;display:none;align-items:center;gap:10px;background:#fff;border-radius:999px;padding:8px 22px;
+  box-shadow:var(--shadow);font-family:var(--f-display);font-size:24px;color:#8A6A1E}
+#echoTag svg{width:28px;height:28px}
+body.echoing #echoTag{display:flex}
+body.admin #echoTag{bottom:calc(var(--dockBotH,80px) + 8px)}
+
+/* ---------- 교사 메뉴 (떠 있는 두 줄) ---------- */
+.dock{position:fixed;left:0;right:0;margin:0 auto;width:fit-content;max-width:calc(100% - 24px);z-index:25;display:none;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;
+  padding:7px 10px;border-radius:18px;background:rgba(255,255,255,.96);box-shadow:0 10px 30px rgba(43,42,38,.18),inset 0 0 0 1px var(--line)}
+#dockTop{top:10px} #dockBot{bottom:12px}
+body.admin:not(.cover) .dock{display:flex}
+.dock .g{display:flex;align-items:center;gap:3px;padding:0 6px;flex-wrap:wrap}
+.dock .g+.g{border-left:1px solid var(--line)}
+.dock .lbl{font-size:12px;color:var(--ink-soft);font-weight:800;margin-right:3px}
+.dock button{border:0;background:transparent;border-radius:10px;min-height:42px;min-width:42px;padding:5px 11px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:6px}
+.dock button svg{width:20px;height:20px}
+.dock button[aria-pressed="true"]{background:var(--accent-tint);color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.dock button.main{background:var(--accent);color:#fff}
+.dock button.main[aria-pressed="true"]{background:#2C4C3A;color:#fff;box-shadow:none}
+.dock a.help{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:5px 11px;border-radius:10px;color:var(--accent);font-weight:700;font-size:14.5px;text-decoration:underline;text-underline-offset:3px}
+.dock a.help svg{width:20px;height:20px}
+.dock .count{font-size:12.5px;color:var(--ink-soft);font-weight:700;padding:0 6px}
+.dock .note{font-size:12.5px;color:#9A2E1C;max-width:240px}
+.dock input.key{width:170px;font:inherit;font-size:14px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px}
+.dock label.small{font-size:12.5px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:4px;padding:0 4px}
+
+/* ---------- 시 입력 창 ---------- */
+.modal-back{position:fixed;inset:0;background:rgba(43,42,38,.5);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:40;padding:20px}
+.modal-back.show{opacity:1;pointer-events:auto}
+.modal{background:var(--panel);border-radius:20px;box-shadow:var(--shadow);max-width:560px;width:100%;padding:26px 26px 22px;max-height:88vh;overflow-y:auto}
+.modal h2{font-family:"Nanum Myeongjo",serif;font-size:22px;margin:0 0 16px}
+.tabrow{display:flex;gap:8px;margin-bottom:16px}
+.tabbtn{flex:1;border:none;background:var(--paper);color:var(--ink-soft);font-weight:700;font-size:13.5px;padding:10px;border-radius:10px}
+.tabbtn.on{background:var(--accent);color:#fff}
+.tabpanel{display:none}.tabpanel.show{display:block}
+.mf{margin-bottom:14px}
+.mf label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:5px}
+.mf input,.mf textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-family:var(--f-body);font-size:14.5px;color:var(--ink);resize:vertical}
+.mf textarea{min-height:180px;font-family:"Nanum Myeongjo",serif;font-size:16px;line-height:1.7}
+.mf small{display:block;color:var(--ink-soft);font-size:11.5px;margin-top:4px}
+.filedrop{border:2px dashed var(--line);border-radius:12px;padding:26px 16px;text-align:center;color:var(--ink-soft);font-size:14px;margin-bottom:14px}
+.filedrop input[type=file]{margin-top:10px}
+.preview-box{background:var(--paper);border-radius:10px;padding:12px 14px;font-size:13.5px;white-space:pre-wrap;max-height:160px;overflow-y:auto}
+.modal-actions{display:flex;gap:10px;margin-top:6px}
+.modal-actions button{flex:1;border:none;padding:12px;border-radius:12px;font-weight:700;font-size:14.5px}
+.btn-cancel{background:var(--paper);color:var(--ink-soft)}
+.btn-del{background:#F6E3DE;color:#9A2E1C}
+.btn-save{background:var(--accent);color:#fff}
+
+/* 관리 버튼 — 공통 규격 모양 (이 앱은 한 번 눌러 켜고 끔) */
+#adminBtn{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:43px;height:43px;border-radius:50%;
+  z-index:50;touch-action:none;--p:0;padding:0;opacity:.4;transition:opacity .3s;
+  border:1px solid rgba(14,92,170,.55);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 88%, rgba(170,245,255,.95), rgba(170,245,255,0) 70%),
+    radial-gradient(circle at 50% 40%, #4FC4F5 0%, #1E8BE0 55%, #0D5FB8 100%);
+  box-shadow:inset 0 -4px 10px rgba(150,240,255,.55), inset 0 3px 6px rgba(0,40,100,.45), 0 4px 10px rgba(0,60,130,.35), 0 1px 2px rgba(0,30,70,.4)}
+#adminBtn::before{content:"";position:absolute;left:14%;right:14%;top:5%;height:44%;border-radius:50% 50% 45% 45% / 60% 60% 40% 40%;
+  background:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,.35) 60%, rgba(255,255,255,.05));pointer-events:none}
+#adminBtn::after{content:"";position:absolute;inset:-5px;border-radius:50%;
+  background:conic-gradient(#3FCFD2 calc(var(--p)*360deg),transparent 0);
+  -webkit-mask:radial-gradient(circle,transparent 22px,#000 23px);mask:radial-gradient(circle,transparent 22px,#000 23px);opacity:.9}
+#adminBtn .ab-label{position:relative;display:block;text-align:center;font-family:var(--f-body);font-weight:700;font-size:8.5px;letter-spacing:.02em;line-height:1;color:#FFFFFF;text-shadow:0 1px 1.5px rgba(0,50,110,.65);pointer-events:none}
+body.admin #adminBtn .ab-label{font-family:"Jua",sans-serif;font-weight:400;font-size:17px;letter-spacing:0;color:#9FF3F5;text-shadow:0 0 6px rgba(63,207,210,.7),0 1px 1px rgba(0,0,0,.6)}
+body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 88%, rgba(110,230,240,.85), rgba(110,230,240,0) 70%),
+    radial-gradient(circle at 50% 40%, #3D4F5A 0%, #17242C 60%, #05090C 100%);
+  box-shadow:inset 0 -4px 10px rgba(90,220,235,.45), inset 0 3px 6px rgba(0,0,0,.6), 0 4px 10px rgba(0,0,0,.4), 0 0 0 3px rgba(63,207,210,.35)}
+
+#printArea{display:none}
+@media print{
+  @page{size:A4;margin:14mm}
+  html,body{background:#fff!important}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block!important;color:#000}
+  .pa-head{display:flex;justify-content:space-between;align-items:flex-end;font-family:var(--f-body);font-size:10.5pt;margin-bottom:6mm}
+  #printArea .title-line{font-size:22pt}
+  #printArea .author-line{font-size:11pt;margin-bottom:6mm}
+  #printArea .poem-columns{font-size:15pt!important;max-width:none!important}
+  #printArea .pline{line-height:2.1}
+  #printArea .reading,#printArea .echo{background:none;box-shadow:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body class="cover">
+
+<section id="cover"><h1>시 암송하기</h1></section>
+
+<div id="app">
+  <div class="content">
+    <div id="poemsContainer"></div>
+    <div class="foot-space"></div>
+  </div>
+
+</div>
+<div id="echoTag"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>따라 해요</div>
+
+<div class="dock" id="dockTop"></div>
+<div class="dock" id="dockBot"></div>
+<button id="adminBtn" type="button" aria-label="관리"><span class="ab-label" id="abLabel">charum</span></button>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <h2>내가 직접 입력한 시</h2>
+    <div class="tabrow">
+      <button class="tabbtn on" id="tabPcBtn" type="button">직접 입력</button>
+      <button class="tabbtn" id="tabBoardBtn" type="button">파일 불러오기 (.txt)</button>
+    </div>
+    <div class="tabpanel show" id="tabPc">
+      <div class="mf"><label for="inputTitle">제목</label><input type="text" id="inputTitle" placeholder="예: 새"></div>
+      <div class="mf"><label for="inputAuthor">작가</label><input type="text" id="inputAuthor" placeholder="예: 이문구"></div>
+      <div class="mf"><label for="inputBody">본문 (한 줄에 한 행씩, 빈 줄 = 연 나눔)</label>
+        <textarea id="inputBody" placeholder="산에는 산새&#10;들에는 들새&#10;..."></textarea>
+        <small>화면 크기에 맞춰 단 수와 글자 크기가 저절로 정해져요.</small></div>
+    </div>
+    <div class="tabpanel" id="tabBoard">
+      <div class="filedrop">미리 준비한 .txt 파일을 고르세요.<br><small>첫 줄 = 제목, 둘째 줄 = 작가, 나머지 줄 = 본문(한 줄에 한 행, 빈 줄 = 연 나눔)</small>
+        <div><input type="file" id="txtFileInput" accept=".txt,text/plain"></div></div>
+      <div class="mf"><label>불러온 내용 미리보기</label><div class="preview-box" id="filePreview">파일을 고르면 여기에 미리보기가 나타나요.</div></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelBtn" type="button">취소</button>
+      <button class="btn-del" id="delBtn" type="button" hidden>이 시 지우기</button>
+      <button class="btn-save" id="saveBtn" type="button">저장</button>
+    </div>
+  </div>
+</div>
+<div id="printArea"></div>
+
+<script>
+"use strict";
+
+/* ================= 기본 제공 시 (공통시 + 계절시) ================= */
+const LIBRARY={
+  common:{label:'공통시',title:'새',author:'이문구',body:['산에는 산새','들에는 들새','물에는 물새','들고 나는 새','하고많아도','울음소리 예쁜 새는','열에 하나가 드물지.','웬일이냐고?','이유는 간단해.','듣는 사람이','새가 아니란 거야.'].join('\n')},
+  spring:{label:'봄',title:'산유화',author:'김소월',body:['산에는 꽃 피네','꽃이 피네','갈 봄 여름 없이','꽃이 피네','','산에','산에','피는 꽃은','저만치 혼자서 피어 있네','','산에서 우는 작은 새여','꽃이 좋아','산에서','사노라네','','산에는 꽃 지네','꽃이 지네','갈 봄 여름 없이','꽃이 지네'].join('\n')},
+  summer:{label:'여름',title:'동창이 밝았느냐',author:'남구만',body:['동창이 밝았느냐 노고지리 우지진다','소 치는 아이는 상기 아니 일었느냐','재 너머 사래 긴 밭을 언제 갈려 하나니'].join('\n')},
+  autumn:{label:'가을',title:'짧은 해',author:'김용택',body:['당신이 이 세상 어딘가에 있기에','세상은 아름답습니다.','','갈대가 하얗게 피고','바람 부는 강변에 서면','','해는 짧고','당신이 그립습니다.'].join('\n')},
+  winter:{label:'겨울',title:'눈 내리는 밤',author:'강소천',body:['말없이','소리 없이','눈 내리는 밤.','','누나도 잠이 들고','엄마도 잠이 들고','','말없이','소리 없이','눈 내리는 밤.','','나는 나하고','이야기하고 싶다.'].join('\n')}
+};
+const LIBRARY_ORDER=['common','spring','summer','autumn','winter'];
+/* 가리기 단계: 조금씩 지워 가며 외움 */
+const STAGES=[
+  {k:'all',label:'전체'},
+  {k:'half',label:'반 가리기'},
+  {k:'word1',label:'낱말 첫 글자'},
+  {k:'line1',label:'줄 첫 글자'},
+  {k:'none',label:'다 가리기'}
+];
+const ICON={
+  play:'<svg class="ic" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>',
+  echo:'<svg class="ic" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+  stop:'<svg class="ic" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>',
+  edit:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>',
+  print:'<svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>',
+  sndOn:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>',
+  sndOff:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/></svg>',
+  gear:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
+  key:'<svg class="ic" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l3 3M14 9l2 2"/></svg>',
+  plus:'<svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'
+};
+
+/* ================= 상태 ================= */
+const S={active:'common', cols:null, font:'myeongjo', stage:'all', sound:true,
+  engine:'cloud', timbre:'Leda', cloudKey:'', saveCloud:false, engineNow:'', admin:false};
+const store={
+  get(k){try{return localStorage.getItem('poemRecite.'+k)}catch(e){return null}},
+  set(k,v){try{v==null?localStorage.removeItem('poemRecite.'+k):localStorage.setItem('poemRecite.'+k,v)}catch(e){}}
+};
+let customs=[]; /* 직접 입력한 시 여러 편 [{id,title,author,body}] */
+(function load(){
+  try{ customs=JSON.parse(store.get('customs')||'[]')||[]; }catch(e){ customs=[]; }
+  /* 예전 앱(poem-recitation-custom-v1)에 저장해 둔 시가 있으면 옮겨 옴 */
+  try{ const old=localStorage.getItem('poem-recitation-custom-v1'); if(old&&!customs.length){ const o=JSON.parse(old); if(o&&o.body){ customs.push({id:'c'+Date.now(),title:o.title,author:o.author,body:o.body}); store.set('customs',JSON.stringify(customs)); } } }catch(e){}
+  const a=store.get('active'); if(a&&(LIBRARY[a]||customs.some(c=>c.id===a))) S.active=a;
+  const c=store.get('cols'); if(['1','2','3','4'].includes(c)) S.cols=+c;
+  if(store.get('font')==='easy') S.font='easy';
+  S.sound=store.get('sound')!=='off';
+  const en=store.get('engine'); if(['cloud','device'].includes(en)) S.engine=en;
+  const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
+  S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
+  /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
+  if(!S.cloudKey){ for(const k of ['colorFind.cloudKey','shapeFinder.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
+})();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function poemData(key){ return LIBRARY[key]||customs.find(c=>c.id===key)||LIBRARY.common; }
+function poemList(){ return LIBRARY_ORDER.map(k=>({key:k,label:LIBRARY[k].label,title:LIBRARY[k].title})).concat(customs.map(c=>({key:c.id,label:'내가 입력',title:c.title}))); }
+
+/* ================= 목소리: 한 수업은 한 목소리 ================= */
+let lastSay='', speakSeq=0, actx=null, curSrc=null;
+function getCtx(){ if(!actx){ const C=window.AudioContext||window.webkitAudioContext; if(C) actx=new C(); } return actx; }
+function unlockAudio(){ try{ const c=getCtx(); if(!c) return; if(c.state==='suspended') c.resume();
+  const b=c.createBuffer(1,240,24000), x=c.createBufferSource(); x.buffer=b; x.connect(c.destination); x.start(); }catch(e){} }
+/* 앞뒤 빈 곳과 끝에 따로 붙은 짧은 잡음만 정리, 시작·끝은 짧게 페이드 */
+function cleanPCM(bin,rate){
+  const n=bin.length>>1, f=new Float32Array(n);
+  for(let k=0;k<n;k++){ let v=bin.charCodeAt(2*k)|(bin.charCodeAt(2*k+1)<<8); if(v>32767) v-=65536; f[k]=v/32768; }
+  const W=Math.round(rate*0.02), nw=Math.max(1,Math.floor(n/W)), rms=new Float32Array(nw); let mx=0;
+  for(let w=0;w<nw;w++){ let t=0; for(let k=w*W;k<Math.min(n,(w+1)*W);k++) t+=f[k]*f[k]; rms[w]=Math.sqrt(t/W); if(rms[w]>mx) mx=rms[w]; }
+  const th=Math.max(0.003,mx*0.04), seg=[]; let on=-1;
+  for(let w=0;w<=nw;w++){ const up=w<nw&&rms[w]>=th; if(up&&on<0) on=w; if(!up&&on>=0){ seg.push([on,w-1]); on=-1; } }
+  while(seg.length>1){ const l=seg[seg.length-1], pv=seg[seg.length-2]; if(l[1]-l[0]+1<=3 && l[0]-pv[1]>=15) seg.pop(); else break; }
+  const a=seg.length?seg[0][0]:0, z=seg.length?seg[seg.length-1][1]:nw-1;
+  const st=Math.max(0,(a-4)*W), en=Math.min(n,(z+1)*W+Math.round(rate*0.22));
+  const body=f.slice(st,en), L=body.length, fi=Math.min(L,Math.round(rate*0.008)), fo=Math.min(L,Math.round(rate*0.04));
+  for(let k=0;k<fi;k++) body[k]*=k/fi;
+  for(let k=0;k<fo;k++) body[L-1-k]*=k/fo;
+  const lead=Math.round(rate*0.06), out=new Float32Array(lead+L); out.set(body,lead);
+  return {data:out,rate};
+}
+function playClip(clip){
+  return new Promise(res=>{
+    const c=getCtx(); if(!c){res(); return;}
+    if(c.state==='suspended') c.resume();
+    const b=c.createBuffer(1,clip.data.length,clip.rate);
+    if(b.copyToChannel) b.copyToChannel(clip.data,0); else b.getChannelData(0).set(clip.data);
+    const x=c.createBufferSource(), g=c.createGain(); g.gain.value=0.75;
+    x.buffer=b; x.connect(g); g.connect(c.destination);
+    x.onended=()=>{ if(curSrc&&curSrc.src===x) curSrc=null; res(); };
+    curSrc={src:x,g,res}; x.start();
+  });
+}
+function stopVoice(){
+  try{speechSynthesis.cancel();}catch(e){}
+  if(curSrc){ const {src,g,res}=curSrc; curSrc=null; try{ src.onended=null; const t=actx.currentTime; g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+0.05); src.stop(t+0.06); }catch(e){} if(res) res(); }
+}
+/* 만든 목소리는 브라우저(IndexedDB)에 저장해 다시 만들지 않음 */
+const vdb={db:null, ready:null};
+vdb.ready=new Promise(r=>{ try{ const q=indexedDB.open('poemReciteVoice',1);
+  q.onupgradeneeded=()=>q.result.createObjectStore('clips');
+  q.onsuccess=()=>{vdb.db=q.result; r();}; q.onerror=()=>r(); }catch(e){ r(); } });
+async function idbGet(k){ await vdb.ready; if(!vdb.db) return null; return new Promise(r=>{ try{ const q=vdb.db.transaction('clips').objectStore('clips').get(k); q.onsuccess=()=>{ const v=q.result; r(v?{data:new Float32Array(v.buf),rate:v.rate}:null); }; q.onerror=()=>r(null); }catch(e){ r(null); } }); }
+function idbPut(k,clip){ try{ if(vdb.db) vdb.db.transaction('clips','readwrite').objectStore('clips').put({buf:clip.data.buffer.slice(0),rate:clip.rate},k); }catch(e){} }
+const VQ={list:[], busy:false, clips:new Map()};
+const timbre=()=>['Leda','Aoede','Kore'].includes(S.timbre)?S.timbre:'Leda';
+function chooseEngine(){ S.engineNow=(S.engine==='cloud'&&S.cloudKey)?'cloud':'device'; S.voiceNote=''; }
+/* Google 음성을 골랐는데 키가 없으면 읽지 않고 안내 (한 수업 한 목소리) */
+function voiceReady(){
+  if(S.engine==='cloud'&&!S.cloudKey){ S.voiceNote='키가 없으면 "기기"를 고르세요.'; renderDocks(); $('dockKey')&&$('dockKey').focus(); return false; }
+  chooseEngine(); return true;
+}
+function getClip(text,urgent){
+  const k=S.engineNow+'|'+timbre()+'|'+text;
+  let c=VQ.clips.get(k);
+  if(!c){
+    c={text,key:k,engine:S.engineNow,done:false}; c.p=new Promise((res,rej)=>{c.res=res; c.rej=rej;}); c.p.catch(()=>{});
+    VQ.clips.set(k,c);
+    idbGet(k).then(v=>{ if(v){ c.done=true; c.res(v); } else { urgent?VQ.list.unshift(c):VQ.list.push(c); pumpVoice(); } });
+  } else if(urgent && !c.done){ const i=VQ.list.indexOf(c); if(i>0){ VQ.list.splice(i,1); VQ.list.unshift(c); } }
+  return c.p;
+}
+async function pumpVoice(){
+  if(VQ.busy) return; VQ.busy=true;
+  while(VQ.list.length){
+    const c=VQ.list.shift();
+    if(c.engine!==S.engineNow){ c.rej(new Error('engine changed')); VQ.clips.delete(c.key); continue; }
+    let tries=0;
+    for(;;){
+      try{ const clip=await synth(c.text); c.done=true; idbPut(c.key,clip); c.res(clip); break; }
+      catch(e){
+        tries++;
+        if(e.quota){
+          if(tries<=2){ await new Promise(r=>setTimeout(r,12000)); continue; }
+          /* 사용량 초과: 이번 수업 전체를 기기 목소리로 한 번만 바꾸고 교사 메뉴에 알림 */
+          S.engineNow='device'; S.voiceNote='Google 목소리 사용량이 다 되어, 이번 수업은 기기 목소리로 바꿨어요.';
+          renderDocks(); VQ.list.forEach(x=>{x.rej(e); VQ.clips.delete(x.key);}); VQ.list=[];
+          c.rej(e); VQ.clips.delete(c.key); break;
+        }
+        if(tries<2){ await new Promise(r=>setTimeout(r,1500)); continue; }
+        c.rej(e); VQ.clips.delete(c.key); break;
+      }
+    }
+  }
+  VQ.busy=false;
+}
+async function synth(text){
+  const call=async withRate=>{
+    const audioConfig={audioEncoding:'LINEAR16',sampleRateHertz:24000}; if(withRate) audioConfig.speakingRate=0.92;
+    return fetch('https://texttospeech.googleapis.com/v1/text:synthesize?key='+encodeURIComponent(S.cloudKey),{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({input:{text},voice:{languageCode:'ko-KR',name:`ko-KR-Chirp3-HD-${timbre()}`},audioConfig})});
+  };
+  let r=await call(S.cloudRate!==false);
+  if(r.status===400 && S.cloudRate!==false){ S.cloudRate=false; r=await call(false); }
+  if(!r.ok){ let m=''; try{m=(await r.json()).error.message||'';}catch(e){} S.ttsError=r.status+' '+m; const er=new Error(S.ttsError); if(r.status===429) er.quota=true; throw er; }
+  const j=await r.json(); const bin=atob(j.audioContent||'');
+  const di=bin.indexOf('data'); const pcm=di>=0&&di<200?bin.slice(di+8):bin.slice(44);
+  return cleanPCM(pcm,24000);
+}
+/* 문장·쉼표 단위로 나눠 만들고 이어서 재생 */
+function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim()).filter(Boolean); }
+function prefetchVoice(lines){
+  if(S.engineNow==='device') return;
+  const parts=[]; lines.forEach(t=>splitSay(t).forEach(x=>{ if(!parts.includes(x)) parts.push(x); }));
+  parts.forEach(x=>getClip(x,false));
+}
+/* 기기 목소리: 좋은 한국어 목소리를 고르고, 끊은 뒤 잠깐 쉬었다 말함(사파리 앞소리 뭉개짐 방지) */
+let koVoice=null;
+function pickKoVoice(){
+  const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.replace('_','-').toLowerCase().startsWith('ko')):[];
+  if(!vs.length) return null;
+  const score=v=>(/premium|프리미엄/i.test(v.name)?4:0)+(/enhanced|향상/i.test(v.name)?3:0)+(/google/i.test(v.name)?2:0)+(/yuna|유나/i.test(v.name)?1:0)+(v.localService?0.5:0);
+  return vs.sort((a,b)=>score(b)-score(a))[0];
+}
+if('speechSynthesis' in window){ koVoice=pickKoVoice(); speechSynthesis.addEventListener?.('voiceschanged',()=>{ koVoice=pickKoVoice(); }); }
+function deviceSay(text,id,done){
+  if(!('speechSynthesis' in window)){ setTimeout(done,Math.max(1200,text.length*180)); return; }
+  try{ speechSynthesis.cancel(); }catch(e){}
+  setTimeout(()=>{
+    if(id!==speakSeq) return;
+    try{
+      if(!koVoice) koVoice=pickKoVoice();
+      const u=new SpeechSynthesisUtterance(text); u.lang='ko-KR'; u.rate=0.78; u.volume=0.7; if(koVoice) u.voice=koVoice;
+      u.onend=u.onerror=()=>{ if(id===speakSeq) done(); };
+      speechSynthesis.speak(u);
+    }catch(e){ done(); }
+  },300);
+}
+/* 보이지 않는 탭에서는 말하지 않고, 돌아오면 이어서 말함 */
+let hiddenSay=null;
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ stopVoice(); speakSeq++; }
+  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; speak(h[0],h[1]); }
+});
+function speak(text,onEnd){
+  if(document.hidden){ hiddenSay=[text||lastSay,onEnd]; return; }
+  if(text) lastSay=text;
+  stopVoice();
+  const id=++speakSeq; let fired=false; const done=()=>{ if(fired) return; fired=true; if(onEnd) onEnd(); };
+  if(!S.engineNow) chooseEngine();
+  if(!S.sound||!lastSay){ if(onEnd) setTimeout(done,Math.max(1200,(lastSay||'').length*180)); return; }
+  if(S.engineNow==='device'){ deviceSay(lastSay,id,done); return; }
+  const parts=splitSay(lastSay), ps=parts.map(x=>getClip(x,true));
+  (async()=>{
+    for(let i=0;i<parts.length;i++){
+      let clip=null;
+      try{ clip=await Promise.race([ps[i],new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),20000))]); }catch(e){}
+      if(id!==speakSeq) return;
+      if(!clip){ if(S.engineNow==='device'){ deviceSay(parts.slice(i).join(' '),id,done); return; } continue; }
+      await playClip(clip);
+      if(id!==speakSeq) return;
+      if(i<parts.length-1) await new Promise(r=>setTimeout(r,/,$/.test(parts[i])?220:320));
+      if(id!==speakSeq) return;
+    }
+    done();
+  })();
+}
+
+/* ================= 전체 화면 ================= */
+/* 파일 고르기 창이 전체 화면을 풀어 버리므로, 처음 화면·입력 창에서는 쓰지 않음 */
+function goFull(){ try{ const d=document.documentElement; if(document.fullscreenElement||document.webkitFullscreenElement) return;
+  if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen(); }catch(e){} }
+function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(document.webkitFullscreenElement) document.webkitExitFullscreen(); }catch(e){} }
+$('app').addEventListener('pointerdown',()=>{ if(!S.admin&&!$('modalBack').classList.contains('show')) goFull(); },true);
+
+/* ================= 교사 모드 버튼 =================
+   이 앱은 교사가 다루는 앱이라 한 번 누르면 바로 켜고 끔.
+   첫 화면에서 켜면 시와 메뉴가 나오고, 끄면 그대로 수업 시작(전체 화면) */
+$('adminBtn').addEventListener('click',e=>{
+  e.stopPropagation(); unlockAudio();
+  if(document.body.classList.contains('cover')){ document.body.classList.remove('cover'); applyFont(); chooseEngine(); rebuildEntries(); setAdmin(true); return; }
+  setAdmin(!S.admin);
+  if(!S.admin) goFull();
+});
+function setAdmin(on){
+  S.admin=on; document.body.classList.toggle('admin',on);
+  $('adminBtn').setAttribute('aria-label', on?'관리 끄기 (수업 시작)':'관리');
+  $('abLabel').textContent=on?'심':'charum';
+  renderDocks();
+}
+
+/* ================= 교사 메뉴 ================= */
+function renderDocks(){
+  const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
+  $('dockTop').innerHTML=
+    `<div class="g"><span class="lbl">가리기</span>${STAGES.map(s=>b('stage:'+s.k,s.label,S.stage===s.k)).join('')}</div>`+
+    `<div class="g"><span class="lbl">시</span>${poemList().map(p=>b('poem:'+p.key,esc(p.label==='내가 입력'?p.title:p.label),S.active===p.key,`title="${esc(p.title)}"`)).join('')}${b('new',ICON.plus+'새 시')}</div>`+
+    `<div class="g"><span class="lbl">단</span>${b('cols:auto','자동',S.cols===null)}${[1,2,3,4].map(n=>b('cols:'+n,n+'단',S.cols===n)).join('')}</div>`+
+    `<div class="g"><span class="lbl">글꼴</span>${b('font:myeongjo','명조',S.font==='myeongjo')}${b('font:easy','둥근 글씨',S.font==='easy')}</div>`+
+    `<div class="g">${b('sound',(S.sound?ICON.sndOn:ICON.sndOff)+(S.sound?'소리':'소리 끔'),S.sound)}</div>`+
+    /* 목소리: 수업 내내 한 목소리. Google 음성은 Cloud 키가 있어야 읽어 줌 */
+    `<div class="g"><span class="lbl">목소리</span>${b('engine:cloud','Google',S.engine==='cloud')}${b('engine:device','기기',S.engine==='device')}<a class="help" href="cloud-key.html" target="_blank" rel="noopener">${ICON.key}Cloud 키 넣는 방법</a>${S.engine==='cloud'?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
+    `<div class="g">`+
+      (S.engine==='cloud'?`${[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join('')}
+        <input class="key" id="dockKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키">`:'')+
+      `${b('vtest','들어 보기')}${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`;
+  const dk=$('dockKey');
+  if(dk){
+    const save=()=>store.set('cloudKey',S.saveCloud&&S.cloudKey?S.cloudKey:null);
+    dk.oninput=()=>{ S.cloudKey=dk.value.trim(); save(); chooseEngine(); };
+    $('dockSave').onchange=e=>{ S.saveCloud=e.target.checked; save(); };
+  }
+  $('dockBot').innerHTML=
+    `<div class="g">${b('read',ICON.play+'들려주기',PB.on&&PB.mode==='all','class="main"')}${b('echo',ICON.echo+'한 줄씩 따라 읽기',PB.on&&PB.mode==='echo','class="main"')}${PB.on?b('stopread',ICON.stop+'멈춤'):''}</div>`+
+    `<div class="g">${b('print',ICON.print+'출력 (빈칸 활동지)')}<span class="count" id="hiddenCounter"></span></div>`;
+  updateCounter();
+  requestAnimationFrame(()=>{
+    document.body.style.setProperty('--dockTopH',($('dockTop').getBoundingClientRect().bottom+14)+'px');
+    document.body.style.setProperty('--dockBotH',(innerHeight-$('dockBot').getBoundingClientRect().top+14)+'px');
+    if(S.admin!==lastAdminFit){ lastAdminFit=S.admin; refitLayout(); }
+  });
+}
+let lastAdminFit=false;
+function onDock(e){
+  const btn=e.target.closest('button[data-a]'); if(!btn||btn.disabled) return;
+  const [a,v]=btn.dataset.a.split(':');
+  if(a==='stage') applyStage(v);
+  if(a==='poem'){ stopReading(); S.active=v; store.set('active',v); rebuildEntries(); }
+  if(a==='new') openModal(null);
+  if(a==='cols'){ S.cols=v==='auto'?null:+v; store.set('cols',S.cols); refitLayout(); }
+  if(a==='font'){ S.font=v; store.set('font',v==='easy'?'easy':'myeongjo'); applyFont(); refitLayout(); }
+  if(a==='sound'){ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); if(!S.sound) stopReading(); }
+  if(a==='engine'){ S.engine=v; store.set('engine',v); stopReading(); chooseEngine(); if(entry) prefetchVoice(poemLines()); }
+  if(a==='timbre'){ S.timbre=v; store.set('timbre',v); stopReading(); chooseEngine(); if(entry) prefetchVoice(poemLines()); }
+  if(a==='vtest'){ if(!voiceReady()){ renderDocks(); return; } stopReading(); speak('산에는 산새, 들에는 들새.'); }
+  if(a==='read') startReading('all');
+  if(a==='echo') startReading('echo');
+  if(a==='stopread') stopReading();
+  if(a==='print') printSheet();
+  renderDocks();
+}
+$('dockTop').addEventListener('click',onDock); $('dockBot').addEventListener('click',onDock);
+function applyFont(){ document.body.classList.toggle('easyfont',S.font==='easy'); }
+
+/* ================= 시 → 줄·글자 ================= */
+let nextId=0, entry=null, layout={cols:1,fontSize:40};
+function buildLine(kind,text){
+  if(text.trim()==='') return {kind,blank:true,tokens:[]};
+  const words=text.split(/\s+/).filter(Boolean), tokens=[];
+  words.forEach((w,wi)=>{ for(const ch of w) tokens.push({id:'tk'+(nextId++),text:ch,len:1,word:wi}); if(wi<words.length-1) tokens.push({id:null,text:' ',space:true}); });
+  return {kind,tokens,text:text.trim()};
+}
+function buildEntry(key){
+  const d=poemData(key), e={key,title:d.title,author:d.author,body:d.body,lines:[],vis:{}};
+  e.lines.push(buildLine('title',d.title)); e.lines.push(buildLine('author',d.author));
+  const raw=d.body.split('\n').map(s=>s.trim());
+  while(raw.length&&raw[0]==='') raw.shift(); while(raw.length&&raw[raw.length-1]==='') raw.pop();
+  raw.forEach(t=>e.lines.push(buildLine('body',t)));
+  e.lines.forEach(l=>l.tokens.forEach(t=>{ if(t.id) e.vis[t.id]=true; }));
+  return e;
+}
+function poemLines(){ return entry?[entry.title,entry.author,...entry.lines.slice(2).filter(l=>!l.blank).map(l=>l.text)]:[]; }
+function rebuildEntries(){
+  stopReading(); nextId=0; entry=buildEntry(S.active); S.stage='all';
+  /* 이 시의 모든 줄 목소리를 미리 만들어 둠 */
+  prefetchVoice(poemLines());
+  refitLayout(); if(S.admin) renderDocks();
+}
+
+/* ================= 가리기 단계 ================= */
+function applyStage(k){
+  if(!entry) return; S.stage=k;
+  entry.lines.forEach((line,li)=>{
+    const head=li<2; let firstInLine=true, lastWord=-1;
+    line.tokens.forEach(t=>{
+      if(!t.id) return;
+      const firstOfWord=t.word!==lastWord; lastWord=t.word;
+      let v=true;
+      if(k==='half') v=head||t.word%2===0;      /* 낱말 하나 걸러 가리기 (제목·작가는 보임) */
+      if(k==='word1') v=head||firstOfWord;      /* 낱말마다 첫 글자만 */
+      if(k==='line1') v=firstInLine;            /* 줄마다 첫 글자만 (원래 앱의 '첫 글자만 남기기') */
+      if(k==='none') v=false;
+      entry.vis[t.id]=v; firstInLine=false;
+    });
+  });
+  render();
+}
+
+/* ================= 그리기 (낱말 하나 = 괄호 하나. 이어진 글자는 괄호 하나로 묶음) ================= */
+function makeVisible(t,group,idx){
+  const span=document.createElement('span'); span.className='tok'; span.textContent=t.text;
+  span.addEventListener('click',()=>{ for(let k=idx;k<group.length;k++) entry.vis[group[k].id]=false; render(); });
+  return span;
+}
+function makeHiddenRun(run){
+  const wrap=document.createElement('span'); wrap.className='hidden-run';
+  wrap.innerHTML='<span class="paren">(</span>'+run.map(()=>'<span class="tok-hidden">　</span>').join('')+'<span class="paren">)</span>';
+  wrap.addEventListener('click',()=>{ entry.vis[run[0].id]=true; render(); });
+  return wrap;
+}
+function renderGroup(toks){
+  const frag=document.createDocumentFragment(); let i=0;
+  while(i<toks.length){
+    if(entry.vis[toks[i].id]){ frag.appendChild(makeVisible(toks[i],toks,i)); i++; }
+    else { const run=[]; while(i<toks.length&&!entry.vis[toks[i].id]){ run.push(toks[i]); i++; } frag.appendChild(makeHiddenRun(run)); }
+  }
+  return frag;
+}
+function renderLine(line,li,cls){
+  const div=document.createElement('div');
+  if(line.blank){ div.className='pline blank-line'; return div; }
+  div.className=cls||'pline'; div.dataset.k=li;
+  const toks=line.tokens; let i=0;
+  while(i<toks.length){
+    if(toks[i].space){ const sp=document.createElement('span'); sp.className='tok-space'; sp.textContent=' '; div.appendChild(sp); i++; }
+    else { const g=[]; while(i<toks.length&&!toks[i].space){ g.push(toks[i]); i++; } div.appendChild(renderGroup(g)); }
+  }
+  return div;
+}
+function render(){
+  const box=$('poemsContainer'); box.innerHTML='';
+  if(!entry) return;
+  const sec=document.createElement('div');
+  const head=document.createElement('div'); head.className='head';
+  const tw=document.createElement('div'); tw.className='title-line'; tw.appendChild(renderLine(entry.lines[0],0,'headline'));
+  const aw=document.createElement('div'); aw.className='author-line'; aw.appendChild(renderLine(entry.lines[1],1,'headline'));
+  head.append(tw,aw); sec.appendChild(head);
+  const stage=document.createElement('div'); stage.className='stage';
+  const pc=document.createElement('div'); pc.className='poem-columns';
+  pc.style.fontSize=layout.fontSize+'px'; pc.style.gridTemplateColumns=`repeat(${layout.cols},1fr)`; pc.style.maxWidth=layout.cols===1?'fit-content':'1100px';
+  const body=entry.lines.slice(2), per=Math.ceil(body.length/layout.cols)||1;
+  for(let c=0;c<layout.cols;c++){
+    const col=document.createElement('div'); col.className='col';
+    body.slice(c*per,c*per+per).forEach((line,j)=>col.appendChild(renderLine(line,2+c*per+j)));
+    pc.appendChild(col);
+  }
+  stage.appendChild(pc); sec.appendChild(stage); box.appendChild(sec);
+  markLine(PB.k,PB.cls);
+  updateCounter();
+}
+function updateCounter(){
+  const el=$('hiddenCounter'); if(!el||!entry) return;
+  const ids=Object.keys(entry.vis), hidden=ids.filter(i=>!entry.vis[i]).length;
+  el.textContent=`가려진 글자 ${hidden} / ${ids.length}`;
+}
+/* 화면에 맞춰 단 수·글자 크기 자동 결정 (스크롤 생기면 다음 단으로) */
+const FONT_SIZES=[48,44,40,36,32,28,25,22,20,18];
+function fits(){
+  const d=document.documentElement;
+  if(d.scrollHeight>innerHeight+1||d.scrollWidth>innerWidth+1) return false;
+  /* 단마다 줄이 옆 단으로 넘치지 않는지도 확인 */
+  return [...document.querySelectorAll('.poem-columns .col')].every(c=>c.scrollWidth<=c.clientWidth+1);
+}
+function refitLayout(){
+  if(!entry||document.body.classList.contains('cover')) return;
+  /* 자동: 단 수마다 들어가는 가장 큰 글자를 찾고, 글자가 가장 큰 쪽을 고름(같으면 단이 적은 쪽) */
+  const tryCols=S.cols?[S.cols]:[1,2,3,4]; let best=null;
+  for(const c of tryCols){
+    for(const f of FONT_SIZES){ layout={cols:c,fontSize:f}; render(); if(fits()){ if(!best||f>best.fontSize) best={cols:c,fontSize:f}; break; } }
+    if(best&&best.fontSize===FONT_SIZES[0]) break;
+  }
+  layout=best||{cols:tryCols[tryCols.length-1],fontSize:FONT_SIZES[FONT_SIZES.length-1]}; render();
+}
+let rzT=null; window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ refitLayout(); if(S.admin) renderDocks(); },200); });
+
+/* ================= 들려주기 · 한 줄씩 따라 읽기 =================
+   들려주기: 제목 → 작가 → 본문을 이어서 읽고, 읽는 줄에 옅은 바탕색을 칠함
+   따라 읽기: 한 줄을 읽고(초록 바탕) → 학생이 따라 할 시간(노란 바탕, "따라 해요") → 다음 줄 */
+const PB={on:false,mode:'all',parts:[],idx:0,timer:null,k:null,cls:null};
+function markLine(k,cls){
+  PB.k=k; PB.cls=cls;
+  document.querySelectorAll('[data-k]').forEach(el=>{ el.classList.remove('reading','echo'); if(k!=null&&+el.dataset.k===k&&cls) el.classList.add(cls); });
+  document.body.classList.toggle('echoing',cls==='echo');
+}
+function startReading(mode){
+  if(!entry) return; stopReading(); unlockAudio();
+  if(!voiceReady()) return;
+  const parts=[{text:entry.title,k:0,pause:500},{text:entry.author,k:1,pause:950}];
+  entry.lines.forEach((l,i)=>{ if(i<2) return; if(l.blank){ if(parts.length) parts[parts.length-1].pause=900; } else parts.push({text:l.text,k:i,pause:420}); });
+  Object.assign(PB,{on:true,mode,parts,idx:0});
+  renderDocks(); step();
+}
+function step(){
+  if(!PB.on) return;
+  if(PB.idx>=PB.parts.length){ stopReading(); return; }
+  const p=PB.parts[PB.idx], t0=performance.now(), my=PB;
+  markLine(p.k,'reading');
+  speak(p.text,()=>{
+    if(!PB.on||PB!==my) return;
+    if(PB.mode==='echo'){
+      /* 학생이 따라 할 시간: 읽은 시간의 1.4배 (최소 2초) + 연이 바뀌면 조금 더 */
+      const dur=performance.now()-t0;
+      markLine(p.k,'echo');
+      PB.timer=setTimeout(()=>{ PB.idx++; step(); },Math.max(2000,dur*1.4)+(p.pause>800?600:0));
+    } else PB.timer=setTimeout(()=>{ PB.idx++; step(); },p.pause);
+  });
+}
+function stopReading(){
+  if(!PB.on&&PB.k==null) return;
+  PB.on=false; clearTimeout(PB.timer); stopVoice(); speakSeq++; markLine(null,null);
+  if(S.admin) renderDocks();
+}
+
+/* ================= 시 입력 창 ================= */
+let editing=null;
+function setTab(w){ $('tabPcBtn').classList.toggle('on',w==='pc'); $('tabBoardBtn').classList.toggle('on',w==='board'); $('tabPc').classList.toggle('show',w==='pc'); $('tabBoard').classList.toggle('show',w==='board'); }
+$('tabPcBtn').onclick=()=>setTab('pc'); $('tabBoardBtn').onclick=()=>setTab('board');
+$('txtFileInput').onchange=()=>{
+  const f=$('txtFileInput').files&&$('txtFileInput').files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=e=>{
+    const lines=String(e.target.result||'').replace(/\r\n/g,'\n').split('\n').map(s=>s.trim());
+    while(lines.length&&!lines[0]) lines.shift();
+    const title=lines.shift()||'(제목 없음)'; while(lines.length&&!lines[0]) lines.shift();
+    const author=lines.shift()||'(작가 미상)'; const body=lines.join('\n').trim();
+    $('inputTitle').value=title; $('inputAuthor').value=author; $('inputBody').value=body;
+    $('filePreview').textContent='제목: '+title+'\n작가: '+author+'\n\n'+body;
+  };
+  rd.readAsText(f,'utf-8');
+};
+function openModal(id){
+  stopReading();
+  const c=id?customs.find(x=>x.id===id):null; editing=c?c.id:null;
+  $('inputTitle').value=c?c.title:''; $('inputAuthor').value=c?c.author:''; $('inputBody').value=c?c.body:'';
+  $('filePreview').textContent='파일을 고르면 여기에 미리보기가 나타나요.'; $('txtFileInput').value='';
+  $('delBtn').hidden=!c; setTab('pc'); leaveFull();
+  $('modalBack').classList.add('show');
+}
+function closeModal(){ $('modalBack').classList.remove('show'); }
+$('cancelBtn').onclick=closeModal;
+$('modalBack').addEventListener('click',e=>{ if(e.target===$('modalBack')) closeModal(); });
+function saveCustoms(){ store.set('customs',JSON.stringify(customs)); }
+$('saveBtn').onclick=()=>{
+  const d={title:$('inputTitle').value.trim()||'(제목 없음)',author:$('inputAuthor').value.trim()||'(작가 미상)',body:$('inputBody').value};
+  if(!d.body.trim()){ $('inputBody').focus(); return; }
+  if(editing){ Object.assign(customs.find(x=>x.id===editing),d); S.active=editing; }
+  else { const id='c'+Date.now(); customs.push({id,...d}); S.active=id; }
+  saveCustoms(); store.set('active',S.active); closeModal(); afterPoemChange();
+};
+$('delBtn').onclick=()=>{
+  if(!editing) return; customs=customs.filter(x=>x.id!==editing); saveCustoms();
+  if(S.active===editing){ S.active='common'; store.set('active','common'); }
+  closeModal(); afterPoemChange();
+};
+function afterPoemChange(){ rebuildEntries(); renderDocks(); }
+
+/* ================= 출력: 지금 가린 모습 그대로 빈칸 활동지 (A4 한 장) ================= */
+function printSheet(){
+  if(!entry) return;
+  const saved=layout, n=entry.lines.length-2;
+  layout={cols:n>18?2:1,fontSize:20}; render();
+  const t=new Date(), ds=`${t.getFullYear()}. ${t.getMonth()+1}. ${t.getDate()}.`;
+  $('printArea').innerHTML=`<div class="pa-head"><span>시 암송 · ${esc(STAGES.find(s=>s.k===S.stage)?.label||'')}</span><span>이름: ____________ &nbsp; ${ds}</span></div>`+$('poemsContainer').innerHTML;
+  layout=saved; render();
+  window.print();
+}
+
+/* ================= 시작 ================= */
+applyFont();
+/* Cloud 키가 없으면 처음에는 기기 목소리로 (관리 메뉴에서 바꿈) */
+if(!store.get('engine')&&!S.cloudKey) S.engine='device';
+</script>
+</body>
+</html>

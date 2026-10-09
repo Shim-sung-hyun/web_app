@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud 키 넣는 방법</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--paper:#FAF7EF;--panel:#fff;--ink:#2B2A26;--soft:#6F6A5E;--line:#E3DED0;--accent:#3F6B52;--tint:#E7EEE7;--warn:#9A2E1C;--warnbg:#F8ECE7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:17px;line-height:1.75}
+main{max-width:760px;margin:0 auto;padding:36px 18px 60px}
+h1{font-family:"Nanum Myeongjo",serif;font-weight:800;font-size:clamp(28px,5vw,38px);margin:0 0 6px;letter-spacing:1px}
+.lead{color:var(--soft);margin:0 0 26px}
+.box{background:var(--panel);border-radius:16px;box-shadow:0 8px 26px -14px rgba(43,42,38,.28);padding:20px 22px;margin:0 0 16px}
+.box.tint{background:var(--tint)}
+.box.warn{background:var(--warnbg)}
+.box h2{font-size:19px;margin:0 0 8px;display:flex;align-items:center;gap:10px}
+.n{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:inline-grid;place-items:center;font-size:15px;flex:none}
+ol,ul{margin:6px 0 0;padding-left:24px}
+li{margin-bottom:4px}
+b.ui{background:#F1EDE2;border:1px solid var(--line);border-radius:6px;padding:0 6px;font-weight:700;white-space:nowrap}
+code{background:#F1EDE2;border-radius:6px;padding:1px 6px;font-size:15px;word-break:break-all}
+a{color:var(--accent);font-weight:700}
+.small{font-size:14.5px;color:var(--soft);margin:8px 0 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Cloud 키 넣는 방법</h1>
+<p class="lead">웹앱이 자연스러운 Google 목소리로 읽어 주려면 <b>Google Cloud 키</b>가 하나 필요합니다. 처음 한 번만 만들면 되고, 10분쯤 걸립니다. 키가 없어도 <b>기기 목소리</b>로는 바로 쓸 수 있습니다.</p>
+
+<div class="box tint">
+  <h2>비용은요?</h2>
+  <p style="margin:0">Google 목소리(Chirp 3: HD)는 <b>매달 100만 자까지 무료</b>입니다. 시 한 편이 보통 100~300자이고, 한 번 만든 목소리는 기기에 저장해 다시 쓰므로 수업에서 무료 한도를 넘기기는 어렵습니다. 다만 키를 만들려면 <b>결제 카드 등록</b>이 필요합니다. 아래 ⑥처럼 예산 알림을 걸어 두면 안심입니다.</p>
+  <p class="small">요금은 바뀔 수 있습니다. 최신 내용: <a href="https://cloud.google.com/text-to-speech/pricing" target="_blank" rel="noopener">Text-to-Speech 가격</a></p>
+</div>
+
+<div class="box">
+  <h2><span class="n">1</span>Google Cloud 콘솔 들어가기</h2>
+  <ol>
+    <li><a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a>에 Google 계정으로 로그인합니다.</li>
+    <li>처음이면 이용 약관에 동의합니다.</li>
+  </ol>
+</div>
+
+<div class="box">
+  <h2><span class="n">2</span>프로젝트 만들기</h2>
+  <ol>
+    <li>화면 위쪽의 <b class="ui">프로젝트 선택</b>을 누르고 <b class="ui">새 프로젝트</b>를 누릅니다.</li>
+    <li>이름(예: <code>수업 웹앱</code>)을 넣고 <b class="ui">만들기</b>를 누릅니다.</li>
+    <li>다 만들어지면 위쪽에서 그 프로젝트가 선택되어 있는지 확인합니다.</li>
+  </ol>
+</div>
+
+<div class="box">
+  <h2><span class="n">3</span>결제 계정 연결 (카드 등록)</h2>
+  <ol>
+    <li>왼쪽 메뉴 ☰ → <b class="ui">결제</b>로 갑니다.</li>
+    <li>안내에 따라 결제 계정을 만들고 카드를 등록한 뒤, 이 프로젝트에 연결합니다.</li>
+  </ol>
+  <p class="small">무료 한도 안에서는 요금이 나가지 않습니다.</p>
+</div>
+
+<div class="box">
+  <h2><span class="n">4</span>Text-to-Speech API 켜기</h2>
+  <ol>
+    <li>☰ → <b class="ui">API 및 서비스</b> → <b class="ui">라이브러리</b>로 갑니다.</li>
+    <li>검색창에 <code>Cloud Text-to-Speech API</code>를 넣고, 나온 항목을 누릅니다.</li>
+    <li><b class="ui">사용</b>을 누릅니다.</li>
+  </ol>
+</div>
+
+<div class="box">
+  <h2><span class="n">5</span>API 키 만들기</h2>
+  <ol>
+    <li>☰ → <b class="ui">API 및 서비스</b> → <b class="ui">사용자 인증 정보</b>로 갑니다.</li>
+    <li>위쪽 <b class="ui">+ 사용자 인증 정보 만들기</b> → <b class="ui">API 키</b>를 누릅니다.</li>
+    <li>나온 키(<code>AIza…</code>로 시작)를 <b>복사</b>합니다.</li>
+    <li><b>안전하게 제한하기 (권장)</b>: 만든 키를 눌러
+      <ul>
+        <li><b class="ui">애플리케이션 제한사항</b> → <b class="ui">웹사이트</b> → <code>https://shim-sung-hyun.github.io/*</code> 추가</li>
+        <li><b class="ui">API 제한사항</b> → <b class="ui">키 제한</b> → <code>Cloud Text-to-Speech API</code>만 고르기</li>
+        <li><b class="ui">저장</b></li>
+      </ul>
+      이렇게 하면 키가 남에게 알려져도 이 웹앱 말고는 쓸 수 없습니다.</li>
+  </ol>
+</div>
+
+<div class="box">
+  <h2><span class="n">6</span>예산 알림 걸기 (권장)</h2>
+  <ol>
+    <li>☰ → <b class="ui">결제</b> → <b class="ui">예산 및 알림</b> → <b class="ui">예산 만들기</b>.</li>
+    <li>금액을 <code>1,000원</code>처럼 작게 정하면, 혹시 요금이 생길 때 메일로 알려 줍니다.</li>
+  </ol>
+</div>
+
+<div class="box tint">
+  <h2><span class="n">7</span>웹앱에 넣기</h2>
+  <ol>
+    <li>웹앱에서 오른쪽 아래 <b>관리 버튼</b>(파란 유리알)을 누릅니다.</li>
+    <li><b class="ui">목소리</b>에서 <b class="ui">Google</b>을 고르고, <b class="ui">Cloud 키를 넣어 주세요</b> 칸에 복사한 키를 붙여 넣습니다.</li>
+    <li><b class="ui">이 기기에 키 저장</b>에 체크하면 다음부터 다시 넣지 않아도 됩니다.</li>
+    <li><b class="ui">들어 보기</b>로 목소리가 나오는지 확인합니다.</li>
+  </ol>
+  <p class="small">같은 사이트의 다른 웹앱(사진 속 도형 찾기, 무지개 색 찾기 등)에 저장한 키가 있으면 자동으로 채워집니다.</p>
+</div>
+
+<div class="box warn">
+  <h2>꼭 지켜 주세요</h2>
+  <ul>
+    <li>API 키는 <b>개인 것</b>입니다. 다른 선생님께는 웹앱 주소만 알려 드리고, 키는 각자 만들어 쓰도록 안내해 주세요.</li>
+    <li>여러 사람이 쓰는 컴퓨터에서는 <b>"이 기기에 키 저장"을 끄세요.</b></li>
+    <li>키가 알려졌다면 ⑤의 <b class="ui">사용자 인증 정보</b>에서 그 키를 지우고 새로 만드세요.</li>
+  </ul>
+</div>
+</main>
+</body>
+</html>
