@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>그림 조각 맞추기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 색: 차름(도서출판) 표지의 크림색·바다색을 바탕으로 한 짙은 바다 계열 */
+:root{
+  --ocean:#17303E; --deep:#0F2430; --panel:#21414F; --line:#3A5A69;
+  --cream:#FBEBD6; --sand:#F1D7B5; --sea:#A9CFDA; --coral:#F0936B; --ink:#1D2A30; --muted:#6E7F86;
+  --f-display:"Jua","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(120% 95% at 50% 50%,#21445A 0%,#17303E 55%,#0F2430 100%) fixed var(--ocean);color:var(--cream);font-family:var(--f-body);font-size:17px;line-height:1.5;
+  -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible+span,a:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
+[hidden]{display:none!important}
+svg.ic{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- 교사 설정 (종이 카드) ---------- */
+#setup{position:fixed;inset:0;overflow:auto;padding:28px 16px 40px;display:none}
+body.setup #setup{display:block}
+body.setup #play, body.setup #adminBtn{display:none}
+body.home #play{display:none}
+.dock:empty{display:none!important}
+/* ---------- 학생 혼자: 사진 고르기 ---------- */
+#home{position:fixed;inset:0;display:none;align-items:center;justify-content:center;gap:clamp(20px,4vw,56px);padding:24px;flex-wrap:wrap}
+body.home #home{display:flex}
+.big-tile{width:clamp(220px,28vw,340px);aspect-ratio:1;border-radius:36px;border:0;background:var(--cream);color:var(--ocean);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  font-family:var(--f-display);font-size:clamp(30px,3.4vw,44px);cursor:pointer;box-shadow:0 18px 40px rgba(0,0,0,.35);padding:22px;overflow:hidden}
+.big-tile svg{width:42%;height:auto;stroke-width:1.8}
+.big-tile img{width:100%;flex:1;min-height:0;object-fit:cover;border-radius:22px}
+#soloBtns{display:none;gap:12px;pointer-events:auto}
+body.solo #soloBtns{display:flex}
+#doneLabel:not(.on){visibility:hidden}
+#doneLabel:not(.on) #soloBtns{pointer-events:none}
+#soloBtns button{border:0;border-radius:999px;font-family:var(--f-display);font-size:clamp(24px,2.6vw,34px);padding:10px 28px;min-height:64px;display:inline-flex;align-items:center;gap:10px}
+#soloBtns button svg{width:1.1em;height:1.1em}
+#againBtn{background:var(--cream);color:var(--ocean)}
+#otherBtn{background:transparent;color:var(--cream);box-shadow:inset 0 0 0 3px var(--cream)}
+.paper{max-width:820px;margin:0 auto;background:var(--cream);color:var(--ink);border-radius:26px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.paper-head{padding:30px 34px 10px;display:flex;gap:18px;align-items:center}
+.paper-head svg{width:62px;height:62px;flex:none;color:var(--ocean)}
+.paper-head h1{font-family:var(--f-display);font-weight:400;font-size:40px;margin:0;line-height:1.1;color:var(--ocean)}
+.paper-head p{margin:4px 0 0;color:#5B666A;font-size:15px}
+.sec{padding:16px 34px;border-top:1.5px dashed #E2CCAE}
+.sec h2{margin:0 0 10px;font-size:17px;font-weight:700;color:var(--ocean)}
+.sec p.hint{margin:8px 0 0;font-size:14px;color:#6A7276}
+.tiles{display:flex;flex-wrap:wrap;gap:10px}
+.tile{position:relative;cursor:pointer}
+.tile input{position:absolute;opacity:0;pointer-events:none}
+.tile span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:96px;min-height:64px;padding:10px 14px;border-radius:16px;
+  background:#FFF6EA;border:2px solid #E8D2B4;font-weight:700;font-size:16px;text-align:center;line-height:1.25}
+.tile span small{font-weight:500;font-size:13px;color:#6A7276}
+.tile span svg{width:44px;height:44px}
+.tile input:checked+span{background:var(--ocean);border-color:var(--ocean);color:var(--cream)}
+.tile input:checked+span small{color:var(--sea)}
+.tiles.lv .tile span{min-width:84px}
+.tiles.lv .tile span b{font-family:var(--f-display);font-weight:400;font-size:28px;line-height:1}
+.pbtn{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ocean);background:transparent;color:var(--ocean);border-radius:999px;padding:10px 20px;font-weight:700;min-height:50px}
+.pbtn.solid{background:var(--ocean);color:var(--cream)}
+.pick{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.pick img{width:104px;height:78px;object-fit:cover;border-radius:12px;border:2px solid #E8D2B4}
+.paper-foot{padding:20px 34px 30px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--sea)}
+.paper-foot .msg{flex:1;min-width:200px;font-size:14px;font-weight:700;color:#7A2E14}
+.go{border:0;border-radius:999px;background:var(--ocean);color:var(--cream);font-family:var(--f-display);font-size:28px;padding:12px 40px;min-height:62px}
+.note{margin:0;font-size:14px;color:#5B666A}
+
+/* ---------- 퍼즐 판 ---------- */
+#play{position:fixed;inset:0;touch-action:none}
+.pbox{position:absolute;background-repeat:no-repeat;box-shadow:0 18px 50px rgba(0,0,0,.45);z-index:0}
+.pbox .veil{position:absolute;inset:0;border-radius:inherit;background:rgba(15,36,48,.30);transition:opacity 1s ease}
+.pbox.clear .veil{opacity:0}
+.pboard{position:absolute;background:var(--deep);z-index:1;box-shadow:0 0 0 2px rgba(251,235,214,.35)}
+.pboard .ghost,.pboard .full{position:absolute;inset:0;background-repeat:no-repeat}
+.pboard .full{opacity:0;transition:opacity 1s ease}
+.pboard .full.on{opacity:1}
+.pboard svg{position:absolute;overflow:visible}
+.pboard svg .guide{fill:none;stroke:rgba(251,235,214,.5);stroke-width:1.6;stroke-dasharray:7 6}
+.pboard svg .target{fill:rgba(240,147,107,.42);stroke:var(--coral);stroke-width:4}
+#prog{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:min(360px,40vw);height:10px;border-radius:5px;background:rgba(251,235,214,.16);overflow:hidden;z-index:3}
+#prog i{display:block;height:100%;width:0;background:var(--cream);border-radius:5px;transition:width .4s ease}
+#doneLabel{position:absolute;z-index:6;display:flex;align-items:center;gap:12px 22px;flex-wrap:wrap;justify-content:center;font-family:var(--f-display);font-size:clamp(30px,3.4vw,44px);color:var(--cream);
+  opacity:0;transition:opacity .8s ease;pointer-events:none;white-space:nowrap}
+#doneLabel.on{opacity:1}
+#doneLabel svg{width:1.2em;height:1.2em;stroke-width:2.6}
+.pc{position:absolute;left:0;top:0;transform-origin:0 0;z-index:5;touch-action:none;cursor:grab;
+  filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
+.pc.anim{transition:transform .32s ease}
+.pc.scatter{transition:transform .9s cubic-bezier(.3,.7,.3,1)}
+.pc.drag{z-index:40;cursor:grabbing;filter:drop-shadow(0 14px 16px rgba(0,0,0,.5))}
+.pc.cue{filter:drop-shadow(4px 0 0 var(--coral)) drop-shadow(-4px 0 0 var(--coral)) drop-shadow(0 4px 0 var(--coral)) drop-shadow(0 -4px 0 var(--coral))}
+.pc.cue.drag{filter:drop-shadow(0 14px 16px rgba(0,0,0,.5))}
+.pc.placed{z-index:2;cursor:default;pointer-events:none;filter:drop-shadow(0 0 0 rgba(251,235,214,0));transition:filter .6s ease,opacity .9s ease}
+.pc.placed.snap{filter:drop-shadow(0 0 7px rgba(251,235,214,.95));transition:none}
+.pc.gone{opacity:0}
+
+/* ---------- 교사 모드: 떠 있는 두 줄 ---------- */
+.dock{position:fixed;left:50%;transform:translateX(-50%);z-index:30;display:none;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;
+  max-width:calc(100% - 24px);padding:8px 10px;border-radius:22px;background:rgba(15,36,48,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 0 0 1px rgba(251,235,214,.14)}
+#dockTop{top:10px} #dockBot{bottom:12px}
+body.admin:not(.setup) .dock{display:flex}
+.dock .grp{display:flex;align-items:center;gap:4px;padding:0 6px}
+.dock .grp+.grp{border-left:1px solid rgba(251,235,214,.18)}
+.dock .lbl{font-size:13px;color:var(--sea);margin-right:4px;font-weight:700}
+.dock button{border:0;background:transparent;color:var(--cream);border-radius:14px;min-height:44px;min-width:44px;padding:6px 12px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:6px}
+.dock button svg{width:22px;height:22px}
+.dock button[aria-pressed="true"]{background:var(--cream);color:var(--ink)}
+.dock button.big{background:var(--coral);color:var(--ink);font-family:var(--f-display);font-weight:400;font-size:20px;padding:6px 18px}
+.dock button:disabled{opacity:.35;cursor:default}
+#logPop{position:fixed;z-index:31;left:50%;transform:translateX(-50%);bottom:84px;width:min(640px,calc(100% - 24px));background:var(--cream);color:var(--ink);border-radius:18px;padding:14px 18px;box-shadow:0 18px 40px rgba(0,0,0,.4)}
+body:not(.admin) #logPop{display:none}
+#logPop h3{margin:0 0 6px;font-size:16px}
+#logPop table{width:100%;border-collapse:collapse;font-size:14px}
+#logPop td,#logPop th{border-bottom:1px solid #E2CCAE;padding:5px 4px;text-align:left}
+#logPop p{margin:8px 0 0;font-size:13px;color:#5B666A}
+
+/* 교사 버튼 (3초 누르기) — 공통 규격 */
+#adminBtn{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:43px;height:43px;border-radius:50%;
+  z-index:50;touch-action:none;--p:0;padding:0;opacity:.4;transition:opacity .3s;
+  border:1px solid rgba(14,92,170,.55);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 88%, rgba(170,245,255,.95), rgba(170,245,255,0) 70%),
+    radial-gradient(circle at 50% 40%, #4FC4F5 0%, #1E8BE0 55%, #0D5FB8 100%);
+  box-shadow:inset 0 -4px 10px rgba(150,240,255,.55), inset 0 3px 6px rgba(0,40,100,.45), 0 4px 10px rgba(0,60,130,.35), 0 1px 2px rgba(0,30,70,.4)}
+#adminBtn::before{content:"";position:absolute;left:14%;right:14%;top:5%;height:44%;border-radius:50% 50% 45% 45% / 60% 60% 40% 40%;
+  background:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,.35) 60%, rgba(255,255,255,.05));pointer-events:none}
+#adminBtn::after{content:"";position:absolute;inset:-5px;border-radius:50%;
+  background:conic-gradient(#3FCFD2 calc(var(--p)*360deg),transparent 0);
+  -webkit-mask:radial-gradient(circle,transparent 22px,#000 23px);mask:radial-gradient(circle,transparent 22px,#000 23px);opacity:.9}
+#adminBtn .ab-label{position:relative;display:block;text-align:center;font-family:var(--f-body);font-weight:700;font-size:8.5px;letter-spacing:.02em;line-height:1;color:#FFFFFF;text-shadow:0 1px 1.5px rgba(0,50,110,.65);pointer-events:none}
+body.admin #adminBtn .ab-label{font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:0;color:#9FF3F5;text-shadow:0 0 6px rgba(63,207,210,.7),0 1px 1px rgba(0,0,0,.6)}
+body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 88%, rgba(110,230,240,.85), rgba(110,230,240,0) 70%),
+    radial-gradient(circle at 50% 40%, #3D4F5A 0%, #17242C 60%, #05090C 100%);
+  box-shadow:inset 0 -4px 10px rgba(90,220,235,.45), inset 0 3px 6px rgba(0,0,0,.6), 0 4px 10px rgba(0,0,0,.4), 0 0 0 3px rgba(63,207,210,.35)}
+
+#printArea{display:none}
+@media print{
+  @page{size:A4;margin:10mm}
+  html,body{height:auto!important;overflow:visible!important;background:#fff!important}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block!important;color:#000;font-family:var(--f-body);max-height:275mm;overflow:hidden;break-inside:avoid;page-break-inside:avoid}
+  .pa-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3mm;font-size:11pt}
+  .pa-head h1{font-family:var(--f-display);font-weight:400;font-size:18pt;margin:0}
+  .pa-img{display:block;margin:0 auto;max-width:100%;max-height:205mm}
+  .pa-note{text-align:center;font-size:11pt;margin:3mm 0}
+  .pa-log{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:3mm}
+  .pa-log td{border:1px solid #999;padding:1.2mm 2mm;text-align:left}
+}
+@media (prefers-reduced-motion:reduce){.pc.anim,.pc.scatter,.pboard .full,.pc.placed,#prog i,#doneLabel{transition:none}}
+</style>
+</head>
+<body class="setup">
+
+<section id="setup"></section>
+<section id="home"></section>
+
+<div id="play">
+  <div id="prog"><i id="progFill"></i></div>
+  <div class="pbox" id="pbox"><div class="veil"></div></div>
+  <div class="pboard" id="pboard"><div class="ghost" id="ghost"></div><div class="full" id="full"></div><svg id="guide"></svg></div>
+  <div id="doneLabel"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>다 맞췄어요<div id="soloBtns"><button type="button" id="againBtn"></button><button type="button" id="otherBtn"></button></div></div>
+</div>
+<div class="dock" id="dockTop"></div>
+<div class="dock" id="dockBot"></div>
+<div id="logPop" hidden></div>
+<button id="adminBtn" type="button" aria-label="교사 모드: 3초 동안 누르기"><span class="ab-label" id="abLabel">charum</span></button>
+<div id="printArea"></div>
+
+<script>
+"use strict";
+
+/* ================= 기본 데이터 ================= */
+const ICON={
+  jig:'<svg class="ic" viewBox="0 0 48 48"><path d="M8 8h11a4 4 0 1 1 8 0h13v12a4 4 0 1 0 0 8v12H27a4 4 0 1 0-8 0H8V28a4 4 0 1 1 0-8z"/></svg>',
+  rect:'<svg class="ic" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="2"/><path d="M24 8v32M8 24h32" stroke-dasharray="3 3"/></svg>',
+  pair:'<svg class="ic" viewBox="0 0 48 48"><circle cx="17" cy="15" r="6"/><circle cx="33" cy="19" r="4.5"/><path d="M6 40c0-7 5-12 11-12s11 5 11 12M27 40c0-5 3-9 7-9s7 4 7 9"/></svg>',
+  solo:'<svg class="ic" viewBox="0 0 48 48"><circle cx="24" cy="15" r="7"/><path d="M11 41c0-8 6-14 13-14s13 6 13 14"/></svg>',
+  help:'<svg class="ic" viewBox="0 0 24 24"><path d="M8 12.5l3 3 5-6"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>',
+  mix:'<svg class="ic" viewBox="0 0 24 24"><path d="M3 7h4l10 10h4M3 17h4l3-3M14 10l3-3h4M18 4l3 3-3 3M18 14l3 3-3 3"/></svg>',
+  redo:'<svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>',
+  next:'<svg class="ic" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>',
+  photo:'<svg class="ic" viewBox="0 0 24 24"><path d="M3.5 8h3.5l2-3h6l2 3h3.5v11h-17z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  print:'<svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>',
+  log:'<svg class="ic" viewBox="0 0 24 24"><path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/></svg>',
+  sndOn:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>',
+  sndOff:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/></svg>',
+  gear:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>'
+};
+/* 단계: 가로 5칸 고정, 줄 수 = 단계 */
+const LEVELS={1:{cols:5,rows:1},2:{cols:5,rows:2},3:{cols:5,rows:3},4:{cols:5,rows:4},5:{cols:5,rows:5}};
+const SHAPES={jig:'퍼즐 모양',rect:'사각형'};
+const GHOSTS={1:'진하게',2:'흐리게',3:'안 보이게'};
+const pieceCount=lv=>LEVELS[lv].cols*LEVELS[lv].rows;
+
+/* ================= 상태 ================= */
+const S={mode:'teacher', level:1, shape:'jig', ghost:1, errorMode:'show', sfx:true, admin:false, img:null, rounds:[], R:null};
+const store={
+  get(k){try{return localStorage.getItem('picturePuzzle.'+k)}catch(e){return null}},
+  set(k,v){try{localStorage.setItem('picturePuzzle.'+k,v)}catch(e){}}
+};
+(function load(){
+  const lv=+store.get('level'); if(LEVELS[lv]) S.level=lv;
+  const sh=store.get('shape'); if(SHAPES[sh]) S.shape=sh;
+  const g=+store.get('ghost'); if(GHOSTS[g]) S.ghost=g;
+  const em=store.get('errorMode'); if(['retry','free'].includes(em)) S.errorMode=em;
+  if(store.get('mode')==='solo') S.mode='solo';
+  S.sfx=store.get('sfx')!=='off';
+})();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ================= 효과음 (목소리 없음): 작게, 교사가 끌 수 있음 ================= */
+let actx=null;
+function getCtx(){ if(!actx){ const C=window.AudioContext||window.webkitAudioContext; if(C) actx=new C(); } return actx; }
+function unlockAudio(){ try{ const c=getCtx(); if(c&&c.state==='suspended') c.resume(); }catch(e){} }
+function tone(freq,at,dur,vol){
+  const c=getCtx(); if(!c) return;
+  const o=c.createOscillator(), g=c.createGain(), t=c.currentTime+at;
+  o.type='sine'; o.frequency.setValueAtTime(freq,t); o.frequency.exponentialRampToValueAtTime(freq*0.82,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.05);
+}
+function sfx(kind){
+  if(!S.sfx||document.hidden) return;
+  try{
+    if(kind==='snap') tone(620,0,0.14,0.07);
+    if(kind==='done'){ tone(523,0,0.35,0.06); tone(659,0.2,0.35,0.06); tone(784,0.4,0.6,0.06); }
+  }catch(e){}
+}
+
+/* ================= 전체 화면 ================= */
+/* 사진 고르기 창은 사파리가 전체 화면을 풀어 버려서, 설정 화면에서는 쓰지 않고 시작할 때와 판을 누를 때 켬 */
+function goFull(){ try{ const d=document.documentElement; if(document.fullscreenElement||document.webkitFullscreenElement) return;
+  if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen(); }catch(e){} }
+function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(document.webkitFullscreenElement) document.webkitExitFullscreen(); }catch(e){} }
+$('play').addEventListener('pointerdown',()=>{ if(!document.body.classList.contains('setup')) goFull(); },true);
+document.addEventListener('contextmenu',e=>{ if(!document.body.classList.contains('setup')) e.preventDefault(); });
+
+/* ================= 교사 모드 버튼 (3초 누르기) ================= */
+(function(){
+  const ab=$('adminBtn'); let raf=0, t0=0, on=false;
+  const stop=()=>{on=false; cancelAnimationFrame(raf); ab.style.setProperty('--p',0);};
+  ab.addEventListener('pointerdown',e=>{
+    e.preventDefault(); e.stopPropagation(); try{ab.setPointerCapture(e.pointerId);}catch(_){}
+    on=true; t0=performance.now();
+    const tick=()=>{ if(!on) return;
+      const p=Math.min(1,(performance.now()-t0)/3000); ab.style.setProperty('--p',p);
+      if(p>=1){stop(); setAdmin(!S.admin); return;} raf=requestAnimationFrame(tick); };
+    raf=requestAnimationFrame(tick);
+  });
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ab.addEventListener(ev,stop));
+  ab.addEventListener('contextmenu',e=>e.preventDefault());
+})();
+function setAdmin(on){
+  S.admin=on; document.body.classList.toggle('admin',on);
+  $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 3초 동안 누르기':'교사 모드: 3초 동안 누르기');
+  $('abLabel').textContent=on?'심':'charum';
+  if(!on) $('logPop').hidden=true;
+  renderDocks();
+  requestAnimationFrame(()=>requestAnimationFrame(layout));
+}
+
+/* ================= 교사 모드 메뉴 ================= */
+function renderDocks(){
+  const R=S.R, done=!!(R&&R.done);
+  const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
+  $('dockTop').innerHTML=
+    `<div class="grp"><span class="lbl">단계</span>${Object.keys(LEVELS).map(l=>b('lv:'+l,l,+l===S.level,`title="${pieceCount(+l)}조각"`)).join('')}</div>`+
+    `<div class="grp"><span class="lbl">모양</span>${Object.keys(SHAPES).map(k=>b('sh:'+k,SHAPES[k].replace(' 모양',''),k===S.shape)).join('')}</div>`+
+    `<div class="grp"><span class="lbl">밑그림</span>${Object.keys(GHOSTS).map(k=>b('gh:'+k,GHOSTS[k].replace('안 보이게','없음'),+k===S.ghost)).join('')}</div>`+
+    `<div class="grp">${b('sfx',(S.sfx?ICON.sndOn:ICON.sndOff)+(S.sfx?'효과음':'효과음 끔'),S.sfx)}${b('setup',ICON.gear+'설정')}</div>`;
+  $('dockBot').innerHTML = !R ? '' : done
+    ? `<div class="grp">${b('again',ICON.redo+'같은 그림 다시')}${S.level<5?b('nextlv',ICON.next+'다음 단계','', 'class="big"'):''}${b('setup',ICON.photo+'다른 사진으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
+    : `<div class="grp">${b('help',ICON.help+'한 조각 도와주기',null,`class="big" ${R&&R.active?'':'disabled'}`)}${b('mix',ICON.mix+'다시 섞기',null,R&&R.active?'':'disabled')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`;
+}
+function onDock(e){
+  const btn=e.target.closest('button[data-a]'); if(!btn) return;
+  const [a,v]=btn.dataset.a.split(':');
+  if(a==='lv'){ S.level=+v; store.set('level',S.level); startRound(); }
+  if(a==='sh'){ S.shape=v; store.set('shape',S.shape); startRound(); }
+  if(a==='gh'){ S.ghost=+v; store.set('ghost',S.ghost); applyGhost(); renderDocks(); }
+  if(a==='sfx'){ S.sfx=!S.sfx; store.set('sfx',S.sfx?'on':'off'); renderDocks(); }
+  if(a==='setup'){ leaveFull(); showSetup(); }
+  if(a==='help') helpOne();
+  if(a==='mix') remix();
+  if(a==='again') startRound();
+  if(a==='nextlv'){ S.level=Math.min(5,S.level+1); store.set('level',S.level); startRound(); }
+  if(a==='print') printSheet();
+  if(a==='log'){ $('logPop').hidden=!$('logPop').hidden; renderLog(); renderDocks(); }
+}
+$('dockTop').addEventListener('click',onDock); $('dockBot').addEventListener('click',onDock);
+function fmtTime(ms){ const s=Math.round(ms/1000); return s<60?`${s}초`:`${Math.floor(s/60)}분 ${s%60}초`; }
+function renderLog(){
+  const rows=S.rounds.map((l,i)=>`<tr><td>${i+1}</td><td>${l.level}단계 · ${SHAPES[l.shape]}</td><td>${l.n}</td><td>${l.first}</td><td>${l.helped}</td><td>${fmtTime(l.ms)}</td></tr>`).join('');
+  $('logPop').innerHTML=`<h3>교사용 기록${S.img&&S.img.demo?' (예시 사진)':''}</h3>
+    <table><thead><tr><th>회</th><th>단계</th><th>조각</th><th>바로 맞힘</th><th>도움 받아 맞힘</th><th>걸린 시간</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="6">아직 다 맞춘 판이 없어요.</td></tr>'}</tbody></table>
+    <p>도움 받아 맞힘 = 다른 자리에 한 번 이상 놓았거나 교사가 도와준 조각. 화면을 닫으면 사라져요.</p>`;
+}
+
+/* ================= 사진 준비 ================= */
+const loadImg=url=>new Promise((res,rej)=>{const im=new Image(); if(/^https?:/.test(url)) im.crossOrigin='anonymous'; im.onload=()=>res(im); im.onerror=rej; im.src=url;});
+/* 큰 사진은 줄여서 씀. 사진은 이 기기 안에서만 쓰고 어디로도 보내지 않음 */
+async function preparePhoto(src,name,demo){
+  const im=await loadImg(src);
+  const k=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight));
+  const w=Math.round(im.naturalWidth*k), h=Math.round(im.naturalHeight*k);
+  const c=document.createElement('canvas'); c.width=w; c.height=h;
+  c.getContext('2d').drawImage(im,0,0,w,h);
+  const url=c.toDataURL('image/jpeg',0.9);
+  return {url,w,h,name,demo:!!demo,el:await loadImg(url)};
+}
+/* 예시 사진: 같은 폴더의 semple.jpeg → GitHub 주소 → (인터넷이 없으면) 앱 안에서 그린 그림 */
+const SAMPLE_SRC=['semple.jpeg','https://shim-sung-hyun.github.io/web_app/002/semple.jpeg','https://raw.githubusercontent.com/Shim-sung-hyun/web_app/main/002/semple.jpeg'];
+let sampleCache=null;
+async function loadSample(){
+  if(sampleCache) return sampleCache;
+  for(const u of SAMPLE_SRC){ try{ sampleCache=await preparePhoto(u,'예시 사진',true); return sampleCache; }catch(e){} }
+  sampleCache=await preparePhoto(makeExample(),'예시 그림',true); return sampleCache;
+}
+/* 인터넷 없이도 되는 예비 그림 */
+function makeExample(){
+  const W=1600,H=1200,c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d');
+  const sky=g.createLinearGradient(0,0,0,780); sky.addColorStop(0,'#9ED6F7'); sky.addColorStop(1,'#E4F4FD');
+  g.fillStyle=sky; g.fillRect(0,0,W,H);
+  const circ=(x,y,r,col)=>{g.fillStyle=col; g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill();};
+  circ(1330,210,110,'#FFC93C');
+  [[260,190,70],[340,160,90],[430,195,70],[820,140,55],[885,120,70],[950,145,55]].forEach(a=>circ(a[0],a[1],a[2],'#FFFFFF'));
+  g.fillStyle='#6CBF4F'; g.fillRect(0,780,W,H-780);
+  g.fillStyle='#F6E3C2'; g.fillRect(400,520,520,380);
+  g.fillStyle='#D8544B'; g.beginPath(); g.moveTo(350,540); g.lineTo(660,300); g.lineTo(970,540); g.closePath(); g.fill();
+  g.fillStyle='#8B5A3C'; g.fillRect(612,700,104,200); g.fillRect(1165,600,70,320);
+  [[1200,520,150],[1100,600,110],[1300,600,110],[1200,420,110]].forEach(a=>circ(a[0],a[1],a[2],'#3E9E4F'));
+  return c.toDataURL('image/jpeg',0.92);
+}
+
+/* ================= 교사 설정 ================= */
+function showSetup(){
+  clearTimeout(timer); S.R=null;
+  document.body.classList.remove('home'); document.body.classList.add('setup'); setAdmin(false);
+  document.querySelectorAll('.pc').forEach(e=>e.remove());
+  const tile=(name,val,cur,inner)=>`<label class="tile"><input type="radio" name="${name}" value="${val}" ${String(cur)===String(val)?'checked':''}><span>${inner}</span></label>`;
+  const lvTiles=()=>Object.keys(LEVELS).map(l=>tile('level',l,S.level,`<b>${l}</b><small>${pieceCount(+l)}조각</small>`)).join('');
+  $('setup').innerHTML=`<div class="paper">
+    <div class="paper-head">${ICON.jig}<div><h1>그림 조각 맞추기</h1><p>사진을 퍼즐 조각으로 나누고, 학생이 조각을 끌어서 제자리에 놓아요. 이 화면은 교사·보호자용입니다.</p></div></div>
+    <div class="sec"><h2>누가 쓰나요</h2><div class="tiles">
+      ${tile('mode','teacher',S.mode,ICON.pair+'교사와 함께<small>교사가 사진·단계를 정함</small>')}
+      ${tile('mode','solo',S.mode,ICON.solo+'학생 혼자<small>학생이 사진 고르고 다시 하기</small>')}
+    </div>
+      <p class="hint" id="modeHint"></p>
+    </div>
+    <div class="sec" id="photoSec"><h2>사진</h2>
+      <div class="pick">
+        <label class="pbtn solid" style="cursor:pointer">${ICON.photo}사진 고르기<input type="file" id="fileIn" accept="image/*" hidden></label>
+        <button class="pbtn" id="demoPic" type="button">예시 사진</button>
+        <div class="pick" id="picInfo"></div>
+      </div>
+      <p class="hint">사진은 이 기기 안에서만 쓰이고 어디로도 보내지 않아요. 학생이 좋아하는 물건·장소의 사진이 좋아요.</p>
+    </div>
+    <div class="sec"><h2>단계 (조각 수)</h2><div class="tiles lv" id="lvTiles">${lvTiles()}</div></div>
+    <div class="sec"><h2>조각 모양</h2><div class="tiles">
+      ${tile('shape','jig',S.shape,ICON.jig+'퍼즐 모양<small>둥근 꼭지</small>')}
+      ${tile('shape','rect',S.shape,ICON.rect+'사각형<small>곧은 선</small>')}
+    </div></div>
+    <div class="sec"><h2>판에 보이는 밑그림</h2><div class="tiles">
+      ${tile('ghost',1,S.ghost,'진하게<small>처음 하는 학생</small>')}
+      ${tile('ghost',2,S.ghost,'흐리게<small>조금 익숙한 학생</small>')}
+      ${tile('ghost',3,S.ghost,'안 보이게<small>테두리 그림만</small>')}
+    </div></div>
+    <div class="sec"><h2>다른 자리에 놓았을 때</h2><div class="tiles">
+      ${tile('errorMode','show',S.errorMode,'바로 자리 보여주기<small>조각과 제자리를 함께 표시</small>')}
+      ${tile('errorMode','retry',S.errorMode,'한 번 더 기회<small>두 번째에 자리 표시</small>')}
+      ${tile('errorMode','free',S.errorMode,'성공할 때까지<small>표시 없이 스스로 다시</small>')}
+    </div></div>
+    <div class="sec"><h2>효과음</h2><div class="tiles">
+      ${tile('sfx','on',S.sfx?'on':'off','켬<small>맞추면 작게 "톡"</small>')}
+      ${tile('sfx','off',S.sfx?'on':'off','끔<small>소리 없이</small>')}
+    </div>
+      <p class="hint">학생 화면에는 메뉴가 없어요. 오른쪽 아래 옅은 동그라미를 <b>3초 동안 누르면</b> 교사 메뉴(단계·모양·밑그림, 한 조각 도와주기, 다시 섞기, 기록, 출력, 설정)가 나타나요.</p>
+    </div>
+    <div class="paper-foot">
+      <button class="pbtn" id="demoBtn" type="button">예시 사진으로 해 보기</button>
+      <span class="msg" id="startMsg" aria-live="polite"></span>
+      <button class="go" id="startBtn" type="button">시작</button>
+    </div>
+  </div>`;
+  renderPicInfo();
+  const modeUI=()=>{
+    $('photoSec').hidden=S.mode==='solo';
+    $('demoBtn').hidden=S.mode==='solo';
+    $('modeHint').innerHTML=S.mode==='solo'
+      ? '시작을 누르면 학생 화면이 열려요. 학생이 <b>사진 고르기</b> 또는 <b>예시 사진</b>을 눌러 바로 하고, 다 맞추면 <b>다시 하기</b>를 눌러요. 이 기기에서 다음에 열면 학생 화면부터 나와요.'
+      : '교사가 사진을 고르고 시작해요. 수업 중에는 교사 메뉴로 단계와 모양을 바꿔요.';
+  };
+  modeUI();
+  $('fileIn').onchange=async e=>{
+    const f=e.target.files&&e.target.files[0]; if(!f) return;
+    const url=URL.createObjectURL(f);
+    try{ S.img=await preparePhoto(url,f.name,false); $('startMsg').textContent=''; }catch(err){ $('startMsg').textContent='이 사진을 열지 못했어요. 다른 사진을 골라 주세요.'; }
+    URL.revokeObjectURL(url); renderPicInfo();
+  };
+  const useDemo=async()=>{ S.img=await loadSample(); renderPicInfo(); };
+  $('demoPic').onclick=useDemo;
+  const bind=()=>$('setup').querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
+    if(r.name==='mode'){S.mode=r.value; store.set('mode',S.mode); modeUI();}
+    if(r.name==='level'){S.level=+r.value; store.set('level',S.level);}
+    if(r.name==='shape'){S.shape=r.value; store.set('shape',S.shape);}
+    if(r.name==='ghost'){S.ghost=+r.value; store.set('ghost',S.ghost);}
+    if(r.name==='errorMode'){S.errorMode=r.value; store.set('errorMode',S.errorMode);}
+    if(r.name==='sfx'){S.sfx=r.value==='on'; store.set('sfx',r.value);}
+  });
+  bind();
+  $('demoBtn').onclick=async()=>{ await useDemo(); begin(); };
+  $('startBtn').onclick=()=>{
+    if(S.mode==='solo'){ unlockAudio(); showHome(); return; }
+    if(!S.img){ $('startMsg').textContent='사진을 골라 주세요. 사진이 없으면 "예시 사진으로 해 보기"를 누르세요.'; return; }
+    begin();
+  };
+}
+function begin(){ goFull(); unlockAudio(); S.rounds=[]; document.body.classList.remove('setup','home'); startRound(); }
+
+/* ================= 학생 혼자: 사진 고르기 화면 ================= */
+/* 사진 고르기 창이 전체 화면을 풀어 버리므로 여기서는 전체 화면을 쓰지 않음 (판을 누르면 켜짐) */
+function showHome(){
+  clearTimeout(timer); S.R=null;
+  document.querySelectorAll('.pc').forEach(e=>e.remove());
+  document.body.classList.remove('setup'); document.body.classList.add('home');
+  $('doneLabel').classList.remove('on');
+  $('home').innerHTML=`
+    <label class="big-tile" id="homePick">${ICON.photo}<span>사진 고르기</span><input type="file" id="homeFile" accept="image/*" hidden></label>
+    <button class="big-tile" id="homeSample" type="button"><img id="homeThumb" alt=""><span>예시 사진</span></button>`;
+  const th=$('homeThumb'); let i=0; th.onerror=()=>{ i++; if(i<SAMPLE_SRC.length) th.src=SAMPLE_SRC[i]; else th.remove(); }; th.src=SAMPLE_SRC[0];
+  $('homeFile').onchange=async e=>{
+    const f=e.target.files&&e.target.files[0]; if(!f) return;
+    const url=URL.createObjectURL(f);
+    try{ S.img=await preparePhoto(url,f.name,false); URL.revokeObjectURL(url); begin(); }catch(err){ URL.revokeObjectURL(url); }
+  };
+  $('homeSample').onclick=async()=>{ unlockAudio(); S.img=await loadSample(); begin(); };
+  renderDocks();
+}
+function renderPicInfo(){
+  const p=$('picInfo'); if(!p) return;
+  p.innerHTML=S.img?`<img src="${S.img.url}" alt=""><span>${esc(S.img.name)}</span>`:'<span class="note">아직 고른 사진이 없어요.</span>';
+}
+
+/* ================= 퍼즐 모양 만들기 ================= */
+/* 같은 경계선을 이웃한 두 조각이 똑같이 나눠 쓰므로 틈 없이 꼭 맞음.
+   경계선 = 3차 베지어 점 목록 [P0, c1, c2, P1, c1, c2, P2 …]. 거꾸로 읽으면 반대 방향 선. */
+function mulberry(a){ return ()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function makeEdges(R){
+  const rnd=mulberry(R.seed), one=()=>R.shape==='jig'?{sg:rnd()<.5?1:-1, dc:(rnd()-.5)*0.12, hs:0.9+rnd()*0.15, ws:0.92+rnd()*0.16}:null;
+  R.H=[]; for(let r=0;r<R.rows-1;r++){ R.H.push([]); for(let c=0;c<R.cols;c++) R.H[r].push(one()); }
+  R.V=[]; for(let r=0;r<R.rows;r++){ R.V.push([]); for(let c=0;c<R.cols-1;c++) R.V[r].push(one()); }
+}
+/* 꼭지 모양 (가운데 기준, 조각 짧은 변 S 단위: 앞뒤 a, 높이 b) */
+const KNOB=[[-0.15,0],[-0.11,0],[-0.08,0.045],[-0.11,0.1],[-0.155,0.19],[-0.09,0.265],[0,0.265],[0.09,0.265],[0.155,0.19],[0.11,0.1],[0.08,0.045],[0.11,0],[0.15,0]];
+function edgeChain(x0,y0,x1,y1,prm,S){
+  const third=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+  const A=[x0,y0], B=[x1,y1];
+  if(!prm) return [A,third(A,B,1/3),third(A,B,2/3),B];
+  const L=Math.hypot(x1-x0,y1-y0), ux=(x1-x0)/L, uy=(y1-y0)/L, nx=-uy*prm.sg, ny=ux*prm.sg;
+  const mx=(x0+x1)/2, my=(y0+y1)/2;
+  const P=([a,b])=>{ const al=a*S*prm.ws+prm.dc*S, h=b*S*prm.hs; return [mx+ux*al+nx*h, my+uy*al+ny*h]; };
+  const k=KNOB.map(P), s=k[0], e=k[12];
+  return [A,third(A,s,1/3),third(A,s,2/3),s, k[1],k[2],k[3], k[4],k[5],k[6], k[7],k[8],k[9], k[10],k[11],e, third(e,B,1/3),third(e,B,2/3),B];
+}
+/* 조각 테두리 (판 안쪽 좌표) */
+function pieceChain(p,R,Q){
+  const {pw,ph,S:Sz}=Q, x=p.c*pw, y=p.r*ph;
+  const top=edgeChain(x,y,x+pw,y,p.r>0?R.H[p.r-1][p.c]:null,Sz);
+  const right=edgeChain(x+pw,y,x+pw,y+ph,p.c<R.cols-1?R.V[p.r][p.c]:null,Sz);
+  const bottom=edgeChain(x,y+ph,x+pw,y+ph,p.r<R.rows-1?R.H[p.r][p.c]:null,Sz).slice().reverse();
+  const left=edgeChain(x,y,x,y+ph,p.c>0?R.V[p.r][p.c-1]:null,Sz).slice().reverse();
+  return [...top,...right.slice(1),...bottom.slice(1),...left.slice(1)];
+}
+/* 판의 안내선: 안쪽 경계선만 */
+function guideChains(R,Q){
+  const {pw,ph,S:Sz}=Q, out=[];
+  for(let r=0;r<R.rows-1;r++) for(let c=0;c<R.cols;c++) out.push(edgeChain(c*pw,(r+1)*ph,(c+1)*pw,(r+1)*ph,R.H[r][c],Sz));
+  for(let r=0;r<R.rows;r++) for(let c=0;c<R.cols-1;c++) out.push(edgeChain((c+1)*pw,r*ph,(c+1)*pw,(r+1)*ph,R.V[r][c],Sz));
+  return out;
+}
+function chainD(ch,ox=0,oy=0){
+  const f=p=>`${(p[0]+ox).toFixed(1)} ${(p[1]+oy).toFixed(1)}`;
+  let d='M'+f(ch[0]); for(let i=1;i+2<ch.length;i+=3) d+=`C${f(ch[i])} ${f(ch[i+1])} ${f(ch[i+2])}`; return d;
+}
+function chainPath(ctx,ch,ox=0,oy=0){
+  ctx.moveTo(ch[0][0]+ox,ch[0][1]+oy);
+  for(let i=1;i+2<ch.length;i+=3) ctx.bezierCurveTo(ch[i][0]+ox,ch[i][1]+oy,ch[i+1][0]+ox,ch[i+1][1]+oy,ch[i+2][0]+ox,ch[i+2][1]+oy);
+}
+
+/* ================= 한 판 ================= */
+let timer=null, G=null;
+function startRound(){
+  clearTimeout(timer); document.body.classList.toggle('solo',S.mode==='solo'); $('logPop').hidden=true;
+  document.querySelectorAll('.pc').forEach(e=>e.remove());
+  const L=LEVELS[S.level];
+  const R={level:S.level, shape:S.shape, cols:L.cols, rows:L.rows, seed:(Math.random()*1e9)|0, pieces:[], active:false, done:false, start:0, cue:null};
+  makeEdges(R);
+  for(let r=0;r<R.rows;r++) for(let c=0;c<R.cols;c++){
+    R.pieces.push({r,c,placed:false,miss:0,help:false,x:0,y:0,s:1});
+  }
+  R.pieces.forEach((p,i)=>p.order=i);
+  const play=$('play');
+  R.pieces.forEach(p=>{ const el=document.createElement('canvas'); el.className='pc'; play.appendChild(el); p.el=el; attachDrag(p); });
+  S.R=R;
+  $('full').classList.remove('on'); $('doneLabel').classList.remove('on'); $('guide').style.visibility=''; $('pbox').classList.remove('clear');
+  G=null; layout();
+  /* 시작: 완성된 그림 모양으로 놓였다가 → 판 둘레로 흩어짐 */
+  R.pieces.forEach(p=>{ p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1; setPos(p); });
+  updateProgress(); renderDocks();
+  timer=setTimeout(()=>{
+    R.pieces.forEach(p=>{ p.el.classList.add('scatter'); p.x=p.slot.x; p.y=p.slot.y; p.s=p.slot.s; setPos(p); });
+    timer=setTimeout(()=>{ R.pieces.forEach(p=>p.el.classList.remove('scatter')); R.active=true; R.start=Date.now(); renderDocks(); },950);
+  },650);
+}
+/* 판은 화면 가운데, 남은 조각은 판 둘레에 흩어 놓음 (자리가 모자라면 작게 줄였다가 집으면 원래 크기) */
+function layout(){
+  const R=S.R, play=$('play'); if(!R||!S.img||document.body.classList.contains('setup')||document.body.classList.contains('home')) return;
+  const W=play.clientWidth, H=play.clientHeight; if(W<100||H<100) return;
+  let top=34, bottom=12;
+  if(S.admin){ top=$('dockTop').getBoundingClientRect().bottom+10; bottom=H-$('dockBot').getBoundingClientRect().top+10; }
+  const land=W/H>=1.1, gap=14;
+  const n=R.pieces.filter(p=>!p.placed).length;
+  let best=null;
+  for(const fac of [1,.9,.8,.7,.6]){
+    const g=geom(W,H,top,bottom,land,fac,R), sl=fitSlots(g,n,W,H,top,bottom,gap);
+    const cand={...g,...sl};
+    if(!best || sl.s>best.s) best=cand;
+    if(sl.s>=0.6){ best=cand; break; }
+  }
+  const old=G; G=best;
+  /* 판 */
+  const bg=`url(${S.img.url})`;
+  Object.assign($('pbox').style,{left:G.bx+'px',top:G.by+'px',width:G.bw+'px',height:G.bh+'px',borderRadius:Math.round(G.f*0.8)+'px',backgroundImage:bg,backgroundSize:`${G.bw}px ${G.bh}px`});
+  Object.assign($('pboard').style,{left:G.ix+'px',top:G.iy+'px',width:G.iw+'px',height:G.ih+'px'});
+  ['ghost','full'].forEach(id=>Object.assign($(id).style,{backgroundImage:bg,backgroundSize:`${G.bw}px ${G.bh}px`,backgroundPosition:`${-G.f}px ${-G.f}px`}));
+  applyGhost();
+  const sv=$('guide'); Object.assign(sv.style,{left:0,top:0,width:G.iw+'px',height:G.ih+'px'}); sv.setAttribute('viewBox',`0 0 ${G.iw} ${G.ih}`);
+  sv.innerHTML=`<path class="guide" d="${guideChains(R,G).map(ch=>chainD(ch)).join('')}"/>`;
+  /* 조각 다시 그리기 (크기가 바뀐 경우만) */
+  if(!old||old.pw!==G.pw||old.ph!==G.ph||old.dpr!==G.dpr||old.R!==R) R.pieces.forEach(drawPiece);
+  G.R=R;
+  /* 자리 */
+  const list=R.pieces.filter(p=>!p.placed);
+  const slots=shuffleArr(G.slots.slice()).slice(0,list.length);
+  slots.sort((a,b)=>a.k-b.k);
+  shuffleArr(list).forEach((p,i)=>{ p.slot={x:slots[i].x,y:slots[i].y,s:G.s}; if(!p.dragging&&(R.active||R.done)){ p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; } });
+  R.pieces.forEach(p=>{ if(p.placed){ p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1; } if(!p.dragging) setPos(p); });
+  if(R.cue) showTarget(R.cue);
+  placeDoneLabel();
+}
+function geom(W,H,top,bottom,land,fac,R){
+  const aw=W, ah=H-top-bottom;
+  const rw=(land?0.58:0.92)*aw*fac, rh=(land?0.74:0.52)*ah*fac;
+  const k=Math.min(rw/S.img.w,rh/S.img.h);
+  const bw=Math.floor(S.img.w*k), bh=Math.floor(S.img.h*k);
+  const bx=Math.round((W-bw)/2), by=Math.round(top+(ah-bh)/2);
+  const f=Math.round(Math.max(10,Math.min(34,Math.min(bw,bh)*0.055)));
+  const ix=bx+f, iy=by+f, iw=bw-2*f, ih=bh-2*f, pw=iw/R.cols, ph=ih/R.rows, Sz=Math.min(pw,ph);
+  const m=R.shape==='jig'?Math.ceil(Sz*0.29)+3:3;
+  return {bx,by,bw,bh,f,ix,iy,iw,ih,pw,ph,S:Sz,m,EW:pw+2*m,EH:ph+2*m,dpr:Math.min(2,window.devicePixelRatio||1)};
+}
+/* 판 둘레 네 곳(왼쪽·오른쪽·위·아래)에 고르게 자리 만들기 */
+function fitSlots(g,n,W,H,top,bottom,gap){
+  const regions=[
+    {x:gap,y:top,w:g.bx-2*gap,h:H-top-bottom},
+    {x:g.bx+g.bw+gap,y:top,w:W-(g.bx+g.bw)-2*gap,h:H-top-bottom},
+    {x:g.bx,y:top,w:g.bw,h:g.by-top-gap},
+    {x:g.bx,y:g.by+g.bh+gap,w:g.bw,h:H-bottom-(g.by+g.bh+gap)}
+  ];
+  const make=s=>{
+    const fw=g.EW*s, fh=g.EH*s, out=[];
+    regions.forEach(rg=>{
+      if(rg.w<fw||rg.h<fh) return;
+      const cols=Math.floor((rg.w+gap)/(fw+gap)), rows=Math.floor((rg.h+gap)/(fh+gap));
+      const sx=(rg.w-cols*fw)/(cols+1), sy=(rg.h-rows*fh)/(rows+1);
+      for(let j=0;j<rows;j++) for(let i=0;i<cols;i++){
+        const x=rg.x+sx*(i+1)+fw*i+(Math.random()-.5)*sx*0.6, y=rg.y+sy*(j+1)+fh*j+(Math.random()-.5)*sy*0.6;
+        if(x+fw>W-78 && y+fh>H-78) continue; /* 교사 버튼 자리 피함 */
+        out.push({x,y,k:out.length});
+      }
+    });
+    return out;
+  };
+  for(let s=1;s>=0.2;s-=0.03){ const sl=make(s); if(sl.length>=n) return {s,slots:sl}; }
+  const s=0.2; return {s,slots:make(s).concat(Array.from({length:n},(_,k)=>({x:gap+(k%10)*20,y:top+Math.floor(k/10)*20,k:999+k})))};
+}
+function shuffleArr(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function applyGhost(){ $('ghost').style.opacity=[0,0.55,0.25,0][S.ghost]; }
+/* 조각 한 개 그리기: 테두리로 자르고 그 안에 사진, 가장자리에 옅은 선 */
+function drawPiece(p){
+  const {EW,EH,m,dpr,f,bw,bh}=G, el=p.el, R=S.R;
+  el.width=Math.ceil(EW*dpr); el.height=Math.ceil(EH*dpr); el.style.width=EW+'px'; el.style.height=EH+'px';
+  const ctx=el.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,EW,EH);
+  const ox=m-p.c*G.pw, oy=m-p.r*G.ph, ch=pieceChain(p,R,G);
+  p.chain=ch;
+  ctx.save(); ctx.beginPath(); chainPath(ctx,ch,ox,oy); ctx.closePath(); ctx.clip();
+  ctx.drawImage(S.img.el,ox-f,oy-f,bw,bh);
+  ctx.restore();
+  ctx.beginPath(); chainPath(ctx,ch,ox,oy); ctx.closePath();
+  ctx.lineJoin='round'; ctx.lineWidth=1.4; ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.stroke();
+}
+function setPos(p){ p.el.style.transform=`translate(${p.x}px,${p.y}px) scale(${p.s})`; }
+function updateProgress(){ const R=S.R; if(!R) return; $('progFill').style.width=(R.pieces.filter(p=>p.placed).length/R.pieces.length*100)+'%'; }
+function showTarget(p){ hideTarget(); const t=document.createElementNS('http://www.w3.org/2000/svg','path'); t.setAttribute('class','target'); t.id='target'; t.setAttribute('d',chainD(pieceChain(p,S.R,G))+'Z'); $('guide').appendChild(t); }
+function hideTarget(){ const t=$('target'); if(t) t.remove(); }
+function placeDoneLabel(){
+  const d=$('doneLabel'); if(!G) return;
+  const below=G.by+G.bh+16, h=56, play=$('play').clientHeight;
+  d.style.left=(G.bx+G.bw/2)+'px'; d.style.transform='translateX(-50%)';
+  d.style.top=(below+h<play-10?below:Math.max(40,G.by-h-6))+'px';
+}
+
+/* ================= 끌어서 놓기 ================= */
+function attachDrag(p){
+  const el=p.el; let pid=null, fx=0, fy=0;
+  const rel=e=>{ const P=$('play').getBoundingClientRect(); return {x:e.clientX-P.left,y:e.clientY-P.top}; };
+  el.addEventListener('pointerdown',e=>{
+    const R=S.R; if(p.placed||!R||!R.active||pid!==null) return;
+    e.preventDefault(); pid=e.pointerId; try{el.setPointerCapture(pid);}catch(_){}
+    const pt=rel(e); fx=(pt.x-p.x)/(G.EW*p.s); fy=(pt.y-p.y)/(G.EH*p.s);
+    p.dragging=true; p.s=1; p.x=pt.x-fx*G.EW; p.y=pt.y-fy*G.EH;
+    el.classList.remove('anim'); el.classList.add('drag'); setPos(p);
+    if(R.cue===p) showTarget(p); else if(R.cue){ R.cue.el.classList.remove('cue'); R.cue=null; hideTarget(); }
+  });
+  el.addEventListener('pointermove',e=>{ if(e.pointerId!==pid) return; const pt=rel(e); p.x=pt.x-fx*G.EW; p.y=pt.y-fy*G.EH; setPos(p); });
+  const up=e=>{ if(e.pointerId!==pid) return; pid=null; p.dragging=false; el.classList.remove('drag'); drop(p); };
+  el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up);
+  el.addEventListener('lostpointercapture',e=>{ if(pid!==null) up(e); });
+}
+function drop(p){
+  const R=S.R; if(!R||!R.active) return;
+  const cx=G.ix+p.c*G.pw-G.m, cy=G.iy+p.r*G.ph-G.m;
+  /* 넉넉하게: 30px 또는 조각 크기의 20%, 단 옆 칸과 헷갈리지 않게 칸의 45%까지 */
+  const thr=Math.min(Math.max(30,0.2*Math.max(G.pw,G.ph)),0.45*Math.min(G.pw,G.ph));
+  if(Math.hypot(p.x-cx,p.y-cy)<thr){ place(p,false); return; }
+  const mx=p.x+G.EW/2, my=p.y+G.EH/2;
+  const over=mx>G.ix-10&&mx<G.ix+G.iw+10&&my>G.iy-10&&my<G.iy+G.ih+10;
+  p.el.classList.add('anim'); p.x=p.slot.x; p.y=p.slot.y; p.s=p.slot.s; setPos(p);
+  if(over){ p.miss++; if(S.errorMode==='show'||(S.errorMode==='retry'&&p.miss>=2)) cue(p); }
+}
+/* 조각과 제자리를 같은 색으로 표시 */
+function cue(p){ const R=S.R; if(R.cue&&R.cue!==p) R.cue.el.classList.remove('cue'); R.cue=p; p.el.classList.add('cue'); showTarget(p); }
+function place(p,byHelp){
+  const R=S.R;
+  p.placed=true; if(byHelp) p.help=true;
+  p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1;
+  p.el.classList.toggle('anim',byHelp); p.el.classList.remove('cue'); p.el.classList.add('placed','snap'); setPos(p);
+  setTimeout(()=>p.el.classList.remove('snap'),byHelp?380:60);
+  if(R.cue===p){ R.cue=null; hideTarget(); }
+  sfx('snap'); updateProgress();
+  if(R.pieces.every(x=>x.placed)) complete();
+}
+/* 교사: 한 조각 도와주기 (도움 받아 맞힘으로 기록) */
+function helpOne(){
+  const R=S.R; if(!R||!R.active) return;
+  const p=(R.cue&&!R.cue.placed)?R.cue:R.pieces.filter(x=>!x.placed).sort((a,b)=>a.order-b.order)[0];
+  if(p) place(p,true);
+}
+/* 교사: 남은 조각 다시 섞기 */
+function remix(){
+  const R=S.R; if(!R||!R.active) return;
+  if(R.cue){ R.cue.el.classList.remove('cue'); R.cue=null; hideTarget(); }
+  const list=R.pieces.filter(p=>!p.placed), slots=shuffleArr(G.slots.slice()).slice(0,list.length);
+  list.forEach((p,i)=>{ p.slot={x:slots[i].x,y:slots[i].y,s:G.s}; p.el.classList.add('anim'); p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; setPos(p); });
+}
+function complete(){
+  const R=S.R; R.active=false; R.done=true;
+  const first=R.pieces.filter(p=>!p.help&&!p.miss).length;
+  S.rounds.push({level:R.level, shape:R.shape, n:R.pieces.length, first, helped:R.pieces.length-first, ms:Date.now()-R.start});
+  renderDocks(); renderLog();
+  timer=setTimeout(()=>{
+    $('full').classList.add('on'); R.pieces.forEach(p=>p.el.classList.add('gone'));
+    $('guide').style.visibility='hidden'; $('pbox').classList.add('clear'); $('doneLabel').classList.add('on'); sfx('done');
+  },450);
+}
+
+/* ================= 출력: 오려서 맞추는 종이 퍼즐 (A4 한 장) ================= */
+async function printSheet(){
+  const R=S.R; if(!R) return;
+  const W=S.img.w, H=S.img.h, c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d');
+  g.drawImage(S.img.el,0,0);
+  const f=Math.round(Math.min(W,H)*0.055), iw=W-2*f, ih=H-2*f, pw=iw/R.cols, ph=ih/R.rows, Q={pw,ph,S:Math.min(pw,ph)};
+  g.strokeStyle='#111'; g.lineWidth=Math.max(3,W/320); g.lineJoin='round';
+  g.strokeRect(f,f,iw,ih);
+  g.beginPath(); guideChains(R,Q).forEach(ch=>chainPath(g,ch,f,f)); g.stroke();
+  const t=new Date(), ds=`${t.getFullYear()}. ${t.getMonth()+1}. ${t.getDate()}.`;
+  const rows=S.rounds.map((l,i)=>`<tr><td>${i+1}회</td><td>${l.level}단계 · ${SHAPES[l.shape]} · ${l.n}조각</td><td>바로 맞힘 ${l.first}</td><td>도움 받아 맞힘 ${l.helped}</td><td>${fmtTime(l.ms)}</td></tr>`).join('');
+  $('printArea').innerHTML=`<div class="pa-head"><h1>그림 조각 맞추기</h1><div>이름: ____________ &nbsp; ${ds}</div></div>
+    <img class="pa-img" id="paImg" src="${c.toDataURL('image/jpeg',0.92)}" alt="">
+    <p class="pa-note">선을 따라 오려서 다시 맞춰 보아요.</p>${rows?`<table class="pa-log">${rows}</table>`:''}`;
+  try{ await $('paImg').decode(); }catch(e){}
+  window.print();
+}
+
+/* 화면 크기가 바뀌면(전체 화면, 돌리기, 교사 메뉴) 맞춘 조각은 그대로 두고 다시 배치 */
+let rzT=null;
+window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(layout,150); });
+
+/* ================= 시작 ================= */
+$('againBtn').innerHTML=ICON.redo+'다시 하기'; $('otherBtn').innerHTML=ICON.photo+'다른 사진';
+$('againBtn').onclick=()=>startRound();
+$('otherBtn').onclick=()=>{ leaveFull(); showHome(); };
+if(S.mode==='solo') showHome(); else showSetup();
+</script>
+</body>
+</html>
