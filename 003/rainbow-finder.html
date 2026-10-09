@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>무지개 색 찾기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 색이 배우는 내용이므로, 화면 틀은 무채색(따뜻한 회색·먹색)으로만 꾸며 색 구별을 방해하지 않음 */
+:root{
+  --paper:#EFEDE8; --sheet:#FFFFFF; --ink:#2A2826; --muted:#6F6A63; --line:#D6D1C8; --soft:#E4E0D8;
+  --f-display:"Jua","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(120% 95% at 50% 45%,#F6F4F0 0%,#EFEDE8 60%,#E6E3DC 100%) fixed var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5;
+  -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overflow:hidden}
+input{-webkit-user-select:text;user-select:text}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+[hidden]{display:none!important}
+svg.ic{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- 교사 설정 ---------- */
+#setup{position:fixed;inset:0;overflow:auto;padding:26px 16px 40px;display:none}
+body.setup #setup{display:block}
+body.setup #game, body.setup #adminBtn{display:none}
+.sheet{max-width:860px;margin:0 auto;background:var(--sheet);border-radius:22px;box-shadow:0 14px 40px rgba(42,40,38,.12);padding:30px 34px}
+.title{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.title h1{font-family:var(--f-display);font-weight:400;font-size:40px;margin:0;line-height:1.1}
+.dots7{display:flex;gap:5px}
+.dots7 i{width:14px;height:14px;border-radius:50%;display:block}
+.lead{margin:0 0 18px;color:var(--muted);font-size:15px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 26px}
+@media (max-width:720px){.grid{grid-template-columns:1fr}}
+.grp h2{margin:0 0 8px;font-size:15px;font-weight:700;color:var(--muted)}
+.grp.full{grid-column:1/-1}
+.seg{display:flex;flex-wrap:wrap;gap:0;border:2px solid var(--ink);border-radius:14px;overflow:hidden;width:fit-content;max-width:100%}
+.seg label{cursor:pointer;position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:flex;flex-direction:column;justify-content:center;min-height:52px;padding:6px 16px;font-weight:700;font-size:16px;line-height:1.25;border-right:2px solid var(--ink);background:#fff}
+.seg label:last-child span{border-right:0}
+.seg span small{font-weight:500;font-size:12.5px;color:var(--muted)}
+.seg input:checked+span{background:var(--ink);color:#fff}
+.seg input:checked+span small{color:#CFCAC2}
+.seg input:focus-visible+span{outline:3px solid #8A847B;outline-offset:-5px}
+.voice{border-top:1px solid var(--line);margin-top:20px;padding-top:18px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.field{flex:1;min-width:220px;font:inherit;padding:11px 14px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);background:#fff;border-radius:12px;padding:10px 18px;font-weight:700;min-height:50px}
+.status{font-size:14.5px;color:var(--muted)}
+.status.good{color:#2E6B3F;font-weight:700}
+.status.bad{color:#9A2E1C;font-weight:700}
+.hint{margin:0;font-size:14px;color:var(--muted)}
+.foot{margin-top:22px;display:flex;gap:12px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.foot .status{flex:1;min-width:200px}
+.go{border:0;border-radius:16px;background:var(--ink);color:#fff;font-family:var(--f-display);font-size:28px;padding:10px 46px;min-height:62px}
+
+/* ---------- 놀이 화면 ---------- */
+#game{position:fixed;inset:0;display:none}
+body.play #game{display:block}
+#field{position:absolute;inset:0;touch-action:none}
+.bub{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;will-change:transform;
+  box-shadow:inset -8px -10px 18px rgba(0,0,0,.14),inset 8px 10px 16px rgba(255,255,255,.28),0 6px 14px rgba(42,40,38,.18)}
+.bub.white{box-shadow:inset 0 0 0 3px #C9C4BA,inset -8px -10px 18px rgba(0,0,0,.06),0 6px 14px rgba(42,40,38,.16)}
+.bub.dim{opacity:.28;transition:opacity .4s}
+.bub.ring::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:6px solid var(--ink)}
+.drop{position:absolute;border-radius:50%;pointer-events:none;transition:transform .55s cubic-bezier(.2,.7,.3,1),opacity .55s ease}
+.drop.white{box-shadow:inset 0 0 0 2px #C9C4BA}
+.pop-ring{position:absolute;border-radius:50%;border:5px solid;pointer-events:none;transition:transform .5s ease-out,opacity .5s ease-out}
+.bub.fade{transition:opacity .35s ease;opacity:0}
+#prompt{position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:16px;
+  background:#fff;border-radius:999px;padding:10px 30px 10px 12px;box-shadow:0 8px 24px rgba(42,40,38,.14);cursor:pointer;white-space:nowrap}
+#prompt.nochip{padding-left:30px}
+#chip{width:58px;height:58px;border-radius:50%;flex:none}
+#promptEar{display:none;width:58px;height:58px}
+#promptEar svg{width:100%;height:100%;stroke-width:2}
+#prompt.ear{padding:10px 26px}
+#prompt.ear #promptEar{display:block}
+#prompt.ear #chip,#prompt.ear #promptText{display:none}
+.bub.obj{background:transparent!important;box-shadow:none!important;filter:drop-shadow(0 5px 8px rgba(42,40,38,.22))}
+.bub.obj svg{width:130%;height:130%;margin:-15%;display:block;overflow:visible}
+#chip.white{box-shadow:inset 0 0 0 3px #C9C4BA}
+#promptText{font-family:var(--f-display);font-size:clamp(30px,3.6vw,46px);line-height:1}
+body.admin #track{bottom:84px}
+#track{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:5;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:70vw}
+#track i{width:20px;height:20px;border-radius:50%;display:block;background:transparent;box-shadow:inset 0 0 0 2.5px #B9B3A8}
+#track i.now{box-shadow:inset 0 0 0 4px var(--ink)}
+#track i.white{box-shadow:inset 0 0 0 2.5px #C9C4BA}
+#endBox{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:24px}
+body.ended #endBox{display:flex}
+body.ended #prompt, body.ended #track{display:none}
+#endBox h2{font-family:var(--f-display);font-weight:400;font-size:clamp(40px,5vw,64px);margin:0}
+#found{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:min(900px,90vw)}
+#found i{width:clamp(48px,6vw,76px);aspect-ratio:1;border-radius:50%;display:block;box-shadow:inset -5px -6px 10px rgba(0,0,0,.14),0 4px 10px rgba(42,40,38,.16)}
+#found i.white{box-shadow:inset 0 0 0 3px #C9C4BA,0 4px 10px rgba(42,40,38,.12)}
+#againBtn{display:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font-family:var(--f-display);font-size:clamp(28px,3vw,38px);padding:12px 40px;min-height:70px;align-items:center;gap:12px}
+#againBtn svg{width:1.1em;height:1.1em}
+body.solo #againBtn{display:inline-flex}
+
+/* 학생 혼자: 시작 화면 */
+#home{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,3vh,30px);padding:20px}
+body.home #home{display:flex}
+body.home #game{display:none}
+.prow{display:flex;gap:clamp(10px,1.6vw,20px);flex-wrap:wrap;justify-content:center}
+.ptile{border:0;background:#fff;border-radius:24px;box-shadow:0 8px 22px rgba(42,40,38,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;
+  outline:5px solid transparent;outline-offset:-5px;transition:outline-color .15s}
+.ptile[aria-pressed="true"]{outline-color:var(--ink)}
+.ptile:disabled{opacity:.3;cursor:default}
+.ptile b{font-family:var(--f-display);font-weight:400;font-size:clamp(26px,2.8vw,36px);line-height:1}
+.ntile{width:clamp(120px,13vw,170px);height:clamp(120px,13vw,170px)}
+.ndots{display:grid;gap:5px;justify-content:center}
+.ndots i{width:14px;height:14px;border-radius:50%;background:var(--ink);display:block}
+.ctile{width:clamp(190px,22vw,290px);height:clamp(90px,11vw,120px)}
+.cdots{display:grid;grid-template-columns:repeat(8,18px);gap:5px;justify-content:center}
+.cdots i{width:18px;height:18px;border-radius:50%;display:block}
+.cdots i.white{box-shadow:inset 0 0 0 2px #C9C4BA}
+#homeBtn{border:0;border-radius:999px;background:var(--ink);color:#fff;font-family:var(--f-display);font-size:clamp(34px,3.6vw,46px);padding:12px 64px;min-height:80px}
+
+/* ---------- 교사 메뉴 (먹색 띠) ---------- */
+.dock{position:fixed;left:0;right:0;margin:0 auto;width:fit-content;z-index:30;display:none;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;
+  max-width:calc(100% - 24px);padding:7px 10px;border-radius:18px;background:rgba(42,40,38,.92);color:#fff;box-shadow:0 10px 26px rgba(0,0,0,.25)}
+#dockTop{top:10px} #dockBot{bottom:12px}
+body.admin:not(.setup) .dock{display:flex}
+.dock:empty{display:none!important}
+.dock .g{display:flex;align-items:center;gap:3px;padding:0 6px}
+.dock .g+.g{border-left:1px solid rgba(255,255,255,.2)}
+.dock .lbl{font-size:12.5px;color:#CFCAC2;margin-right:4px;font-weight:700}
+.dock button{border:0;background:transparent;color:#fff;border-radius:11px;min-height:44px;min-width:44px;padding:5px 11px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:6px}
+.dock button svg{width:21px;height:21px}
+.dock button[aria-pressed="true"]{background:#fff;color:var(--ink)}
+.dock button.go-btn{background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px #fff;font-family:var(--f-display);font-weight:400;font-size:20px;padding:5px 16px}
+.dock .note{font-size:12.5px;color:#FFD9A8;max-width:240px}
+#logPop{position:fixed;z-index:31;left:50%;transform:translateX(-50%);bottom:80px;width:min(680px,calc(100% - 24px));max-height:60vh;overflow:auto;background:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+body:not(.admin) #logPop{display:none}
+#logPop h3{margin:0 0 6px;font-size:16px}
+#logPop table{width:100%;border-collapse:collapse;font-size:14px}
+#logPop td,#logPop th{border-bottom:1px solid var(--line);padding:5px 4px;text-align:left}
+#logPop td i{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+#logPop p{margin:8px 0 0;font-size:13px;color:var(--muted)}
+
+/* 교사 버튼 (3초 누르기) — 공통 규격 */
+#adminBtn{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:43px;height:43px;border-radius:50%;
+  z-index:50;touch-action:none;--p:0;padding:0;opacity:.4;transition:opacity .3s;
+  border:1px solid rgba(14,92,170,.55);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 88%, rgba(170,245,255,.95), rgba(170,245,255,0) 70%),
+    radial-gradient(circle at 50% 40%, #4FC4F5 0%, #1E8BE0 55%, #0D5FB8 100%);
+  box-shadow:inset 0 -4px 10px rgba(150,240,255,.55), inset 0 3px 6px rgba(0,40,100,.45), 0 4px 10px rgba(0,60,130,.35), 0 1px 2px rgba(0,30,70,.4)}
+#adminBtn::before{content:"";position:absolute;left:14%;right:14%;top:5%;height:44%;border-radius:50% 50% 45% 45% / 60% 60% 40% 40%;
+  background:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,.35) 60%, rgba(255,255,255,.05));pointer-events:none}
+#adminBtn::after{content:"";position:absolute;inset:-5px;border-radius:50%;
+  background:conic-gradient(#3FCFD2 calc(var(--p)*360deg),transparent 0);
+  -webkit-mask:radial-gradient(circle,transparent 22px,#000 23px);mask:radial-gradient(circle,transparent 22px,#000 23px);opacity:.9}
+#adminBtn .ab-label{position:relative;display:block;text-align:center;font-family:var(--f-body);font-weight:700;font-size:8.5px;letter-spacing:.02em;line-height:1;color:#FFFFFF;text-shadow:0 1px 1.5px rgba(0,50,110,.65);pointer-events:none}
+body.admin #adminBtn .ab-label{font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:0;color:#9FF3F5;text-shadow:0 0 6px rgba(63,207,210,.7),0 1px 1px rgba(0,0,0,.6)}
+body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 88%, rgba(110,230,240,.85), rgba(110,230,240,0) 70%),
+    radial-gradient(circle at 50% 40%, #3D4F5A 0%, #17242C 60%, #05090C 100%);
+  box-shadow:inset 0 -4px 10px rgba(90,220,235,.45), inset 0 3px 6px rgba(0,0,0,.6), 0 4px 10px rgba(0,0,0,.4), 0 0 0 3px rgba(63,207,210,.35)}
+
+#printArea{display:none}
+@media print{
+  @page{size:A4;margin:12mm}
+  html,body{height:auto!important;overflow:visible!important;background:#fff!important}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block!important;color:#000;font-family:var(--f-body);max-height:270mm;overflow:hidden}
+  .pa-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:5mm;font-size:11pt}
+  .pa-head h1{font-family:var(--f-display);font-weight:400;font-size:20pt;margin:0}
+  .pa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7mm 6mm;margin:4mm 0 6mm}
+  .pa-grid div{display:flex;flex-direction:column;align-items:center;gap:2mm;font-family:var(--f-display);font-size:16pt}
+  .pa-grid i{width:38mm;height:38mm;border-radius:50%;border:1.2mm solid #000;display:block}
+  .pa-note{font-size:11pt;margin:0 0 3mm}
+  .pa-log{width:100%;border-collapse:collapse;font-size:9.5pt}
+  .pa-log td,.pa-log th{border:1px solid #999;padding:1.2mm 2mm;text-align:left}
+}
+@media (prefers-reduced-motion:reduce){.bub.pop,.bub.fade,.bub.dim{transition:none}}
+</style>
+</head>
+<body class="setup">
+<section id="setup"></section>
+<section id="home"><div class="prow" id="pickN"></div><div class="prow" id="pickC"></div><button id="homeBtn" type="button">시작</button></section>
+<div id="game">
+  <div id="field"></div>
+  <div id="prompt" role="button" aria-label="다시 듣기"><i id="chip"></i><span id="promptText"></span><span id="promptEar"><svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg></span></div>
+  <div id="track"></div>
+  <div id="endBox"><h2>다 했어요</h2><div id="found"></div><button id="againBtn" type="button"></button></div>
+</div>
+<div class="dock" id="dockTop"></div>
+<div class="dock" id="dockBot"></div>
+<div id="logPop" hidden></div>
+<button id="adminBtn" type="button" aria-label="교사 모드: 3초 동안 누르기"><span class="ab-label" id="abLabel">charum</span></button>
+<div id="printArea"></div>
+
+<script>
+"use strict";
+
+/* ================= 기본 데이터 ================= */
+/* 색: 학생이 헷갈리지 않는 색만 (서로 색차 ΔE2000 20 이상).
+   노랑-금색, 회색-은색, 파랑-감색, 빨강-다홍처럼 비슷한 색은 뺐고, 그렇게 남은 색이 15색 */
+const COLORS=[
+  {name:'빨강',hex:'#E53935'},{name:'주황',hex:'#F57C00'},{name:'노랑',hex:'#FDD835'},{name:'초록',hex:'#2E9E44'},
+  {name:'파랑',hex:'#1E6FD9'},{name:'남색',hex:'#1A237E'},{name:'보라',hex:'#9C27B0'},
+  {name:'연두',hex:'#A5D65A'},{name:'하늘색',hex:'#6CCFF6'},{name:'분홍',hex:'#F78FB3'},{name:'갈색',hex:'#7B4A2E'},
+  {name:'검정',hex:'#1E1E1E'},{name:'하양',hex:'#FFFFFF'},{name:'회색',hex:'#9E9E9E'},{name:'청록',hex:'#00838F'}
+];
+const RAINBOW=COLORS.slice(0,7);
+const OPT={
+  choices:{2:'2개',4:'4개',8:'8개',10:'10개',15:'15개'},
+  colors:{7:'7색',11:'11색',15:'15색'},
+  speed:{0:'멈춤',1:'느리게',2:'보통',3:'빠르게'},
+  way:{match:'같은 색 찾기',name:'이름 듣고 찾기'},
+  look:{circle:'동그라미',object:'물건'},
+  help:{off:'끔',s5:'5초',s3:'3초',s0:'바로'},
+  rounds:{5:'5번',10:'10번',20:'20번'}
+};
+const COLOR_NOTE={7:'빨주노초파남보',11:'+ 연두·하늘색·분홍·갈색',15:'+ 검정·하양·회색·청록'};
+/* 한 화면의 동그라미는 모두 다른 색이므로, 동그라미 수는 색 수를 넘지 않음 */
+const okChoice=(ch,co)=>ch<=co;
+function clampChoices(){ if(!okChoice(S.choices,S.colors)){ S.choices=Math.max(...Object.keys(OPT.choices).map(Number).filter(n=>n<=S.colors)); store.set('choices',S.choices); } }
+const SPEED_PX=[0,45,90,150]; /* 1초에 움직이는 거리(px, 1366 너비 기준) */
+const ICON={
+  start:'<svg class="ic" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>',
+  redo:'<svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>',
+  ear:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>',
+  skip:'<svg class="ic" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>',
+  stop:'<svg class="ic" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>',
+  print:'<svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>',
+  log:'<svg class="ic" viewBox="0 0 24 24"><path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/></svg>',
+  sndOff:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/></svg>',
+  gear:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>'
+};
+
+/* ================= 상태 ================= */
+const S={mode:'teacher', choices:4, colors:7, speed:1, way:'match', look:'circle', help:'off', rounds:10, sound:true,
+  engine:'cloud', timbre:'Leda', cloudKey:'', saveCloud:false, engineNow:'', admin:false,
+  game:null, log:[]};
+const store={
+  get(k){try{return localStorage.getItem('colorFind.'+k)}catch(e){return null}},
+  set(k,v){try{v==null?localStorage.removeItem('colorFind.'+k):localStorage.setItem('colorFind.'+k,v)}catch(e){}}
+};
+(function load(){
+  for(const k of ['choices','colors','speed','rounds']){ const v=store.get(k); if(v!=null&&OPT[k][v]) S[k]=+v; }
+  for(const k of ['way','look','help','mode']){ const v=store.get(k); if(v&&(k==='mode'?['teacher','solo'].includes(v):OPT[k][v])) S[k]=v; }
+  S.sound=store.get('sound')!=='off';
+  clampChoices();
+  const en=store.get('engine'); if(['cloud','device'].includes(en)) S.engine=en;
+  const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
+  S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
+  /* 같은 사이트의 다른 앱(001 사진 속 도형 찾기)에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
+  if(!S.cloudKey){ try{ S.cloudKey=localStorage.getItem('shapeFinder.cloudKey')||''; }catch(e){} }
+})();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ================= 한국어 ================= */
+function batchim(w){const c=w.charCodeAt(w.length-1); return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0;}
+const eul=w=>w+(batchim(w)?'을':'를');
+const yeyo=w=>w+(batchim(w)?'이에요':'예요');
+const findLine=c=>eul(c.name)+' 찾아요.';
+
+/* ================= 소리: 한 수업은 한 목소리 ================= */
+let lastSay='', speakSeq=0, actx=null, curSrc=null, softTimer=null, pdown=false;
+document.addEventListener('pointerdown',()=>{pdown=true;},true);
+['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,()=>{pdown=false;},true));
+function getCtx(){ if(!actx){ const C=window.AudioContext||window.webkitAudioContext; if(C) actx=new C(); } return actx; }
+function unlockAudio(){ try{ const c=getCtx(); if(!c) return; if(c.state==='suspended') c.resume();
+  const b=c.createBuffer(1,240,24000), x=c.createBufferSource(); x.buffer=b; x.connect(c.destination); x.start(); }catch(e){} }
+/* 앞뒤 빈 곳과 끝에 따로 붙은 짧은 잡음만 정리, 시작·끝은 짧게 페이드 */
+function cleanPCM(bin,rate){
+  const n=bin.length>>1, f=new Float32Array(n);
+  for(let k=0;k<n;k++){ let v=bin.charCodeAt(2*k)|(bin.charCodeAt(2*k+1)<<8); if(v>32767) v-=65536; f[k]=v/32768; }
+  const W=Math.round(rate*0.02), nw=Math.max(1,Math.floor(n/W)), rms=new Float32Array(nw); let mx=0;
+  for(let w=0;w<nw;w++){ let t=0; for(let k=w*W;k<Math.min(n,(w+1)*W);k++) t+=f[k]*f[k]; rms[w]=Math.sqrt(t/W); if(rms[w]>mx) mx=rms[w]; }
+  const th=Math.max(0.003,mx*0.04), seg=[]; let on=-1;
+  for(let w=0;w<=nw;w++){ const up=w<nw&&rms[w]>=th; if(up&&on<0) on=w; if(!up&&on>=0){ seg.push([on,w-1]); on=-1; } }
+  while(seg.length>1){ const l=seg[seg.length-1], pv=seg[seg.length-2]; if(l[1]-l[0]+1<=3 && l[0]-pv[1]>=15) seg.pop(); else break; }
+  const a=seg.length?seg[0][0]:0, z=seg.length?seg[seg.length-1][1]:nw-1;
+  const st=Math.max(0,(a-4)*W), en=Math.min(n,(z+1)*W+Math.round(rate*0.22));
+  const body=f.slice(st,en), L=body.length, fi=Math.min(L,Math.round(rate*0.008)), fo=Math.min(L,Math.round(rate*0.04));
+  for(let k=0;k<fi;k++) body[k]*=k/fi;
+  for(let k=0;k<fo;k++) body[L-1-k]*=k/fo;
+  const lead=Math.round(rate*0.06), out=new Float32Array(lead+L); out.set(body,lead);
+  return {data:out,rate};
+}
+function playClip(clip){
+  return new Promise(res=>{
+    const c=getCtx(); if(!c){res(); return;}
+    if(c.state==='suspended') c.resume();
+    const b=c.createBuffer(1,clip.data.length,clip.rate);
+    if(b.copyToChannel) b.copyToChannel(clip.data,0); else b.getChannelData(0).set(clip.data);
+    const x=c.createBufferSource(), g=c.createGain(); g.gain.value=0.75;
+    x.buffer=b; x.connect(g); g.connect(c.destination);
+    x.onended=()=>{ if(curSrc&&curSrc.src===x) curSrc=null; res(); };
+    curSrc={src:x,g,res}; x.start();
+  });
+}
+function stopVoice(){
+  try{speechSynthesis.cancel();}catch(e){}
+  if(curSrc){ const {src,g,res}=curSrc; curSrc=null; try{ src.onended=null; const t=actx.currentTime; g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+0.05); src.stop(t+0.06); }catch(e){} if(res) res(); }
+}
+/* 만든 목소리는 브라우저(IndexedDB)에 저장해 다시 만들지 않음 */
+const vdb={db:null, ready:null};
+vdb.ready=new Promise(r=>{ try{ const q=indexedDB.open('colorFindVoice',1);
+  q.onupgradeneeded=()=>q.result.createObjectStore('clips');
+  q.onsuccess=()=>{vdb.db=q.result; r();}; q.onerror=()=>r(); }catch(e){ r(); } });
+async function idbGet(k){ await vdb.ready; if(!vdb.db) return null; return new Promise(r=>{ try{ const q=vdb.db.transaction('clips').objectStore('clips').get(k); q.onsuccess=()=>{ const v=q.result; r(v?{data:new Float32Array(v.buf),rate:v.rate}:null); }; q.onerror=()=>r(null); }catch(e){ r(null); } }); }
+function idbPut(k,clip){ try{ if(vdb.db) vdb.db.transaction('clips','readwrite').objectStore('clips').put({buf:clip.data.buffer.slice(0),rate:clip.rate},k); }catch(e){} }
+const VQ={list:[], busy:false, clips:new Map()};
+const timbre=()=>['Leda','Aoede','Kore'].includes(S.timbre)?S.timbre:'Leda';
+function chooseEngine(){ S.engineNow=(S.engine==='cloud'&&S.cloudKey)?'cloud':'device'; S.voiceNote=''; }
+function getClip(text,urgent){
+  const k=S.engineNow+'|'+timbre()+'|'+text;
+  let c=VQ.clips.get(k);
+  if(!c){
+    c={text,key:k,engine:S.engineNow,done:false}; c.p=new Promise((res,rej)=>{c.res=res; c.rej=rej;}); c.p.catch(()=>{});
+    VQ.clips.set(k,c);
+    idbGet(k).then(v=>{ if(v){ c.done=true; c.res(v); } else { urgent?VQ.list.unshift(c):VQ.list.push(c); pumpVoice(); } });
+  } else if(urgent && !c.done){ const i=VQ.list.indexOf(c); if(i>0){ VQ.list.splice(i,1); VQ.list.unshift(c); } }
+  return c.p;
+}
+async function pumpVoice(){
+  if(VQ.busy) return; VQ.busy=true;
+  while(VQ.list.length){
+    const c=VQ.list.shift();
+    if(c.engine!==S.engineNow){ c.rej(new Error('engine changed')); VQ.clips.delete(c.key); continue; }
+    let tries=0;
+    for(;;){
+      try{ const clip=await synth(c.text); c.done=true; idbPut(c.key,clip); c.res(clip); break; }
+      catch(e){
+        tries++;
+        if(e.quota){
+          if(tries<=2){ await new Promise(r=>setTimeout(r,12000)); continue; }
+          /* 사용량 초과: 이번 수업 전체를 기기 목소리로 한 번만 바꾸고 교사 메뉴에 알림 */
+          S.engineNow='device'; S.voiceNote='Google 목소리 사용량이 다 되어, 이번 수업은 기기 목소리로 바꿨어요.';
+          renderDocks(); VQ.list.forEach(x=>{x.rej(e); VQ.clips.delete(x.key);}); VQ.list=[];
+          c.rej(e); VQ.clips.delete(c.key); break;
+        }
+        if(tries<2){ await new Promise(r=>setTimeout(r,1500)); continue; }
+        c.rej(e); VQ.clips.delete(c.key); break;
+      }
+    }
+  }
+  VQ.busy=false;
+}
+async function synth(text){
+  const call=async withRate=>{
+    const audioConfig={audioEncoding:'LINEAR16',sampleRateHertz:24000}; if(withRate) audioConfig.speakingRate=0.92;
+    return fetch('https://texttospeech.googleapis.com/v1/text:synthesize?key='+encodeURIComponent(S.cloudKey),{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({input:{text},voice:{languageCode:'ko-KR',name:`ko-KR-Chirp3-HD-${timbre()}`},audioConfig})});
+  };
+  let r=await call(S.cloudRate!==false);
+  if(r.status===400 && S.cloudRate!==false){ S.cloudRate=false; r=await call(false); }
+  if(!r.ok){ let m=''; try{m=(await r.json()).error.message||'';}catch(e){} S.ttsError=r.status+' '+m; const er=new Error(S.ttsError); if(r.status===429) er.quota=true; throw er; }
+  const j=await r.json(); const bin=atob(j.audioContent||'');
+  const di=bin.indexOf('data'); const pcm=di>=0&&di<200?bin.slice(di+8):bin.slice(44);
+  return cleanPCM(pcm,24000);
+}
+/* 문장·쉼표 단위로 나눠 만들고 이어서 재생 */
+function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim()).filter(Boolean); }
+function prefetchVoice(lines){
+  if(S.engineNow==='device') return;
+  const parts=[]; lines.forEach(t=>splitSay(t).forEach(x=>{ if(!parts.includes(x)) parts.push(x); }));
+  parts.forEach(x=>getClip(x,false));
+}
+/* 기기 목소리: 좋은 한국어 목소리를 고르고, 끊은 뒤 잠깐 쉬었다 말함(사파리 앞소리 뭉개짐 방지) */
+let koVoice=null;
+function pickKoVoice(){
+  const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.replace('_','-').toLowerCase().startsWith('ko')):[];
+  if(!vs.length) return null;
+  const score=v=>(/premium|프리미엄/i.test(v.name)?4:0)+(/enhanced|향상/i.test(v.name)?3:0)+(/google/i.test(v.name)?2:0)+(/yuna|유나/i.test(v.name)?1:0)+(v.localService?0.5:0);
+  return vs.sort((a,b)=>score(b)-score(a))[0];
+}
+if('speechSynthesis' in window){ koVoice=pickKoVoice(); speechSynthesis.addEventListener?.('voiceschanged',()=>{ koVoice=pickKoVoice(); }); }
+function deviceSay(text,id,done){
+  if(!('speechSynthesis' in window)){ done(); return; }
+  try{ speechSynthesis.cancel(); }catch(e){}
+  setTimeout(()=>{
+    if(id!==speakSeq) return;
+    try{
+      if(!koVoice) koVoice=pickKoVoice();
+      const u=new SpeechSynthesisUtterance(text); u.lang='ko-KR'; u.rate=0.78; u.volume=0.7; if(koVoice) u.voice=koVoice;
+      u.onend=u.onerror=()=>{ if(id===speakSeq) done(); };
+      speechSynthesis.speak(u);
+    }catch(e){ done(); }
+  },300);
+}
+/* 보이지 않는 탭에서는 말하지 않고, 돌아오면 이어서 말함 */
+let hiddenSay=null;
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ stopVoice(); speakSeq++; }
+  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; speak(h[0],h[1]); }
+});
+function speak(text,onEnd){
+  if(document.hidden){ hiddenSay=[text||lastSay,onEnd]; return; }
+  if(text) lastSay=text;
+  if(softTimer){ clearTimeout(softTimer); softTimer=null; }
+  stopVoice();
+  const id=++speakSeq; let fired=false; const done=()=>{ if(fired) return; fired=true; if(onEnd) onEnd(); };
+  if(!S.engineNow) chooseEngine();
+  if(!S.sound||!lastSay){ if(onEnd) setTimeout(done,Math.max(1200,(lastSay||'').length*150)); return; }
+  if(S.engineNow==='device'){ deviceSay(lastSay,id,done); return; }
+  const parts=splitSay(lastSay), ps=parts.map(x=>getClip(x,true));
+  (async()=>{
+    for(let i=0;i<parts.length;i++){
+      let clip=null;
+      try{ clip=await Promise.race([ps[i],new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),20000))]); }catch(e){}
+      if(id!==speakSeq) return;
+      if(!clip){ if(S.engineNow==='device'){ deviceSay(parts.slice(i).join(' '),id,done); return; } continue; }
+      await playClip(clip);
+      if(id!==speakSeq) return;
+      if(i<parts.length-1) await new Promise(r=>setTimeout(r,/,$/.test(parts[i])?220:320));
+      if(id!==speakSeq) return;
+    }
+    done();
+  })();
+}
+/* 아이가 계속 누르는 동안은 기다렸다가 마지막 행동 뒤(0.65초)에 말함 */
+function speakSoon(text,onEnd,wait=650){
+  lastSay=text; stopVoice(); speakSeq++;
+  if(softTimer) clearTimeout(softTimer);
+  const go=()=>{ if(pdown){ softTimer=setTimeout(go,250); return; } softTimer=null; speak(text,onEnd); };
+  softTimer=setTimeout(go,wait);
+}
+/* ================= 전체 화면 ================= */
+function goFull(){ try{ const d=document.documentElement; if(document.fullscreenElement||document.webkitFullscreenElement) return;
+  if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen(); }catch(e){} }
+function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(document.webkitFullscreenElement) document.webkitExitFullscreen(); }catch(e){} }
+document.addEventListener('contextmenu',e=>{ if(!document.body.classList.contains('setup')) e.preventDefault(); });
+
+/* ================= 교사 모드 버튼 (3초 누르기) ================= */
+(function(){
+  const ab=$('adminBtn'); let raf=0, t0=0, on=false;
+  const stop=()=>{on=false; cancelAnimationFrame(raf); ab.style.setProperty('--p',0);};
+  ab.addEventListener('pointerdown',e=>{
+    e.preventDefault(); e.stopPropagation(); try{ab.setPointerCapture(e.pointerId);}catch(_){}
+    on=true; t0=performance.now();
+    const tick=()=>{ if(!on) return;
+      const p=Math.min(1,(performance.now()-t0)/3000); ab.style.setProperty('--p',p);
+      if(p>=1){stop(); setAdmin(!S.admin); return;} raf=requestAnimationFrame(tick); };
+    raf=requestAnimationFrame(tick);
+  });
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ab.addEventListener(ev,stop));
+  ab.addEventListener('contextmenu',e=>e.preventDefault());
+})();
+function setAdmin(on){
+  S.admin=on; document.body.classList.toggle('admin',on);
+  $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 3초 동안 누르기':'교사 모드: 3초 동안 누르기');
+  $('abLabel').textContent=on?'심':'charum';
+  if(!on) $('logPop').hidden=true;
+  renderDocks();
+  requestAnimationFrame(()=>{ if(S.game){ BD=bounds(); fitBubs(); } });
+}
+
+/* ================= 교사 메뉴 ================= */
+function renderDocks(){
+  const g=S.game, ended=document.body.classList.contains('ended'), playing=!!g&&!ended;
+  const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
+  const set=(key,lbl)=>`<div class="g"><span class="lbl">${lbl}</span>${Object.keys(OPT[key]).map(v=>b(key+':'+v,OPT[key][v].replace(' 찾기',''),String(S[key])===v,key==='choices'&&!okChoice(+v,S.colors)?'disabled':'')).join('')}</div>`;
+  /* 맨 앞: 바꾼 설정으로 새로 시작 */
+  $('dockTop').innerHTML=`<div class="g">${b('start',ICON.start+'새로 시작',null,'class="go-btn"')}</div>`+set('choices','동그라미')+set('colors','색')+set('speed','속도')+set('way','방식')+set('look','모양')+set('help','도움')+set('rounds','문제')+
+    `<div class="g"><span class="lbl">사용</span>${b('mode:teacher','교사와 함께',S.mode==='teacher')}${b('mode:solo','학생 혼자',S.mode==='solo')}</div>`+
+    `<div class="g">${b('sound',S.sound?ICON.ear+'소리':ICON.sndOff+'소리 끔',S.sound)}${b('setup',ICON.gear+'설정')}${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`;
+  $('dockBot').innerHTML = !g ? '' : playing
+    ? `<div class="g">${b('replay',ICON.ear+'다시 듣기')}${b('skip',ICON.skip+'다음 문제')}${b('stop',ICON.stop+'여기까지')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
+    : `<div class="g">${b('again',ICON.redo+'다시 하기')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div><div class="g"><span class="lbl">${ICON.print.replace('class="ic"','class="ic" style="width:18px;height:18px;vertical-align:-4px"')} 출력</span>${b('print:student','학생용 색칠하기')}${b('print:teacher','교사용 기록')}</div>`;
+}
+function onDock(e){
+  const btn=e.target.closest('button[data-a]'); if(!btn) return;
+  const [a,v]=btn.dataset.a.split(':');
+  if(OPT[a]){ S[a]=isNaN(+v)?v:+v; store.set(a,v);
+    if(a==='speed'&&S.game) S.game.bubs.forEach(setVel);
+    if(a==='colors') clampChoices();
+    if(S.game&&!document.body.classList.contains('ended')&&(a==='choices'||a==='colors')){ if(!palette().some(c=>c.name===S.game.target.name)) S.game.target=palette()[0]; S.game.bubs.forEach(o=>o.el.remove()); S.game.bubs=[]; BD=bounds(); buildSet(); showPrompt(); schedulePrompt(); speak(findLine(S.game.target)); }
+    else if(S.game&&a==='way') showPrompt();
+    else if(S.game&&a==='look'&&!document.body.classList.contains('ended')){ S.game.bubs.forEach(drawLook); }
+    else if(S.game&&a==='help'&&!document.body.classList.contains('ended')){ schedulePrompt(); }
+    else if(S.game&&a==='rounds'&&!document.body.classList.contains('ended')){ if(S.game.hist.length>=S.rounds) endGame(); else renderTrack(); }
+    renderDocks(); return; }
+  if(a==='mode'){ S.mode=v; store.set('mode',v); document.body.classList.toggle('solo',v==='solo');
+    if(v==='teacher'&&document.body.classList.contains('home')) startGame();
+    else if(v==='solo'&&!S.game) showHome();
+    renderDocks(); return; }
+  if(a==='sound'){ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); if(!S.sound) stopVoice(); renderDocks(); }
+  if(a==='setup'){ leaveFull(); showSetup(); }
+  if(a==='replay') speak();
+  if(a==='skip') nextRound();
+  if(a==='stop') endGame();
+  if(a==='again'||a==='start'){ $('logPop').hidden=true; startGame(); }
+  if(a==='print') printSheet(v);
+  if(a==='log'){ $('logPop').hidden=!$('logPop').hidden; renderLog(); renderDocks(); }
+}
+$('dockTop').addEventListener('click',onDock); $('dockBot').addEventListener('click',onDock);
+function renderLog(){
+  const rows=S.log.map((l,i)=>`<tr><td>${i+1}</td><td><i style="background:${l.hex}"></i>${esc(l.name)}</td><td>${l.result}</td><td>${l.wrong.length?esc(l.wrong.join(', ')):'-'}</td></tr>`).join('');
+  const first=S.log.filter(l=>l.result==='바로 맞힘').length;
+  $('logPop').innerHTML=`<h3>교사용 기록 · 바로 맞힘 ${first} / ${S.log.length}</h3>
+    <table><thead><tr><th>문제</th><th>찾을 색</th><th>결과</th><th>먼저 누른 색</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="4">아직 기록이 없어요.</td></tr>'}</tbody></table>
+    <p>${esc(OPT.way[S.way])} · ${esc(OPT.look[S.look])} ${S.choices}개 · ${S.colors}색 · ${esc(OPT.speed[S.speed])} · 도와주기 ${esc(OPT.help[S.help])}. 우연히 맞힐 확률 ${Math.round(100/S.choices)}%. 도움 받아 맞힘 = 시간이 지나 정답이 알려 준 뒤 맞힘. 화면을 닫으면 사라져요.</p>`;
+}
+
+/* ================= 교사 설정 ================= */
+function showSetup(){
+  stopGame(); stopVoice();
+  document.body.className='setup'; setAdmin(false);
+  const seg=(key,list)=>`<div class="seg">${Object.keys(list).map(v=>{ const [t,sm]=list[v]; return `<label><input type="radio" name="${key}" value="${v}" ${String(S[key])===v?'checked':''}><span>${t}${sm?`<small>${sm}</small>`:''}</span></label>`; }).join('')}</div>`;
+  const opt=key=>Object.fromEntries(Object.entries(OPT[key]).map(([k,v])=>[k,[v,'']]));
+  $('setup').innerHTML=`<div class="sheet">
+    <div class="title"><div class="dots7">${RAINBOW.map(c=>`<i style="background:${c.hex}"></i>`).join('')}</div><h1>무지개 색 찾기</h1></div>
+    <p class="lead">떠다니는 동그라미 가운데 말한 색을 찾아 눌러요. 맞히면 "뽁" 터지고, 다른 색을 누르면 아무 반응이 없어요. 이 화면은 교사·보호자용입니다.</p>
+    <div class="grid">
+      <div class="grp full"><h2>누가 쓰나요</h2>${seg('mode',{teacher:['교사와 함께','교사 메뉴로 바꿔 가며'],solo:['학생 혼자','학생이 동그라미 수·색 수 고르고 시작']})}</div>
+      <div class="grp full"><h2>찾는 방식</h2>${seg('way',{match:['같은 색 찾기','위에 색과 이름을 함께 보여 줌'],name:['이름 듣고 찾기','색 이름만 듣고 찾음']})}</div>
+      <div class="grp full"><h2>모양</h2>${seg('look',{circle:['동그라미','색만 보고 찾기'],object:['물건','풍선·컵·자동차… 여러 물건에서 같은 색 찾기 (일반화)']})}</div>
+      <div class="grp full"><h2>도와주기 (시간 지연)</h2>${seg('help',{off:['끔',''],s5:['5초',''],s3:['3초',''],s0:['바로','무오류']})}<p class="hint" style="margin-top:6px">정한 시간 안에 못 찾으면 정답이 멈춰서 천천히 커졌다 작아지며 알려 줘요. 다른 색을 눌러도 반응은 없어요.</p></div>
+      <div class="grp full"><h2>한 번에 나오는 동그라미</h2>${seg('choices',opt('choices'))}<p class="hint" id="choiceHint" style="margin-top:6px"></p></div>
+      <div class="grp"><h2>움직이는 빠르기</h2>${seg('speed',opt('speed'))}</div>
+      <div class="grp full"><h2>나오는 색의 수</h2>${seg('colors',Object.fromEntries(Object.keys(OPT.colors).map(k=>[k,[OPT.colors[k],COLOR_NOTE[k]]])))}</div>
+      <div class="grp"><h2>문제 수</h2>${seg('rounds',opt('rounds'))}</div>
+    </div>
+    <div class="voice">
+      <div class="grp"><h2>목소리 (수업 내내 한 목소리)</h2>${seg('engine',{cloud:['Google 음성','자연스러움 · Cloud 키 필요'],device:['기기 목소리','키 없이 바로']})}</div>
+      <div id="cloudRow" ${S.engine==='cloud'?'':'hidden'} style="display:flex;flex-direction:column;gap:10px">
+        ${seg('timbre',{Leda:['밝은 목소리',''],Aoede:['산뜻한 목소리',''],Kore:['또렷한 목소리','']})}
+        <p class="hint">키 만들기: <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a>에서 Cloud Text-to-Speech API를 사용 설정하고 API 키를 만드세요. 결제 카드 등록이 필요하지만 매달 100만 자까지 무료예요.</p>
+        <div class="row"><input class="field" id="cloudKey" type="password" autocomplete="off" placeholder="Google Cloud 키" value="${esc(S.cloudKey)}"><button class="btn" id="showKey" type="button">보기</button></div>
+        <label class="row" style="gap:8px"><input type="checkbox" id="saveCloud" ${S.saveCloud?'checked':''}> 이 기기에 키 저장 (여러 사람이 쓰는 컴퓨터라면 끄세요)</label>
+      </div>
+      <div class="row"><button class="btn" id="voiceTest" type="button">${ICON.ear}목소리 들어 보기</button><span class="status" id="voiceStatus"></span></div>
+    </div>
+    <p class="hint" style="margin-top:14px">학생 화면에는 메뉴가 없어요. 오른쪽 아래 옅은 동그라미를 <b>3초 동안 누르면</b> 교사 메뉴(동그라미 수·색 수·속도·방식, 다시 듣기, 다음 문제, 여기까지, 기록, 출력, 설정)가 나타나요.</p>
+    <div class="foot"><span class="status" id="startMsg" aria-live="polite"></span><button class="go" id="startBtn" type="button">시작</button></div>
+  </div>`;
+  const syncChoices=()=>{
+    $('setup').querySelectorAll('input[name=choices]').forEach(x=>{ const ok=okChoice(+x.value,S.colors); x.disabled=!ok; x.parentElement.style.opacity=ok?'':'.35'; x.checked=+x.value===S.choices; });
+    $('choiceHint').textContent=S.colors<15?`${S.colors}색이면 동그라미는 ${S.colors}개까지 나와요.`:'';
+  };
+  $('setup').querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
+    const k=r.name, v=r.value; S[k]=['choices','colors','speed','rounds'].includes(k)?+v:v; store.set(k,v);
+    if(k==='engine') $('cloudRow').hidden=S.engine!=='cloud';
+    if(k==='colors'){ clampChoices(); syncChoices(); }
+  });
+  syncChoices();
+  const saveKey=()=>store.set('cloudKey',S.saveCloud&&S.cloudKey?S.cloudKey:null);
+  $('cloudKey').oninput=e=>{S.cloudKey=e.target.value.trim(); saveKey();};
+  $('saveCloud').onchange=e=>{S.saveCloud=e.target.checked; saveKey();};
+  $('showKey').onclick=e=>{const k=$('cloudKey'), t=k.type==='password'; k.type=t?'text':'password'; e.target.textContent=t?'숨기기':'보기';};
+  $('voiceTest').onclick=async()=>{
+    unlockAudio(); const st=$('voiceStatus'); st.className='status'; st.textContent='';
+    if(S.engine==='cloud'&&!S.cloudKey){ st.textContent='Google Cloud 키를 넣어 주세요.'; st.className='status bad'; return; }
+    chooseEngine(); const line='안녕하세요. 빨강을 찾아요.';
+    if(S.engineNow==='cloud'){ st.textContent='목소리를 만드는 중…';
+      try{ await Promise.all(splitSay(line).map(x=>getClip(x,true))); st.textContent='이 목소리로 수업해요.'; st.className='status good'; }
+      catch(e){ st.textContent='목소리를 만들지 못했어요: '+(S.ttsError||e.message); st.className='status bad'; return; } }
+    const was=S.sound; S.sound=true; speak(line); S.sound=was;
+  };
+  $('startBtn').onclick=()=>{
+    /* Google 음성을 골랐는데 키가 없으면 시작하지 않고 안내 */
+    if(S.engine==='cloud'&&!S.cloudKey){ const m=$('startMsg'); m.textContent='Google 음성을 쓰려면 Cloud 키를 넣어 주세요. 키가 없으면 "기기 목소리"를 고르세요.'; m.className='status bad'; return; }
+    unlockAudio(); chooseEngine(); prefetchVoice(allLines());
+    if(S.mode==='solo') showHome(); else startGame();
+  };
+}
+
+/* ================= 학생 혼자: 시작 화면 ================= */
+/* 학생이 동그라미 수와 색 수를 고름. 고르기 전에는 말하지 않고, 고르면 그 선택을 말해 줌 */
+const NUM={2:'두',4:'네',7:'일곱',8:'여덟',10:'열',11:'열한',15:'열다섯'};
+function showHome(){
+  stopGame(); document.body.className='home solo'; if(S.admin) document.body.classList.add('admin'); renderDocks();
+  renderPick();
+}
+function renderPick(){
+  $('pickN').innerHTML=Object.keys(OPT.choices).map(n=>{ const cols=Math.ceil(Math.sqrt(n));
+    return `<button class="ptile ntile" type="button" data-n="${n}" aria-pressed="${+n===S.choices}" aria-label="동그라미 ${n}개" ${okChoice(+n,S.colors)?'':'disabled'}>
+      <span class="ndots" style="grid-template-columns:repeat(${cols},14px)">${'<i></i>'.repeat(n)}</span><b>${n}</b></button>`; }).join('');
+  $('pickC').innerHTML=Object.keys(OPT.colors).map(c=>`<button class="ptile ctile" type="button" data-c="${c}" aria-pressed="${+c===S.colors}" aria-label="${c}색">
+      <span class="cdots">${COLORS.slice(0,c).map(x=>`<i style="background:${x.hex}" class="${x.hex==='#FFFFFF'?'white':''}"></i>`).join('')}</span><b>${c}</b></button>`).join('');
+  $('pickN').querySelectorAll('button').forEach(b=>b.onclick=()=>{ unlockAudio(); S.choices=+b.dataset.n; store.set('choices',S.choices); renderPick(); speak(NUM[S.choices]+' 개.'); });
+  $('pickC').querySelectorAll('button').forEach(b=>b.onclick=()=>{ unlockAudio(); S.colors=+b.dataset.c; store.set('colors',S.colors); clampChoices(); renderPick(); speak(NUM[S.colors]+' 가지 색.'); });
+}
+$('homeBtn').onclick=()=>{
+  if(S.engine==='cloud'&&!S.cloudKey){ leaveFull(); showSetup(); return; }
+  unlockAudio(); chooseEngine(); prefetchVoice(allLines()); startGame();
+};
+$('againBtn').innerHTML=ICON.redo+'다시 하기';
+/* 학생이 위쪽 안내를 누르면 다시 들려줌 */
+$('prompt').addEventListener('pointerdown',e=>{ e.stopPropagation(); const g=S.game; if(!g||document.body.classList.contains('ended')||!g.target) return; unlockAudio(); speak(findLine(g.target)); });
+$('againBtn').onclick=()=>showHome();
+
+/* ================= 놀이 ================= */
+/* 찾으면 말 대신 "뽁" 터지는 모습과 소리만. 터진 동그라미 자리에 새 색이 생겨 끊기지 않고 이어짐 */
+const palette=()=>COLORS.slice(0,S.colors);
+function allLines(){
+  return COLORS.map(findLine).concat(['다 했어요.'],Object.keys(OPT.choices).map(n=>NUM[n]+' 개.'),Object.keys(OPT.colors).map(n=>NUM[n]+' 가지 색.'));
+}
+let raf=0, lastT=0, nextT=null;
+function stopGame(){ cancelAnimationFrame(raf); clearTimeout(nextT); if(S.game) clearTimeout(S.game.promptT); S.game=null; $('field').innerHTML=''; $('logPop').hidden=true; }
+function startGame(){
+  stopGame(); goFull();
+  document.body.className='play'+(S.mode==='solo'?' solo':'')+(S.admin?' admin':'');
+  S.game={i:0, hist:[], asked:{}, shownCount:{}, bubs:[], target:null, busy:false};
+  S.log=[];
+  renderDocks();
+  BD=bounds(); const g=S.game;
+  g.target=null; buildSet();
+  setTarget(pickOnScreen(g));
+  speak(findLine(g.target));
+  lastT=performance.now(); cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);
+}
+const radius=()=>{ const {W,H,top,bottom}=BD; const k={2:0.15,4:0.125,8:0.1,10:0.09,15:0.075}[S.choices]||0.1; return Math.round(Math.min(W,(H-top-bottom)*1.25)*k); };
+/* 크기 차이: 2개는 거의 같은 크기(±5%), 많을수록 크게 달라짐(15개는 기본의 0.55~1.45배) */
+const SIZE_SPREAD={2:0.05,4:0.15,8:0.28,10:0.35,15:0.45};
+function bubbleR(){ const v=SIZE_SPREAD[S.choices]||0.2; return Math.max(26,Math.round(radius()*(1+v*(Math.random()*2-1)))); }
+/* 처음(또는 색 수를 바꿨을 때) 한 번에 만들기: 찾을 색 + 다른 색 */
+function buildSet(){
+  const g=S.game, t=g.target;
+  g.bubs.forEach(b=>b.el.remove()); g.bubs=[];
+  const others=palette().filter(c=>!t||c.name!==t.name).sort(()=>Math.random()-.5).slice(0,Math.max(t?1:2,S.choices-(t?1:0)));
+  (t?[t,...others]:others).sort(()=>Math.random()-.5).forEach(c=>addBubble(c,false));
+}
+/* 물건 모양: 한 가지 색으로만 그림(밝고 어두운 덧칠만) — 다른 색이 섞이면 헷갈리므로 */
+const OBJ=['balloon','cup','car','shirt','umbrella','sock','fish','star','flower'];
+function objSVG(kind,hex){
+  const white=hex==='#FFFFFF', st=white?'stroke="#BDB7AD" stroke-width="2.5"':'stroke="rgba(0,0,0,.22)" stroke-width="1.6"';
+  const f=`fill="${hex}" ${st} stroke-linejoin="round"`, sh='fill="rgba(0,0,0,.2)"', li='fill="rgba(255,255,255,.4)"', line=w=>`fill="none" stroke="${white?'#BDB7AD':hex}" stroke-width="${w}" stroke-linecap="round"`;
+  const P={
+    balloon:`<path d="M50 84 q-4 8 3 15" ${line(3)}/><path d="M45 78h10l-5 8z" ${f}/><ellipse cx="50" cy="42" rx="31" ry="37" ${f}/><ellipse cx="38" cy="27" rx="7" ry="11" ${li}/>`,
+    cup:`<path d="M68 38h7a11 11 0 0 1 0 22h-8" ${line(7)}/><path d="M20 24h50l-5 60a6 6 0 0 1-6 6H31a6 6 0 0 1-6-6z" ${f}/><path d="M24 30h42v6H24z" ${sh}/>`,
+    car:`<path d="M6 64q0-13 13-13h9l11-17h27l13 17h6q9 0 9 11v12H6z" ${f}/><path d="M42 39h11v12H34zM57 39h8l9 12H57z" ${li}/><circle cx="28" cy="75" r="11" ${f}/><circle cx="28" cy="75" r="11" ${sh}/><circle cx="72" cy="75" r="11" ${f}/><circle cx="72" cy="75" r="11" ${sh}/><circle cx="28" cy="75" r="4" ${li}/><circle cx="72" cy="75" r="4" ${li}/>`,
+    shirt:`<path d="M35 12 13 24l9 19 10-5v50h36V38l10 5 9-19-22-12q-6 9-15 9t-15-9z" ${f}/><path d="M35 12q6 9 15 9t15-9" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="3"/>`,
+    umbrella:`<path d="M50 50v34a7 7 0 0 1-14 0" ${line(5)}/><path d="M6 54a44 42 0 0 1 88 0q-7-7-15 0-7-7-14 0-7-7-15 0-7-7-15 0-7-7-14 0-8-7-15 0z" ${f}/><path d="M50 12v42" stroke="rgba(0,0,0,.18)" stroke-width="2"/>`,
+    sock:`<path d="M34 8h30v48l15 15a12 12 0 0 1-17 17L39 65q-5-5-5-11z" ${f}/><path d="M34 8h30v11H34z" ${sh}/>`,
+    fish:`<path d="M10 50q26-30 56-8l20-15v46L66 58q-30 22-56-8z" ${f}/><circle cx="27" cy="46" r="4.5" ${sh}/><path d="M48 36q6 14 0 28" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="2.5"/>`,
+    star:`<path d="m50 6 13 28 30 3-23 20 7 30-27-16-27 16 7-30L7 37l30-3z" ${f}/><path d="m50 22 6 14-6 8-6-8z" ${li}/>`,
+    flower:`<path d="M50 62v34" ${line(5)}/>${[0,72,144,216,288].map(a=>`<circle cx="${50+20*Math.sin(a*Math.PI/180)}" cy="${38-20*Math.cos(a*Math.PI/180)}" r="15" ${f}/>`).join('')}<circle cx="50" cy="38" r="11" ${f}/><circle cx="50" cy="38" r="11" ${li}/>`
+  };
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${P[kind]}</svg>`;
+}
+function drawLook(b){
+  if(S.look==='object'){ if(!b.kind) b.kind=OBJ[Math.floor(Math.random()*OBJ.length)]; b.el.classList.add('obj'); b.el.innerHTML=objSVG(b.kind,b.c.hex); }
+  else { b.el.classList.remove('obj'); b.el.innerHTML=''; }
+}
+/* 빈 곳을 찾아 동그라미 하나 만들기 (grow=true면 작게 시작해 부풀어 오름) */
+function addBubble(c,grow){
+  const g=S.game, {W,H,top,bottom}=BD, r=bubbleR();
+  let best=null, bestD=-1;
+  for(let t=0;t<160;t++){
+    const x=r+Math.random()*Math.max(1,W-2*r), y=top+r+Math.random()*Math.max(1,H-top-bottom-2*r);
+    const d=g.bubs.reduce((m,o)=>Math.min(m,Math.hypot(o.x-x,o.y-y)-o.r-r),1e9);
+    if(d>bestD){ bestD=d; best={x,y}; } if(d>60) break;
+  }
+  const el=document.createElement('div'); el.className='bub'+(c.hex==='#FFFFFF'?' white':'');
+  el.style.width=el.style.height=2*r+'px'; el.style.background=c.hex;
+  $('field').appendChild(el);
+  /* 물건 모양: 한 화면에서 물건이 겹치지 않게 고름 */
+  const used=g.bubs.map(o=>o.kind), freeK=OBJ.filter(k=>!used.includes(k));
+  const b={c,el,x:best.x,y:best.y,r,vx:0,vy:0,s:grow?0.05:1,ps:1,kind:(freeK.length?freeK:OBJ)[Math.floor(Math.random()*(freeK.length||OBJ.length))]};
+  drawLook(b); setVel(b); g.bubs.push(b); place(b);
+  g.shownCount[c.name]=(g.shownCount[c.name]||0)+1;
+  return b;
+}
+/* 다음에 찾을 색: 화면에 있는 동그라미(새로 생긴 것 포함) 가운데 똑같은 확률로 고름.
+   동그라미가 N개면 새로 생긴 동그라미가 정답일 확률도 1/N → "새것만 누르면 된다"가 통하지 않음 */
+function pickOnScreen(g,exclude){
+  const list=g.bubs.filter(b=>!exclude||b.c.name!==exclude);
+  return list[Math.floor(Math.random()*list.length)].c;
+}
+/* 새 동그라미의 색: 화면에 없는 색 가운데 덜 나온 색부터 (여러 색이 고르게 나오도록) */
+function pickNewColor(g,popped){
+  const on=g.bubs.map(b=>b.c.name);
+  let free=palette().filter(c=>!on.includes(c.name)&&c.name!==popped);
+  if(!free.length) free=palette().filter(c=>!on.includes(c.name));
+  const seen=c=>(g.asked[c.name]||0)+(g.shownCount[c.name]||0)*0.5;
+  const min=Math.min(...free.map(seen)), least=free.filter(c=>seen(c)===min);
+  return least[Math.floor(Math.random()*least.length)];
+}
+function setTarget(t){
+  const g=S.game; g.target=t; g.asked[t.name]=(g.asked[t.name]||0)+1; g.miss=0; g.wrong=[]; g.shown=false; g.prompted=false;
+  showPrompt(); renderTrack(); schedulePrompt();
+}
+/* 시간 지연 촉구: 정한 시간 안에 못 찾으면 정답이 멈추고 천천히 커졌다 작아짐(번쩍임 없음).
+   오답에는 반응하지 않고, '시간'에만 반응함. 지시를 말하는 시간(약 1.5초)은 빼고 셈 */
+function schedulePrompt(){
+  const g=S.game; if(!g) return; clearTimeout(g.promptT);
+  g.bubs.forEach(o=>{ if(o.pulse){ o.pulse=false; o.hold=false; } });
+  if(S.help==='off'||g.prompted) return;
+  const t=g.target, sec=+S.help.slice(1), wait=sec===0?500:sec*1000+1500;
+  const fire=()=>{ if(S.game!==g||g.target!==t||document.body.classList.contains('ended')) return;
+    const tb=g.bubs.find(o=>o.c.name===t.name); if(!tb){ g.promptT=setTimeout(fire,200); return; }
+    g.prompted=true; tb.pulse=true; tb.hold=true; tb.pt=0; };
+  g.promptT=setTimeout(fire,wait);
+}
+function showPrompt(){
+  const t=S.game.target, chip=$('chip');
+  chip.hidden=S.way!=='match'; chip.style.background=t.hex; chip.className=t.hex==='#FFFFFF'?'white':'';
+  $('prompt').classList.toggle('nochip',S.way!=='match');
+  /* 이름 듣고 찾기: 글자를 보여 주지 않음(읽을 줄 아는 학생에게 단서가 되므로). 스피커만 — 누르면 다시 들려줌 */
+  $('prompt').classList.toggle('ear',S.way==='name');
+  $('promptText').textContent=eul(t.name)+' 찾아요';
+}
+function setVel(b){
+  const sc=Math.min(1.4,Math.max(0.6,(BD?BD.W:1366)/1366)), sp=SPEED_PX[S.speed]*sc*(0.8+Math.random()*0.4), a=Math.random()*Math.PI*2;
+  b.vx=Math.cos(a)*sp; b.vy=Math.sin(a)*sp;
+}
+/* 동그라미가 다니는 곳: 위쪽 안내 아래 ~ 아래쪽 진행 점 위 (교사 메뉴가 있으면 그만큼 비킴) */
+function bounds(){
+  const F=$('field'), W=F.clientWidth||innerWidth, H=F.clientHeight||innerHeight;
+  const pr=$('prompt'); pr.style.top=(S.admin?$('dockTop').getBoundingClientRect().bottom+10:18)+'px';
+  const top=pr.getBoundingClientRect().bottom+14;
+  const bottom=S.admin?H-$('dockBot').getBoundingClientRect().top+40:56;
+  return {W,H,top,bottom};
+}
+let BD=null;
+function place(b){ b.el.style.transform=`translate(${b.x-b.r}px,${b.y-b.r}px) scale(${b.s*(b.ps||1)})`; }
+function tick(t){
+  const g=S.game; if(!g) return;
+  const dt=Math.min(0.05,Math.max(0,(t-lastT)/1000)); lastT=t;
+  const {W,H,top,bottom}=BD||(BD=bounds());
+  if(!document.hidden) g.bubs.forEach(b=>{
+    if(b.s<1) b.s=Math.min(1,b.s+dt*2.4);
+    if(b.pulse){ b.pt+=dt; b.ps=1+0.12*Math.sin(b.pt*Math.PI*2/1.6); } else b.ps=1;
+    if(b.hold) return;
+    b.x+=b.vx*dt; b.y+=b.vy*dt;
+    if(b.x<b.r){b.x=b.r; b.vx=Math.abs(b.vx);} if(b.x>W-b.r){b.x=W-b.r; b.vx=-Math.abs(b.vx);}
+    if(b.y<top+b.r){b.y=top+b.r; b.vy=Math.abs(b.vy);} if(b.y>H-bottom-b.r){b.y=H-bottom-b.r; b.vy=-Math.abs(b.vy);}
+  });
+  /* 동그라미끼리 겹치지 않게 부드럽게 튕김 */
+  for(let i=0;i<g.bubs.length;i++) for(let j=i+1;j<g.bubs.length;j++){
+    const a=g.bubs[i], b=g.bubs[j];
+    const dx=b.x-a.x, dy=b.y-a.y, d=Math.hypot(dx,dy)||1, min=a.r*a.s+b.r*b.s+8;
+    if(d<min){ const nx=dx/d, ny=dy/d, push=(min-d)/2;
+      if(!a.hold){a.x-=nx*push; a.y-=ny*push;} if(!b.hold){b.x+=nx*push; b.y+=ny*push;}
+      const va=a.vx*nx+a.vy*ny, vb=b.vx*nx+b.vy*ny; if(va-vb>0){ a.vx+=(vb-va)*nx; a.vy+=(vb-va)*ny; b.vx+=(va-vb)*nx; b.vy+=(va-vb)*ny; } }
+  }
+  g.bubs.forEach(place);
+  raf=requestAnimationFrame(tick);
+}
+/* 누르기: 움직이는 동그라미도 누르기 쉽게 반지름의 20%(최소 30px)까지 넉넉히 */
+$('field').addEventListener('pointerdown',e=>{
+  const g=S.game; if(!g||g.busy||document.body.classList.contains('ended')) return; goFull(); unlockAudio();
+  if(performance.now()<(g.lockUntil||0)) return; /* 오답 뒤 1초는 누르기를 받지 않음(마구 누르기 방지, 눈에 보이는 반응 없음) */
+  const R=$('field').getBoundingClientRect(), x=e.clientX-R.left, y=e.clientY-R.top;
+  let best=null, bd=1e9;
+  g.bubs.forEach(b=>{ const d=Math.hypot(b.x-x,b.y-y)-b.r; if(d<Math.max(30,b.r*0.2)&&d<bd){bd=d; best=b;} });
+  if(best) choose(best);
+});
+function choose(b){
+  const g=S.game, t=g.target;
+  if(b.c.name===t.name){
+    clearTimeout(g.promptT);
+    S.log.push({name:t.name,hex:t.hex,result:g.prompted?'도움 받아 맞힘':g.miss?'다시 해서 맞힘':'바로 맞힘',wrong:g.wrong.slice()});
+    g.hist.push(t.hex); g.i++;
+    stopVoice(); speakSeq++; if(softTimer){clearTimeout(softTimer); softTimer=null;}
+    g.bubs=g.bubs.filter(o=>o!==b); pop(b);
+    g.bubs.forEach(o=>{ o.hold=false; o.pulse=false; });
+    if(g.i>=S.rounds){ renderTrack(); nextT=setTimeout(endGame,700); return; }
+    /* 다음 색을 정하고, 터진 자리를 채울 새 동그라미를 만듦 */
+    g.busy=true;
+    const newColor=pickNewColor(g,t.name);
+    const pool=g.bubs.map(o=>o.c).concat([newColor]), nt=pool[Math.floor(Math.random()*pool.length)];
+    if(nt===newColor) g.newHits=(g.newHits||0)+1;
+    setTarget(nt);
+    nextT=setTimeout(()=>{ if(S.game!==g) return; addBubble(newColor,true); g.busy=false; speak(findLine(nt)); },380);
+  } else {
+    /* 다른 색: 소리도 모습도 아무 반응 없음 (기록만) */
+    g.miss++; g.wrong.push(b.c.name); g.lockUntil=performance.now()+1000;
+  }
+}
+/* 터지는 모습: 동그라미가 살짝 부풀며 사라지고, 같은 색 물방울이 사방으로 튀고, 둥근 물결이 퍼짐 */
+function pop(b){
+  popSound();
+  const F=$('field'), reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  b.el.style.transition='transform .16s ease-out, opacity .16s ease-out';
+  b.el.style.transform=`translate(${b.x-b.r}px,${b.y-b.r}px) scale(1.22)`; b.el.style.opacity='0';
+  setTimeout(()=>b.el.remove(),220);
+  if(reduce) return;
+  const ring=document.createElement('div'); ring.className='pop-ring';
+  Object.assign(ring.style,{left:(b.x-b.r)+'px',top:(b.y-b.r)+'px',width:2*b.r+'px',height:2*b.r+'px',borderColor:b.c.hex==='#FFFFFF'?'#C9C4BA':b.c.hex});
+  F.appendChild(ring);
+  const drops=[];
+  for(let k=0;k<12;k++){
+    const d=document.createElement('div'); d.className='drop'+(b.c.hex==='#FFFFFF'?' white':'');
+    const sz=b.r*(0.16+Math.random()*0.14); Object.assign(d.style,{width:sz+'px',height:sz+'px',left:(b.x-sz/2)+'px',top:(b.y-sz/2)+'px',background:b.c.hex});
+    F.appendChild(d); drops.push([d,k]);
+  }
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    ring.style.transform='scale(1.7)'; ring.style.opacity='0';
+    drops.forEach(([d,k])=>{ const a=k/12*Math.PI*2+Math.random()*0.4, dist=b.r*(1.1+Math.random()*0.7);
+      d.style.transform=`translate(${Math.cos(a)*dist}px,${Math.sin(a)*dist}px) scale(.35)`; d.style.opacity='0'; });
+  }));
+  setTimeout(()=>{ ring.remove(); drops.forEach(([d])=>d.remove()); },800);
+}
+/* "뽁" 소리: 짧고 작게 (소리를 끄면 나지 않음) */
+function popSound(){
+  if(!S.sound||document.hidden) return;
+  try{
+    const c=getCtx(); if(!c) return; const t=c.currentTime;
+    const n=Math.floor(c.sampleRate*0.05), buf=c.createBuffer(1,n,c.sampleRate), d=buf.getChannelData(0);
+    for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
+    const src=c.createBufferSource(), bp=c.createBiquadFilter(), g1=c.createGain();
+    src.buffer=buf; bp.type='bandpass'; bp.frequency.value=1500; bp.Q.value=1.2; g1.gain.value=0.22;
+    src.connect(bp); bp.connect(g1); g1.connect(c.destination); src.start(t);
+    const o=c.createOscillator(), g2=c.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(560,t); o.frequency.exponentialRampToValueAtTime(170,t+0.1);
+    g2.gain.setValueAtTime(0.0001,t); g2.gain.exponentialRampToValueAtTime(0.09,t+0.008); g2.gain.exponentialRampToValueAtTime(0.0001,t+0.12);
+    o.connect(g2); g2.connect(c.destination); o.start(t); o.stop(t+0.15);
+  }catch(e){}
+}
+/* 교사: 다음 문제 (기록 없이 넘김) */
+function nextRound(){
+  const g=S.game; if(!g||g.busy) return;
+  g.hist.push(null); g.i++;
+  g.bubs.forEach(o=>{ o.hold=false; o.pulse=false; });
+  if(g.i>=S.rounds){ endGame(); return; }
+  setTarget(pickOnScreen(g,g.target&&g.target.name));
+  speak(findLine(g.target));
+}
+function renderTrack(){
+  const g=S.game;
+  $('track').innerHTML=Array.from({length:S.rounds},(_,i)=>{
+    if(i<g.hist.length){ const h=g.hist[i]; return h?`<i style="background:${h}" class="${h==='#FFFFFF'?'white':''}"></i>`:'<i style="opacity:.35"></i>'; }
+    return `<i class="${i===g.hist.length?'now':''}"></i>`;
+  }).join('');
+}
+function endGame(){
+  const g=S.game; if(!g) return; clearTimeout(nextT); clearTimeout(g.promptT);
+  g.bubs.forEach(b=>b.el.classList.add('fade')); g.busy=true;
+  document.body.classList.add('ended');
+  $('found').innerHTML=S.log.map(l=>`<i style="background:${l.hex}" class="${l.hex==='#FFFFFF'?'white':''}" title="${esc(l.name)}"></i>`).join('');
+  renderDocks(); renderLog();
+  speak('다 했어요.');
+}
+
+/* ================= 출력 (A4 한 장): 학생용 = 색칠하기만, 교사용 = 기록만 ================= */
+function printSheet(kind){
+  const t=new Date(), ds=`${t.getFullYear()}. ${t.getMonth()+1}. ${t.getDate()}.`;
+  if(kind==='teacher'){
+    const L=S.log, n=L.length, first=L.filter(l=>l.result==='바로 맞힘').length, taps=L.reduce((a,l)=>a+l.wrong.length,0);
+    const help=L.filter(l=>l.result==='도움 받아 맞힘').length;
+    const by={}; L.forEach(l=>{ const o=by[l.name]||(by[l.name]={hex:l.hex,n:0,first:0,help:0,wrong:{}}); o.n++; if(l.result==='바로 맞힘') o.first++; if(l.result==='도움 받아 맞힘') o.help++; l.wrong.forEach(w=>o.wrong[w]=(o.wrong[w]||0)+1); });
+    const colorRows=Object.entries(by).map(([k,o])=>`<tr><td>${esc(k)}</td><td>${o.n}</td><td>${o.first}</td><td>${o.n-o.first-o.help}</td><td>${o.help}</td><td>${Object.entries(o.wrong).sort((a,b)=>b[1]-a[1]).map(([w,c])=>esc(w)+(c>1?' ×'+c:'')).join(', ')||'-'}</td></tr>`).join('');
+    const qRows=L.map((l,i)=>`<tr><td>${i+1}</td><td>${esc(l.name)}</td><td>${l.result}</td><td>${l.wrong.length?esc(l.wrong.join(', ')):'-'}</td></tr>`).join('');
+    $('printArea').innerHTML=`<div class="pa-head"><h1>무지개 색 찾기 · 교사용 기록</h1><div>학생: ____________ &nbsp; ${ds}</div></div>
+      <p class="pa-note">${esc(OPT.way[S.way])} · ${esc(OPT.look[S.look])} ${S.choices}개 · ${S.colors}색 · ${esc(OPT.speed[S.speed])} · 도와주기 ${esc(OPT.help[S.help])} · 문제 ${S.rounds}번</p>
+      <p class="pa-note"><b>바로 맞힘 ${first} / ${n}${n?` (${Math.round(first/n*100)}%)`:''}</b> · 다시 해서 맞힘 ${n-first-help} · 도움 받아 맞힘 ${help} · 다른 색을 누른 횟수 ${taps} · 우연히 맞힐 확률 ${Math.round(100/S.choices)}%</p>
+      ${n?`<table class="pa-log" style="margin-bottom:4mm"><thead><tr><th>찾을 색</th><th>나온 횟수</th><th>바로 맞힘</th><th>다시 해서 맞힘</th><th>도움 받아 맞힘</th><th>대신 누른 색</th></tr></thead><tbody>${colorRows}</tbody></table>
+      <table class="pa-log"><thead><tr><th>문제</th><th>찾을 색</th><th>결과</th><th>먼저 누른 색</th></tr></thead><tbody>${qRows}</tbody></table>`:'<p class="pa-note">기록이 없어요.</p>'}`;
+  } else {
+    const names=[]; (S.log.length?S.log:palette()).forEach(l=>{ if(!names.includes(l.name)) names.push(l.name); });
+    const list=names.slice(0,12), cols=list.length>9?4:3;
+    $('printArea').innerHTML=`<div class="pa-head"><h1>색칠해요</h1><div>이름: ____________ &nbsp; ${ds}</div></div>
+      <p class="pa-note">이름에 맞는 색으로 동그라미를 칠해요.</p>
+      <div class="pa-grid" style="grid-template-columns:repeat(${cols},1fr)">${list.map(n=>`<div><i${cols===4?' style="width:34mm;height:34mm"':''}></i>${esc(n)}</div>`).join('')}</div>`;
+  }
+  window.print();
+}
+
+function fitBubs(){ const g=S.game; if(!g) return; const {W,H,top,bottom}=BD; g.bubs.forEach(b=>{ b.x=Math.min(Math.max(b.r,b.x),W-b.r); b.y=Math.min(Math.max(top+b.r,b.y),H-bottom-b.r); place(b); }); }
+/* 전체 화면이 켜지거나 풀려 화면 크기가 바뀌어도 움직임은 그대로, 다니는 곳만 다시 맞춤 */
+['resize','fullscreenchange','webkitfullscreenchange','orientationchange'].forEach(ev=>(ev==='resize'||ev==='orientationchange'?window:document).addEventListener(ev,()=>{ if(S.game){ BD=bounds(); fitBubs(); lastT=performance.now(); } }));
+
+/* ================= 시작 ================= */
+if(S.mode==='solo') showHome(); else showSetup();
+</script>
+</body>
+</html>
