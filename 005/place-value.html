@@ -80,7 +80,9 @@ body.recording .rec{display:inline-flex}
 .pv-digit.comma span{font-family:'Noto Sans KR',sans-serif;font-weight:900;font-size:.56em;line-height:1;color:var(--base);transform:translateY(-.33em)}
 .pv-digit.pop{animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.12)}100%{transform:scale(1)}}
-.pv-label{font-weight:800;color:var(--dark);font-size:.24em;height:1.6em;line-height:1.6em;min-width:1.2em;text-align:center;margin-top:.2em;cursor:pointer}
+.pv-label{font-weight:800;color:var(--dark);font-size:.24em;height:1.6em;line-height:1.6em;min-width:1.2em;text-align:center;margin-top:.2em}
+/* 누르는 곳은 글자 자체만 */
+.pv-label .tx{cursor:pointer}
 .pv-label.hidden{opacity:.28}
 .pv-label.spacer{opacity:0;cursor:default}
 .hint{margin-top:clamp(12px,2.6vh,24px);color:var(--ink-soft);font-weight:700;font-size:clamp(14px,2vw,17px);min-height:1.4em;text-align:center}
@@ -526,7 +528,7 @@ function renderRow(top,digitOf){
   for(let e=top;e>=0;e--){
     const d=digitOf(e), col=document.createElement('div'); col.className='pv-col'; col.dataset.exp=e;
     const vis=!!S.labels[e];
-    col.innerHTML=`<div class="pv-digit${d!=null?' filled':''}">${d!=null?d:'?'}</div><div class="pv-label${vis?'':' hidden'}">${vis?chartLabel(e):'·'}</div>`;
+    col.innerHTML=`<div class="pv-digit${d!=null?' filled':''}">${d!=null?d:'?'}</div><div class="pv-label${vis?'':' hidden'}"><span class="tx">${vis?chartLabel(e):'·'}</span></div>`;
     t.appendChild(col);
     if(e%3===0&&e!==0){ const c=document.createElement('div'); c.className='pv-col comma-col'; c.innerHTML='<div class="pv-digit comma"><span>,</span></div><div class="pv-label spacer">·</div>'; t.appendChild(c); }
   }
@@ -564,10 +566,10 @@ let rzT=null; window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setT
    관리가 열린 채로 수를 누르면 관리를 닫고 바로 학생 화면으로 */
 $('stage').addEventListener('click',e=>{
   unlockAudio();
-  const lab=e.target.closest('.pv-label');
+  const tx=e.target.closest('.pv-label .tx'), lab=tx&&tx.parentElement;
   if(lab&&!lab.classList.contains('spacer')){
     const ex=+lab.parentElement.dataset.exp; S.labels[ex]=!S.labels[ex];
-    lab.classList.toggle('hidden',!S.labels[ex]); lab.textContent=S.labels[ex]?chartLabel(ex):'·'; syncLabelBtn(); return;
+    lab.classList.toggle('hidden',!S.labels[ex]); tx.textContent=S.labels[ex]?chartLabel(ex):'·'; syncLabelBtn(); return;
   }
   if(S.admin) setAdmin(false);
   goFull(); showNumber();
@@ -583,7 +585,7 @@ function syncLabelBtn(){ $('labelBtn').classList.toggle('on',Object.keys(S.label
 $('labelBtn').addEventListener('click',()=>{
   const on=!$('labelBtn').classList.contains('on'); for(let e=0;e<=11;e++) S.labels[e]=on; syncLabelBtn();
   $('pvTable').querySelectorAll('.pv-col').forEach(col=>{ const l=col.querySelector('.pv-label'); if(!l||l.classList.contains('spacer')) return;
-    const ex=+col.dataset.exp; l.classList.toggle('hidden',!on); l.textContent=on?chartLabel(ex):'·'; });
+    const ex=+col.dataset.exp; l.classList.toggle('hidden',!on); l.innerHTML='<span class="tx">'+(on?chartLabel(ex):'·')+'</span>'; });
 });
 function syncVoiceBtn(){ $('voiceBtn').classList.toggle('on',S.sound); $('vOn').style.display=S.sound?'':'none'; $('vOff').style.display=S.sound?'none':''; }
 $('voiceBtn').addEventListener('click',()=>{ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); syncVoiceBtn(); if(!S.sound) hush(); else if(S.next) prefetchVoice(readKo(S.next.n)); });
@@ -731,7 +733,7 @@ const PICK_STEPS=[
 ];
 const PLAY_STEPS=[
   {el:'#stage', t:'수 만들기', x:'화면을 누르면 새 수가 나오고 읽어 줘요. 스페이스바를 눌러도 돼요.'},
-  {el:'.pv-label:not(.spacer)', t:'자리 이름', x:'자리 이름을 누르면 그 이름만 감추거나 다시 보여요.'},
+  {el:'.pv-label:not(.spacer) .tx', t:'자리 이름', x:'자리 이름을 누르면 그 이름만 감추거나 다시 보여요.'},
   {el:'#chipRow', t:'숫자를 넣을 자리', x:'켠 자리에는 1~9, 끈 자리에는 0이 나와요. 예) 백의 자리에서 십을 끄면 304처럼 나와요.', need:()=>S.mode==='tier'&&S.top>0},
   {el:'#waitBtn', t:'읽어 주는 때', x:'바로 → 3초 뒤 → 5초 뒤. 학생이 먼저 읽어 볼 시간을 준 뒤 읽어 줘요.'},
   {el:'#labelBtn', t:'자리 이름 모두', x:'자리 이름을 한꺼번에 감추거나 보여요.'},
