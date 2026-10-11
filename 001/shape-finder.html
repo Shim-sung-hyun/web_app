@@ -27,7 +27,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 .app{height:100%;display:grid;grid-template-rows:auto 1fr auto;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
 
 /* 학생 모드: 메뉴 숨김 */
-body:not(.admin) .top, body:not(.admin) .bar, body.setup .top, body.setup .bar{display:none}
+body:not(.admin) .top, body.setup .top{display:none}
+.app > .bar{display:none!important}
 body:not(.admin) .admin-only{display:none!important}
 body.setup #adminBtn{display:none}
 body.setup{overflow:auto}
@@ -52,7 +53,39 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
     radial-gradient(ellipse 70% 45% at 50% 88%, rgba(110,230,240,.85), rgba(110,230,240,0) 70%),
     radial-gradient(circle at 50% 40%, #3D4F5A 0%, #17242C 60%, #05090C 100%);
   box-shadow:inset 0 -4px 10px rgba(90,220,235,.45), inset 0 3px 6px rgba(0,0,0,.6), 0 4px 10px rgba(0,0,0,.4), 0 0 0 3px rgba(63,207,210,.35)}
-body.admin .bar{padding-right:80px}
+
+
+/* 교사 모드 설정 패널 (오른쪽) */
+.admin-panel{display:none;position:fixed;right:12px;top:var(--ap-top,76px);bottom:var(--ap-bot,88px);width:min(420px,calc(100vw - 24px));z-index:40;
+  background:var(--surface);border:2px solid var(--line);border-radius:18px;box-shadow:0 12px 32px rgba(20,40,50,.18);overflow:auto;padding:14px 16px 16px;
+  -webkit-user-select:none;user-select:none}
+body.admin:not(.setup) .admin-panel{display:block}
+.admin-panel.folded{bottom:auto;overflow:hidden}
+.admin-panel.folded .ap-body{display:none}
+.ap-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ap-head h2{margin:0;font-size:18px}
+.ap-fold{all:unset;cursor:pointer;font-size:14px;color:var(--muted);padding:6px 10px;border-radius:10px}
+.ap-fold:hover{background:var(--accent-soft)}
+.ap-group{padding:10px 0;border-top:1px solid var(--line)}
+.ap-group h3{margin:0 0 8px;font-size:15px}
+.ap-group .opts{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.ap-group .opt{padding:9px 10px;gap:8px}
+.ap-group .opt span{font-size:12.5px}
+.ap-group .opt.off{opacity:.45;pointer-events:none}
+.ap-hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.ap-foot{display:flex;gap:8px;justify-content:space-between;padding:12px 0 2px;border-top:1px solid var(--line);position:sticky;bottom:-16px;background:var(--surface)}
+.ap-foot .btn{min-height:48px;padding:8px 16px}
+.ap-foot .ap-start{font-size:18px;min-width:0;flex:1}
+
+/* 도움말 코치마크 */
+.coach{position:fixed;inset:0;z-index:100}
+.coach-hole{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(15,30,38,.55);outline:3px solid #FFD54A;outline-offset:2px;transition:all .25s;pointer-events:none}
+.coach-tip{position:fixed;max-width:340px;background:#fff;color:var(--ink);border-radius:14px;padding:14px 16px;box-shadow:0 10px 28px rgba(0,0,0,.25);font-size:15px;line-height:1.6}
+.coach-tip b{display:block;font-size:16px;margin-bottom:4px}
+.coach-nav{display:flex;align-items:center;gap:8px;margin-top:10px}
+.coach-nav .cnt{flex:1;font-size:13px;color:var(--muted)}
+.coach-nav button{border:2px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;font-weight:700}
+.coach-nav button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
 
 /* 일정표 */
 .top{grid-row:1;display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--surface);border-bottom:2px solid var(--line)}
@@ -216,9 +249,8 @@ body.setup main{overflow:auto}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .field{flex:1;min-width:200px;font:inherit;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
 .status{font-size:15px;color:var(--muted)}
-.pause-note{display:none;align-items:center;gap:6px;white-space:nowrap;align-self:center;font-size:14px;font-weight:700;color:#8A5A00;background:#FFF3D6;border-radius:999px;padding:7px 14px}
-body.paused .pause-note{display:inline-flex}
 body.paused #main{pointer-events:none}
+body.paused #main .admin-only{pointer-events:auto}
 .card.need{outline:3px solid #D93A3A;outline-offset:2px}
 .card.need.blink{animation:needBlink 1s ease-in-out 4}
 @keyframes needBlink{50%{outline-color:rgba(217,58,58,.15)}}
@@ -268,12 +300,12 @@ details.log td,details.log th{border-bottom:1px solid var(--line);padding:6px 4p
     <ol class="schedule" id="schedule" aria-label="오늘 할 일"></ol>
     <div class="tools">
       <button class="tool" id="soundBtn" aria-pressed="false" type="button"></button>
-      <span class="pause-note" id="pauseNote"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>멈춤 · 관리 버튼을 끄면 이어서 해요</span>
       <span class="status" id="voiceNote" hidden style="max-width:260px;font-size:13px"></span>
       <button class="tool" id="setupBtn" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>설정</button>
     </div>
   </header>
   <main id="main"></main>
+  <aside class="admin-panel" id="adminPanel" aria-label="수업 설정"></aside>
   <footer class="bar">
     <div class="left"><button class="btn" id="replayBtn" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>다시 듣기</button></div>
     <div class="dots" id="dots"></div>
@@ -588,7 +620,7 @@ function renderSoundBtn(){
 }
 $('soundBtn').onclick=()=>{S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); if(!S.sound) stopVoice(); renderSoundBtn(); if(S.sound) speak();};
 $('setupBtn').onclick=()=>{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); showSetup(); };
-$('replayBtn').onclick=()=>{ if(S.paused){ const had=!!heldSay; resumeLesson(); if(!had) speak(); } else speak(); };
+$('replayBtn').onclick=()=>{ const had=!!heldSay; if(S.admin) setAdmin(false); else resumeLesson(); if(!had) speak(); };
 /* 전체 화면: 사진 고르기 창(파일 선택)은 브라우저가 전체 화면을 강제로 풀어 버려서,
    사진 고르기 화면에서는 전체 화면을 쓰지 않고, 사진을 고른 뒤 학생이 처음 누를 때 다시 켬 */
 function goFull(){ try{ if(!document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){} }
@@ -599,21 +631,153 @@ function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscree
   const ab=$('adminBtn'); let raf=0, t0=0, on=false;
   const stop=()=>{on=false; cancelAnimationFrame(raf); ab.style.setProperty('--p',0);};
   ab.addEventListener('pointerdown',e=>{
-    e.preventDefault(); try{ab.setPointerCapture(e.pointerId);}catch(_){}
+    e.preventDefault();
+    if(S.admin){ setAdmin(false); return; }   /* 끌 때는 바로 */
+    try{ab.setPointerCapture(e.pointerId);}catch(_){}
     on=true; t0=performance.now();
     const tick=()=>{ if(!on) return;
       const p=Math.min(1,(performance.now()-t0)/3000); ab.style.setProperty('--p',p);
-      if(p>=1){stop(); setAdmin(!S.admin); return;} raf=requestAnimationFrame(tick); };
+      if(p>=1){stop(); setAdmin(true); return;} raf=requestAnimationFrame(tick); };
     raf=requestAnimationFrame(tick);
   });
   ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ab.addEventListener(ev,stop));
   ab.addEventListener('contextmenu',e=>e.preventDefault());
 })();
+/* ===== 교사 모드 설정 패널 ===== */
+let panelSnap=null;
+function optHTML(name,val,cur,t,d,off){ return `<label class="opt${off?' off':''}"><input type="radio" name="ap_${name}" value="${val}" ${String(cur)===String(val)?'checked':''} ${off?'disabled':''}><div><b>${t}</b>${d?`<span>${d}</span>`:''}</div></label>`; }
+function openPanel(){
+  const top=document.querySelector('.top'), ap=$('adminPanel');
+  requestAnimationFrame(()=>{ ap.style.setProperty('--ap-top',(top.getBoundingClientRect().bottom+10)+'px'); ap.style.setProperty('--ap-bot','76px'); });
+  panelSnap={level:S.level,paint:S.paint,engine:S.engine,timbre:S.timbre};
+  const noCloud=!S.cloudKey;
+  ap.classList.remove('folded');
+  ap.innerHTML=`<div class="ap-head"><h2>수업 설정</h2><button class="ap-fold" id="apFold" type="button">접기</button></div>
+  <div class="ap-body">
+    <div class="ap-group" id="ap-level"><h3>단계</h3><div class="opts">
+      ${optHTML('level',1,S.level,'1단계','도형 이름')}${optHTML('level',2,S.level,'2단계','변과 꼭짓점')}${optHTML('level',3,S.level,'3단계','각')}
+    </div></div>
+    <div class="ap-group" id="ap-showSec"><h3>도형 하나를 보여 주는 시간</h3><div class="opts">
+      ${optHTML('showSec',4,S.showSec,'4초','')}${optHTML('showSec',6,S.showSec,'6초','기본')}${optHTML('showSec',8,S.showSec,'8초','')}
+    </div></div>
+    <div class="ap-group" id="ap-paint"><h3>붓으로 칠하기</h3><div class="opts">
+      ${optHTML('paint','on',S.paint?'on':'off','켬','')}${optHTML('paint','off',S.paint?'on':'off','끔','')}
+    </div></div>
+    <div class="ap-group" id="ap-voice"><h3>목소리</h3><div class="opts">
+      ${optHTML('engine','cloud',S.engine,'Google 음성','',noCloud)}${optHTML('engine','device',S.engine,'기기 목소리','')}
+    </div>
+    <div class="opts" id="apTimbre" style="margin-top:8px" ${S.engine==='cloud'?'':'hidden'}>
+      ${optHTML('timbre','Leda',S.timbre,'밝은','')}${optHTML('timbre','Aoede',S.timbre,'산뜻한','')}${optHTML('timbre','Kore',S.timbre,'또렷한','')}
+    </div>
+    ${noCloud?'<p class="ap-hint">Google 음성은 위쪽 <b>설정</b>에서 키를 넣으면 쓸 수 있어요.</p>':''}</div>
+    <div class="ap-group" id="ap-error"><h3>틀렸을 때</h3><div class="opts">
+      ${optHTML('errorMode','show',S.errorMode,'바로 정답','무오류 학습')}${optHTML('errorMode','retry',S.errorMode,'한 번 더 기회','')}
+    </div></div>
+    <div class="ap-foot"><button class="btn" id="apHelp" type="button">도움말</button><button class="btn primary ap-start" id="apStart" type="button">새 설정으로 시작하기</button></div>
+  </div>`;
+  ap.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
+    const n=r.name.slice(3), v=r.value;
+    if(n==='level'){S.level=+v; store.set('level',S.level);}
+    if(n==='showSec'){S.showSec=+v; store.set('showSec',S.showSec);}
+    if(n==='paint'){S.paint=v==='on'; store.set('paint',v);}
+    if(n==='errorMode'){S.errorMode=v; store.set('errorMode',S.errorMode);}
+    if(n==='engine'){S.engine=v; store.set('engine',S.engine); $('apTimbre').hidden=v!=='cloud';}
+    if(n==='timbre'){S.timbre=v; store.set('timbre',S.timbre);}
+  });
+  $('apFold').onclick=()=>{ const f=ap.classList.toggle('folded'); $('apFold').textContent=f?'펴기':'접기'; };
+  if(S.stage==='end'){ ap.classList.add('folded'); $('apFold').textContent='펴기'; }  /* 끝 화면은 교사용 버튼이 가리지 않게 접어서 */
+  $('apHelp').onclick=startCoach;
+  $('apStart').onclick=restartWithPanel;
+}
+/* 패널에서 바꾼 설정을 수업에 반영 (화면 이동은 하지 않음) */
+function applySettings(o){
+  if(!o) return false;
+  if(o.engine!==S.engine||o.timbre!==S.timbre){ stopVoice(); chooseEngine(); if(S.shapes.length) prefetchVoice(FIXED_LINES()); }
+  const lvl=o.level!==S.level;
+  if(S.shapes.length && (lvl || o.paint!==S.paint)){ const log=S.log; buildLesson(S.shapes); if(!lvl) S.log=log; }
+  return lvl;
+}
+function adminOffFlags(){
+  closeCoach(); S.admin=false; document.body.classList.remove('admin'); $('abLabel').textContent='charum';
+  $('adminBtn').setAttribute('aria-label','교사 모드: 3초 동안 누르기');
+}
+/* 관리 버튼 한 번 눌러 끄기: 새 설정으로, 멈춘 그 단계의 처음부터 */
+function restartCurrentStage(){
+  const o=panelSnap; panelSnap=null;
+  if(!o){ resumeLesson(); return; }
+  applySettings(o);
+  const st=S.stage, v=S.view;
+  const go = st==='learn' ? ()=>{ S.li=0; showLearn(); }
+           : st==='find'  ? ()=>{ S.ti=0; showFind(); }
+           : st==='end'   ? ()=>showEnd()
+           : v==='photo'  ? ()=>showPhoto()
+           : v==='brush'  ? ()=>showBrush()
+           : v==='reveal' ? ()=>showReveal()
+           : null;                       /* 사진을 불러오거나 분석 중이면 하던 대로 이어서 */
+  if(!go || ((st==='learn'||st==='find'||st==='end') && !S.shapes.length)){ resumeLesson(); return; }
+  dropPause(); go();
+}
+/* 새 설정으로 시작하기: 사진 고르기부터 새로 */
+function restartWithPanel(){
+  const o=panelSnap; panelSnap=null;
+  if(o && (o.engine!==S.engine||o.timbre!==S.timbre)){ stopVoice(); chooseEngine(); }
+  adminOffFlags(); dropPause();
+  newSession(); showPhoto();
+}
+/* 위 단계 메뉴: 설정을 반영하고 교사 모드를 닫은 뒤 그 단계로 */
+function leaveAdminQuiet(){
+  if(!S.admin) return;
+  const o=panelSnap; panelSnap=null; applySettings(o); adminOffFlags();
+}
+/* 도움말: 설정마다 코치마크 */
+const COACH=[
+  ['.schedule','단계 메뉴','누르면 그 단계(사진·배우기·찾기·끝)로 바로 가요. 지금 하는 단계에 "지금"이 붙어 있어요.'],
+  ['#soundBtn','소리','목소리를 켜고 꺼요.'],
+  ['#setupBtn','설정','처음 설정 화면으로 가요. Gemini 키, Google 음성 키를 넣거나 바꿀 때 써요. 수업은 처음부터 다시 해요.'],
+  ['#ap-level','단계','1단계는 도형 이름, 2단계는 변과 꼭짓점, 3단계는 각과 직각을 배워요.'],
+  ['#ap-showSec','보여 주는 시간','배우기에서 도형 하나를 보여 주는 시간이에요. 집중 시간이 짧으면 4초, 천천히 보면 8초.'],
+  ['#ap-paint','붓으로 칠하기','켜면 도형을 배운 뒤 붓으로 직접 칠해요. 끄면 보기만 하고 넘어가요.'],
+  ['#ap-voice','목소리','Google 음성은 자연스럽고, 기기 목소리는 키 없이 바로 나와요. 한 수업은 한 목소리로 말해요.'],
+  ['#ap-error','틀렸을 때','바로 정답: 틀리면 정답 자리를 바로 보여 줘요(무오류 학습). 한 번 더 기회: 한 번 더 해 보고, 또 틀리면 보여 줘요.'],
+  ['#apStart','새 설정으로 시작하기','바꾼 설정으로 사진 고르기부터 새로 시작해요.'],
+  ['#adminBtn','관리 버튼','3초 누르면 교사 모드가 켜지고 수업이 멈춰요. 켜져 있을 때 한 번 누르면 바꾼 설정으로, 멈췄던 단계의 처음부터 다시 해요.']
+];
+let coachEl=null;
+function closeCoach(){ if(coachEl){ coachEl.remove(); coachEl=null; } }
+function startCoach(){
+  closeCoach();
+  const ap=$('adminPanel'); ap.classList.remove('folded'); const fb=$('apFold'); if(fb) fb.textContent='접기';
+  const list=COACH.filter(([sel])=>{ const el=document.querySelector(sel); if(!el) return false; const r=el.getBoundingClientRect(); return r.width>0 && getComputedStyle(el).visibility!=='hidden'; });
+  coachEl=document.createElement('div'); coachEl.className='coach';
+  coachEl.innerHTML='<div class="coach-hole"></div><div class="coach-tip" role="dialog" aria-live="polite"></div>';
+  document.body.appendChild(coachEl);
+  const hole=coachEl.querySelector('.coach-hole'), tip=coachEl.querySelector('.coach-tip');
+  let i=0;
+  const show=()=>{
+    const [sel,title,text]=list[i], el=document.querySelector(sel);
+    el.scrollIntoView({block:'nearest'});
+    const r=el.getBoundingClientRect(), pad=6;
+    Object.assign(hole.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});
+    tip.innerHTML=`<b>${title}</b>${text}<div class="coach-nav"><span class="cnt">${i+1} / ${list.length}</span>${i>0?'<button type="button" data-a="prev">이전</button>':''}<button type="button" class="pri" data-a="${i<list.length-1?'next':'close'}">${i<list.length-1?'다음':'다 봤어요'}</button><button type="button" data-a="close">닫기</button></div>`;
+    const tw=Math.min(340,innerWidth-24); tip.style.width=tw+'px';
+    const th=tip.offsetHeight;
+    let top, left=r.left+r.width/2-tw/2;
+    if(r.bottom+14+th<=innerHeight-12) top=r.bottom+14;
+    else if(r.top-14-th>=12) top=r.top-14-th;
+    else { top=Math.max(12,Math.min(innerHeight-th-12,r.top)); left=r.left-tw-16; if(left<12) left=r.right+16; }
+    tip.style.top=top+'px'; tip.style.left=Math.max(12,Math.min(innerWidth-tw-12,left))+'px';
+  };
+  tip.addEventListener('click',e=>{ const a=e.target.dataset&&e.target.dataset.a; if(!a) return;
+    if(a==='next'){ i++; show(); } else if(a==='prev'){ i--; show(); } else closeCoach(); });
+  coachEl.addEventListener('pointerdown',e=>{ if(e.target===coachEl) e.preventDefault(); });
+  show();
+}
 function setAdmin(on){
   S.admin=on; document.body.classList.toggle('admin',on);
-  $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 3초 동안 누르기':'교사 모드: 3초 동안 누르기');
+  $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 한 번 누르기':'교사 모드: 3초 동안 누르기');
   $('abLabel').textContent = on ? '심' : 'charum';
-  if(on) pauseLesson(); else resumeLesson();
+  if(on){ pauseLesson(); openPanel(); }
+  else { closeCoach(); restartCurrentStage(); }
   requestAnimationFrame(refit);
 }
 document.addEventListener('contextmenu',e=>{ if(!document.body.classList.contains('setup')) e.preventDefault(); });
@@ -650,7 +814,7 @@ function setSchedule(stageKey){
   const idx=STAGES.findIndex(s=>s.key===stageKey);
   const ready=S.shapes.length>0;
   $('schedule').innerHTML=STAGES.map((s,i)=>`<li class="${i===idx?'now':i<idx?'done':''}">${i===idx?'<span class="now-tag">지금</span>':''}<button class="stage-btn" type="button" data-k="${s.key}" ${s.key!=='photo'&&!ready?'disabled':''}>${s.icon}<span class="lbl">${s.label}</span></button></li>`).join('');
-  $('schedule').querySelectorAll('.stage-btn').forEach(b=>b.onclick=()=>goStage(b.dataset.k));
+  $('schedule').querySelectorAll('.stage-btn').forEach(b=>b.onclick=()=>{ const k=b.dataset.k; leaveAdminQuiet(); goStage(k); });
 }
 /* 교사 모드: 위 메뉴로 단계 이동 */
 function goStage(k){
@@ -663,7 +827,7 @@ function goStage(k){
 }
 function setFooter({next=null,dots=null}={}){
   const nb=$('nextBtn');
-  nb.style.visibility=next?'visible':'hidden'; nb.onclick=next?(()=>{ dropPause(); PT.forEach(o=>{ if(o.id==null) o.arm(); }); next(); }):null;
+  nb.style.visibility=next?'visible':'hidden'; nb.onclick=next?(()=>{ leaveAdminQuiet(); dropPause(); PT.forEach(o=>{ if(o.id==null) o.arm(); }); next(); }):null;
   $('dots').innerHTML=dots?Array.from({length:dots[0]},(_,i)=>`<i class="${i<dots[1]?'on':i===dots[1]?'cur':''}"></i>`).join(''):'';
 }
 function screen(stage, view, html, say, footer){
@@ -829,7 +993,7 @@ function unionPx(list){
 
 /* ================= 교사 설정 ================= */
 function showSetup(o={}){
-  dropPause(); clearTimers(); token++; fitIds=[];
+  panelSnap=null; closeCoach(); dropPause(); clearTimers(); token++; fitIds=[];
   if('speechSynthesis' in window) speechSynthesis.cancel();
   document.body.classList.add('setup'); setAdmin(false);
   const opt=(name,val,cur,t,d)=>`<label class="opt"><input type="radio" name="${name}" value="${val}" ${String(cur)===String(val)?'checked':''}><div><b>${t}</b><span>${d}</span></div></label>`;
@@ -898,7 +1062,7 @@ function showSetup(o={}){
       </div>
     </div>
 
-    <p class="note"><b>학생 화면에서는 메뉴가 모두 숨겨져요.</b> 화면 오른쪽 아래의 옅은 동그라미를 <b>3초 동안 누르면</b> 교사 모드가 켜지고 메뉴(단계 이동, 다음, 다시 듣기, 소리, 설정)가 나타나요. 시작을 누르면 전체 화면으로 바뀌어요. 교사 모드에서는 위쪽의 <b>사진 · 배우기 · 찾기 · 끝</b>을 눌러 원하는 단계로 바로 갈 수 있어요. 한 번 더 3초 누르면 꺼져요.<br>
+    <p class="note"><b>학생 화면에서는 메뉴가 모두 숨겨져요.</b> 화면 오른쪽 아래의 옅은 동그라미(charum)를 <b>3초 동안 누르면</b> 교사 모드가 켜지고 수업이 멈춰요. 오른쪽에 <b>수업 설정</b>(단계·시간·칠하기·목소리·틀렸을 때)이 나오고, 맨 아래 <b>도움말</b>을 누르면 설정마다 설명이 나와요. 위쪽 <b>사진 · 배우기 · 찾기 · 끝</b>으로 원하는 단계로 바로 갈 수 있어요. 동그라미를 <b>한 번 누르면</b> 바꾼 설정으로, 멈췄던 단계의 처음부터 다시 해요. <b>새 설정으로 시작하기</b>는 사진 고르기부터 새로 시작해요. 시작을 누르면 전체 화면으로 바뀌어요.<br>
     마지막 화면의 만화 그림은 Gemini 그림 모델로 만들어요. 키에 그림 모델 사용 권한이 없으면 도형을 칠한 사진이 대신 나와요.<br>
     사진은 분석을 위해 Google Gemini로 보내집니다. 학생 얼굴이나 이름이 보이는 사진은 피해 주세요. 소리는 기본으로 켜져 있어요.</p>
 
