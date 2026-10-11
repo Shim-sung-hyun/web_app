@@ -104,10 +104,12 @@ body.solo #soloBtns{display:flex}
 .pc.gone{opacity:0}
 
 /* ---------- 교사 모드: 떠 있는 두 줄 ---------- */
-.dock{position:fixed;left:50%;transform:translateX(-50%);z-index:30;display:none;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;
+.dock{position:fixed;left:0;right:0;margin:0 auto;width:fit-content;z-index:30;display:none;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;
   max-width:calc(100% - 24px);padding:8px 10px;border-radius:22px;background:rgba(15,36,48,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 0 0 1px rgba(251,235,214,.14)}
 #dockTop{top:10px} #dockBot{bottom:12px}
+/* 도움말: 교사 메뉴 오른쪽 위 끝 */
+#helpTop{left:auto;right:12px;margin:0;padding:6px}
 body.admin:not(.setup) .dock{display:flex}
 .dock .grp{display:flex;align-items:center;gap:4px;padding:0 6px}
 .dock .grp+.grp{border-left:1px solid rgba(251,235,214,.18)}
@@ -158,6 +160,20 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
   .pa-log{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:3mm}
   .pa-log td{border:1px solid #999;padding:1.2mm 2mm;text-align:left}
 }
+/* ---------- 도움말: 말풍선 둘러보기 ---------- */
+#tour{position:fixed;inset:0;z-index:70;display:none}
+#tour.show{display:block}
+#tourHole{position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(5,14,20,.62);transition:all .25s ease;pointer-events:none}
+#tourTip{position:fixed;width:min(340px,calc(100% - 24px));background:var(--cream);color:var(--ink);border-radius:16px;box-shadow:0 14px 40px rgba(0,0,0,.45);padding:16px 18px 12px;transition:top .25s ease,left .25s ease;font-family:var(--f-body)}
+#tourTip::before{content:"";position:absolute;left:var(--ax,40px);width:16px;height:16px;background:var(--cream);transform:rotate(45deg)}
+#tourTip.below::before{top:-7px} #tourTip.above::before{bottom:-7px}
+#tourTip h4{margin:0 0 6px;font-size:17px;font-family:var(--f-display);font-weight:400}
+#tourTip p{margin:0;font-size:14.5px;line-height:1.6}
+.tour-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.tour-foot span{font-size:12.5px;color:var(--muted);font-weight:700}
+.tour-foot div{display:flex;gap:6px}
+.tour-foot button{border:0;border-radius:10px;min-height:40px;padding:6px 14px;font-weight:700;font-size:14px;background:#EAD6BB;color:var(--ink);font-family:var(--f-body)}
+.tour-foot button.next{background:var(--coral)}
 @media (prefers-reduced-motion:reduce){.pc.anim,.pc.scatter,.pboard .full,.pc.placed,#prog i,#doneLabel{transition:none}}
 </style>
 </head>
@@ -174,8 +190,11 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
 </div>
 <div class="dock" id="dockTop"></div>
 <div class="dock" id="dockBot"></div>
+<div class="dock" id="helpTop"></div>
 <div id="logPop" hidden></div>
 <button id="adminBtn" type="button" aria-label="교사 모드: 3초 동안 누르기"><span class="ab-label" id="abLabel">charum</span></button>
+<div id="tour"><div id="tourHole"></div><div id="tourTip" class="below"><h4 id="tourTitle"></h4><p id="tourText"></p>
+  <div class="tour-foot"><span id="tourStep"></span><div><button type="button" id="tourEnd">그만</button><button type="button" class="next" id="tourNext">다음</button></div></div></div></div>
 <div id="printArea"></div>
 
 <script>
@@ -196,7 +215,9 @@ const ICON={
   log:'<svg class="ic" viewBox="0 0 24 24"><path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/></svg>',
   sndOn:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>',
   sndOff:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/></svg>',
-  gear:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>'
+  gear:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
+  play:'<svg class="ic" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>',
+  q:'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.4 9.4a2.7 2.7 0 1 1 3.7 2.5c-.7.3-1.1.9-1.1 1.7v.5M12 17.2h.01"/></svg>'
 };
 /* 단계: 가로 5칸 고정, 줄 수 = 단계 */
 const LEVELS={1:{cols:5,rows:1},2:{cols:5,rows:2},3:{cols:5,rows:3},4:{cols:5,rows:4},5:{cols:5,rows:5}};
@@ -248,24 +269,33 @@ function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscree
 $('play').addEventListener('pointerdown',()=>{ if(!document.body.classList.contains('setup')) goFull(); },true);
 document.addEventListener('contextmenu',e=>{ if(!document.body.classList.contains('setup')) e.preventDefault(); });
 
-/* ================= 교사 모드 버튼 (3초 누르기) ================= */
+/* ================= 교사 모드 버튼 =================
+   열 때: 3초 동안 누르기 (학생이 실수로 열지 않게)
+   닫을 때: 한 번 누르면 바로 학생 화면(전체 화면) */
 (function(){
-  const ab=$('adminBtn'); let raf=0, t0=0, on=false;
+  const ab=$('adminBtn'); let raf=0, t0=0, on=false, justOpened=false, ignoreUntil=0;
   const stop=()=>{on=false; cancelAnimationFrame(raf); ab.style.setProperty('--p',0);};
   ab.addEventListener('pointerdown',e=>{
-    e.preventDefault(); e.stopPropagation(); try{ab.setPointerCapture(e.pointerId);}catch(_){}
+    e.preventDefault(); e.stopPropagation();
+    if(S.admin) return; /* 닫기는 click에서 바로 */
+    try{ab.setPointerCapture(e.pointerId);}catch(_){}
     on=true; t0=performance.now();
     const tick=()=>{ if(!on) return;
       const p=Math.min(1,(performance.now()-t0)/3000); ab.style.setProperty('--p',p);
-      if(p>=1){stop(); setAdmin(!S.admin); return;} raf=requestAnimationFrame(tick); };
+      if(p>=1){stop(); justOpened=true; setAdmin(true); return;} raf=requestAnimationFrame(tick); };
     raf=requestAnimationFrame(tick);
   });
-  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ab.addEventListener(ev,stop));
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ab.addEventListener(ev,()=>{ stop(); if(justOpened){ justOpened=false; ignoreUntil=performance.now()+500; } }));
+  ab.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(performance.now()<ignoreUntil) return; /* 3초 눌러 연 직후 손을 뗄 때 생기는 click은 무시 */
+    if(S.admin){ setAdmin(false); goFull(); }
+  });
   ab.addEventListener('contextmenu',e=>e.preventDefault());
 })();
 function setAdmin(on){
   S.admin=on; document.body.classList.toggle('admin',on);
-  $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 3초 동안 누르기':'교사 모드: 3초 동안 누르기');
+  $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 한 번 누르기':'교사 모드: 3초 동안 누르기');
   $('abLabel').textContent=on?'심':'charum';
   if(!on) $('logPop').hidden=true;
   renderDocks();
@@ -277,13 +307,14 @@ function renderDocks(){
   const R=S.R, done=!!(R&&R.done);
   const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
   $('dockTop').innerHTML=
-    `<div class="grp"><span class="lbl">단계</span>${Object.keys(LEVELS).map(l=>b('lv:'+l,l,+l===S.level,`title="${pieceCount(+l)}조각"`)).join('')}</div>`+
-    `<div class="grp"><span class="lbl">모양</span>${Object.keys(SHAPES).map(k=>b('sh:'+k,SHAPES[k].replace(' 모양',''),k===S.shape)).join('')}</div>`+
-    `<div class="grp"><span class="lbl">밑그림</span>${Object.keys(GHOSTS).map(k=>b('gh:'+k,GHOSTS[k].replace('안 보이게','없음'),+k===S.ghost)).join('')}</div>`+
+    `<div class="grp" id="gLv"><span class="lbl">단계</span>${Object.keys(LEVELS).map(l=>b('lv:'+l,l,+l===S.level,`title="${pieceCount(+l)}조각"`)).join('')}</div>`+
+    `<div class="grp" id="gSh"><span class="lbl">모양</span>${Object.keys(SHAPES).map(k=>b('sh:'+k,SHAPES[k].replace(' 모양',''),k===S.shape)).join('')}</div>`+
+    `<div class="grp" id="gGh"><span class="lbl">밑그림</span>${Object.keys(GHOSTS).map(k=>b('gh:'+k,GHOSTS[k].replace('안 보이게','없음'),+k===S.ghost)).join('')}</div>`+
     `<div class="grp">${b('sfx',(S.sfx?ICON.sndOn:ICON.sndOff)+(S.sfx?'효과음':'효과음 끔'),S.sfx)}${b('setup',ICON.gear+'설정')}</div>`;
+  $('helpTop').innerHTML=b('tour',ICON.q+'도움말');
   $('dockBot').innerHTML = !R ? '' : done
-    ? `<div class="grp">${b('again',ICON.redo+'같은 그림 다시')}${S.level<5?b('nextlv',ICON.next+'다음 단계','', 'class="big"'):''}${b('setup',ICON.photo+'다른 사진으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
-    : `<div class="grp">${b('help',ICON.help+'한 조각 도와주기',null,`class="big" ${R&&R.active?'':'disabled'}`)}${b('mix',ICON.mix+'다시 섞기',null,R&&R.active?'':'disabled')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`;
+    ? `<div class="grp">${b('student',ICON.play+'학생 화면으로',null,'class="big"')}</div><div class="grp">${b('again',ICON.redo+'같은 그림 다시')}${S.level<5?b('nextlv',ICON.next+'다음 단계'):''}${b('setup',ICON.photo+'다른 사진으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
+    : `<div class="grp">${b('student',ICON.play+'학생 화면으로',null,'class="big"')}</div><div class="grp">${b('mix',ICON.mix+'다시 섞기',null,R&&R.active?'':'disabled')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`;
 }
 function onDock(e){
   const btn=e.target.closest('button[data-a]'); if(!btn) return;
@@ -293,14 +324,16 @@ function onDock(e){
   if(a==='gh'){ S.ghost=+v; store.set('ghost',S.ghost); applyGhost(); renderDocks(); }
   if(a==='sfx'){ S.sfx=!S.sfx; store.set('sfx',S.sfx?'on':'off'); renderDocks(); }
   if(a==='setup'){ leaveFull(); showSetup(); }
-  if(a==='help') helpOne();
+  /* 학생 화면으로: 메뉴를 닫고 바로 전체 화면으로 (들어올 때만 3초) */
+  if(a==='student'){ setAdmin(false); goFull(); return; }
+  if(a==='tour'){ startTour(); return; }
   if(a==='mix') remix();
   if(a==='again') startRound();
   if(a==='nextlv'){ S.level=Math.min(5,S.level+1); store.set('level',S.level); startRound(); }
   if(a==='print') printSheet();
   if(a==='log'){ $('logPop').hidden=!$('logPop').hidden; renderLog(); renderDocks(); }
 }
-$('dockTop').addEventListener('click',onDock); $('dockBot').addEventListener('click',onDock);
+$('dockTop').addEventListener('click',onDock); $('dockBot').addEventListener('click',onDock); $('helpTop').addEventListener('click',onDock);
 function fmtTime(ms){ const s=Math.round(ms/1000); return s<60?`${s}초`:`${Math.floor(s/60)}분 ${s%60}초`; }
 function renderLog(){
   const rows=S.rounds.map((l,i)=>`<tr><td>${i+1}</td><td>${l.level}단계 · ${SHAPES[l.shape]}</td><td>${l.n}</td><td>${l.first}</td><td>${l.helped}</td><td>${fmtTime(l.ms)}</td></tr>`).join('');
@@ -388,7 +421,7 @@ function showSetup(){
       ${tile('sfx','on',S.sfx?'on':'off','켬<small>맞추면 작게 "톡"</small>')}
       ${tile('sfx','off',S.sfx?'on':'off','끔<small>소리 없이</small>')}
     </div>
-      <p class="hint">학생 화면에는 메뉴가 없어요. 오른쪽 아래 옅은 동그라미를 <b>3초 동안 누르면</b> 교사 메뉴(단계·모양·밑그림, 한 조각 도와주기, 다시 섞기, 기록, 출력, 설정)가 나타나요.</p>
+      <p class="hint">학생 화면에는 메뉴가 없어요. 오른쪽 아래 옅은 동그라미를 <b>3초 동안 누르면</b> 교사 메뉴(단계·모양·밑그림, 학생 화면으로, 다시 섞기, 기록, 출력, 설정, 도움말)가 나타나요. 다 바꾼 뒤 <b>학생 화면으로</b>를 누르면 바로 전체 화면으로 이어서 해요.</p>
     </div>
     <div class="paper-foot">
       <button class="pbtn" id="demoBtn" type="button">예시 사진으로 해 보기</button>
@@ -557,7 +590,7 @@ function layout(){
   const list=R.pieces.filter(p=>!p.placed);
   const slots=shuffleArr(G.slots.slice()).slice(0,list.length);
   slots.sort((a,b)=>a.k-b.k);
-  shuffleArr(list).forEach((p,i)=>{ p.slot={x:slots[i].x,y:slots[i].y,s:G.s}; if(!p.dragging&&(R.active||R.done)){ p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; } });
+  shuffleArr(list).forEach((p,i)=>{ p.slot={x:slots[i].x,y:slots[i].y,s:G.s}; if(!p.dragging&&(R.active||R.done)){ if(p.free) clampPiece(p); else { p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; } } });
   R.pieces.forEach(p=>{ if(p.placed){ p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1; } if(!p.dragging) setPos(p); });
   if(R.cue) showTarget(R.cue);
   placeDoneLabel();
@@ -614,6 +647,8 @@ function drawPiece(p){
   ctx.lineJoin='round'; ctx.lineWidth=1.4; ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.stroke();
 }
 function setPos(p){ p.el.style.transform=`translate(${p.x}px,${p.y}px) scale(${p.s})`; }
+function clampPiece(p){ const pl=$('play'), W=pl.clientWidth, H=pl.clientHeight, w=G.EW*p.s, h=G.EH*p.s; p.x=Math.min(Math.max(0,p.x),W-w); p.y=Math.min(Math.max(0,p.y),H-h);
+  if(p.x+w>W-74&&p.y+h>H-74) p.x=Math.max(0,W-74-w); /* 관리 버튼은 가리지 않게 */ }
 function updateProgress(){ const R=S.R; if(!R) return; $('progFill').style.width=(R.pieces.filter(p=>p.placed).length/R.pieces.length*100)+'%'; }
 function showTarget(p){ hideTarget(); const t=document.createElementNS('http://www.w3.org/2000/svg','path'); t.setAttribute('class','target'); t.id='target'; t.setAttribute('d',chainD(pieceChain(p,S.R,G))+'Z'); $('guide').appendChild(t); }
 function hideTarget(){ const t=$('target'); if(t) t.remove(); }
@@ -649,14 +684,15 @@ function drop(p){
   if(Math.hypot(p.x-cx,p.y-cy)<thr){ place(p,false); return; }
   const mx=p.x+G.EW/2, my=p.y+G.EH/2;
   const over=mx>G.ix-10&&mx<G.ix+G.iw+10&&my>G.iy-10&&my<G.iy+G.ih+10;
-  p.el.classList.add('anim'); p.x=p.slot.x; p.y=p.slot.y; p.s=p.slot.s; setPos(p);
+  /* 맞추지 못하면 원래 자리로 돌아가지 않고 놓은 곳에 그대로 (화면 밖으로는 안 나가게) */
+  p.free=true; clampPiece(p); setPos(p); $('play').appendChild(p.el);
   if(over){ p.miss++; if(S.errorMode==='show'||(S.errorMode==='retry'&&p.miss>=2)) cue(p); }
 }
 /* 조각과 제자리를 같은 색으로 표시 */
 function cue(p){ const R=S.R; if(R.cue&&R.cue!==p) R.cue.el.classList.remove('cue'); R.cue=p; p.el.classList.add('cue'); showTarget(p); }
 function place(p,byHelp){
   const R=S.R;
-  p.placed=true; if(byHelp) p.help=true;
+  p.placed=true; p.free=false; if(byHelp) p.help=true;
   p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1;
   p.el.classList.toggle('anim',byHelp); p.el.classList.remove('cue'); p.el.classList.add('placed','snap'); setPos(p);
   setTimeout(()=>p.el.classList.remove('snap'),byHelp?380:60);
@@ -664,18 +700,12 @@ function place(p,byHelp){
   sfx('snap'); updateProgress();
   if(R.pieces.every(x=>x.placed)) complete();
 }
-/* 교사: 한 조각 도와주기 (도움 받아 맞힘으로 기록) */
-function helpOne(){
-  const R=S.R; if(!R||!R.active) return;
-  const p=(R.cue&&!R.cue.placed)?R.cue:R.pieces.filter(x=>!x.placed).sort((a,b)=>a.order-b.order)[0];
-  if(p) place(p,true);
-}
 /* 교사: 남은 조각 다시 섞기 */
 function remix(){
   const R=S.R; if(!R||!R.active) return;
   if(R.cue){ R.cue.el.classList.remove('cue'); R.cue=null; hideTarget(); }
   const list=R.pieces.filter(p=>!p.placed), slots=shuffleArr(G.slots.slice()).slice(0,list.length);
-  list.forEach((p,i)=>{ p.slot={x:slots[i].x,y:slots[i].y,s:G.s}; p.el.classList.add('anim'); p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; setPos(p); });
+  list.forEach((p,i)=>{ p.free=false; p.slot={x:slots[i].x,y:slots[i].y,s:G.s}; p.el.classList.add('anim'); p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; setPos(p); });
 }
 function complete(){
   const R=S.R; R.active=false; R.done=true;
@@ -706,9 +736,53 @@ async function printSheet(){
   window.print();
 }
 
+/* ================= 도움말: 교사 메뉴를 말풍선으로 하나씩 ================= */
+const TOUR_STEPS=[
+  {el:'#gLv', t:'단계', x:'줄 수를 정해요. 1단계 5조각부터 5단계 25조각까지. 누르면 바로 새 판이 시작돼요.'},
+  {el:'#gSh', t:'모양', x:'둥근 꼭지가 있는 퍼즐 모양과 곧은 선의 사각형 가운데 골라요.'},
+  {el:'#gGh', t:'밑그림', x:'판에 보이는 그림의 진하기예요. 익숙해질수록 흐리게, 없음으로 바꿔요.'},
+  {el:'#dockTop [data-a="sfx"]', t:'효과음', x:'조각을 맞출 때 나는 작은 소리를 켜고 꺼요.'},
+  {el:'#dockTop [data-a="setup"]', t:'설정', x:'처음 설정 화면으로 가서 사진, 누가 쓰는지, 다른 자리에 놓았을 때의 도움 방식을 바꿔요.'},
+  {el:'#dockBot [data-a="student"]', t:'학생 화면으로', x:'메뉴를 닫고 바로 전체 화면으로 학생이 이어서 해요. 메뉴는 오른쪽 아래 동그라미를 3초 누르면 다시 열려요.'},
+  {el:'#dockBot [data-a="mix"]', t:'다시 섞기', x:'남은 조각을 판 둘레에 다시 흩어 놓아요. 학생이 아무 데나 놓아 둔 조각도 정리돼요.'},
+  {el:'#dockBot [data-a="again"]', t:'같은 그림 다시', x:'같은 사진으로 한 번 더 해요.'},
+  {el:'#dockBot [data-a="nextlv"]', t:'다음 단계', x:'조각을 한 줄 늘려 다시 해요.'},
+  {el:'#dockBot [data-a="setup"]', t:'다른 사진으로', x:'설정 화면에서 다른 사진을 골라요.'},
+  {el:'#dockBot [data-a="print"]', t:'출력', x:'오려서 맞추는 종이 퍼즐과 기록을 A4 한 장으로 인쇄해요.'},
+  {el:'#dockBot [data-a="log"]', t:'기록', x:'다 맞춘 판마다 바로 맞힘, 도움 받아 맞힘(제자리 표시를 본 조각), 걸린 시간을 보여 줘요.'},
+  {el:'#adminBtn', t:'관리 버튼', x:'이 동그라미를 3초 누르면 교사 메뉴가 열려요(학생이 실수로 열지 않게). 메뉴가 열려 있을 때 한 번 누르면 바로 학생 화면으로 돌아가요.'}
+];
+const TOUR={on:false,i:0,list:[]};
+function startTour(){
+  $('logPop').hidden=true; renderDocks();
+  TOUR.list=TOUR_STEPS.filter(s=>document.querySelector(s.el)); TOUR.i=0; TOUR.on=true;
+  $('tour').classList.add('show'); showStep();
+}
+function showStep(){
+  const s=TOUR.list[TOUR.i]; if(!s) return endTour();
+  $('tourTitle').textContent=s.t; $('tourText').textContent=s.x;
+  $('tourStep').textContent=(TOUR.i+1)+' / '+TOUR.list.length;
+  $('tourNext').textContent=TOUR.i===TOUR.list.length-1?'끝':'다음';
+  placeTour();
+}
+function placeTour(){
+  const s=TOUR.list[TOUR.i]; if(!s) return; const el=document.querySelector(s.el); if(!el) return;
+  const r=el.getBoundingClientRect(), pad=6, hole=$('tourHole'), tip=$('tourTip');
+  Object.assign(hole.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});
+  const tw=tip.offsetWidth, th=tip.offsetHeight;
+  const below=r.bottom+pad+14+th<innerHeight-8 || r.top-pad-14-th<8;
+  const top=below?r.bottom+pad+14:r.top-pad-14-th, left=Math.min(Math.max(12,r.left+r.width/2-tw/2),innerWidth-tw-12);
+  tip.className=below?'below':'above'; tip.style.top=top+'px'; tip.style.left=left+'px';
+  tip.style.setProperty('--ax',Math.min(tw-28,Math.max(12,r.left+r.width/2-left-8))+'px');
+}
+function endTour(){ TOUR.on=false; $('tour').classList.remove('show'); }
+$('tourNext').addEventListener('click',()=>{ TOUR.i++; showStep(); });
+$('tourEnd').addEventListener('click',endTour);
+document.addEventListener('keydown',e=>{ if(TOUR.on&&e.key==='Escape') endTour(); });
+
 /* 화면 크기가 바뀌면(전체 화면, 돌리기, 교사 메뉴) 맞춘 조각은 그대로 두고 다시 배치 */
 let rzT=null;
-window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(layout,150); });
+window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ layout(); if(TOUR.on) placeTour(); },150); });
 
 /* ================= 시작 ================= */
 $('againBtn').innerHTML=ICON.redo+'다시 하기'; $('otherBtn').innerHTML=ICON.photo+'다른 사진';
