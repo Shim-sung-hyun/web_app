@@ -14,4 +14,6 @@
 파일
   shape-finder.html          웹앱
   shape-finder01~05.jpg      화면 그림 (붓 고르기, 사진 속 도형, 배우기, 칠하기, 찾기)
+  cloud-key.html             Cloud 키 넣는 방법 안내 페이지 (설정 화면 목소리 칸에서 연결)
+                             주소: https://shim-sung-hyun.github.io/web_app/001/cloud-key.html
   shape-finder_manual.html   게시판 본문용 설명서

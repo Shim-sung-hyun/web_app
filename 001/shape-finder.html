@@ -292,6 +292,11 @@ details.log td,details.log th{border-bottom:1px solid var(--line);padding:6px 4p
 }
 @keyframes fadein{to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.draw{stroke-dashoffset:0;animation:none}.fadein{opacity:1;animation:none}.photo-wrap img{transition:none}}
+/* ---------- 빠뜨린 곳 알려 주기: 빨간 테두리 스포트라이트 + 말풍선 (번쩍임 없음) ---------- */
+#spot{position:fixed;z-index:90;pointer-events:none;border-radius:14px;display:none;box-shadow:0 0 0 4px #E5484D,0 0 0 9999px rgba(15,20,28,.45);transition:left .2s ease,top .2s ease,width .2s ease,height .2s ease}
+#spotTip{position:fixed;z-index:91;pointer-events:none;display:none;max-width:min(360px,calc(100% - 24px));background:#E5484D;color:#fff;font:700 15px/1.5 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;padding:9px 14px;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.3)}
+#spotTip::before{content:"";position:absolute;left:var(--ax,24px);width:14px;height:14px;background:#E5484D;transform:rotate(45deg)}
+#spotTip.below::before{top:-6px} #spotTip.above::before{bottom:-6px}
 </style>
 </head>
 <body class="setup">
@@ -389,6 +394,8 @@ const store = {
   const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
   if(store.get('voice')==='device' && !en) S.engine='device';
   S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
+  /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
+  if(!S.cloudKey){ for(const k of ['colorFind.cloudKey','poemRecite.cloudKey','placeValue.cloudKey','placeCount.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
 })();
 const hex=()=>COLORS.find(c=>c.key===S.color).hex;
 const $=id=>document.getElementById(id);
@@ -630,17 +637,23 @@ function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscree
 (function(){
   const ab=$('adminBtn'); let raf=0, t0=0, on=false;
   const stop=()=>{on=false; cancelAnimationFrame(raf); ab.style.setProperty('--p',0);};
+  let justOpened=false, ignoreUntil=0;
   ab.addEventListener('pointerdown',e=>{
     e.preventDefault();
-    if(S.admin){ setAdmin(false); return; }   /* 끌 때는 바로 */
+    if(S.admin) return;   /* 끌 때는 click에서 바로 */
     try{ab.setPointerCapture(e.pointerId);}catch(_){}
     on=true; t0=performance.now();
     const tick=()=>{ if(!on) return;
       const p=Math.min(1,(performance.now()-t0)/3000); ab.style.setProperty('--p',p);
-      if(p>=1){stop(); setAdmin(true); return;} raf=requestAnimationFrame(tick); };
+      if(p>=1){stop(); justOpened=true; setAdmin(true); return;} raf=requestAnimationFrame(tick); };
     raf=requestAnimationFrame(tick);
   });
-  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ab.addEventListener(ev,stop));
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ab.addEventListener(ev,()=>{ stop(); if(justOpened){ justOpened=false; ignoreUntil=performance.now()+500; } }));
+  /* 끌 때: 한 번 누르면 바꾼 설정으로 멈춘 단계의 처음부터, 바로 학생 화면(전체 화면). 사진 고르기 화면에서는 전체 화면을 쓰지 않음 */
+  ab.addEventListener('click',e=>{
+    if(performance.now()<ignoreUntil) return; /* 3초 눌러 켠 직후 손을 뗄 때 생기는 click은 무시 */
+    if(S.admin){ setAdmin(false); if(S.stage&&S.view!=='photo') goFull(); }
+  });
   ab.addEventListener('contextmenu',e=>e.preventDefault());
 })();
 /* ===== 교사 모드 설정 패널 ===== */
@@ -1043,14 +1056,14 @@ function showSetup(o={}){
         ${opt('timbre','Kore',S.timbre,'또렷한 목소리','')}
       </div>
       <div id="cloudRow" ${S.engine==='cloud'?'':'hidden'} style="display:flex;flex-direction:column;gap:10px">
-        <div class="keyguide"><b>Google 음성 키 받기</b>
+        <div class="keyguide"><b>Google 음성 키 받기</b> · <a href="cloud-key.html" target="_blank" rel="noopener">Cloud 키 넣는 방법 (자세히)</a>
           <ol>
             <li><a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a> 에서 프로젝트를 고르고(없으면 만들기), 결제 계정을 연결해요. 매달 100만 자까지 무료예요.</li>
             <li><a href="https://console.cloud.google.com/apis/library/texttospeech.googleapis.com" target="_blank" rel="noopener">Cloud Text-to-Speech API</a> 페이지에서 <b>사용</b>을 눌러요.</li>
             <li><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">사용자 인증 정보</a> → <b>사용자 인증 정보 만들기</b> → <b>API 키</b>를 눌러 키를 복사하고, 아래 칸에 붙여 넣어요.</li>
           </ol>
         </div>
-        <div class="row"><input class="field" id="cloudKey" type="password" autocomplete="off" placeholder="Google Cloud 키 (Text-to-Speech API 사용 설정)" value="${esc(S.cloudKey)}">
+        <div class="row"><input class="field" id="cloudKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}">
           <button class="btn" id="showCloud" type="button">보기</button></div>
         <label class="row" style="gap:8px"><input type="checkbox" id="saveCloud" ${S.saveCloud?'checked':''}> 이 기기에 키 저장 (여러 사람이 쓰는 컴퓨터라면 끄세요)</label>
       </div>
@@ -1073,10 +1086,8 @@ function showSetup(o={}){
   fillModels();
   const keyInput=$('keyInput');
   if(o.needKey){
-    const card=$('geminiCard'); $('needMsg').hidden=false; card.classList.add('need');
-    requestAnimationFrame(()=>{ card.scrollIntoView({block:'center',behavior:'smooth'}); setTimeout(()=>keyInput.focus({preventScroll:true}),400); });
-    keyInput.addEventListener('input',()=>{ if(keyInput.value.trim()) card.classList.remove('blink'); },{once:true});
-    card.classList.add('blink');
+    /* 빠뜨린 곳 알려 주기: Gemini 키 칸을 빨간 테두리로 비추고 말풍선 (깜빡임 없음) */
+    requestAnimationFrame(()=>spotlight('#keyInput','내 사진을 쓰려면 Gemini 키를 넣어 주세요. 키가 없으면 "예시 사진"으로 해요.'));
   }
   $('showKey').onclick=e=>{const t=keyInput.type==='password'; keyInput.type=t?'text':'password'; e.target.textContent=t?'숨기기':'보기';};
   $('checkKey').onclick=()=>checkKey();
@@ -1098,7 +1109,7 @@ function showSetup(o={}){
     unlockAudio(); readKeyFields();
     const st=$('voiceStatus'); st.className='status'; st.textContent='';
     chooseEngine();
-    if(S.engine!=='device' && S.engineNow==='device'){ st.textContent='Google Cloud 키를 넣어 주세요.'; st.className='status bad'; return; }
+    if(S.engine!=='device' && S.engineNow==='device'){ spotlight('#cloudKey','Cloud 키를 넣어 주세요. 키가 없으면 "기기 목소리"를 고르세요.'); return; }
     const line='안녕하세요. 사진에서 동그라미를 찾아볼까요?';
     if(S.engineNow!=='device'){
       st.textContent='목소리를 만드는 중…';
@@ -1107,7 +1118,7 @@ function showSetup(o={}){
     }
     const was=S.sound; S.sound=true; speak(line); S.sound=was;
   };
-  const needCloudKey=()=>{ if(S.engine==='cloud' && !S.cloudKey){ const st=$('voiceStatus'); st.textContent='Google 음성을 쓰려면 Google Cloud 키를 넣어 주세요. 키가 없으면 "기기 목소리"를 고르세요.'; st.className='status bad'; $('cloudKey')?.focus(); st.scrollIntoView?.({block:'center'}); return true; } return false; };
+  const needCloudKey=()=>{ if(S.engine==='cloud' && !S.cloudKey){ spotlight('#cloudKey','Cloud 키를 넣어 주세요. 키가 없으면 "기기 목소리"를 고르세요.'); return true; } return false; };
   $('startBtn').onclick=async()=>{
     unlockAudio();
     readKeyFields();
@@ -1135,7 +1146,7 @@ function rankModel(m){
 }
 async function checkKey(){
   readKeyFields();
-  if(!S.apiKey){setStatus('키를 넣어 주세요.','bad'); return false;}
+  if(!S.apiKey){ setStatus(''); spotlight('#keyInput','Gemini 키를 넣어 주세요. 키가 없으면 예시 사진으로 수업해요.'); return false; }
   setStatus('확인하는 중…');
   try{
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':S.apiKey}});
@@ -2129,6 +2140,31 @@ async function printSheet(){
 /* ================= 시작 ================= */
 renderSoundBtn();
 showSetup();
+/* ================= 빠뜨린 곳 알려 주기 =================
+   필요한 것을 안 하고 넘어가려 할 때, 그곳을 빨간 테두리로 비추고 말풍선으로 할 일을 알려 줌.
+   비춘 곳은 바로 누를 수 있고, 아무 데나 누르면 사라짐 */
+const SPOT={el:null,sel:''};
+(function(){ const a=document.createElement('div'); a.id='spot'; const b=document.createElement('div'); b.id='spotTip'; document.body.append(a,b); })();
+/* sel: CSS 선택자 (화면이 다시 그려져도 위치를 다시 찾음) */
+function spotlight(sel,msg){
+  const el=document.querySelector(sel); if(!el) return; SPOT.el=el; SPOT.sel=sel;
+  try{ el.scrollIntoView({block:'center',behavior:'smooth'}); }catch(e){ el.scrollIntoView(); }
+  document.getElementById('spotTip').textContent=msg;
+  setTimeout(()=>{ if(SPOT.sel!==sel) return; document.getElementById('spot').style.display='block'; document.getElementById('spotTip').style.display='block'; placeSpot();
+    const cur=document.querySelector(sel); if(cur&&cur.focus&&/INPUT|SELECT|TEXTAREA/.test(cur.tagName)) try{ cur.focus({preventScroll:true}); }catch(e){} },350);
+}
+function placeSpot(){
+  const el=SPOT.sel&&document.querySelector(SPOT.sel); if(!el) return; SPOT.el=el; const r=el.getBoundingClientRect(), pad=6, sp=document.getElementById('spot'), tip=document.getElementById('spotTip');
+  Object.assign(sp.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});
+  const tw=tip.offsetWidth, th=tip.offsetHeight, below=r.bottom+pad+12+th<innerHeight-8||r.top-pad-12-th<8;
+  const left=Math.min(Math.max(12,r.left+r.width/2-tw/2),innerWidth-tw-12);
+  tip.className=below?'below':'above'; tip.style.left=left+'px'; tip.style.top=(below?r.bottom+pad+12:r.top-pad-12-th)+'px';
+  tip.style.setProperty('--ax',Math.min(tw-26,Math.max(12,r.left+r.width/2-left-7))+'px');
+}
+function hideSpot(){ SPOT.el=null; SPOT.sel=''; document.getElementById('spot').style.display='none'; document.getElementById('spotTip').style.display='none'; }
+document.addEventListener('pointerdown',()=>{ if(SPOT.el) hideSpot(); },true);
+window.addEventListener('resize',()=>{ if(SPOT.el) placeSpot(); });
+document.addEventListener('scroll',()=>{ if(SPOT.el) placeSpot(); },true);
 </script>
 </body>
 </html>
