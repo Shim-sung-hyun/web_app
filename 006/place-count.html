@@ -327,9 +327,29 @@ const CSS=`
 #krBox button{font:inherit;font-size:16px;padding:10px 22px;border-radius:12px;border:1px solid #c9cde0;background:#f4f5fa;color:#1d2133;cursor:pointer;min-height:44px}
 #krBox button.kr-pri{background:#2C5FCF;border-color:#2C5FCF;color:#fff}
 html:not(.kr-ready) .kr-open{display:none!important}
+#krBox .kr-done{text-align:center}
+#krBox .kr-big{width:84px;height:84px;margin:6px auto 12px;border-radius:50%;background:#e7f5ec;color:#1b7f3a;font-size:52px;line-height:84px;font-weight:700}
+#krBox .kr-done h2{font-size:26px;margin:0 0 14px}
+#krBox .kr-list{list-style:none;margin:0 auto 14px;padding:0;display:inline-flex;flex-direction:column;gap:10px;text-align:left}
+#krBox .kr-list li{display:flex;align-items:center;gap:10px;font-size:18px}
+#krBox .kr-list .kr-ok{color:#1b7f3a;font-weight:700}
+#krBox .kr-list code{font-family:ui-monospace,Menlo,monospace;font-size:18px;background:#f1f3f8;border-radius:8px;padding:3px 10px;color:#30344a}
 .kr-open{font:inherit;font-size:14px;padding:6px 12px;border-radius:10px;border:1px solid #9fb3e6;background:#eef3ff;color:#1E4396;cursor:pointer;white-space:nowrap;min-height:36px}
 `;
 function ensureCss(){ if(document.getElementById('krCss')) return; const s=document.createElement('style'); s.id='krCss'; s.textContent=CSS; document.head.appendChild(s); }
+
+function mask(k){ return '••••'+esc(k.slice(-4)); }
+function esc(t){ return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+/* 받은 뒤: 저절로 닫지 않고 완료 화면을 보여 줌(교사가 고개를 들었을 때도 남아 있게) */
+function showDone(box,got,stop){
+  const rows=[['gemini','Gemini 키'],['cloud','Google 음성 키 (Cloud)']].filter(([k])=>got[k])
+    .map(([k,l])=>`<li><span class="kr-ok">✓</span><b>${l}</b><code>${mask(got[k])}</code></li>`).join('');
+  box.querySelector('.kr-card').innerHTML=`<div class="kr-done"><div class="kr-big" aria-hidden="true">✓</div><h2>키를 받았어요</h2>
+    <ul class="kr-list">${rows}</ul>
+    <p class="kr-sub">끝 네 자리가 휴대폰에서 보낸 키와 같은지 보세요. 받은 키는 이 기기에 저장했어요.</p>
+    <div class="kr-btns"><button type="button" class="kr-pri" id="krOk">확인</button></div></div>`;
+  const ok=box.querySelector('#krOk'); ok.onclick=stop; try{ ok.focus({preventScroll:true}); }catch(e){}
+}
 
 let active=null;
 async function receive(opts){
@@ -383,10 +403,9 @@ async function receive(opts){
         if(got.cloud){ try{ localStorage.setItem('webapp.cloudKey',got.cloud); }catch(e){} }
         const want=opts.want||['cloud','gemini']; const useful=want.filter(w=>got[w]);
         if(!useful.length){ say(want.includes('gemini')&&!want.includes('cloud')?'Gemini 키가 오지 않았어요. 휴대폰에서 Gemini 키를 넣어 보내 주세요.':'Cloud 키가 오지 않았어요. 휴대폰에서 Cloud 키를 넣어 보내 주세요.','err'); retry(); return; }
-        const names=useful.map(w=>w==='cloud'?'Cloud 키':'Gemini 키').join('와 ');
-        say(names+'를 받았어요.','ok');
+        me.sid=''; /* 받아 갔다는 표시는 서버에 남겨 휴대폰이 확인하게 함(닫을 때 지우지 않음) */
         try{ opts.onKeys&&opts.onKeys(got); }catch(e){ console.error(e); }
-        setTimeout(()=>{ if(active===me) close(); },1400);
+        showDone(box,got,stop);
       }catch(e){ say('키를 풀지 못했어요. 다시 받아 주세요.','err'); retry(); }
     };
     me.timer=setTimeout(poll,1500);

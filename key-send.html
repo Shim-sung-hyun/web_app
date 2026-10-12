@@ -37,10 +37,21 @@ input.f:focus{outline:2px solid #9fb3e6;outline-offset:1px}
 /* 빠뜨린 곳 알려 주기: 깜빡이지 않는 빨간 테두리 + 말풍선 */
 #spot{position:fixed;z-index:50;border-radius:14px;box-shadow:0 0 0 3px #e53935,0 0 0 9999px rgba(20,24,40,.35);pointer-events:none}
 #spotTip{position:fixed;z-index:51;max-width:min(320px,calc(100vw - 32px));background:#e53935;color:#fff;font-size:15px;font-weight:700;line-height:1.45;padding:10px 14px;border-radius:12px;pointer-events:none}
+.res-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px 18px 22px;text-align:center;margin-bottom:14px}
+.res-big{width:88px;height:88px;margin:0 auto 14px;border-radius:50%;background:#eef3ff;color:var(--pri2);font-size:44px;line-height:88px;font-weight:700}
+.res-big.ok{background:#e7f5ec;color:var(--ok);font-size:54px}
+.res-big.err{background:#fdecec;color:var(--err)}
+.res-card h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:30px;margin:0 0 8px}
+.res-card p{margin:0 0 12px;color:var(--sub);font-size:16px;line-height:1.6}
+.res-list{list-style:none;margin:0;padding:0;display:inline-flex;flex-direction:column;gap:8px;text-align:left}
+.res-list li{font-size:16px}
+.res-list code{font-family:ui-monospace,Menlo,monospace;background:#f1f3f8;border-radius:8px;padding:2px 8px;margin-left:6px}
+#again{width:100%;font:inherit;font-size:18px;font-weight:700;padding:14px;border:1px solid var(--line);border-radius:16px;background:#fff;color:var(--ink)}
 </style>
 </head>
 <body>
 <main>
+<div id="form">
   <h1>전자칠판으로 키 보내기</h1>
   <p class="lead">전자칠판의 웹앱에서 <b>📱 휴대폰으로 받기</b>를 누르면 번호 4자리가 나와요. 그 번호와 키를 넣고 보내기를 누르세요.</p>
 
@@ -63,6 +74,16 @@ input.f:focus{outline:2px solid #9fb3e6;outline-offset:1px}
   <button id="send" type="button">보내기</button>
   <p id="state" aria-live="polite"></p>
 
+</div>
+<div id="result" hidden>
+  <div class="res-card">
+    <div class="res-big" id="resIcon" aria-hidden="true">…</div>
+    <h2 id="resTitle">보냈어요</h2>
+    <p id="resMsg">전자칠판이 받기를 기다리는 중이에요.</p>
+    <ul class="res-list" id="resList"></ul>
+  </div>
+  <button id="again" type="button">다른 기기에도 보내기</button>
+</div>
   <p class="safe"><b>안전하게 보내요.</b> 키는 이 휴대폰에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있어요. 중간의 중계 서버는 키를 볼 수 없고, 전자칠판이 받는 즉시(받지 않으면 3분 뒤) 지워요. 번호는 한 번만 쓸 수 있어요.</p>
 </main>
 <script>
@@ -119,6 +140,27 @@ async function call(body){
   return j;
 }
 
+/* 보낸 뒤: 결과 화면으로 바꾸고, 전자칠판이 실제로 받아 갔는지 확인 */
+const mask=k=>'••••'+k.slice(-4);
+let watch=null;
+function setRes(state,title,msg){ const i=$('resIcon'); i.className='res-big'+(state?' '+state:''); i.textContent=state==='ok'?'✓':state==='err'?'!':'…';
+  $('resTitle').textContent=title; $('resMsg').textContent=msg; }
+function showResult(code,tk,payload){
+  $('form').hidden=true; $('result').hidden=false; scrollTo(0,0);
+  const rows=[]; if(payload.gemini) rows.push(['Gemini 키',payload.gemini]); if(payload.cloud) rows.push(['Google 음성 키',payload.cloud]);
+  $('resList').innerHTML=''; rows.forEach(([l,k])=>{ const li=document.createElement('li'); li.append(l); const c=document.createElement('code'); c.textContent=mask(k); li.append(c); $('resList').append(li); });
+  setRes('','보냈어요','전자칠판이 받기를 기다리는 중이에요.');
+  clearTimeout(watch); const end=Date.now()+200*1000;
+  const tick=async()=>{
+    let r=null; try{ r=await call({a:'check',code,tk}); }catch(e){}
+    if(r&&r.status==='done'){ setRes('ok','전자칠판이 받았어요','전자칠판 화면에서 끝 네 자리가 같은지 보세요.'); try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){} return; }
+    if((r&&r.status==='gone')||Date.now()>end){ setRes('err','전자칠판이 받지 못했어요','전자칠판에서 창을 닫았거나 번호 시간(3분)이 지났어요. 전자칠판에서 다시 받기를 누르고, 새 번호로 보내 주세요.'); return; }
+    watch=setTimeout(tick,2000);
+  };
+  watch=setTimeout(tick,1200);
+}
+$('again').onclick=()=>{ clearTimeout(watch); $('result').hidden=true; $('form').hidden=false; say(''); $('code').focus(); };
+
 $('send').onclick=async()=>{
   const code=$('code').value.trim(), cloud=$('cloud').value.trim(), gemini=$('gemini').value.trim();
   if(!/^\d{4}$/.test(code)){ spotlight('#code','전자칠판에 나온 번호 4자리를 넣어 주세요.'); return; }
@@ -135,9 +177,9 @@ $('send').onclick=async()=>{
     const iv=crypto.getRandomValues(new Uint8Array(12));
     const payload={}; if(cloud) payload.cloud=cloud; if(gemini) payload.gemini=gemini;
     const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(payload)));
-    await call({a:'send',code,epub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),iv:b64u.enc(iv),ct:b64u.enc(ct)});
-    $('code').value='';
-    say('보냈어요. 전자칠판에 "받았어요"가 나오는지 보세요.','ok');
+    const sent=await call({a:'send',code,epub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),iv:b64u.enc(iv),ct:b64u.enc(ct)});
+    $('code').value=''; say('');
+    showResult(code,sent.tk,payload);
   }catch(e){
     const c=e&&e.code;
     if(c==='nocode'){ say('');
