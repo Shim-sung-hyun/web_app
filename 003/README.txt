@@ -14,4 +14,6 @@
 파일
   rainbow-finder.html          웹앱
   rainbow-finder01~09.jpg      화면 그림 (동그라미 10개, 터지는 순간, 동그라미 15개, 물건 모양, 교사 모드, 학생 혼자 고르기, 학생 혼자 끝, 이름 듣고 찾기, 도와주기)
+  cloud-key.html               Cloud 키 넣는 방법 안내 페이지 (설정 화면 목소리 칸에서 연결)
+                               주소: https://shim-sung-hyun.github.io/web_app/003/cloud-key.html
   rainbow-finder_manual.html   게시판 본문용 설명서

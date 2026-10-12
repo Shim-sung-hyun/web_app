@@ -194,6 +194,11 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
 .tour-foot div{display:flex;gap:6px}
 .tour-foot button{border:0;border-radius:10px;min-height:40px;padding:6px 14px;font-weight:700;font-size:14px;background:var(--soft);color:var(--ink);font-family:var(--f-body)}
 .tour-foot button.next{background:var(--ink);color:#fff}
+/* ---------- 빠뜨린 곳 알려 주기: 빨간 테두리 스포트라이트 + 말풍선 (번쩍임 없음) ---------- */
+#spot{position:fixed;z-index:90;pointer-events:none;border-radius:14px;display:none;box-shadow:0 0 0 4px #E5484D,0 0 0 9999px rgba(15,20,28,.45);transition:left .2s ease,top .2s ease,width .2s ease,height .2s ease}
+#spotTip{position:fixed;z-index:91;pointer-events:none;display:none;max-width:min(360px,calc(100% - 24px));background:#E5484D;color:#fff;font:700 15px/1.5 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;padding:9px 14px;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.3)}
+#spotTip::before{content:"";position:absolute;left:var(--ax,24px);width:14px;height:14px;background:#E5484D;transform:rotate(45deg)}
+#spotTip.below::before{top:-6px} #spotTip.above::before{bottom:-6px}
 </style>
 </head>
 <body class="setup">
@@ -270,7 +275,8 @@ const store={
   const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
   S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
   /* 같은 사이트의 다른 앱(001 사진 속 도형 찾기)에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
-  if(!S.cloudKey){ try{ S.cloudKey=localStorage.getItem('shapeFinder.cloudKey')||''; }catch(e){} }
+  /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
+  if(!S.cloudKey){ for(const k of ['shapeFinder.cloudKey','poemRecite.cloudKey','placeValue.cloudKey','placeCount.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
 })();
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -555,8 +561,8 @@ function showSetup(){
       <div class="grp"><h2>목소리 (수업 내내 한 목소리)</h2>${seg('engine',{cloud:['Google 음성','자연스러움 · Cloud 키 필요'],device:['기기 목소리','키 없이 바로']})}</div>
       <div id="cloudRow" ${S.engine==='cloud'?'':'hidden'} style="display:flex;flex-direction:column;gap:10px">
         ${seg('timbre',{Leda:['밝은 목소리',''],Aoede:['산뜻한 목소리',''],Kore:['또렷한 목소리','']})}
-        <p class="hint">키 만들기: <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a>에서 Cloud Text-to-Speech API를 사용 설정하고 API 키를 만드세요. 결제 카드 등록이 필요하지만 매달 100만 자까지 무료예요.</p>
-        <div class="row"><input class="field" id="cloudKey" type="password" autocomplete="off" placeholder="Google Cloud 키" value="${esc(S.cloudKey)}"><button class="btn" id="showKey" type="button">보기</button></div>
+        <p class="hint">키 만들기: <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a>에서 Cloud Text-to-Speech API를 사용 설정하고 API 키를 만드세요. 결제 카드 등록이 필요하지만 매달 100만 자까지 무료예요. 차례대로 따라 하기: <a href="cloud-key.html" target="_blank" rel="noopener">Cloud 키 넣는 방법</a></p>
+        <div class="row"><input class="field" id="cloudKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}"><button class="btn" id="showKey" type="button">보기</button></div>
         <label class="row" style="gap:8px"><input type="checkbox" id="saveCloud" ${S.saveCloud?'checked':''}> 이 기기에 키 저장 (여러 사람이 쓰는 컴퓨터라면 끄세요)</label>
       </div>
       <div class="row"><button class="btn" id="voiceTest" type="button">${ICON.ear}목소리 들어 보기</button><span class="status" id="voiceStatus"></span></div>
@@ -580,7 +586,7 @@ function showSetup(){
   $('showKey').onclick=e=>{const k=$('cloudKey'), t=k.type==='password'; k.type=t?'text':'password'; e.target.textContent=t?'숨기기':'보기';};
   $('voiceTest').onclick=async()=>{
     unlockAudio(); const st=$('voiceStatus'); st.className='status'; st.textContent='';
-    if(S.engine==='cloud'&&!S.cloudKey){ st.textContent='Google Cloud 키를 넣어 주세요.'; st.className='status bad'; return; }
+    if(S.engine==='cloud'&&!S.cloudKey){ spotlight('#cloudKey',"Cloud 키를 넣어 주세요. 키가 없으면 \"기기 목소리\"를 고르세요."); return; }
     chooseEngine(); const line='안녕하세요. 빨강을 찾아요.';
     if(S.engineNow==='cloud'){ st.textContent='목소리를 만드는 중…';
       try{ await Promise.all(splitSay(line).map(x=>getClip(x,true))); st.textContent='이 목소리로 수업해요.'; st.className='status good'; }
@@ -589,7 +595,8 @@ function showSetup(){
   };
   $('startBtn').onclick=()=>{
     /* Google 음성을 골랐는데 키가 없으면 시작하지 않고 안내 */
-    if(S.engine==='cloud'&&!S.cloudKey){ const m=$('startMsg'); m.textContent='Google 음성을 쓰려면 Cloud 키를 넣어 주세요. 키가 없으면 "기기 목소리"를 고르세요.'; m.className='status bad'; return; }
+    /* 빠뜨린 곳 알려 주기: 키 칸을 빨간 테두리로 비추고 말풍선 (깜빡임 없음) */
+    if(S.engine==='cloud'&&!S.cloudKey){ spotlight('#cloudKey',"Cloud 키를 넣어 주세요. 키가 없으면 \"기기 목소리\"를 고르세요."); return; }
     unlockAudio(); chooseEngine(); prefetchVoice(allLines());
     if(S.mode==='solo') showHome(); else startGame();
   };
@@ -612,7 +619,7 @@ function renderPick(){
   $('pickC').querySelectorAll('button').forEach(b=>b.onclick=()=>{ unlockAudio(); S.colors=+b.dataset.c; store.set('colors',S.colors); clampChoices(); renderPick(); speak(NUM[S.colors]+' 가지 색.'); });
 }
 $('homeBtn').onclick=()=>{
-  if(S.engine==='cloud'&&!S.cloudKey){ leaveFull(); showSetup(); return; }
+  if(S.engine==='cloud'&&!S.cloudKey){ leaveFull(); showSetup(); spotlight('#cloudKey',"Cloud 키를 넣어 주세요. 키가 없으면 \"기기 목소리\"를 고르세요."); return; }
   unlockAudio(); chooseEngine(); prefetchVoice(allLines()); startGame();
 };
 $('againBtn').innerHTML=ICON.redo+'다시 하기';
@@ -934,6 +941,31 @@ $('tourNext').addEventListener('click',()=>{ TOUR.i++; showStep(); });
 $('tourEnd').addEventListener('click',endTour);
 document.addEventListener('keydown',e=>{ if(TOUR.on&&e.key==='Escape') endTour(); });
 window.addEventListener('resize',()=>{ if(TOUR.on) placeTour(); });
+/* ================= 빠뜨린 곳 알려 주기 =================
+   필요한 것을 안 하고 넘어가려 할 때, 그곳을 빨간 테두리로 비추고 말풍선으로 할 일을 알려 줌.
+   비춘 곳은 바로 누를 수 있고, 아무 데나 누르면 사라짐 */
+const SPOT={el:null,sel:''};
+(function(){ const a=document.createElement('div'); a.id='spot'; const b=document.createElement('div'); b.id='spotTip'; document.body.append(a,b); })();
+/* sel: CSS 선택자 (화면이 다시 그려져도 위치를 다시 찾음) */
+function spotlight(sel,msg){
+  const el=document.querySelector(sel); if(!el) return; SPOT.el=el; SPOT.sel=sel;
+  try{ el.scrollIntoView({block:'center',behavior:'smooth'}); }catch(e){ el.scrollIntoView(); }
+  document.getElementById('spotTip').textContent=msg;
+  setTimeout(()=>{ if(SPOT.sel!==sel) return; document.getElementById('spot').style.display='block'; document.getElementById('spotTip').style.display='block'; placeSpot();
+    const cur=document.querySelector(sel); if(cur&&cur.focus&&/INPUT|SELECT|TEXTAREA/.test(cur.tagName)) try{ cur.focus({preventScroll:true}); }catch(e){} },350);
+}
+function placeSpot(){
+  const el=SPOT.sel&&document.querySelector(SPOT.sel); if(!el) return; SPOT.el=el; const r=el.getBoundingClientRect(), pad=6, sp=document.getElementById('spot'), tip=document.getElementById('spotTip');
+  Object.assign(sp.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});
+  const tw=tip.offsetWidth, th=tip.offsetHeight, below=r.bottom+pad+12+th<innerHeight-8||r.top-pad-12-th<8;
+  const left=Math.min(Math.max(12,r.left+r.width/2-tw/2),innerWidth-tw-12);
+  tip.className=below?'below':'above'; tip.style.left=left+'px'; tip.style.top=(below?r.bottom+pad+12:r.top-pad-12-th)+'px';
+  tip.style.setProperty('--ax',Math.min(tw-26,Math.max(12,r.left+r.width/2-left-7))+'px');
+}
+function hideSpot(){ SPOT.el=null; SPOT.sel=''; document.getElementById('spot').style.display='none'; document.getElementById('spotTip').style.display='none'; }
+document.addEventListener('pointerdown',()=>{ if(SPOT.el) hideSpot(); },true);
+window.addEventListener('resize',()=>{ if(SPOT.el) placeSpot(); });
+document.addEventListener('scroll',()=>{ if(SPOT.el) placeSpot(); },true);
 </script>
 </body>
 </html>
