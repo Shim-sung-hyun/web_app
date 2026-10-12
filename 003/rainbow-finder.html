@@ -180,6 +180,20 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
   .pa-log td,.pa-log th{border:1px solid #999;padding:1.2mm 2mm;text-align:left}
 }
 @media (prefers-reduced-motion:reduce){.bub.pop,.bub.fade,.bub.dim{transition:none}}
+/* ---------- 도움말: 말풍선 둘러보기 ---------- */
+#tour{position:fixed;inset:0;z-index:70;display:none}
+#tour.show{display:block}
+#tourHole{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(20,18,16,.58);transition:all .25s ease;pointer-events:none}
+#tourTip{position:fixed;width:min(340px,calc(100% - 24px));background:#fff;color:var(--ink);border-radius:16px;box-shadow:0 14px 40px rgba(0,0,0,.3);padding:16px 18px 12px;transition:top .25s ease,left .25s ease;font-family:var(--f-body)}
+#tourTip::before{content:"";position:absolute;left:var(--ax,40px);width:16px;height:16px;background:#fff;transform:rotate(45deg)}
+#tourTip.below::before{top:-7px} #tourTip.above::before{bottom:-7px}
+#tourTip h4{margin:0 0 6px;font-size:18px;font-family:var(--f-display);font-weight:400}
+#tourTip p{margin:0;font-size:14.5px;line-height:1.6}
+.tour-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.tour-foot span{font-size:12.5px;color:var(--muted);font-weight:700}
+.tour-foot div{display:flex;gap:6px}
+.tour-foot button{border:0;border-radius:10px;min-height:40px;padding:6px 14px;font-weight:700;font-size:14px;background:var(--soft);color:var(--ink);font-family:var(--f-body)}
+.tour-foot button.next{background:var(--ink);color:#fff}
 </style>
 </head>
 <body class="setup">
@@ -197,6 +211,8 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
 <button id="adminBtn" type="button" aria-label="교사 모드: 3초 동안 누르기"><span class="ab-label" id="abLabel">charum</span></button>
 <div id="printArea"></div>
 
+<div id="tour"><div id="tourHole"></div><div id="tourTip" class="below"><h4 id="tourTitle"></h4><p id="tourText"></p>
+  <div class="tour-foot"><span id="tourStep"></span><div><button type="button" id="tourEnd">그만</button><button type="button" class="next" id="tourNext">다음</button></div></div></div></div>
 <script>
 "use strict";
 
@@ -233,7 +249,8 @@ const ICON={
   print:'<svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>',
   log:'<svg class="ic" viewBox="0 0 24 24"><path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/></svg>',
   sndOff:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/></svg>',
-  gear:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>'
+  gear:'<svg class="ic" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
+  q:'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.4 9.4a2.7 2.7 0 1 1 3.7 2.5c-.7.3-1.1.9-1.1 1.7v.5M12 17.2h.01"/></svg>'
 };
 
 /* ================= 상태 ================= */
@@ -433,24 +450,32 @@ function goFull(){ try{ const d=document.documentElement; if(document.fullscreen
 function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(document.webkitFullscreenElement) document.webkitExitFullscreen(); }catch(e){} }
 document.addEventListener('contextmenu',e=>{ if(!document.body.classList.contains('setup')) e.preventDefault(); });
 
-/* ================= 교사 모드 버튼 (3초 누르기) ================= */
+/* ================= 교사 모드 버튼 =================
+   켤 때: 3초 동안 누르기 (학생이 실수로 켜지 않게) / 끌 때: 한 번 누르면 바로 학생 화면(전체 화면) */
 (function(){
-  const ab=$('adminBtn'); let raf=0, t0=0, on=false;
+  const ab=$('adminBtn'); let raf=0, t0=0, on=false, justOpened=false, ignoreUntil=0;
   const stop=()=>{on=false; cancelAnimationFrame(raf); ab.style.setProperty('--p',0);};
   ab.addEventListener('pointerdown',e=>{
-    e.preventDefault(); e.stopPropagation(); try{ab.setPointerCapture(e.pointerId);}catch(_){}
+    e.preventDefault(); e.stopPropagation();
+    if(S.admin) return; /* 끄기는 click에서 바로 */
+    try{ab.setPointerCapture(e.pointerId);}catch(_){}
     on=true; t0=performance.now();
     const tick=()=>{ if(!on) return;
       const p=Math.min(1,(performance.now()-t0)/3000); ab.style.setProperty('--p',p);
-      if(p>=1){stop(); setAdmin(!S.admin); return;} raf=requestAnimationFrame(tick); };
+      if(p>=1){stop(); justOpened=true; setAdmin(true); return;} raf=requestAnimationFrame(tick); };
     raf=requestAnimationFrame(tick);
   });
-  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ab.addEventListener(ev,stop));
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>ab.addEventListener(ev,()=>{ stop(); if(justOpened){ justOpened=false; ignoreUntil=performance.now()+500; } }));
+  ab.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(performance.now()<ignoreUntil) return; /* 3초 눌러 켠 직후 손을 뗄 때 생기는 click은 무시 */
+    if(S.admin){ setAdmin(false); if(S.game) goFull(); }
+  });
   ab.addEventListener('contextmenu',e=>e.preventDefault());
 })();
 function setAdmin(on){
   S.admin=on; document.body.classList.toggle('admin',on);
-  $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 3초 동안 누르기':'교사 모드: 3초 동안 누르기');
+  $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 한 번 누르기':'교사 모드: 3초 동안 누르기');
   $('abLabel').textContent=on?'심':'charum';
   if(!on) $('logPop').hidden=true;
   renderDocks();
@@ -461,13 +486,14 @@ function setAdmin(on){
 function renderDocks(){
   const g=S.game, ended=document.body.classList.contains('ended'), playing=!!g&&!ended;
   const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
-  const set=(key,lbl)=>`<div class="g"><span class="lbl">${lbl}</span>${Object.keys(OPT[key]).map(v=>b(key+':'+v,OPT[key][v].replace(' 찾기',''),String(S[key])===v,key==='choices'&&!okChoice(+v,S.colors)?'disabled':'')).join('')}</div>`;
+  const set=(key,lbl)=>`<div class="g" id="g-${key}"><span class="lbl">${lbl}</span>${Object.keys(OPT[key]).map(v=>b(key+':'+v,OPT[key][v].replace(' 찾기',''),String(S[key])===v,key==='choices'&&!okChoice(+v,S.colors)?'disabled':'')).join('')}</div>`;
   /* 맨 앞: 바꾼 설정으로 새로 시작 */
   $('dockTop').innerHTML=`<div class="g">${b('start',ICON.start+'새로 시작',null,'class="go-btn"')}</div>`+set('choices','동그라미')+set('colors','색')+set('speed','속도')+set('way','방식')+set('look','모양')+set('help','도움')+set('rounds','문제')+
-    `<div class="g"><span class="lbl">사용</span>${b('mode:teacher','교사와 함께',S.mode==='teacher')}${b('mode:solo','학생 혼자',S.mode==='solo')}</div>`+
-    `<div class="g">${b('sound',S.sound?ICON.ear+'소리':ICON.sndOff+'소리 끔',S.sound)}${b('setup',ICON.gear+'설정')}${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`;
+    `<div class="g" id="g-mode"><span class="lbl">사용</span>${b('mode:teacher','교사와 함께',S.mode==='teacher')}${b('mode:solo','학생 혼자',S.mode==='solo')}</div>`+
+    `<div class="g">${b('sound',S.sound?ICON.ear+'소리':ICON.sndOff+'소리 끔',S.sound)}${b('setup',ICON.gear+'설정')}${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`+
+    `<div class="g">${b('tour',ICON.q+'도움말')}</div>`;
   $('dockBot').innerHTML = !g ? '' : playing
-    ? `<div class="g">${b('replay',ICON.ear+'다시 듣기')}${b('skip',ICON.skip+'다음 문제')}${b('stop',ICON.stop+'여기까지')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
+    ? `<div class="g">${b('replay',ICON.ear+'다시 듣기')}${b('stop',ICON.stop+'여기까지')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
     : `<div class="g">${b('again',ICON.redo+'다시 하기')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div><div class="g"><span class="lbl">${ICON.print.replace('class="ic"','class="ic" style="width:18px;height:18px;vertical-align:-4px"')} 출력</span>${b('print:student','학생용 색칠하기')}${b('print:teacher','교사용 기록')}</div>`;
 }
 function onDock(e){
@@ -488,10 +514,11 @@ function onDock(e){
     renderDocks(); return; }
   if(a==='sound'){ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); if(!S.sound) stopVoice(); renderDocks(); }
   if(a==='setup'){ leaveFull(); showSetup(); }
+  if(a==='tour'){ startTour(); return; }
   if(a==='replay') speak();
-  if(a==='skip') nextRound();
   if(a==='stop') endGame();
-  if(a==='again'||a==='start'){ $('logPop').hidden=true; startGame(); }
+  /* 새로 시작·다시 하기: 바꾼 설정으로 시작하고 바로 학생 화면(전체 화면) */
+  if(a==='again'||a==='start'){ $('logPop').hidden=true; setAdmin(false); startGame(); }
   if(a==='print') printSheet(v);
   if(a==='log'){ $('logPop').hidden=!$('logPop').hidden; renderLog(); renderDocks(); }
 }
@@ -534,7 +561,7 @@ function showSetup(){
       </div>
       <div class="row"><button class="btn" id="voiceTest" type="button">${ICON.ear}목소리 들어 보기</button><span class="status" id="voiceStatus"></span></div>
     </div>
-    <p class="hint" style="margin-top:14px">학생 화면에는 메뉴가 없어요. 오른쪽 아래 옅은 동그라미를 <b>3초 동안 누르면</b> 교사 메뉴(동그라미 수·색 수·속도·방식, 다시 듣기, 다음 문제, 여기까지, 기록, 출력, 설정)가 나타나요.</p>
+    <p class="hint" style="margin-top:14px">학생 화면에는 메뉴가 없어요. 오른쪽 아래 옅은 동그라미를 <b>3초 동안 누르면</b> 교사 메뉴(새로 시작, 동그라미 수·색 수·속도·방식, 다시 듣기, 여기까지, 기록, 출력, 설정)가 나타나요. 메뉴는 한 번 누르면 바로 닫혀요.</p>
     <div class="foot"><span class="status" id="startMsg" aria-live="polite"></span><button class="go" id="startBtn" type="button">시작</button></div>
   </div>`;
   const syncChoices=()=>{
@@ -812,15 +839,6 @@ function popSound(){
     o.connect(g2); g2.connect(c.destination); o.start(t); o.stop(t+0.15);
   }catch(e){}
 }
-/* 교사: 다음 문제 (기록 없이 넘김) */
-function nextRound(){
-  const g=S.game; if(!g||g.busy) return;
-  g.hist.push(null); g.i++;
-  g.bubs.forEach(o=>{ o.hold=false; o.pulse=false; });
-  if(g.i>=S.rounds){ endGame(); return; }
-  setTarget(pickOnScreen(g,g.target&&g.target.name));
-  speak(findLine(g.target));
-}
 function renderTrack(){
   const g=S.game;
   $('track').innerHTML=Array.from({length:S.rounds},(_,i)=>{
@@ -867,6 +885,55 @@ function fitBubs(){ const g=S.game; if(!g) return; const {W,H,top,bottom}=BD; g.
 
 /* ================= 시작 ================= */
 if(S.mode==='solo') showHome(); else showSetup();
+
+/* ================= 도움말: 교사 메뉴를 말풍선으로 하나씩 ================= */
+const TOUR_STEPS=[
+  {el:'#dockTop [data-a="start"]', t:'새로 시작', x:'바꾼 설정으로 처음부터 다시 해요. 메뉴는 닫히고 바로 학생 화면(전체 화면)이 돼요.'},
+  {el:'#g-choices', t:'동그라미', x:'한 번에 나오는 동그라미 수예요. 2개부터 15개까지. 하던 판에 바로 적용돼요.'},
+  {el:'#g-colors', t:'색', x:'나올 수 있는 색의 수예요. 7색 → 11색 → 15색으로 늘려 가요.'},
+  {el:'#g-speed', t:'속도', x:'동그라미가 움직이는 빠르기예요. "멈춤"이면 움직이지 않아요.'},
+  {el:'#g-way', t:'방식', x:'"같은 색"은 위에 보이는 색과 같은 것을 찾고, "이름 듣고"는 색 이름만 듣고 찾아요.'},
+  {el:'#g-look', t:'모양', x:'동그라미 대신 물건 모양으로 바꿔요. 같은 색을 여러 물건에서 찾는 연습(일반화)이에요.'},
+  {el:'#g-help', t:'도움', x:'정한 시간 안에 못 찾으면 정답이 천천히 커졌다 작아지며 알려 줘요. "바로"는 처음부터 알려 주는 무오류 학습이에요.'},
+  {el:'#g-rounds', t:'문제', x:'한 판에 찾을 문제 수예요.'},
+  {el:'#g-mode', t:'사용', x:'"학생 혼자"를 고르면 학생이 동그라미 수와 색 수를 고르고 스스로 시작해요.'},
+  {el:'#dockTop [data-a="sound"]', t:'소리', x:'색 이름을 읽어 주는 목소리와 효과음을 켜고 꺼요.'},
+  {el:'#dockTop [data-a="setup"]', t:'설정', x:'처음 설정 화면으로 가요. 목소리(Google · 기기)는 여기서 바꿔요.'},
+  {el:'#dockBot [data-a="replay"]', t:'다시 듣기', x:'지금 찾을 색을 한 번 더 들려줘요. 학생이 위쪽 안내를 눌러도 다시 들려줘요.'},
+  {el:'#dockBot [data-a="stop"]', t:'여기까지', x:'남은 문제를 하지 않고 지금까지로 끝내요.'},
+  {el:'#dockBot [data-a="again"]', t:'다시 하기', x:'같은 설정으로 한 판 더 해요. 바로 학생 화면이 돼요.'},
+  {el:'#dockBot [data-a="log"]', t:'기록', x:'문제마다 바로 맞힘, 도움 받아 맞힘, 잘못 고른 색을 보여 줘요.'},
+  {el:'#dockBot [data-a="print:student"]', t:'출력', x:'학생용 색칠하기와 교사용 기록을 A4 한 장으로 인쇄해요.'},
+  {el:'#adminBtn', t:'관리 버튼', x:'3초 누르면 교사 메뉴가 열려요(학생이 실수로 열지 않게). 메뉴가 열려 있을 때 한 번 누르면 하던 판 그대로 학생 화면으로 돌아가요.'}
+];
+const TOUR={on:false,i:0,list:[]};
+function startTour(){
+  $('logPop').hidden=true; renderDocks();
+  TOUR.list=TOUR_STEPS.filter(s=>document.querySelector(s.el)); TOUR.i=0; TOUR.on=true;
+  $('tour').classList.add('show'); showStep();
+}
+function showStep(){
+  const s=TOUR.list[TOUR.i]; if(!s) return endTour();
+  $('tourTitle').textContent=s.t; $('tourText').textContent=s.x;
+  $('tourStep').textContent=(TOUR.i+1)+' / '+TOUR.list.length;
+  $('tourNext').textContent=TOUR.i===TOUR.list.length-1?'끝':'다음';
+  placeTour();
+}
+function placeTour(){
+  const s=TOUR.list[TOUR.i]; if(!s) return; const el=document.querySelector(s.el); if(!el) return;
+  const r=el.getBoundingClientRect(), pad=6, hole=$('tourHole'), tip=$('tourTip');
+  Object.assign(hole.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});
+  const tw=tip.offsetWidth, th=tip.offsetHeight;
+  const below=r.bottom+pad+14+th<innerHeight-8 || r.top-pad-14-th<8;
+  const top=below?r.bottom+pad+14:r.top-pad-14-th, left=Math.min(Math.max(12,r.left+r.width/2-tw/2),innerWidth-tw-12);
+  tip.className=below?'below':'above'; tip.style.top=top+'px'; tip.style.left=left+'px';
+  tip.style.setProperty('--ax',Math.min(tw-28,Math.max(12,r.left+r.width/2-left-8))+'px');
+}
+function endTour(){ TOUR.on=false; $('tour').classList.remove('show'); }
+$('tourNext').addEventListener('click',()=>{ TOUR.i++; showStep(); });
+$('tourEnd').addEventListener('click',endTour);
+document.addEventListener('keydown',e=>{ if(TOUR.on&&e.key==='Escape') endTour(); });
+window.addEventListener('resize',()=>{ if(TOUR.on) placeTour(); });
 </script>
 </body>
 </html>
