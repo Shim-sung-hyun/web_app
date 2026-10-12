@@ -222,7 +222,7 @@ const ICON={
 /* 단계: 가로 5칸 고정, 줄 수 = 단계 */
 const LEVELS={1:{cols:5,rows:1},2:{cols:5,rows:2},3:{cols:5,rows:3},4:{cols:5,rows:4},5:{cols:5,rows:5}};
 const SHAPES={jig:'퍼즐 모양',rect:'사각형'};
-const GHOSTS={1:'진하게',2:'흐리게',3:'안 보이게'};
+const GHOSTS={1:'진하게',2:'흐리게',3:'더 흐리게',4:'안 보이게'};
 const pieceCount=lv=>LEVELS[lv].cols*LEVELS[lv].rows;
 
 /* ================= 상태 ================= */
@@ -234,7 +234,9 @@ const store={
 (function load(){
   const lv=+store.get('level'); if(LEVELS[lv]) S.level=lv;
   const sh=store.get('shape'); if(SHAPES[sh]) S.shape=sh;
-  const g=+store.get('ghost'); if(GHOSTS[g]) S.ghost=g;
+  /* 밑그림 4단계(진하게·흐리게·더 흐리게·없음). 예전 3단계에 저장된 '안 보이게'(3)는 4로 옮김 */
+  const g2=+store.get('ghost2'), g=+store.get('ghost');
+  if(GHOSTS[g2]) S.ghost=g2; else if([1,2,3].includes(g)) S.ghost=g===3?4:g;
   const em=store.get('errorMode'); if(['retry','free'].includes(em)) S.errorMode=em;
   if(store.get('mode')==='solo') S.mode='solo';
   S.sfx=store.get('sfx')!=='off';
@@ -313,19 +315,20 @@ function renderDocks(){
     `<div class="grp">${b('sfx',(S.sfx?ICON.sndOn:ICON.sndOff)+(S.sfx?'효과음':'효과음 끔'),S.sfx)}${b('setup',ICON.gear+'설정')}</div>`;
   $('helpTop').innerHTML=b('tour',ICON.q+'도움말');
   $('dockBot').innerHTML = !R ? '' : done
-    ? `<div class="grp">${b('student',ICON.play+'학생 화면으로',null,'class="big"')}</div><div class="grp">${b('again',ICON.redo+'같은 그림 다시')}${S.level<5?b('nextlv',ICON.next+'다음 단계'):''}${b('setup',ICON.photo+'다른 사진으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
-    : `<div class="grp">${b('student',ICON.play+'학생 화면으로',null,'class="big"')}</div><div class="grp">${b('mix',ICON.mix+'다시 섞기',null,R&&R.active?'':'disabled')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`;
+    ? `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${S.level<5?b('nextlv',ICON.next+'다음 단계'):''}${b('setup',ICON.photo+'다른 사진으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
+    : `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${b('mix',ICON.mix+'다시 섞기',null,R&&R.active?'':'disabled')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`;
 }
 function onDock(e){
   const btn=e.target.closest('button[data-a]'); if(!btn) return;
   const [a,v]=btn.dataset.a.split(':');
   if(a==='lv'){ S.level=+v; store.set('level',S.level); startRound(); }
   if(a==='sh'){ S.shape=v; store.set('shape',S.shape); startRound(); }
-  if(a==='gh'){ S.ghost=+v; store.set('ghost',S.ghost); applyGhost(); renderDocks(); }
+  if(a==='gh'){ S.ghost=+v; store.set('ghost2',S.ghost); applyGhost(); renderDocks(); }
   if(a==='sfx'){ S.sfx=!S.sfx; store.set('sfx',S.sfx?'on':'off'); renderDocks(); }
   if(a==='setup'){ leaveFull(); showSetup(); }
-  /* 학생 화면으로: 메뉴를 닫고 바로 전체 화면으로 (들어올 때만 3초) */
-  if(a==='student'){ setAdmin(false); goFull(); return; }
+  /* 이 그림으로 다시 시작: 바꾼 설정(단계·모양·밑그림…)을 적용해 같은 사진으로 처음부터, 메뉴는 닫고 전체 화면.
+     하던 판으로 그냥 돌아가려면 관리 버튼을 한 번 누름 */
+  if(a==='restart'){ startRound(); setAdmin(false); goFull(); return; }
   if(a==='tour'){ startTour(); return; }
   if(a==='mix') remix();
   if(a==='again') startRound();
@@ -410,7 +413,8 @@ function showSetup(){
     <div class="sec"><h2>판에 보이는 밑그림</h2><div class="tiles">
       ${tile('ghost',1,S.ghost,'진하게<small>처음 하는 학생</small>')}
       ${tile('ghost',2,S.ghost,'흐리게<small>조금 익숙한 학생</small>')}
-      ${tile('ghost',3,S.ghost,'안 보이게<small>테두리 그림만</small>')}
+      ${tile('ghost',3,S.ghost,'더 흐리게<small>거의 다 익숙한 학생</small>')}
+      ${tile('ghost',4,S.ghost,'안 보이게<small>테두리 그림만</small>')}
     </div></div>
     <div class="sec"><h2>다른 자리에 놓았을 때</h2><div class="tiles">
       ${tile('errorMode','show',S.errorMode,'바로 자리 보여주기<small>조각과 제자리를 함께 표시</small>')}
@@ -421,7 +425,7 @@ function showSetup(){
       ${tile('sfx','on',S.sfx?'on':'off','켬<small>맞추면 작게 "톡"</small>')}
       ${tile('sfx','off',S.sfx?'on':'off','끔<small>소리 없이</small>')}
     </div>
-      <p class="hint">학생 화면에는 메뉴가 없어요. 오른쪽 아래 옅은 동그라미를 <b>3초 동안 누르면</b> 교사 메뉴(단계·모양·밑그림, 학생 화면으로, 다시 섞기, 기록, 출력, 설정, 도움말)가 나타나요. 다 바꾼 뒤 <b>학생 화면으로</b>를 누르면 바로 전체 화면으로 이어서 해요.</p>
+      <p class="hint">학생 화면에는 메뉴가 없어요. 오른쪽 아래 옅은 동그라미를 <b>3초 동안 누르면</b> 교사 메뉴(단계·모양·밑그림, 이 그림으로 다시 시작, 다시 섞기, 기록, 출력, 설정, 도움말)가 나타나요. 다 바꾼 뒤 <b>이 그림으로 다시 시작</b>을 누르면 바뀐 설정으로 처음부터, 관리 버튼을 <b>한 번</b> 누르면 하던 판으로 돌아가요.</p>
     </div>
     <div class="paper-foot">
       <button class="pbtn" id="demoBtn" type="button">예시 사진으로 해 보기</button>
@@ -450,7 +454,7 @@ function showSetup(){
     if(r.name==='mode'){S.mode=r.value; store.set('mode',S.mode); modeUI();}
     if(r.name==='level'){S.level=+r.value; store.set('level',S.level);}
     if(r.name==='shape'){S.shape=r.value; store.set('shape',S.shape);}
-    if(r.name==='ghost'){S.ghost=+r.value; store.set('ghost',S.ghost);}
+    if(r.name==='ghost'){S.ghost=+r.value; store.set('ghost2',S.ghost);}
     if(r.name==='errorMode'){S.errorMode=r.value; store.set('errorMode',S.errorMode);}
     if(r.name==='sfx'){S.sfx=r.value==='on'; store.set('sfx',r.value);}
   });
@@ -632,7 +636,7 @@ function fitSlots(g,n,W,H,top,bottom,gap){
   const s=0.2; return {s,slots:make(s).concat(Array.from({length:n},(_,k)=>({x:gap+(k%10)*20,y:top+Math.floor(k/10)*20,k:999+k})))};
 }
 function shuffleArr(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-function applyGhost(){ $('ghost').style.opacity=[0,0.55,0.25,0][S.ghost]; }
+function applyGhost(){ $('ghost').style.opacity=[0,0.55,0.25,0.1,0][S.ghost]; }
 /* 조각 한 개 그리기: 테두리로 자르고 그 안에 사진, 가장자리에 옅은 선 */
 function drawPiece(p){
   const {EW,EH,m,dpr,f,bw,bh}=G, el=p.el, R=S.R;
@@ -743,14 +747,13 @@ const TOUR_STEPS=[
   {el:'#gGh', t:'밑그림', x:'판에 보이는 그림의 진하기예요. 익숙해질수록 흐리게, 없음으로 바꿔요.'},
   {el:'#dockTop [data-a="sfx"]', t:'효과음', x:'조각을 맞출 때 나는 작은 소리를 켜고 꺼요.'},
   {el:'#dockTop [data-a="setup"]', t:'설정', x:'처음 설정 화면으로 가서 사진, 누가 쓰는지, 다른 자리에 놓았을 때의 도움 방식을 바꿔요.'},
-  {el:'#dockBot [data-a="student"]', t:'학생 화면으로', x:'메뉴를 닫고 바로 전체 화면으로 학생이 이어서 해요. 메뉴는 오른쪽 아래 동그라미를 3초 누르면 다시 열려요.'},
+  {el:'#dockBot [data-a="restart"]', t:'이 그림으로 다시 시작', x:'바꾼 설정을 적용해 같은 사진으로 처음부터 다시 해요. 메뉴는 닫히고 바로 전체 화면이 돼요.'},
   {el:'#dockBot [data-a="mix"]', t:'다시 섞기', x:'남은 조각을 판 둘레에 다시 흩어 놓아요. 학생이 아무 데나 놓아 둔 조각도 정리돼요.'},
-  {el:'#dockBot [data-a="again"]', t:'같은 그림 다시', x:'같은 사진으로 한 번 더 해요.'},
   {el:'#dockBot [data-a="nextlv"]', t:'다음 단계', x:'조각을 한 줄 늘려 다시 해요.'},
   {el:'#dockBot [data-a="setup"]', t:'다른 사진으로', x:'설정 화면에서 다른 사진을 골라요.'},
   {el:'#dockBot [data-a="print"]', t:'출력', x:'오려서 맞추는 종이 퍼즐과 기록을 A4 한 장으로 인쇄해요.'},
   {el:'#dockBot [data-a="log"]', t:'기록', x:'다 맞춘 판마다 바로 맞힘, 도움 받아 맞힘(제자리 표시를 본 조각), 걸린 시간을 보여 줘요.'},
-  {el:'#adminBtn', t:'관리 버튼', x:'이 동그라미를 3초 누르면 교사 메뉴가 열려요(학생이 실수로 열지 않게). 메뉴가 열려 있을 때 한 번 누르면 바로 학생 화면으로 돌아가요.'}
+  {el:'#adminBtn', t:'관리 버튼', x:'이 동그라미를 3초 누르면 교사 메뉴가 열려요(학생이 실수로 열지 않게). 메뉴가 열려 있을 때 한 번 누르면 하던 판 그대로 학생 화면으로 돌아가요.'}
 ];
 const TOUR={on:false,i:0,list:[]};
 function startTour(){
