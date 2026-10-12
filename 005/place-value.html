@@ -71,7 +71,8 @@ body.recording .rec{display:inline-flex}
 .chip.on{background:var(--tint);border-color:var(--base);color:var(--dark)}
 .chip.fixed{background:var(--base);border-color:var(--base);color:#fff;cursor:default}
 .stage{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;min-height:0}
-.pv-table{display:flex;align-items:flex-end;justify-content:center;flex-wrap:nowrap;font-size:var(--fs,120px)}
+/* 수는 오른쪽 맞춤: 일의 자리는 늘 같은 곳, 수가 길어지면 왼쪽으로 늘어남. 너비는 가장 긴 수(열두 자리) 기준 */
+.pv-table{display:flex;align-items:flex-end;justify-content:flex-end;flex-wrap:nowrap;font-size:var(--fs,120px);max-width:100%;transition:transform .25s ease}
 .pv-col{display:flex;flex-direction:column;align-items:center}
 .pv-digit{font-family:'Jua',sans-serif;font-variant-numeric:tabular-nums;font-size:1em;line-height:1;padding:0 .03em;color:var(--ink-soft)}
 .pv-digit.filled{color:var(--base)}
@@ -278,7 +279,7 @@ function readKo(n){
 /* ================= 저장 ================= */
 const ls={ get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}} };
 const store={ get:k=>ls.get('placeValue.'+k), set:(k,v)=>ls.set('placeValue.'+k,v) };
-const S={mode:null, top:null, mix:{}, labels:{}, count:0, cur:null, next:null,
+const S={mode:null, top:null, mix:{}, labels:{0:true,1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true}, count:0, cur:null, next:null,
   sound:true, wait:0, engine:'cloud', timbre:'Leda', cloudKey:'', saveCloud:false, engineNow:'', admin:false};
 (function load(){
   S.sound=store.get('sound')!=='off';
@@ -486,13 +487,13 @@ function enterPlay(){
 }
 function startTier(top){
   S.mode='tier'; S.top=top; S.mix={}; for(let e=top-1;e>=0;e--) S.mix[e]=true;
-  S.labels={}; for(let e=0;e<=11;e++) S.labels[e]=true; syncLabelBtn();
+  syncLabelBtn(); /* 자리 이름 켜고 끈 상태는 그대로 (학생을 바꿀 때만 처음으로) */
   const m=TIERS[top]; applyTheme(m.color); $('tierBadge').textContent=m.label; $('tierRange').textContent=m.range;
   renderChips(); enterPlay();
 }
 function startBig(){
   S.mode='big'; S.top=null;
-  S.labels={}; for(let e=0;e<=11;e++) S.labels[e]=true; syncLabelBtn();
+  syncLabelBtn();
   applyTheme(BIG_COLOR); $('tierBadge').textContent='큰 수'; $('tierRange').textContent='천 ~ 천억 사이의 수';
   $('chipRow').innerHTML=''; enterPlay();
 }
@@ -554,16 +555,27 @@ function showNumber(){
   refreshNext(); updateCounter();
 }
 function updateCounter(){ $('counterText').textContent='오늘 만든 수 '+S.count+'개'; }
-/* 화면 크기에 맞춰 수를 되도록 크게 */
+/* 숫자 크기는 어떤 단위를 하든 같게: 가장 긴 수(천억 단위, 열두 자리)가 화면 좌우를 채우는 크기로 고정.
+   표의 너비도 그 길이로 고정하고 오른쪽 맞춤 → 일의 자리가 늘 같은 자리 */
+const MAXE=11; let FIT={W:0,H:0,fs:100,w:0};
+function measureMax(){
+  const m=document.createElement('div'); m.className='pv-table'; m.style.cssText='position:absolute;visibility:hidden;left:0;top:0;--fs:100px;max-width:none';
+  for(let e=MAXE;e>=0;e--){ m.insertAdjacentHTML('beforeend',`<div class="pv-col"><div class="pv-digit filled">8</div><div class="pv-label"><span class="tx">${chartLabel(e)}</span></div></div>`);
+    if(e%3===0&&e!==0) m.insertAdjacentHTML('beforeend','<div class="pv-col comma-col"><div class="pv-digit comma"><span>,</span></div><div class="pv-label spacer">·</div></div>'); }
+  $('stage').appendChild(m); const r={w:m.scrollWidth||1,h:m.scrollHeight||1}; m.remove(); return r;
+}
 function fitTable(){
   const t=$('pvTable'), st=$('stage'); if(!document.body.classList.contains('playing')) return;
-  t.style.setProperty('--fs','100px');
   requestAnimationFrame(()=>{
     const W=st.clientWidth, H=st.clientHeight-50;
-    const w=t.scrollWidth||1, h=t.scrollHeight||1;
-    t.style.setProperty('--fs',Math.max(28,Math.min(100*W*0.92/w,100*H*0.88/h,300))+'px');
+    if(W!==FIT.W||H!==FIT.H||!FIT.w){ const m=measureMax(); FIT={W,H,fs:Math.max(24,Math.min(100*W*0.94/m.w,100*H*0.88/m.h,300)),w:m.w}; }
+    t.style.setProperty('--fs',FIT.fs+'px'); t.style.width=(FIT.w*FIT.fs/100)+'px';
+    /* 관리 창이 열려 있으면 수를 창 왼쪽으로 비켜 둠 (크기는 그대로) */
+    t.style.transform='';
+    if(S.admin){ const r=t.getBoundingClientRect(), dl=$('drawer').getBoundingClientRect().left; const dx=Math.max(0,r.right-dl+28); if(dx) t.style.transform=`translateX(${-dx}px)`; }
   });
 }
+document.fonts&&document.fonts.ready.then(()=>{ FIT.w=0; fitTable(); });
 let rzT=null; window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ fitTable(); if(TOUR.on) placeTour(); },150); });
 
 /* ================= 누르기 =================
@@ -617,7 +629,12 @@ function logNumber(cur){
   log.push({s:recId,t:Date.now(),k:cur.key,p:cur.pat,n:cur.n}); saveLog(); updateRec();
 }
 function setRecording(id){
-  recId=students.some(s=>s.id===id)?id:'';
+  const next=students.some(s=>s.id===id)?id:'';
+  /* 다른 학생으로 바꿀 때만 자리 이름 켜고 끈 상태를 처음(모두 보임)으로.
+     처음 학생을 고를 때나 기록을 끝낼 때는 그대로 */
+  if(recId&&next&&next!==recId){ for(let e=0;e<=11;e++) S.labels[e]=true; syncLabelBtn();
+    if(document.body.classList.contains('playing')){ if(S.cur) renderRow(S.cur.top,x=>S.cur.digits[x]); else renderEmpty(); } }
+  recId=next;
   updateRec(); renderDrawer();
 }
 function updateRec(){
@@ -728,6 +745,7 @@ function setAdmin(on){
   $('abLabel').textContent=on?'심':'charum';
   if(on){ loadRec(); renderDrawer(); leaveFull(); }
   else{ $('newName').blur(); if(document.body.classList.contains('playing')) goFull(); }
+  setTimeout(fitTable,280); /* 관리 창이 다 열린 뒤(또는 닫힌 뒤) 수 위치를 맞춤 */
 }
 
 /* ================= 사용법: 말풍선 둘러보기 ================= */
