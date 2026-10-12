@@ -327,7 +327,7 @@ const CSS=`
 #krBox .kr-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
 #krBox button{font:inherit;font-size:16px;padding:10px 22px;border-radius:12px;border:1px solid #c9cde0;background:#f4f5fa;color:#1d2133;cursor:pointer;min-height:44px}
 #krBox button.kr-pri{background:#2C5FCF;border-color:#2C5FCF;color:#fff}
-body:not(.kr-ready) .kr-open{display:none!important}
+html:not(.kr-ready) .kr-open{display:none!important}
 .kr-open{font:inherit;font-size:14px;padding:6px 12px;border-radius:10px;border:1px solid #9fb3e6;background:#eef3ff;color:#1E4396;cursor:pointer;white-space:nowrap;min-height:36px}
 `;
 function ensureCss(){ if(document.getElementById('krCss')) return; const s=document.createElement('style'); s.id='krCss'; s.textContent=CSS; document.head.appendChild(s); }
@@ -403,7 +403,7 @@ function close(){
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
 window.KeyRelay={receive,close,QR,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
 ensureCss();
-if(READY){ if(document.body) document.body.classList.add('kr-ready'); else document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('kr-ready')); }
+if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
 })();
 </script>
 <script>
@@ -749,7 +749,7 @@ function showSetup(){
       <div class="grp"><h2>목소리 (수업 내내 한 목소리)</h2>${seg('engine',{cloud:['Google 음성','자연스러움 · Cloud 키 필요'],device:['기기 목소리','키 없이 바로']})}</div>
       <div id="cloudRow" ${S.engine==='cloud'?'':'hidden'} style="display:flex;flex-direction:column;gap:10px">
         ${seg('timbre',{Leda:['밝은 목소리',''],Aoede:['산뜻한 목소리',''],Kore:['또렷한 목소리','']})}
-        <p class="hint">키 만들기: <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a>에서 Cloud Text-to-Speech API를 사용 설정하고 API 키를 만드세요. 결제 카드 등록이 필요하지만 매달 100만 자까지 무료예요. 차례대로 따라 하기: <a href="cloud-key.html" target="_blank" rel="noopener">Cloud 키 넣는 방법</a></p>
+        <p class="hint"><b>Cloud 키 받기</b> · <b>키가 있으면</b> → <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키 목록</a>에서 <b>키 표시</b>를 눌러 복사 · <b>처음이면</b> → <a href="cloud-key.html" target="_blank" rel="noopener">Cloud 키 만드는 방법</a>(결제 등록·API 켜기·키 만들기, 매달 100만 자 무료)</p>
         <div class="row"><input class="field" id="cloudKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}"><button class="btn" id="showKey" type="button">보기</button><button class="kr-open" data-kr="1" type="button">📱 휴대폰으로 받기</button></div>
         <label class="row" style="gap:8px"><input type="checkbox" id="saveCloud" ${S.saveCloud?'checked':''}> 이 기기에 키 저장 (여러 사람이 쓰는 컴퓨터라면 끄세요)</label>
       </div>

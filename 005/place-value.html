@@ -354,7 +354,7 @@ const CSS=`
 #krBox .kr-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
 #krBox button{font:inherit;font-size:16px;padding:10px 22px;border-radius:12px;border:1px solid #c9cde0;background:#f4f5fa;color:#1d2133;cursor:pointer;min-height:44px}
 #krBox button.kr-pri{background:#2C5FCF;border-color:#2C5FCF;color:#fff}
-body:not(.kr-ready) .kr-open{display:none!important}
+html:not(.kr-ready) .kr-open{display:none!important}
 .kr-open{font:inherit;font-size:14px;padding:6px 12px;border-radius:10px;border:1px solid #9fb3e6;background:#eef3ff;color:#1E4396;cursor:pointer;white-space:nowrap;min-height:36px}
 `;
 function ensureCss(){ if(document.getElementById('krCss')) return; const s=document.createElement('style'); s.id='krCss'; s.textContent=CSS; document.head.appendChild(s); }
@@ -430,7 +430,7 @@ function close(){
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
 window.KeyRelay={receive,close,QR,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
 ensureCss();
-if(READY){ if(document.body) document.body.classList.add('kr-ready'); else document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('kr-ready')); }
+if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
 })();
 </script>
 <script>
@@ -646,7 +646,7 @@ function voiceNote(t){ $('voiceNote').textContent=t||''; }
 function renderVoiceRow(){
   const b=(a,l,p)=>`<button type="button" class="seg" data-v="${a}" aria-pressed="${p}">${l}</button>`;
   $('voiceRow').innerHTML=`<span class="lbl">목소리</span>${b('engine:device','기기',S.engine==='device')}${b('engine:cloud','Google',S.engine==='cloud')}`+
-    `<a href="cloud-key.html" target="_blank" rel="noopener">Cloud 키 넣는 방법</a>`+
+    `<a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키가 있으면: 키 목록</a><a href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a>`+
     (S.engine==='cloud'?`<span class="sep"></span>${[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join('')}`+
       `<input class="key" id="voiceKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키">`+
       `<button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button>`+
@@ -943,7 +943,7 @@ function setAdmin(on){
 const PICK_STEPS=[
   {el:'#pickGrid', t:'배울 자리 고르기', x:'가장 높은 자리를 고르면 연습 화면으로 가요. "큰 수"는 천부터 천억까지 섞여 나와요.'},
   {el:'#voiceRow', t:'목소리', x:'"기기"는 바로 쓸 수 있어요. "Google"은 더 자연스럽고 Cloud 키가 필요해요. 한 번 고르면 기억해요.'},
-  {el:'body.kr-ready #voiceRow [data-kr]', t:'휴대폰으로 받기', x:'Cloud 키를 휴대폰에서 이 화면으로 보내요. 번호 4자리가 나오면 휴대폰에서 그 번호와 키를 넣고 보내기를 눌러요.'},
+  {el:'html.kr-ready #voiceRow [data-kr]', t:'휴대폰으로 받기', x:'Cloud 키를 휴대폰에서 이 화면으로 보내요. 번호 4자리가 나오면 휴대폰에서 그 번호와 키를 넣고 보내기를 눌러요.'},
   {el:'#adminBtn', t:'학생 기록', x:'이 작은 단추를 누르면 학생을 넣고 고를 수 있어요. 고른 학생의 학습이 기록되고, 기록을 볼 수도 있어요.'}
 ];
 const PLAY_STEPS=[

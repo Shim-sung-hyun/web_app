@@ -326,7 +326,7 @@ const CSS=`
 #krBox .kr-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
 #krBox button{font:inherit;font-size:16px;padding:10px 22px;border-radius:12px;border:1px solid #c9cde0;background:#f4f5fa;color:#1d2133;cursor:pointer;min-height:44px}
 #krBox button.kr-pri{background:#2C5FCF;border-color:#2C5FCF;color:#fff}
-body:not(.kr-ready) .kr-open{display:none!important}
+html:not(.kr-ready) .kr-open{display:none!important}
 .kr-open{font:inherit;font-size:14px;padding:6px 12px;border-radius:10px;border:1px solid #9fb3e6;background:#eef3ff;color:#1E4396;cursor:pointer;white-space:nowrap;min-height:36px}
 `;
 function ensureCss(){ if(document.getElementById('krCss')) return; const s=document.createElement('style'); s.id='krCss'; s.textContent=CSS; document.head.appendChild(s); }
@@ -402,7 +402,7 @@ function close(){
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
 window.KeyRelay={receive,close,QR,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
 ensureCss();
-if(READY){ if(document.body) document.body.classList.add('kr-ready'); else document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('kr-ready')); }
+if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
 })();
 </script>
 <script>
@@ -665,7 +665,8 @@ function renderVoicePop(){
   const p=$('voicePop');
   p.innerHTML=`<div class="row">${[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>`<button type="button" class="tb${S.timbre===k?' on':''}" data-tb="${k}">${l}</button>`).join('')}<button type="button" class="tb" data-test="1">들어 보기</button></div>`+
     `<div class="row"><input class="key" id="voiceKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button></div>`+
-    `<div class="row" style="justify-content:space-between"><label><input type="checkbox" id="voiceSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label><a href="cloud-key.html" target="_blank" rel="noopener">Cloud 키 넣는 방법</a></div>`+
+    `<div class="row" style="justify-content:space-between"><label><input type="checkbox" id="voiceSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label></div>`+
+    `<div class="row" style="justify-content:space-between"><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키가 있으면: 키 목록</a><a href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a></div>`+
     (S.voiceNote?`<div class="note">${esc(S.voiceNote)}</div>`:'');
   const k=$('voiceKey'), save=()=>store.set('cloudKey',S.saveCloud&&S.cloudKey?S.cloudKey:null);
   k.oninput=()=>{ S.cloudKey=k.value.trim(); save(); chooseEngine(); };

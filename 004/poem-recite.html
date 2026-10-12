@@ -317,7 +317,7 @@ const CSS=`
 #krBox .kr-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
 #krBox button{font:inherit;font-size:16px;padding:10px 22px;border-radius:12px;border:1px solid #c9cde0;background:#f4f5fa;color:#1d2133;cursor:pointer;min-height:44px}
 #krBox button.kr-pri{background:#2C5FCF;border-color:#2C5FCF;color:#fff}
-body:not(.kr-ready) .kr-open{display:none!important}
+html:not(.kr-ready) .kr-open{display:none!important}
 .kr-open{font:inherit;font-size:14px;padding:6px 12px;border-radius:10px;border:1px solid #9fb3e6;background:#eef3ff;color:#1E4396;cursor:pointer;white-space:nowrap;min-height:36px}
 `;
 function ensureCss(){ if(document.getElementById('krCss')) return; const s=document.createElement('style'); s.id='krCss'; s.textContent=CSS; document.head.appendChild(s); }
@@ -393,7 +393,7 @@ function close(){
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
 window.KeyRelay={receive,close,QR,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
 ensureCss();
-if(READY){ if(document.body) document.body.classList.add('kr-ready'); else document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('kr-ready')); }
+if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
 })();
 </script>
 <script>
@@ -649,7 +649,7 @@ function renderDocks(){
     `<div class="g" id="gFont"><span class="lbl">글꼴</span>${b('font:myeongjo','명조',S.font==='myeongjo')}${b('font:easy','둥근 글씨',S.font==='easy')}</div>`+
     `<div class="g">${b('sound',(S.sound?ICON.sndOn:ICON.sndOff)+(S.sound?'소리':'소리 끔'),S.sound)}</div>`+
     /* 목소리: 수업 내내 한 목소리. Google 음성은 Cloud 키가 있어야 읽어 줌 */
-    `<div class="g" id="gVoice"><span class="lbl">목소리</span>${b('engine:cloud','Google',S.engine==='cloud')}${b('engine:device','기기',S.engine==='device')}<a class="help" href="cloud-key.html" target="_blank" rel="noopener">${ICON.key}Cloud 키 넣는 방법</a>${S.engine==='cloud'?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
+    `<div class="g" id="gVoice"><span class="lbl">목소리</span>${b('engine:cloud','Google',S.engine==='cloud')}${b('engine:device','기기',S.engine==='device')}<a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">${ICON.key}키가 있으면: 키 목록</a><a class="help" href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a>${S.engine==='cloud'?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
     `<div class="g">`+
       (S.engine==='cloud'?`${[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join('')}
         <input class="key" id="dockKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button>`:'')+
@@ -947,7 +947,7 @@ const TOUR_STEPS=[
   {el:'#gFont', t:'글꼴', x:'명조는 시다운 글꼴, 둥근 글씨는 글자를 처음 읽는 학생에게 좋아요.'},
   {el:'#dockTop [data-a="sound"]', t:'소리', x:'읽어 주는 목소리를 켜고 꺼요.'},
   {el:'#gVoice', t:'목소리', x:'"기기"는 키 없이 바로 나오고, "Google"은 더 자연스러워요. Google은 Cloud 키가 필요해요(옆 "Cloud 키 넣는 방법").'},
-  {el:'body.kr-ready #dockTop [data-kr]', t:'휴대폰으로 받기', x:'Cloud 키를 휴대폰에서 이 화면으로 보내요. 번호 4자리가 나오면 휴대폰에서 그 번호와 키를 넣고 보내기를 눌러요.'},
+  {el:'html.kr-ready #dockTop [data-kr]', t:'휴대폰으로 받기', x:'Cloud 키를 휴대폰에서 이 화면으로 보내요. 번호 4자리가 나오면 휴대폰에서 그 번호와 키를 넣고 보내기를 눌러요.'},
   {el:'#dockTop [data-a="vtest"]', t:'들어 보기', x:'고른 목소리로 미리 들어 봐요.'},
   {el:'#dockBot [data-a="read"]', t:'들려주기', x:'제목 → 작가 → 본문을 이어서 읽고, 지금 읽는 줄에 옅은 바탕이 생겨요. 가린 글자도 소리로는 다 읽어 줘요.'},
   {el:'#dockBot [data-a="echo"]', t:'한 줄씩 따라 읽기', x:'한 줄을 읽어 준 뒤 "따라 해요"가 나오고, 학생이 따라 말할 시간을 준 다음 저절로 다음 줄로 가요.'},
