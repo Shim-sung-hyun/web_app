@@ -9,7 +9,7 @@
 <h3 style="margin:28px 0 8px;padding-left:10px;border-left:5px solid #1F6C75;font-size:20px;color:#1C2A31;">처음 한 번 준비</h3>
 <ol style="margin:0 0 12px;padding-left:24px;">
   <li style="margin-bottom:6px;"><b>앱 열기</b>: 이 글 위의 <b>▶ 앱 바로 실행</b> 버튼을 누릅니다. 새 탭에서 앱이 열립니다.</li>
-  <li style="margin-bottom:6px;"><b>Gemini 키 (꼭 필요)</b>: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#1F6C75;">aistudio.google.com/apikey</a>에서 Create API key를 누르고, 키를 복사해 첫 화면에 붙여 넣은 뒤 <b>키 확인</b>을 누릅니다. 무료입니다.</li>
+  <li style="margin-bottom:6px;"><b>Gemini 키 (꼭 필요)</b>: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#1F6C75;">aistudio.google.com/apikey</a>에서 Create API key를 누르고, 키를 복사해 첫 화면에 붙여 넣은 뒤 <b>키 확인</b>을 누릅니다. 사진 분석은 이 키로 무료입니다(결제를 연결하지 않은 키). Google 음성용으로 결제를 연결한 프로젝트에서 만든 키는 유료가 되니, Gemini 키는 AI Studio에서 따로 만드세요.</li>
   <li style="margin-bottom:6px;"><b>목소리 (고르기)</b>
     <ul style="margin:4px 0 0;padding-left:20px;">
       <li><b>Google 음성</b>: 자연스럽고 빠릅니다. <a href="https://console.cloud.google.com" target="_blank" rel="noopener" style="color:#1F6C75;">console.cloud.google.com</a>에서 Cloud Text-to-Speech API를 사용 설정하고 API 키를 만들어 넣습니다. 결제 카드 등록이 필요하지만 매달 100만 자까지 무료입니다. 차례대로 따라 하는 안내: <a href="https://shim-sung-hyun.github.io/web_app/001/cloud-key.html" target="_blank" rel="noopener" style="color:#1F6C75;">Cloud 키 넣는 방법</a>. 다른 앱(003~006)에 저장한 키가 있으면 자동으로 채워집니다. 전자칠판처럼 키를 붙여 넣기 어려우면 키 칸 옆 <b>📱 휴대폰으로 받기</b>를 누르세요. 휴대폰으로 QR을 찍고 화면의 번호 4자리와 키를 넣어 보내면 Gemini 키와 Cloud 키를 한꺼번에 전자칠판에 들어갑니다(키는 잠가서 보내고, 받는 즉시 중계 서버에서 지워집니다).</li>
@@ -18,6 +18,7 @@
     </ul>
   </li>
   <li style="margin-bottom:6px;"><b>키 저장</b>: 첫 화면 <b>1 키 설정</b>에 Gemini 키와 Google 음성 키를 함께 넣습니다. 넣은 키는 이 기기에 저장되어 다음부터 다시 넣지 않아도 됩니다. 여러 사람이 쓰는 컴퓨터라면 수업을 마친 뒤 <b>키 지우기</b>를 누르세요.</li>
+  <li style="margin-bottom:6px;"><b>끝 화면 그림 (돈이 드는 기능)</b>: 기본은 "칠한 사진"이라 돈이 들지 않습니다. "만화 그림"을 고르면 Gemini 그림을 그리는데, 결제 등록이 필요하고 그림 한 장마다 약 50원이 듭니다. 쓰실 때는 Google Cloud 결제의 <b>예산 및 알림</b>(예: 1만 원)을 먼저 걸어 두세요.</li>
 </ol>
 <p style="margin:0 0 12px;padding:10px 14px;background:#EDF5F6;border-radius:8px;">Gemini 키가 없어도 <b>시작</b>을 누르면 "사진을 골라요" 화면에서 <b>예시 사진으로 하기</b>로 수업할 수 있어요. 키 없이 <b>사진 고르기</b>를 누르면 키를 넣는 칸으로 돌아가 다시 안내해요.</p>
 
@@ -77,7 +78,7 @@
 </div>
 <div style="margin:0 0 22px;">
   <p style="margin:0 0 6px;font-size:17px;"><span style="display:inline-block;min-width:26px;height:26px;line-height:26px;margin-right:6px;border-radius:13px;background:#1F6C75;color:#FFFFFF;text-align:center;font-size:14px;font-weight:bold;">7</span><b>끝</b></p>
-  <p style="margin:0 0 8px;">사진이 찾은 도형을 강조한 만화 그림으로 바뀌어 나옵니다. 학생 화면에는 그림과 찾은 도형 이름만 보입니다.</p>
+  <p style="margin:0 0 8px;">학생이 칠한 사진과 찾은 도형 이름이 나옵니다. 처음 설정의 <b>끝 화면 그림</b>을 "만화 그림"으로 고르면 Gemini가 사진을 만화로 그려 줍니다. <b>만화 그림은 무료가 아닙니다.</b> 결제 등록이 필요하고, 그림을 한 장 그릴 때마다 약 50원이 듭니다(요금은 바뀔 수 있습니다). 같은 사진의 그림은 이 기기에 저장해 다시 쓰지만, 새 사진이나 다른 기기·브라우저에서는 다시 듭니다. 기본은 돈이 들지 않는 "칠한 사진"입니다.</p>
 </div>
 
 <h3 style="margin:28px 0 8px;padding-left:10px;border-left:5px solid #1F6C75;font-size:20px;color:#1C2A31;">교사 모드</h3>
@@ -96,6 +97,7 @@
   <li style="margin-bottom:6px;">3단계(각)를 할 때는 책·액자·휴대폰 같은 <b>직각 물체</b>를 넣어 찍으면 좋습니다.</li>
   <li style="margin-bottom:6px;">학생 <b>얼굴이나 이름</b>이 보이는 사진은 피하세요. 사진은 분석을 위해 Google Gemini로 보내집니다.</li>
   <li style="margin-bottom:6px;">사진에 따라 AI가 도형을 조금 어긋나게 잡을 수 있습니다. 수업 전에 한 번 해 보세요.</li>
+  <li style="margin-bottom:6px;"><b>돈이 드는 기능</b>: "만화 그림"은 그림 한 장마다 약 50원이 듭니다(결제 등록 필요). 사진 분석은 AI Studio에서 결제를 연결하지 않고 만든 Gemini 키로 하면 돈이 들지 않지만, Google 음성용으로 결제를 연결한 프로젝트에서 만든 키는 분석에도 요금이 붙습니다. 예산 알림(예: 1만 원)을 걸어 두세요.</li>
   <li style="margin-bottom:6px;">API 키는 개인 것입니다. 다른 분에게는 이 글 주소만 알려 드리고, 키는 각자 만들어 쓰도록 안내해 주세요.</li>
 </ul>
 

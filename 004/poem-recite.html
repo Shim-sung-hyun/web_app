@@ -413,7 +413,9 @@ function close(){
   me.box.remove();
 }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
-window.KeyRelay={receive,close,QR,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
+/* 모든 앱이 함께 쓰는 키 자리(webapp.cloudKey·webapp.geminiKey): 앱이 키를 저장하거나 지울 때 같이 맞춤 */
+function share(kind,val){ const k=kind==='gemini'?'webapp.geminiKey':'webapp.cloudKey'; try{ val?localStorage.setItem(k,val):localStorage.removeItem(k); }catch(e){} return val; }
+window.KeyRelay={receive,close,QR,share,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
 ensureCss();
 if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
 })();
@@ -472,7 +474,7 @@ let customs=[]; /* 직접 입력한 시 여러 편 [{id,title,author,body}] */
   const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
   S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
   /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
-  if(!S.cloudKey){ for(const k of ['webapp.cloudKey','colorFind.cloudKey','shapeFinder.cloudKey','placeValue.cloudKey','placeCount.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
+  if(!S.cloudKey){ for(const k of ['webapp.cloudKey','colorFind.cloudKey','shapeFinder.cloudKey','placeValue.cloudKey','placeCount.cloudKey','wordLearn.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
 })();
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -678,11 +680,11 @@ function renderDocks(){
       `${b('vtest','들어 보기')}${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`;
   const dk=$('dockKey');
   if(dk){
-    const save=()=>store.set('cloudKey',S.saveCloud&&S.cloudKey?S.cloudKey:null);
+    const save=()=>store.set('cloudKey',KeyRelay.share('cloud',S.saveCloud&&S.cloudKey?S.cloudKey:null));
     dk.oninput=()=>{ S.cloudKey=dk.value.trim(); save(); chooseEngine(); };
     $('dockSave').onchange=e=>{ S.saveCloud=e.target.checked; save(); };
     /* 휴대폰으로 키 받기 */
-    $('dockTop').querySelector('[data-kr]').onclick=e=>{ e.stopPropagation(); KeyRelay.receive({want:['cloud'],onKeys:k=>{ S.cloudKey=k.cloud; S.saveCloud=true; store.set('cloudKey',k.cloud); chooseEngine(); renderDocks(); }}); };
+    $('dockTop').querySelector('[data-kr]').onclick=e=>{ e.stopPropagation(); KeyRelay.receive({want:['cloud'],onKeys:k=>{ S.cloudKey=k.cloud; S.saveCloud=true; store.set('cloudKey',KeyRelay.share('cloud',k.cloud)); chooseEngine(); renderDocks(); }}); };
   }
   $('dockBot').innerHTML=
     `<div class="g">${b('read',ICON.play+'들려주기',PB.on&&PB.mode==='all','class="main"')}${b('echo',ICON.echo+'한 줄씩 따라 읽기',PB.on&&PB.mode==='echo','class="main"')}${PB.on?b('stopread',ICON.stop+'멈춤'):''}</div>`+

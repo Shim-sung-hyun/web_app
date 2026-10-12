@@ -422,7 +422,9 @@ function close(){
   me.box.remove();
 }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
-window.KeyRelay={receive,close,QR,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
+/* 모든 앱이 함께 쓰는 키 자리(webapp.cloudKey·webapp.geminiKey): 앱이 키를 저장하거나 지울 때 같이 맞춤 */
+function share(kind,val){ const k=kind==='gemini'?'webapp.geminiKey':'webapp.cloudKey'; try{ val?localStorage.setItem(k,val):localStorage.removeItem(k); }catch(e){} return val; }
+window.KeyRelay={receive,close,QR,share,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
 ensureCss();
 if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
 })();
@@ -442,7 +444,7 @@ const S={unit:'만', target:10, pass:0, count:0,
   const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
   S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
   /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
-  if(!S.cloudKey){ for(const k of ['webapp.cloudKey','placeValue.cloudKey','poemRecite.cloudKey','colorFind.cloudKey','shapeFinder.cloudKey']){ const v=ls.get(k); if(v){ S.cloudKey=v; break; } } }
+  if(!S.cloudKey){ for(const k of ['webapp.cloudKey','placeValue.cloudKey','poemRecite.cloudKey','colorFind.cloudKey','shapeFinder.cloudKey','wordLearn.cloudKey']){ const v=ls.get(k); if(v){ S.cloudKey=v; break; } } }
   if(S.engine==='cloud'&&!S.cloudKey) S.engine='device';
 })();
 const $=id=>document.getElementById(id);
@@ -690,7 +692,7 @@ function renderVoicePop(){
     `<div class="row" style="justify-content:space-between"><label><input type="checkbox" id="voiceSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label></div>`+
     `<div class="row" style="justify-content:space-between"><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키가 있으면: 키 목록</a><a href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a></div>`+
     (S.voiceNote?`<div class="note">${esc(S.voiceNote)}</div>`:'');
-  const k=$('voiceKey'), save=()=>store.set('cloudKey',S.saveCloud&&S.cloudKey?S.cloudKey:null);
+  const k=$('voiceKey'), save=()=>store.set('cloudKey',KeyRelay.share('cloud',S.saveCloud&&S.cloudKey?S.cloudKey:null));
   k.oninput=()=>{ S.cloudKey=k.value.trim(); save(); chooseEngine(); };
   $('voiceSave').onchange=e=>{ S.saveCloud=e.target.checked; save(); };
 }
@@ -698,7 +700,7 @@ $('voicePop').addEventListener('click',e=>{
   e.stopPropagation();
   const t=e.target.closest('button'); if(!t) return; unlockAudio();
   if(t.dataset.tb){ S.timbre=t.dataset.tb; store.set('timbre',S.timbre); chooseEngine(); prefetchNames(); renderVoicePop(); }
-  if(t.dataset.kr){ KeyRelay.receive({want:['cloud'],onKeys:x=>{ S.cloudKey=x.cloud; S.saveCloud=true; store.set('cloudKey',x.cloud); chooseEngine(); prefetchNames(); S.voiceNote=''; renderVoicePop(); $('voicePop').classList.add('show'); }}); return; }
+  if(t.dataset.kr){ KeyRelay.receive({want:['cloud'],onKeys:x=>{ S.cloudKey=x.cloud; S.saveCloud=true; store.set('cloudKey',KeyRelay.share('cloud',x.cloud)); chooseEngine(); prefetchNames(); S.voiceNote=''; renderVoicePop(); $('voicePop').classList.add('show'); }}); return; }
   if(t.dataset.test){ if(!S.cloudKey){ spotlight('#voiceKey','Cloud 키를 넣어 주세요. 키가 없으면 "기기"를 고르세요.'); } else { voiceNote(''); chooseEngine(); speak('십만'); renderVoicePop(); } }
 });
 document.addEventListener('click',e=>{ if(!e.target.closest('#segSound')) closeVoicePop(); });
