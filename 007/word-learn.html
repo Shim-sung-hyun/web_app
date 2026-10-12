@@ -208,6 +208,15 @@ button{font-family:inherit;cursor:pointer}
 .picletters.out{opacity:0}
 .picletters img{position:absolute;object-fit:contain;opacity:0;transform:scale(.3);transition:opacity .18s ease,transform .22s ease}
 .picletters img.on{opacity:1;transform:scale(1)}
+.fontword .syl{transition:opacity .35s ease}
+.fontword .syl.hide{opacity:0}
+.sdot{position:absolute;border-radius:50%;border:3px solid #B9C7D8;background:#fff;box-shadow:0 4px 0 #E3DCCD;cursor:pointer;transition:background .25s,border-color .25s,transform .2s}
+.sdot.next{border-color:#7E9CC0}
+.sdot.hint{animation:hint 1.8s ease-in-out infinite}
+.sdot.done{background:#7E9CC0;border-color:#7E9CC0;box-shadow:none;transform:scale(.8)}
+/* 쓰기 붓: 손가락·마우스 끝에 붓이 따라다님(붓끝이 닿는 곳) */
+#brush{position:fixed;left:0;top:0;width:92px;height:92px;pointer-events:none;z-index:8;display:none;will-change:transform;filter:drop-shadow(0 3px 3px rgba(0,0,0,.18))}
+#traceHit.brushy{cursor:none}
 /* 기록 중 표시: 녹화처럼 빨간 점 (깜빡이지 않음, 이름 없음) */
 .rec{position:absolute;left:16px;top:14px;z-index:5;display:none;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#E0353B;opacity:.7;white-space:nowrap}
 .rec::before{content:"";width:11px;height:11px;border-radius:50%;background:#E0353B;box-shadow:0 0 0 3px rgba(224,53,59,.18)}
@@ -275,7 +284,7 @@ body.recording .rec{display:inline-flex}
      <div class="seg" id="picSeg">
       <button data-v="gemini">Gemini가 그린 그림</button><button data-v="emoji">기본 그림</button>
      </div>
-     <div class="note" style="margin-top:8px"><b>Gemini 키 받기</b>: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> 에서 <b>Create API key</b>(API 키 만들기)를 누르고, 키를 복사해 아래 칸에 넣으세요. 그림 모델은 결제 등록이 필요할 수 있어요.</div>
+     <div class="note" style="margin-top:8px"><b>Gemini 키 받기</b>: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> 에서 <b>Create API key</b>(API 키 만들기)를 누르고, 키를 복사해 아래 칸에 넣으세요. <br><b>Gemini 그림은 무료가 아니에요.</b> 결제 등록이 필요하고, <b>그림을 한 장 그릴 때마다 약 50원</b>이 들어요. 그린 그림은 이 기기에 저장해 다시 쓰므로, 같은 낱말은 다시 그리지 않는 한 또 들지 않아요(다시 그리기를 하거나 다른 기기·브라우저에서 처음 그릴 때는 다시 들어요). 돈을 쓰지 않으려면 "기본 그림"을 고르세요.</div>
      <div class="keyline" style="margin-top:6px">
       <input id="gemKey" type="password" placeholder="AIza… 로 시작하는 Gemini 키" autocomplete="off" spellcheck="false">
       <button class="btn" data-eye="gemKey">보기</button>
@@ -423,6 +432,12 @@ body.recording .rec{display:inline-flex}
  <div id="dots"></div>
 </div>
 <img id="pen" class="hidden" alt="">
+<div id="brush"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
+ <line x1="40" y1="60" x2="94" y2="6" stroke="#B9814B" stroke-width="10" stroke-linecap="round"/>
+ <line x1="40" y1="60" x2="94" y2="6" stroke="#D9A46C" stroke-width="4" stroke-linecap="round" transform="translate(-2,-2)"/>
+ <line x1="29" y1="71" x2="43" y2="57" stroke="#9AA3AE" stroke-width="14" stroke-linecap="round"/>
+ <path d="M3 97 C9 84 17 74 26 66 L34 74 C26 83 16 91 3 97 Z" fill="#26324A"/>
+</svg></div>
 
 <div class="tbar hidden" id="tTop">
  <span id="tWord"></span>
@@ -1198,8 +1213,9 @@ const Gem = {
     if (!r.ok) throw new Error('key ' + r.status);
     const j = await r.json();
     const list = (j.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent')).map(m => m.name.replace('models/', ''));
-    const img = list.filter(n => /image/.test(n) && /gemini/.test(n));
-    const score = n => (/flash-image$/.test(n) ? 100 : 0) + (/flash/.test(n) ? 20 : 0) + (/preview/.test(n) ? -5 : 0) + (/2\.5/.test(n) ? 3 : 0) + (/3/.test(n) ? 4 : 0);
+    /* 그림 모델: 값이 싸고 빠른 것부터 (Nano Banana 2.1 → Flash Lite Image → Flash Image → Pro) */
+    const img = list.filter(n => /gemini/.test(n) && /image|nano-banana/.test(n) && !/imagen/.test(n));
+    const score = n => (/nano-banana/.test(n) ? 200 : 0) + (/flash-lite-image/.test(n) ? 150 : 0) + (/flash-image/.test(n) ? 100 : 0) + (/pro/.test(n) ? -50 : 0) + (/preview/.test(n) ? -5 : 0) + (parseFloat((n.match(/(\d+(\.\d+)?)/) || [0, 0])[1]) || 0);
     img.sort((a, b) => score(b) - score(a));
     return img[0] || '';
   },
@@ -1235,6 +1251,8 @@ function isEmojiOnly(s) { return !!s && /^\p{Extended_Pictographic}/u.test(s.tri
 /* =========================================================
    목소리
    ========================================================= */
+/* 말 빠르기: 기본(0.92 / 0.78)의 90% — 선생님 요청 */
+const G_RATE = 0.83;
 const Speech = {
   ctx: null, gain: null, buf: new Map(), gen: 0, cur: null, fellBack: false, devVoice: null,
   initAudio() {
@@ -1252,7 +1270,7 @@ const Speech = {
     });
     return out;
   },
-  key(t) { return 'g|' + S.voice + '|' + t; },
+  key(t) { return 'g|' + S.voice + '|' + G_RATE + '|' + t; },
   async gBuffer(t) {
     const k = this.key(t);
     if (this.buf.has(k)) return this.buf.get(k);
@@ -1261,7 +1279,7 @@ const Speech = {
       if (!ab) {
         const r = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': S.ttsKey },
-          body: JSON.stringify({ input: { text: t }, voice: { languageCode: 'ko-KR', name: 'ko-KR-Chirp3-HD-' + S.voice }, audioConfig: { audioEncoding: 'LINEAR16', sampleRateHertz: 24000, speakingRate: 0.92 } })
+          body: JSON.stringify({ input: { text: t }, voice: { languageCode: 'ko-KR', name: 'ko-KR-Chirp3-HD-' + S.voice }, audioConfig: { audioEncoding: 'LINEAR16', sampleRateHertz: 24000, speakingRate: G_RATE } })
         });
         if (!r.ok) { const e = new Error('tts ' + r.status); e.status = r.status; e.body = await r.text().catch(() => ''); throw e; }
         const j = await r.json();
@@ -1335,7 +1353,7 @@ const Speech = {
     await new Promise(res => {
       try {
         const u = new SpeechSynthesisUtterance(t);
-        u.lang = 'ko-KR'; u.rate = 0.78; u.volume = 0.8; if (this.devVoice) u.voice = this.devVoice;
+        u.lang = 'ko-KR'; u.rate = 0.70; u.volume = 0.8; if (this.devVoice) u.voice = this.devVoice;
         u.onend = res; u.onerror = res;
         speechSynthesis.speak(u);
         setTimeout(res, 1500 + t.length * 420);
@@ -1495,8 +1513,8 @@ function updateDots() {
   d.innerHTML = R.ended ? '' : `<b>${(cur ? cur.wi : 0) + 1}</b>/${R.words.length}`;
 }
 function prepTexts(words) {
-  const t = ['똑같은 글자를 찾아요.', '다시 해요.', '다음 낱말이에요.', '글자에 맞는 그림을 찾아요.', '여기 있어요.', '글자를 눌러요.', '따라 써요.', '오늘 배운 낱말이에요.', '다 했어요.', ...Praise.list];
-  words.forEach(w => t.push(w, eul(w) + ' 찾아요.', ieyo(w) + '.', w + ', 똑같은 글자예요.'));
+  const t = ['똑같은 글자를 찾아요.', '동그라미를 눌러요.', '다시 해요.', '다음 낱말이에요.', '글자에 맞는 그림을 찾아요.', '여기 있어요.', '글자를 눌러요.', '붓으로 따라 써요.', '오늘 배운 낱말이에요.', '다 했어요.', ...Praise.list];
+  words.forEach(w => { t.push(w, eul(w) + ' 찾아요.', ieyo(w) + '.', w + ', 똑같은 글자예요.'); [...w].forEach(c => c !== ' ' && t.push(c)); });
   return t;
 }
 
@@ -1511,20 +1529,20 @@ async function startLesson(words) {
   stage.innerHTML = '';
   await loadFonts(words);
   await Pics.url(words[0]);
-  runFrom(0);
+  afterFullscreen(() => runFrom(0));
 }
 async function runFrom(i) {
   const run = ++R.run; Speech.stop(); R.ended = false; R.trace = null;
   try {
     for (let k = i; k < R.items.length; k++) {
-      R.idx = k; updateDots(); Teacher.refresh();
+      R.idx = k; R.size = [innerWidth, innerHeight]; updateDots(); Teacher.refresh();
       if (await doItem(R.items[k], run) === 'skip') continue;
       await wait(R.items[k + 1] && R.items[k + 1].wi !== R.items[k].wi ? 900 : 450, run);
     }
     await endScreen(run);
   } catch (e) { if (e !== CANCEL) console.error(e); }
 }
-function clearStage() { stage.innerHTML = ''; hidePen(); R.trace = null; }
+function clearStage() { stage.innerHTML = ''; hidePen(); R.trace = null; const b = document.getElementById('brush'); if (b) b.style.display = 'none'; }
 /* 그림이 아직 그려지는 중이면 다 될 때까지 조용히 기다림. 끝내 그림이 없으면 그 낱말은 건너뜀 */
 async function waitPic(w, run) {
   if (BG.busy(w)) {
@@ -1589,11 +1607,11 @@ async function introPicLetters(w, run) {
       box.appendChild(im); stamps.push(im);
     }
   });
-  const per = Math.max(16, Math.min(45, 2200 / stamps.length));
+  const per = Math.max(70, Math.min(120, 5000 / stamps.length));
   for (const im of stamps) { im.classList.add('on'); await wait(per, run); }
-  await wait(450, run);
+  await wait(600, run);
   await say(w, run);
-  await wait(900, run);
+  await wait(1200, run);
   box.classList.add('out');
   await wait(600, run);
 }
@@ -1659,22 +1677,44 @@ async function stageLook(w, run) {
     if (i < fonts.length - 1) await wait(1250, run);
   }
 
-  /* 글자를 누르면 다시 읽고 다음으로 */
-  const last = prev;
-  last.classList.add('tapword');
+  /* 글자 수만큼 동그라미: 순서대로 누르면 그 글자가 하나씩 나오고, 다 나오면 낱말을 말함 */
+  const last = prev, lastFont = fonts[fonts.length - 1];
+  const chars = [...w];
+  last.innerHTML = chars.map(c => `<span class="syl">${esc(c)}</span>`).join('');
+  await wait(400, run);
+  const spans = [...last.querySelectorAll('.syl')];
+  spans.forEach(sp => sp.classList.add('hide'));
+  await wait(450, run);
+  const dotS = Math.min(H * 0.1, W * 0.09, 86);
+  const dotY = Math.min(H - dotS - 14, box.y + box.h + dotS * 0.25);
+  const dots = spans.map((sp, i) => {
+    const r = sp.getBoundingClientRect();
+    const d = document.createElement('div'); d.className = 'sdot' + (i === 0 ? ' next' : '');
+    Object.assign(d.style, { width: dotS + 'px', height: dotS + 'px', left: (r.left + r.width / 2 - dotS / 2) + 'px', top: dotY + 'px' });
+    if (chars[i] === ' ') d.style.display = 'none';
+    stage.appendChild(d); return d;
+  });
   await new Promise((res, rej) => {
-    let done = false, hinted = false;
-    const t1 = setTimeout(() => { if (!done && run === R.run) last.classList.add('hint'); }, 3000);
-    const t2 = setTimeout(async () => { if (!done && run === R.run && !hinted) { hinted = true; try { await say('글자를 눌러요.', run); } catch (e) {} } }, 7000);
-    const t3 = setTimeout(() => finish(), 20000);
-    const clear = () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearInterval(chk); };
-    const finish = async () => {
-      if (done) return; done = true; clear();
-      last.classList.remove('hint');
-      try { await say(w, run); res(); } catch (e) { rej(e); }
+    let i = 0, done = false, hinted = false, last = performance.now();
+    while (chars[i] === ' ') { spans[i].classList.remove('hide'); i++; }
+    const chk = setInterval(async () => {
+      if (run !== R.run) { clearInterval(chk); rej(CANCEL); return; }
+      if (done) return;
+      const idle = performance.now() - last;
+      if (idle > 3000 && dots[i]) dots[i].classList.add('hint');
+      if (idle > 8000 && !hinted) { hinted = true; say('동그라미를 눌러요.', run).catch(() => {}); }
+    }, 250);
+    const reveal = async () => {
+      const ch = chars[i];
+      spans[i].classList.remove('hide'); dots[i].classList.remove('next', 'hint'); dots[i].classList.add('done');
+      i++; while (chars[i] === ' ') { spans[i].classList.remove('hide'); i++; }
+      last = performance.now();
+      const p = say(ch, run);          /* 누를 때마다 그 글자 소리 */
+      if (i < chars.length) { dots[i].classList.add('next'); p.catch(() => {}); return; }
+      done = true; clearInterval(chk);
+      try { await p; await wait(450, run); await say(w, run); res(); } catch (e) { rej(e); }
     };
-    last.addEventListener('pointerup', () => { if (run === R.run) setTimeout(finish, 120); });
-    const chk = setInterval(() => { if (run !== R.run) { clear(); rej(CANCEL); } }, 200);
+    dots.forEach((d, j) => d.addEventListener('pointerup', () => { if (done || run !== R.run) return; if (j === i) reveal(); else if (dots[i]) dots[i].classList.add('hint'); }));
   });
   await wait(300, run);
 }
@@ -1768,7 +1808,7 @@ async function stageTrace(w, run) {
   const L = layoutWord(w, 0.56, 0.56);
   const { ws, k, svg, svgX, svgY, toScr } = L;
   const guides = ws.strokes.map(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 15));
-  const hit = document.createElement('div'); hit.id = 'traceHit'; stage.appendChild(hit);
+  const hit = document.createElement('div'); hit.id = 'traceHit'; hit.classList.add('brushy'); stage.appendChild(hit);
 
   const penSize = Math.max(58, 100 * k * 0.4);
   setPenSrc(await Pics.url(w)); alive(run);
@@ -1780,7 +1820,7 @@ async function stageTrace(w, run) {
   let helped = false, saidHint = false;
   const TOL = 26, AHEAD = 30;
   R.trace = { si: 0, gliding: false, screen: [] };
-  const firstInstr = say('따라 써요.', run).catch(() => {});
+  const firstInstr = say('붓으로 따라 써요.', run).catch(() => {});
 
   for (let si = 0; si < ws.strokes.length; si++) {
     const st = ws.strokes[si];
@@ -1844,7 +1884,7 @@ async function stageTrace(w, run) {
         const idle = performance.now() - lastMove;
         if (!hinted && !auto && idle > 6000) {
           hinted = true; pen.classList.add('penhint');
-          if (!saidHint) { saidHint = true; say('따라 써요.', run).catch(() => {}); }
+          if (!saidHint) { saidHint = true; say('붓으로 따라 써요.', run).catch(() => {}); }
         }
         if (!auto && idle > 13000) {
           auto = true; helped = true; pen.classList.remove('penhint');
@@ -1905,10 +1945,16 @@ async function stageFreeWrite(w, run) {
 
   const user = []; let curPts = null, curPath = null;
   const toSvg = e => [(e.clientX - svgX) / k, (e.clientY - svgY) / k];
+  const brush = $('#brush'), bs = Math.max(70, Math.min(110, 100 * k * 0.6));
+  brush.style.width = brush.style.height = bs + 'px';
+  const moveBrush = e => { brush.style.display = 'block'; brush.style.transform = `translate(${e.clientX - bs * 0.03}px, ${e.clientY - bs * 0.97}px)`; };
+  hit.classList.add('brushy');
+  hit.addEventListener('pointermove', moveBrush); hit.addEventListener('pointerdown', moveBrush);
+  hit.addEventListener('pointerleave', () => { brush.style.display = 'none'; });
   const redraw = () => { if (curPath) curPath.setAttribute('d', 'M' + curPts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L') + (curPts.length === 1 ? ' l0.1 0' : '')); };
   R.free = { svgX, svgY, k, ws };
   let lastAct = performance.now();
-  const instr = copy ? '보고 써요.' : '따라 써요.';
+  const instr = copy ? '보고 써요.' : '붓으로 따라 써요.';
   say(instr, run).catch(() => {});
   await new Promise((res, rej) => {
     let down = false, said = false;
@@ -1936,7 +1982,7 @@ async function stageFreeWrite(w, run) {
     }, 300);
     okB.addEventListener('pointerup', () => { if (!user.length) return; clearInterval(chk); res(); });
   });
-  R.free = null;
+  R.free = null; brush.style.display = 'none';
   btns.querySelectorAll('.wbtn').forEach(b => b.classList.add('off'));
   const score = likeness(user, ws.strokes);
   Rec.add(w, 5, 'self', score);
@@ -2050,8 +2096,8 @@ const Teacher = {
     a.addEventListener('click', () => { if (performance.now() < this.ignoreUntil) return; if (S.teacher) this.close(); });
     a.addEventListener('contextmenu', e => e.preventDefault());
     const curWi = () => { const it = R.items[Math.min(R.idx, R.items.length - 1)]; return it ? it.wi : 0; };
-    const go = i => { this.close(false); runFrom(i); };
-    const goEnd = () => { this.close(false); const run = ++R.run; Speech.stop(); R.idx = R.items.length; endScreen(run).catch(() => {}); };
+    const go = i => { this.close(false); afterFullscreen(() => runFrom(i)); };
+    const goEnd = () => { this.close(false); const run = ++R.run; Speech.stop(); R.idx = R.items.length; afterFullscreen(() => { if (run === R.run) endScreen(run).catch(() => {}); }); };
     const goWord = wi => { const i = R.items.findIndex(x => x.wi === wi); if (i >= 0) go(i); };
     $$('#tTop [data-st]').forEach(b => b.addEventListener('click', () => {
       const st = +b.dataset.st;
@@ -2078,8 +2124,8 @@ const Teacher = {
   /* 닫으면 바꾼 설정으로 멈춘 단계의 처음부터, 전체 화면 학생 화면 */
   close(resume = true) {
     if (!S.teacher) return;
-    S.teacher = false; endTour(); this.refresh(); enterFS();
-    if (resume && !R.ended) runFrom(R.idx);
+    S.teacher = false; endTour(); this.refresh();
+    afterFullscreen(() => { if (resume && !R.ended) runFrom(R.idx); });
   },
   refresh() {
     const a = $('#aqua'); a.classList.toggle('on', S.teacher); a.querySelector('span').textContent = S.teacher ? '심' : 'charum';
@@ -2198,8 +2244,32 @@ document.addEventListener('pointerdown', () => { if (SPOT.el) hideSpot(); }, tru
 window.addEventListener('resize', () => { if (SPOT.el) placeSpot(); });
 document.addEventListener('scroll', () => { if (SPOT.el) placeSpot(); }, true);
 
+/* 전체 화면이 다 커진 뒤에 화면을 그림 (작은 크기로 그려진 채 남지 않게) */
+const isFS = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+function afterFullscreen(fn) {
+  const was = [innerWidth, innerHeight];
+  enterFS();
+  let done = false;
+  const go = () => {
+    if (done) return; done = true;
+    document.removeEventListener('fullscreenchange', go); document.removeEventListener('webkitfullscreenchange', go); window.removeEventListener('resize', go);
+    requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(fn, 80)));
+  };
+  document.addEventListener('fullscreenchange', go); document.addEventListener('webkitfullscreenchange', go); window.addEventListener('resize', go);
+  setTimeout(go, isFS() ? 30 : 700);
+}
+/* 수업 중 화면 크기가 바뀌면(전체 화면 들어가기·돌리기) 지금 단계를 새 크기로 다시 그림 */
+let rzT = 0;
+window.addEventListener('resize', () => {
+  clearTimeout(rzT);
+  rzT = setTimeout(() => {
+    if ($('#lesson').classList.contains('hidden') || S.teacher || R.ended || TOUR.on || !R.size) return;
+    const [w0, h0] = R.size;
+    if (Math.abs(innerWidth - w0) / w0 > 0.04 || Math.abs(innerHeight - h0) / h0 > 0.04) runFrom(R.idx);
+  }, 400);
+});
 /* 전체 화면 */
-function enterFS() { const d = document.documentElement; try { (d.requestFullscreen || d.webkitRequestFullscreen || (() => {})).call(d); } catch (e) {} }
+function enterFS() { const d = document.documentElement; if (isFS()) return; try { const r = (d.requestFullscreen || d.webkitRequestFullscreen || (() => {})).call(d); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
 function exitFS() { try { if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
 $('#lesson').addEventListener('pointerdown', () => { Speech.initAudio(); if (S.teacher && !TOUR.on) { Teacher.close(); return; } if (!document.fullscreenElement && !document.webkitFullscreenElement) enterFS(); }, { capture: true, passive: true });
 
@@ -2343,7 +2413,7 @@ $('#resumeBtn').addEventListener('click', () => {
   const i = R.paused; R.paused = null; showPauseBar();
   storeKeys(); Speech.initAudio();
   $('#setup').classList.add('hidden'); $('#lesson').classList.remove('hidden');
-  enterFS(); runFrom(i);
+  afterFullscreen(() => runFrom(i));
 });
 $('#quitBtn').addEventListener('click', () => { Rec.endLesson(); R.paused = null; R.trials = []; showPauseBar(); });
 segInit('#modeSeg', 'mode', () => { renderJamo(); autoPick(true); renderWordChips(); });
@@ -2715,6 +2785,7 @@ $('#drawAll').addEventListener('click', async e => {
   storeKeys(); const m = $('#wmMsg');
   if (!S.gemKey) { m.textContent = 'Gemini 키를 넣으면 그림을 그릴 수 있어요.'; return; }
   const need = []; for (const it of S.words) if (!(await Pics.hasStored(it.w))) need.push(it);
+  if (need.length && !confirm(`그림 ${need.length}장을 그려요.\nGemini 그림은 한 장마다 약 50원이 들어서, 모두 약 ${(need.length * 50).toLocaleString()}원이 들어요.\n그릴까요?`)) return;
   let fail = 0;
   if (need.length) { Loading.show('그림을 그리고 있어요'); fail = await drawWithLoading(need); await sleep(600); Loading.hide(); }
   m.textContent = need.length ? `${need.length - fail}개를 그렸어요.` + (fail ? ` ${fail}개는 그리지 못했어요.` : '') : '모든 낱말에 그림이 있어요.';
