@@ -19,5 +19,5 @@
   poem-recite_manual.html   게시판 본문용 설명서
 
 휴대폰으로 키 받기
-  키 칸 옆 "📱 휴대폰으로 받기" 단추는 중계 서버 https://charum.org/webapp/key-relay.php 를 씁니다.
+  키 칸 옆 "📱 휴대폰으로 받기" 단추는 중계 서버 https://charum.org/key-relay.php 를 씁니다.
   중계 서버와 보내기 페이지는 key-relay.zip을 보세요.
