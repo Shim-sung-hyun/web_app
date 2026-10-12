@@ -295,7 +295,7 @@ async function aesFrom(priv,pubRaw,code){
 async function call(body){
   const r=await fetch(RELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
   let j={}; try{ j=await r.json(); }catch(e){}
-  if(!r.ok) throw Object.assign(new Error(j.error||('http'+r.status)),{code:j.error||r.status});
+  if(!r.ok||j.error) throw Object.assign(new Error(j.error||('http'+r.status)),{code:j.error||('http '+r.status)});
   return j;
 }
 
@@ -380,7 +380,7 @@ async function receive(opts){
     me.timer=setTimeout(poll,1500);
   }catch(e){
     const c=e&&e.code;
-    say(c==='insecure'?'이 화면은 https 주소에서만 키를 받을 수 있어요.':c==='busy'||c===429?'지금은 번호를 만들 수 없어요. 잠시 뒤에 다시 해 주세요.':'중계 서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요.','err');
+    say(c==='insecure'?'이 화면은 https 주소에서만 키를 받을 수 있어요.':c==='busy'||c===429?'지금은 번호를 만들 수 없어요. 잠시 뒤에 다시 해 주세요.':c==='origin'?'중계 서버가 이 주소의 요청을 받지 않아요(origin). key-relay.php 맨 위 설정을 확인해 주세요.':'중계 서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요. ('+(c||(e&&e.name)||'network')+')','err');
     retry();
   }
 }

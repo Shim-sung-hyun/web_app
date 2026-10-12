@@ -115,7 +115,7 @@ const b64u={ enc:b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/
 async function call(body){
   const r=await fetch(RELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
   let j={}; try{ j=await r.json(); }catch(e){}
-  if(!r.ok) throw Object.assign(new Error(j.error||'http'),{code:j.error||r.status});
+  if(!r.ok||j.error) throw Object.assign(new Error(j.error||'http'),{code:j.error||('http '+r.status)});
   return j;
 }
 
@@ -143,7 +143,7 @@ $('send').onclick=async()=>{
     if(c==='nocode'){ say('');
       spotlight('#code','번호를 찾을 수 없어요. 전자칠판의 번호를 다시 보세요. 3분이 지났거나 이미 보낸 번호라면 전자칠판에서 다시 받기를 눌러 주세요.'); }
     else if(c==='busy'||c===429) say('잠시 뒤에 다시 보내 주세요.','err');
-    else say('중계 서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요.','err');
+    else say('중계 서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요. ('+(c||(e&&e.name)||'network')+')','err');
   }finally{ $('send').disabled=false; }
 };
 })();
