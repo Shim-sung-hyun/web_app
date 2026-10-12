@@ -17,3 +17,7 @@
   cloud-key.html            Cloud 키 넣는 방법 안내 페이지 (위쪽 소리 → Google에서 연결)
                             주소: https://shim-sung-hyun.github.io/web_app/006/cloud-key.html
   place-count_manual.html   게시판 본문용 설명서
+
+휴대폰으로 키 받기
+  키 칸 옆 "📱 휴대폰으로 받기" 단추는 중계 서버 https://charum.org/webapp/key-relay.php 를 씁니다.
+  중계 서버와 보내기 페이지는 key-relay.zip을 보세요.
