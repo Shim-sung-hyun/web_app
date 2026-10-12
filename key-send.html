@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>전자칠판으로 키 보내기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d2133;--sub:#5b6077;--line:#d9dcea;--pri:#2C5FCF;--pri2:#1E4396;--bg:#f3f5fb;--ok:#1b7f3a;--err:#c62828}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:520px;margin:0 auto;padding:22px 16px 40px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:28px;margin:6px 0 6px;color:var(--pri2)}
+.lead{margin:0 0 18px;color:var(--sub);font-size:15px;line-height:1.6}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 16px;margin-bottom:14px}
+label.t{display:block;font-weight:700;margin:0 0 8px;font-size:16px}
+.hint{font-size:13px;color:var(--sub);margin:6px 0 0;line-height:1.5}
+.hint a{color:var(--pri2)}
+input.f{width:100%;font:inherit;font-size:16px;padding:12px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input.f:focus{outline:2px solid #9fb3e6;outline-offset:1px}
+#code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:44px;letter-spacing:.3em;text-align:center;padding:8px 0 8px .3em}
+.row{display:flex;gap:8px;align-items:center}
+.row .f{flex:1}
+.sm{font:inherit;font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#f4f5fa;color:var(--ink);white-space:nowrap}
+.gap{height:14px}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--sub);margin-top:12px;line-height:1.5}
+.chk input{width:20px;height:20px;margin:1px 0 0}
+#send{width:100%;font:inherit;font-size:20px;font-weight:700;padding:16px;border:0;border-radius:16px;background:var(--pri);color:#fff;margin-top:4px}
+#send:disabled{opacity:.6}
+#state{min-height:1.6em;margin:14px 2px 0;font-size:16px;line-height:1.55;text-align:center}
+#state.ok{color:var(--ok);font-weight:700}
+#state.err{color:var(--err);font-weight:700}
+.safe{font-size:13px;color:var(--sub);line-height:1.6;margin:18px 4px 0}
+.safe b{color:var(--ink)}
+/* 빠뜨린 곳 알려 주기: 깜빡이지 않는 빨간 테두리 + 말풍선 */
+#spot{position:fixed;z-index:50;border-radius:14px;box-shadow:0 0 0 3px #e53935,0 0 0 9999px rgba(20,24,40,.35);pointer-events:none}
+#spotTip{position:fixed;z-index:51;max-width:min(320px,calc(100vw - 32px));background:#e53935;color:#fff;font-size:15px;font-weight:700;line-height:1.45;padding:10px 14px;border-radius:12px;pointer-events:none}
+</style>
+</head>
+<body>
+<main>
+  <h1>전자칠판으로 키 보내기</h1>
+  <p class="lead">전자칠판의 웹앱에서 <b>📱 휴대폰으로 받기</b>를 누르면 번호 4자리가 나와요. 그 번호와 키를 넣고 보내기를 누르세요.</p>
+
+  <div class="card">
+    <label class="t" for="code">전자칠판의 번호</label>
+    <input class="f" id="code" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="0000" aria-label="번호 4자리">
+  </div>
+
+  <div class="card">
+    <label class="t" for="cloud">Google 음성 키 (Cloud 키)</label>
+    <div class="row"><input class="f" id="cloud" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요"><button class="sm" type="button" data-show="cloud">보기</button></div>
+    <p class="hint"><a href="https://shim-sung-hyun.github.io/web_app/003/cloud-key.html" target="_blank" rel="noopener">Cloud 키 넣는 방법</a></p>
+    <div class="gap"></div>
+    <label class="t" for="gemini">Gemini 키 <span style="font-weight:400;color:var(--sub);font-size:14px">(사진 분석 앱만, 없으면 비워 두세요)</span></label>
+    <div class="row"><input class="f" id="gemini" type="password" autocomplete="off" placeholder="Gemini 키 (AIza…)"><button class="sm" type="button" data-show="gemini">보기</button></div>
+    <p class="hint">키 받기: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></p>
+    <label class="chk"><input type="checkbox" id="save"> 이 휴대폰에 키 저장 (다음부터는 번호만 넣으면 돼요. 여러 사람이 쓰는 기기라면 끄세요)</label>
+  </div>
+
+  <button id="send" type="button">보내기</button>
+  <p id="state" aria-live="polite"></p>
+
+  <p class="safe"><b>안전하게 보내요.</b> 키는 이 휴대폰에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있어요. 중간의 중계 서버는 키를 볼 수 없고, 전자칠판이 받는 즉시(받지 않으면 3분 뒤) 지워요. 번호는 한 번만 쓸 수 있어요.</p>
+</main>
+<script>
+(function(){
+const RELAY='https://charum.org/webapp/key-relay.php';
+const $=id=>document.getElementById(id);
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+
+/* 번호: 주소의 #c=1234 에서 가져오고, 주소에서는 바로 지움 */
+const m=/c=(\d{4})/.exec(location.hash||''); if(m){ $('code').value=m[1]; }
+if(location.hash) history.replaceState(null,'',location.pathname+location.search);
+
+/* 키: 이 휴대폰에 저장한 것 → 같은 사이트 앱에 저장된 것 순서로 채움 */
+const saved=ls.get('keySend.save')==='1';
+$('save').checked=saved;
+const firstOf=list=>{ for(const k of list){ const v=ls.get(k); if(v) return v; } return ''; };
+$('cloud').value=(saved&&ls.get('keySend.cloud'))||firstOf(['webapp.cloudKey','placeValue.cloudKey','placeCount.cloudKey','poemRecite.cloudKey','colorFind.cloudKey','shapeFinder.cloudKey']);
+$('gemini').value=(saved&&ls.get('keySend.gemini'))||firstOf(['webapp.geminiKey','shapeFinder.key']);
+function store(){
+  const on=$('save').checked; ls.set('keySend.save',on?'1':null);
+  ls.set('keySend.cloud',on&&$('cloud').value.trim()?$('cloud').value.trim():null);
+  ls.set('keySend.gemini',on&&$('gemini').value.trim()?$('gemini').value.trim():null);
+}
+$('save').onchange=store; $('cloud').oninput=()=>{ if($('save').checked) store(); }; $('gemini').oninput=()=>{ if($('save').checked) store(); };
+document.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{ const i=$(b.dataset.show), t=i.type==='password'; i.type=t?'text':'password'; b.textContent=t?'숨기기':'보기'; });
+$('code').addEventListener('input',e=>{ e.target.value=e.target.value.replace(/\D/g,'').slice(0,4); say(''); });
+
+/* 빠뜨린 곳 알려 주기 */
+let spotSel=null;
+function spotlight(sel,msg){
+  hideSpot(); spotSel=sel; const el=document.querySelector(sel); if(!el) return;
+  el.scrollIntoView({block:'center',behavior:'instant'}); try{ el.focus({preventScroll:true}); }catch(e){}
+  const s=document.createElement('div'); s.id='spot'; const t=document.createElement('div'); t.id='spotTip'; t.textContent=msg;
+  document.body.append(s,t); place();
+}
+function place(){
+  if(!spotSel) return; const el=document.querySelector(spotSel), s=$('spot'), t=$('spotTip'); if(!el||!s) return;
+  const r=el.getBoundingClientRect(), p=6;
+  Object.assign(s.style,{left:(r.left-p)+'px',top:(r.top-p)+'px',width:(r.width+p*2)+'px',height:(r.height+p*2)+'px'});
+  const tw=t.offsetWidth, th=t.offsetHeight; let top=r.bottom+14; if(top+th>innerHeight-8) top=r.top-th-14;
+  t.style.left=Math.max(16,Math.min(innerWidth-tw-16,r.left))+'px'; t.style.top=Math.max(8,top)+'px';
+}
+function hideSpot(){ spotSel=null; $('spot')&&$('spot').remove(); $('spotTip')&&$('spotTip').remove(); }
+addEventListener('pointerdown',hideSpot,true); addEventListener('resize',place); addEventListener('scroll',place,true);
+
+function say(t,cls){ const s=$('state'); s.textContent=t; s.className=cls||''; }
+
+const b64u={ enc:b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''),
+  dec:s=>{ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return Uint8Array.from(atob(s),c=>c.charCodeAt(0)); } };
+async function call(body){
+  const r=await fetch(RELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
+  let j={}; try{ j=await r.json(); }catch(e){}
+  if(!r.ok) throw Object.assign(new Error(j.error||'http'),{code:j.error||r.status});
+  return j;
+}
+
+$('send').onclick=async()=>{
+  const code=$('code').value.trim(), cloud=$('cloud').value.trim(), gemini=$('gemini').value.trim();
+  if(!/^\d{4}$/.test(code)){ spotlight('#code','전자칠판에 나온 번호 4자리를 넣어 주세요.'); return; }
+  if(!cloud&&!gemini){ spotlight('#cloud','Cloud 키를 넣어 주세요.'); return; }
+  if(!window.crypto||!crypto.subtle){ say('이 브라우저에서는 보낼 수 없어요. 다른 브라우저로 열어 주세요.','err'); return; }
+  store(); $('send').disabled=true; say('보내는 중이에요…');
+  try{
+    const {pub}=await call({a:'pub',code});
+    const wb=await crypto.subtle.importKey('raw',b64u.dec(pub),{name:'ECDH',namedCurve:'P-256'},false,[]);
+    const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+    const bits=await crypto.subtle.deriveBits({name:'ECDH',public:wb},kp.privateKey,256);
+    const hk=await crypto.subtle.importKey('raw',bits,'HKDF',false,['deriveKey']);
+    const key=await crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:new TextEncoder().encode('webapp-key-relay|'+code),info:new TextEncoder().encode('v1')},hk,{name:'AES-GCM',length:256},false,['encrypt']);
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const payload={}; if(cloud) payload.cloud=cloud; if(gemini) payload.gemini=gemini;
+    const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(payload)));
+    await call({a:'send',code,epub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),iv:b64u.enc(iv),ct:b64u.enc(ct)});
+    $('code').value='';
+    say('보냈어요. 전자칠판에 "받았어요"가 나오는지 보세요.','ok');
+  }catch(e){
+    const c=e&&e.code;
+    if(c==='nocode'){ say('');
+      spotlight('#code','번호를 찾을 수 없어요. 전자칠판의 번호를 다시 보세요. 3분이 지났거나 이미 보낸 번호라면 전자칠판에서 다시 받기를 눌러 주세요.'); }
+    else if(c==='busy'||c===429) say('잠시 뒤에 다시 보내 주세요.','err');
+    else say('중계 서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요.','err');
+  }finally{ $('send').disabled=false; }
+};
+})();
+</script>
+</body>
+</html>
