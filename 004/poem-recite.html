@@ -369,6 +369,9 @@ async function receive(opts){
         const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(r.iv)},key,b64u.dec(r.ct));
         const k=JSON.parse(new TextDecoder().decode(plain))||{};
         const got={}; if(typeof k.cloud==='string'&&k.cloud.trim()) got.cloud=k.cloud.trim(); if(typeof k.gemini==='string'&&k.gemini.trim()) got.gemini=k.gemini.trim();
+        /* 두 키를 모두 이 기기에 남겨 두어, 다른 앱(예: 001 Gemini)을 열 때도 채워지게 함 */
+        if(got.gemini){ try{ localStorage.setItem('webapp.geminiKey',got.gemini); }catch(e){} }
+        if(got.cloud){ try{ localStorage.setItem('webapp.cloudKey',got.cloud); }catch(e){} }
         const want=opts.want||['cloud','gemini']; const useful=want.filter(w=>got[w]);
         if(!useful.length){ say(want.includes('gemini')&&!want.includes('cloud')?'Gemini 키가 오지 않았어요. 휴대폰에서 Gemini 키를 넣어 보내 주세요.':'Cloud 키가 오지 않았어요. 휴대폰에서 Cloud 키를 넣어 보내 주세요.','err'); retry(); return; }
         const names=useful.map(w=>w==='cloud'?'Cloud 키':'Gemini 키').join('와 ');
@@ -450,7 +453,7 @@ let customs=[]; /* 직접 입력한 시 여러 편 [{id,title,author,body}] */
   const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
   S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
   /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
-  if(!S.cloudKey){ for(const k of ['colorFind.cloudKey','shapeFinder.cloudKey','placeValue.cloudKey','placeCount.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
+  if(!S.cloudKey){ for(const k of ['webapp.cloudKey','colorFind.cloudKey','shapeFinder.cloudKey','placeValue.cloudKey','placeCount.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
 })();
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

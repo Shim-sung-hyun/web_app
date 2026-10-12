@@ -297,6 +297,10 @@ details.log td,details.log th{border-bottom:1px solid var(--line);padding:6px 4p
 #spotTip{position:fixed;z-index:91;pointer-events:none;display:none;max-width:min(360px,calc(100% - 24px));background:#E5484D;color:#fff;font:700 15px/1.5 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;padding:9px 14px;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.3)}
 #spotTip::before{content:"";position:absolute;left:var(--ax,24px);width:14px;height:14px;background:#E5484D;transform:rotate(45deg)}
 #spotTip.below::before{top:-6px} #spotTip.above::before{bottom:-6px}
+.keybar{gap:12px;flex-wrap:wrap;align-items:center;padding:12px 14px;background:#EEF3FF;border-radius:12px}
+html:not(.kr-ready) .keybar{display:none}
+.hint-sm{font-size:14px;color:#5b6077;line-height:1.5}
+.keynote{justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:6px;padding-top:12px;border-top:1px solid #e3e6ee}
 </style>
 </head>
 <body class="setup">
@@ -481,6 +485,9 @@ async function receive(opts){
         const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(r.iv)},key,b64u.dec(r.ct));
         const k=JSON.parse(new TextDecoder().decode(plain))||{};
         const got={}; if(typeof k.cloud==='string'&&k.cloud.trim()) got.cloud=k.cloud.trim(); if(typeof k.gemini==='string'&&k.gemini.trim()) got.gemini=k.gemini.trim();
+        /* 두 키를 모두 이 기기에 남겨 두어, 다른 앱(예: 001 Gemini)을 열 때도 채워지게 함 */
+        if(got.gemini){ try{ localStorage.setItem('webapp.geminiKey',got.gemini); }catch(e){} }
+        if(got.cloud){ try{ localStorage.setItem('webapp.cloudKey',got.cloud); }catch(e){} }
         const want=opts.want||['cloud','gemini']; const useful=want.filter(w=>got[w]);
         if(!useful.length){ say(want.includes('gemini')&&!want.includes('cloud')?'Gemini 키가 오지 않았어요. 휴대폰에서 Gemini 키를 넣어 보내 주세요.':'Cloud 키가 오지 않았어요. 휴대폰에서 Cloud 키를 넣어 보내 주세요.','err'); retry(); return; }
         const names=useful.map(w=>w==='cloud'?'Cloud 키':'Gemini 키').join('와 ');
@@ -574,7 +581,7 @@ const store = {
   if(store.get('errorMode')==='retry') S.errorMode='retry';
   S.sound = store.get('sound')!=='off';
   S.model = store.get('model')||'';
-  const k=store.get('key'); if(k){S.apiKey=k; S.saveKey=true;}
+  const k=store.get('key')||(()=>{try{return localStorage.getItem('webapp.geminiKey')}catch(e){return null}})(); if(k){S.apiKey=k;}
   const c=store.get('color'); if(COLORS.some(x=>x.key===c)) S.color=c;
   const sec=+store.get('showSec'); if([4,6,8].includes(sec)) S.showSec=sec;
   S.paint = store.get('paint')!=='off';
@@ -583,7 +590,7 @@ const store = {
   if(store.get('voice')==='device' && !en) S.engine='device';
   S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
   /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
-  if(!S.cloudKey){ for(const k of ['colorFind.cloudKey','poemRecite.cloudKey','placeValue.cloudKey','placeCount.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
+  if(!S.cloudKey){ for(const k of ['webapp.cloudKey','colorFind.cloudKey','poemRecite.cloudKey','placeValue.cloudKey','placeCount.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
 })();
 const hex=()=>COLORS.find(c=>c.key===S.color).hex;
 const $=id=>document.getElementById(id);
@@ -1202,18 +1209,40 @@ function showSetup(o={}){
     <div><h1>사진 속 도형 찾기</h1>
     <p class="lead">학생이 고른 사진을 옅게 하고, Gemini가 찾은 도형을 그 위에 선으로 그려 줍니다. 학생은 도형을 하나씩 보고, 붓으로 칠하고, 사진에서 직접 찾아봅니다. 이 화면은 교사·보호자용입니다.</p></div>
 
-    <div class="card" id="geminiCard"><h2><span class="n">1</span>Gemini API 키</h2>
+    <div class="card" id="geminiCard"><h2><span class="n">1</span>키 설정</h2>
       <p class="need-msg" id="needMsg" hidden>직접 고른 사진을 쓰려면 <b>Gemini 키</b>가 필요해요. 아래에서 키를 받아 넣고 <b>키 확인</b>을 누른 뒤, 맨 아래 <b>시작</b>을 눌러 주세요.</p>
-      <p><b>키 받기</b>: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> 에서 <b>Create API key</b>를 누르고 키를 복사해요. 무료예요.<br><b>키 넣기</b>: 아래 칸에 붙여 넣고 <b>키 확인</b>을 눌러요.</p>
+      <div class="row keybar"><button class="kr-open" data-kr="1" type="button">📱 휴대폰으로 받기 (두 키 한꺼번에)</button><span class="hint-sm">전자칠판이라면 휴대폰에서 Gemini 키와 Google 음성 키를 한 번에 보내요.</span></div>
+      <h3>Gemini 키</h3>
+      <p><b>키 받기</b>: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> 에서 <b>Create API key</b>를 누르고, 키를 복사한 후 아래 칸에 넣으세요. 무료예요.</p>
       <div class="row">
         <input class="field" id="keyInput" type="password" autocomplete="off" placeholder="AIza… 로 시작하는 키" value="${esc(S.apiKey)}">
         <button class="btn" id="showKey" type="button">보기</button>
         <button class="btn" id="checkKey" type="button">키 확인</button>
-        <button class="kr-open" data-kr="1" type="button">📱 휴대폰으로 받기</button>
       </div>
-      <label class="row" style="gap:8px"><input type="checkbox" id="saveKey" ${S.saveKey?'checked':''}> 이 기기에 키 저장 (여러 사람이 쓰는 컴퓨터라면 끄세요)</label>
-      <div class="row"><label for="modelSel" style="font-weight:700">모델</label><select class="field" id="modelSel" style="flex:0 1 320px"></select></div>
-      <div class="status" id="keyStatus" aria-live="polite">${S.model?'이전에 고른 모델: '+esc(S.model):'키를 넣고 "키 확인"을 누르면 쓸 수 있는 모델을 자동으로 고릅니다. 키가 없으면 예시 사진으로만 수업해요.'}</div>
+      <div class="status" id="keyStatus" aria-live="polite">${S.apiKey?'':'키가 없으면 예시 사진으로만 수업해요.'}</div>
+      <h3>목소리</h3>
+      <div class="opts">
+        ${opt('engine','cloud',S.engine,'Google 음성','자연스럽고 빠름. Cloud 키 필요, 매달 100만 자 무료')}
+        ${opt('engine','device',S.engine,'기기 목소리','기계 소리지만 늘 바로 나옴')}
+      </div>
+      <div class="opts">
+        ${opt('timbre','Leda',S.timbre,'밝은 목소리','')}
+        ${opt('timbre','Aoede',S.timbre,'산뜻한 목소리','')}
+        ${opt('timbre','Kore',S.timbre,'또렷한 목소리','')}
+      </div>
+      <div id="cloudRow" ${S.engine==='cloud'?'':'hidden'} style="display:flex;flex-direction:column;gap:10px">
+        <div class="keyguide"><b>Google 음성 키 받기</b><br><b>키가 있으면</b> → <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키 목록</a>에서 <b>키 표시</b>를 눌러 복사해요.<br><b>처음이면</b> → 아래 1~3을 따라 하거나 <a href="cloud-key.html" target="_blank" rel="noopener">Cloud 키 만드는 방법 (자세히)</a>을 보세요.
+          <ol>
+            <li><a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a> 에서 프로젝트를 고르고(없으면 만들기), 결제 계정을 연결해요. 매달 100만 자까지 무료예요.</li>
+            <li><a href="https://console.cloud.google.com/apis/library/texttospeech.googleapis.com" target="_blank" rel="noopener">Cloud Text-to-Speech API</a> 페이지에서 <b>사용</b>을 눌러요.</li>
+            <li><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">사용자 인증 정보</a> → <b>사용자 인증 정보 만들기</b> → <b>API 키</b>를 눌러 키를 복사하고, 아래 칸에 붙여 넣어요.</li>
+          </ol>
+        </div>
+        <div class="row"><input class="field" id="cloudKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}">
+          <button class="btn" id="showCloud" type="button">보기</button></div>
+      </div>
+      <div class="row"><button class="btn" id="voiceTest" type="button">목소리 들어 보기</button><span class="status" id="voiceStatus"></span></div>
+      <div class="row keynote"><span class="hint-sm">넣은 키는 이 기기(브라우저)에 저장돼요. 여러 사람이 쓰는 컴퓨터라면 수업을 마친 뒤 <b>키 지우기</b>를 눌러 주세요.</span><button class="btn" id="clearKeys" type="button">키 지우기</button></div>
     </div>
 
     <div class="card"><h2><span class="n">2</span>수업 정하기</h2>
@@ -1234,29 +1263,6 @@ function showSetup(o={}){
         ${opt('paint','on',S.paint?'on':'off','켬','도형을 본 뒤 붓으로 직접 칠하기')}
         ${opt('paint','off',S.paint?'on':'off','끔','보기만 하고 넘어가기')}
       </div>
-      <h3>목소리</h3>
-      <div class="opts">
-        ${opt('engine','cloud',S.engine,'Google 음성','자연스럽고 빠름. Cloud 키 필요, 매달 100만 자 무료')}
-        ${opt('engine','device',S.engine,'기기 목소리','기계 소리지만 늘 바로 나옴')}
-      </div>
-      <div class="opts">
-        ${opt('timbre','Leda',S.timbre,'밝은 목소리','')}
-        ${opt('timbre','Aoede',S.timbre,'산뜻한 목소리','')}
-        ${opt('timbre','Kore',S.timbre,'또렷한 목소리','')}
-      </div>
-      <div id="cloudRow" ${S.engine==='cloud'?'':'hidden'} style="display:flex;flex-direction:column;gap:10px">
-        <div class="keyguide"><b>Google 음성 키 받기</b><br><b>키가 있으면</b> → <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키 목록</a>에서 <b>키 표시</b>를 눌러 복사해요.<br><b>처음이면</b> → 아래 1~3을 따라 하거나 <a href="cloud-key.html" target="_blank" rel="noopener">Cloud 키 만드는 방법 (자세히)</a>을 보세요.
-          <ol>
-            <li><a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a> 에서 프로젝트를 고르고(없으면 만들기), 결제 계정을 연결해요. 매달 100만 자까지 무료예요.</li>
-            <li><a href="https://console.cloud.google.com/apis/library/texttospeech.googleapis.com" target="_blank" rel="noopener">Cloud Text-to-Speech API</a> 페이지에서 <b>사용</b>을 눌러요.</li>
-            <li><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">사용자 인증 정보</a> → <b>사용자 인증 정보 만들기</b> → <b>API 키</b>를 눌러 키를 복사하고, 아래 칸에 붙여 넣어요.</li>
-          </ol>
-        </div>
-        <div class="row"><input class="field" id="cloudKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}">
-          <button class="btn" id="showCloud" type="button">보기</button><button class="kr-open" data-kr="1" type="button">📱 휴대폰으로 받기</button></div>
-        <label class="row" style="gap:8px"><input type="checkbox" id="saveCloud" ${S.saveCloud?'checked':''}> 이 기기에 키 저장 (여러 사람이 쓰는 컴퓨터라면 끄세요)</label>
-      </div>
-      <div class="row"><button class="btn" id="voiceTest" type="button">목소리 들어 보기</button><span class="status" id="voiceStatus"></span></div>
       <h3>틀렸을 때</h3>
       <div class="opts">
         ${opt('errorMode','show',S.errorMode,'바로 정답 보여주기','무오류 학습. 틀리면 정답 자리를 표시')}
@@ -1280,7 +1286,6 @@ function showSetup(o={}){
   }
   $('showKey').onclick=e=>{const t=keyInput.type==='password'; keyInput.type=t?'text':'password'; e.target.textContent=t?'숨기기':'보기';};
   $('checkKey').onclick=()=>checkKey();
-  $('modelSel').onchange=e=>{S.model=e.target.value; store.set('model',S.model);};
   keyInput.oninput=()=>{S.modelChecked=false;};
   main.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
     if(r.name==='level'){S.level=+r.value; store.set('level',S.level);}
@@ -1290,13 +1295,17 @@ function showSetup(o={}){
     if(r.name==='engine'){S.engine=r.value; store.set('engine',S.engine); $('cloudRow').hidden=S.engine!=='cloud';}
     if(r.name==='timbre'){S.timbre=r.value; store.set('timbre',S.timbre);}
   });
-  const saveCloud=()=>store.set('cloudKey',S.saveCloud&&S.cloudKey?S.cloudKey:null);
+  const saveCloud=()=>store.set('cloudKey',S.cloudKey||null);
   $('cloudKey').oninput=e=>{S.cloudKey=e.target.value.trim(); saveCloud();};
-  $('saveCloud').onchange=e=>{S.saveCloud=e.target.checked; saveCloud();};
+  $('clearKeys').onclick=()=>{
+    S.apiKey=''; S.cloudKey=''; S.modelChecked=false; $('keyInput').value=''; $('cloudKey').value='';
+    store.set('key',null); store.set('cloudKey',null); try{ localStorage.removeItem('webapp.geminiKey'); localStorage.removeItem('webapp.cloudKey'); }catch(e){}
+    setStatus('이 앱에 저장된 키를 지웠어요.');
+  };
   /* 휴대폰으로 키 받기: 받은 키는 칸에 넣고 이 기기에 저장(체크를 끄면 지움) */
   main.querySelectorAll('[data-kr]').forEach(b=>b.onclick=()=>KeyRelay.receive({want:['gemini','cloud'],onKeys:k=>{
-    if(k.gemini&&$('keyInput')){ $('keyInput').value=k.gemini; $('saveKey').checked=true; S.modelChecked=false; checkKey(); }
-    if(k.cloud&&$('cloudKey')){ $('cloudKey').value=k.cloud; S.cloudKey=k.cloud; S.saveCloud=true; $('saveCloud').checked=true; saveCloud(); }
+    if(k.gemini&&$('keyInput')){ $('keyInput').value=k.gemini; S.modelChecked=false; try{ localStorage.setItem('webapp.geminiKey',k.gemini); }catch(e){} checkKey(); }
+    if(k.cloud&&$('cloudKey')){ $('cloudKey').value=k.cloud; S.cloudKey=k.cloud; saveCloud(); }
   }}));
   $('showCloud').onclick=e=>{const k=$('cloudKey'), t=k.type==='password'; k.type=t?'text':'password'; e.target.textContent=t?'숨기기':'보기';};
   $('voiceTest').onclick=async()=>{
@@ -1324,8 +1333,8 @@ function showSetup(o={}){
 }
 function readKeyFields(){
   const k=$('keyInput'); if(!k) return;
-  S.apiKey=k.value.trim(); S.saveKey=$('saveKey').checked;
-  store.set('key', S.saveKey&&S.apiKey ? S.apiKey : null);
+  S.apiKey=k.value.trim();
+  store.set('key', S.apiKey||null);
 }
 function setStatus(t,cls=''){const s=$('keyStatus'); if(s){s.textContent=t; s.className='status '+cls;}}
 function fillModels(){
