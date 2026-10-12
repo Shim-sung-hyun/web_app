@@ -2,7 +2,7 @@
 
 [파일]
 - word-learn.html          웹앱
-- word-learn01~22.jpg      화면 캡처 (설명서 그림)
+- word-learn01~24.jpg      화면 캡처 (설명서 그림)
 - word-learn_manual.html   게시판 본문용 설명서 (에디터 소스 모드에 붙여 넣기)
 - cloud-key.html           Cloud 키 넣는 방법 (앱에서 연결)
 - words-sample.txt         낱말 목록 .txt 예시
@@ -12,7 +12,7 @@ GitHub 저장소 Shim-sung-hyun/web_app 에 007 폴더째 올리기
 
 [주소]
 앱:   https://shim-sung-hyun.github.io/web_app/007/word-learn.html
-그림: https://shim-sung-hyun.github.io/web_app/007/word-learn01.jpg ~ word-learn22.jpg
+그림: https://shim-sung-hyun.github.io/web_app/007/word-learn01.jpg ~ word-learn24.jpg
 
 [게시판]
 - 확장 변수 app_url: https://shim-sung-hyun.github.io/web_app/007/word-learn.html
