@@ -208,12 +208,14 @@ button{font-family:inherit;cursor:pointer}
 .picletters.out{opacity:0}
 .picletters img{position:absolute;object-fit:contain;opacity:0;transform:scale(.3);transition:opacity .18s ease,transform .22s ease}
 .picletters img.on{opacity:1;transform:scale(1)}
-.fontword .syl{transition:opacity .35s ease}
-.fontword .syl.hide{opacity:0}
-.sdot{position:absolute;border-radius:50%;border:3px solid #B9C7D8;background:#fff;box-shadow:0 4px 0 #E3DCCD;cursor:pointer;transition:background .25s,border-color .25s,transform .2s}
+.fontword .syl{position:relative;display:inline-block}
+.fontword .syl .ch{display:inline-block;transition:opacity .4s ease,transform .4s ease}
+.fontword .syl.hide .ch{opacity:0;transform:scale(.55)}
+.sdot{position:absolute;left:50%;top:50%;border-radius:50%;border:3px solid #B9C7D8;background:#fff;box-shadow:0 4px 0 #E3DCCD;cursor:pointer;transform:translate(-50%,-50%)}
 .sdot.next{border-color:#7E9CC0}
 .sdot.hint{animation:hint 1.8s ease-in-out infinite}
-.sdot.done{background:#7E9CC0;border-color:#7E9CC0;box-shadow:none;transform:scale(.8)}
+.sdot.done{opacity:0;transform:translate(-50%,-50%) scale(.4);pointer-events:none}
+.sdot{transition:opacity .4s ease,transform .4s ease,border-color .25s}
 /* 쓰기 붓: 손가락·마우스 끝에 붓이 따라다님(붓끝이 닿는 곳) */
 #brush{position:fixed;left:0;top:0;width:92px;height:92px;pointer-events:none;z-index:8;display:none;will-change:transform;filter:drop-shadow(0 3px 3px rgba(0,0,0,.18))}
 #traceHit.brushy{cursor:none}
@@ -333,6 +335,11 @@ body.recording .rec{display:inline-flex}
      <div class="note">학생을 고르면 기록이 시작돼요. 고르지 않으면 기록하지 않아요(시범·연습). 명단은 이 사이트의 다른 앱과 함께 써요.</div>
     </div>
     <div class="row">
+     <label class="t">낱말 묶음</label>
+     <div class="seg" id="stageSeg"><button data-v="1">1단계 생활 기초</button><button data-v="2">2단계 1학년 교과서</button><button data-v="3">3단계 2학년 교과서</button><button data-v="mine">내가 넣은 낱말</button><button data-v="all">모두</button></div>
+     <div class="note" id="stageNote"></div>
+    </div>
+    <div class="row">
      <label class="t">낱말 고르는 방법</label>
      <div class="seg" id="modeSeg"><button data-v="free">직접 고르기</button><button data-v="cons">자음별</button><button data-v="vow">모음별</button></div>
      <div id="jamoBox" class="hidden" style="margin-top:8px">
@@ -382,7 +389,7 @@ body.recording .rec{display:inline-flex}
    <button class="btn mini" id="txtAdd">.txt 더하기</button>
    <button class="btn mini" id="txtReplace">.txt로 바꾸기</button>
    <button class="btn mini" id="txtSave">.txt로 저장</button>
-   <button class="btn mini" id="drawAll">그림 없는 낱말 모두 그리기</button>
+   <button class="btn mini" id="drawAll">이 묶음의 그림 없는 낱말 그리기</button>
    <button class="btn mini" id="resetWords">기본 낱말로 되돌리기</button>
    <button class="btn mini main" id="wmClose">닫기</button>
   </div>
@@ -852,9 +859,181 @@ const DEFAULT_WORDS = [
   { w: '비', e: '🌧️', d: 'rain falling from a cloud' },
   { w: '선물', e: '🎁', d: 'a gift box' }
 ];
+/* 2단계: 1학년 국어 교과서(2022 개정)에 그림과 함께 나오는 낱말 — 교과서에 처음 나오는 순서 */
+const STAGE2_WORDS = [
+  { w: '칠판', d: '초록색 칠판' },
+  { w: '고구마', e: '🍠' },
+  { w: '도토리', d: '갈색 도토리 한 알' },
+  { w: '새우', e: '🦐' },
+  { w: '고추', e: '🌶️' },
+  { w: '무지개', e: '🌈' },
+  { w: '바위', e: '🪨' },
+  { w: '매미', d: '나무에 붙은 매미 한 마리' },
+  { w: '조개', e: '🐚' },
+  { w: '배추', d: '초록 배추 한 포기' },
+  { w: '산', e: '⛰️' },
+  { w: '책상', d: '학생용 책상 하나' },
+  { w: '무릎', d: '사람의 무릎' },
+  { w: '낙타', e: '🐫' },
+  { w: '불고기', d: '불고기 한 접시' },
+  { w: '반지', e: '💍' },
+  { w: '젓가락', e: '🥢' },
+  { w: '독수리', e: '🦅' },
+  { w: '버섯', e: '🍄' },
+  { w: '장미', e: '🌹' },
+  { w: '구급차', e: '🚑' },
+  { w: '열쇠', e: '🔑' },
+  { w: '종이', d: '흰 종이 한 장' },
+  { w: '교실', d: '책상과 칠판이 있는 교실' },
+  { w: '구름', e: '☁️' },
+  { w: '다람쥐', e: '🐿️' },
+  { w: '꼬리', d: '강아지 꼬리' },
+  { w: '공책', e: '📓' },
+  { w: '까치', d: '검은색과 흰색 까치 한 마리' },
+  { w: '지우개', d: '하얀 지우개' },
+  { w: '잠자리', d: '날개를 편 잠자리 한 마리' },
+  { w: '농구공', e: '🏀' },
+  { w: '운동장', d: '넓은 학교 운동장' },
+  { w: '도서관', d: '책장이 가득한 도서관' },
+  { w: '공원', d: '나무와 의자가 있는 공원' },
+  { w: '김밥', d: '썰어 놓은 김밥 한 줄' },
+  { w: '팔', e: '💪' },
+  { w: '시소', d: '놀이터 시소 하나' },
+  { w: '국수', e: '🍜' },
+  { w: '김치', d: '빨간 배추김치 한 접시' },
+  { w: '신호등', e: '🚦' },
+  { w: '치과', d: '이를 치료하는 치과 의자' },
+  { w: '해바라기', e: '🌻' },
+  { w: '빵집', d: '빵이 진열된 빵집' },
+  { w: '미끄럼틀', e: '🛝' },
+  { w: '스파게티', e: '🍝' },
+  { w: '자두', d: '빨간 자두 하나' },
+  { w: '나팔꽃', d: '보라색 나팔꽃' },
+  { w: '소방차', e: '🚒' },
+  { w: '필통', d: '연필이 들어 있는 필통' },
+  { w: '놀이터', d: '그네와 미끄럼틀이 있는 놀이터' },
+  { w: '쥐', e: '🐭' },
+  { w: '사슴', e: '🦌' },
+  { w: '아파트', e: '🏢' },
+  { w: '악어', e: '🐊' },
+  { w: '줄넘기', d: '손잡이가 달린 줄넘기 줄' },
+  { w: '하늘', d: '구름 없는 파란 하늘' },
+  { w: '원숭이', e: '🐒' },
+  { w: '그네', d: '놀이터 그네 하나' },
+  { w: '하마', e: '🦛' },
+  { w: '얼음', e: '🧊' },
+  { w: '모래성', d: '모래로 쌓은 성' },
+  { w: '개미', e: '🐜' },
+  { w: '실내화', d: '흰색 실내화 한 켤레' },
+  { w: '훌라후프', d: '빨간 훌라후프 하나' },
+  { w: '여우', e: '🦊' },
+  { w: '생쥐', d: '작은 회색 생쥐 한 마리' },
+  { w: '양파', e: '🧅' },
+  { w: '복숭아', e: '🍑' },
+  { w: '그릇', e: '🥣' },
+  { w: '냄비', d: '손잡이 달린 냄비' },
+  { w: '식탁', d: '나무 식탁' },
+  { w: '한복', d: '알록달록한 한복' },
+  { w: '참새', d: '작은 갈색 참새 한 마리' },
+  { w: '꿀', e: '🍯' },
+  { w: '안경', e: '👓' },
+  { w: '피아노', e: '🎹' },
+  { w: '리본', e: '🎀' },
+  { w: '손톱', d: '사람 손의 손톱' },
+  { w: '병아리', e: '🐤' },
+  { w: '색연필', d: '색연필 여러 자루' },
+  { w: '흙', d: '화분에 담긴 흙' },
+  { w: '인형', d: '곰 인형 하나' },
+  { w: '문구점', d: '학용품을 파는 문구점' },
+  { w: '참외', d: '노란 참외 하나' },
+  { w: '까마귀', d: '검은 까마귀 한 마리' },
+  { w: '황새', d: '다리가 긴 황새' },
+  { w: '쟁반', d: '둥근 쟁반' },
+  { w: '바다', e: '🌊' },
+  { w: '거미', e: '🕷️' },
+  { w: '전등', d: '천장 전등' },
+  { w: '눈사람', e: '☃️' },
+  { w: '색종이', d: '여러 색 색종이 묶음' },
+  { w: '책가방', d: '학생용 책가방' },
+  { w: '낙엽', d: '떨어진 단풍잎 하나' },
+  { w: '청소기', d: '진공청소기' },
+  { w: '돗자리', d: '펼쳐 놓은 돗자리' },
+  { w: '감자', e: '🥔' },
+  { w: '땅콩', e: '🥜' }
+];
+/* 3단계: 2학년 국어 교과서에 더 나오는 낱말 */
+const STAGE3_WORDS = [
+  { w: '펭귄', e: '🐧' },
+  { w: '치타', d: '점박이 치타 한 마리' },
+  { w: '연못', d: '작은 연못' },
+  { w: '나뭇잎', e: '🍃' },
+  { w: '파도', d: '하얗게 부서지는 파도' },
+  { w: '모래밭', d: '넓은 모래밭' },
+  { w: '바람개비', d: '색색의 바람개비' },
+  { w: '비빔밥', d: '비빔밥 한 그릇' },
+  { w: '페트병', d: '빈 페트병' },
+  { w: '목도리', e: '🧣' },
+  { w: '편지', e: '✉️' },
+  { w: '너구리', e: '🦝' },
+  { w: '앞치마', d: '앞치마 하나' },
+  { w: '놀이공원', e: '🎡' },
+  { w: '수세미', d: '설거지 수세미' },
+  { w: '허수아비', d: '논에 서 있는 허수아비' },
+  { w: '승강기', d: '문이 열린 승강기(엘리베이터)' },
+  { w: '빨대', d: '컵에 꽂은 빨대' },
+  { w: '종이컵', d: '하얀 종이컵' },
+  { w: '붕어', d: '작은 붕어 한 마리' },
+  { w: '잉어', d: '커다란 잉어 한 마리' },
+  { w: '머리핀', d: '리본 머리핀' },
+  { w: '금메달', e: '🥇' },
+  { w: '거울', d: '둥근 거울' },
+  { w: '두꺼비', d: '갈색 두꺼비 한 마리' },
+  { w: '달팽이', e: '🐌' },
+  { w: '우편함', d: '빨간 우편함' },
+  { w: '아이스크림', e: '🍦' },
+  { w: '솜사탕', d: '분홍 솜사탕' },
+  { w: '빗자루', e: '🧹' },
+  { w: '헬리콥터', e: '🚁' },
+  { w: '떡볶이', d: '빨간 떡볶이 한 접시' },
+  { w: '옷장', d: '나무 옷장' },
+  { w: '짜장면', d: '짜장면 한 그릇' },
+  { w: '신발주머니', d: '신발주머니 하나' },
+  { w: '스웨터', d: '털실 스웨터' },
+  { w: '사다리', d: '나무 사다리' },
+  { w: '사물함', d: '교실 사물함' },
+  { w: '물통', d: '어린이 물통' },
+  { w: '책꽂이', d: '책이 꽂힌 책꽂이' },
+  { w: '수영복', d: '어린이 수영복' },
+  { w: '수영장', e: '🏊' },
+  { w: '비옷', d: '노란 비옷' },
+  { w: '장화', d: '노란 장화 한 켤레' },
+  { w: '헬멧', d: '안전모(헬멧)' },
+  { w: '송아지', d: '어린 송아지 한 마리' },
+  { w: '미술관', d: '그림이 걸린 미술관' },
+  { w: '씨앗', d: '손바닥 위의 씨앗' },
+  { w: '우체국', d: '우체국 건물' },
+  { w: '상추', d: '초록 상추 몇 장' },
+  { w: '당나귀', d: '당나귀 한 마리' },
+  { w: '떡국', d: '떡국 한 그릇' },
+  { w: '냉면', d: '냉면 한 그릇' },
+  { w: '도시락', e: '🍱' },
+  { w: '비닐봉지', d: '비닐봉지 하나' },
+  { w: '박물관', d: '박물관 건물' },
+  { w: '달걀', e: '🥚' },
+  { w: '담요', d: '포근한 담요' },
+  { w: '택배 상자', d: '테이프 붙은 택배 상자' },
+  { w: '택시', e: '🚕' },
+  { w: '스마트폰', e: '📱' },
+  { w: '옥수수', e: '🌽' }
+];
+const ALL_DEFAULTS = DEFAULT_WORDS.concat(STAGE2_WORDS, STAGE3_WORDS);
+const STAGE_OF = new Map();
+DEFAULT_WORDS.forEach(x => STAGE_OF.set(x.w, 1)); STAGE2_WORDS.forEach(x => STAGE_OF.set(x.w, 2)); STAGE3_WORDS.forEach(x => STAGE_OF.set(x.w, 3));
+function defOf(w) { return ALL_DEFAULTS.find(x => x.w === w); }
+function stageOf(w) { return STAGE_OF.get(w) || 0; }   /* 0 = 선생님이 넣은 낱말 */
 /* 예전 기본 목록(낱말 목록을 새 기본으로 바꿀 때, 교사가 더한 낱말만 남기려고) */
 const OLD_DEFAULT_NAMES = '물 밥 우유 사과 바나나 빵 엄마 아빠 아기 손 발 눈 코 입 귀 가방 책 연필 의자 신발 옷 모자 양말 컵 공 시계 우산 휴지 비누 칫솔 숟가락 집 학교 화장실 버스 자동차 자전거 강아지 고양이 새 물고기 토끼 꽃 나무 해 딸기 포도 과자 친구 선생님 거미 고기 구두 기차 고래 가위 고구마 거북이 곰 가지 기린 개 나비 너구리 노래 낙타 다리 도토리 돼지 당근 달 닭 라면 레몬 로봇 리본 라디오 문 말 망치 모기 머리 멜론 바지 배 배추 별 비행기 바다 버섯 벌 소 사자 수박 사탕 소금 선물 오리 이 오이 여우 양 자 주스 지도 장갑 종 지구 치마 치즈 초 침대 창문 코끼리 키위 카메라 케이크 커피 토마토 트럭 텐트 택시 튜브 피자 피아노 펭귄 풍선 포크 편지 하마 호랑이 호박 하트 햄버거 휴대폰 꿀 깃발 떡 쌀 씨앗'.split(' ');
-const WORDS_VER = 2;
+const WORDS_VER = 3;   /* 3: 2단계(1학년 교과서)·3단계(2학년 교과서) 낱말을 더함 */
 /* 자음·모음 추천 순서
    - 1·2학년 교과서 고빈도 어절의 자소 빈도(초성 ㄱ·ㄹ·ㄴ·ㅅ·ㅎ·ㅈ, 중성 ㅏ·ㅣ·ㅗ·ㅡ·ㅜ, 종성 ㄹ·ㄴ·ㅇ: 이다은 외)
    - 말소리 발달에서 일찍 나오는 소리(ㅁ·ㄴ·ㄷ·ㅂ·ㄱ)를 앞에
@@ -1053,11 +1232,17 @@ function wordStrokes(word) {
    ========================================================= */
 function loadWords() {
   const saved = LS.get('words', null);
-  if (!saved) return DEFAULT_WORDS.map(x => ({ ...x }));
-  if (LS.get('wordsVer', 1) >= WORDS_VER) return saved;
-  /* 새 기본 낱말 100개 + 교사가 직접 더했던 낱말 */
-  const mine = saved.filter(x => !OLD_DEFAULT_NAMES.includes(x.w) && !DEFAULT_WORDS.some(d => d.w === x.w));
-  const list = DEFAULT_WORDS.map(x => ({ ...x })).concat(mine);
+  if (!saved) return ALL_DEFAULTS.map(x => ({ ...x }));
+  const ver = LS.get('wordsVer', 1);
+  if (ver >= WORDS_VER) return saved;
+  let list = saved;
+  if (ver < 2) {
+    /* 새 기본 낱말 100개 + 교사가 직접 더했던 낱말 */
+    const mine = saved.filter(x => !OLD_DEFAULT_NAMES.includes(x.w) && !DEFAULT_WORDS.some(d => d.w === x.w));
+    list = DEFAULT_WORDS.map(x => ({ ...x })).concat(mine);
+  }
+  /* 2·3단계 낱말 가운데 아직 없는 것만 더함(선생님이 넣은 낱말·그림 설명은 그대로) */
+  STAGE2_WORDS.concat(STAGE3_WORDS).forEach(x => { if (!list.some(y => y.w === x.w)) list.push({ ...x }); });
   LS.set('words', list); LS.set('wordsVer', WORDS_VER);
   return list;
 }
@@ -1080,7 +1265,8 @@ const S = {
   jvow: LS.get('jvow', 'ㅏ'),
   focus: null,
   writeMode: LS.get('writeMode', 'guide'),
-  picLetters: LS.get('picLetters', 'on')
+  picLetters: LS.get('picLetters', 'on'),
+  stage: LS.get('stage', 1)
 };
 /* 키: 이 앱 칸(wordLearn.*) → 함께 쓰는 칸(webapp.*) → 다른 앱 칸 순서로 찾아 채움 */
 const KEYS = {
@@ -1251,8 +1437,8 @@ function isEmojiOnly(s) { return !!s && /^\p{Extended_Pictographic}/u.test(s.tri
 /* =========================================================
    목소리
    ========================================================= */
-/* 말 빠르기: 기본(0.92 / 0.78)의 90% — 선생님 요청 */
-const G_RATE = 0.83;
+/* 말 빠르기: 기본(0.92 / 0.78)의 98% — 선생님 요청 */
+const G_RATE = 0.90;
 const Speech = {
   ctx: null, gain: null, buf: new Map(), gen: 0, cur: null, fellBack: false, devVoice: null,
   initAudio() {
@@ -1353,7 +1539,7 @@ const Speech = {
     await new Promise(res => {
       try {
         const u = new SpeechSynthesisUtterance(t);
-        u.lang = 'ko-KR'; u.rate = 0.70; u.volume = 0.8; if (this.devVoice) u.voice = this.devVoice;
+        u.lang = 'ko-KR'; u.rate = 0.76; u.volume = 0.8; if (this.devVoice) u.voice = this.devVoice;
         u.onend = res; u.onerror = res;
         speechSynthesis.speak(u);
         setTimeout(res, 1500 + t.length * 420);
@@ -1680,19 +1866,19 @@ async function stageLook(w, run) {
   /* 글자 수만큼 동그라미: 순서대로 누르면 그 글자가 하나씩 나오고, 다 나오면 낱말을 말함 */
   const last = prev, lastFont = fonts[fonts.length - 1];
   const chars = [...w];
-  last.innerHTML = chars.map(c => `<span class="syl">${esc(c)}</span>`).join('');
+  last.innerHTML = chars.map(c => `<span class="syl"><i class="ch" style="font-style:normal">${esc(c)}</i></span>`).join('');
   await wait(400, run);
   const spans = [...last.querySelectorAll('.syl')];
   spans.forEach(sp => sp.classList.add('hide'));
   await wait(450, run);
-  const dotS = Math.min(H * 0.1, W * 0.09, 86);
-  const dotY = Math.min(H - dotS - 14, box.y + box.h + dotS * 0.25);
+  /* 동그라미는 글자 칸 안에 넣는다: 글자가 나올 바로 그 자리, 그 크기. 누르면 동그라미가 줄며 그 자리의 글자로 바뀜 */
   const dots = spans.map((sp, i) => {
-    const r = sp.getBoundingClientRect();
+    const ch = sp.querySelector('.ch');          /* offset 크기는 숨김(scale)의 영향을 받지 않음 */
+    const dotS = Math.min(ch.offsetWidth, ch.offsetHeight) * 0.92;
     const d = document.createElement('div'); d.className = 'sdot' + (i === 0 ? ' next' : '');
-    Object.assign(d.style, { width: dotS + 'px', height: dotS + 'px', left: (r.left + r.width / 2 - dotS / 2) + 'px', top: dotY + 'px' });
+    Object.assign(d.style, { width: dotS + 'px', height: dotS + 'px' });
     if (chars[i] === ' ') d.style.display = 'none';
-    stage.appendChild(d); return d;
+    sp.appendChild(d); return d;
   });
   await new Promise((res, rej) => {
     let i = 0, done = false, hinted = false, last = performance.now();
@@ -1709,10 +1895,10 @@ async function stageLook(w, run) {
       spans[i].classList.remove('hide'); dots[i].classList.remove('next', 'hint'); dots[i].classList.add('done');
       i++; while (chars[i] === ' ') { spans[i].classList.remove('hide'); i++; }
       last = performance.now();
-      const p = say(ch, run);          /* 누를 때마다 그 글자 소리 */
+      const p = say(ch, run);          /* 누를 때마다 그 글자 소리만 ("고", "기") */
       if (i < chars.length) { dots[i].classList.add('next'); p.catch(() => {}); return; }
       done = true; clearInterval(chk);
-      try { await p; await wait(450, run); await say(w, run); res(); } catch (e) { rej(e); }
+      try { await p; await wait(700, run); res(); } catch (e) { rej(e); }
     };
     dots.forEach((d, j) => d.addEventListener('pointerup', () => { if (done || run !== R.run) return; if (j === i) reveal(); else if (dots[i]) dots[i].classList.add('hint'); }));
   });
@@ -2160,6 +2346,7 @@ const TOUR_STEPS = {
     { el: '#ttsKey', t: 'Cloud 키', x: '"Google 음성 키 받는 법"을 따라 받은 키를 넣어요. 넣은 키는 이 기기에 저장돼요.' },
     { el: '#clearKeys', t: '키 지우기', x: '여러 사람이 쓰는 컴퓨터라면 수업을 마친 뒤 눌러 주세요.' },
     { el: '#recRow', t: '학생 기록', x: '학생을 고르면 그때부터 기록해요. 고르지 않으면 기록하지 않아요. 수업 화면 왼쪽 위에 빨간 점이 보이면 기록 중이에요.' },
+    { el: '#stageSeg', t: '낱말 묶음', x: '1단계 생활 기초 100개, 2단계 1학년 교과서, 3단계 2학년 교과서 낱말 가운데에서 골라요.' },
     { el: '#modeSeg', t: '낱말 고르는 방법', x: '직접 고르거나, 자음별·모음별로 고르면 그 낱자가 든 낱말을 쉬운 것부터 골라 줘요.' },
     { el: '#wordChips', t: '오늘 배울 낱말', x: '누른 순서대로 배워요. 다시 누르면 빠져요.' },
     { el: '#openWM', t: '낱말 관리', x: '.txt로 낱말을 더하거나 바꾸고, 그림을 그리거나 사진을 넣어요.' },
@@ -2417,6 +2604,26 @@ $('#resumeBtn').addEventListener('click', () => {
 });
 $('#quitBtn').addEventListener('click', () => { Rec.endLesson(); R.paused = null; R.trials = []; showPauseBar(); });
 segInit('#modeSeg', 'mode', () => { renderJamo(); autoPick(true); renderWordChips(); });
+function paintStage() {
+  const cnt = st => S.words.filter(x => inStage(x.w, st)).length;
+  $$('#stageSeg button').forEach(b => {
+    const v = isNaN(+b.dataset.v) ? b.dataset.v : +b.dataset.v, n = cnt(v);
+    if (!b.dataset.label) b.dataset.label = b.textContent;
+    b.innerHTML = b.dataset.label + ' <small style="opacity:.7">' + n + '</small>';
+    b.classList.toggle('hidden', v === 'mine' && !n);
+  });
+  if (S.stage === 'mine' && !cnt('mine')) { S.stage = 1; LS.set('stage', 1); }
+  paintSeg('#stageSeg', 'stage');
+  $('#stageNote').textContent = {
+    1: '집과 학교에서 가장 많이 쓰는 낱말 100개예요. 처음에는 여기서 시작해요.',
+    2: '1학년 국어 교과서에 그림과 함께 나오는 낱말이에요. 교과서에 처음 나오는 순서로 놓았어요.',
+    3: '2학년 국어 교과서에 새로 나오는 낱말이에요.',
+    mine: '선생님이 .txt나 사진으로 넣은 낱말이에요.',
+    all: '모든 낱말이에요.'
+  }[S.stage] + (S.stage !== 1 && S.stage !== 'mine' ? ' 이모지가 없는 낱말은 Gemini 그림이나 사진이 있어야 나와요.' : '');
+}
+segInit('#stageSeg', 'stage', () => { paintStage(); renderJamo(); autoPick(true); renderWordChips(); });
+paintStage();
 
 $('#ttsKey').value = S.ttsKey; $('#gemKey').value = S.gemKey;
 /* 넣은 키는 이 앱 칸과 함께 쓰는 칸(webapp.*)에 저장 → 다른 앱도 바로 씀 */
@@ -2553,10 +2760,14 @@ $('#roster').addEventListener('click', e => {
 function usable(w) { const it = Pics.entry(w); return !!it.e || !!Pics.stored.get(w) || (S.picMode === 'gemini' && !!S.gemKey); }
 /* 고르는 방법에 맞는 낱말 (자음별·모음별은 첫 글자 기준, 쉬운 낱말부터) */
 function matchJamo(w, type, c) { const j = jamo(w[0]); return !!j && (type === 'cons' ? j.cho === c : j.jung === c); }
+/* 낱말 묶음: 1단계 생활 기초 · 2단계 1학년 교과서 · 3단계 2학년 교과서 · 내가 넣은 낱말 · 모두 */
+function inStage(w, st) { return st === 'all' ? true : st === 'mine' ? stageOf(w) === 0 : stageOf(w) === st; }
+function stageWords() { return S.words.filter(x => inStage(x.w, S.stage)); }
 function poolWords() {
-  if (S.mode === 'free') return S.words.map(x => x.w);
+  const list = stageWords();
+  if (S.mode === 'free') return list.map(x => x.w);
   const type = S.mode, c = type === 'cons' ? S.jcons : S.jvow;
-  return S.words.map((x, i) => ({ w: x.w, i })).filter(x => matchJamo(x.w, type, c))
+  return list.map((x, i) => ({ w: x.w, i })).filter(x => matchJamo(x.w, type, c))
     .sort((a, b) => difficulty(a.w) - difficulty(b.w) || a.i - b.i).map(x => x.w);
 }
 function autoPick(force) {
@@ -2571,7 +2782,7 @@ function renderJamo() {
   const type = S.mode, order = type === 'cons' ? CONS_ORDER : VOW_ORDER, cur = type === 'cons' ? S.jcons : S.jvow;
   const el = $('#jamoChips'); el.innerHTML = '';
   order.forEach((c, i) => {
-    const n = S.words.filter(x => matchJamo(x.w, type, c)).length;
+    const n = stageWords().filter(x => matchJamo(x.w, type, c)).length;
     const b = document.createElement('button');
     b.className = 'jchip' + (c === cur ? ' on' : '') + (n < 2 ? ' none' : '');
     b.innerHTML = `<small>${i + 1}</small><b>${c}</b><small>${n}개</small>`;
@@ -2587,6 +2798,7 @@ function renderJamo() {
     + '<br>추천 순서: 1·2학년 교과서에 많이 나오는 자소, 말소리 발달에서 일찍 나오는 소리를 앞에 두고, 헷갈리는 짝(ㄱ/ㅋ, ㄷ/ㅌ, ㅂ/ㅍ, ㅈ/ㅊ, ㅏ/ㅓ, ㅗ/ㅜ)은 떨어뜨려 놓았어요.';
 }
 async function renderWordChips() {
+  paintStage();
   S.chosen = S.chosen.filter(w => S.words.some(x => x.w === w));
   const tok = renderWordChips.tok = (renderWordChips.tok || 0) + 1;
   const box = document.createDocumentFragment();
@@ -2713,7 +2925,7 @@ function parseTxt(text) {
     if (!w || w.length > 12) return;
     const it = { w };
     if (d) { if (isEmojiOnly(d)) it.e = d; else it.d = d; }
-    const def = DEFAULT_WORDS.find(x => x.w === w);
+    const def = defOf(w);
     if (def) { if (!it.e) it.e = def.e; if (!it.d) it.d = def.d; }
     out.push(it);
   });
@@ -2721,10 +2933,10 @@ function parseTxt(text) {
 }
 function toTxt() {
   return '# 글자 익히기 낱말 목록 — 한 줄에 낱말 하나, 그림 설명은 | 뒤에\n' +
-    S.words.map(x => { const def = DEFAULT_WORDS.find(d => d.w === x.w); const extra = x.d && !(def && def.d === x.d) ? x.d : (x.e && !(def && def.e === x.e) ? x.e : ''); return x.w + (extra ? ' | ' + extra : ''); }).join('\n') + '\n';
+    S.words.map(x => { const def = defOf(x.w); const extra = x.d && !(def && def.d === x.d) ? x.d : (x.e && !(def && def.e === x.e) ? x.e : ''); return x.w + (extra ? ' | ' + extra : ''); }).join('\n') + '\n';
 }
 let txtMode = 'add', picTarget = null;
-function descShown(it) { const def = DEFAULT_WORDS.find(d => d.w === it.w); return it.d && !(def && def.d === it.d) ? it.d : ''; }
+function descShown(it) { const def = defOf(it.w); return it.d && !(def && def.d === it.d) ? it.d : ''; }
 async function renderWM() {
   const tok = renderWM.tok = (renderWM.tok || 0) + 1;
   const tb = document.createDocumentFragment();
@@ -2779,12 +2991,12 @@ $('#txtSave').addEventListener('click', () => {
 });
 $('#resetWords').addEventListener('click', () => {
   if (!confirm('기본 낱말 목록으로 되돌릴까요? (그린 그림은 남아요)')) return;
-  S.words = DEFAULT_WORDS.map(x => ({ ...x })); saveWords(); Pics.cache.clear(); renderWM();
+  S.words = ALL_DEFAULTS.map(x => ({ ...x })); saveWords(); Pics.cache.clear(); renderWM();
 });
 $('#drawAll').addEventListener('click', async e => {
   storeKeys(); const m = $('#wmMsg');
   if (!S.gemKey) { m.textContent = 'Gemini 키를 넣으면 그림을 그릴 수 있어요.'; return; }
-  const need = []; for (const it of S.words) if (!(await Pics.hasStored(it.w))) need.push(it);
+  const need = []; for (const it of stageWords()) if (!(await Pics.hasStored(it.w))) need.push(it);   /* 지금 고른 낱말 묶음만 */
   if (need.length && !confirm(`그림 ${need.length}장을 그려요.\nGemini 그림은 한 장마다 약 50원이 들어서, 모두 약 ${(need.length * 50).toLocaleString()}원이 들어요.\n그릴까요?`)) return;
   let fail = 0;
   if (need.length) { Loading.show('그림을 그리고 있어요'); fail = await drawWithLoading(need); await sleep(600); Loading.hide(); }
