@@ -54,17 +54,17 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 .tg.hint{box-shadow:0 0 0 5px var(--glow)}
 .tg.basket{justify-content:flex-start;cursor:pointer}
 .tg.basket .slot{position:relative;width:100%;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
-.tg.basket .slot img{object-fit:contain;display:block;margin-bottom:-12%;transition:transform .5s ease-in,opacity .4s ease}
+.tg.basket .slot img{object-fit:contain;display:block;margin-bottom:-12%;transition:transform .4s ease-in,opacity .4s ease}
 .tg.basket .bk{position:absolute;left:0;right:0;bottom:0}
 .tg.basket .bk svg{width:100%;height:100%;display:block}
 .tg.basket .lbl{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);font-family:Jua;line-height:1.1;background:#fffdf8;border:2px solid #7a4f22;border-radius:12px;padding:.04em .4em;white-space:nowrap;color:var(--ink)}
 .tg.hop{transform:translateY(-14px)}
-#reveal{position:absolute;inset:0;pointer-events:none;transition:opacity .4s ease}
-#reveal .rv-pic{position:absolute;object-fit:contain;transition:left .7s ease,top .7s ease,width .7s ease,height .7s ease,opacity .45s ease}
+#reveal{position:absolute;inset:0;pointer-events:none;transition:opacity .25s ease}
+#reveal .rv-pic{position:absolute;object-fit:contain;transition:left .5s ease,top .5s ease,width .5s ease,height .5s ease,opacity .3s ease}
 #reveal .rv-word{position:absolute;left:0;right:0;text-align:center;font-family:Jua;line-height:1.2;color:var(--ink);white-space:nowrap}
 #reveal .rv-word span{opacity:0;transition:opacity .35s ease}
 #reveal .rv-word span.on{opacity:1}
-#reveal .rv-word.lab{right:auto;transition:left .75s ease,top .75s ease,font-size .75s ease}
+#reveal .rv-word.lab{right:auto;transition:left .5s ease,top .5s ease,font-size .5s ease}
 #reveal .rv-word span{display:inline-block;transition:opacity .35s ease,color .25s ease,transform .25s ease}
 #reveal .rv-word span.now{color:#c0562b;transform:translateY(-6%)}
 #doneBox{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;background:var(--bg)}
@@ -344,9 +344,9 @@ async function success(el, ans, feed, hinted, run){
     el.querySelector('img').style.opacity = 1;
     const tx = r.left + r.width/2, ty = r.top + r.height*0.42;
     const ir = it.getBoundingClientRect();
-    it.style.transition = 'transform .9s ease-in-out, opacity .4s ease .7s';
+    it.style.transition = 'transform .65s ease-in-out, opacity .3s ease .5s';
     it.style.transform = `translate(calc(-50% + ${tx - (ir.left+ir.width/2)}px), ${ir.top + (ty - (ir.top+ir.height/2))}px) scale(.45)`;
-    await sleep(850); alive(run);
+    await sleep(650); alive(run);
     it.style.opacity = 0; el.classList.add('hop'); chime();
     document.querySelectorAll('#targets .tg img').forEach(im => im.src = pose(im.closest('.tg').dataset.w, 'yum'));
   } else {
@@ -355,23 +355,23 @@ async function success(el, ans, feed, hinted, run){
     im.style.opacity = 1;
     const ir = it.getBoundingClientRect();
     const k = r.width / ir.width;
-    it.style.transition = 'transform 1s ease-in-out';
+    it.style.transition = 'transform .7s ease-in-out';
     it.style.transform = `translate(calc(-50% + ${(r.left+r.width/2) - (ir.left+ir.width/2)}px), ${ir.top + ((r.top+r.height/2) - (ir.top+ir.height/2))}px) scale(${k})`;
-    await sleep(1000); alive(run);
+    await sleep(700); alive(run);
     it.style.transition = 'none'; it.style.opacity = 0;
     im.style.transform = 'translateY(115%)';          /* 바구니 속으로 */
-    await sleep(520); alive(run);
+    await sleep(420); alive(run);
     el.classList.add('hop'); chime();
   }
   G.stars++; const st = $('#stars').children[G.stars-1]; if (st) st.classList.add('on');
-  await sleep(320); el.classList.remove('hop'); alive(run);
+  await sleep(250); el.classList.remove('hop'); alive(run);
   if (!feed){
     /* 바구니에 들어가자마자: 다른 바구니는 사라지고, 정답 바구니가 가운데로 */
     document.querySelectorAll('#targets .tg').forEach(e => { if (e !== el) e.style.opacity = 0; });
     const r0 = el.getBoundingClientRect();
-    el.style.transition = 'opacity .35s ease, transform .7s ease';
+    el.style.transition = 'opacity .3s ease, transform .5s ease';
     el.style.transform = `translateX(${innerWidth/2 - (r0.left + r0.width/2)}px)`;
-    await sleep(800); alive(run);
+    await sleep(550); alive(run);
   }
   /* 구체적 피드백 */
   const praise = PRAISE[(G.i + G.stars) % PRAISE.length];
@@ -397,7 +397,7 @@ async function picToWord(el, ans, run){
   const big = Math.min(H*0.42, W*0.42);
   const cx = W/2, cy = H*0.42;
   Object.assign(pic.style, { left: (cx-big/2)+'px', top: (cy-big/2)+'px', width: big+'px', height: big+'px' });
-  await sleep(750); alive(run);
+  await sleep(520); alive(run);
   const chars = [...ans];
   const fs = Math.min(big*0.62, W*0.8/chars.length);
   const word = document.createElement('div'); word.className = 'rv-word'; word.style.fontSize = fs+'px';
@@ -407,20 +407,20 @@ async function picToWord(el, ans, run){
   if (S.level < 3){
     word.style.top = (cy - fs*0.62) + 'px';
     pic.style.opacity = 0;                       /* 그림이 글자로 바뀜 */
-    await sleep(450); alive(run);
-    for (const sp of spans){ sp.classList.add('on'); await Speech.say(sp.textContent); alive(run); await sleep(150); }
-    await sleep(250); await Speech.say(ans); alive(run);
+    await sleep(300); alive(run);
+    for (const sp of spans){ sp.classList.add('on'); await Speech.say(sp.textContent); alive(run); await sleep(60); }
+    await sleep(120); await Speech.say(ans); alive(run);
   } else {
     /* 3수준: 글자가 먼저, 그림은 확인으로 */
     Object.assign(pic.style, { opacity: 0 });
     word.style.top = (H*0.62) + 'px';
     spans.forEach(sp => sp.classList.add('on'));
-    await sleep(350); alive(run);
+    await sleep(250); alive(run);
     Object.assign(pic.style, { top: (H*0.62 - big*0.95)+'px', opacity: 1 });
     await Speech.say(ans); alive(run);
   }
-  await sleep(900); alive(run);
-  ov.style.opacity = 0; await sleep(400); ov.remove();
+  await sleep(450); alive(run);
+  ov.style.opacity = 0; await sleep(250); ov.remove();
 }
 
 /* 바구니: 이름표 글자가 가운데로 커지며 (1·2) 한 자씩 짚어 읽고 이어 읽음, (3) 글자 위에 그림이 나타나 확인 */
@@ -439,11 +439,11 @@ async function labelToWord(el, ans, run){
   const fs = Math.min(H*0.26, W*0.8/chars.length);
   const w1 = word.getBoundingClientRect().width * fs/fs0;
   Object.assign(word.style, { fontSize: fs+'px', left: (W/2 - w1/2)+'px', top: (S.level<3 ? H*0.42 - fs*0.62 : H*0.6)+'px' });
-  await sleep(800); alive(run);
+  await sleep(550); alive(run);
   const spans = [...word.children];
   if (S.level < 3){
-    for (const sp of spans){ sp.classList.add('now'); await Speech.say(sp.textContent); alive(run); sp.classList.remove('now'); await sleep(120); }
-    await sleep(200); await Speech.say(ans); alive(run);
+    for (const sp of spans){ sp.classList.add('now'); await Speech.say(sp.textContent); alive(run); sp.classList.remove('now'); await sleep(60); }
+    await sleep(120); await Speech.say(ans); alive(run);
   } else {
     const big = Math.min(H*0.3, W*0.3);
     const p = document.createElement('img'); p.className='rv-pic'; p.src = pic(ans);
@@ -451,8 +451,8 @@ async function labelToWord(el, ans, run){
     ov.appendChild(p); await sleep(40); p.style.opacity = 1;
     await Speech.say(ans); alive(run);
   }
-  await sleep(900); alive(run);
-  ov.style.opacity = 0; await sleep(400); ov.remove();
+  await sleep(450); alive(run);
+  ov.style.opacity = 0; await sleep(250); ov.remove();
 }
 
 /* ---------- 전체 화면 ---------- */
