@@ -323,15 +323,11 @@ async function success(el, ans, feed, hinted, run){
   await sleep(320); el.classList.remove('hop'); alive(run);
   /* 구체적 피드백 */
   const praise = PRAISE[(G.i + G.stars) % PRAISE.length];
-  if (!feed){
-    await Speech.say(`${ans}. ${praise}`); alive(run);
-    await sleep(450); alive(run);
-    document.querySelectorAll('#targets .tg').forEach(e=>e.style.opacity=0);
-    await sleep(380); return;
-  }
   const EAT = ['잘 먹어요.', '맛있게 먹어요.', '냠냠 먹어요.'];
   const n = G.said[ans] = (G.said[ans] || 0) + 1;
-  await Speech.say(`${ga(ans)} ${eul(FOODKO[G.cur] || '먹이')} ${EAT[(G.stars + n) % EAT.length]}`); alive(run);
+  if (feed) await Speech.say(`${ga(ans)} ${eul(FOODKO[G.cur] || '먹이')} ${EAT[(G.stars + n) % EAT.length]}`);
+  else await Speech.say(n % 2 ? `${eul(ans)} 바구니에 담았어요.` : `${ans}. ${praise}`);
+  alive(run);
   await picToWord(el, ans, run);
 }
 
