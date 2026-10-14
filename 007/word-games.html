@@ -45,7 +45,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 #item img{width:100%;height:100%;object-fit:contain;display:block}
 #item .tag{position:absolute;left:0;right:0;bottom:-4px;text-align:center;font-family:Jua;color:var(--ink);line-height:1}
 #item.card{background:var(--card);border:3px solid var(--line);border-radius:22px}
-#targets{position:absolute;left:0;right:0;bottom:4%;display:flex;justify-content:center;align-items:flex-end}
+#targets{position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;align-items:flex-end}
 .tg{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;transition:opacity .35s ease, transform .35s ease}
 .tg .pic{position:relative;cursor:pointer}
 .tg .pic img{width:100%;height:100%;object-fit:contain;display:block;transition:opacity .4s ease}
@@ -267,7 +267,7 @@ async function trial(ans, run){
   /* 아래쪽: 동물(또는 바구니). 모두 땅(아래 34%) 안에 들어가게 */
   const box = $('#targets'); box.innerHTML='';
   const gr = feed ? 0.34 : 0.4; $('#ground').style.height = (gr*100)+'%';
-  const groundH = H*gr, th = groundH*0.9;
+  const groundH = H*gr, th = groundH - 14 - 22;   /* 아래 14px, 위 22px 띄움: 힌트 테두리가 땅 안에만 */
   const gap = Math.max(feed ? 14 : 36, W*(feed ? 0.025 : 0.05));
   const cw = Math.min((W*0.92 - gap*(opts.length-1))/opts.length, feed ? th : th*1.25, 340);
   box.style.gap = gap+'px';
@@ -365,6 +365,14 @@ async function success(el, ans, feed, hinted, run){
   }
   G.stars++; const st = $('#stars').children[G.stars-1]; if (st) st.classList.add('on');
   await sleep(320); el.classList.remove('hop'); alive(run);
+  if (!feed){
+    /* 바구니에 들어가자마자: 다른 바구니는 사라지고, 정답 바구니가 가운데로 */
+    document.querySelectorAll('#targets .tg').forEach(e => { if (e !== el) e.style.opacity = 0; });
+    const r0 = el.getBoundingClientRect();
+    el.style.transition = 'opacity .35s ease, transform .7s ease';
+    el.style.transform = `translateX(${innerWidth/2 - (r0.left + r0.width/2)}px)`;
+    await sleep(800); alive(run);
+  }
   /* 구체적 피드백 */
   const praise = PRAISE[(G.i + G.stars) % PRAISE.length];
   const EAT = ['잘 먹어요.', '맛있게 먹어요.', '냠냠 먹어요.'];
@@ -426,7 +434,7 @@ async function labelToWord(el, ans, run){
   word.innerHTML = chars.map(c => `<span class="on">${c}</span>`).join('');
   Object.assign(word.style, { left: r.left+'px', top: r.top+'px', right:'auto', fontSize: fs0+'px' });
   ov.appendChild(word);
-  document.querySelectorAll('#targets .tg').forEach(e => e.style.opacity = 0);
+  el.style.opacity = 0;
   await sleep(40);
   const fs = Math.min(H*0.26, W*0.8/chars.length);
   const w1 = word.getBoundingClientRect().width * fs/fs0;
