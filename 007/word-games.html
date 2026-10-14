@@ -50,16 +50,23 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 .tg .pic{position:relative;cursor:pointer}
 .tg .pic img{width:100%;height:100%;object-fit:contain;display:block;transition:opacity .4s ease}
 .tg .word{font-family:Jua;line-height:1.05;cursor:pointer;padding:2px 10px;border-radius:12px;white-space:nowrap}
-.tg.hint .pic::after,.tg.hint .word{box-shadow:0 0 0 5px var(--glow)}
-.tg.hint .pic::after{content:'';position:absolute;inset:-4px;border-radius:24px;pointer-events:none}
-.tg.basket .pic{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'><path d='M6 14 H94 L84 56 H16 Z' fill='%23d9a86c' stroke='%237a5530' stroke-width='3'/><path d='M14 26 H86 M18 40 H82' stroke='%23b88447' stroke-width='3'/></svg>") bottom/100% 46% no-repeat}
-.tg.basket .pic img{height:62%;margin-top:0}
+.tg{border-radius:18px}
+.tg.hint{box-shadow:0 0 0 5px var(--glow)}
+.tg.basket{justify-content:flex-start;cursor:pointer}
+.tg.basket .slot{position:relative;width:100%;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+.tg.basket .slot img{object-fit:contain;display:block;margin-bottom:-12%;transition:transform .5s ease-in,opacity .4s ease}
+.tg.basket .bk{position:absolute;left:0;right:0;bottom:0}
+.tg.basket .bk svg{width:100%;height:100%;display:block}
+.tg.basket .lbl{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);font-family:Jua;line-height:1.1;background:#fffdf8;border:2px solid #7a4f22;border-radius:12px;padding:.04em .4em;white-space:nowrap;color:var(--ink)}
 .tg.hop{transform:translateY(-14px)}
 #reveal{position:absolute;inset:0;pointer-events:none;transition:opacity .4s ease}
 #reveal .rv-pic{position:absolute;object-fit:contain;transition:left .7s ease,top .7s ease,width .7s ease,height .7s ease,opacity .45s ease}
 #reveal .rv-word{position:absolute;left:0;right:0;text-align:center;font-family:Jua;line-height:1.2;color:var(--ink);white-space:nowrap}
 #reveal .rv-word span{opacity:0;transition:opacity .35s ease}
 #reveal .rv-word span.on{opacity:1}
+#reveal .rv-word.lab{right:auto;transition:left .75s ease,top .75s ease,font-size .75s ease}
+#reveal .rv-word span{display:inline-block;transition:opacity .35s ease,color .25s ease,transform .25s ease}
+#reveal .rv-word span.now{color:#c0562b;transform:translateY(-6%)}
 #doneBox{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;background:var(--bg)}
 #doneBox.show{display:flex}
 #doneBox .big{font-family:Jua;font-size:min(9vw,64px)}
@@ -117,6 +124,18 @@ const pose = (w, k) => NOPOSE.has(w) ? pic(w) : GBASE + 'animal/' + FILE[w] + '_
 const FILE = {"개": "gae", "고양이": "goyangi", "토끼": "tokki", "코끼리": "kokkiri", "강아지": "gangaji", "호랑이": "horangi", "오리": "ori", "기린": "girin", "사자": "saja", "원숭이": "wonsungi", "펭귄": "penggwin", "개구리": "gaeguri", "곰": "gom", "닭": "dak", "물고기": "mulgogi", "나비": "nabi", "병아리": "byeongari", "소": "so", "여우": "yeou", "하마": "hama", "돼지": "dwaeji", "새": "sae_dongmul", "거북이": "geobuki", "다람쥐": "daramjwi", "말": "mal_dongmul", "쥐": "jwi", "사슴": "saseum", "개미": "gaemi", "참새": "chamsae", "생쥐": "saengjwi", "낙타": "nakta", "사과": "sagwa", "바나나": "banana", "수박": "subak", "포도": "podo", "눈": "nun_sinche", "코": "ko", "입": "ip", "귀": "gwi", "버스": "beoseu", "자동차": "jadongcha", "비행기": "bihaenggi", "자전거": "jajeongeo", "정지": "jeongji", "위험": "wiheom", "금지": "geumji", "비상구": "bisanggu"};
 const FEED = {"개": ["bone", "dog_food", "sausage"], "강아지": ["bone", "dog_food", "sausage"], "고양이": ["fish", "cat_food", "milk_saucer"], "토끼": ["carrot", "lettuce", "clover"], "호랑이": ["drumstick", "steak", "ham"], "사자": ["ribs", "roast_chicken", "meat_slab"], "원숭이": ["bananas", "mango", "pineapple"], "곰": ["honey_pot", "salmon", "blueberries"], "소": ["hay", "grass", "corn"], "닭": ["grain", "cabbage_leaf", "corn_kernels"], "병아리": ["grain", "cabbage_leaf", "corn_kernels"], "돼지": ["potato", "sweet_potato", "veg_bucket"], "말": ["apple", "sugar_cubes", "oats"], "코끼리": ["peanuts", "watermelon", "sugar_cane"], "물고기": ["fish_food", "pellets"], "새": ["sunflower_seeds", "crumbs", "red_berries"], "참새": ["sunflower_seeds", "crumbs", "red_berries"], "오리": ["bread_slice", "peas", "water_weed"], "쥐": ["cheese", "rice", "cracker"], "생쥐": ["cheese", "rice", "cracker"], "여우": ["grapes", "egg", "blackberries"], "기린": ["leafy_branch", "cabbage", "celery"], "거북이": ["strawberry", "cucumber", "tomato"], "개구리": ["fly", "dragonfly", "cricket"], "나비": ["pink_flower", "dandelion", "lavender"], "개미": ["cookie", "candy", "cake_slice"], "다람쥐": ["acorn", "chestnut", "walnut"], "펭귄": ["squid", "shrimp", "anchovies"], "하마": ["pumpkin", "melon", "radish"], "사슴": ["deer_cracker", "mushroom", "maple_leaves"], "낙타": ["dates", "cactus", "dry_grass"]};   /* 동물마다 먹이 그림(game/feed/food) */
 const FOODKO = {"bone": "뼈다귀", "dog_food": "사료", "sausage": "소시지", "fish": "생선", "cat_food": "통조림", "milk_saucer": "우유", "carrot": "당근", "lettuce": "상추", "clover": "클로버", "drumstick": "닭다리", "steak": "스테이크", "ham": "햄", "ribs": "갈비", "roast_chicken": "통닭", "meat_slab": "고기", "bananas": "바나나", "mango": "망고", "pineapple": "파인애플", "honey_pot": "꿀단지", "salmon": "연어", "blueberries": "블루베리", "hay": "건초", "grass": "풀", "corn": "옥수수", "grain": "모이", "cabbage_leaf": "배춧잎", "corn_kernels": "옥수수", "potato": "감자", "sweet_potato": "고구마", "veg_bucket": "채소", "apple": "사과", "sugar_cubes": "각설탕", "oats": "귀리", "peanuts": "땅콩", "watermelon": "수박", "sugar_cane": "사탕수수", "fish_food": "먹이", "pellets": "먹이", "sunflower_seeds": "해바라기씨", "crumbs": "빵 부스러기", "red_berries": "열매", "bread_slice": "식빵", "peas": "완두콩", "water_weed": "물풀", "cheese": "치즈", "rice": "쌀", "cracker": "크래커", "grapes": "포도", "egg": "달걀", "blackberries": "블랙베리", "leafy_branch": "나뭇잎", "cabbage": "양배추", "celery": "셀러리", "strawberry": "딸기", "cucumber": "오이", "tomato": "토마토", "fly": "파리", "dragonfly": "잠자리", "cricket": "귀뚜라미", "pink_flower": "꽃꿀", "dandelion": "민들레 꿀", "lavender": "라벤더 꿀", "cookie": "과자", "candy": "사탕", "cake_slice": "케이크", "acorn": "도토리", "chestnut": "밤", "walnut": "호두", "squid": "오징어", "shrimp": "새우", "anchovies": "멸치", "pumpkin": "호박", "melon": "멜론", "radish": "무", "deer_cracker": "사슴 과자", "mushroom": "버섯", "maple_leaves": "단풍잎", "dates": "대추야자", "cactus": "선인장", "dry_grass": "마른 풀"};   /* 먹이 이름(말할 때) */
+const BASKET = `<svg viewBox="0 0 200 110" preserveAspectRatio="none" aria-hidden="true">
+  <defs><clipPath id="bkc"><path d="M8 20 H192 L174 106 Q172 109 168 109 H32 Q28 109 26 106 Z"/></clipPath></defs>
+  <path d="M8 20 H192 L174 106 Q172 109 168 109 H32 Q28 109 26 106 Z" fill="#d7a15c"/>
+  <g clip-path="url(#bkc)" stroke-width="7" fill="none">
+    <path d="M0 36 H200 M0 58 H200 M0 80 H200 M0 102 H200" stroke="#c48a45"/>
+    <path d="M0 47 H200 M0 69 H200 M0 91 H200" stroke="#e2b273" stroke-width="5"/>
+    <path d="M30 20 L44 110 M62 20 L70 110 M94 20 L97 110 M126 20 L123 110 M158 20 L150 110" stroke="#a8722f" stroke-width="3.5"/>
+  </g>
+  <path d="M8 20 H192 L174 106 Q172 109 168 109 H32 Q28 109 26 106 Z" fill="none" stroke="#7a4f22" stroke-width="3"/>
+  <rect x="3" y="9" width="194" height="18" rx="9" fill="#b97a37" stroke="#7a4f22" stroke-width="3"/>
+  <path d="M14 15 H186" stroke="#d9a35f" stroke-width="3" stroke-linecap="round"/>
+</svg>`;
 const NOPOSE = new Set(["새"]);   /* 모습 그림을 다시 받을 동물: 낱말 그림으로 대신 */
 const SETS = {
   feed: [{"n": "동물 1", "w": ["개", "고양이", "토끼", "코끼리"]}, {"n": "동물 2", "w": ["강아지", "호랑이", "오리", "기린"]}, {"n": "동물 3", "w": ["사자", "원숭이", "펭귄", "개구리"]}, {"n": "동물 4", "w": ["곰", "닭", "물고기", "나비"]}, {"n": "동물 5", "w": ["병아리", "소", "여우", "하마"]}, {"n": "동물 6", "w": ["돼지", "새", "거북이", "다람쥐"]}, {"n": "동물 7", "w": ["말", "쥐", "사슴", "개미"]}, {"n": "동물 8", "w": ["참새", "생쥐", "낙타"]}],
@@ -245,17 +264,31 @@ async function trial(ans, run){
   const opts = shuffle(others.concat(ans));
   const W = innerWidth, H = innerHeight;
 
-  /* 아래쪽: 동물(또는 바구니) */
+  /* 아래쪽: 동물(또는 바구니). 모두 땅(아래 34%) 안에 들어가게 */
   const box = $('#targets'); box.innerHTML='';
-  const gap = Math.max(14, W*0.025);
-  const cw = Math.min((W*0.92 - gap*(opts.length-1))/opts.length, H*0.30, 300);
+  const gr = feed ? 0.34 : 0.4; $('#ground').style.height = (gr*100)+'%';
+  const groundH = H*gr, th = groundH*0.9;
+  const gap = Math.max(feed ? 14 : 36, W*(feed ? 0.025 : 0.05));
+  const cw = Math.min((W*0.92 - gap*(opts.length-1))/opts.length, feed ? th : th*1.25, 340);
   box.style.gap = gap+'px';
+  const wfs = S.level===1 ? Math.min(cw*0.24, 36) : Math.min(cw*0.32, th*0.26, 70);
+  let slotP = 0;
   const els = opts.map(w => {
-    const d = document.createElement('div'); d.className='tg'+(feed?'':' basket'); d.dataset.w=w; d.style.width=cw+'px'; d.style.opacity=0;
-    const showPic = S.level===1 ? 1 : S.level===2 ? (feed?0.35:1) : (feed?0:1);
-    d.innerHTML = `<div class="pic" style="width:${cw}px;height:${cw*(feed?0.95:0.8)}px"><img src="${feed ? pose(w,'yum') : pic(w)}" alt="" style="opacity:${showPic}"></div>`
-      + `<div class="word" style="font-size:${S.level===1 ? Math.min(cw*0.26, 36) : Math.min(cw*0.34, 72)}px">${w}</div>`;
-    if (!feed && S.level===3) d.querySelector('.word').style.visibility='hidden';   /* 바구니 3수준: 바구니는 그림만, 글자는 내려오는 쪽에 */
+    const d = document.createElement('div'); d.className='tg'+(feed?'':' basket'); d.dataset.w=w;
+    d.style.width=cw+'px'; d.style.height=th+'px'; d.style.opacity=0;
+    if (feed){
+      const showPic = S.level===1 ? 1 : S.level===2 ? 0.35 : 0;
+      d.innerHTML = `<div class="pic" style="width:${cw}px;height:${th - wfs*1.2}px"><img src="${pose(w,'yum')}" alt="" style="opacity:${showPic}"></div>`
+        + `<div class="word" style="font-size:${wfs}px">${w}</div>`;
+    } else {
+      /* 바구니: 위쪽 칸에 그림이 바구니에 반쯤 들어가 있고, 바구니 앞에 이름표 */
+      const showPic = S.level===1 ? 1 : S.level===2 ? 0.35 : 0;
+      const bh = Math.min(th*0.52, cw*0.6), slotH = th - bh*0.78;
+      slotP = Math.min(slotH*1.2, cw*0.72);
+      const lfs = S.level===1 ? Math.min(cw*0.2, bh*0.34, 34) : Math.min(cw*0.27, bh*0.46, 64);
+      d.innerHTML = `<div class="slot" style="height:${slotH}px"><img src="${pic(w)}" alt="" style="width:${slotP}px;height:${slotP}px;opacity:${showPic}"></div>`
+        + `<div class="bk" style="height:${bh}px">${BASKET}<div class="lbl" style="font-size:${lfs}px">${w}</div></div>`;
+    }
     box.appendChild(d); return d;
   });
   await sleep(30); els.forEach(e=>e.style.opacity=1);
@@ -269,13 +302,10 @@ async function trial(ans, run){
     it.innerHTML = `<img src="${foodPic(list[k])}" alt="">`; G.cur = list[k];
   }
   else {
-    /* 바구니: 1 그림, 2 흐린 그림 + 글자, 3 글자만 */
-    it.classList.add('card');
-    const fs = Math.min(sz*0.36, 64, sz*0.92/ans.length);
-    it.innerHTML = S.level===1 ? `<img src="${pic(ans)}" alt="">`
-      : S.level===2 ? `<img src="${pic(ans)}" alt="" style="opacity:.3;height:72%"><div class="tag" style="font-size:${fs}px;white-space:nowrap">${ans}</div>`
-      : `<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:0 .45em;white-space:nowrap;font-family:Jua;font-size:${Math.min(sz*0.42, 76)}px">${ans}</div>`;
-    if (S.level===3){ it.style.width='auto'; it.style.minWidth=sz+'px'; }
+    /* 바구니: 내려오는 것은 늘 그림, 아래 그림의 두 배 크기 */
+    const s2 = Math.min(slotP*2, H*0.3, W*0.3);
+    it.style.width = it.style.height = s2+'px';
+    it.innerHTML = `<img src="${pic(ans)}" alt="">`;
   }
   await sleep(40); alive(run);
   it.style.transition=''; it.style.transform=`translate(-50%, ${H*0.12}px)`;
@@ -307,18 +337,32 @@ async function trial(ans, run){
 }
 
 async function success(el, ans, feed, hinted, run){
-  const it = $('#item'), r = el.querySelector('.pic').getBoundingClientRect();
+  const it = $('#item');
   el.classList.remove('hint');
-  if (feed){ el.querySelector('img').style.opacity = 1; }
-  /* 먹이(또는 낱말)가 대상에게 감 */
-  const tx = r.left + r.width/2, ty = r.top + r.height*(feed?0.42:0.25);
-  const ir = it.getBoundingClientRect();
-  it.style.transition = 'transform .9s ease-in-out, opacity .4s ease .7s';
-  const k = feed ? 0.45 : 0.5;
-  it.style.transform = `translate(calc(-50% + ${tx - (ir.left+ir.width/2)}px), ${ir.top + (ty - (ir.top+ir.height/2))}px) scale(${k})`;
-  await sleep(850); alive(run);
-  it.style.opacity = 0; el.classList.add('hop'); chime();
-  if (feed) document.querySelectorAll('#targets .tg img').forEach(im => im.src = pose(im.closest('.tg').dataset.w, 'yum'));
+  if (feed){
+    const r = el.querySelector('.pic').getBoundingClientRect();
+    el.querySelector('img').style.opacity = 1;
+    const tx = r.left + r.width/2, ty = r.top + r.height*0.42;
+    const ir = it.getBoundingClientRect();
+    it.style.transition = 'transform .9s ease-in-out, opacity .4s ease .7s';
+    it.style.transform = `translate(calc(-50% + ${tx - (ir.left+ir.width/2)}px), ${ir.top + (ty - (ir.top+ir.height/2))}px) scale(.45)`;
+    await sleep(850); alive(run);
+    it.style.opacity = 0; el.classList.add('hop'); chime();
+    document.querySelectorAll('#targets .tg img').forEach(im => im.src = pose(im.closest('.tg').dataset.w, 'yum'));
+  } else {
+    /* 위의 그림이 작아지며 내려와 아래 그림과 겹치고, 둘이 함께 바구니로 쏙 */
+    const im = el.querySelector('.slot img'), r = im.getBoundingClientRect();
+    im.style.opacity = 1;
+    const ir = it.getBoundingClientRect();
+    const k = r.width / ir.width;
+    it.style.transition = 'transform 1s ease-in-out';
+    it.style.transform = `translate(calc(-50% + ${(r.left+r.width/2) - (ir.left+ir.width/2)}px), ${ir.top + ((r.top+r.height/2) - (ir.top+ir.height/2))}px) scale(${k})`;
+    await sleep(1000); alive(run);
+    it.style.transition = 'none'; it.style.opacity = 0;
+    im.style.transform = 'translateY(115%)';          /* 바구니 속으로 */
+    await sleep(520); alive(run);
+    el.classList.add('hop'); chime();
+  }
   G.stars++; const st = $('#stars').children[G.stars-1]; if (st) st.classList.add('on');
   await sleep(320); el.classList.remove('hop'); alive(run);
   /* 구체적 피드백 */
@@ -328,7 +372,7 @@ async function success(el, ans, feed, hinted, run){
   if (feed) await Speech.say(`${ga(ans)} ${eul(FOODKO[G.cur] || '먹이')} ${EAT[(G.stars + n) % EAT.length]}`);
   else await Speech.say(n % 2 ? `${eul(ans)} 바구니에 담았어요.` : `${ans}. ${praise}`);
   alive(run);
-  await picToWord(el, ans, run);
+  if (feed) await picToWord(el, ans, run); else await labelToWord(el, ans, run);
 }
 
 /* 맞힌 동물만 남고 가운데로 → (수준 1·2) 그림이 사라지며 글자가 한 자씩 나옴 "토" "끼" → "토끼"
@@ -365,6 +409,38 @@ async function picToWord(el, ans, run){
     spans.forEach(sp => sp.classList.add('on'));
     await sleep(350); alive(run);
     Object.assign(pic.style, { top: (H*0.62 - big*0.95)+'px', opacity: 1 });
+    await Speech.say(ans); alive(run);
+  }
+  await sleep(900); alive(run);
+  ov.style.opacity = 0; await sleep(400); ov.remove();
+}
+
+/* 바구니: 이름표 글자가 가운데로 커지며 (1·2) 한 자씩 짚어 읽고 이어 읽음, (3) 글자 위에 그림이 나타나 확인 */
+async function labelToWord(el, ans, run){
+  const W = innerWidth, H = innerHeight;
+  const lbl = el.querySelector('.lbl'), r = lbl.getBoundingClientRect();
+  const fs0 = parseFloat(lbl.style.fontSize);
+  const ov = document.createElement('div'); ov.id = 'reveal'; $('#game').appendChild(ov);
+  const chars = [...ans];
+  const word = document.createElement('div'); word.className = 'rv-word lab';
+  word.innerHTML = chars.map(c => `<span class="on">${c}</span>`).join('');
+  Object.assign(word.style, { left: r.left+'px', top: r.top+'px', right:'auto', fontSize: fs0+'px' });
+  ov.appendChild(word);
+  document.querySelectorAll('#targets .tg').forEach(e => e.style.opacity = 0);
+  await sleep(40);
+  const fs = Math.min(H*0.26, W*0.8/chars.length);
+  const w1 = word.getBoundingClientRect().width * fs/fs0;
+  Object.assign(word.style, { fontSize: fs+'px', left: (W/2 - w1/2)+'px', top: (S.level<3 ? H*0.42 - fs*0.62 : H*0.6)+'px' });
+  await sleep(800); alive(run);
+  const spans = [...word.children];
+  if (S.level < 3){
+    for (const sp of spans){ sp.classList.add('now'); await Speech.say(sp.textContent); alive(run); sp.classList.remove('now'); await sleep(120); }
+    await sleep(200); await Speech.say(ans); alive(run);
+  } else {
+    const big = Math.min(H*0.3, W*0.3);
+    const p = document.createElement('img'); p.className='rv-pic'; p.src = pic(ans);
+    Object.assign(p.style, { left:(W/2-big/2)+'px', top:(H*0.6 - big*1.02)+'px', width:big+'px', height:big+'px', opacity:0 });
+    ov.appendChild(p); await sleep(40); p.style.opacity = 1;
     await Speech.say(ans); alive(run);
   }
   await sleep(900); alive(run);
