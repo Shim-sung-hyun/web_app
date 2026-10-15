@@ -462,12 +462,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
       <div class="seg" id="gameSeg"><button data-v="on">하기</button><button data-v="off">하지 않기</button></div>
       <div class="note" id="gameNote"></div>
      </div>
-     <div class="row">
-      <label class="t">보기 시작</label>
-      <div class="seg" id="plSeg"><button data-v="on">그림으로 쓴 글자부터</button><button data-v="off">바로 그림부터</button></div>
-      <div class="note">"그림으로 쓴 글자부터"를 고르면, 작은 그림들이 첫 획 몇 개를 쓰고 천천히 글자로 바뀐 뒤 그림 붓이 이어 써요. 수준 2는 같은 낱말을 세 번째 볼 때부터 붓이 바로 써요. 장면 그림 낱말은 크레파스로 써요.</div>
-     </div>
-     <div class="row">
+          <div class="row">
       <label class="t">쓰기</label>
       <div class="seg" id="writeSeg"><button data-v="guide">획 순서 도와주기</button><button data-v="trace">혼자 따라 쓰기</button><button data-v="copy">혼자 보고 쓰기</button></div>
       <div class="note" id="writeNote"></div>
@@ -1720,14 +1715,10 @@ function strokePath(svg, pts, cls, width) {
 }
 
 /* ---------- 1 보기 ----------
-   그림을 크게 보여 주며 이름을 말함 → (그림 글자) 그림이 작아져 첫 획 몇 개(약 25%)를 작은 그림들로 쓰고,
-   그 아래로 진한 획이 함께 그어짐 → 작은 그림들이 천천히 획으로 녹아듦(자극 형성) →
-   마지막 그림이 커져 붓이 되어 나머지 획을 씀 → 여러 글꼴로 바뀜 → 동그라미.
-   수준 2에서는 같은 낱말을 세 번째 볼 때부터 그림 글자 없이 붓이 바로 씀(단서 줄이기). 장면 그림은 크레파스 */
-function lookSeen(w) { return Rec.recId ? Rec.log.filter(r => r.s === Rec.recId && r.w === w && r.st === 2).length : 0; }
+   그림을 크게 보여 주며 이름을 말함 → 그림이 작아져 첫 획의 시작점으로 → 작은 그림 하나가 획순대로 끝까지 씀(잔상이 따라감) →
+   다 쓴 뒤 위로 올라가며 커지고 이름을 말함 → 바른바탕부터 여러 글꼴 → 동그라미. 장면 그림은 크레파스 */
 async function stageLook(w, run) {
   const scene = isScene(w), col = scene ? CRAYON[w] : null;
-  const picFirst = S.picLetters !== 'off' && !scene && !(R.lv >= 2 && lookSeen(w) >= 2);
   clearStage();
   const W = innerWidth, H = innerHeight;
   const L = layoutWord(w, 0.62, 0.4);
@@ -1760,50 +1751,11 @@ async function stageLook(w, run) {
     setPen(first[0] + penSize * 0.5, first[1] - penSize * 0.5, penSize);
     await tween(450, t => { pen.style.opacity = t; setPen(first[0] + penSize * 0.5 * (1 - t), first[1] - penSize * 0.5 * (1 - t), penSize); }, run);
     pen.style.opacity = 1;
-  } else if (picFirst && ws.strokes.length) {
-    /* 그림 글자: 큰 그림이 첫 획의 시작점으로 작아져 들어가고, 작은 그림들이 획을 따라 놓임 */
-    const size = Math.max(16, 100 * k * 0.13), gap = size * 1.15;
-    await movePen(first[0], first[1], size, 900, run);
-    hidePen();
-    const box = document.createElement('div'); box.className = 'picletters'; stage.appendChild(box);
-    const stamps = [];
-    from = Math.max(1, Math.round(ws.strokes.length * 0.25));
-    let endPt = first;
-    for (let si = 0; si < from; si++) {
-      const st = ws.strokes[si];
-      const path = mk(st);
-      const len = path.getTotalLength();
-      path.style.strokeDasharray = len + ' ' + (len + 10); path.style.strokeDashoffset = len;
-      const n = Math.max(1, Math.round(len * k / gap)), mine = [];
-      for (let i = 0; i <= n; i++) {
-        const q = path.getPointAtLength(len * i / n);
-        const im = document.createElement('img'); im.src = url; im.alt = '';
-        Object.assign(im.style, { width: size + 'px', height: size + 'px', left: (svgX + q.x * k - size / 2) + 'px', top: (svgY + q.y * k - size / 2) + 'px' });
-        box.appendChild(im); mine.push({ im, f: i / n }); stamps.push(im);
-      }
-      const dur = Math.max(500, len * k / (SPEED * 0.7) * 1000);
-      await tween(dur, t => {
-        path.style.strokeDashoffset = len * (1 - t);
-        mine.forEach(m => { if (m.f <= t + 1e-6) m.im.classList.add('on'); });
-      }, run, t => t);
-      mine.forEach(m => m.im.classList.add('on'));
-      path.style.strokeDashoffset = 0;
-      const e = st.pts[st.pts.length - 1]; endPt = toScr(e);
-      await wait(150, run);
-    }
-    await wait(700, run);
-    /* 작은 그림들이 천천히 획으로 녹아듦. 마지막 그림은 남아 붓이 됨 */
-    const last = stamps.pop();
-    stamps.forEach(im => { im.style.transition = 'transform 1.3s ease, opacity 1.3s ease'; im.style.transform = 'scale(.2, .12)'; im.style.opacity = '0'; });
-    await wait(1400, run);
-    const lr = last.getBoundingClientRect();
-    last.style.display = 'none';
-    setPenSrc(url); pen.classList.remove('hidden'); pen.style.opacity = 1;
-    setPen(lr.left + lr.width / 2, lr.top + lr.height / 2, lr.width);
-    const nx = ws.strokes[from] ? toScr(ws.strokes[from].pts[0]) : [lr.left + lr.width / 2, lr.top + lr.height / 2];
-    penSize = size;   /* 끝까지 작은 그림으로 쓰고, 다 쓴 뒤 위로 올라가며 커짐 */
-    await movePen(nx[0], nx[1], penSize, 500, run);
-  } else await movePen(first[0], first[1], penSize, 1000, run);
+  } else {
+    /* 작은 그림 하나가 처음부터 끝까지 부드럽게 씀(뒤로 잔상이 따라감). 다 쓴 뒤 위로 올라가며 커짐 */
+    penSize = Math.max(16, 100 * k * 0.13);
+    await movePen(first[0], first[1], penSize, 900, run);
+  }
   await wait(200, run);
 
   for (const st of ws.strokes.slice(from)) {
@@ -2735,7 +2687,7 @@ const TOUR_STEPS = {
     { el: '#startBtn', t: '시작', x: '전체 화면으로 수업을 시작해요. 묶음을 다 배우면 그 낱말로 놀이를 해요.' },
     { el: '#sheetBtn', t: '쓰기 연습지', x: '오늘 낱말을 A4에 한 장씩 인쇄해요.' },
     { el: '#voiceBox', t: '목소리', x: '기기 목소리는 바로 쓸 수 있어요. Google 음성은 Cloud 키가 필요해요(휴대폰으로 받기도 돼요).' },
-    { el: '#moreBox', t: '수업 방식', x: '놀이 하기, 보기 시작, 쓰기 방식, 쓰기 글자 모양(바른바탕), 글꼴을 정해요.' },
+    { el: '#moreBox', t: '수업 방식', x: '놀이 하기, 쓰기 방식, 쓰기 글자 모양(바른바탕), 글꼴을 정해요.' },
     { el: '#rosterBox', t: '학생 명단', x: '학생 이름을 넣거나 지워요.' },
     { el: '#recBtn', t: '교사용 기록', x: '학생마다 바로 맞힘·도움 받아 맞힘, 쓰기, 놀이 기록을 보고 내보내요.' }
   ],
@@ -2985,7 +2937,6 @@ segInit('#engSeg', 'engine', paintEngine); paintEngine();
 segInit('#voiceSeg', 'voice', paintVoiceSum);
 segInit('#fontSeg', 'fontMode');
 segInit('#writeSeg', 'writeMode', paintWriteNote);
-segInit('#plSeg', 'picLetters');
 segInit('#gameSeg', 'games', paintGameNote);
 segInit('#glyphSeg', 'glyph', () => { GlyphFont.load(); paintMoreSum(); });
 function paintWriteNote() {
