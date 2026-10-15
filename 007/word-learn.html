@@ -2367,7 +2367,7 @@ const TOUR_STEPS = {
     { el: '#tSheet2', t: '쓰기 연습지', x: '오늘 낱말을 A4에 한 장씩 인쇄해요.' },
     { el: '#tAgain', t: '다시 하기', x: '같은 낱말로 처음부터 다시 해요.' },
     { el: '#tRec', t: '교사용 기록', x: '바로 맞힘 / 도움 받아 맞힘과 쓰기 기록을 봐요. 내보내기(CSV)와 출력(A4)도 있어요.' },
-    { el: '#aqua', t: '관리 버튼', x: '한 번 누르면 메뉴를 닫고 멈춘 단계의 처음부터 이어 가요. 학생 화면을 눌러도 돼요. 열 때는 3초 동안 눌러요.' }
+    { el: '#aqua', t: '관리 버튼', x: '한 번 누르면 메뉴를 닫고 멈춘 단계의 처음부터 이어 가요. 메뉴가 열려 있는 동안 학생 화면은 눌러도 움직이지 않아요. 열 때는 3초 동안 눌러요.' }
   ]
 };
 const TOUR = { on: false, steps: [], i: 0 };
@@ -2458,7 +2458,7 @@ window.addEventListener('resize', () => {
 /* 전체 화면 */
 function enterFS() { const d = document.documentElement; if (isFS()) return; try { const r = (d.requestFullscreen || d.webkitRequestFullscreen || (() => {})).call(d); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
 function exitFS() { try { if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
-$('#lesson').addEventListener('pointerdown', () => { Speech.initAudio(); if (S.teacher && !TOUR.on) { Teacher.close(); return; } if (!document.fullscreenElement && !document.webkitFullscreenElement) enterFS(); }, { capture: true, passive: true });
+$('#lesson').addEventListener('pointerdown', () => { Speech.initAudio(); if (S.teacher) return; if (!document.fullscreenElement && !document.webkitFullscreenElement) enterFS(); }, { capture: true, passive: true });
 
 /* =========================================================
    기록 보기 · 출력

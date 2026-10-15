@@ -301,6 +301,8 @@ details.log td,details.log th{border-bottom:1px solid var(--line);padding:6px 4p
 html:not(.kr-ready) .keybar{display:none}
 .hint-sm{font-size:14px;color:#5b6077;line-height:1.5}
 .keynote{justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:6px;padding-top:12px;border-top:1px solid #e3e6ee}
+/* 관리(교사) 메뉴가 열려 있는 동안 학생 활동 영역은 눌러도 반응하지 않음 (설정을 바꾸는 중에 학생이 눌러 넘어가지 않게) */
+body.admin #main{pointer-events:none}
 </style>
 </head>
 <body class="setup">

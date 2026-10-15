@@ -199,6 +199,8 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
 #spotTip{position:fixed;z-index:91;pointer-events:none;display:none;max-width:min(360px,calc(100% - 24px));background:#E5484D;color:#fff;font:700 15px/1.5 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;padding:9px 14px;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.3)}
 #spotTip::before{content:"";position:absolute;left:var(--ax,24px);width:14px;height:14px;background:#E5484D;transform:rotate(45deg)}
 #spotTip.below::before{top:-6px} #spotTip.above::before{bottom:-6px}
+/* 관리(교사) 메뉴가 열려 있는 동안 학생 활동 영역은 눌러도 반응하지 않음 (설정을 바꾸는 중에 학생이 눌러 넘어가지 않게) */
+body.admin #game{pointer-events:none}
 </style>
 </head>
 <body class="setup">
