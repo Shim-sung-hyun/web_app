@@ -439,6 +439,11 @@ details.more[open]>summary::before{content:'▾ '}
       <div class="note" id="writeNote"></div>
      </div>
      <div class="row">
+      <label class="t">쓰기 글자 모양</label>
+      <div class="seg" id="glyphSeg"><button data-v="bareon">바른바탕 (교과서 바른 글씨)</button><button data-v="stroke">획 글자</button></div>
+      <div class="note">보기·쓰기에서 붓이 쓰는 글자와 따라 쓰는 흐린 글자예요. 바른바탕은 학교안심 바른바탕 B 글꼴이에요.</div>
+     </div>
+     <div class="row">
       <label class="t">글꼴</label>
       <div class="seg" id="fontSeg"><button data-v="easy">쉬운 글꼴만</button><button data-v="all">다양하게</button></div>
       <div class="note">처음에는 쉬운 글꼴(고딕·둥근 글씨)로 시작하고, 익숙해지면 다양하게 바꿔요.</div>
@@ -1089,6 +1094,7 @@ const S = {
   writeMode: LS.get('writeMode', 'guide'),
   picLetters: LS.get('picLetters', 'on'),
   games: LS.get('games', 'on'),
+  glyph: LS.get('glyph', 'bareon'),   /* 쓰기 글자 모양: bareon 바른바탕 · stroke 획 글자 */
   level: LS.get('level', 1)
 };
 function refreshWords() { S.words = BOOK_WORDS.map(w => ({ w })).concat(S.mine.filter(x => !PICS[x.w])); }
@@ -1571,10 +1577,83 @@ async function doItem(it, run) {
   return stageChoice(it.st, it.w, run);
 }
 
+/* ---------- 바른바탕(학교안심 바른바탕 B)으로 쓰기 ----------
+   보이는 글자는 바른바탕 글꼴, 붓이 따라가는 길은 앱의 획 길을 그 글자 크기·자리에 맞춘 것.
+   붓이 지나가면 그 둘레의 글꼴 글자가 드러나고(가림막), 다 쓰면 글자 전체가 드러남 */
+const GLYPH_FONT = 'BareonB', GF = 100;
+const GlyphFont = {
+  ok: false,
+  async load() {
+    if (this.ok || S.glyph === 'stroke') return this.ok;
+    try {
+      const f = new FontFace(GLYPH_FONT, 'url(' + PBASE.replace(/pics\/$/, 'fonts/') + 'bareonbatang-b.woff2)');
+      document.fonts.add(await f.load()); this.ok = true;
+    } catch (e) { console.warn('glyph font', e); }
+    return this.ok;
+  }
+};
+const useGlyph = () => S.glyph !== 'stroke' && GlyphFont.ok;
+function glyphBox(ch) {
+  const c = glyphBox.c || (glyphBox.c = document.createElement('canvas').getContext('2d'));
+  c.font = GF + 'px ' + GLYPH_FONT; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+  const m = c.measureText(ch);
+  return { x0: -m.actualBoundingBoxLeft, x1: m.actualBoundingBoxRight, y0: -m.actualBoundingBoxAscent, y1: m.actualBoundingBoxDescent };
+}
+/* 낱말 → 바른바탕 글자 자리 + 그 글자에 맞춘 획 길 */
+function glyphWord(word) {
+  const ref = glyphBox('갈'), B = 60 - (ref.y0 + ref.y1) / 2, IN = 5;
+  const strokes = [], glyphs = []; let x = 10;
+  for (const ch of word) {
+    if (ch === ' ') { x += 50; continue; }
+    const s = syllableStrokes(ch).map(st => ({ pts: st.pts.map(([a, b]) => [a + x, b + 10]), part: st.part, c: st.c }));
+    const g = glyphBox(ch), cx = x + 50;
+    const gx0 = cx + g.x0 + IN, gx1 = cx + g.x1 - IN, gy0 = B + g.y0 + IN, gy1 = B + g.y1 - IN;
+    let sx0 = 1e9, sy0 = 1e9, sx1 = -1e9, sy1 = -1e9;
+    s.forEach(st => st.pts.forEach(([a, b]) => { sx0 = Math.min(sx0, a); sx1 = Math.max(sx1, a); sy0 = Math.min(sy0, b); sy1 = Math.max(sy1, b); }));
+    const fx = v => sx1 - sx0 < 1 ? (gx0 + gx1) / 2 : gx0 + (v - sx0) / (sx1 - sx0) * (gx1 - gx0);
+    const fy = v => sy1 - sy0 < 1 ? (gy0 + gy1) / 2 : gy0 + (v - sy0) / (sy1 - sy0) * (gy1 - gy0);
+    s.forEach(st => strokes.push({ ...st, pts: st.pts.map(([a, b]) => [fx(a), fy(b)]) }));
+    glyphs.push({ ch, x: cx, y: B });
+    x += 110;
+  }
+  return { strokes, width: x, height: 120, glyphs };
+}
+const SVGNS = 'http://www.w3.org/2000/svg';
+function glyphLayer(L, fill) {
+  const g = document.createElementNS(SVGNS, 'g'); g.setAttribute('class', 'glyph');
+  L.glyph.glyphs.forEach(o => {
+    const t = document.createElementNS(SVGNS, 'text');
+    t.setAttribute('x', o.x); t.setAttribute('y', o.y); t.setAttribute('text-anchor', 'middle'); t.setAttribute('font-size', GF);
+    t.style.fontFamily = GLYPH_FONT; t.style.fill = fill; t.textContent = o.ch;
+    g.appendChild(t);
+  });
+  L.svg.appendChild(g);
+  return g;
+}
+let glyphMaskN = 0;
+function glyphReveal(L, fill, width) {
+  const id = 'gm' + (++glyphMaskN);
+  const defs = document.createElementNS(SVGNS, 'defs'), mask = document.createElementNS(SVGNS, 'mask');
+  mask.id = id; mask.setAttribute('maskUnits', 'userSpaceOnUse');
+  ['x', 'y'].forEach(a => mask.setAttribute(a, -60)); mask.setAttribute('width', L.ws.width + 120); mask.setAttribute('height', L.ws.height + 120);
+  defs.appendChild(mask); L.svg.appendChild(defs);
+  const layer = glyphLayer(L, fill); layer.setAttribute('mask', `url(#${id})`);
+  return {
+    layer,
+    path(pts, color) {
+      const p = document.createElementNS(SVGNS, 'path');
+      p.setAttribute('d', 'M' + pts.map(q => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' L'));
+      p.setAttribute('stroke-width', width || 24); p.style.stroke = color || '#fff'; p.style.fill = 'none';
+      mask.appendChild(p); return p;
+    },
+    full() { const r = document.createElementNS(SVGNS, 'rect'); r.setAttribute('x', -60); r.setAttribute('y', -60); r.setAttribute('width', L.ws.width + 120); r.setAttribute('height', L.ws.height + 120); r.style.fill = '#fff'; mask.appendChild(r); }
+  };
+}
+
 /* 낱말 획을 화면에 놓기 */
 function layoutWord(w, cy, hFrac) {
   const W = innerWidth, H = innerHeight;
-  const ws = wordStrokes(w);
+  const gw = useGlyph() ? glyphWord(w) : null, ws = gw || wordStrokes(w);
   const k = Math.min(W * 0.86 / ws.width, H * hFrac / ws.height);
   const svgW = ws.width * k, svgH = ws.height * k;
   const svgX = (W - svgW) / 2, svgY = H * cy - svgH / 2;
@@ -1583,7 +1662,7 @@ function layoutWord(w, cy, hFrac) {
   svg.setAttribute('viewBox', `0 0 ${ws.width} ${ws.height}`);
   Object.assign(svg.style, { left: svgX + 'px', top: svgY + 'px', width: svgW + 'px', height: svgH + 'px' });
   stage.appendChild(svg);
-  return { ws, k, svg, svgX, svgY, svgW, svgH, toScr: ([x, y]) => [svgX + x * k, svgY + y * k] };
+  return { ws, k, svg, svgX, svgY, svgW, svgH, glyph: gw, toScr: ([x, y]) => [svgX + x * k, svgY + y * k] };
 }
 function strokePath(svg, pts, cls, width) {
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -1607,6 +1686,8 @@ async function stageLook(w, run) {
   const W = innerWidth, H = innerHeight;
   const L = layoutWord(w, 0.62, 0.4);
   const { ws, k, svg, svgX, svgY, toScr } = L;
+  const GL = L.glyph, inkRev = GL ? glyphReveal(L, scene ? col : '#26324A') : null;
+  const mk = st => { if (GL) return inkRev.path(st.pts); const q = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7); if (scene && !isFocus(st)) q.style.stroke = col; return q; };
 
   const url = await Pics.url(w); alive(run);
   setPenSrc(url);
@@ -1644,7 +1725,7 @@ async function stageLook(w, run) {
     let endPt = first;
     for (let si = 0; si < from; si++) {
       const st = ws.strokes[si];
-      const path = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7);
+      const path = mk(st);
       const len = path.getTotalLength();
       path.style.strokeDasharray = len + ' ' + (len + 10); path.style.strokeDashoffset = len;
       const n = Math.max(1, Math.round(len * k / gap)), mine = [];
@@ -1679,8 +1760,7 @@ async function stageLook(w, run) {
   await wait(200, run);
 
   for (const st of ws.strokes.slice(from)) {
-    const path = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7);
-    if (scene && !isFocus(st)) path.style.stroke = col;
+    const path = mk(st);
     const len = path.getTotalLength();
     path.style.strokeDasharray = len + ' ' + (len + 10);
     path.style.strokeDashoffset = len;
@@ -1696,6 +1776,7 @@ async function stageLook(w, run) {
     path.style.strokeDashoffset = 0;
     await wait(110, run);
   }
+  if (GL) inkRev.full();
   const pl = stage.querySelector('.picletters'); if (pl) pl.remove();
 
   if (scene) { await tween(350, t => pen.style.opacity = 1 - t, run); hidePen(); pen.classList.remove('crayon'); pen.style.opacity = 1; }
@@ -1863,7 +1944,10 @@ async function stageTrace(w, run) {
   const scene = isScene(w), col = scene ? CRAYON[w] : null;
   const L = layoutWord(w, scene ? 0.6 : 0.56, scene ? 0.48 : 0.56);
   const { ws, k, svg, svgX, svgY, toScr } = L;
-  const guides = ws.strokes.map(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 10));
+  const GL = L.glyph;
+  if (GL) glyphLayer(L, '#EAE4D8');
+  const curRev = GL ? glyphReveal(L, '#CFC5B0', 26) : null, inkRev = GL ? glyphReveal(L, scene ? col : '#26324A') : null;
+  const guides = ws.strokes.map(st => GL ? curRev.path(st.pts, '#000') : strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 10));
   const hit = document.createElement('div'); hit.id = 'traceHit'; hit.style.cursor = 'pointer'; stage.appendChild(hit);
 
   let penSize = Math.max(44, 100 * k * 0.14);
@@ -1887,9 +1971,9 @@ async function stageTrace(w, run) {
 
   for (let si = 0; si < ws.strokes.length; si++) {
     const st = ws.strokes[si];
-    guides.forEach((g, i) => g.classList.toggle('cur', i === si));
-    const ink = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7);
-    if (scene && !isFocus(st)) ink.style.stroke = col;
+    guides.forEach((g, i) => GL ? (g.style.stroke = i === si ? '#fff' : '#000') : g.classList.toggle('cur', i === si));
+    const ink = GL ? inkRev.path(st.pts) : strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7);
+    if (!GL && scene && !isFocus(st)) ink.style.stroke = col;
     const len = ink.getTotalLength();
     ink.style.strokeDasharray = len + ' ' + (len + 10);
     ink.style.strokeDashoffset = len;
@@ -1968,6 +2052,7 @@ async function stageTrace(w, run) {
   }
   await firstInstr;
   R.trace = null;
+  if (GL) inkRev.full();
   guides.forEach(g => { g.style.transition = 'opacity .5s'; g.style.opacity = 0; });
   const topS = Math.min(H * 0.24, W * 0.28);
   if (scene) { await tween(350, t => pen.style.opacity = 1 - t, run); hidePen(); pen.classList.remove('crayon'); pen.style.opacity = 1; }
@@ -1996,7 +2081,7 @@ async function stageFreeWrite(w, run) {
     const x0 = (W - (ps + gap + mw)) / 2;
     setPen(x0 + ps / 2, H * 0.18, ps);
     Object.assign(model.svg.style, { position: 'absolute', left: (x0 + ps + gap) + 'px' });
-    model.ws.strokes.forEach(st => strokePath(model.svg, st.pts, isFocus(st) ? 'focus' : '', 7));
+    if (model.glyph) glyphLayer(model, '#26324A'); else model.ws.strokes.forEach(st => strokePath(model.svg, st.pts, isFocus(st) ? 'focus' : '', 7));
     model.svg.id = 'modelSvg';
     model.svg.querySelectorAll('path').forEach(p => { p.style.fill = 'none'; p.style.stroke = isFocusPath(p) ? '#D9663B' : 'var(--ink)'; p.style.strokeLinecap = 'round'; p.style.strokeLinejoin = 'round'; });
   } else setPen(W / 2, H * 0.13, Math.min(H * 0.13, W * 0.13));
@@ -2006,7 +2091,7 @@ async function stageFreeWrite(w, run) {
     const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     r.setAttribute('class', 'wbox'); r.setAttribute('x', 2); r.setAttribute('y', 2); r.setAttribute('width', ws.width - 4); r.setAttribute('height', ws.height - 4); r.setAttribute('rx', 14);
     svg.appendChild(r);
-  } else ws.strokes.forEach(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 10));
+  } else if (L.glyph) glyphLayer(L, '#EAE4D8'); else ws.strokes.forEach(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 10));
   const hit = document.createElement('div'); hit.id = 'traceHit'; stage.appendChild(hit);
   const btns = document.createElement('div'); btns.className = 'wbtns';
   const mk = (cls, icon, label) => { const b = document.createElement('button'); b.className = 'wbtn ' + cls; b.innerHTML = `<span class="ic">${icon}</span><span>${label}</span>`; return b; };
@@ -2848,6 +2933,7 @@ segInit('#fontSeg', 'fontMode');
 segInit('#writeSeg', 'writeMode', paintWriteNote);
 segInit('#plSeg', 'picLetters');
 segInit('#gameSeg', 'games', paintGameNote);
+segInit('#glyphSeg', 'glyph', () => GlyphFont.load());
 function paintWriteNote() {
   $('#writeNote').textContent = (S.writeMode === 'guide' ? '그림(장면 그림은 크레파스)을 끌면 획 길을 따라 그어져요. 가만히 있으면 반짝이고, 더 기다리면 대신 그어 줘요.'
     : S.writeMode === 'trace' ? '흐린 글자 위에 손가락으로 자유롭게 써요. 도와주지 않고, 기록에 닮은 정도(%)만 남겨요.'
@@ -3168,7 +3254,7 @@ async function prepareAndStart(words) {
     if (Loading.cancel) { Loading.hide(); return; }
   }
   Loading.set('글자 모양을 불러오고 있어요', '', 1);
-  await loadFonts(words);
+  await Promise.all([loadFonts(words), GlyphFont.load()]);
   Loading.hide();
   if (Loading.cancel) return;
   R.bundle = S.mode === 'bundle' && S.mi >= 0 && words.length ? { mi: S.mi, lv: curLevel(), bi: S.bi } : null;
