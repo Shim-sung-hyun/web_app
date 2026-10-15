@@ -1690,6 +1690,24 @@ async function toGlyph(L, fill, run) {
   g.style.opacity = 1; paths.forEach(p => { p.style.opacity = 0; });
   await wait(1250, run);
 }
+/* 한 획을 다 그었음을 알림: 획 끝에 작은 고리가 퍼지며 사라지고(0.45초, 번쩍임 없음), 아주 작은 "똑" 소리 */
+let tickAC = null;
+function strokeCue(svg, x, y, col) {
+  const c = document.createElementNS(SVGNS, 'circle');
+  c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', 5);
+  Object.assign(c.style, { fill: 'none', stroke: col || '#5BAE7E', strokeWidth: 3, opacity: 0.9, transition: 'r .45s ease-out, opacity .45s ease-out' });
+  svg.appendChild(c);
+  requestAnimationFrame(() => requestAnimationFrame(() => { c.setAttribute('r', 13); c.style.r = '13px'; c.style.opacity = 0; }));
+  setTimeout(() => c.remove(), 600);
+  if (!S.sound) return;
+  try {
+    tickAC = tickAC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = tickAC.createOscillator(), g = tickAC.createGain(), t = tickAC.currentTime;
+    o.type = 'sine'; o.frequency.value = 880;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.04, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.14);
+    o.connect(g).connect(tickAC.destination); o.start(t); o.stop(t + 0.16);
+  } catch (e) {}
+}
 
 /* 낱말 획을 화면에 놓기 */
 function layoutWord(w, cy, hFrac, fit) {
@@ -2018,7 +2036,10 @@ async function stageTrace(w, run) {
         advance(e);
       };
       const onMove = e => { if (down) advance(e); };
-      const onUp = () => { down = false; };
+      const onUp = () => {
+        down = false;
+        if (!finished && !auto && prog >= len * 0.7) { auto = true; const from = prog; tween(180, t => { prog = from + (len - from) * t; render(); }, run, t => t).then(done, () => {}); }
+      };
       hit.addEventListener('pointerdown', onDown);
       hit.addEventListener('pointermove', onMove);
       hit.addEventListener('pointerup', onUp);
@@ -2029,7 +2050,7 @@ async function stageTrace(w, run) {
         hit.removeEventListener('pointerup', onUp); hit.removeEventListener('pointercancel', onUp);
         pen.classList.remove('penhint');
       };
-      const done = () => { if (finished) return; finished = true; prog = len; render(); ink.style.strokeDashoffset = 0; cleanup(); res(); };
+      const done = () => { if (finished) return; finished = true; prog = len; render(); ink.style.strokeDashoffset = 0; const e = ink.getPointAtLength(len); strokeCue(svg, e.x, e.y); cleanup(); res(); };
       const chk = setInterval(async () => {
         if (run !== R.run) { cleanup(); rej(CANCEL); return; }
         const idle = performance.now() - lastMove;
