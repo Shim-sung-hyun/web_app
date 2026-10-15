@@ -1844,7 +1844,7 @@ async function stageTrace(w, run) {
   const L = layoutWord(w, scene ? 0.6 : 0.56, scene ? 0.48 : 0.56);
   const { ws, k, svg, svgX, svgY, toScr } = L;
   const guides = ws.strokes.map(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 15));
-  const hit = document.createElement('div'); hit.id = 'traceHit'; hit.classList.add('brushy'); stage.appendChild(hit);
+  const hit = document.createElement('div'); hit.id = 'traceHit'; hit.style.cursor = 'pointer'; stage.appendChild(hit);
 
   let penSize = Math.max(58, 100 * k * 0.4);
   const url = await Pics.url(w); alive(run);
@@ -1891,8 +1891,8 @@ async function stageTrace(w, run) {
       setPen(svgX + q.x * k, svgY + q.y * k, penSize);
     };
     await new Promise((res, rej) => {
-      let down = false, finished = false, auto = false;
-      const toSvg = e => [(e.clientX - svgX) / k, (e.clientY - svgY) / k];
+      let down = false, finished = false, auto = false, off = [0, 0];
+      const toSvg = e => [(e.clientX - off[0] - svgX) / k, (e.clientY - off[1] - svgY) / k];
       const advance = e => {
         if (finished || auto) return;
         const [x, y] = toSvg(e);
@@ -1909,7 +1909,13 @@ async function stageTrace(w, run) {
           if (prog >= len - Math.max(4, len * 0.08)) done();
         }
       };
-      const onDown = e => { down = true; try { hit.setPointerCapture(e.pointerId); } catch (x) {} Speech.initAudio(); advance(e); };
+      const onDown = e => {
+        down = true; try { hit.setPointerCapture(e.pointerId); } catch (x) {} Speech.initAudio();
+        /* 붓을 누르면 누른 자리와 붓끝의 차이만큼 옮겨서 따라감(크레파스는 몸통을 눌러도 됨) */
+        const dx = e.clientX - penState.x, dy = e.clientY - penState.y;
+        off = Math.hypot(dx, dy) < penState.s * 0.6 ? [dx, dy] : [0, 0];
+        advance(e);
+      };
       const onMove = e => { if (down) advance(e); };
       const onUp = () => { down = false; };
       hit.addEventListener('pointerdown', onDown);
