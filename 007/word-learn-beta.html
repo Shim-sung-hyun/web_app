@@ -1822,7 +1822,6 @@ async function stageLook(w, run) {
     path.style.strokeDashoffset = 0;
     await wait(110, run);
   }
-  if (GL) await toGlyph(L, scene ? col : '#26324A', run);
   const pl = stage.querySelector('.picletters'); if (pl) pl.remove();
 
   if (scene) { await tween(350, t => pen.style.opacity = 1 - t, run); hidePen(); pen.classList.remove('crayon'); pen.style.opacity = 1; }
@@ -1833,6 +1832,7 @@ async function stageLook(w, run) {
   /* 여러 글꼴로 바뀜 */
   const box = { x: svgX, y: svgY, w: L.svgW, h: L.svgH };
   const fonts = randFonts(3);
+  if (useGlyph()) fonts[0] = { f: GLYPH_FONT, w: 400, easy: true };   /* 붓이 쓴 글자 → 바른바탕 → 다른 글꼴 */
   let prev = svg;
   for (let i = 0; i < fonts.length; i++) {
     const el = wordEl(w, fonts[i], box.w, box.h * 1.1, 'fontword');
