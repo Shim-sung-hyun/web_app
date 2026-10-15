@@ -335,6 +335,9 @@ details.more[open]>summary::before{content:'▾ '}
 #game #doneBox.show{display:flex}
 #game #doneBox .big{font-family:Jua,sans-serif;font-size:min(9vw,64px)}
 
+/* 전체 화면에서도 마우스 포인터가 보이게 */
+#lesson,#lesson #stage{cursor:default}
+.card,.sdot,.anbtn,.wbtn,.tapword,#game .tg,#aqua{cursor:pointer}
 </style>
 </head>
 <body>
@@ -1796,7 +1799,7 @@ async function stageChoice(st, w, run) {
   const instr = st === 2 ? '똑같은 글자를 찾아요.' : st === 3 ? (R.lv === 3 ? '그림에 맞는 글자를 찾아요.' : eul(w) + ' 찾아요.') : (R.lv === 1 ? w + ', 글자에 맞는 그림을 찾아요.' : '글자에 맞는 그림을 찾아요.');
   const okSay = st === 2 ? w + ', 똑같은 글자예요.' : ieyo(w) + '.';
 
-  let locked = true, helped = false, resolved = false, timers = [];
+  let locked = false, helped = false, resolved = false, timers = [];
   const clearT = () => { timers.forEach(clearTimeout); timers = []; };
   const help = async fadeWrong => {
     helped = true;
@@ -1828,7 +1831,7 @@ async function stageChoice(st, w, run) {
       }
     }));
     (async () => {
-      try { await wait(200, run); await say(instr, run); locked = false; armTimers(); }
+      try { await wait(200, run); await say(instr, run); if (!resolved) armTimers(); }
       catch (e) { clearInterval(chk); rej(e); }
     })();
   });
@@ -2687,6 +2690,7 @@ window.addEventListener('resize', () => {
   clearTimeout(rzT);
   rzT = setTimeout(() => {
     if ($('#lesson').classList.contains('hidden') || S.teacher || R.ended || TOUR.on || !R.size) return;
+    if (performance.now() - (R.tapFS || 0) < 3000) { R.size = [innerWidth, innerHeight]; return; }
     const [w0, h0] = R.size;
     if (Math.abs(innerWidth - w0) / w0 > 0.04 || Math.abs(innerHeight - h0) / h0 > 0.04) runFrom(R.idx);
   }, 400);
@@ -2694,7 +2698,7 @@ window.addEventListener('resize', () => {
 /* 전체 화면 */
 function enterFS() { const d = document.documentElement; if (isFS()) return; try { const r = (d.requestFullscreen || d.webkitRequestFullscreen || (() => {})).call(d); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
 function exitFS() { try { if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
-$('#lesson').addEventListener('pointerdown', () => { Speech.initAudio(); if (S.teacher && !TOUR.on) { Teacher.close(); return; } if (!document.fullscreenElement && !document.webkitFullscreenElement) enterFS(); }, { capture: true, passive: true });
+$('#lesson').addEventListener('pointerdown', () => { Speech.initAudio(); if (S.teacher && !TOUR.on) { Teacher.close(); return; } if (!document.fullscreenElement && !document.webkitFullscreenElement) { R.tapFS = performance.now(); enterFS(); } }, { capture: true, passive: true });
 
 /* =========================================================
    기록 보기 · 출력
