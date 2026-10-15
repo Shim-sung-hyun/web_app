@@ -3077,7 +3077,8 @@ function wsWordSvg(w, kind, cellMM) {
   } else if (kind === 'start') {
     ws.strokes.forEach(st => { const [x, y] = st.pts[0]; g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="#9a9a9a"/>`; });
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="3 3 ${U + 4} 114" width="${((U + 4) * mm).toFixed(1)}mm" height="${(114 * mm).toFixed(1)}mm">${g}</svg>`;
+  const top = kind === 'model' ? -9 : 3, hh = kind === 'model' ? 132 : 114;   /* 본보기: 번호가 칸 밖에 놓여도 보이게 */
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="3 ${top} ${U + 4} ${hh}" width="${((U + 4) * mm).toFixed(1)}mm" height="${(hh * mm).toFixed(1)}mm" overflow="visible">${g}</svg>`;
 }
 async function worksheetHTML(words) {
   let html = '';
