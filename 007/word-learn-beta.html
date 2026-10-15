@@ -2315,7 +2315,7 @@ function clearPlay() {
   gq('#ground').style.display = ''; const it = gq('#item'); it.style.transition = 'none'; it.style.opacity = 0; it.innerHTML = '';
   gq('#doneBox').classList.remove('show');
 }
-function hideGame() { clearPlay(); GM.classList.add('hidden'); }
+function hideGame() { clearPlay(); GM.classList.add('hidden'); $('#dots').style.display = ''; }
 function gameTexts(words, kind) {
   const t = ['동물에게 먹이를 줘요.', '스티커를 붙여요.', '바구니에 담아요.', '잘했어요.', '맞아요.', '좋아요.', '바로 그거예요.'];
   for (let n = 0; n <= GTRIALS; n++) t.push(`별을 ${['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟'][n] || n} 개 모았어요.`);
@@ -2342,6 +2342,7 @@ async function runGame(words, run) {
   const pics = {}; for (const w of words) pics[w] = await Pics.url(w);
   G = { words, kind, lv, seq: gplan(words), i: 0, stars: 0, food: {}, said: {}, pics };
   GM.classList.remove('hidden'); GM.classList.toggle('meadow', kind === 'feed');
+  $('#dots').style.display = 'none';   /* 놀이 중에는 낱말 번호(1/4)를 감춤: 별과 겹치지 않게 */
   gq('#stars').innerHTML = Array.from({ length: GTRIALS }, () => '<i><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.5l1.3-6.6L2.5 9.3l6.6-.8z" fill="#e7b53c" stroke="#9c7420" stroke-width="1"/></svg></i>').join('');
   await wait(500, run);
   await say(kind === 'feed' ? '동물에게 먹이를 줘요.' : kind === 'body' ? '스티커를 붙여요.' : '바구니에 담아요.', run);
@@ -2395,7 +2396,7 @@ async function trial(ans, run) {
     } else {
       const bh = Math.min(th * 0.52, cw * 0.6), slotH = th - bh * 0.78;
       slotP = Math.min(slotH * 1.2, cw * 0.72);
-      const lfs = G.lv === 1 ? Math.min(cw * 0.2, bh * 0.34, 34) : Math.min(cw * 0.27, bh * 0.46, 64) * Math.min(1, 2.4 / Math.max(2, [...w].length));
+      const lfs = Math.min(cw * 0.8 / ([...w].length + 0.8), bh * 0.6);   /* 이름표가 바구니 앞면의 약 80%를 차지하게 */
       d.innerHTML = `<div class="slot" style="height:${slotH}px"><img src="${G.pics[w]}" alt="" style="width:${slotP}px;height:${slotP}px;opacity:${showPic}"></div>`
         + `<div class="bk" style="height:${bh}px">${BASKET}<div class="lbl" style="font-size:${lfs}px">${esc(w)}</div></div>`;
     }
