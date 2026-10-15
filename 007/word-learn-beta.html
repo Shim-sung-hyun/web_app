@@ -1391,11 +1391,14 @@ if ('speechSynthesis' in window) { speechSynthesis.onvoiceschanged = () => Speec
 
 /* 칭찬: 여러 표현, 한 수업에 2번까지, 연달아 같은 말 없음 */
 const Praise = {
-  list: ['잘했어요.', '맞아요.', '좋아요.', '멋져요.', '훌륭해요.', '바로 찾았어요.'],
+  list: ['잘했어요.', '멋져요.', '훌륭해요.'],
+  write: ['잘 썼어요.', '멋지게 썼어요.', '또박또박 썼어요.'],   /* 쓰기를 마쳤을 때. 첫 칭찬은 "잘 썼어요" */
   used: {}, last: '',
   reset() { this.used = {}; this.last = ''; },
-  next() {
-    const ok = this.list.filter(p => (this.used[p] || 0) < 2 && p !== this.last);
+  next(kind) {
+    const list = kind === 'write' ? this.write : this.list, max = kind === 'write' ? 4 : 2;   /* 쓰기는 한 묶음(최대 10낱말)에 끝까지 나오게 4번까지 */
+    if (kind === 'write' && !this.used[list[0]]) { this.used[list[0]] = 1; this.last = list[0]; return list[0]; }
+    const ok = list.filter(p => (this.used[p] || 0) < max && p !== this.last);
     if (!ok.length) return '';
     const p = pick(ok); this.used[p] = (this.used[p] || 0) + 1; this.last = p; return p;
   }
@@ -1563,7 +1566,7 @@ function updateDots() {
   d.innerHTML = R.ended ? '' : `<b>${(cur ? cur.wi : 0) + 1}</b>/${R.words.length}`;
 }
 function prepTexts(words) {
-  const t = ['그림에 맞는 글자를 찾아 눌러요.', '똑같은 글자를 찾아 눌러요.', '글자에 맞는 그림을 찾아 눌러요.', '동그라미를 눌러요.', '다시 해요.', '다음 낱말이에요.', '글자에 맞는 그림을 찾아요.', '여기 있어요.', '글자를 눌러요.', '붓으로 따라 써요.', '오늘 배운 낱말이에요.', '다 했어요.', ...Praise.list];
+  const t = ['그림에 맞는 글자를 찾아 눌러요.', '똑같은 글자를 찾아 눌러요.', '글자에 맞는 그림을 찾아 눌러요.', '동그라미를 눌러요.', '다시 해요.', '다음 낱말이에요.', '글자에 맞는 그림을 찾아요.', '여기 있어요.', '글자를 눌러요.', '붓으로 따라 써요.', '오늘 배운 낱말이에요.', '다 했어요.', ...Praise.list, ...Praise.write];
   words.forEach(w => { t.push(w, eul(w) + ' 찾아요.', ieyo(w) + '.', w + ', 똑같은 글자예요.', w + ', 글자에 맞는 그림을 찾아 눌러요.', eul(w) + ' 찾아 눌러요.', w + '.'); [...w].forEach(c => c !== ' ' && t.push(c)); });
   return t;
 }
@@ -1894,6 +1897,7 @@ async function stageChoice(st, w, run) {
     targetFont = randFonts(1)[0];
     const pw = document.createElement('div'); pw.className = 'pword';
     pw.appendChild(wordEl(w, targetFont, W * 0.44, H * 0.3));
+    if (st === 2) { const im = new Image(); im.src = await Pics.url(w); im.alt = ''; const ps = H * 0.3 * 0.8 / 3; Object.assign(im.style, { height: ps + 'px', width: ps + 'px', objectFit: 'contain', marginLeft: '1.5vw', flex: 'none' }); pw.appendChild(im); }
     prompt.appendChild(pw);
   }
   alive(run);
@@ -2075,7 +2079,7 @@ async function stageTrace(w, run) {
   if (scene) { await tween(350, t => pen.style.opacity = 1 - t, run); hidePen(); pen.classList.remove('crayon'); pen.style.opacity = 1; }
   else await movePen(W / 2, H * 0.17, topS, 700, run);
   Rec.add(w, 5, helped ? 'helped' : 'direct');
-  const p = helped ? '' : Praise.next();
+  const p = helped ? '' : Praise.next('write');
   await say((p ? p + ' ' : '') + ieyo(w) + '.', run);
   await wait(600, run);
 }
@@ -2160,7 +2164,7 @@ async function stageFreeWrite(w, run) {
   const score = likeness(user, ws.strokes);
   Rec.add(w, 5, 'self', score);
   if (!copy) svg.querySelectorAll('path.guide').forEach(g => { g.style.transition = 'opacity .5s'; g.style.opacity = 0; });
-  const p = Praise.next();
+  const p = Praise.next('write');
   await say((p ? p + ' ' : '') + ieyo(w) + '.', run);
   await wait(600, run);
 }
