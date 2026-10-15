@@ -363,6 +363,11 @@ details.more[open]>summary::before{content:'▾ '}
 details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margin-left:8px}
 #pickBox{margin-top:12px}
 
+body.tmode #stage,body.tmode #game{pointer-events:none}
+.tbar button.cur{border-color:#9FF3F5;border-style:dashed}
+.tbar button.go{background:#2F7D5B;border-color:#2F7D5B;font-weight:700}
+.card .ok{position:absolute;right:12px;top:10px;width:13%;min-width:34px;aspect-ratio:1;border-radius:50%;background:var(--good);color:#fff;display:flex;align-items:center;justify-content:center;font-size:clamp(18px,2.4vw,30px);font-weight:700;opacity:0;transform:scale(.6);transition:opacity .3s ease,transform .3s ease}
+.card.right .ok{opacity:1;transform:scale(1)}
 /* 전체 화면에서도 마우스 포인터가 보이게 */
 #lesson,#lesson #stage{cursor:default}
 .card,.sdot,.anbtn,.wbtn,.tapword,#game .tg,#aqua{cursor:pointer}
@@ -568,13 +573,13 @@ details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margi
  <span id="tLesson" style="display:contents">
   <button id="tPrevW">이전 낱말</button><button id="tNextW">다음 낱말</button>
   <span class="sep"></span>
-  <button id="tRestart">바꾼 설정으로 처음부터</button>
-  <span class="sep"></span>
   <button id="tSheet">쓰기 연습지 (A4)</button>
  </span>
  <span id="tEnd" style="display:contents">
   <button id="tNextB">다음 묶음</button><button id="tAgain">다시 하기</button><button id="tGame">놀이 다시</button><button id="tOther">다른 낱말로</button><button id="tRec">교사용 기록</button><button id="tPrint">기록 출력</button><button id="tSheet2">쓰기 연습지 (A4)</button>
  </span>
+ <span class="sep"></span>
+ <button id="tRestart" class="go">바꾼 설정으로 이어서</button>
 </div>
 <!-- 도움말 둘러보기 · 빠뜨린 곳 알려 주기 -->
 <div id="tour"><div id="tourHole"></div><div id="tourTip" class="below"><h4 id="tourTitle"></h4><p id="tourText"></p>
@@ -1563,8 +1568,8 @@ function updateDots() {
   d.innerHTML = R.ended ? '' : `<b>${(cur ? cur.wi : 0) + 1}</b>/${R.words.length}`;
 }
 function prepTexts(words) {
-  const t = ['그림에 맞는 글자를 찾아요.', '똑같은 글자를 찾아요.', '동그라미를 눌러요.', '다시 해요.', '다음 낱말이에요.', '글자에 맞는 그림을 찾아요.', '여기 있어요.', '글자를 눌러요.', '붓으로 따라 써요.', '오늘 배운 낱말이에요.', '다 했어요.', ...Praise.list];
-  words.forEach(w => { t.push(w, eul(w) + ' 찾아요.', ieyo(w) + '.', w + ', 똑같은 글자예요.', w + ', 글자에 맞는 그림을 찾아요.'); [...w].forEach(c => c !== ' ' && t.push(c)); });
+  const t = ['그림에 맞는 글자를 찾아 눌러요.', '똑같은 글자를 찾아 눌러요.', '글자에 맞는 그림을 찾아 눌러요.', '동그라미를 눌러요.', '다시 해요.', '다음 낱말이에요.', '글자에 맞는 그림을 찾아요.', '여기 있어요.', '글자를 눌러요.', '붓으로 따라 써요.', '오늘 배운 낱말이에요.', '다 했어요.', ...Praise.list];
+  words.forEach(w => { t.push(w, eul(w) + ' 찾아요.', ieyo(w) + '.', w + ', 똑같은 글자예요.', w + ', 글자에 맞는 그림을 찾아 눌러요.', eul(w) + ' 찾아 눌러요.', w + '.'); [...w].forEach(c => c !== ' ' && t.push(c)); });
   return t;
 }
 
@@ -1609,9 +1614,9 @@ async function doItem(it, run) {
   return stageChoice(it.st, it.w, run);
 }
 
-/* ---------- 바른바탕(학교안심 바른바탕 B)으로 쓰기 ----------
-   보이는 글자는 바른바탕 글꼴, 붓이 따라가는 길은 앱의 획 길을 그 글자 크기·자리에 맞춘 것.
-   붓이 지나가면 그 둘레의 글꼴 글자가 드러나고(가림막), 다 쓰면 글자 전체가 드러남 */
+/* ---------- 바른바탕(학교안심 바른바탕 B) ----------
+   붓이 쓰는 동안은 획 글자(붓을 정확히 따라 나타남), 다 쓰면 같은 자리에서 천천히 바른바탕 글자로 바뀜.
+   혼자 따라 쓰기의 흐린 글자와 혼자 보고 쓰기의 본보기는 바른바탕 */
 const GLYPH_FONT = 'BareonB', GF = 100;
 const GlyphFont = {
   ok: false,
@@ -1681,11 +1686,20 @@ function glyphReveal(L, fill, width) {
     full() { const r = document.createElementNS(SVGNS, 'rect'); r.setAttribute('x', -60); r.setAttribute('y', -60); r.setAttribute('width', L.ws.width + 120); r.setAttribute('height', L.ws.height + 120); r.style.fill = '#fff'; mask.appendChild(r); }
   };
 }
+/* 획 글자 → 바른바탕: 같은 자리에서 1.2초 동안 겹쳐 바뀜 */
+async function toGlyph(L, fill, run) {
+  const paths = [...L.svg.querySelectorAll('path')].filter(p => p.style.opacity !== '0');
+  const g = glyphLayer(L, fill); g.style.opacity = 0; g.style.transition = 'opacity 1.2s ease';
+  paths.forEach(p => { p.style.transition = 'opacity 1.2s ease'; });
+  await wait(40, run);
+  g.style.opacity = 1; paths.forEach(p => { p.style.opacity = 0; });
+  await wait(1250, run);
+}
 
 /* 낱말 획을 화면에 놓기 */
-function layoutWord(w, cy, hFrac) {
+function layoutWord(w, cy, hFrac, fit) {
   const W = innerWidth, H = innerHeight;
-  const gw = useGlyph() ? glyphWord(w) : null, ws = gw || wordStrokes(w);
+  const gw = useGlyph() ? glyphWord(w) : null, ws = (fit && gw) || wordStrokes(w);
   const k = Math.min(W * 0.86 / ws.width, H * hFrac / ws.height);
   const svgW = ws.width * k, svgH = ws.height * k;
   const svgX = (W - svgW) / 2, svgY = H * cy - svgH / 2;
@@ -1718,8 +1732,8 @@ async function stageLook(w, run) {
   const W = innerWidth, H = innerHeight;
   const L = layoutWord(w, 0.62, 0.4);
   const { ws, k, svg, svgX, svgY, toScr } = L;
-  const GL = L.glyph, inkRev = GL ? glyphReveal(L, scene ? col : '#26324A') : null;
-  const mk = st => { if (GL) return inkRev.path(st.pts); const q = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7); if (scene && !isFocus(st)) q.style.stroke = col; return q; };
+  const GL = L.glyph;
+  const mk = st => { const q = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7); if (scene && !isFocus(st)) q.style.stroke = col; return q; };
 
   const url = await Pics.url(w); alive(run);
   setPenSrc(url);
@@ -1808,7 +1822,7 @@ async function stageLook(w, run) {
     path.style.strokeDashoffset = 0;
     await wait(110, run);
   }
-  if (GL) inkRev.full();
+  if (GL) await toGlyph(L, scene ? col : '#26324A', run);
   const pl = stage.querySelector('.picletters'); if (pl) pl.remove();
 
   if (scene) { await tween(350, t => pen.style.opacity = 1 - t, run); hidePen(); pen.classList.remove('crayon'); pen.style.opacity = 1; }
@@ -1926,8 +1940,8 @@ async function stageChoice(st, w, run) {
   }
   alive(run);
   const right = cards.find(c => c.dataset.w === w);
-  const instr = st === 2 ? '똑같은 글자를 찾아요.' : st === 3 ? (R.lv === 3 ? '그림에 맞는 글자를 찾아요.' : eul(w) + ' 찾아요.') : (R.lv === 1 ? w + ', 글자에 맞는 그림을 찾아요.' : '글자에 맞는 그림을 찾아요.');
-  const okSay = st === 2 ? w + ', 똑같은 글자예요.' : ieyo(w) + '.';
+  const instr = st === 2 ? '똑같은 글자를 찾아 눌러요.' : st === 3 ? (R.lv === 3 ? '그림에 맞는 글자를 찾아 눌러요.' : eul(w) + ' 찾아 눌러요.') : (R.lv === 1 ? w + ', 글자에 맞는 그림을 찾아 눌러요.' : '글자에 맞는 그림을 찾아 눌러요.');
+  const okSay = w + '.';
 
   let locked = false, helped = false, resolved = false, timers = [];
   const clearT = () => { timers.forEach(clearTimeout); timers = []; };
@@ -1949,10 +1963,10 @@ async function stageChoice(st, w, run) {
       if (c === right) {
         resolved = true; locked = true; clearT();
         right.classList.remove('glow'); right.classList.add('right');
+        if (!right.querySelector('.ok')) { const ok = document.createElement('span'); ok.className = 'ok'; ok.textContent = '✓'; right.appendChild(ok); }
         cards.filter(x => x !== right).forEach(x => x.classList.add('faded'));
         Rec.add(w, st, helped ? 'helped' : 'direct');
-        const p = helped ? '' : Praise.next();
-        try { await wait(250, run); await say((p ? p + ' ' : '') + okSay, run); await wait(500, run); clearInterval(chk); res(); }
+        try { await wait(200, run); await say(okSay, run); await wait(500, run); clearInterval(chk); res(); }
         catch (e) { clearInterval(chk); rej(e); }
       } else if (!helped) {
         locked = true; clearT();
@@ -1977,9 +1991,7 @@ async function stageTrace(w, run) {
   const L = layoutWord(w, scene ? 0.6 : 0.56, scene ? 0.48 : 0.56);
   const { ws, k, svg, svgX, svgY, toScr } = L;
   const GL = L.glyph;
-  if (GL) glyphLayer(L, '#EAE4D8');
-  const curRev = GL ? glyphReveal(L, '#CFC5B0', 26) : null, inkRev = GL ? glyphReveal(L, scene ? col : '#26324A') : null;
-  const guides = ws.strokes.map(st => GL ? curRev.path(st.pts, '#000') : strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 10));
+  const guides = ws.strokes.map(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 10));
   const hit = document.createElement('div'); hit.id = 'traceHit'; hit.style.cursor = 'pointer'; stage.appendChild(hit);
 
   let penSize = Math.max(44, 100 * k * 0.14);
@@ -2003,9 +2015,9 @@ async function stageTrace(w, run) {
 
   for (let si = 0; si < ws.strokes.length; si++) {
     const st = ws.strokes[si];
-    guides.forEach((g, i) => GL ? (g.style.stroke = i === si ? '#fff' : '#000') : g.classList.toggle('cur', i === si));
-    const ink = GL ? inkRev.path(st.pts) : strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7);
-    if (!GL && scene && !isFocus(st)) ink.style.stroke = col;
+    guides.forEach((g, i) => g.classList.toggle('cur', i === si));
+    const ink = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7);
+    if (scene && !isFocus(st)) ink.style.stroke = col;
     const len = ink.getTotalLength();
     ink.style.strokeDasharray = len + ' ' + (len + 10);
     ink.style.strokeDashoffset = len;
@@ -2084,8 +2096,8 @@ async function stageTrace(w, run) {
   }
   await firstInstr;
   R.trace = null;
-  if (GL) inkRev.full();
   guides.forEach(g => { g.style.transition = 'opacity .5s'; g.style.opacity = 0; });
+  if (GL) await toGlyph(L, scene ? col : '#26324A', run);
   const topS = Math.min(H * 0.24, W * 0.28);
   if (scene) { await tween(350, t => pen.style.opacity = 1 - t, run); hidePen(); pen.classList.remove('crayon'); pen.style.opacity = 1; }
   else await movePen(W / 2, H * 0.17, topS, 700, run);
@@ -2107,7 +2119,7 @@ async function stageFreeWrite(w, run) {
   let model = null;
   if (copy) {
     /* 그림과 본보기 글자를 한 줄로 가운데에 */
-    model = layoutWord(w, 0.18, 0.2);
+    model = layoutWord(w, 0.18, 0.2, true);
     const ps = Math.min(H * 0.2, W * 0.18), gap = W * 0.03;
     const mw = Math.min(model.svgW, W * 0.86 - ps - gap);
     const x0 = (W - (ps + gap + mw)) / 2;
@@ -2117,7 +2129,7 @@ async function stageFreeWrite(w, run) {
     model.svg.id = 'modelSvg';
     model.svg.querySelectorAll('path').forEach(p => { p.style.fill = 'none'; p.style.stroke = isFocusPath(p) ? '#D9663B' : 'var(--ink)'; p.style.strokeLinecap = 'round'; p.style.strokeLinejoin = 'round'; });
   } else setPen(W / 2, H * 0.13, Math.min(H * 0.13, W * 0.13));
-  const L = layoutWord(w, copy ? 0.57 : 0.52, copy ? 0.46 : 0.56);
+  const L = layoutWord(w, copy ? 0.57 : 0.52, copy ? 0.46 : 0.56, true);
   const { ws, k, svg, svgX, svgY } = L;
   if (copy) {
     const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -2640,11 +2652,16 @@ const Teacher = {
     this.goGame = goGame;
     $$('#tTop [data-st]').forEach(b => b.addEventListener('click', () => {
       const st = +b.dataset.st;
+      this.pick = this.pick === st ? null : st; this.refresh();   /* 고르기만, 실행은 "바꾼 설정으로 이어서" */
+    }));
+    this.applyPick = () => {
+      const st = this.pick; this.pick = null;
+      if (!st) return this.close();
       if (st === 9) return goEnd();
       if (st === 8) return goGame();
       const wi = R.ended ? R.words.length - 1 : curWi();
-      const i = R.items.findIndex(x => x.wi === wi && x.st === st); if (i >= 0) go(i);
-    }));
+      const i = R.items.findIndex(x => x.wi === wi && x.st === st); if (i >= 0) go(i); else this.close();
+    };
     $('#tPrevW').addEventListener('click', () => goWord(Math.max(0, curWi() - 1)));
     $('#tNextW').addEventListener('click', () => { const wi = curWi() + 1; if (wi < R.words.length) goWord(wi); else goEnd(); });
     $('#tSound').addEventListener('click', () => { S.sound = !S.sound; if (!S.sound) Speech.stop(); this.refresh(); });
@@ -2652,7 +2669,7 @@ const Teacher = {
     $('#tHelp').addEventListener('click', () => startTour('lesson'));
     $('#tSheet').addEventListener('click', () => printWorksheets(R.words));
     $('#tSheet2').addEventListener('click', () => printWorksheets(R.words));
-    $('#tRestart').addEventListener('click', () => { R.items = buildItems(R.words); Praise.reset(); go(0); });
+    $('#tRestart').addEventListener('click', () => this.applyPick());
     $('#tAgain').addEventListener('click', () => { R.items = buildItems(R.words); R.trials = []; Praise.reset(); go(0); });
     $('#tOther').addEventListener('click', () => { this.toSetup(); renderAll(); });
     $('#tGame').addEventListener('click', goGame);
@@ -2668,7 +2685,7 @@ const Teacher = {
   },
   cancelHold() { if (this.hold) { cancelAnimationFrame(this.hold.raf); this.hold = null; } const a = $('#aqua'); a.classList.remove('holding'); a.style.setProperty('--p', '0%'); },
   /* 메뉴를 열면 수업이 그 자리에서 멈춤 */
-  open() { S.teacher = true; if (!R.ended || R.phase === 'game') { ++R.run; Speech.stop(); } exitFS(); this.refresh(); },
+  open() { this.pick = null; S.teacher = true; if (!R.ended || R.phase === 'game') { ++R.run; Speech.stop(); } exitFS(); this.refresh(); },
   /* 닫으면 바꾼 설정으로 멈춘 단계의 처음부터, 전체 화면 학생 화면 */
   close(resume = true) {
     if (!S.teacher) return;
@@ -2677,7 +2694,7 @@ const Teacher = {
     afterFullscreen(() => { if (resume && wasGame) this.goGame(); else if (resume && !R.ended) runFrom(R.idx); });
   },
   refresh() {
-    const a = $('#aqua'); a.classList.toggle('on', S.teacher); a.querySelector('span').textContent = S.teacher ? '심' : 'charum';
+    const a = $('#aqua'); a.classList.toggle('on', S.teacher); document.body.classList.toggle('tmode', S.teacher); a.querySelector('span').textContent = S.teacher ? '심' : 'charum';
     const inLesson = !$('#lesson').classList.contains('hidden');
     $('#tTop').classList.toggle('hidden', !(S.teacher && inLesson));
     $('#tBottom').classList.toggle('hidden', !(S.teacher && inLesson));
@@ -2687,7 +2704,8 @@ const Teacher = {
     $$('#tTop [data-st]').forEach(b => {
       const st = +b.dataset.st;
       b.classList.toggle('hidden', st === 8 ? !(S.games === 'on' && R.words.length >= 2) : st !== 9 && !LEVELS[R.lv].steps.includes(st));
-      b.classList.toggle('on', inGame ? st === 8 : R.ended ? st === 9 : !!cur && st === cur.st);
+      const now = inGame ? st === 8 : R.ended ? st === 9 : !!cur && st === cur.st;
+      b.classList.toggle('on', this.pick ? st === this.pick : now); b.classList.toggle('cur', !!this.pick && now);
     });
     $('#tNextB').classList.toggle('hidden', !R.bundle);
     $('#tGame').classList.toggle('hidden', !(R.words.length >= 2));
@@ -2723,20 +2741,20 @@ const TOUR_STEPS = {
   ],
   lesson: [
     { el: '#tWord', t: '지금 낱말', x: '몇 번째 낱말인지 보여요. 메뉴를 여는 동안 수업은 멈춰 있어요.' },
-    { el: '#tTop [data-st="1"]', t: '단계', x: '보기 · 같은 글자 · 낱말 고르기 · 그림 고르기 · 쓰기 가운데 누른 단계로 바로 가요.' },
+    { el: '#tTop [data-st="1"]', t: '단계', x: '보기 · 같은 글자 · 낱말 고르기 · 그림 고르기 · 쓰기 가운데 갈 단계를 골라요(점선은 지금 단계). 아래 "바꾼 설정으로 이어서"를 누르면 그 단계로 가요.' },
     { el: '#tTop [data-st="9"]', t: '끝', x: '오늘 배운 낱말을 보여 주는 끝 화면으로 가요.' },
     { el: '#tTop [data-st="8"]', t: '놀이', x: '이 묶음 낱말로 하는 놀이(8번)로 바로 가요. 놀이는 기록에 "놀이(복습)"으로 남아요.' },
     { el: '#tSound', t: '소리', x: '말소리를 켜고 꺼요.' },
     { el: '#tSetup', t: '설정', x: '설정 화면으로 가요. 수업은 멈춰 있고, "이어 하기"로 돌아와요.' },
     { el: '#tPrevW', t: '낱말 이동', x: '이전 낱말, 다음 낱말의 보기부터 해요.' },
-    { el: '#tRestart', t: '바꾼 설정으로 처음부터', x: '같은 낱말로 첫 낱말부터 다시 해요.' },
+    { el: '#tRestart', t: '바꾼 설정으로 이어서', x: '위에서 고른 단계로 가서 이어 해요. 고른 것이 없으면 멈춘 곳에서 이어 가요.' },
     { el: '#tSheet', t: '쓰기 연습지', x: '오늘 낱말을 A4에 한 장씩 인쇄해요. 진하게 → 흐리게 → 점선 → 시작점 → 혼자 순서로 여섯 번 써요.' },
     { el: '#tSheet2', t: '쓰기 연습지', x: '오늘 낱말을 A4에 한 장씩 인쇄해요.' },
     { el: '#tNextB', t: '다음 묶음', x: '이 학생이 아직 하지 않은 다음 묶음을 준비해서 바로 시작해요.' },
     { el: '#tAgain', t: '다시 하기', x: '같은 낱말로 처음부터 다시 해요.' },
     { el: '#tGame', t: '놀이 다시', x: '이 묶음의 놀이를 한 번 더 해요.' },
     { el: '#tRec', t: '교사용 기록', x: '바로 맞힘 / 도움 받아 맞힘과 쓰기 기록을 봐요. 내보내기(CSV)와 출력(A4)도 있어요.' },
-    { el: '#aqua', t: '관리 버튼', x: '한 번 누르면 메뉴를 닫고 멈춘 단계의 처음부터 이어 가요. 학생 화면을 눌러도 돼요. 열 때는 3초 동안 눌러요.' }
+    { el: '#aqua', t: '관리 버튼', x: '한 번 누르면 메뉴를 닫고 멈춘 단계의 처음부터 이어 가요. 메뉴가 열려 있는 동안 학생 화면은 눌러도 움직이지 않아요. 열 때는 3초 동안 눌러요.' }
   ]
 };
 const TOUR = { on: false, steps: [], i: 0 };
@@ -2829,7 +2847,7 @@ window.addEventListener('resize', () => {
 /* 전체 화면 */
 function enterFS() { const d = document.documentElement; if (isFS()) return; try { const r = (d.requestFullscreen || d.webkitRequestFullscreen || (() => {})).call(d); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
 function exitFS() { try { if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
-$('#lesson').addEventListener('pointerdown', () => { Speech.initAudio(); if (S.teacher && !TOUR.on) { Teacher.close(); return; } if (!document.fullscreenElement && !document.webkitFullscreenElement) { R.tapFS = performance.now(); enterFS(); } }, { capture: true, passive: true });
+$('#lesson').addEventListener('pointerdown', () => { Speech.initAudio(); if (S.teacher) return; if (!document.fullscreenElement && !document.webkitFullscreenElement) { R.tapFS = performance.now(); enterFS(); } }, { capture: true, passive: true });
 
 /* =========================================================
    기록 보기 · 출력
