@@ -836,7 +836,7 @@ const CRAYON = {"손":"#9B5E3A","발":"#B05625","눈":"#664026","코":"#A15B34",
 /* 그림 속에 그 낱말 글자가 든 간판 그림: 3수준 그림 고르기의 보기에서 뺌 */
 const TXTPIC = new Set(["식당","마트","경찰서","빵집","약국","편의점","문구점","우체국"]);
 /* 헷갈리기 쉬운 짝: 고르기의 다른 보기로 쓰지 않음 */
-const PAIRS = [["강아지","개"],["생쥐","쥐"],["새","참새"],["닭","병아리"],["손","손톱"],["다리","무릎"],["우체국","우체통"],["우체통","우편함"],["승강기","엘리베이터"],["급식","급식실"],["걸레","대걸레"],["색종이","종이"],["색연필","색종이"],["공","농구공"],["바다","바닷가"],["물","물고기"],["스마트폰","휴대폰"],["책","책가방"],["책","책꽂이"],["신발","신발주머니"]];
+const PAIRS = [["물","우유"],["물","컵"],["우유","컵"],["강아지","개"],["생쥐","쥐"],["새","참새"],["닭","병아리"],["손","손톱"],["다리","무릎"],["우체국","우체통"],["우체통","우편함"],["승강기","엘리베이터"],["급식","급식실"],["걸레","대걸레"],["색종이","종이"],["색연필","색종이"],["공","농구공"],["바다","바닷가"],["물","물고기"],["스마트폰","휴대폰"],["책","책가방"],["책","책꽂이"],["신발","신발주머니"]];
 /* 그림이 없어 묶음에서 뺀 낱말: 사진을 넣어 "내가 넣은 낱말"로 */
 const SUGGEST = ['동생','누나','언니','오빠','형','친구','여자','월급'];
 
@@ -1627,7 +1627,19 @@ async function introPicLetters(w, run) {
 }
 async function stageLook(w, run) {
   const scene = isScene(w), col = scene ? CRAYON[w] : null;
-  if (S.picLetters !== 'off' && !scene) await introPicLetters(w, run);
+  const picFirst = S.picLetters !== 'off' && !scene;
+  if (picFirst) {
+    clearStage();
+    const W0 = innerWidth, H0 = innerHeight, b0 = Math.min(H0 * 0.56, W0 * 0.6);
+    setPenSrc(await Pics.url(w)); alive(run);
+    pen.classList.remove('hidden', 'crayon');
+    setPen(W0 / 2, H0 * 0.48, b0 * 0.85); pen.style.opacity = 0;
+    await tween(500, t => { pen.style.opacity = t; setPen(W0 / 2, H0 * 0.48, b0 * (0.85 + 0.15 * t)); }, run);
+    pen.style.opacity = 1;
+    await wait(250, run); await say(w, run); await wait(700, run);
+    await tween(400, t => pen.style.opacity = 1 - t, run); hidePen(); pen.style.opacity = 1;
+    await introPicLetters(w, run);
+  }
   clearStage();
   const W = innerWidth, H = innerHeight;
   const L = layoutWord(w, 0.62, 0.4);
@@ -1638,11 +1650,9 @@ async function stageLook(w, run) {
   pen.classList.remove('hidden', 'crayon');
   const big = Math.min(H * 0.56, W * 0.6);
   setPen(W / 2, H * 0.48, big * 0.85); pen.style.opacity = 0;
-  await tween(500, t => { pen.style.opacity = t; setPen(W / 2, H * 0.48, big * (0.85 + 0.15 * t)); }, run);
+  await tween(picFirst ? 350 : 500, t => { pen.style.opacity = t; setPen(W / 2, H * 0.48, big * (0.85 + 0.15 * t)); }, run);
   pen.style.opacity = 1;
-  await wait(250, run);
-  await say(w, run);
-  await wait(500, run);
+  if (!picFirst) { await wait(250, run); await say(w, run); await wait(500, run); } else await wait(300, run);
 
   let penSize = Math.max(54, 100 * k * 0.42);
   const first = ws.strokes[0] ? toScr(ws.strokes[0].pts[0]) : [W / 2, H / 2];
