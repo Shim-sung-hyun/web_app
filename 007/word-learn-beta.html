@@ -1644,7 +1644,7 @@ async function stageLook(w, run) {
     let endPt = first;
     for (let si = 0; si < from; si++) {
       const st = ws.strokes[si];
-      const path = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 9);
+      const path = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7);
       const len = path.getTotalLength();
       path.style.strokeDasharray = len + ' ' + (len + 10); path.style.strokeDashoffset = len;
       const n = Math.max(1, Math.round(len * k / gap)), mine = [];
@@ -1679,7 +1679,7 @@ async function stageLook(w, run) {
   await wait(200, run);
 
   for (const st of ws.strokes.slice(from)) {
-    const path = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 9);
+    const path = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7);
     if (scene && !isFocus(st)) path.style.stroke = col;
     const len = path.getTotalLength();
     path.style.strokeDasharray = len + ' ' + (len + 10);
@@ -1863,7 +1863,7 @@ async function stageTrace(w, run) {
   const scene = isScene(w), col = scene ? CRAYON[w] : null;
   const L = layoutWord(w, scene ? 0.6 : 0.56, scene ? 0.48 : 0.56);
   const { ws, k, svg, svgX, svgY, toScr } = L;
-  const guides = ws.strokes.map(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 15));
+  const guides = ws.strokes.map(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 10));
   const hit = document.createElement('div'); hit.id = 'traceHit'; hit.style.cursor = 'pointer'; stage.appendChild(hit);
 
   let penSize = Math.max(44, 100 * k * 0.14);
@@ -1888,7 +1888,7 @@ async function stageTrace(w, run) {
   for (let si = 0; si < ws.strokes.length; si++) {
     const st = ws.strokes[si];
     guides.forEach((g, i) => g.classList.toggle('cur', i === si));
-    const ink = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 9);
+    const ink = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7);
     if (scene && !isFocus(st)) ink.style.stroke = col;
     const len = ink.getTotalLength();
     ink.style.strokeDasharray = len + ' ' + (len + 10);
@@ -1996,7 +1996,7 @@ async function stageFreeWrite(w, run) {
     const x0 = (W - (ps + gap + mw)) / 2;
     setPen(x0 + ps / 2, H * 0.18, ps);
     Object.assign(model.svg.style, { position: 'absolute', left: (x0 + ps + gap) + 'px' });
-    model.ws.strokes.forEach(st => strokePath(model.svg, st.pts, isFocus(st) ? 'focus' : '', 9));
+    model.ws.strokes.forEach(st => strokePath(model.svg, st.pts, isFocus(st) ? 'focus' : '', 7));
     model.svg.id = 'modelSvg';
     model.svg.querySelectorAll('path').forEach(p => { p.style.fill = 'none'; p.style.stroke = isFocusPath(p) ? '#D9663B' : 'var(--ink)'; p.style.strokeLinecap = 'round'; p.style.strokeLinejoin = 'round'; });
   } else setPen(W / 2, H * 0.13, Math.min(H * 0.13, W * 0.13));
@@ -2006,7 +2006,7 @@ async function stageFreeWrite(w, run) {
     const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     r.setAttribute('class', 'wbox'); r.setAttribute('x', 2); r.setAttribute('y', 2); r.setAttribute('width', ws.width - 4); r.setAttribute('height', ws.height - 4); r.setAttribute('rx', 14);
     svg.appendChild(r);
-  } else ws.strokes.forEach(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 15));
+  } else ws.strokes.forEach(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 10));
   const hit = document.createElement('div'); hit.id = 'traceHit'; stage.appendChild(hit);
   const btns = document.createElement('div'); btns.className = 'wbtns';
   const mk = (cls, icon, label) => { const b = document.createElement('button'); b.className = 'wbtn ' + cls; b.innerHTML = `<span class="ic">${icon}</span><span>${label}</span>`; return b; };
@@ -2033,7 +2033,7 @@ async function stageFreeWrite(w, run) {
       down = true; try { hit.setPointerCapture(e.pointerId); } catch (x) {}
       Speech.initAudio();
       curPts = [toSvg(e)];
-      curPath = strokePath(svg, curPts, 'user', 9); redraw();
+      curPath = strokePath(svg, curPts, 'user', 7); redraw();
       user.push(curPts); lastAct = performance.now();
       clearB.classList.remove('off'); okB.classList.remove('off');
     };
