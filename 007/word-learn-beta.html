@@ -1079,9 +1079,9 @@ function wordStrokes(word) {
    2 글자 알아보기: 묶음 6낱말, 보기 3개, 보기→같은 글자→낱말 고르기→그림 고르기→혼자 따라 쓰기
    3 읽기: 묶음 10낱말, 보기 4개, 낱말 고르기(소리 없이)→그림 고르기→혼자 보고 쓰기 */
 const LEVELS = {
-  1: { size: 4, n: 2, steps: [1, 2, 4, 5, 6], write: 'guide', name: '1 듣고 고르기' },
-  2: { size: 6, n: 3, steps: [1, 2, 3, 4, 5, 6], write: 'trace', name: '2 글자 알아보기' },
-  3: { size: 10, n: 4, steps: [3, 4, 5, 6], write: 'copy', name: '3 읽기' }
+  1: { size: 4, n: 2, steps: [1, 2, 4, 5], write: 'guide', name: '1 듣고 고르기' },
+  2: { size: 6, n: 3, steps: [1, 2, 3, 4, 5], write: 'trace', name: '2 글자 알아보기' },
+  3: { size: 10, n: 4, steps: [3, 4, 5], write: 'copy', name: '3 읽기' }
 };
 const BOOK_WORDS = BOOK.flatMap(x => x.w);
 const MADANG_OF = new Map(); BOOK.forEach((x, i) => x.w.forEach(w => MADANG_OF.set(w, i)));
