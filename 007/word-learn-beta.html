@@ -1801,7 +1801,8 @@ async function stageLook(w, run) {
     setPenSrc(url); pen.classList.remove('hidden'); pen.style.opacity = 1;
     setPen(lr.left + lr.width / 2, lr.top + lr.height / 2, lr.width);
     const nx = ws.strokes[from] ? toScr(ws.strokes[from].pts[0]) : [lr.left + lr.width / 2, lr.top + lr.height / 2];
-    await movePen(nx[0], nx[1], penSize, 700, run);
+    penSize = size;   /* 끝까지 작은 그림으로 쓰고, 다 쓴 뒤 위로 올라가며 커짐 */
+    await movePen(nx[0], nx[1], penSize, 500, run);
   } else await movePen(first[0], first[1], penSize, 1000, run);
   await wait(200, run);
 
