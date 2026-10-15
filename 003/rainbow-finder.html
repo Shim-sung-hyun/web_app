@@ -689,7 +689,7 @@ document.addEventListener('contextmenu',e=>{ if(!document.body.classList.contain
   ab.addEventListener('click',e=>{
     e.stopPropagation();
     if(performance.now()<ignoreUntil) return; /* 3초 눌러 켠 직후 손을 뗄 때 생기는 click은 무시 */
-    if(S.admin){ setAdmin(false); if(S.game) goFull(); }
+    if(S.admin){ applyPending(); setAdmin(false); if(S.game) goFull(); }
   });
   ab.addEventListener('contextmenu',e=>e.preventDefault());
 })();
@@ -713,32 +713,43 @@ function renderDocks(){
     `<div class="g">${b('sound',S.sound?ICON.ear+'소리':ICON.sndOff+'소리 끔',S.sound)}${b('setup',ICON.gear+'설정')}${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`+
     `<div class="g">${b('tour',ICON.q+'도움말')}</div>`;
   $('dockBot').innerHTML = !g ? '' : playing
-    ? `<div class="g">${b('replay',ICON.ear+'다시 듣기')}${b('stop',ICON.stop+'여기까지')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
+    ? `<div class="g">${b('replay',ICON.ear+'다시 듣기')}${b('stop',ICON.stop+'여기까지')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div><div class="g">${b('go','바꾼 설정으로 이어서',null,'class="go-btn"')}</div>`
     : `<div class="g">${b('again',ICON.redo+'다시 하기')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div><div class="g"><span class="lbl">${ICON.print.replace('class="ic"','class="ic" style="width:18px;height:18px;vertical-align:-4px"')} 출력</span>${b('print:student','학생용 색칠하기')}${b('print:teacher','교사용 기록')}</div>`;
 }
 function onDock(e){
   const btn=e.target.closest('button[data-a]'); if(!btn) return;
   const [a,v]=btn.dataset.a.split(':');
   if(OPT[a]){ S[a]=isNaN(+v)?v:+v; store.set(a,v);
-    if(a==='speed'&&S.game) S.game.bubs.forEach(setVel);
     if(a==='colors') clampChoices();
+    PEND.add(a); renderDocks(); return; }   /* 고르기만, 판에는 "바꾼 설정으로 이어서"에서 반영 */
+  if(a==='go'){ applyPending(); $('logPop').hidden=true; setAdmin(false); if(S.game) goFull(); return; }
+  if(a==='mode'){ S.mode=v; store.set('mode',v); document.body.classList.toggle('solo',v==='solo');
+    if(v==='teacher'&&document.body.classList.contains('home')) startGame();
+    else if(v==='solo'&&!S.game) showHome();
+    renderDocks(); return; }
+  return onDock2(a,v);
+}
+/* 바꾼 설정을 지금 판에 반영 */
+const PEND=new Set();
+function applyPending(){
+  for(const a of PEND){
+    if(a==='speed'&&S.game) S.game.bubs.forEach(setVel);
     if(S.game&&!document.body.classList.contains('ended')&&(a==='choices'||a==='colors')){ if(!palette().some(c=>c.name===S.game.target.name)) S.game.target=palette()[0]; S.game.bubs.forEach(o=>o.el.remove()); S.game.bubs=[]; BD=bounds(); buildSet(); showPrompt(); schedulePrompt(); speak(findLine(S.game.target)); }
     else if(S.game&&a==='way') showPrompt();
     else if(S.game&&a==='look'&&!document.body.classList.contains('ended')){ S.game.bubs.forEach(drawLook); }
     else if(S.game&&a==='help'&&!document.body.classList.contains('ended')){ schedulePrompt(); }
     else if(S.game&&a==='rounds'&&!document.body.classList.contains('ended')){ if(S.game.hist.length>=S.rounds) endGame(); else renderTrack(); }
-    renderDocks(); return; }
-  if(a==='mode'){ S.mode=v; store.set('mode',v); document.body.classList.toggle('solo',v==='solo');
-    if(v==='teacher'&&document.body.classList.contains('home')) startGame();
-    else if(v==='solo'&&!S.game) showHome();
-    renderDocks(); return; }
+  }
+  PEND.clear();
+}
+function onDock2(a,v){
   if(a==='sound'){ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); if(!S.sound) stopVoice(); renderDocks(); }
   if(a==='setup'){ leaveFull(); showSetup(); }
   if(a==='tour'){ startTour(); return; }
   if(a==='replay') speak();
   if(a==='stop') endGame();
   /* 새로 시작·다시 하기: 바꾼 설정으로 시작하고 바로 학생 화면(전체 화면) */
-  if(a==='again'||a==='start'){ $('logPop').hidden=true; setAdmin(false); startGame(); }
+  if(a==='again'||a==='start'){ PEND.clear(); $('logPop').hidden=true; setAdmin(false); startGame(); }
   if(a==='print') printSheet(v);
   if(a==='log'){ $('logPop').hidden=!$('logPop').hidden; renderLog(); renderDocks(); }
 }
@@ -1111,6 +1122,7 @@ if(S.mode==='solo') showHome(); else showSetup();
 
 /* ================= 도움말: 교사 메뉴를 말풍선으로 하나씩 ================= */
 const TOUR_STEPS=[
+  {el:'#dockBot [data-a="go"]', t:'바꾼 설정으로 이어서', x:'위에서 바꾼 동그라미·색·속도 같은 설정을 지금 판에 반영하고 이어 해요. 메뉴가 열려 있는 동안에는 판이 바뀌지 않아요.'},
   {el:'#dockTop [data-a="start"]', t:'새로 시작', x:'바꾼 설정으로 처음부터 다시 해요. 메뉴는 닫히고 바로 학생 화면(전체 화면)이 돼요.'},
   {el:'#g-choices', t:'동그라미', x:'한 번에 나오는 동그라미 수예요. 2개부터 15개까지. 하던 판에 바로 적용돼요.'},
   {el:'#g-colors', t:'색', x:'나올 수 있는 색의 수예요. 7색 → 11색 → 15색으로 늘려 가요.'},

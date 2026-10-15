@@ -328,8 +328,9 @@ function renderDocks(){
 function onDock(e){
   const btn=e.target.closest('button[data-a]'); if(!btn) return;
   const [a,v]=btn.dataset.a.split(':');
-  if(a==='lv'){ S.level=+v; store.set('level',S.level); startRound(); }
-  if(a==='sh'){ S.shape=v; store.set('shape',S.shape); startRound(); }
+  /* 단계·모양: 고르기만 하고, 아래 "이 그림으로 다시 시작"을 누르면 반영 (메뉴가 열린 동안 판이 바뀌지 않게) */
+  if(a==='lv'){ S.level=+v; store.set('level',S.level); renderDocks(); }
+  if(a==='sh'){ S.shape=v; store.set('shape',S.shape); renderDocks(); }
   if(a==='gh'){ S.ghost=+v; store.set('ghost2',S.ghost); applyGhost(); renderDocks(); }
   if(a==='sfx'){ S.sfx=!S.sfx; store.set('sfx',S.sfx?'on':'off'); renderDocks(); }
   if(a==='setup'){ leaveFull(); showSetup(); }
@@ -749,8 +750,8 @@ async function printSheet(){
 
 /* ================= 도움말: 교사 메뉴를 말풍선으로 하나씩 ================= */
 const TOUR_STEPS=[
-  {el:'#gLv', t:'단계', x:'줄 수를 정해요. 1단계 5조각부터 5단계 25조각까지. 누르면 바로 새 판이 시작돼요.'},
-  {el:'#gSh', t:'모양', x:'둥근 꼭지가 있는 퍼즐 모양과 곧은 선의 사각형 가운데 골라요.'},
+  {el:'#gLv', t:'단계', x:'줄 수를 정해요. 1단계 5조각부터 5단계 25조각까지. 고른 뒤 아래 "이 그림으로 다시 시작"을 누르면 새 판이 시작돼요.'},
+  {el:'#gSh', t:'모양', x:'둥근 꼭지가 있는 퍼즐 모양과 곧은 선의 사각형 가운데 골라요. "이 그림으로 다시 시작"을 누르면 반영돼요.'},
   {el:'#gGh', t:'밑그림', x:'판에 보이는 그림의 진하기예요. 익숙해질수록 흐리게, 없음으로 바꿔요.'},
   {el:'#dockTop [data-a="sfx"]', t:'효과음', x:'조각을 맞출 때 나는 작은 소리를 켜고 꺼요.'},
   {el:'#dockTop [data-a="setup"]', t:'설정', x:'처음 설정 화면으로 가서 사진, 누가 쓰는지, 다른 자리에 놓았을 때의 도움 방식을 바꿔요.'},

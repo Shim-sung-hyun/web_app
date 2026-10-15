@@ -93,6 +93,7 @@ body.admin:not(.setup) .admin-panel{display:block}
 .schedule li{flex:1;display:flex;border-radius:12px;color:var(--muted);font-family:var(--f-display);font-size:19px;min-width:0;position:relative}
 .stage-btn{all:unset;box-sizing:border-box;flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 6px;border-radius:12px;cursor:pointer;font:inherit;color:inherit}
 .stage-btn:disabled{opacity:.35;cursor:default}
+.stage-btn.picked{outline:3px solid var(--accent);outline-offset:-3px;background:var(--accent-soft)}
 .stage-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .schedule li:not(.now) .stage-btn:not(:disabled):hover{background:var(--accent-soft)}
 .schedule li svg{width:26px;height:26px;flex:none}
@@ -905,7 +906,7 @@ function openPanel(){
     <div class="ap-group" id="ap-error"><h3>틀렸을 때</h3><div class="opts">
       ${optHTML('errorMode','show',S.errorMode,'바로 정답','무오류 학습')}${optHTML('errorMode','retry',S.errorMode,'한 번 더 기회','')}
     </div></div>
-    <div class="ap-foot"><button class="btn" id="apHelp" type="button">도움말</button><button class="btn primary ap-start" id="apStart" type="button">새 설정으로 시작하기</button></div>
+    <div class="ap-foot"><button class="btn" id="apHelp" type="button">도움말</button><button class="btn" id="apStart" type="button">새 사진으로 시작</button><button class="btn primary ap-start" id="apGo" type="button">바꾼 설정으로 이어서</button></div>
   </div>`;
   ap.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
     const n=r.name.slice(3), v=r.value;
@@ -920,6 +921,7 @@ function openPanel(){
   if(S.stage==='end'){ ap.classList.add('folded'); $('apFold').textContent='펴기'; }  /* 끝 화면은 교사용 버튼이 가리지 않게 접어서 */
   $('apHelp').onclick=startCoach;
   $('apStart').onclick=restartWithPanel;
+  $('apGo').onclick=applyPick;
 }
 /* 패널에서 바꾼 설정을 수업에 반영 (화면 이동은 하지 않음) */
 function applySettings(o){
@@ -963,7 +965,7 @@ function leaveAdminQuiet(){
 }
 /* 도움말: 설정마다 코치마크 */
 const COACH=[
-  ['.schedule','단계 메뉴','누르면 그 단계(사진·배우기·찾기·끝)로 바로 가요. 지금 하는 단계에 "지금"이 붙어 있어요.'],
+  ['.schedule','단계 메뉴','갈 단계(사진·배우기·찾기·끝)를 골라요. 아래 "바꾼 설정으로 이어서"를 누르면 그 단계로 가요. 지금 하는 단계에 "지금"이 붙어 있어요.'],
   ['#soundBtn','소리','목소리를 켜고 꺼요.'],
   ['#setupBtn','설정','처음 설정 화면으로 가요. Gemini 키, Google 음성 키를 넣거나 바꿀 때 써요. 수업은 처음부터 다시 해요.'],
   ['#ap-level','단계','1단계는 도형 이름, 2단계는 변과 꼭짓점, 3단계는 각과 직각을 배워요.'],
@@ -971,7 +973,8 @@ const COACH=[
   ['#ap-paint','붓으로 칠하기','켜면 도형을 배운 뒤 붓으로 직접 칠해요. 끄면 보기만 하고 넘어가요.'],
   ['#ap-voice','목소리','Google 음성은 자연스럽고, 기기 목소리는 키 없이 바로 나와요. 한 수업은 한 목소리로 말해요.'],
   ['#ap-error','틀렸을 때','바로 정답: 틀리면 정답 자리를 바로 보여 줘요(무오류 학습). 한 번 더 기회: 한 번 더 해 보고, 또 틀리면 보여 줘요.'],
-  ['#apStart','새 설정으로 시작하기','바꾼 설정으로 사진 고르기부터 새로 시작해요.'],
+  ['#apGo','바꾼 설정으로 이어서','위쪽 일정표에서 고른 단계로 가서 이어 해요. 고른 것이 없으면 멈춘 단계의 처음부터 해요. 메뉴가 열려 있는 동안 일정표를 누르면 고르기만 돼요.'],
+  ['#apStart','새 사진으로 시작','바꾼 설정으로 사진 고르기부터 새로 시작해요.'],
   ['#adminBtn','관리 버튼','3초 누르면 교사 모드가 켜지고 수업이 멈춰요. 켜져 있을 때 한 번 누르면 바꾼 설정으로, 멈췄던 단계의 처음부터 다시 해요.']
 ];
 let coachEl=null;
@@ -1008,6 +1011,7 @@ function setAdmin(on){
   S.admin=on; document.body.classList.toggle('admin',on);
   $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 한 번 누르기':'교사 모드: 3초 동안 누르기');
   $('abLabel').textContent = on ? '심' : 'charum';
+  S.pick=null; markPick();
   if(on){ pauseLesson(); openPanel(); }
   else { closeCoach(); restartCurrentStage(); }
   requestAnimationFrame(refit);
@@ -1046,7 +1050,17 @@ function setSchedule(stageKey){
   const idx=STAGES.findIndex(s=>s.key===stageKey);
   const ready=S.shapes.length>0;
   $('schedule').innerHTML=STAGES.map((s,i)=>`<li class="${i===idx?'now':i<idx?'done':''}">${i===idx?'<span class="now-tag">지금</span>':''}<button class="stage-btn" type="button" data-k="${s.key}" ${s.key!=='photo'&&!ready?'disabled':''}>${s.icon}<span class="lbl">${s.label}</span></button></li>`).join('');
-  $('schedule').querySelectorAll('.stage-btn').forEach(b=>b.onclick=()=>{ const k=b.dataset.k; leaveAdminQuiet(); goStage(k); });
+  $('schedule').querySelectorAll('.stage-btn').forEach(b=>b.onclick=()=>{ const k=b.dataset.k;
+    if(S.admin){ S.pick=S.pick===k?null:k; markPick(); return; }   /* 교사 모드: 고르기만, 실행은 "바꾼 설정으로 이어서" */
+    leaveAdminQuiet(); goStage(k); });
+  markPick();
+}
+function markPick(){ document.querySelectorAll('#schedule .stage-btn').forEach(b=>b.classList.toggle('picked', !!S.admin && b.dataset.k===S.pick)); }
+/* 바꾼 설정으로 이어서: 고른 단계가 있으면 그 단계로, 없으면 멈춘 단계의 처음부터 (메뉴 닫고 전체 화면) */
+function applyPick(){
+  const k=S.pick; S.pick=null; markPick();
+  if(k){ leaveAdminQuiet(); goStage(k); if(S.stage&&S.view!=='photo') goFull(); return; }
+  setAdmin(false); if(S.stage&&S.view!=='photo') goFull();
 }
 /* 교사 모드: 위 메뉴로 단계 이동 */
 function goStage(k){
