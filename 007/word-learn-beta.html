@@ -1615,7 +1615,7 @@ async function doItem(it, run) {
 }
 
 /* ---------- 바른바탕(학교안심 바른바탕 B) ----------
-   붓이 쓰는 동안은 획 글자(붓을 정확히 따라 나타남), 다 쓰면 같은 자리에서 천천히 바른바탕 글자로 바뀜.
+   붓(보기·도와주기)이 쓴 획 글자는 그대로 둠. 보기의 여러 글꼴 가운데 첫 번째가 바른바탕.
    혼자 따라 쓰기의 흐린 글자와 혼자 보고 쓰기의 본보기는 바른바탕 */
 const GLYPH_FONT = 'BareonB', GF = 100;
 const GlyphFont = {
@@ -2097,7 +2097,6 @@ async function stageTrace(w, run) {
   await firstInstr;
   R.trace = null;
   guides.forEach(g => { g.style.transition = 'opacity .5s'; g.style.opacity = 0; });
-  if (GL) await toGlyph(L, scene ? col : '#26324A', run);
   const topS = Math.min(H * 0.24, W * 0.28);
   if (scene) { await tween(350, t => pen.style.opacity = 1 - t, run); hidePen(); pen.classList.remove('crayon'); pen.style.opacity = 1; }
   else await movePen(W / 2, H * 0.17, topS, 700, run);
