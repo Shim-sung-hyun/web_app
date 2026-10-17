@@ -551,11 +551,15 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
  <div id="dots"></div>
 </div>
 <img id="pen" class="hidden" alt="">
-<div id="brush"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
- <line x1="40" y1="60" x2="94" y2="6" stroke="#B9814B" stroke-width="10" stroke-linecap="round"/>
- <line x1="40" y1="60" x2="94" y2="6" stroke="#D9A46C" stroke-width="4" stroke-linecap="round" transform="translate(-2,-2)"/>
- <line x1="29" y1="71" x2="43" y2="57" stroke="#9AA3AE" stroke-width="14" stroke-linecap="round"/>
- <path d="M3 97 C9 84 17 74 26 66 L34 74 C26 83 16 91 3 97 Z" fill="#26324A"/>
+<div id="brush"><svg viewBox="0 0 100 100" width="100%" height="100%" overflow="visible" aria-hidden="true">
+ <g transform="rotate(45 50 50)">
+  <rect x="43" y="-14" width="14" height="17" rx="3" fill="#EF8E8E" stroke="#B85C5C" stroke-width="1.5"/>
+  <rect x="42.5" y="2" width="15" height="9" fill="#C9CDD3" stroke="#8D939B" stroke-width="1.5"/>
+  <rect x="43" y="10" width="14" height="84" fill="#F4C430" stroke="#B88A10" stroke-width="1.5"/>
+  <line x1="50" y1="11" x2="50" y2="93" stroke="#E0AE1C" stroke-width="2"/>
+  <path d="M43 94 L57 94 L52.5 108.5 L47.5 108.5 Z" fill="#EAC795" stroke="#B88A50" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M47.5 108.5 L52.5 108.5 L50 118 Z" fill="#26324A"/>
+ </g>
 </svg></div>
 
 <div class="tbar hidden" id="tTop">
@@ -1829,9 +1833,9 @@ async function stageLook(w, run) {
   spans.forEach(sp => sp.classList.add('hide'));
   await wait(450, run);
   /* 동그라미는 글자 칸 안에 넣는다: 글자가 나올 바로 그 자리, 그 크기. 누르면 동그라미가 줄며 그 자리의 글자로 바뀜 */
+  const dotSize = Math.min(...spans.map((sp, i) => { const ch = sp.querySelector('.ch'); return chars[i] === ' ' ? 1e9 : Math.min(ch.offsetWidth, ch.offsetHeight); })) * 0.92;   /* offset 크기는 숨김(scale)의 영향을 받지 않음 */
   const dots = spans.map((sp, i) => {
-    const ch = sp.querySelector('.ch');          /* offset 크기는 숨김(scale)의 영향을 받지 않음 */
-    const dotS = Math.min(ch.offsetWidth, ch.offsetHeight) * 0.92;
+    const dotS = dotSize;
     const d = document.createElement('div'); d.className = 'sdot' + (i === 0 ? ' next' : '');
     Object.assign(d.style, { width: dotS + 'px', height: dotS + 'px' });
     if (chars[i] === ' ') d.style.display = 'none';
@@ -1967,7 +1971,8 @@ async function stageTrace(w, run) {
   const { ws, k, svg, svgX, svgY, toScr } = L;
   const GL = L.glyph;
   const guides = ws.strokes.map(st => strokePath(svg, st.pts, 'guide' + (isFocus(st) ? ' focus' : ''), 10));
-  const hit = document.createElement('div'); hit.id = 'traceHit'; hit.style.cursor = 'pointer'; stage.appendChild(hit);
+  const hit = document.createElement('div'); hit.id = 'traceHit'; hit.style.cursor = 'grab'; stage.appendChild(hit);
+  hit.addEventListener('pointerdown', () => { hit.style.cursor = 'grabbing'; }); ['pointerup', 'pointercancel'].forEach(ev => hit.addEventListener(ev, () => { hit.style.cursor = 'grab'; }));
 
   let penSize = Math.max(44, 100 * k * 0.14);
   const url = await Pics.url(w); alive(run);
