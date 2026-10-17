@@ -1266,6 +1266,8 @@ function cutBackground(ctx, W, H) {
    ========================================================= */
 /* 말 빠르기: 기본(0.92 / 0.78)의 98% — 선생님 요청 */
 const G_RATE = 0.90;
+const SAY_FIX = { '색연필': '생년필', '나뭇잎': '나문닙', '담요': '담뇨' };   /* 표준 발음: [생년필] [나문닙] [담뇨] */
+const sayFix = t => t.replace(/색연필|나뭇잎|담요/g, m => SAY_FIX[m]);
 const Speech = {
   ctx: null, gain: null, buf: new Map(), gen: 0, cur: null, fellBack: false, devVoice: null,
   initAudio() {
@@ -1276,6 +1278,7 @@ const Speech = {
   },
   engine() { return this.fellBack ? 'device' : S.engine; },
   chunks(text) {
+    text = sayFix(text);
     const out = [];
     text.split(/(?<=[.?!])\s+/).forEach(sen => {
       const parts = sen.split(/(?<=,)\s*/);
