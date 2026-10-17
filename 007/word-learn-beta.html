@@ -1369,7 +1369,7 @@ const Speech = {
     if (!this.devVoice) this.pickDevVoice();
     await new Promise(res => {
       try {
-        const u = new SpeechSynthesisUtterance((/Windows/i.test(navigator.userAgent) ? ', ' : '') + t);   /* 윈도우: 첫소리 잘림 막기 */
+        t = t.replace(/[.,!]+$/, ''); const u = new SpeechSynthesisUtterance((/Windows/i.test(navigator.userAgent) ? ', ' : '') + t);   /* 윈도우: 첫소리 잘림 막기 */
         u.lang = 'ko-KR'; u.rate = 0.76; u.volume = 0.8; if (this.devVoice) u.voice = this.devVoice;
         u.onend = res; u.onerror = res;
         speechSynthesis.speak(u);
