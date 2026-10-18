@@ -2495,7 +2495,7 @@ async function trial(ans, run) {
     }
     box.appendChild(d); return d;
   });
-  await wait(30, run); els.forEach(e => e.style.opacity = 1);
+  await wait(30, run); if (!feed) els.forEach(e => e.style.opacity = 1);   /* 먹이 주기: 먹이가 먼저 자리 잡은 뒤 동물이 제자리에서 나타남 */
   const it = gq('#item'); const sz = Math.min(H * 0.24, W * 0.24, 230);
   it.className = ''; it.style.left = ''; it.style.transition = 'none'; it.style.opacity = 1; it.style.width = sz + 'px'; it.style.height = sz + 'px';
   it.style.transform = 'translate(-50%,-120%)';
@@ -2510,7 +2510,10 @@ async function trial(ans, run) {
   await wait(40, run);
   it.style.transition = ''; it.style.transform = `translate(-50%, ${H * 0.12}px)`;
   await wait(2700, run);
-  if (feed) els.forEach(e => e.querySelector('img').src = pose(e.dataset.w, 'open'));
+  if (feed) {
+    els.forEach(e => { e.querySelector('img').src = pose(e.dataset.w, 'open'); e.style.transition = 'opacity .5s ease'; e.style.opacity = 1; });
+    await wait(900, run);   /* 다 나타나 멈춘 뒤에 이름을 말함 */
+  }
   const speakCue = () => Speech.say(ans).catch(() => {});
   if (feed || G.lv !== 3) speakCue();
   await waitTap(els, ans, lv, run, speakCue, (G.lv === 3 && !feed) ? 3000 : lv.again, (e, hinted) => success(e, ans, feed, run));
