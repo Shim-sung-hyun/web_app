@@ -181,7 +181,8 @@ button{font-family:inherit;cursor:pointer}
 #aqua.on{opacity:.6;background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.75) 0 12%,rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 85%,#7FA9AE 0,#3D5459 50%,#20302F 100%)}
 #aqua.on span{font-family:Jua,sans-serif;font-size:17px;color:#9FF3F5;text-shadow:0 0 6px rgba(159,243,245,.8)}
 #aqua .ring{position:absolute;inset:-4px;border-radius:50%;pointer-events:none;opacity:0}
-#aqua.holding .ring{opacity:1;background:conic-gradient(rgba(159,243,245,.9) var(--p,0%),transparent 0);-webkit-mask:radial-gradient(circle,transparent 23px,#000 24px);mask:radial-gradient(circle,transparent 23px,#000 24px)}
+#aqua.holding{opacity:1}
+#aqua.holding .ring{opacity:1;background:conic-gradient(#FF7A00 var(--p,0%),transparent 0);-webkit-mask:radial-gradient(circle,transparent 23px,#000 24px);mask:radial-gradient(circle,transparent 23px,#000 24px)}
 
 /* 도움말 둘러보기 */
 #tour{position:fixed;inset:0;z-index:80;display:none}
@@ -3023,6 +3024,39 @@ $('#picFile').addEventListener('change', async e => {
 document.addEventListener('visibilitychange', () => { if (!document.hidden) Speech.initAudio(); });
 Teacher.init(); renderStudents(); updateRecMark(); renderJamo(); autoPick(true); renderWordChips();
 window.__app = { S, R, Rec, wordStrokes, syllableStrokes, parseTxt, toTxt, poolWords, difficulty };
+</script>
+<script id="holdBubble">
+/* 관리 버튼을 3초 누르는 동안: 손가락에 가리지 않게 버튼 왼쪽 위에 큰 원(차오름 + 3·2·1)을 보여 줌. 손을 떼면 바로 사라짐 */
+(function(){
+  const btn = document.querySelector('#adminBtn, #aqua'); if (!btn) return;
+  const st = document.createElement('style');
+  st.textContent = '.hb-bub{position:fixed;width:88px;height:88px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.28);z-index:2147483000;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .12s}'
+    + '.hb-bub.show{opacity:1}'
+    + '.hb-bub i{position:absolute;inset:5px;border-radius:50%;background:conic-gradient(#FF7A00 var(--hp,0%),#FFE2C2 0);-webkit-mask:radial-gradient(circle,transparent 29px,#000 30px);mask:radial-gradient(circle,transparent 29px,#000 30px)}'
+    + '.hb-bub b{position:relative;font:400 36px/1 Jua,"Noto Sans KR",sans-serif;color:#1d2133}';
+  document.head.appendChild(st);
+  const bub = document.createElement('div'); bub.className = 'hb-bub'; bub.innerHTML = '<i></i><b></b>';
+  document.body.appendChild(bub);
+  let down = false, raf = 0, shown = false;
+  const prog = () => { const v = getComputedStyle(btn).getPropertyValue('--p').trim(); const n = parseFloat(v) || 0; return /%$/.test(v) ? n / 100 : n; };
+  const hide = () => { if (!shown) return; shown = false; bub.classList.remove('show'); btn.style.opacity = ''; };
+  const loop = () => {
+    const p = prog();
+    if (down && p > 0.02 && p < 1) {
+      const r = btn.getBoundingClientRect(), S = 88;
+      let x = r.left + r.width / 2 - S / 2 - 78, y = r.top - S - 34;
+      x = Math.max(8, Math.min(innerWidth - S - 8, x)); y = Math.max(8, y);
+      bub.style.left = x + 'px'; bub.style.top = y + 'px';
+      bub.style.setProperty('--hp', (p * 100) + '%');
+      bub.lastChild.textContent = Math.max(1, Math.ceil(3 * (1 - p)));
+      if (!shown) { shown = true; bub.classList.add('show'); btn.style.opacity = '1'; }
+    } else hide();
+    if (down) raf = requestAnimationFrame(loop); else hide();
+  };
+  btn.addEventListener('pointerdown', () => { down = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); }, true);
+  const up = () => { down = false; cancelAnimationFrame(raf); hide(); };
+  ['pointerup', 'pointercancel', 'blur'].forEach(t => addEventListener(t, up, true));
+})();
 </script>
 </body>
 </html>

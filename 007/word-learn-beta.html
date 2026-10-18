@@ -181,7 +181,8 @@ button{font-family:inherit;cursor:pointer}
 #aqua.on{opacity:.6;background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.75) 0 12%,rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 85%,#7FA9AE 0,#3D5459 50%,#20302F 100%)}
 #aqua.on span{font-family:Jua,sans-serif;font-size:17px;color:#9FF3F5;text-shadow:0 0 6px rgba(159,243,245,.8)}
 #aqua .ring{position:absolute;inset:-4px;border-radius:50%;pointer-events:none;opacity:0}
-#aqua.holding .ring{opacity:1;background:conic-gradient(rgba(159,243,245,.9) var(--p,0%),transparent 0);-webkit-mask:radial-gradient(circle,transparent 23px,#000 24px);mask:radial-gradient(circle,transparent 23px,#000 24px)}
+#aqua.holding{opacity:1}
+#aqua.holding .ring{opacity:1;background:conic-gradient(#FF7A00 var(--p,0%),transparent 0);-webkit-mask:radial-gradient(circle,transparent 23px,#000 24px);mask:radial-gradient(circle,transparent 23px,#000 24px)}
 
 /* 도움말 둘러보기 */
 #tour{position:fixed;inset:0;z-index:80;display:none}
@@ -435,8 +436,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
    <details class="more" id="voiceBox">
     <summary>목소리 <span class="sum" id="voiceSum"></span></summary>
     <div class="row">
-     <div class="seg" id="engSeg"><button data-v="base">기본 목소리 (키 없이)</button><button data-v="google">Google 음성 (키)</button><button data-v="device">기기 목소리</button></div>
-     <div class="note" id="engNote" style="margin-top:6px"></div>
+     <div class="seg" id="engSeg"><button data-v="base">기본 목소리</button><button data-v="google">Google 음성 (키)</button><button data-v="device">기기 목소리</button></div>
      <div class="seg" id="voiceSeg" style="margin-top:6px"><button data-v="Leda">밝고 귀여운</button><button data-v="Aoede">산뜻하고 부드러운</button><button data-v="Kore">또렷하고 씩씩한</button></div>
      <div class="row keybar" style="margin:10px 0 4px"><button class="kr-open" data-kr="1" type="button" id="krBoth">📱 휴대폰으로 받기</button><span class="note">전자칠판이라면 휴대폰에서 Google 음성 키를 보내요.</span></div>
      <details class="keyhelp">
@@ -1306,7 +1306,7 @@ const Speech = {
     const out = [];
     text.split(/(?<=[.?!])\s+/).forEach(sen => {
       const parts = sen.split(/(?<=,)\s*/);
-      parts.forEach((p, i) => { p = p.trim(); if (p) out.push({ t: p, pause: i < parts.length - 1 ? 220 : 320 }); });
+      parts.forEach((p, i) => { p = p.trim(); if (oneSyl(p)) p = p.replace(/[.,!?]?$/, '.'); if (p) out.push({ t: p, pause: i < parts.length - 1 ? 220 : 320 }); });
     });
     return out;
   },
@@ -3048,13 +3048,12 @@ function segInit(id, key, onChange) {
 }
 function paintEngine() {
   $('#voiceSeg').style.display = S.engine === 'google' ? '' : 'none'; paintVoiceSum();
-  $('#engNote').textContent = S.engine === 'base' ? '미리 만들어 둔 Google 목소리(밝은)예요. 키도 결제도 필요 없어요. "내가 넣은 낱말"은 키가 있으면 같은 Google 목소리로, 없으면 기기 목소리로 말해요.'
-    : S.engine === 'google' ? 'Cloud 키로 그때그때 만들어요. 목소리를 고를 수 있어요(밝은 목소리는 미리 만든 소리를 함께 써요).'
-    : '이 기기(브라우저)의 목소리예요. 기기마다 소리가 달라요.';
+  const g = S.engine === 'google';
+  ['#voiceBox .keybar', '#voiceBox .keyhelp', '#voiceBox .keyline', '#voiceBox .keynote'].forEach(q => document.querySelectorAll(q).forEach(e => { e.style.display = g ? '' : 'none'; }));
 }
 function paintVoiceSum() {
   const VN = { Leda: '밝고 귀여운', Aoede: '산뜻하고 부드러운', Kore: '또렷하고 씩씩한' };
-  $('#voiceSum').textContent = S.engine === 'base' ? '기본 목소리 (키 없이)' : S.engine === 'google' ? 'Google 음성 · ' + VN[S.voice] + (S.ttsKey ? '' : ' · 키를 넣어 주세요') : '기기 목소리';
+  $('#voiceSum').textContent = S.engine === 'base' ? '기본 목소리' : S.engine === 'google' ? 'Google 음성 · ' + VN[S.voice] + (S.ttsKey ? '' : ' · 키를 넣어 주세요') : '기기 목소리';
 }
 function paintMoreSum() {
   $('#moreSum').textContent = '놀이 ' + (S.games === 'on' ? '하기' : '안 함') + ' · ' + WMODE_TXT[S.writeMode] + ' · ' + (S.glyph === 'stroke' ? '획 글자' : '바른바탕');
@@ -3523,6 +3522,39 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) Spee
 })();
 window.__app = { get G() { return G; }, S, R, Rec, Prog, wordStrokes, syllableStrokes, parseTxt, poolWords, difficulty, bundlesOf, curLevel, setLevel, BOOK };
 
+</script>
+<script id="holdBubble">
+/* 관리 버튼을 3초 누르는 동안: 손가락에 가리지 않게 버튼 왼쪽 위에 큰 원(차오름 + 3·2·1)을 보여 줌. 손을 떼면 바로 사라짐 */
+(function(){
+  const btn = document.querySelector('#adminBtn, #aqua'); if (!btn) return;
+  const st = document.createElement('style');
+  st.textContent = '.hb-bub{position:fixed;width:88px;height:88px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.28);z-index:2147483000;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .12s}'
+    + '.hb-bub.show{opacity:1}'
+    + '.hb-bub i{position:absolute;inset:5px;border-radius:50%;background:conic-gradient(#FF7A00 var(--hp,0%),#FFE2C2 0);-webkit-mask:radial-gradient(circle,transparent 29px,#000 30px);mask:radial-gradient(circle,transparent 29px,#000 30px)}'
+    + '.hb-bub b{position:relative;font:400 36px/1 Jua,"Noto Sans KR",sans-serif;color:#1d2133}';
+  document.head.appendChild(st);
+  const bub = document.createElement('div'); bub.className = 'hb-bub'; bub.innerHTML = '<i></i><b></b>';
+  document.body.appendChild(bub);
+  let down = false, raf = 0, shown = false;
+  const prog = () => { const v = getComputedStyle(btn).getPropertyValue('--p').trim(); const n = parseFloat(v) || 0; return /%$/.test(v) ? n / 100 : n; };
+  const hide = () => { if (!shown) return; shown = false; bub.classList.remove('show'); btn.style.opacity = ''; };
+  const loop = () => {
+    const p = prog();
+    if (down && p > 0.02 && p < 1) {
+      const r = btn.getBoundingClientRect(), S = 88;
+      let x = r.left + r.width / 2 - S / 2 - 78, y = r.top - S - 34;
+      x = Math.max(8, Math.min(innerWidth - S - 8, x)); y = Math.max(8, y);
+      bub.style.left = x + 'px'; bub.style.top = y + 'px';
+      bub.style.setProperty('--hp', (p * 100) + '%');
+      bub.lastChild.textContent = Math.max(1, Math.ceil(3 * (1 - p)));
+      if (!shown) { shown = true; bub.classList.add('show'); btn.style.opacity = '1'; }
+    } else hide();
+    if (down) raf = requestAnimationFrame(loop); else hide();
+  };
+  btn.addEventListener('pointerdown', () => { down = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); }, true);
+  const up = () => { down = false; cancelAnimationFrame(raf); hide(); };
+  ['pointerup', 'pointercancel', 'blur'].forEach(t => addEventListener(t, up, true));
+})();
 </script>
 </body>
 </html>
