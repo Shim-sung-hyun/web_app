@@ -1271,6 +1271,24 @@ function cutBackground(ctx, W, H) {
    ========================================================= */
 /* 말 빠르기: 기본(0.92 / 0.78)의 98% — 선생님 요청 */
 const G_RATE = 0.90;
+const oneSyl = t => /^[가-힣][.,!?]?$/.test(t);
+/* 소리에서 마지막 마디(말 덩어리)만 잘라 냄. 못 찾으면 null */
+function lastPhrase(b, ctx) {
+  try {
+    const d = b.getChannelData(0), sr = b.sampleRate, fr = Math.round(sr * 0.02), n = Math.floor(d.length / fr), rms = new Float32Array(n);
+    let mx = 0;
+    for (let i = 0; i < n; i++) { let s = 0; for (let j = i * fr; j < (i + 1) * fr; j++) s += d[j] * d[j]; rms[i] = Math.sqrt(s / fr); if (rms[i] > mx) mx = rms[i]; }
+    const thr = Math.max(mx * 0.08, 0.004), gs = [];
+    for (let i = 0; i < n; i++) if (rms[i] > thr) { let j = i; while (j < n && rms[j] > thr) j++; if (gs.length && (i - gs[gs.length - 1][1]) * 0.02 < 0.15) gs[gs.length - 1][1] = j; else gs.push([i, j]); i = j; }
+    const g = gs.filter(x => (x[1] - x[0]) * 0.02 >= 0.08);
+    if (g.length < 2) return null;
+    const [a, z] = g[g.length - 1], prevEnd = g[g.length - 2][1];
+    if ((a - prevEnd) * 0.02 < 0.25) return null;
+    const s0 = Math.max(0, Math.round((a * 0.02 - 0.05) * sr)), e0 = Math.min(d.length, Math.round((z * 0.02 + 0.10) * sr));
+    const out = ctx.createBuffer(1, e0 - s0, sr); out.getChannelData(0).set(d.subarray(s0, e0));
+    return out;
+  } catch (e) { return null; }
+}
 const quietBuf = b => { try { const d = b.getChannelData(0); let m = 0; for (let i = 0; i < d.length; i += 4) { const v = Math.abs(d[i]); if (v > m) m = v; } return m < 0.03; } catch (e) { return false; } };
 const SAY_FIX = { '색연필': '생년필', '나뭇잎': '나문닙', '담요': '담뇨', '물고기': '물꼬기', '눈사람': '눈싸람', '빵집': '빵찝', '밀가루': '밀까루', '빨대': '빨때', '치과': '치꽈', '비빔밥': '비빔빱', '줄넘기': '줄럼끼', '열쇠': '열쐬', '알림장': '알림짱', '경찰서': '경찰써', '신발주머니': '신발쭈머니', '김밥': '김빱' };   /* 표준 발음대로 소리 내기(화면 글자는 그대로) */
 const sayFix = t => t.replace(/신발주머니|색연필|나뭇잎|물고기|눈사람|밀가루|비빔밥|줄넘기|알림장|경찰서|담요|빵집|빨대|치과|열쇠|김밥/g, m => SAY_FIX[m]);
@@ -1292,7 +1310,7 @@ const Speech = {
     });
     return out;
   },
-  key(t, v) { return 'g|' + (v || S.voice) + '|' + G_RATE + '|' + t; },
+  key(t, v) { return 'g|' + (v || S.voice) + '|' + G_RATE + '|' + t + (oneSyl(t) ? '|s' : ''); },
   /* 쓰는 Google 목소리: 기본 목소리 모드는 늘 Leda(미리 만든 소리와 같은 목소리) */
   gVoice() { return S.engine === 'base' ? 'Leda' : S.voice; },
   /* 미리 만든 소리: voice/leda/index.json 의 목록(낱말·문장의 SHA-1 앞 16자리) */
@@ -1331,7 +1349,7 @@ const Speech = {
       if (!ab) {
         const r = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': S.ttsKey },
-          body: JSON.stringify({ input: { text: t }, voice: { languageCode: 'ko-KR', name: 'ko-KR-Chirp3-HD-' + v }, audioConfig: { audioEncoding: 'LINEAR16', sampleRateHertz: 24000, speakingRate: G_RATE } })
+          body: JSON.stringify({ input: { text: oneSyl(t) ? '글자. ' + t.replace(/[.,!?]$/, '') + '.' : t }, voice: { languageCode: 'ko-KR', name: 'ko-KR-Chirp3-HD-' + v }, audioConfig: { audioEncoding: 'LINEAR16', sampleRateHertz: 24000, speakingRate: G_RATE } })
         });
         if (!r.ok) { const e = new Error('tts ' + r.status); e.status = r.status; e.body = await r.text().catch(() => ''); throw e; }
         const j = await r.json();
@@ -1341,7 +1359,8 @@ const Speech = {
         IDB.set('tts', k, ab.slice(0));
       }
       this.initAudio();
-      return await new Promise((res, rej) => this.ctx.decodeAudioData(ab.slice(0), res, rej));
+      const dec = await new Promise((res, rej) => this.ctx.decodeAudioData(ab.slice(0), res, rej));
+      return oneSyl(t) ? (lastPhrase(dec, this.ctx) || dec) : dec;
     })();
     this.buf.set(k, p);
     p.catch(() => this.buf.delete(k));
