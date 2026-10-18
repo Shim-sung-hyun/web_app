@@ -2600,7 +2600,13 @@ async function picToWord(el, ans, run) {
   const big = Math.min(H * 0.42, W * 0.42), cx = W / 2, cy = H * 0.42;
   Object.assign(pic.style, { left: (cx - big / 2) + 'px', top: (cy - big / 2) + 'px', width: big + 'px', height: big + 'px' });
   await wait(520, run);
-  if (fd) { await wait(250, run); fd.style.opacity = 0; await wait(400, run); }
+  if (fd) {   /* 먹는 것처럼: 두 번에 나눠 입 쪽으로 작아지며 사라짐 */
+    await wait(200, run);
+    fd.style.transition = 'transform .22s ease-in, opacity .3s ease'; fd.style.transform = 'scale(.62)';
+    await wait(300, run);
+    fd.style.transform = 'scale(.15)'; fd.style.opacity = 0;
+    await wait(380, run);
+  }
   const chars = [...ans];
   const fs = Math.min(big * 0.62, W * 0.8 / chars.length);
   const word = document.createElement('div'); word.className = 'rv-word'; word.style.fontSize = fs + 'px';
