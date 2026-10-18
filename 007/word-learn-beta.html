@@ -1806,7 +1806,7 @@ async function stageLook(w, run) {
   const scene = isScene(w), col = scene ? CRAYON[w] : null;
   clearStage();
   const W = innerWidth, H = innerHeight;
-  const L = layoutWord(w, 0.62, 0.4);
+  const L = layoutWord(w, 0.67, 0.4);
   const { ws, k, svg, svgX, svgY, toScr } = L;
   const GL = L.glyph;
   const mk = st => { const q = strokePath(svg, st.pts, isFocus(st) ? 'focus' : '', 7); if (scene && !isFocus(st)) q.style.stroke = col; return q; };
@@ -1827,9 +1827,9 @@ async function stageLook(w, run) {
   let from = 0;
   if (scene) {
     /* 장면 그림: 그림은 위로 올라가 남고, 그 색 크레파스가 글자를 씀 */
-    await movePen(W / 2, H * 0.2, topS, 700, run);
+    await movePen(W / 2, H * 0.27, topS, 700, run);
     const card = document.createElement('img'); card.className = 'scenecard'; card.src = url; card.alt = '';
-    Object.assign(card.style, { left: (W / 2 - topS / 2) + 'px', top: (H * 0.2 - topS / 2) + 'px', width: topS + 'px', height: topS + 'px' });
+    Object.assign(card.style, { left: (W / 2 - topS / 2) + 'px', top: (H * 0.27 - topS / 2) + 'px', width: topS + 'px', height: topS + 'px' });
     stage.appendChild(card);
     penSize *= 1.7;
     pen.style.opacity = 0; setPenSrc(crayonURL(col)); pen.classList.add('crayon');
@@ -1863,7 +1863,7 @@ async function stageLook(w, run) {
   const pl = stage.querySelector('.picletters'); if (pl) pl.remove();
 
   if (scene) { await tween(350, t => pen.style.opacity = 1 - t, run); hidePen(); pen.classList.remove('crayon'); pen.style.opacity = 1; }
-  else await movePen(W / 2, H * 0.2, topS, 800, run);
+  else await movePen(W / 2, H * 0.27, topS, 800, run);
   await say(w, run);
   await wait(S.focus ? 900 : 300, run);
 
@@ -1969,6 +1969,7 @@ async function stageChoice(st, w, run) {
   const opts = shuffle([w, ...others]);
   choices.style.gap = gapX + 'px';
   if (grid) Object.assign(choices.style, { flexWrap: 'wrap', width: (cardW * 2 + gapX + 4) + 'px', margin: '0 auto', bottom: '5vh', rowGap: (H * 0.02) + 'px' });
+  else if (W < H) { prompt.style.top = '14vh'; choices.style.bottom = Math.max(H * 0.07, H - H * 0.58 - cardH) + 'px'; }   /* 세로 화면: 견본과 보기를 가깝게, 전체를 가운데로 */
   const cf = opts.map((_, i) => randFonts(1, targetFont ? [targetFont.f] : null)[0]);
   const cards = [];
   for (let i = 0; i < opts.length; i++) {
