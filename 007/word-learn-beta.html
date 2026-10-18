@@ -464,6 +464,11 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
       <div class="seg" id="gameSeg"><button data-v="on">하기</button><button data-v="off">하지 않기</button></div>
       <div class="note" id="gameNote"></div>
      </div>
+     <div class="row">
+      <label class="t">상 놀이 (비눗방울)</label>
+      <div class="seg" id="bubbleSeg"><button data-v="on">하기</button><button data-v="off">하지 않기</button></div>
+      <div class="note">묶음 끝 놀이를 마치면 비눗방울을 터뜨려요(수준 1·2·3: 1분·1분 30초·2분, 다 차면 먼저 끝). 기록은 남기지 않아요.</div>
+     </div>
           <div class="row">
       <label class="t">쓰기</label>
       <div class="seg" id="writeSeg"><button data-v="guide">획 순서 도와주기</button><button data-v="trace">혼자 따라 쓰기</button><button data-v="copy">혼자 보고 쓰기</button></div>
@@ -1131,6 +1136,7 @@ const S = {
   writeMode: LS.get('writeMode', 'guide'),
   picLetters: LS.get('picLetters', 'on'),
   games: LS.get('games', 'on'),
+  bubble: LS.get('bubble', 'on'),
   glyph: LS.get('glyph', 'bareon'),   /* 쓰기 글자 모양: bareon 바른바탕 · stroke 획 글자 */
   level: LS.get('level', 1)
 };
@@ -2355,7 +2361,8 @@ const STICKERS = [
   `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 88C20 66 6 50 6 32 6 18 17 8 30 8c9 0 16 5 20 12 4-7 11-12 20-12 13 0 24 10 24 24 0 18-14 34-44 56z" fill="#ff8fa8" stroke="#c9506c" stroke-width="5" stroke-linejoin="round"/><path d="M24 26c3-5 8-7 12-6" stroke="#ffe0e7" stroke-width="5" stroke-linecap="round" fill="none"/></svg>`
 ];
 const GLV = { 1: { n: 2, hint: 3000, again: 7000 }, 2: { n: 3, hint: 6000, again: 8000 }, 3: { n: 4, hint: 0, again: 6000 } };
-const GTRIALS = 8;
+const GMAX = 10;   /* 놀이 횟수 = 배운 낱말 수(수준 1·2·3 → 4·6·10번), 많아도 10번 */
+const KO_N = n => ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열'][n] || String(n);
 const GAME_NAMES = { feed: '먹이 주기', basket: '바구니 담기', body: '스티커 붙이기' };
 /* 낱말에 맞는 놀이: 모두 동물이면 먹이 주기, 모두 몸이면 스티커 붙이기, 아니면 바구니 담기 */
 function gameFor(words) {
@@ -2371,7 +2378,7 @@ const MOUTH = {byeongari:[0.38,0.44],chamsae:[.88,.26],dak:[.83,.23],daramjwi:[0
 const pose = (w, k) => GBASE + 'feed/animal/' + PICS[w] + '_' + k + '.webp';
 const BODYIMG = GBASE + 'body/body.webp';
 const gplan = words => {
-  let seq = []; while (seq.length < GTRIALS) seq = seq.concat(shuffle(words)); seq = seq.slice(0, GTRIALS);
+  let seq = shuffle(words).slice(0, GMAX);   /* 낱말마다 한 번씩 */
   for (let i = 1; i < seq.length; i++) if (seq[i] === seq[i - 1]) { const j = seq.findIndex((x, k) => k > i && x !== seq[i] && x !== seq[i - 1]); if (j > 0) [seq[i], seq[j]] = [seq[j], seq[i]]; }
   return seq;
 };
@@ -2395,7 +2402,8 @@ function clearPlay() {
 function hideGame() { clearPlay(); GM.classList.add('hidden'); $('#dots').style.display = ''; }
 function gameTexts(words, kind) {
   const t = ['동물에게 먹이를 줘요.', '스티커를 붙여요.', '바구니에 담아요.', '잘했어요.', '맞아요.', '좋아요.', '바로 그거예요.'];
-  for (let n = 0; n <= GTRIALS; n++) t.push(`별을 ${['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟'][n] || n} 개 모았어요.`);
+  for (let n = 0; n <= GMAX; n++) t.push(`별을 ${KO_N(n)} 개 모았어요.`);
+  t.push('비눗방울을 터뜨려요.');
   words.forEach(w => {
     t.push(w, eul(w) + ' 바구니에 담았어요.', w + '에 스티커를 붙였어요.'); [...w].forEach(c => t.push(c));
     if (kind === 'feed') (FEED[w] || []).forEach(f => ['잘 먹어요.', '맛있게 먹어요.', '냠냠 먹어요.'].forEach(e => t.push(`${ga(w)} ${eul(FOODKO[f] || '먹이')} ${e}`)));
@@ -2417,18 +2425,20 @@ async function runGame(words, run) {
   await Promise.all(urls.map(u => new Promise(r => { const i = new Image(); i.onload = i.onerror = r; i.src = u; }))); alive(run);
   clearStage(); clearPlay();
   const pics = {}; for (const w of words) pics[w] = await Pics.url(w);
-  G = { words, kind, lv, seq: gplan(words), i: 0, stars: 0, food: {}, said: {}, pics };
+  G = { words, kind, lv, seq: gplan(words), i: 0, stars: 0, food: {}, said: {}, pics }; G.n = G.seq.length;
   GM.classList.remove('hidden'); GM.classList.toggle('meadow', kind === 'feed');
   $('#dots').style.display = 'none';   /* 놀이 중에는 낱말 번호(1/4)를 감춤: 별과 겹치지 않게 */
-  gq('#stars').innerHTML = Array.from({ length: GTRIALS }, () => '<i><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.5l1.3-6.6L2.5 9.3l6.6-.8z" fill="#e7b53c" stroke="#9c7420" stroke-width="1"/></svg></i>').join('');
+  gq('#stars').innerHTML = Array.from({ length: G.n }, () => '<i><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.5l1.3-6.6L2.5 9.3l6.6-.8z" fill="#e7b53c" stroke="#9c7420" stroke-width="1"/></svg></i>').join('');
   await wait(500, run);
   await say(kind === 'feed' ? '동물에게 먹이를 줘요.' : kind === 'body' ? '스티커를 붙여요.' : '바구니에 담아요.', run);
   await wait(400, run);
-  while (G.i < GTRIALS) { await (kind === 'body' ? trialBody : trial)(G.seq[G.i], run); G.i++; }
+  while (G.i < G.n) { await (kind === 'body' ? trialBody : trial)(G.seq[G.i], run); G.i++; }
   await wait(500, run);
   gq('#doneMsg').textContent = `별 ${G.stars}개`; gq('#doneBox').classList.add('show');
   R.phase = 'done'; Teacher.refresh();
-  await say(`별을 ${['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟'][G.stars] || G.stars} 개 모았어요.`, run);
+  await say(`별을 ${KO_N(G.stars)} 개 모았어요.`, run);
+  /* 상 놀이: 비눗방울(선생님이 끌 수 있음) */
+  if (S.bubble !== 'off') { gq('#doneBox').classList.remove('show'); await wait(500, run); await bubbleGame(words, run); gq('#doneBox').classList.add('show'); }
   /* 학생이 고르는 단추 둘: 한 번 더(같은 놀이) · 다음(다음 묶음). 고르기 전에는 말하지 않음 */
   const row = document.createElement('div'); row.className = 'anrow gend';
   const mk = (cls, icon, label) => { const b = document.createElement('button'); b.className = 'anbtn ' + cls; b.innerHTML = `<span class="ic">${icon}</span><span>${label}</span>`; return b; };
@@ -2737,6 +2747,224 @@ async function bodySuccess(el, ans, run, L) {
   await say(n % 2 ? `${ans}에 스티커를 붙였어요.` : `${ans}. ${PR[(G.i + G.stars) % PR.length]}`, run);
   await labelToWord(el, ans, run, L.land ? L.area.x + L.area.w / 2 : innerWidth / 2);
   GM.querySelectorAll('#labels .tg').forEach(e => e.style.opacity = 0);
+}
+
+/* =========================================================
+   상 놀이: 비눗방울 톡톡
+   - 방울이 아래에서 떠올라(점점 빨리) 천장에 붙고, 천장은 조금씩 내려옴. 선까지 차거나 시간이 다 되면 끝(진 것 없음).
+   - 방울에는 오늘 배운 낱말 그림이 섞여 있음. 신호(수준 1 소리 · 2 소리+글자 · 3 글자)에 맞는 그림을 터뜨리면 상:
+     연속 1번 → 그 방울 둘레, 2번 → 가로·세로 중 더 많이 붙은 줄, 3번 이상 → 가로와 세로 모두. 다른 것은 그 방울만.
+   ========================================================= */
+const BUB_COL = [['#FFC2D4', '#F07EA2'], ['#FFDDB0', '#F2A34E'], ['#FFF0A6', '#E6C53A'], ['#BFF0CF', '#55C27F'], ['#BDE6FF', '#4FA9EA'], ['#DACBFF', '#9478EC']];
+const BLV = { 1: { t: 60, v0: 75, v1: 140, sp0: 1.8, sp1: 1.0, fall: 0.02 }, 2: { t: 90, v0: 90, v1: 190, sp0: 1.5, sp1: 0.8, fall: 0.025 }, 3: { t: 120, v0: 105, v1: 240, sp0: 1.3, sp1: 0.65, fall: 0.03 } };
+let BAC = null;
+function popSnd(big) {
+  if (!S.sound) return;
+  try {
+    BAC = BAC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = BAC.createOscillator(), g = BAC.createGain(), t = BAC.currentTime;
+    o.type = 'sine'; o.frequency.setValueAtTime(big ? 760 : 620, t); o.frequency.exponentialRampToValueAtTime(big ? 380 : 300, t + 0.08);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(big ? 0.06 : 0.04, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.11);
+    o.connect(g).connect(BAC.destination); o.start(t); o.stop(t + 0.12);
+  } catch (e) {}
+}
+async function bubbleGame(words, run) {
+  const lv = G.lv || R.lv || 1, P = BLV[lv] || BLV[1];
+  const W = innerWidth, H = innerHeight, dpr = Math.min(2, devicePixelRatio || 1);
+  ['#targets', '#item', '#ground', '#bodyStage', '#labels', '#reveal'].forEach(s => { const e = gq(s); if (e) { if (s === '#targets') e.innerHTML = ''; else if (s === '#item' || s === '#ground') e.style.opacity = 0; else e.remove(); } });
+  const box = document.createElement('div'); box.id = 'bub';
+  Object.assign(box.style, { position: 'absolute', inset: 0, zIndex: 30, background: 'linear-gradient(#EEF3FF 0%,#F7F3FB 60%,#FBF6EF 100%)', touchAction: 'none' });
+  const cv = document.createElement('canvas'); cv.width = W * dpr; cv.height = H * dpr; Object.assign(cv.style, { position: 'absolute', inset: 0, width: W + 'px', height: H + 'px' });
+  const hdr = Math.max(64, H * 0.1);
+  const ban = document.createElement('div');
+  Object.assign(ban.style, { position: 'absolute', left: '50%', top: (hdr * 0.18) + 'px', transform: 'translateX(-50%)', height: (hdr * 0.64) + 'px', minWidth: (hdr * 1.4) + 'px', padding: '0 ' + (hdr * 0.35) + 'px', borderRadius: (hdr * 0.32) + 'px',
+    background: '#fffdf8', border: '2px solid #d9d1c2', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontFamily: 'Jua,sans-serif', fontSize: (hdr * 0.42) + 'px', color: '#2f3a4f', opacity: 0, transition: 'opacity .3s ease', cursor: 'pointer' });
+  const bar = document.createElement('div');
+  Object.assign(bar.style, { position: 'absolute', left: '6%', right: '6%', top: (hdr * 0.88) + 'px', height: '6px', borderRadius: '3px', background: '#E3E0EC', overflow: 'hidden' });
+  const barIn = document.createElement('i'); Object.assign(barIn.style, { display: 'block', height: '100%', width: '100%', background: '#9BB6E6', transformOrigin: 'left' }); bar.appendChild(barIn);
+  box.append(cv, bar, ban); GM.appendChild(box);
+  const cx = cv.getContext('2d'); cx.scale(dpr, dpr);
+
+  /* 그림 */
+  const imgs = {};
+  await Promise.all(words.map(w => new Promise(res => { const im = new Image(); im.onload = () => { imgs[w] = im; res(); }; im.onerror = res; im.src = G.pics[w]; })));
+  const ws = words.filter(w => imgs[w]);
+
+  /* 격자(벌집) */
+  const D = Math.round(Math.max(62, Math.min(W, H) / (W < H ? 7.5 : 8.5))), R2 = D / 2;
+  const cols = Math.max(4, Math.floor((W - R2) / D)), ox = (W - (cols * D + R2)) / 2 + R2, rowH = D * 0.88;
+  const limitY = H * 0.74;
+  let ceil = hdr + 4;
+  const grid = new Map();   /* key "r,c" → {ci, w} */
+  const K = (r, c) => r + ',' + c;
+  const okCell = (r, c) => r >= 0 && c >= 0 && c < cols - (r % 2 ? 1 : 0);
+  const cxy = (r, c) => [ox + c * D + (r % 2 ? R2 : 0), ceil + R2 + r * rowH];
+  const nb = (r, c) => { const o = r % 2 ? [[-1, 0], [-1, 1], [0, -1], [0, 1], [1, 0], [1, 1]] : [[-1, -1], [-1, 0], [0, -1], [0, 1], [1, -1], [1, 0]]; return o.map(([a, b]) => [r + a, c + b]).filter(([a, b]) => okCell(a, b)); };
+
+  const rising = [], fx = [];   /* fx: 터짐 효과 */
+  let t = 0, last = performance.now(), nextSpawn = 0.6, popped = 0, streak = 0, target = null, tgtAt = 0, reSaid = false, ended = false, forcePic = false;
+  const popQ = [];   /* [시각, 칸 또는 방울] 차례 터뜨리기 */
+  const speakTgt = () => { if (lv < 3 && target) Speech.say(target).catch(() => {}); };
+  const showTgt = () => {
+    ban.innerHTML = lv === 1 ? '<svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#5E7FA8"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="#5E7FA8" stroke-width="2" stroke-linecap="round"/></svg>' : esc(target);
+    ban.style.opacity = 1;
+  };
+  const pickTarget = () => {
+    const onScreen = new Set([...grid.values()].map(g => g.w).concat(rising.map(b => b.w)).filter(Boolean));
+    const pool = ws.filter(w => w !== target);
+    const pref = pool.filter(w => onScreen.has(w));
+    target = (pref.length ? pick(pref) : pick(pool.length ? pool : ws)) || null;
+    if (!onScreen.has(target)) forcePic = true;
+    tgtAt = t; reSaid = false; showTgt(); speakTgt();
+  };
+  ban.addEventListener('pointerdown', e => { e.stopPropagation(); speakTgt(); });
+  box.__dbg = { grid, rising, cxy, K, tgt: () => target, streak: () => streak, popped: () => popped };   /* 시험용 */
+
+  const spawn = () => {
+    const prog = Math.min(1, t / P.t);
+    let w = null;
+    if (forcePic && target) { w = target; forcePic = false; }
+    else if (Math.random() < 0.42 && ws.length) w = pick(ws);
+    const x = ox + Math.random() * (cols - 1) * D;
+    rising.push({ x, y: H + R2, v: P.v0 + (P.v1 - P.v0) * prog, ci: Math.floor(Math.random() * BUB_COL.length), w });
+    nextSpawn = t + P.sp0 + (P.sp1 - P.sp0) * prog;
+  };
+  const snap = b => {
+    /* 붙을 자리: 가까운 빈 칸 가운데 더 위쪽(줄 번호가 작은) 칸을 먼저 → 한 줄로 길게 늘어지지 않고 옆으로 고르게 참 */
+    let best = null, bs = 1e9;
+    const consider = (r, c) => { if (!okCell(r, c) || grid.has(K(r, c))) return; const [x, y] = cxy(r, c); const d = Math.hypot(x - b.x, y - b.y); if (d > D * 1.6) return; const sc = r * D * 2 + d; if (sc < bs) { bs = sc; best = [r, c]; } };
+    if (b.y - R2 <= ceil + 1) for (let c = 0; c < cols; c++) consider(0, c);
+    if (!best && b.y - R2 <= ceil + 1) { let bd = 1e9; for (let c = 0; c < cols; c++) if (!grid.has(K(0, c))) { const d = Math.abs(cxy(0, c)[0] - b.x); if (d < bd) { bd = d; best = [0, c]; } } }
+    for (const [k] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = cxy(r, c); if (Math.hypot(x - b.x, y - b.y) < D * 1.02) nb(r, c).forEach(([a, z]) => consider(a, z)); }
+    if (!best) return false;
+    grid.set(K(best[0], best[1]), { ci: b.ci, w: b.w });
+    return true;
+  };
+  const touching = b => {
+    if (b.y - R2 <= ceil + 1) return true;
+    for (const [k] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = cxy(r, c); if (Math.hypot(x - b.x, y - b.y) < D * 0.96) return true; }
+    return false;
+  };
+  const addFx = (x, y, ci, big) => { fx.push({ x, y, ci, t0: t, big }); popSnd(big); popped++; };
+  const popCell = (r, c, big) => { const g = grid.get(K(r, c)); if (!g) return; grid.delete(K(r, c)); const [x, y] = cxy(r, c); addFx(x, y, g.ci, big); };
+  const dropFloating = () => {
+    const seen = new Set(), st = [];
+    for (const [k] of grid) if (k.startsWith('0,')) { seen.add(k); st.push(k); }
+    while (st.length) { const [r, c] = st.pop().split(',').map(Number); for (const [a, z] of nb(r, c)) { const k = K(a, z); if (grid.has(k) && !seen.has(k)) { seen.add(k); st.push(k); } } }
+    let i = 0;
+    for (const [k] of [...grid]) if (!seen.has(k)) { const [r, c] = k.split(',').map(Number); popQ.push([t + 0.15 + (i++) * 0.04, r, c, false]); }
+  };
+  const reward = (r, c, n, bx, by) => {
+    const set = new Map();
+    const add = (a, z) => { if (grid.has(K(a, z))) set.set(K(a, z), [a, z]); };
+    if (r == null) { /* 떠오르던 방울을 맞힘: 그 아래 위 세로 줄 */
+      if (n >= 2) { const c0 = Math.max(0, Math.min(cols - 1, Math.round((bx - ox) / D))); for (let a = 0; a < 40; a++) add(a, c0); }
+    } else if (n === 1) nb(r, c).forEach(([a, z]) => add(a, z));
+    else {
+      const row = [], col = [];
+      for (let z = 0; z < cols; z++) if (grid.has(K(r, z))) row.push([r, z]);
+      for (let a = 0; a < 40; a++) if (grid.has(K(a, c))) col.push([a, c]);
+      (n >= 3 ? row.concat(col) : (row.length >= col.length ? row : col)).forEach(([a, z]) => add(a, z));
+    }
+    const [ox0, oy0] = r == null ? [bx, by] : cxy(r, c);
+    [...set.values()].map(([a, z]) => { const [x, y] = cxy(a, z); return [Math.hypot(x - ox0, y - oy0), a, z]; }).sort((p, q) => p[0] - q[0])
+      .forEach(([, a, z], i) => popQ.push([t + 0.06 + i * 0.05, a, z, true]));
+  };
+  const hitTest = (x, y) => {
+    for (let i = rising.length - 1; i >= 0; i--) { const b = rising[i]; if (Math.hypot(b.x - x, b.y - y) < R2 * 1.1) return { b, i }; }
+    let best = null, bd = R2 * 1.1;
+    for (const [k] of grid) { const [r, c] = k.split(',').map(Number); const [gx, gy] = cxy(r, c); const d = Math.hypot(gx - x, gy - y); if (d < bd) { bd = d; best = { r, c }; } }
+    return best;
+  };
+  cv.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    if (ended || S.teacher || run !== R.run) return;
+    const h = hitTest(e.clientX, e.clientY); if (!h) return;
+    const w = h.b ? h.b.w : grid.get(K(h.r, h.c)).w;
+    const hit = target && w === target;
+    if (h.b) { rising.splice(h.i, 1); addFx(h.b.x, h.b.y, h.b.ci, hit); }
+    else popCell(h.r, h.c, hit);
+    if (hit) {
+      streak++;
+      reward(h.b ? null : h.r, h.b ? null : h.c, Math.min(3, streak), h.b && h.b.x, h.b && h.b.y);
+      ban.style.opacity = 0; target = null; tgtAt = t + 1.4;   /* 잠깐 쉬었다가 다음 신호 */
+    } else if (w) streak = 0;
+    dropFloating();
+  });
+
+  /* 그리기 */
+  const drawBubble = (x, y, ci, w, a = 1, s = 1) => {
+    const [c1, c2] = BUB_COL[ci], r = R2 * 0.96 * s;
+    cx.save(); cx.globalAlpha = a;
+    if (w && imgs[w]) {
+      cx.beginPath(); cx.arc(x, y, r, 0, Math.PI * 2); cx.fillStyle = '#fffdfa'; cx.fill();
+      const im = imgs[w], q = r * 1.38; cx.save(); cx.beginPath(); cx.arc(x, y, r * 0.9, 0, Math.PI * 2); cx.clip(); cx.drawImage(im, x - q / 2, y - q / 2, q, q); cx.restore();
+      cx.lineWidth = Math.max(3, r * 0.12); cx.strokeStyle = c2; cx.beginPath(); cx.arc(x, y, r - cx.lineWidth / 2, 0, Math.PI * 2); cx.stroke();
+    } else {
+      const g = cx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
+      g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(0.35, c1); g.addColorStop(1, c2);
+      cx.beginPath(); cx.arc(x, y, r, 0, Math.PI * 2); cx.fillStyle = g; cx.globalAlpha = a * 0.9; cx.fill(); cx.globalAlpha = a;
+      cx.lineWidth = 1.5; cx.strokeStyle = 'rgba(255,255,255,.8)'; cx.stroke();
+    }
+    cx.beginPath(); cx.ellipse(x - r * 0.38, y - r * 0.45, r * 0.22, r * 0.12, -0.6, 0, Math.PI * 2); cx.fillStyle = 'rgba(255,255,255,.75)'; cx.fill();
+    cx.restore();
+  };
+  const draw = () => {
+    cx.clearRect(0, 0, W, H);
+    cx.save(); cx.setLineDash([10, 10]); cx.strokeStyle = 'rgba(150,140,175,.35)'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(W * 0.04, limitY); cx.lineTo(W * 0.96, limitY); cx.stroke(); cx.restore();
+    for (const [k, g] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = cxy(r, c); drawBubble(x, y, g.ci, g.w); }
+    for (const b of rising) drawBubble(b.x, b.y, b.ci, b.w);
+    for (const f of fx) {
+      const p = (t - f.t0) / 0.32; if (p > 1) continue;
+      const [, c2] = BUB_COL[f.ci];
+      cx.save(); cx.globalAlpha = 1 - p; cx.strokeStyle = c2; cx.lineWidth = 3;
+      cx.beginPath(); cx.arc(f.x, f.y, R2 * (0.9 + p * 0.5), 0, Math.PI * 2); cx.stroke();
+      cx.fillStyle = c2; for (let i = 0; i < 6; i++) { const an = i * Math.PI / 3 + f.ci, d = R2 * (0.7 + p * 0.9); cx.beginPath(); cx.arc(f.x + Math.cos(an) * d, f.y + Math.sin(an) * d, 3.5 * (1 - p) + 1, 0, Math.PI * 2); cx.fill(); }
+      cx.restore();
+    }
+  };
+
+  await wait(200, run);
+  draw();
+  await say('비눗방울을 터뜨려요.', run);
+  last = performance.now();
+  await new Promise((res, rej) => {
+    const frame = now => {
+      if (run !== R.run) { rej(CANCEL); return; }
+      let dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (S.teacher || document.hidden) dt = 0;   /* 관리 메뉴가 열린 동안·안 보일 때는 멈춤 */
+      t += dt;
+      if (dt > 0) {
+        if (t >= nextSpawn) spawn();
+        if (!target && t >= tgtAt && ws.length) pickTarget();
+        if (target && !reSaid && t - tgtAt > 8) { reSaid = true; speakTgt(); }
+        if (target && t - tgtAt > 16) pickTarget();
+        ceil += D * P.fall * dt;
+        for (let i = rising.length - 1; i >= 0; i--) { const b = rising[i]; b.y -= b.v * dt; if (touching(b)) { rising.splice(i, 1); if (!snap(b)) addFx(b.x, b.y, b.ci, false); } }
+        if (popQ.length) {
+          popQ.sort((p, q) => p[0] - q[0]);
+          while (popQ.length && popQ[0][0] <= t) { const [, r, c, big] = popQ.shift(); popCell(r, c, big); }
+          if (!popQ.length) dropFloating();   /* 줄이 다 터진 뒤 천장에서 떨어진 방울도 터짐 */
+        }
+        for (let i = fx.length - 1; i >= 0; i--) if (t - fx[i].t0 > 0.35) fx.splice(i, 1);
+        barIn.style.transform = `scaleX(${Math.max(0, 1 - t / P.t)})`;
+        let full = false; for (const [k] of grid) { const [r, c] = k.split(',').map(Number); if (cxy(r, c)[1] + R2 > limitY) { full = true; break; } }
+        if (full || t >= P.t) { ended = true; box.__end = { t, full }; draw(); res(); return; }
+      }
+      draw();
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  });
+  ban.style.opacity = 0;
+  const msg = document.createElement('div');
+  Object.assign(msg.style, { position: 'absolute', left: '50%', top: '42%', transform: 'translate(-50%,-50%)', background: 'rgba(255,253,248,.95)', border: '2px solid #d9d1c2', borderRadius: '28px', padding: '22px 40px', textAlign: 'center', fontFamily: 'Jua,sans-serif', color: '#2f3a4f', opacity: 0, transition: 'opacity .4s ease' });
+  msg.innerHTML = `<div style="font-size:${Math.min(64, W * 0.08)}px">다 했어요!</div><div style="font-size:${Math.min(34, W * 0.045)}px;margin-top:6px;color:#5E7FA8">방울 ${popped}개</div>`;
+  box.appendChild(msg);
+  await wait(40, run); msg.style.opacity = 1;
+  await say('다 했어요.', run);
+  await wait(1600, run);
+  box.style.transition = 'opacity .35s ease'; box.style.opacity = 0; await wait(380, run); box.remove();
 }
 
 
@@ -3098,13 +3326,14 @@ function paintVoiceSum() {
   $('#voiceSum').textContent = S.engine === 'base' ? '기본 목소리' : S.engine === 'google' ? 'Google 음성 · ' + VN[S.voice] + (S.ttsKey ? '' : ' · 키를 넣어 주세요') : '기기 목소리';
 }
 function paintMoreSum() {
-  $('#moreSum').textContent = '놀이 ' + (S.games === 'on' ? '하기' : '안 함') + ' · ' + WMODE_TXT[S.writeMode] + ' · ' + (S.glyph === 'stroke' ? '획 글자' : '바른바탕');
+  $('#moreSum').textContent = '놀이 ' + (S.games === 'on' ? '하기' + (S.bubble !== 'off' ? '(+비눗방울)' : '') : '안 함') + ' · ' + WMODE_TXT[S.writeMode] + ' · ' + (S.glyph === 'stroke' ? '획 글자' : '바른바탕');
 }
 segInit('#engSeg', 'engine', paintEngine); paintEngine();
 segInit('#voiceSeg', 'voice', paintVoiceSum);
 segInit('#fontSeg', 'fontMode');
 segInit('#writeSeg', 'writeMode', paintWriteNote);
 segInit('#gameSeg', 'games', paintGameNote);
+segInit('#bubbleSeg', 'bubble', () => setTimeout(paintMoreSum, 0));
 segInit('#glyphSeg', 'glyph', () => { GlyphFont.load(); paintMoreSum(); });
 function paintWriteNote() {
   setTimeout(paintMoreSum, 0);
@@ -3117,7 +3346,7 @@ function paintGameNote() {
   setTimeout(paintMoreSum, 0);
   const g = S.chosen.length >= 2 ? gameFor(S.chosen) : null;
   $('#gameNote').textContent = S.games === 'on'
-    ? '묶음을 다 배우면 그 낱말로 짧게 놀아요(8번, 약 3분).' + (g ? ' 지금 낱말은 "' + GAME_NAMES[g] + '"예요.' : '') + ' 놀이 결과는 기록에 "놀이(복습)"으로 따로 남아요.'
+    ? '묶음을 다 배우면 그 낱말로 짧게 놀아요(배운 낱말 수만큼, 낱말마다 한 번).' + (g ? ' 지금 낱말은 "' + GAME_NAMES[g] + '"예요.' : '') + ' 놀이 결과는 기록에 "놀이(복습)"으로 따로 남아요.'
     : '묶음을 다 배우면 오늘 배운 낱말을 보여 주고 끝나요.';
 }
 paintWriteNote();
