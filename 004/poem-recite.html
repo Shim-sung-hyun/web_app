@@ -371,7 +371,7 @@ async function receive(opts){
     if(me.dead) return;
     me.code=o.code; me.sid=o.sid;
     box.querySelector('#krCode').textContent=o.code;
-    box.querySelector('#krQr').innerHTML=QR.svg(SEND_PAGE+'#c='+o.code,196);
+    box.querySelector('#krQr').innerHTML=QR.svg(SEND_PAGE+'#c='+o.code+'&w='+(opts.want||['cloud','gemini']).join(','),196);
     const end=Date.now()+(o.ttl||180)*1000;
     const left=()=>{ const s=Math.max(0,Math.round((end-Date.now())/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
     say('휴대폰에서 보내기를 기다리고 있어요 · 남은 시간 '+left());

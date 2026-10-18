@@ -61,13 +61,17 @@ input.f:focus{outline:2px solid #9fb3e6;outline-offset:1px}
   </div>
 
   <div class="card">
+    <div id="cloudBox">
     <label class="t" for="cloud">Google 음성 키 (Cloud 키)</label>
     <div class="row"><input class="f" id="cloud" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요"><button class="sm" type="button" data-show="cloud">보기</button></div>
     <p class="hint"><b>키가 있으면</b> → <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키 목록</a>에서 <b>키 표시</b>를 눌러 복사<br><b>처음이면</b> → <a href="https://shim-sung-hyun.github.io/web_app/003/cloud-key.html" target="_blank" rel="noopener">Cloud 키 만드는 방법</a>(결제 등록·API 켜기·키 만들기)</p>
-    <div class="gap"></div>
+    </div>
+    <div class="gap" id="keyGap"></div>
+    <div id="geminiBox">
     <label class="t" for="gemini">Gemini 키 <span style="font-weight:400;color:var(--sub);font-size:14px">(사진 분석 앱만, 없으면 비워 두세요)</span></label>
     <div class="row"><input class="f" id="gemini" type="password" autocomplete="off" placeholder="Gemini 키 (AIza…)"><button class="sm" type="button" data-show="gemini">보기</button></div>
     <p class="hint">키 받기: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> → <b>Create API key</b>. 결제를 연결하지 않은 키라 사진 분석은 무료예요. Google 음성용(결제 연결) 프로젝트에서 만든 키는 유료가 돼요.</p>
+    </div>
     <label class="chk"><input type="checkbox" id="save"> 이 휴대폰에 키 저장 (다음부터는 번호만 넣으면 돼요. 여러 사람이 쓰는 기기라면 끄세요)</label>
   </div>
 
@@ -94,6 +98,13 @@ const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:
 
 /* 번호: 주소의 #c=1234 에서 가져오고, 주소에서는 바로 지움 */
 const m=/c=(\d{4})/.exec(location.hash||''); if(m){ $('code').value=m[1]; }
+/* 앱이 필요한 키: 주소의 &w=cloud / w=gemini / w=cloud,gemini. 없으면(번호만 넣은 경우) 둘 다 보임 */
+const wm=/w=([a-z,]+)/.exec(location.hash||''), WANT=wm?wm[1].split(',').filter(x=>x==='cloud'||x==='gemini'):['cloud','gemini'];
+if(!WANT.length) WANT.push('cloud','gemini');
+if(!WANT.includes('cloud')) $('cloudBox').hidden=true;
+if(!WANT.includes('gemini')) $('geminiBox').hidden=true;
+if(WANT.length<2) $('keyGap').hidden=true;
+if(WANT.length===1){ const sp=document.querySelector('label[for="'+WANT[0]+'"] span'); if(sp) sp.remove(); }
 if(location.hash) history.replaceState(null,'',location.pathname+location.search);
 
 /* 키: 이 휴대폰에 저장한 것 → 같은 사이트 앱에 저장된 것 순서로 채움 */
@@ -162,9 +173,9 @@ function showResult(code,tk,payload){
 $('again').onclick=()=>{ clearTimeout(watch); $('result').hidden=true; $('form').hidden=false; say(''); $('code').focus(); };
 
 $('send').onclick=async()=>{
-  const code=$('code').value.trim(), cloud=$('cloud').value.trim(), gemini=$('gemini').value.trim();
+  const code=$('code').value.trim(), cloud=WANT.includes('cloud')?$('cloud').value.trim():'', gemini=WANT.includes('gemini')?$('gemini').value.trim():'';
   if(!/^\d{4}$/.test(code)){ spotlight('#code','전자칠판에 나온 번호 4자리를 넣어 주세요.'); return; }
-  if(!cloud&&!gemini){ spotlight('#cloud','Cloud 키를 넣어 주세요.'); return; }
+  if(!cloud&&!gemini){ if(WANT.includes('cloud')) spotlight('#cloud','Cloud 키를 넣어 주세요.'); else spotlight('#gemini','Gemini 키를 넣어 주세요.'); return; }
   if(!window.crypto||!crypto.subtle){ say('이 브라우저에서는 보낼 수 없어요. 다른 브라우저로 열어 주세요.','err'); return; }
   store(); $('send').disabled=true; say('보내는 중이에요…');
   try{
