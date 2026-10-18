@@ -2583,11 +2583,22 @@ async function picToWord(el, ans, run) {
   const pic = img.cloneNode(); pic.className = 'rv-pic';
   Object.assign(pic.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', opacity: 1 });
   ov.appendChild(pic);
+  /* 입에 문 먹이도 함께 올라가고, 다 올라가면 "다 먹은" 듯 사라진 뒤 이름을 말함(이름은 동물에게만) */
+  const mf = el.querySelector('.mouthfood'); let fd = null, fr = null;
+  if (mf) {
+    const q = mf.getBoundingClientRect(), s0 = Math.min(r.width, r.height);
+    fr = { x: (q.left - (r.left + (r.width - s0) / 2)) / s0, y: (q.top - (r.top + (r.height - s0) / 2)) / s0, w: q.width / s0 };
+    fd = mf.cloneNode(); fd.className = 'rv-pic';
+    Object.assign(fd.style, { left: q.left + 'px', top: q.top + 'px', width: q.width + 'px', height: q.height + 'px', opacity: 1, transform: 'none' });
+    ov.appendChild(fd);
+  }
   GM.querySelectorAll('#targets .tg').forEach(e => e.style.opacity = 0);
   await wait(40, run);
   const big = Math.min(H * 0.42, W * 0.42), cx = W / 2, cy = H * 0.42;
   Object.assign(pic.style, { left: (cx - big / 2) + 'px', top: (cy - big / 2) + 'px', width: big + 'px', height: big + 'px' });
+  if (fd) Object.assign(fd.style, { left: (cx - big / 2 + fr.x * big) + 'px', top: (cy - big / 2 + fr.y * big) + 'px', width: fr.w * big + 'px', height: fr.w * big + 'px' });
   await wait(520, run);
+  if (fd) { await wait(250, run); fd.style.opacity = 0; await wait(400, run); }
   const chars = [...ans];
   const fs = Math.min(big * 0.62, W * 0.8 / chars.length);
   const word = document.createElement('div'); word.className = 'rv-word'; word.style.fontSize = fs + 'px';
