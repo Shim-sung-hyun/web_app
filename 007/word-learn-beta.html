@@ -435,7 +435,8 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
    <details class="more" id="voiceBox">
     <summary>목소리 <span class="sum" id="voiceSum"></span></summary>
     <div class="row">
-     <div class="seg" id="engSeg"><button data-v="google">Google 음성</button><button data-v="device">기기 목소리</button></div>
+     <div class="seg" id="engSeg"><button data-v="base">기본 목소리 (키 없이)</button><button data-v="google">Google 음성 (키)</button><button data-v="device">기기 목소리</button></div>
+     <div class="note" id="engNote" style="margin-top:6px"></div>
      <div class="seg" id="voiceSeg" style="margin-top:6px"><button data-v="Leda">밝고 귀여운</button><button data-v="Aoede">산뜻하고 부드러운</button><button data-v="Kore">또렷하고 씩씩한</button></div>
      <div class="row keybar" style="margin:10px 0 4px"><button class="kr-open" data-kr="1" type="button" id="krBoth">📱 휴대폰으로 받기</button><span class="note">전자칠판이라면 휴대폰에서 Google 음성 키를 보내요.</span></div>
      <details class="keyhelp">
@@ -1145,12 +1146,16 @@ const KEYS = {
 const CLOUD_KEYS = ['wordLearn.cloudKey', 'webapp.cloudKey', 'placeCount.cloudKey', 'placeValue.cloudKey', 'poemRecite.cloudKey', 'colorFind.cloudKey', 'shapeFinder.cloudKey'];
 S.ttsKey = KEYS.find(CLOUD_KEYS);
 /* 키가 없으면 처음에는 기기 목소리로 */
-if (!S.engine) S.engine = S.ttsKey ? 'google' : 'device';
+if (!S.engine) S.engine = 'base';
+/* 예전에 키 없이 기기 목소리를 쓰던 기기는 한 번 기본 목소리로 바꿈 */
+if (S.engine === 'device' && !LS.get('engineV2', null)) { S.engine = 'base'; LS.set('engine', 'base'); }
+LS.set('engineV2', 1);
 
 /* =========================================================
    그림: 기본 낱말은 pics/ 의 그림, 선생님이 넣은 낱말은 넣은 사진(이 기기에만)
    ========================================================= */
 const PBASE = /\/web_app\/007\//.test(location.href) ? 'pics/' : 'https://shim-sung-hyun.github.io/web_app/007/pics/';
+const VBASE = PBASE.replace(/pics\/$/, 'voice/leda/');
 const GBASE = /\/web_app\/007\//.test(location.href) ? 'game/' : 'https://shim-sung-hyun.github.io/web_app/007/game/';
 const Pics = {
   cache: new Map(), stored: new Map(),
@@ -1287,16 +1292,46 @@ const Speech = {
     });
     return out;
   },
-  key(t) { return 'g|' + S.voice + '|' + G_RATE + '|' + t; },
-  async gBuffer(t) {
-    const k = this.key(t);
+  key(t, v) { return 'g|' + (v || S.voice) + '|' + G_RATE + '|' + t; },
+  /* 쓰는 Google 목소리: 기본 목소리 모드는 늘 Leda(미리 만든 소리와 같은 목소리) */
+  gVoice() { return S.engine === 'base' ? 'Leda' : S.voice; },
+  /* 미리 만든 소리: voice/leda/index.json 의 목록(낱말·문장의 SHA-1 앞 16자리) */
+  pre: null,
+  preReady() {
+    if (!this.pre) this.pre = fetch(VBASE + 'index.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : { files: [] }).then(j => new Set(j.files || [])).catch(() => new Set());
+    return this.pre;
+  },
+  async preHash(t) { const d = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16); },
+  usePre() { return S.engine === 'base' || (S.engine === 'google' && S.voice === 'Leda'); },
+  async hasPre(t) { if (!this.usePre() || !window.crypto || !crypto.subtle) return null; const set = await this.preReady(); if (!set.size) return null; const h = await this.preHash(t); return set.has(h) ? h : null; },
+  async pBuffer(t, h) {
+    const k = 'p|' + t;
+    if (this.buf.has(k)) return this.buf.get(k);
+    const p = (async () => {
+      const r = await fetch(VBASE + h + '.mp3'); if (!r.ok) throw new Error('pre ' + r.status);
+      const ab = await r.arrayBuffer(); this.initAudio();
+      return await new Promise((res, rej) => this.ctx.decodeAudioData(ab, res, rej));
+    })();
+    this.buf.set(k, p); p.catch(() => this.buf.delete(k));
+    return p;
+  },
+  /* 한 마디를 준비: 미리 만든 소리 → (키가 있으면) Google → 없으면 null(기기 목소리) */
+  async ready(t) {
+    const h = await this.hasPre(t);
+    if (h) { try { return await this.pBuffer(t, h); } catch (e) {} }
+    if ((S.engine === 'google' || S.engine === 'base') && S.ttsKey && !this.fellBack) return await this.gBuffer(t, this.gVoice());
+    return null;
+  },
+  async gBuffer(t, v) {
+    v = v || S.voice;
+    const k = this.key(t, v);
     if (this.buf.has(k)) return this.buf.get(k);
     const p = (async () => {
       let ab = await IDB.get('tts', k);
       if (!ab) {
         const r = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': S.ttsKey },
-          body: JSON.stringify({ input: { text: t }, voice: { languageCode: 'ko-KR', name: 'ko-KR-Chirp3-HD-' + S.voice }, audioConfig: { audioEncoding: 'LINEAR16', sampleRateHertz: 24000, speakingRate: G_RATE } })
+          body: JSON.stringify({ input: { text: t }, voice: { languageCode: 'ko-KR', name: 'ko-KR-Chirp3-HD-' + v }, audioConfig: { audioEncoding: 'LINEAR16', sampleRateHertz: 24000, speakingRate: G_RATE } })
         });
         if (!r.ok) { const e = new Error('tts ' + r.status); e.status = r.status; e.body = await r.text().catch(() => ''); throw e; }
         const j = await r.json();
@@ -1320,20 +1355,20 @@ const Speech = {
       : 'Google 음성을 쓸 수 없어요(키 확인). 이번 수업은 기기 목소리로 해요.');
   },
   preload(texts) {
-    if (this.engine() !== 'google' || !S.ttsKey) return;
+    if (!(S.engine === 'base' || (this.engine() === 'google' && S.ttsKey))) return;
     const set = new Set(); texts.forEach(t => this.chunks(t).forEach(c => set.add(c.t)));
     let chain = Promise.resolve();
-    [...set].forEach(t => { chain = chain.then(() => this.gBuffer(t).catch(e => { if (e.status) this.quotaFallback(e); })); });
+    [...set].forEach(t => { chain = chain.then(() => this.ready(t).catch(e => { if (e.status && S.engine === 'google') this.quotaFallback(e); })); });
   },
   /* 수업에 나올 말을 모두 미리 만들기 (준비 화면에서 진행률 표시) */
   async preloadAll(texts, onProg) {
-    if (this.engine() !== 'google' || !S.ttsKey) return;
+    if (!(S.engine === 'base' || (this.engine() === 'google' && S.ttsKey))) return;
     const set = new Set(); texts.forEach(t => this.chunks(t).forEach(c => set.add(c.t)));
     const list = [...set]; let done = 0, stop = false;
     const worker = async () => {
       while (list.length && !stop && !Loading.cancel) {
         const t = list.shift();
-        try { await this.gBuffer(t); } catch (e) { if (e.status) { this.quotaFallback(e); stop = true; } }
+        try { await this.ready(t); } catch (e) { if (e.status && S.engine === 'google') { this.quotaFallback(e); stop = true; } }
         done++; onProg && onProg(done, set.size);
       }
     };
@@ -1386,9 +1421,11 @@ const Speech = {
       await this.waitVisible();
       if (g !== this.gen) return;
       if (!S.sound) { await sleep(250 + c.t.length * 120); }
-      else if (this.engine() === 'google') {
-        try { const b = await this.gBuffer(c.t); if (quietBuf(b)) await this.playDevice(c.t, g); else await this.playBuffer(b, g); }
-        catch (e) { this.quotaFallback(e); if (g !== this.gen) return; await this.playDevice(c.t, g); }
+      else if (S.engine === 'base' || this.engine() === 'google') {
+        let b = null;
+        try { b = await this.ready(c.t); } catch (e) { if (S.engine === 'google') this.quotaFallback(e); else this.fellBack = true; }
+        if (g !== this.gen) return;
+        if (b && !quietBuf(b)) await this.playBuffer(b, g); else await this.playDevice(c.t, g);
       } else await this.playDevice(c.t, g);
       if (g !== this.gen) return;
       await sleep(c.pause);
@@ -2751,7 +2788,7 @@ const TOUR_STEPS = {
     { el: '#pickBox', t: '다른 낱말 고르기', x: '편·마당·묶음을 직접 고르거나, 자음별·모음별로 골라요. 선생님이 넣은 낱말과 사진도 여기서 관리해요.' },
     { el: '#startBtn', t: '시작', x: '전체 화면으로 수업을 시작해요. 묶음을 다 배우면 그 낱말로 놀이를 해요.' },
     { el: '#sheetBtn', t: '쓰기 연습지', x: '오늘 낱말을 A4에 한 장씩 인쇄해요.' },
-    { el: '#voiceBox', t: '목소리', x: '기기 목소리는 바로 쓸 수 있어요. Google 음성은 Cloud 키가 필요해요(휴대폰으로 받기도 돼요).' },
+    { el: '#voiceBox', t: '목소리', x: '기본 목소리는 키 없이 바로 쓰는 Google 목소리예요. 다른 Google 목소리는 Cloud 키가 필요해요(휴대폰으로 받기도 돼요).' },
     { el: '#moreBox', t: '수업 방식', x: '놀이 하기, 쓰기 방식, 쓰기 글자 모양(바른바탕), 글꼴을 정해요.' },
     { el: '#rosterBox', t: '학생 명단', x: '학생 이름을 넣거나 지워요.' },
     { el: '#recBtn', t: '교사용 기록', x: '학생마다 바로 맞힘·도움 받아 맞힘, 쓰기, 놀이 기록을 보고 내보내요.' }
@@ -2990,10 +3027,15 @@ function segInit(id, key, onChange) {
   });
   paint();
 }
-function paintEngine() { $('#voiceSeg').style.display = S.engine === 'google' ? '' : 'none'; paintVoiceSum(); }
+function paintEngine() {
+  $('#voiceSeg').style.display = S.engine === 'google' ? '' : 'none'; paintVoiceSum();
+  $('#engNote').textContent = S.engine === 'base' ? '미리 만들어 둔 Google 목소리(밝은)예요. 키도 결제도 필요 없어요. "내가 넣은 낱말"은 키가 있으면 같은 Google 목소리로, 없으면 기기 목소리로 말해요.'
+    : S.engine === 'google' ? 'Cloud 키로 그때그때 만들어요. 목소리를 고를 수 있어요(밝은 목소리는 미리 만든 소리를 함께 써요).'
+    : '이 기기(브라우저)의 목소리예요. 기기마다 소리가 달라요.';
+}
 function paintVoiceSum() {
   const VN = { Leda: '밝고 귀여운', Aoede: '산뜻하고 부드러운', Kore: '또렷하고 씩씩한' };
-  $('#voiceSum').textContent = S.engine === 'google' ? 'Google 음성 · ' + VN[S.voice] + (S.ttsKey ? '' : ' · 키를 넣어 주세요') : '기기 목소리';
+  $('#voiceSum').textContent = S.engine === 'base' ? '기본 목소리 (키 없이)' : S.engine === 'google' ? 'Google 음성 · ' + VN[S.voice] + (S.ttsKey ? '' : ' · 키를 넣어 주세요') : '기기 목소리';
 }
 function paintMoreSum() {
   $('#moreSum').textContent = '놀이 ' + (S.games === 'on' ? '하기' : '안 함') + ' · ' + WMODE_TXT[S.writeMode] + ' · ' + (S.glyph === 'stroke' ? '획 글자' : '바른바탕');
@@ -3337,7 +3379,7 @@ async function prepareAndStart(words) {
   await Pics.preload(words);
   if (Loading.cancel) { Loading.hide(); return; }
   /* 목소리: 첫 낱말에 나올 말만 기다리고, 나머지는 뒤에서 */
-  if (Speech.engine() === 'google' && S.ttsKey) {
+  if (S.engine === 'base' || (Speech.engine() === 'google' && S.ttsKey)) {
     Loading.set('목소리를 준비하고 있어요', '', 0);
     await Speech.preloadAll(prepTexts([words[0]]), (d, n) => Loading.set(null, `${d} / ${n}`, d / n));
     if (Loading.cancel) { Loading.hide(); return; }
