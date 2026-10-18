@@ -2580,23 +2580,25 @@ async function picToWord(el, ans, run) {
   const W = innerWidth, H = innerHeight;
   const img = el.querySelector('img'), r = img.getBoundingClientRect();
   const ov = document.createElement('div'); ov.id = 'reveal'; GM.appendChild(ov);
-  const pic = img.cloneNode(); pic.className = 'rv-pic';
-  Object.assign(pic.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', opacity: 1 });
-  ov.appendChild(pic);
-  /* 입에 문 먹이도 함께 올라가고, 다 올라가면 "다 먹은" 듯 사라진 뒤 이름을 말함(이름은 동물에게만) */
-  const mf = el.querySelector('.mouthfood'); let fd = null, fr = null;
+  /* 입에 문 먹이도 동물과 한 덩어리로 함께 올라가고, 다 올라가면 "다 먹은" 듯 사라진 뒤 이름을 말함(이름은 동물에게만) */
+  const mf = el.querySelector('.mouthfood'); let pic, fd = null;
   if (mf) {
-    const q = mf.getBoundingClientRect(), s0 = Math.min(r.width, r.height);
-    fr = { x: (q.left - (r.left + (r.width - s0) / 2)) / s0, y: (q.top - (r.top + (r.height - s0) / 2)) / s0, w: q.width / s0 };
-    fd = mf.cloneNode(); fd.className = 'rv-pic';
-    Object.assign(fd.style, { left: q.left + 'px', top: q.top + 'px', width: q.width + 'px', height: q.height + 'px', opacity: 1, transform: 'none' });
-    ov.appendChild(fd);
+    const q = mf.getBoundingClientRect(), s0 = Math.min(r.width, r.height), x0 = r.left + (r.width - s0) / 2, y0 = r.top + (r.height - s0) / 2;
+    pic = document.createElement('div'); pic.className = 'rv-pic';
+    Object.assign(pic.style, { left: x0 + 'px', top: y0 + 'px', width: s0 + 'px', height: s0 + 'px', opacity: 1 });
+    const di = img.cloneNode(); Object.assign(di.style, { position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', objectFit: 'contain', opacity: 1 });
+    fd = mf.cloneNode();
+    Object.assign(fd.style, { position: 'absolute', left: ((q.left - x0) / s0 * 100) + '%', top: ((q.top - y0) / s0 * 100) + '%', width: (q.width / s0 * 100) + '%', height: (q.height / s0 * 100) + '%', opacity: 1, transform: 'none', transition: 'opacity .4s ease' });
+    pic.append(di, fd);
+  } else {
+    pic = img.cloneNode(); pic.className = 'rv-pic';
+    Object.assign(pic.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', opacity: 1 });
   }
+  ov.appendChild(pic);
   GM.querySelectorAll('#targets .tg').forEach(e => e.style.opacity = 0);
   await wait(40, run);
   const big = Math.min(H * 0.42, W * 0.42), cx = W / 2, cy = H * 0.42;
   Object.assign(pic.style, { left: (cx - big / 2) + 'px', top: (cy - big / 2) + 'px', width: big + 'px', height: big + 'px' });
-  if (fd) Object.assign(fd.style, { left: (cx - big / 2 + fr.x * big) + 'px', top: (cy - big / 2 + fr.y * big) + 'px', width: fr.w * big + 'px', height: fr.w * big + 'px' });
   await wait(520, run);
   if (fd) { await wait(250, run); fd.style.opacity = 0; await wait(400, run); }
   const chars = [...ans];
