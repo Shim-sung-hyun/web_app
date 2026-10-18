@@ -406,7 +406,7 @@ async function receive(opts){
     if(!window.crypto||!crypto.subtle) throw Object.assign(new Error('insecure'),{code:'insecure'});
     const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},false,['deriveBits']);
     const pubRaw=await crypto.subtle.exportKey('raw',kp.publicKey);
-    const o=await call({a:'open',pub:b64u.enc(pubRaw)});
+    const o=await call({a:'open',pub:b64u.enc(pubRaw),want:(opts.want||['cloud','gemini']).join(',')});
     if(me.dead) return;
     me.code=o.code; me.sid=o.sid;
     box.querySelector('#krCode').textContent=o.code;
