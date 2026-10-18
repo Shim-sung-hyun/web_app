@@ -2765,13 +2765,13 @@ async function bodySuccess(el, ans, run, L) {
 }
 
 /* =========================================================
-   상 놀이: 비눗방울 톡톡
+   상 놀이: 비눗방울 톡톡 (방울에는 오늘 낱말 글자, 신호는 수준 1 글자 · 2 그림 · 3 소리)
    - 방울이 아래에서 떠올라(점점 빨리) 천장에 붙고, 천장은 조금씩 내려옴. 선까지 차거나 시간이 다 되면 끝(진 것 없음).
    - 방울에는 오늘 배운 낱말 그림이 섞여 있음. 신호(수준 1 소리 · 2 소리+글자 · 3 글자)에 맞는 그림을 터뜨리면 상:
      연속 1번 → 그 방울 둘레, 2번 → 가로·세로 중 더 많이 붙은 줄, 3번 이상 → 가로와 세로 모두. 다른 것은 그 방울만.
    ========================================================= */
 const BUB_COL = [['#FFC2D4', '#F07EA2'], ['#FFDDB0', '#F2A34E'], ['#FFF0A6', '#E6C53A'], ['#BFF0CF', '#55C27F'], ['#BDE6FF', '#4FA9EA'], ['#DACBFF', '#9478EC']];
-const BLV = { 1: { t: 60, v0: 0.18, v1: 0.36, sp0: 0.7, sp1: 0.36, fall: 0.06 }, 2: { t: 90, v0: 0.2, v1: 0.42, sp0: 0.7, sp1: 0.34, fall: 0.055 }, 3: { t: 120, v0: 0.24, v1: 0.52, sp0: 0.6, sp1: 0.27, fall: 0.05 } };   /* 빠르기 v: 화면 높이/초 */
+const BLV = { 1: { t: 60, v0: 0.18, v1: 0.36, sp0: 0.7, sp1: 0.36, fall: 0.06, fast: 0, grow: 0 }, 2: { t: 90, v0: 0.2, v1: 0.42, sp0: 0.7, sp1: 0.34, fall: 0.04, fast: 12, grow: 6 }, 3: { t: 120, v0: 0.24, v1: 0.52, sp0: 0.6, sp1: 0.27, fall: 0.035, fast: 9, grow: 5 } };   /* v: 화면 높이/초, fast: 빠른 방울 간격(초), grow: 씨앗 방울이 하나 늘리는 간격(초) */   /* 빠르기 v: 화면 높이/초 */
 let BAC = null;
 function popSnd(big) {
   if (!S.sound) return;
@@ -2807,7 +2807,7 @@ async function bubbleGame(words, run) {
   const ws = words.filter(w => imgs[w]);
 
   /* 격자(벌집) */
-  const D = Math.round(Math.max(56, Math.min(W, H) / (W < H ? 8.5 : 10))), R2 = D / 2;
+  const D = Math.round(Math.max(64, Math.min(W, H) / (W < H ? 7 : 8))), R2 = D / 2;
   const cols = Math.max(4, Math.floor((W - R2) / D)), ox = (W - (cols * D + R2)) / 2 + R2, rowH = D * 0.88;
   const limitY = H * 0.74;
   let ceil = hdr + 4;
@@ -2820,9 +2820,11 @@ async function bubbleGame(words, run) {
   const rising = [], fx = [];   /* fx: 터짐 효과 */
   let t = 0, last = performance.now(), nextSpawn = 0.6, popped = 0, streak = 0, target = null, tgtAt = 0, reSaid = false, ended = false, forcePic = false;
   const popQ = [];   /* [시각, 칸 또는 방울] 차례 터뜨리기 */
-  const speakTgt = () => { if (lv < 3 && target) Speech.say(target).catch(() => {}); };
+  /* 신호: 수준 1 글자(같은 글자 찾기) · 2 그림 · 3 소리(이름표를 누르면 다시 들림) */
+  const speakTgt = () => { if (lv === 3 && target) Speech.say(target).catch(() => {}); };
   const showTgt = () => {
-    ban.innerHTML = lv === 1 ? '<svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#5E7FA8"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="#5E7FA8" stroke-width="2" stroke-linecap="round"/></svg>' : esc(target);
+    ban.innerHTML = lv === 3 ? '<svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#5E7FA8"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="#5E7FA8" stroke-width="2" stroke-linecap="round"/></svg>'
+      : lv === 2 ? `<img src="${G.pics[target]}" alt="" style="height:${hdr * 0.56}px;width:${hdr * 0.56}px;object-fit:contain">` : esc(target);
     ban.style.opacity = 1;
   };
   const pickTarget = () => {
@@ -2836,29 +2838,30 @@ async function bubbleGame(words, run) {
   ban.addEventListener('pointerdown', e => { e.stopPropagation(); speakTgt(); });
   box.__dbg = { grid, rising, cxy, K, tgt: () => target, streak: () => streak, popped: () => popped };   /* 시험용 */
 
-  const spawn = () => {
+  let nextFast = P.fast ? P.fast * 0.8 : 1e9;
+  const spawn = fast => {
     const prog = Math.min(1, t / P.t);
     let w = null;
-    if (forcePic && target) { w = target; forcePic = false; }
-    else if (Math.random() < 0.42 && ws.length) w = pick(ws);
+    if (!fast) { if (forcePic && target) { w = target; forcePic = false; } else if (Math.random() < 0.5 && ws.length) w = pick(ws); }
+    const sz = fast ? 0.9 : 0.85 + Math.random() * 0.45;   /* 떠오를 때 크기는 제각각, 붙으면 칸 크기로 */
     const x = ox + Math.random() * (cols - 1) * D;
-    rising.push({ x, y: H + R2, v: H * (P.v0 + (P.v1 - P.v0) * prog) * (0.85 + Math.random() * 0.3), ci: Math.floor(Math.random() * BUB_COL.length), w });
-    nextSpawn = t + P.sp0 + (P.sp1 - P.sp0) * prog;
+    rising.push({ x, y: H + R2 * sz, sz, v: H * (P.v0 + (P.v1 - P.v0) * prog) * (fast ? 2.5 : 0.85 + Math.random() * 0.3), ci: Math.floor(Math.random() * BUB_COL.length), w, fast });
+    if (fast) nextFast = t + P.fast * (0.8 + Math.random() * 0.4); else nextSpawn = t + P.sp0 + (P.sp1 - P.sp0) * prog;
   };
   const snap = b => {
     /* 붙을 자리: 가까운 빈 칸 가운데 더 위쪽(줄 번호가 작은) 칸을 먼저 → 한 줄로 길게 늘어지지 않고 옆으로 고르게 참 */
     let best = null, bs = 1e9;
     const consider = (r, c) => { if (!okCell(r, c) || grid.has(K(r, c))) return; const [x, y] = cxy(r, c); const d = Math.hypot(x - b.x, y - b.y); if (d > D * 1.6) return; const sc = r * D * 2 + d; if (sc < bs) { bs = sc; best = [r, c]; } };
-    if (b.y - R2 <= ceil + 1) for (let c = 0; c < cols; c++) consider(0, c);
-    if (!best && b.y - R2 <= ceil + 1) { let bd = 1e9; for (let c = 0; c < cols; c++) if (!grid.has(K(0, c))) { const d = Math.abs(cxy(0, c)[0] - b.x); if (d < bd) { bd = d; best = [0, c]; } } }
+    if (b.y - R2 * b.sz <= ceil + 1) for (let c = 0; c < cols; c++) consider(0, c);
+    if (!best && b.y - R2 * b.sz <= ceil + 1) { let bd = 1e9; for (let c = 0; c < cols; c++) if (!grid.has(K(0, c))) { const d = Math.abs(cxy(0, c)[0] - b.x); if (d < bd) { bd = d; best = [0, c]; } } }
     for (const [k] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = cxy(r, c); if (Math.hypot(x - b.x, y - b.y) < D * 1.02) nb(r, c).forEach(([a, z]) => consider(a, z)); }
     if (!best) return false;
-    grid.set(K(best[0], best[1]), { ci: b.ci, w: b.w });
+    grid.set(K(best[0], best[1]), { ci: b.ci, w: b.w, seed: b.fast ? t + P.grow : 0 });   /* 빠른 방울이 붙으면 씨앗: 몇 초마다 옆에 하나씩 늘어남 */
     return true;
   };
   const touching = b => {
-    if (b.y - R2 <= ceil + 1) return true;
-    for (const [k] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = cxy(r, c); if (Math.hypot(x - b.x, y - b.y) < D * 0.96) return true; }
+    if (b.y - R2 * b.sz <= ceil + 1) return true;
+    for (const [k] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = cxy(r, c); if (Math.hypot(x - b.x, y - b.y) < (R2 + R2 * b.sz) * 0.96) return true; }
     return false;
   };
   const addFx = (x, y, ci, big) => { fx.push({ x, y, ci, t0: t, big }); popSnd(big); popped++; };
@@ -2887,7 +2890,7 @@ async function bubbleGame(words, run) {
       .forEach(([, a, z], i) => popQ.push([t + 0.06 + i * 0.05, a, z, true]));
   };
   const hitTest = (x, y) => {
-    for (let i = rising.length - 1; i >= 0; i--) { const b = rising[i]; if (Math.hypot(b.x - x, b.y - y) < R2 * 1.1) return { b, i }; }
+    for (let i = rising.length - 1; i >= 0; i--) { const b = rising[i]; if (Math.hypot(b.x - x, b.y - y) < R2 * b.sz * 1.1) return { b, i }; }
     let best = null, bd = R2 * 1.1;
     for (const [k] of grid) { const [r, c] = k.split(',').map(Number); const [gx, gy] = cxy(r, c); const d = Math.hypot(gx - x, gy - y); if (d < bd) { bd = d; best = { r, c }; } }
     return best;
@@ -2901,7 +2904,7 @@ async function bubbleGame(words, run) {
     if (h.b) { rising.splice(h.i, 1); addFx(h.b.x, h.b.y, h.b.ci, hit); }
     else popCell(h.r, h.c, hit);
     if (hit) {
-      streak++;
+      streak++; Speech.say(w).catch(() => {});
       reward(h.b ? null : h.r, h.b ? null : h.c, Math.min(3, streak), h.b && h.b.x, h.b && h.b.y);
       ban.style.opacity = 0; target = null; tgtAt = t + 1.4;   /* 잠깐 쉬었다가 다음 신호 */
     } else if (w) streak = 0;
@@ -2909,27 +2912,39 @@ async function bubbleGame(words, run) {
   });
 
   /* 그리기 */
-  const drawBubble = (x, y, ci, w, a = 1, s = 1) => {
-    const [c1, c2] = BUB_COL[ci], r = R2 * 0.96 * s;
-    cx.save(); cx.globalAlpha = a;
-    if (w && imgs[w]) {
-      cx.beginPath(); cx.arc(x, y, r, 0, Math.PI * 2); cx.fillStyle = '#fffdfa'; cx.fill();
-      const im = imgs[w], q = r * 1.38; cx.save(); cx.beginPath(); cx.arc(x, y, r * 0.9, 0, Math.PI * 2); cx.clip(); cx.drawImage(im, x - q / 2, y - q / 2, q, q); cx.restore();
-      cx.lineWidth = Math.max(3, r * 0.12); cx.strokeStyle = c2; cx.beginPath(); cx.arc(x, y, r - cx.lineWidth / 2, 0, Math.PI * 2); cx.stroke();
+  const drawBubble = (x, y, ci, w, sz = 1, seed = false) => {
+    const [c1, c2] = BUB_COL[ci], r = R2 * 0.96 * sz;
+    cx.save();
+    if (w) {   /* 글자 방울: 연한 바탕 + 색 테두리 + 글자 */
+      const g = cx.createRadialGradient(x - r * 0.3, y - r * 0.35, r * 0.1, x, y, r);
+      g.addColorStop(0, '#ffffff'); g.addColorStop(1, c1);
+      cx.beginPath(); cx.arc(x, y, r, 0, Math.PI * 2); cx.fillStyle = g; cx.fill();
+      cx.lineWidth = Math.max(3, r * 0.1); cx.strokeStyle = c2; cx.beginPath(); cx.arc(x, y, r - cx.lineWidth / 2, 0, Math.PI * 2); cx.stroke();
+      const n = [...w].length, fs = Math.min(r * 0.8, (2.05 * r) / n);
+      cx.font = fs + 'px Jua, "Noto Sans KR", sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+      const tw = cx.measureText(w).width;
+      if (tw > r * 1.8) { const ph = fs * 1.25, pw = tw + fs * 0.5; cx.fillStyle = 'rgba(255,255,255,.92)'; cx.beginPath(); cx.roundRect ? cx.roundRect(x - pw / 2, y - ph / 2, pw, ph, ph / 2) : cx.rect(x - pw / 2, y - ph / 2, pw, ph); cx.fill(); }
+      cx.fillStyle = '#2f3a4f'; cx.fillText(w, x, y + fs * 0.05);
     } else {
       const g = cx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
-      g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(0.35, c1); g.addColorStop(1, c2);
-      cx.beginPath(); cx.arc(x, y, r, 0, Math.PI * 2); cx.fillStyle = g; cx.globalAlpha = a * 0.9; cx.fill(); cx.globalAlpha = a;
+      g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(seed ? 0.2 : 0.35, seed ? c2 : c1); g.addColorStop(1, c2);
+      cx.beginPath(); cx.arc(x, y, r, 0, Math.PI * 2); cx.fillStyle = g; cx.globalAlpha = 0.9; cx.fill(); cx.globalAlpha = 1;
       cx.lineWidth = 1.5; cx.strokeStyle = 'rgba(255,255,255,.8)'; cx.stroke();
+      if (seed) {   /* 씨앗 방울: 가운데 새싹 무늬(깜빡이지 않음) */
+        cx.strokeStyle = '#fff'; cx.fillStyle = '#fff'; cx.lineWidth = Math.max(2, r * 0.08); cx.lineCap = 'round';
+        cx.beginPath(); cx.moveTo(x, y + r * 0.4); cx.lineTo(x, y - r * 0.05); cx.stroke();
+        cx.beginPath(); cx.ellipse(x - r * 0.2, y - r * 0.12, r * 0.22, r * 0.11, -0.5, 0, Math.PI * 2); cx.fill();
+        cx.beginPath(); cx.ellipse(x + r * 0.2, y - r * 0.2, r * 0.22, r * 0.11, 0.5, 0, Math.PI * 2); cx.fill();
+      }
     }
-    cx.beginPath(); cx.ellipse(x - r * 0.38, y - r * 0.45, r * 0.22, r * 0.12, -0.6, 0, Math.PI * 2); cx.fillStyle = 'rgba(255,255,255,.75)'; cx.fill();
+    cx.beginPath(); cx.ellipse(x - r * 0.42, y - r * 0.5, r * 0.18, r * 0.1, -0.6, 0, Math.PI * 2); cx.fillStyle = 'rgba(255,255,255,.75)'; cx.fill();
     cx.restore();
   };
   const draw = () => {
     cx.clearRect(0, 0, W, H);
     cx.save(); cx.setLineDash([10, 10]); cx.strokeStyle = 'rgba(150,140,175,.35)'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(W * 0.04, limitY); cx.lineTo(W * 0.96, limitY); cx.stroke(); cx.restore();
-    for (const [k, g] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = cxy(r, c); drawBubble(x, y, g.ci, g.w); }
-    for (const b of rising) drawBubble(b.x, b.y, b.ci, b.w);
+    for (const [k, g] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = cxy(r, c); drawBubble(x, y, g.ci, g.w, 1, !!g.seed); }
+    for (const b of rising) drawBubble(b.x, b.y, b.ci, b.w, b.sz, b.fast);
     for (const f of fx) {
       const p = (t - f.t0) / 0.32; if (p > 1) continue;
       const [, c2] = BUB_COL[f.ci];
@@ -2951,7 +2966,13 @@ async function bubbleGame(words, run) {
       if (S.teacher || document.hidden) dt = 0;   /* 관리 메뉴가 열린 동안·안 보일 때는 멈춤 */
       t += dt;
       if (dt > 0) {
-        if (t >= nextSpawn) spawn();
+        if (t >= nextSpawn) spawn(false);
+        if (t >= nextFast) spawn(true);
+        for (const [k, g] of grid) if (g.seed && t >= g.seed) {   /* 씨앗: 빈 옆 칸에 방울 하나 */
+          const [r, c] = k.split(',').map(Number), em = nb(r, c).filter(([a, z]) => !grid.has(K(a, z)));
+          if (em.length) { const [a, z] = pick(em); grid.set(K(a, z), { ci: Math.floor(Math.random() * BUB_COL.length), w: null, seed: 0 }); }
+          g.seed = t + P.grow;
+        }
         if (!target && t >= tgtAt && ws.length) pickTarget();
         if (target && !reSaid && t - tgtAt > 8) { reSaid = true; speakTgt(); }
         if (target && t - tgtAt > 16) pickTarget();
