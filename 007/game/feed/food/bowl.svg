@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <ellipse cx="256" cy="402" rx="190" ry="26" fill="#000" opacity=".08"/>
+  <!-- 사료 더미 -->
+  <g stroke="#4a3426" stroke-width="7" stroke-linejoin="round">
+    <circle cx="170" cy="250" r="34" fill="#c98a4b"/><circle cx="222" cy="226" r="34" fill="#b97a3f"/><circle cx="276" cy="222" r="34" fill="#d39857"/>
+    <circle cx="330" cy="238" r="34" fill="#c08243"/><circle cx="198" cy="270" r="30" fill="#d9a066"/><circle cx="254" cy="258" r="32" fill="#c48745"/>
+    <circle cx="308" cy="268" r="30" fill="#d39857"/><circle cx="352" cy="270" r="28" fill="#b97a3f"/><circle cx="150" cy="278" r="26" fill="#d9a066"/>
+  </g>
+  <!-- 그릇 -->
+  <path d="M86 270 H426 L392 380 Q384 400 360 400 H152 Q128 400 120 380 Z" fill="#7cc4e4" stroke="#4a3426" stroke-width="9" stroke-linejoin="round"/>
+  <rect x="74" y="252" width="364" height="40" rx="20" fill="#9ad6ee" stroke="#4a3426" stroke-width="9"/>
+  <path d="M132 318 Q256 340 380 318" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".55"/>
+</svg>

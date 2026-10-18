@@ -2356,6 +2356,9 @@ function gameFor(words) {
 }
 const ga = w => w + (hasJong(w) ? '이' : '가');
 const foodPic = f => GBASE + 'feed/food/' + f + '.webp';
+const BOWL = () => GBASE + 'feed/food/bowl.svg';   /* 고르는 동안은 어느 동물에게나 같은 먹이 그릇(먹이가 답을 알려 주지 않게) */
+/* 맞힌 뒤 좋아하는 먹이를 입에 문 자리(그림 512×512 안의 비율) */
+const MOUTH = {byeongari:[0.38,0.44],chamsae:[.88,.26],dak:[.83,.23],daramjwi:[0.34,0.49],dwaeji:[0.21,0.47],gae:[0.27,0.39],gaeguri:[0.44,0.39],gaemi:[.29,.50],gangaji:[0.62,0.49],geobuki:[.19,.33],girin:[.83,.27],gom:[0.73,0.4],goyangi:[0.37,0.39],hama:[.43,.56],horangi:[0.23,0.49],jwi:[0.27,0.51],kokkiri:[.70,.47],mal_dongmul:[.92,.33],mulgogi:[.10,.52],nabi:[.46,.44],nakta:[.17,.25],ori:[.90,.25],penggwin:[.40,.27],sae_dongmul:[.77,.25],saengjwi:[0.29,0.53],saja:[0.31,0.5],saseum:[.35,.42],so:[.15,.46],tokki:[.85,.52],wonsungi:[0.44,0.46],yeou:[0.37,0.49]};
 const pose = (w, k) => GBASE + 'feed/animal/' + PICS[w] + '_' + k + '.webp';
 const BODYIMG = GBASE + 'body/body.webp';
 const gplan = words => {
@@ -2391,7 +2394,7 @@ function gameTexts(words, kind) {
   return t;
 }
 async function gameUrls(words, kind) {
-  if (kind === 'feed') return words.flatMap(w => [pose(w, 'yum'), pose(w, 'open'), ...FEED[w].map(foodPic)]);
+  if (kind === 'feed') return [BOWL()].concat(words.flatMap(w => [pose(w, 'yum'), pose(w, 'open'), ...FEED[w].map(foodPic)]));
   const u = []; for (const w of words) u.push(await Pics.url(w));
   if (kind === 'body') u.push(BODYIMG);
   return u.filter(Boolean);
@@ -2501,7 +2504,7 @@ async function trial(ans, run) {
   it.style.transform = 'translate(-50%,-120%)';
   if (feed) {
     const list = FEED[ans], k = G.food[ans] = ((G.food[ans] ?? Math.floor(Math.random() * list.length)) + 1) % list.length;
-    it.innerHTML = `<img src="${foodPic(list[k])}" alt="">`; G.cur = list[k];
+    it.innerHTML = `<img src="${BOWL()}" alt="">`; G.cur = list[k];
   } else {
     const s2 = Math.min(slotP * 2, H * 0.3, W * 0.3);
     it.style.width = it.style.height = s2 + 'px';
@@ -2529,8 +2532,16 @@ async function success(el, ans, feed, run) {
     it.style.transition = 'transform .65s ease-in-out, opacity .3s ease .5s';
     it.style.transform = `translate(calc(-50% + ${tx - (ir.left + ir.width / 2)}px), ${ir.top + (ty - (ir.top + ir.height / 2))}px) scale(.45)`;
     await wait(650, run);
-    it.style.opacity = 0; el.classList.add('hop'); chime();
+    it.style.transition = 'opacity .15s ease'; it.style.opacity = 0; el.classList.add('hop'); chime();   /* 그릇은 바로 사라지고 좋아하는 먹이가 입에 */
     GM.querySelectorAll('#targets .tg img').forEach(im => im.src = pose(im.closest('.tg').dataset.w, 'yum'));
+    /* 맞힌 동물이 좋아하는 먹이를 입에 문 것처럼 */
+    const pic = el.querySelector('.pic'), m = MOUTH[PICS[ans]];
+    if (pic && m) {
+      const pw = pic.clientWidth, ph = pic.clientHeight, s = Math.min(pw, ph), fsz = s * 0.28;
+      const f = document.createElement('img'); f.className = 'mouthfood'; f.src = foodPic(G.cur); f.alt = '';
+      Object.assign(f.style, { position: 'absolute', width: fsz + 'px', height: fsz + 'px', objectFit: 'contain', left: ((pw - s) / 2 + m[0] * s - fsz / 2) + 'px', top: ((ph - s) / 2 + m[1] * s - fsz / 2) + 'px', opacity: 0, transition: 'opacity .3s ease', pointerEvents: 'none' });
+      pic.appendChild(f); requestAnimationFrame(() => { f.style.opacity = 1; });
+    }
   } else {
     const im = el.querySelector('.slot img'), r = im.getBoundingClientRect();
     im.style.opacity = 1;
