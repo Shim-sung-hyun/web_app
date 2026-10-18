@@ -173,6 +173,7 @@ button{font-family:inherit;cursor:pointer}
 #tNotice{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:#FFF4D6;color:#6A4A00;border:1px solid #F0D58A;border-radius:12px;padding:8px 14px;font-size:14px;z-index:31}
 
 /* 관리 버튼 (Aqua) */
+#setup:not(.hidden) ~ #aqua{display:none}   /* 처음 설정 화면에서는 관리 버튼이 필요 없음 */
 #aqua{position:fixed;right:14px;bottom:14px;width:43px;height:43px;border-radius:50%;z-index:40;border:none;padding:0;opacity:.4;
   background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.95) 0 14%,rgba(255,255,255,0) 42%),radial-gradient(circle at 50% 85%,#9FE0FF 0,#3C8DDB 45%,#1F5FB8 100%);
   box-shadow:inset 0 -3px 6px rgba(255,255,255,.55),inset 0 2px 3px rgba(0,0,0,.25),0 2px 5px rgba(0,0,0,.25);
