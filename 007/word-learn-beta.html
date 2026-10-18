@@ -1953,6 +1953,7 @@ async function stageChoice(st, w, run) {
   const cardH = grid ? H * 0.2 : Math.min(H * 0.4, cardW * (N > 2 ? 1.25 : 1.1));
   const prompt = document.createElement('div'); prompt.className = 'prompt';
   const choices = document.createElement('div'); choices.className = 'choices';
+  choices.style.opacity = 0; choices.style.pointerEvents = 'none';   /* 견본을 먼저 보게: 보기는 잠시 뒤에 */
   stage.append(prompt, choices);
 
   let targetFont = null;
@@ -2014,7 +2015,13 @@ async function stageChoice(st, w, run) {
       }
     }));
     (async () => {
-      try { await wait(200, run); await say(instr, run); if (!resolved) armTimers(); }
+      try {
+        await wait(200, run);
+        const sp = say(instr, run);
+        await wait(1000, run);
+        choices.style.transition = 'opacity .5s ease'; choices.style.opacity = 1; choices.style.pointerEvents = '';
+        await sp; if (!resolved) armTimers();
+      }
       catch (e) { clearInterval(chk); rej(e); }
     })();
   });
@@ -2498,7 +2505,7 @@ async function trial(ans, run) {
     }
     box.appendChild(d); return d;
   });
-  await wait(30, run); if (!feed) els.forEach(e => e.style.opacity = 1);   /* 먹이 주기: 먹이가 먼저 자리 잡은 뒤 동물이 제자리에서 나타남 */
+  await wait(30, run);   /* 먹이(그릇)·맞힐 그림이 먼저 자리 잡은 뒤, 고를 것(동물·바구니)이 제자리에서 나타남 */
   const it = gq('#item'); const sz = Math.min(H * 0.24, W * 0.24, 230);
   it.className = ''; it.style.left = ''; it.style.transition = 'none'; it.style.opacity = 1; it.style.width = sz + 'px'; it.style.height = sz + 'px';
   it.style.transform = 'translate(-50%,-120%)';
@@ -2513,10 +2520,8 @@ async function trial(ans, run) {
   await wait(40, run);
   it.style.transition = ''; it.style.transform = `translate(-50%, ${H * 0.12}px)`;
   await wait(2700, run);
-  if (feed) {
-    els.forEach(e => { e.querySelector('img').src = pose(e.dataset.w, 'open'); e.style.transition = 'opacity .5s ease'; e.style.opacity = 1; });
-    await wait(900, run);   /* 다 나타나 멈춘 뒤에 이름을 말함 */
-  }
+  els.forEach(e => { if (feed) e.querySelector('img').src = pose(e.dataset.w, 'open'); e.style.transition = 'opacity .5s ease'; e.style.opacity = 1; });
+  await wait(900, run);   /* 다 나타나 멈춘 뒤에 이름을 말함 */
   const speakCue = () => Speech.say(ans).catch(() => {});
   if (feed || G.lv !== 3) speakCue();
   await waitTap(els, ans, lv, run, speakCue, (G.lv === 3 && !feed) ? 3000 : lv.again, (e, hinted) => success(e, ans, feed, run));
@@ -2672,7 +2677,7 @@ async function trialBody(ans, run) {
       + `<span class="lbl" style="font-size:${fs}px">${esc(w)}</span>`;
     lb.appendChild(d); return d;
   });
-  await wait(30, run); els.forEach(e => e.style.opacity = 1);
+  await wait(30, run);
   const it = gq('#item'); const bw = Math.min(L.bs * 0.2, 120);
   it.className = 'bandage'; it.style.transition = 'none'; it.style.opacity = 1;
   it.style.width = it.style.height = bw + 'px'; it.innerHTML = STICKERS[G.i % 2];
@@ -2682,6 +2687,8 @@ async function trialBody(ans, run) {
   it.style.transition = 'transform 1.6s cubic-bezier(.25,.6,.3,1)';
   it.style.transform = `translate(-50%, ${L.land ? L.area.y + L.area.h * 0.08 : 8}px)`;
   await wait(1700, run);
+  els.forEach(e => { e.style.transition = 'opacity .5s ease'; e.style.opacity = 1; });   /* 스티커가 자리 잡은 뒤 이름표가 제자리에서 나타남 */
+  await wait(900, run);
   const speakCue = () => Speech.say(ans).catch(() => {});
   speakCue();
   await waitTap(els, ans, lv, run, speakCue, lv.again, e => bodySuccess(e, ans, run, L));
