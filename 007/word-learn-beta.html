@@ -1362,16 +1362,7 @@ const Speech = {
     await new Promise(res => { src.onended = res; src.start(); setTimeout(res, d * 1000 + 400); });
     if (this.cur === src) this.cur = null;
   },
-  keepAlive() {
-    try {
-      this.initAudio(); if (this.ka || !this.ctx) return;
-      const c = this.ctx, b = c.createBuffer(1, c.sampleRate, c.sampleRate), d = b.getChannelData(0);
-      for (let i = 0; i < d.length; i++) d[i] = (Math.random() - 0.5) * 2e-5;
-      const s = c.createBufferSource(); s.buffer = b; s.loop = true; s.connect(c.destination); s.start(); this.ka = s;
-    } catch (e) {}
-  },
   async playDevice(t, g) {
-    this.keepAlive();
     try { speechSynthesis.cancel(); } catch (e) {}
     await sleep(300);
     if (g !== this.gen) return;
