@@ -1935,7 +1935,7 @@ function distractors(w, n, st) {
   const mi = MADANG_OF.get(w), p = mi != null ? BOOK[mi].p : 0;
   const tiers = [R.words, mi != null ? BOOK[mi].w : [], BOOK.filter(x => x.p === p).flatMap(x => x.w), S.words.map(x => x.w)];
   const base = x => x !== w && !(R.skip && R.skip.has(x)) && Pics.has(x) && !(PICS[x] && PICS[x] === PICS[w])
-    && !((st === 4 || R.lv < 3) && isPair(x, w)) && !(st === 4 && R.lv === 3 && TXTPIC.has(x));
+    && !((st !== 2 || R.lv < 3) && isPair(x, w)) && !(st === 4 && R.lv === 3 && TXTPIC.has(x));
   const out = [];
   for (const strict of [true, false]) for (const tier of tiers) for (const x of shuffle(tier)) {
     if (out.length >= n) return out;
