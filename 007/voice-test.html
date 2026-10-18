@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>기기 목소리 시험</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#faf7f2;color:#333;margin:0;padding:20px;max-width:760px}
+h1{font-size:20px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0;padding:10px;background:#fff;border-radius:10px;border:1px solid #ddd}
+.row b{width:100%;font-size:15px}button{font-size:16px;padding:10px 14px;border-radius:8px;border:1px solid #9ab;background:#eef4f8;cursor:pointer}
+.note{font-size:13px;color:#666}
+</style></head><body>
+<h1>기기 목소리 시험 (맥 파이어폭스 "탁" 찾기)</h1>
+<p class="note">각 줄의 단추를 눌러 들어 보고, "탁"이 나는 줄과 안 나는 줄을 알려 주세요.</p>
+<p class="note" id="vinfo"></p>
+<div id="rows"></div>
+<script>
+const T=['연.','색연필.','사과를 찾아 눌러요.'];
+const allKo=()=>(speechSynthesis.getVoices()||[]).filter(v=>v.lang&&v.lang.replace('_','-').toLowerCase().startsWith('ko'));
+function pick005(){const vs=allKo();const s=v=>(/premium|프리미엄/i.test(v.name)?4:0)+(/enhanced|향상/i.test(v.name)?3:0)+(/google/i.test(v.name)?2:0)+(/yuna|유나/i.test(v.name)?1:0)+(v.localService?0.5:0);return vs.sort((a,b)=>s(b)-s(a))[0]||null;}
+function pick007(){const vs=allKo();const s=v=>(/premium|프리미엄/i.test(v.name)?50:0)+(/enhanced|향상/i.test(v.name)?40:0)+(/google/i.test(v.name)?30:0)+(/yuna|유나/i.test(v.name)?20:0);vs.sort((a,b)=>s(b)-s(a));return vs[0]||null;}
+const V=[
+ {n:'1. 다른 앱(005)과 똑같이',rate:.78,vol:.7,voice:pick005,pause:0},
+ {n:'2. 지금 베타와 똑같이',rate:.76,vol:.8,voice:pick007,pause:300},
+ {n:'3. 베타 + 소리 크기 1',rate:.76,vol:1,voice:pick007,pause:300},
+ {n:'4. 베타 + 목소리 지정 안 함',rate:.76,vol:.8,voice:()=>null,pause:300},
+ {n:'5. 베타 + 멈춤 뒤 쉬지 않음',rate:.76,vol:.8,voice:pick007,pause:0},
+];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function say(v,t){try{speechSynthesis.cancel();}catch(e){} if(v.pause)await sleep(v.pause);
+ const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=v.rate;u.volume=v.vol;const vo=v.voice();if(vo)u.voice=vo;speechSynthesis.speak(u);}
+function draw(){
+ const a=pick005(),b=pick007();
+ document.getElementById('vinfo').textContent='한국어 목소리: '+allKo().map(v=>v.name).join(', ')+' / 005가 고르는 것: '+(a&&a.name)+' / 베타가 고르는 것: '+(b&&b.name);
+ document.getElementById('rows').innerHTML='';
+ V.forEach(v=>{const d=document.createElement('div');d.className='row';d.innerHTML='<b>'+v.n+'</b>';
+  T.forEach(t=>{const bt=document.createElement('button');bt.textContent=t;bt.onclick=()=>say(v,t);d.appendChild(bt);});
+  document.getElementById('rows').appendChild(d);});
+}
+draw(); speechSynthesis.onvoiceschanged=draw;
+</script></body></html>
