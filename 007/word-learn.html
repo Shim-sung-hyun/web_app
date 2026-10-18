@@ -181,8 +181,8 @@ button{font-family:inherit;cursor:pointer}
 #aqua.on{opacity:.6;background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.75) 0 12%,rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 85%,#7FA9AE 0,#3D5459 50%,#20302F 100%)}
 #aqua.on span{font-family:Jua,sans-serif;font-size:17px;color:#9FF3F5;text-shadow:0 0 6px rgba(159,243,245,.8)}
 #aqua .ring{position:absolute;inset:-4px;border-radius:50%;pointer-events:none;opacity:0}
-#aqua.holding{opacity:1}
-#aqua.holding .ring{opacity:1;background:conic-gradient(#FF7A00 var(--p,0%),transparent 0);-webkit-mask:radial-gradient(circle,transparent 23px,#000 24px);mask:radial-gradient(circle,transparent 23px,#000 24px)}
+#aqua.holding{opacity:.75}
+#aqua.holding .ring{opacity:1;background:conic-gradient(#22AFBC var(--p,0%),transparent 0);-webkit-mask:radial-gradient(circle,transparent 23px,#000 24px);mask:radial-gradient(circle,transparent 23px,#000 24px)}
 
 /* 도움말 둘러보기 */
 #tour{position:fixed;inset:0;z-index:80;display:none}
@@ -3026,7 +3026,7 @@ Teacher.init(); renderStudents(); updateRecMark(); renderJamo(); autoPick(true);
 window.__app = { S, R, Rec, wordStrokes, syllableStrokes, parseTxt, toTxt, poolWords, difficulty };
 </script>
 <script id="holdBubble">
-/* 관리 버튼을 3초 누르는 동안: 버튼 조금 위(손가락에 가리지 않는 곳)에 투명한 아쿠아 원이 1초에 한 번씩 부드럽게 세 번 깜빡. 손을 떼면 바로 사라짐 */
+/* 관리 버튼을 3초 누르는 동안: (휴대폰·태블릿을 손가락으로 누를 때만) 버튼 조금 위(손가락에 가리지 않는 곳)에 투명한 아쿠아 원이 1초에 한 번씩 부드럽게 세 번 깜빡. 전자칠판·PC는 버튼 둘레 고리만. 손을 떼면 바로 사라짐 */
 (function(){
   const btn = document.querySelector('#adminBtn, #aqua'); if (!btn) return;
   const st = document.createElement('style');
@@ -3035,7 +3035,8 @@ window.__app = { S, R, Rec, wordStrokes, syllableStrokes, parseTxt, toTxt, poolW
     + 'border:1.5px solid rgba(70,185,200,.55);box-shadow:0 0 10px rgba(130,230,238,.55)}';
   document.head.appendChild(st);
   const dot = document.createElement('div'); dot.className = 'hb-dot'; document.body.appendChild(dot);
-  let down = false, raf = 0;
+  let down = false, raf = 0, useDot = false;
+  const mobileOS = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const prog = () => { const v = getComputedStyle(btn).getPropertyValue('--p').trim(); const n = parseFloat(v) || 0; return /%$/.test(v) ? n / 100 : n; };
   const hide = () => { dot.style.opacity = 0; btn.style.opacity = ''; };
   const loop = () => {
@@ -3044,12 +3045,13 @@ window.__app = { S, R, Rec, wordStrokes, syllableStrokes, parseTxt, toTxt, poolW
       const r = btn.getBoundingClientRect(), S = 40;
       dot.style.left = Math.max(4, Math.min(innerWidth - S - 4, r.left + r.width / 2 - S / 2)) + 'px';
       dot.style.top = Math.max(4, r.top - S - 34) + 'px';
-      btn.style.opacity = '1';
+      btn.style.opacity = '.75';
+      if (!useDot) return void (raf = requestAnimationFrame(loop));
       dot.style.opacity = (0.9 * Math.sin(Math.PI * ((p * 3) % 1))).toFixed(3);   /* 1초마다 한 번: 천천히 나타났다 사라짐 */
     } else hide();
     if (down) raf = requestAnimationFrame(loop); else hide();
   };
-  btn.addEventListener('pointerdown', () => { down = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); }, true);
+  btn.addEventListener('pointerdown', e => { useDot = e.pointerType !== 'mouse' && (mobileOS || Math.min(screen.width, screen.height) < 1040); down = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); }, true);
   const up = () => { down = false; cancelAnimationFrame(raf); hide(); };
   ['pointerup', 'pointercancel', 'blur'].forEach(t => addEventListener(t, up, true));
 })();
