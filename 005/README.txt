@@ -14,10 +14,6 @@
 파일
   place-value.html          웹앱
   place-value01~05.jpg      화면 그림 (첫 화면, 연습 화면(기록 중), 사용법 말풍선, 학생 기록, 큰 수)
-  cloud-key.html            Cloud 키 넣는 방법 안내 페이지 (첫 화면 목소리 줄에서 연결)
-                            주소: https://shim-sung-hyun.github.io/web_app/005/cloud-key.html
   place-value_manual.html   게시판 본문용 설명서
-
-휴대폰으로 키 받기
-  키 칸 옆 "📱 휴대폰으로 받기" 단추는 중계 서버 https://charum.org/key-relay.php 를 씁니다.
-  중계 서버와 보내기 페이지는 key-relay.zip을 보세요.
+  voice/leda/               목소리(미리 만든 Google Leda 조각, mp3 + index.json). 키 없이 씀
+                            수를 자리마다 조각(예: 삼만 / 이천·오백·칠)으로 이어 읽음
