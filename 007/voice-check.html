@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>기본 목소리 들어 보기</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d2133;--sub:#5b6077;--line:#d9dcea;--pri:#2C5FCF;--bg:#f3f5fb;--bad:#c62828}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 120px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:30px;margin:0 0 6px;color:#1E4396}
+.lead{color:var(--sub);line-height:1.7;margin:0 0 16px}
+h2{font-size:18px;margin:26px 0 4px}
+.why{color:var(--sub);font-size:14px;margin:0 0 10px;line-height:1.6}
+.row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 12px;margin:6px 0}
+.row.bad{border-color:var(--bad);background:#fff5f5}
+.play{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--pri);color:#fff;font-size:18px;cursor:pointer}
+.t{flex:1;font-size:18px}
+.t small{display:block;color:var(--sub);font-size:13px;margin-top:2px}
+label.ck{flex:none;display:flex;align-items:center;gap:6px;font-size:14px;color:var(--bad);cursor:pointer;user-select:none}
+label.ck input{width:22px;height:22px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.bar button{font:inherit;font-size:16px;font-weight:700;padding:12px 20px;border-radius:12px;border:0;background:var(--pri);color:#fff;cursor:pointer}
+#msg{color:var(--sub);font-size:14px}
+</style>
+</head>
+<body>
+<main>
+<h1>기본 목소리 들어 보기</h1>
+<p class="lead">글자 익히기(007)의 미리 만든 목소리 가운데 <b>한 번 들어 보면 좋을 말</b>만 모았어요. ▶를 눌러 듣고, 발음이 틀리거나 흐리거나 너무 빠르면 <b>“이상해요”</b>에 표시해 주세요. 다 듣고 아래 <b>“표시한 것 복사”</b>를 눌러 Claude에게 붙여 넣어 주시면 그 말만 다시 만들어요.</p>
+<div id="list"></div>
+</main>
+<div class="bar"><span id="msg"></span><button id="copy">표시한 것 복사</button></div>
+<script>
+const GROUPS = [{"title": "1. 표준 발음 확인", "why": "받침이 뒤로 넘어가거나(연음) 글자에 없는 된소리·ㄴ 소리가 나는 말이에요. 괄호 안 표준 발음대로 들리는지 봐 주세요.", "items": [{"t": "닭이에요.", "show": "닭이에요.", "note": "표준 발음 [달기에요]"}, {"t": "닭이 모이를 잘 먹어요.", "show": "닭이 모이를 잘 먹어요.", "note": "[달기]"}, {"t": "닭을 찾아요.", "show": "닭을 찾아요.", "note": "[달글]"}, {"t": "흙이에요.", "show": "흙이에요.", "note": "[흘기에요]"}, {"t": "흙을 찾아요.", "show": "흙을 찾아요.", "note": "[흘글]"}, {"t": "꽃이에요.", "show": "꽃이에요.", "note": "[꼬치에요]"}, {"t": "꽃을 찾아요.", "show": "꽃을 찾아요.", "note": "[꼬츨]"}, {"t": "나팔꽃이에요.", "show": "나팔꽃이에요.", "note": "[나팔꼬치에요]"}, {"t": "무릎이에요.", "show": "무릎이에요.", "note": "[무르피에요]"}, {"t": "곰이 꿀단지를 잘 먹어요.", "show": "곰이 꿀단지를 잘 먹어요.", "note": "꿀단지 [꿀딴지]"}, {"t": "사슴이 단풍잎을 잘 먹어요.", "show": "사슴이 단풍잎을 잘 먹어요.", "note": "단풍잎 [단풍닙]"}, {"t": "닭이 배춧잎을 잘 먹어요.", "show": "닭이 배춧잎을 잘 먹어요.", "note": "배춧잎 [배춘닙]"}, {"t": "나비가 꽃꿀을 잘 먹어요.", "show": "나비가 꽃꿀을 잘 먹어요.", "note": "꽃꿀 [꼳꿀]"}, {"t": "잠자리예요.", "show": "잠자리예요.", "note": "곤충 잠자리 [잠자리] (잠잘 곳은 [잠짜리])"}, {"t": "의자예요.", "show": "의자예요.", "note": "[의자]"}, {"t": "의사예요.", "show": "의사예요.", "note": "[의사]"}, {"t": "편의점이에요.", "show": "편의점이에요.", "note": "[펴니저미에요]"}, {"t": "연못이에요.", "show": "연못이에요.", "note": "[연모시에요]"}, {"t": "씨앗이에요.", "show": "씨앗이에요.", "note": "[씨아시에요]"}, {"t": "버섯이에요.", "show": "버섯이에요.", "note": "[버서시에요]"}, {"t": "비옷이에요.", "show": "비옷이에요.", "note": "[비오시에요]"}, {"t": "책꽂이예요.", "show": "책꽂이예요.", "note": "[책꼬지예요]"}, {"t": "앞치마예요.", "show": "앞치마예요.", "note": "[압치마예요]"}, {"t": "계산대예요.", "show": "계산대예요.", "note": "[계ː산대예요]"}]}, {"title": "2. 음성 인식기가 다르게 알아들은 말", "why": "기계가 알아듣기 어려워한 말이에요. 기계가 틀렸을 수도 있어요. 사람 귀로 또렷한지 봐 주세요.", "items": [{"t": "허수아비.", "show": "허수아비.", "note": "인식: 어서와비"}, {"t": "허수아비를 찾아요.", "show": "허수아비를 찾아요.", "note": "인식: 허수합의를 찾아요."}, {"t": "허수아비예요.", "show": "허수아비예요.", "note": "인식: 허수압이에요."}, {"t": "세제.", "show": "세제.", "note": "인식: 체제"}, {"t": "세제예요.", "show": "세제예요.", "note": "인식: 3G예요."}, {"t": "세제를 찾아 눌러요.", "show": "세제를 찾아 눌러요.", "note": "인식: 해제를 찾아 눌러요."}, {"t": "승강기.", "show": "승강기.", "note": "인식: 승강기"}, {"t": "승강기예요.", "show": "승강기예요.", "note": "인식: 승관기예요."}, {"t": "승강기를 찾아 눌러요.", "show": "승강기를 찾아 눌러요.", "note": "인식: 승관기를 찾아 눌러요."}, {"t": "연못.", "show": "연못.", "note": "인식: 연못"}, {"t": "연못을 찾아요.", "show": "연못을 찾아요.", "note": "인식: 옆모습 찾아요."}, {"t": "연못을 찾아 눌러요.", "show": "연못을 찾아 눌러요.", "note": "인식: 옆모습을 찾아눌러요."}, {"t": "우체통.", "show": "우체통.", "note": "인식: 우채통"}, {"t": "우체통을 찾아 눌러요.", "show": "우체통을 찾아 눌러요.", "note": "인식: 무채품을 찾아 눌러요."}, {"t": "우체통을 바구니에 담았어요.", "show": "우체통을 바구니에 담았어요.", "note": "인식: 무채통을 바구니에 담았어요."}, {"t": "까마귀.", "show": "까마귀.", "note": "인식: 까마귀"}, {"t": "까마귀예요.", "show": "까마귀예요.", "note": "인식: 까맣게 해요."}, {"t": "까마귀를 바구니에 담았어요.", "show": "까마귀를 바구니에 담았어요.", "note": "인식: 까먹이를 바구니에 담았어요."}, {"t": "담뇨를 찾아 눌러요.", "show": "담요를 찾아 눌러요.", "note": "인식: 단유를 찾아 눌러요. · 앱은 [담뇨를 찾아 눌러요]처럼 소리 내요"}, {"t": "담뇨를 터뜨려요.", "show": "담요를 터뜨려요.", "note": "인식: 반려를 터뜨려요. · 앱은 [담뇨를 터뜨려요]처럼 소리 내요"}, {"t": "당나귀.", "show": "당나귀.", "note": "인식: 당나기"}, {"t": "당나귀예요.", "show": "당나귀예요.", "note": "인식: 당락이에요."}, {"t": "당나귀를 찾아 눌러요.", "show": "당나귀를 찾아 눌러요.", "note": "인식: 닭나기를 찾아 눌러요."}, {"t": "돗자리.", "show": "돗자리.", "note": "인식: 돗자리"}, {"t": "돗자리를 찾아요.", "show": "돗자리를 찾아요.", "note": "인식: 복자리를 찾아요."}, {"t": "돗자리를 바구니에 담았어요.", "show": "돗자리를 바구니에 담았어요.", "note": "인식: 끝자리를 바구니에 담았어요."}, {"t": "생년필을 찾아 눌러요.", "show": "색연필을 찾아 눌러요.", "note": "인식: 생년비를 찾아 놀라요. · 앱은 [생년필을 찾아 눌러요]처럼 소리 내요"}, {"t": "생년필을 터뜨려요.", "show": "색연필을 터뜨려요.", "note": "인식: 생년비를 터뜨려요. · 앱은 [생년필을 터뜨려요]처럼 소리 내요"}, {"t": "세탁기.", "show": "세탁기.", "note": "인식: 세탁기"}, {"t": "세탁기를 찾아 눌러요.", "show": "세탁기를 찾아 눌러요.", "note": "인식: 습탁기를 찾아 눌러요."}, {"t": "세탁기를 바구니에 담았어요.", "show": "세탁기를 바구니에 담았어요.", "note": "인식: 채탁기를 바구니에 담았어요."}, {"t": "송아지.", "show": "송아지.", "note": "인식: 송하지"}, {"t": "송아지를 찾아요.", "show": "송아지를 찾아요.", "note": "인식: 청아지를 찾아요."}, {"t": "송아지를 바구니에 담았어요.", "show": "송아지를 바구니에 담았어요.", "note": "인식: 송화지를 바구니에 담았어요."}, {"t": "수건.", "show": "수건.", "note": "인식: 수건"}, {"t": "수건을 찾아 눌러요.", "show": "수건을 찾아 눌러요.", "note": "인식: 슈관의 체자 눌러요"}, {"t": "수건을 바구니에 담았어요.", "show": "수건을 바구니에 담았어요.", "note": "인식: 수반을 바꾼 위에 담았어요."}, {"t": "시장.", "show": "시장.", "note": "인식: 시장"}, {"t": "시장이에요.", "show": "시장이에요.", "note": "인식: 짱이에요."}, {"t": "시장을 바구니에 담았어요.", "show": "시장을 바구니에 담았어요.", "note": "인식: 취장을 바구니에 담았어요."}, {"t": "씨앗.", "show": "씨앗.", "note": "인식: 셰프"}, {"t": "씨앗을 바구니에 담았어요.", "show": "씨앗을 바구니에 담았어요.", "note": "인식: 치아슬 바구니에 담았어요."}, {"t": "영수증.", "show": "영수증.", "note": "인식: 영수증"}, {"t": "영수증을 찾아요.", "show": "영수증을 찾아요.", "note": "인식: 0수정을 찾아요."}, {"t": "영수증을 터뜨려요.", "show": "영수증을 터뜨려요.", "note": "인식: 0수정을 터뜨려요."}, {"t": "잉어.", "show": "잉어.", "note": "인식: 이고"}, {"t": "잉어예요.", "show": "잉어예요.", "note": "인식: 이거예요."}, {"t": "잉어를 터뜨려요.", "show": "잉어를 터뜨려요.", "note": "인식: 2호를 터뜨려요."}, {"t": "저울.", "show": "저울.", "note": "인식: 자울"}, {"t": "저울을 찾아요.", "show": "저울을 찾아요.", "note": "인식: 저오를 찾아요."}, {"t": "저울을 바구니에 담았어요.", "show": "저울을 바구니에 담았어요.", "note": "인식: 저오를 바구니에 담았어요."}, {"t": "나비가 꽃꿀을 맛있게 먹어요.", "show": "나비가 꽃꿀을 맛있게 먹어요.", "note": "인식: 나비가 콧구를 맛있게 먹어요"}, {"t": "펭귄을 찾아요.", "show": "펭귄을 찾아요.", "note": "인식: 빙균을 찾아요."}, {"t": "기린을 찾아요.", "show": "기린을 찾아요.", "note": "인식: 길인을 찾아요."}, {"t": "독수리예요.", "show": "독수리예요.", "note": "인식: 목소리예요."}, {"t": "수세미", "show": "수세미", "note": "인식: 수세미"}, {"t": "수세미,", "show": "수세미,", "note": "인식: 시청해 주셔서 감사합니다."}]}, {"title": "3. 빠르게 말한 것", "why": "보통보다 빨리 말해 흐리게 들릴 수 있어요.", "items": [{"t": "케이크.", "show": "케이크.", "note": "1초에 9.4글자(보통 6글자)"}, {"t": "치즈예요.", "show": "치즈예요.", "note": "1초에 8.0글자(보통 6글자)"}, {"t": "공이에요.", "show": "공이에요.", "note": "1초에 8.5글자(보통 6글자)"}, {"t": "말이에요.", "show": "말이에요.", "note": "1초에 8.0글자(보통 6글자)"}, {"t": "지하철을 찾아 눌러요.", "show": "지하철을 찾아 눌러요.", "note": "1초에 7.9글자(보통 6글자)"}, {"t": "에스컬레이터예요.", "show": "에스컬레이터예요.", "note": "1초에 8.1글자(보통 6글자)"}, {"t": "두꺼비예요.", "show": "두꺼비예요.", "note": "1초에 8.5글자(보통 6글자)"}, {"t": "작업복이에요.", "show": "작업복이에요.", "note": "1초에 8.1글자(보통 6글자)"}, {"t": "쓰레기봉투예요.", "show": "쓰레기봉투예요.", "note": "1초에 8.0글자(보통 6글자)"}, {"t": "허수아비를 바구니에 담았어요.", "show": "허수아비를 바구니에 담았어요.", "note": "1초에 8.2글자(보통 6글자)"}]}, {"title": "4. 끝이 잘렸을 수 있는 것", "why": "파일 끝에서 소리가 바로 끊겨요. 마지막 글자까지 들리는지 봐 주세요.", "items": [{"t": "바나나를 찾아요.", "show": "바나나를 찾아요.", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "비행기,", "show": "비행기,", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "코끼리,", "show": "코끼리,", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "남자예요.", "show": "남자예요.", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "정지", "show": "정지", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "사다리", "show": "사다리", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "사다리,", "show": "사다리,", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "커피.", "show": "커피.", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "빵찝을 바구니에 담았어요.", "show": "빵집을 바구니에 담았어요.", "note": "끝소리가 갑자기 끊겼을 수 있어요 · 앱은 [빵찝을 바구니에 담았어요]처럼 소리 내요"}, {"t": "컵을 터뜨려요.", "show": "컵을 터뜨려요.", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "학교를 터뜨려요.", "show": "학교를 터뜨려요.", "note": "끝소리가 갑자기 끊겼을 수 있어요"}, {"t": "비를 터뜨려요.", "show": "비를 터뜨려요.", "note": "끝소리가 갑자기 끊겼을 수 있어요"}]}, {"title": "5. 소리를 키운 것", "why": "다른 말보다 작게 만들어져 있어서 소리 크기를 맞췄어요. 소리가 갈라지지 않는지만 봐 주세요.", "items": [{"t": "앞.", "show": "앞.", "note": ""}, {"t": "자.", "show": "자.", "note": ""}, {"t": "네.", "show": "네.", "note": ""}, {"t": "배예요.", "show": "배예요.", "note": ""}, {"t": "음.", "show": "음.", "note": ""}, {"t": "오이.", "show": "오이.", "note": ""}, {"t": "바위.", "show": "바위.", "note": ""}, {"t": "우표", "show": "우표", "note": ""}, {"t": "커피", "show": "커피", "note": ""}, {"t": "우산", "show": "우산", "note": ""}, {"t": "아파트,", "show": "아파트,", "note": ""}]}];
+const VBASE = 'voice/leda/';
+const $ = id => document.getElementById(id);
+const hashOf = async t => { const d = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16); };
+const KEY = 'voiceCheck007';
+let marks = {}; try { marks = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} count(); };
+const count = () => { const n = Object.values(marks).filter(Boolean).length; $('msg').textContent = n ? `${n}개 표시함` : '표시한 것이 없어요'; };
+const audio = new Audio();
+GROUPS.forEach(g => {
+  const h2 = document.createElement('h2'); h2.textContent = g.title; $('list').appendChild(h2);
+  if (g.why) { const p = document.createElement('p'); p.className = 'why'; p.textContent = g.why; $('list').appendChild(p); }
+  g.items.forEach(it => {
+    const row = document.createElement('div'); row.className = 'row' + (marks[it.t] ? ' bad' : '');
+    const b = document.createElement('button'); b.className = 'play'; b.textContent = '▶'; b.setAttribute('aria-label', '듣기');
+    b.onclick = async () => { audio.src = VBASE + (await hashOf(it.t)) + '.mp3'; audio.play().catch(() => {}); };
+    const t = document.createElement('div'); t.className = 't'; t.textContent = it.show || it.t;
+    if (it.note) { const s = document.createElement('small'); s.textContent = it.note; t.appendChild(s); }
+    const ck = document.createElement('label'); ck.className = 'ck'; ck.innerHTML = '<input type="checkbox"> 이상해요';
+    const inp = ck.querySelector('input'); inp.checked = !!marks[it.t];
+    inp.onchange = () => { marks[it.t] = inp.checked; row.classList.toggle('bad', inp.checked); save(); };
+    row.append(b, t, ck); $('list').appendChild(row);
+  });
+});
+count();
+$('copy').onclick = async () => {
+  const list = Object.keys(marks).filter(k => marks[k]);
+  if (!list.length) { $('msg').textContent = '표시한 것이 없어요'; return; }
+  const txt = '이상한 소리:\n' + list.join('\n');
+  try { await navigator.clipboard.writeText(txt); $('msg').textContent = `${list.length}개를 복사했어요. Claude에게 붙여 넣어 주세요.`; }
+  catch (e) { prompt('아래 글을 복사해 주세요', txt); }
+};
+</script>
+</body>
+</html>
