@@ -30,7 +30,7 @@ svg.ic{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;strok
 #cover{display:none;position:fixed;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:18px}
 body.cover #cover{display:flex}
 body.cover #app{display:none}
-#cover h1{font-family:"Nanum Myeongjo",serif;font-weight:800;font-size:clamp(52px,8vw,104px);letter-spacing:4px;margin:0;color:var(--ink)}
+#cover h1{cursor:pointer;-webkit-user-select:none;user-select:none;font-family:"Nanum Myeongjo",serif;font-weight:800;font-size:clamp(52px,8vw,104px);letter-spacing:4px;margin:0;color:var(--ink)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* ---------- 시 화면 ---------- */
 #app{position:relative;min-height:100vh;display:flex;flex-direction:column}
@@ -164,7 +164,7 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
 </head>
 <body class="cover">
 
-<section id="cover"><h1>시 암송하기</h1></section>
+<section id="cover"><h1 id="coverTitle" role="button" tabindex="0">시 암송하기</h1></section>
 
 <div id="app">
   <div class="content">
@@ -692,6 +692,14 @@ $('adminBtn').addEventListener('click',e=>{
   setAdmin(!S.admin);
   if(!S.admin) goFull();
 });
+/* 첫 화면 제목을 누르면 공통시로 바로 시작(전체 화면). 메뉴는 관리 버튼으로 */
+function startFromCover(){
+  if(!document.body.classList.contains('cover')) return;
+  unlockAudio(); S.active='common'; store.set('active','common');
+  document.body.classList.remove('cover'); applyFont(); chooseEngine(); goFull(); rebuildEntries();
+}
+$('coverTitle').addEventListener('click',startFromCover);
+$('coverTitle').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); startFromCover(); } });
 function setAdmin(on){
   S.admin=on; document.body.classList.toggle('admin',on);
   $('adminBtn').setAttribute('aria-label', on?'관리 끄기 (수업 시작)':'관리');
