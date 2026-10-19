@@ -1232,7 +1232,7 @@ window.AdminGate = (function () {
   const st = document.createElement('style');
   st.textContent = '#agDot{position:fixed;left:18px;top:18px;width:62px;height:62px;border-radius:50%;z-index:2147483600;display:none;cursor:pointer;touch-action:none;'
     + 'background:radial-gradient(circle at 50% 38%,rgba(210,252,253,.9),rgba(120,225,232,.55) 60%,rgba(70,190,205,.4));border:2px solid rgba(34,175,188,.75);box-shadow:0 0 10px rgba(120,225,232,.6)}'
-    + '#agDot svg{position:absolute;inset:-6px;width:74px;height:74px;transform:rotate(-90deg);pointer-events:none}'
+    + '#agDot svg{position:absolute;left:50%;top:50%;width:74px;height:74px;transform:translate(-50%,-50%) rotate(-90deg);pointer-events:none}'
     + '#agDot circle{fill:none;stroke:#22AFBC;stroke-width:4;stroke-linecap:round}';
   document.head.appendChild(st);
   const dot = document.createElement('div'); dot.id = 'agDot'; dot.setAttribute('aria-label', '관리 열기');

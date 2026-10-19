@@ -2454,7 +2454,7 @@ function hideGame() { clearPlay(); GM.classList.add('hidden'); $('#dots').style.
 function gameTexts(words, kind) {
   const t = ['동물에게 먹이를 줘요.', '스티커를 붙여요.', '바구니에 담아요.', '잘했어요.', '맞아요.', '좋아요.', '바로 그거예요.'];
   for (let n = 0; n <= GMAX; n++) t.push(`별을 ${KO_N(n)} 개 모았어요.`);
-  t.push('비눗방울을 터뜨려요.');
+  t.push('낱말 찾기 놀이.');
   words.forEach(w => {
     t.push(w, eul(w) + ' 바구니에 담았어요.', w + '에 스티커를 붙였어요.'); [...w].forEach(c => t.push(c));
     if (kind === 'feed') (FEED[w] || []).forEach(f => ['잘 먹어요.', '맛있게 먹어요.', '냠냠 먹어요.'].forEach(e => t.push(`${ga(w)} ${eul(FOODKO[f] || '먹이')} ${e}`)));
@@ -2846,7 +2846,7 @@ async function bodySuccess(el, ans, run, L) {
 /* =========================================================
    상 놀이: 비눗방울 톡톡 (방울에는 오늘 낱말 글자, 신호는 수준 1 글자 · 2 그림 · 3 소리)
    - 방울이 아래에서 떠올라(점점 빨리) 고정된 천장에 붙어 아래로 쌓임. 점선까지 차거나 시간이 다 되면 끝(진 것 없음).
-   - 방울에는 오늘 배운 낱말 글자가 섞여 있음. 신호(수준 1 글자 · 2 그림+글자 · 3 소리, 말은 모두 "○○를 터뜨려요.")에 맞는 방울만 터짐.
+   - 방울에는 오늘 배운 낱말 글자가 섞여 있음. 신호(수준 1 글자 · 2 그림+글자 · 3 소리, 말은 낱말만 "사과.")에 맞는 방울만 터짐. 시작할 때 "낱말 찾기 놀이" 제목 약 2초, 처음 판의 첫 신호만 맞는 방울이 살짝 빛남.
      연속 1번 → 그 방울 둘레, 2번 → 가로·세로 중 더 많이 붙은 줄, 3번 이상 → 가로와 세로 모두. 다른 방울은 눌러도 반응 없음.
    - 위험할 때 한 판에 한 번 조커(금색): 터뜨리면 그 줄과 위아래 줄.
    ========================================================= */
@@ -2960,7 +2960,8 @@ async function bubbleGame(words, run) {
   const popQ = [];   /* [시각, 칸 또는 방울] 차례 터뜨리기 */
   /* 신호: 수준 1 글자 · 2 그림+글자 · 3 소리(이름표를 누르면 다시 들림) */
   let speaking = false, sayEnd = 0, fingerDown = false;
-  const speakTgt = () => { if (!target) return; speaking = true; Speech.say(eul(target) + ' 터뜨려요.').catch(() => {}).then(() => { speaking = false; sayEnd = performance.now(); }); };
+  const speakTgt = () => { if (!target) return; speaking = true; Speech.say(target + '.').catch(() => {}).then(() => { speaking = false; sayEnd = performance.now(); }); };   /* 신호는 낱말만("사과.") */
+  const demoKey = words.join('|'); let demo = R.bubDemo !== demoKey; R.bubDemo = demoKey;   /* 이 낱말들로 처음 하는 판의 첫 신호만: 맞는 방울이 살짝 빛남(시범) */
   const showTgt = () => {
     ban.innerHTML = lv === 3 ? '<svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#5E7FA8"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="#5E7FA8" stroke-width="2" stroke-linecap="round"/></svg>'
       : lv === 2 ? `<img src="${G.pics[target]}" alt="" style="height:${hdr * 0.56}px;width:${hdr * 0.56}px;object-fit:contain"><span>${esc(target)}</span>` : esc(target);
@@ -2969,6 +2970,7 @@ async function bubbleGame(words, run) {
   };
   let jokerUsed = false;
   const pickTarget = (forceW) => {
+    if (target) demo = false;   /* 시범은 첫 신호에만 */
     if (forceW) { target = forceW; tgtAt = t; reSaid = false; showTgt(); speakTgt(); return; }
     const onScreen = new Set([...grid.values()].map(g => g.w).concat(rising.map(b => b.w)).filter(Boolean));
     const pool = ws.filter(w => w !== target);
@@ -3082,7 +3084,7 @@ async function bubbleGame(words, run) {
     streak++; Speech.say(w).catch(() => {});
     if (g.joker) jokerPop(h.b ? null : h.r, h.b ? null : h.c, h.b && h.b.x, h.b && h.b.y);
     else reward(h.b ? null : h.r, h.b ? null : h.c, Math.min(3, streak), h.b && h.b.x, h.b && h.b.y);
-    ban.style.opacity = 0; target = null; tgtAt = t + 1.4;   /* 잠깐 쉬었다가 다음 신호 (떨어진 방울을 따로 터뜨리지 않음: 그냥 터지는 방울 없게) */
+    demo = false; ban.style.opacity = 0; target = null; tgtAt = t + 1.4;   /* 잠깐 쉬었다가 다음 신호 (떨어진 방울을 따로 터뜨리지 않음: 그냥 터지는 방울 없게) */
   });
 
   /* 그리기 */
@@ -3115,6 +3117,13 @@ async function bubbleGame(words, run) {
     cx.save(); cx.setLineDash([10, 10]); cx.strokeStyle = 'rgba(150,140,175,.35)'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(W * 0.04, limitY); cx.lineTo(W * 0.96, limitY); cx.stroke(); cx.restore();
     for (const [k, g] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = posOf(r, c, g); drawBubble(x, y, g.ci, g.w, 1, !!g.joker); }
     for (const b of rising) drawBubble(b.x, b.y, b.ci, b.w, b.sz, b.joker);
+    if (demo && target) {   /* 시범: 맞는 방울 둘레에 부드러운 빛(깜빡이지 않음) */
+      cx.save(); cx.strokeStyle = 'rgba(255,196,60,.9)'; cx.lineWidth = 6; cx.shadowColor = 'rgba(255,200,80,.9)'; cx.shadowBlur = 16;
+      const halo = (x, y, sz) => { cx.beginPath(); cx.arc(x, y, R2 * 1.08 * sz, 0, Math.PI * 2); cx.stroke(); };
+      for (const [k, g] of grid) if (g.w === target) { const [r, c] = k.split(',').map(Number); const [x, y] = posOf(r, c, g); halo(x, y, 1); }
+      for (const b of rising) if (b.w === target) halo(b.x, b.y, b.sz);
+      cx.restore();
+    }
     for (const f of fx) {
       const p = (t - f.t0) / 0.32; if (p > 1) continue;
       const [, c2] = BUB_COL[f.ci];
@@ -3126,8 +3135,23 @@ async function bubbleGame(words, run) {
   };
 
   await wait(200, run);
+  /* 시작: 놀이 화면(방울 몇 개)을 흐리게 깔고 큰 제목 "낱말 찾기 놀이"를 약 2초 */
+  const deco = [];
+  for (let c = 0; c < cols; c++) if (Math.random() < 0.6) { grid.set(K(0, c), { ci: Math.floor(Math.random() * BUB_COL.length), w: null, deco: true }); deco.push(K(0, c)); }
+  for (let c = 0; c < cols - 1; c++) if (Math.random() < 0.3 && (grid.has(K(0, c)) || grid.has(K(0, c + 1)))) { grid.set(K(1, c), { ci: Math.floor(Math.random() * BUB_COL.length), w: null, deco: true }); deco.push(K(1, c)); }
   draw();
-  await say('비눗방울을 터뜨려요.', run);
+  cv.style.transition = 'filter .4s ease'; cv.style.filter = 'blur(4px)';
+  const title = document.createElement('div');
+  Object.assign(title.style, { position: 'absolute', left: '50%', top: '46%', transform: 'translate(-50%,-50%) scale(.96)', fontFamily: "'Gaegu','Jua',sans-serif", fontWeight: 700, fontSize: Math.min(W * 0.11, H * 0.17) + 'px',
+    color: '#3D5A8A', whiteSpace: 'nowrap', textShadow: '0 0 0 #fff,3px 3px 0 #fff,-3px -3px 0 #fff,3px -3px 0 #fff,-3px 3px 0 #fff,0 6px 14px rgba(60,80,120,.18)', opacity: 0, transition: 'opacity .4s ease, transform .4s ease', pointerEvents: 'none', zIndex: 2 });
+  title.textContent = '낱말 찾기 놀이'; box.appendChild(title);
+  await wait(40, run); title.style.opacity = 1; title.style.transform = 'translate(-50%,-50%) scale(1)';
+  const t0i = performance.now();
+  await say('낱말 찾기 놀이.', run);
+  await wait(Math.max(300, 2000 - (performance.now() - t0i)), run);
+  title.style.opacity = 0; cv.style.filter = 'none';
+  await wait(420, run); title.remove();
+  deco.forEach(k => grid.delete(k)); draw();
   const mus = bubbleMusic(() => S.teacher || document.hidden || !S.sound);
   last = performance.now();
   await new Promise((res, rej) => {
@@ -4056,7 +4080,7 @@ window.AdminGate = (function () {
   const st = document.createElement('style');
   st.textContent = '#agDot{position:fixed;left:18px;top:18px;width:62px;height:62px;border-radius:50%;z-index:2147483600;display:none;cursor:pointer;touch-action:none;'
     + 'background:radial-gradient(circle at 50% 38%,rgba(210,252,253,.9),rgba(120,225,232,.55) 60%,rgba(70,190,205,.4));border:2px solid rgba(34,175,188,.75);box-shadow:0 0 10px rgba(120,225,232,.6)}'
-    + '#agDot svg{position:absolute;inset:-6px;width:74px;height:74px;transform:rotate(-90deg);pointer-events:none}'
+    + '#agDot svg{position:absolute;left:50%;top:50%;width:74px;height:74px;transform:translate(-50%,-50%) rotate(-90deg);pointer-events:none}'
     + '#agDot circle{fill:none;stroke:#22AFBC;stroke-width:4;stroke-linecap:round}';
   document.head.appendChild(st);
   const dot = document.createElement('div'); dot.id = 'agDot'; dot.setAttribute('aria-label', '관리 열기');
