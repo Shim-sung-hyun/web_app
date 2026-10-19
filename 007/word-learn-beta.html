@@ -381,6 +381,10 @@ details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margi
 .replay:active{transform:translateY(2px);box-shadow:0 1px 0 #e3dccd}
 /* 전자칠판: 누르는 동안 '화면 밀기'로 읽혀 취소되지 않게 */
 .card,.sdot,.anbtn,.wbtn,.tg,.endcard{touch-action:none}
+/* 시작 줄: 설정 맨 아래(떠 있지 않게) · 누구와 하나요 안의 학생 명단 */
+.startbar.one{position:static;margin:0 0 20px}
+.rosterpanel{margin:10px 0 4px;padding:12px 14px;border:1px dashed var(--line);border-radius:14px;background:#FBFAF7}
+.rosterpanel .addline{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 
 body.tmode #stage,body.tmode #game{pointer-events:none}
 .tbar button.cur{border-color:#9FF3F5;border-style:dashed}
@@ -404,6 +408,15 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
   <section class="step" id="stepWho">
    <h2><span class="n">1</span>누구와 하나요?</h2>
    <div class="who" id="who"></div>
+   <div class="rosterpanel hidden" id="rosterBox">
+    <span class="sum hidden" id="rosterSum"></span>
+    <div class="row" id="recRow">
+     <div class="addline"><input id="nameIn" placeholder="학생 이름(실명)" style="width:200px"><button class="btn mini" id="nameAdd">학생 넣기</button><button class="btn mini" id="rosterClose" type="button">닫기</button></div>
+     <div class="roster" id="roster"></div>
+     <div class="note">이름은 담임이 실명으로 넣어요. 명단은 이 사이트의 다른 앱과 함께 쓰고, 기록은 이 기기에만 저장돼요. ×를 누르면 그 학생과 기록을 지워요.</div>
+     <select id="recSelect" class="hidden"></select><button class="hidden" id="recStop"></button><span id="recStatus" class="hidden"></span>
+    </div>
+   </div>
    <div class="row" style="margin-bottom:0">
     <div class="seg lv" id="levelSeg"><button data-v="1">수준 1 · 듣고 고르기</button><button data-v="2">수준 2 · 글자 알아보기</button><button data-v="3">수준 3 · 읽기</button></div>
     <div class="note" id="levelNote"></div>
@@ -443,19 +456,12 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
    </details>
   </section>
 
-  <div class="startbar one">
-   <button class="btn main big" id="startBtn">시작</button>
-   <span id="chosenCnt" class="note"></span>
-   <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap"><button class="btn" id="demoBtn">예시로 해 보기</button><button class="btn" id="sheetBtn">쓰기 연습지 출력</button></span>
-   <span id="startMsg"></span>
-  </div>
 
   <section class="step settings">
    <details class="more" id="voiceBox">
     <summary>목소리 <span class="sum" id="voiceSum"></span></summary>
     <div class="row">
      <div class="seg" id="engSeg"><button data-v="base">기본 목소리</button><button data-v="google">Google 음성 (키)</button><button data-v="device">기기 목소리</button></div>
-     <div class="seg" id="volSeg" style="margin-top:6px"><button data-v="1">소리 보통</button><button data-v="2">크게</button><button data-v="3">아주 크게</button></div>
      <div class="seg" id="voiceSeg" style="margin-top:6px"><button data-v="Leda">밝고 귀여운</button><button data-v="Aoede">산뜻하고 부드러운</button><button data-v="Kore">또렷하고 씩씩한</button></div>
      <div class="row keybar" style="margin:10px 0 4px"><button class="kr-open" data-kr="1" type="button" id="krBoth">📱 휴대폰으로 받기</button><span class="note">전자칠판이라면 휴대폰에서 Google 음성 키를 보내요.</span></div>
      <details class="keyhelp">
@@ -483,9 +489,14 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
       <div class="note" id="gameNote"></div>
      </div>
      <div class="row">
-      <label class="t">상 놀이 (비눗방울)</label>
+      <label class="t">보상 놀이 (비눗방울)</label>
       <div class="seg" id="bubbleSeg"><button data-v="on">하기</button><button data-v="off">하지 않기</button></div>
       <div class="note">묶음 끝 놀이를 마치면 비눗방울을 터뜨려요(수준 1·2·3: 1분·1분 30초·2분, 다 차면 먼저 끝). 기록은 남기지 않아요.</div>
+     </div>
+     <div class="row">
+      <label class="t">놀이 소리</label>
+      <div class="seg" id="volSeg"><button data-v="1">보통</button><button data-v="2">크게</button><button data-v="3">아주 크게</button></div>
+      <div class="note">놀이(바구니·먹이·스티커·비눗방울)의 효과음과 음악 크기예요. 말소리 크기는 기기 소리로 맞춰요.</div>
      </div>
      <div class="row">
       <label class="t">비눗방울 천장 높이</label>
@@ -508,16 +519,14 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
       <div class="note">처음에는 쉬운 글꼴(고딕·둥근 글씨)로 시작하고, 익숙해지면 다양하게 바꿔요.</div>
      </div>
    </details>
-   <details class="more" id="rosterBox">
-    <summary>학생 명단 <span class="sum" id="rosterSum"></span></summary>
-    <div class="row" id="recRow">
-     <div class="addline"><input id="nameIn" placeholder="학생 이름(실명)" style="width:200px"><button class="btn mini" id="nameAdd">학생 넣기</button></div>
-     <div class="roster" id="roster"></div>
-     <div class="note">이름은 담임이 실명으로 넣어요. 명단은 이 사이트의 다른 앱과 함께 쓰고, 기록은 이 기기에만 저장돼요. ×를 누르면 그 학생과 기록을 지워요.</div>
-     <select id="recSelect" class="hidden"></select><button class="hidden" id="recStop"></button><span id="recStatus" class="hidden"></span>
-    </div>
-   </details>
   </section>
+
+  <div class="startbar one">
+   <button class="btn main big" id="startBtn">시작</button>
+   <span id="chosenCnt" class="note"></span>
+   <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap"><button class="btn" id="demoBtn">예시로 해 보기</button><button class="btn" id="sheetBtn">쓰기 연습지 출력</button></span>
+   <span id="startMsg"></span>
+  </div>
  </div>
 </div>
 
@@ -1336,7 +1345,7 @@ function lastPhrase(b, ctx) {
 const quietBuf = b => { try { const d = b.getChannelData(0); let m = 0; for (let i = 0; i < d.length; i += 4) { const v = Math.abs(d[i]); if (v > m) m = v; } return m < 0.03; } catch (e) { return false; } };
 const SAY_FIX = { '색연필': '생년필', '나뭇잎': '나문닙', '담요': '담뇨', '물고기': '물꼬기', '눈사람': '눈싸람', '빵집': '빵찝', '밀가루': '밀까루', '빨대': '빨때', '치과': '치꽈', '비빔밥': '비빔빱', '줄넘기': '줄럼끼', '열쇠': '열쐬', '알림장': '알림짱', '경찰서': '경찰써', '신발주머니': '신발쭈머니', '김밥': '김빱' };   /* 표준 발음대로 소리 내기(화면 글자는 그대로) */
 const sayFix = t => t.replace(/신발주머니|색연필|나뭇잎|물고기|눈사람|밀가루|비빔밥|줄넘기|알림장|경찰서|담요|빵집|빨대|치과|열쇠|김밥/g, m => SAY_FIX[m]);
-const VK = () => [1, 1, 1.45, 2][+S.vol || 2] || 1.45;   /* 소리 크기 배율(보통 1 · 크게 1.45 · 아주 크게 2) */
+const VK = () => [1, 1, 1.45, 2][+S.vol || 2] || 1.45;   /* 놀이 소리 크기 배율(보통 1 · 크게 1.45 · 아주 크게 2): 효과음·음악만 */
 const Speech = {
   ctx: null, gain: null, buf: new Map(), gen: 0, cur: null, fellBack: false, devVoice: null,
   initAudio() {
@@ -1346,7 +1355,7 @@ const Speech = {
     } catch (e) {}
   },
   engine() { return this.fellBack ? 'device' : S.engine; },
-  applyVol() { if (this.gain) this.gain.gain.value = 0.8 * VK(); },
+  applyVol() { if (this.gain) this.gain.gain.value = 0.8; },   /* 말소리는 보통 하나(크기는 기기에서) */
   chunks(text) {
     text = sayFix(text);
     const out = [];
@@ -1470,7 +1479,7 @@ const Speech = {
     await new Promise(res => {
       try {
         const u = new SpeechSynthesisUtterance((/Windows/i.test(navigator.userAgent) ? ', ' : '') + t);   /* 윈도우: 첫소리 잘림 막기 */
-        u.lang = 'ko-KR'; u.rate = 0.76; u.volume = Math.min(1, 0.8 * VK()); if (this.devVoice) u.voice = this.devVoice;
+        u.lang = 'ko-KR'; u.rate = 0.76; u.volume = 0.8; if (this.devVoice) u.voice = this.devVoice;
         u.onend = res; u.onerror = res;
         speechSynthesis.speak(u);
         setTimeout(res, 1500 + t.length * 420);
@@ -1817,7 +1826,7 @@ function strokeCue(svg, x, y, col) {
     tickAC = tickAC || new (window.AudioContext || window.webkitAudioContext)();
     const o = tickAC.createOscillator(), g = tickAC.createGain(), t = tickAC.currentTime;
     o.type = 'sine'; o.frequency.value = 880;
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.04 * VK(), t + 0.01); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.14);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.04, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.14);
     o.connect(g).connect(tickAC.destination); o.start(t); o.stop(t + 0.16);
   } catch (e) {}
 }
@@ -3562,7 +3571,7 @@ function paintEngine() {
 }
 function paintVoiceSum() {
   const VN = { Leda: '밝고 귀여운', Aoede: '산뜻하고 부드러운', Kore: '또렷하고 씩씩한' };
-  $('#voiceSum').textContent = (S.engine === 'base' ? '기본 목소리' : S.engine === 'google' ? 'Google 음성 · ' + VN[S.voice] + (S.ttsKey ? '' : ' · 키를 넣어 주세요') : '기기 목소리') + ' · ' + ['', '소리 보통', '소리 크게', '소리 아주 크게'][S.vol || 2];
+  $('#voiceSum').textContent = (S.engine === 'base' ? '기본 목소리' : S.engine === 'google' ? 'Google 음성 · ' + VN[S.voice] + (S.ttsKey ? '' : ' · 키를 넣어 주세요') : '기기 목소리') ;
 }
 function paintMoreSum() {
   $('#moreSum').textContent = '놀이 ' + (S.games === 'on' ? '하기' + (S.bubble !== 'off' ? '(+비눗방울)' : '') : '안 함') + ' · ' + WMODE_TXT[S.writeMode] + ' · ' + (S.glyph === 'stroke' ? '획 글자' : '바른바탕');
@@ -3574,7 +3583,7 @@ segInit('#writeSeg', 'writeMode', paintWriteNote);
 segInit('#gameSeg', 'games', paintGameNote);
 segInit('#bubbleSeg', 'bubble', () => setTimeout(paintMoreSum, 0));
 segInit('#ceilSeg', 'ceil');
-segInit('#volSeg', 'vol', () => { Speech.applyVol(); paintVoiceSum(); });
+segInit('#volSeg', 'vol', () => setTimeout(paintMoreSum, 0));
 segInit('#glyphSeg', 'glyph', () => { GlyphFont.load(); paintMoreSum(); });
 function paintWriteNote() {
   setTimeout(paintMoreSum, 0);
@@ -3732,6 +3741,7 @@ function addStudent() {
   Rec.saveStudents(); $('#nameIn').value = ''; renderStudents();
 }
 $('#nameAdd').addEventListener('click', addStudent);
+$('#rosterClose').addEventListener('click', () => $('#rosterBox').classList.add('hidden'));
 $('#nameIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addStudent(); } });
 $('#roster').addEventListener('click', e => {
   const b = e.target.closest('button[data-del]'); if (!b) return;
@@ -3883,12 +3893,12 @@ function renderWho() {
   const el = $('#who'); if (!el) return;
   const b = (id, name, sub, cls) => `<button type="button" data-id="${esc(id)}" class="${cls || ''}${Rec.recId === id ? ' on' + (id ? ' recon' : '') : ''}">${esc(name)}${sub ? `<small>${esc(sub)}</small>` : ''}</button>`;
   el.innerHTML = b('', '연습', '기록 안 함') + Rec.students.map(s => b(s.id, s.name, '수준 ' + (LEVELS[s.wl] ? s.wl : 1))).join('')
-    + '<button type="button" class="add" data-add="1">+ 학생</button>';
+    + '<button type="button" class="add" data-add="1">+ 학생</button>' + (Rec.students.length ? '<button type="button" class="add" data-edit="1">명단 고치기</button>' : '');
   $('#rosterSum').textContent = Rec.students.length ? Rec.students.length + '명' : '아직 없어요';
 }
 $('#who').addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
-  if (t.dataset.add) { $('#rosterBox').open = true; $('#nameIn').focus(); try { $('#rosterBox').scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (x) {} return; }
+  if (t.dataset.add || t.dataset.edit) { const p = $('#rosterBox'); const show = t.dataset.add ? true : p.classList.contains('hidden'); p.classList.toggle('hidden', !show); if (show && t.dataset.add) $('#nameIn').focus(); return; }
   setRecording(t.dataset.id || '');
 });
 $('#nextBundle').addEventListener('click', () => { pickResume(); renderAll(); });
