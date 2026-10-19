@@ -364,6 +364,18 @@ details.more[open]>summary::before{content:'▾ '}
 .settings details.more:first-child{border-top:0}
 details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margin-left:8px}
 #pickBox{margin-top:12px}
+/* 좁은 화면: 교사 메뉴 줄이 넘치면 좌우로 밀어 움직임(잘리지 않게) */
+.tbar{overflow-x:auto;overflow-y:hidden;justify-content:flex-start;touch-action:pan-x;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tbar::-webkit-scrollbar{display:none}
+.tbar>*,.tbar>span>*{flex-shrink:0}
+.tbar.more-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent)}
+.tbar.more-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 36px);mask-image:linear-gradient(90deg,transparent,#000 36px)}
+.tbar.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 36px,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(90deg,transparent,#000 36px,#000 calc(100% - 36px),transparent)}
+#tBottom{max-width:calc(100vw - 150px)}
+/* 좁은 화면(휴대폰 세로): 제목이 한 글자씩 세로로 서지 않게 */
+.setup-head{flex-wrap:wrap;row-gap:6px}
+.setup-head h1,.setup-head .beta{white-space:nowrap;flex-shrink:0}
+@media (max-width:560px){.setup-head{gap:8px 10px}.setup-head h1{font-size:30px}.setup-head .sub{flex-basis:100%;order:3;font-size:14px}}
 
 body.tmode #stage,body.tmode #game{pointer-events:none}
 .tbar button.cur{border-color:#9FF3F5;border-style:dashed}
@@ -883,7 +895,7 @@ const CRAYON = {"손":"#9B5E3A","발":"#B05625","눈":"#664026","코":"#A15B34",
 /* 그림 속에 그 낱말 글자가 든 간판 그림: 3수준 그림 고르기의 보기에서 뺌 */
 const TXTPIC = new Set(["식당","마트","경찰서","빵집","약국","편의점","문구점","우체국"]);
 /* 헷갈리기 쉬운 짝: 고르기의 다른 보기로 쓰지 않음 */
-const PAIRS = [["위험","금지"],["위험","정지"],["금지","정지"],["물","우유"],["물","컵"],["우유","컵"],["강아지","개"],["생쥐","쥐"],["새","참새"],["닭","병아리"],["손","손톱"],["다리","무릎"],["우체국","우체통"],["우체통","우편함"],["승강기","엘리베이터"],["급식","급식실"],["걸레","대걸레"],["색종이","종이"],["색연필","색종이"],["공","농구공"],["바다","바닷가"],["물","물고기"],["스마트폰","휴대폰"],["책","책가방"],["책","책꽂이"],["신발","신발주머니"],["회사","출근"],["회사","퇴근"],["출근","퇴근"],["행주","걸레"],["주스","음료수"],["컵","종이컵"],["지하철","기차"],["컴퓨터","텔레비전"],["탈의실","사물함"],["박물관","미술관"],["현금인출기","번호표"],["라면","국수"],["라면","냉면"],["국수","냉면"],["감자","고구마"],["배추","상추"],["사과","자두"],["붕어","잉어"],["붕어","물고기"],["잉어","물고기"],["까치","까마귀"],["소","송아지"],["말","당나귀"],["개구리","두꺼비"],["비닐봉지","쓰레기봉투"],["헬멧","안전모"]];
+const PAIRS = [["위험","금지"],["위험","정지"],["금지","정지"],["물","우유"],["물","컵"],["우유","컵"],["강아지","개"],["생쥐","쥐"],["새","참새"],["닭","병아리"],["손","손톱"],["다리","무릎"],["우체국","우체통"],["우체통","우편함"],["승강기","엘리베이터"],["급식","급식실"],["걸레","대걸레"],["색종이","종이"],["색연필","색종이"],["공","농구공"],["바다","바닷가"],["물","물고기"],["스마트폰","휴대폰"],["책","책가방"],["책","책꽂이"],["신발","신발주머니"],["회사","출근"],["회사","퇴근"],["출근","퇴근"],["행주","걸레"],["주스","음료수"],["컵","종이컵"],["지하철","기차"],["컴퓨터","텔레비전"],["탈의실","사물함"],["박물관","미술관"],["현금인출기","번호표"],["라면","국수"],["라면","냉면"],["국수","냉면"],["감자","고구마"],["배추","상추"],["사과","자두"],["붕어","잉어"],["붕어","물고기"],["잉어","물고기"],["까치","까마귀"],["소","송아지"],["말","당나귀"],["개구리","두꺼비"],["비닐봉지","쓰레기봉투"],["헬멧","안전모"],["약","약국"],["빵","빵집"],["경찰","경찰서"],["접시","쟁반"],["리본","머리핀"],["교실","칠판"],["교실","급식실"],["책","공책"],["책","교과서"],["공책","교과서"],["의자","책상"],["신발","실내화"],["신발","안전화"],["신발","장화"],["모자","안전모"],["모자","위생모"],["장갑","고무장갑"],["가방","책가방"],["하늘","구름"],["구름","비"],["바다","파도"],["꽃","장미"],["꽃","해바라기"],["꽃","나팔꽃"],["나뭇잎","낙엽"],["새","까치"],["새","까마귀"],["새","독수리"],["새","황새"],["새","오리"],["놀이터","그네"],["놀이터","미끄럼틀"],["놀이터","시소"],["커피","종이컵"],["걸레","수건"],["휴지","물티슈"],["종이","서류"],["자동차","택시"],["고기","치킨"],["밥","그릇"],["국수","떡국"],["김치","반찬"],["급식","반찬"],["사과","토마토"],["연필","색연필"],["색연필","크레파스"],["공책","스케치북"],["운동장","체육관"],["페트병","물통"]];
 /* 그림이 없어 묶음에서 뺀 낱말: 사진을 넣어 "내가 넣은 낱말"로 */
 const SUGGEST = ['동생','누나','언니','오빠','형','친구','여자','월급'];
 
@@ -1983,7 +1995,7 @@ async function stageChoice(st, w, run) {
     const c = document.createElement('div'); c.className = 'card'; c.dataset.w = opts[i];
     c.style.width = cardW + 'px'; c.style.height = cardH + 'px';
     if (st === 4) { const im = new Image(); im.src = await Pics.url(opts[i]); c.appendChild(im); }
-    else c.appendChild(wordEl(opts[i], cf[i], cardW, cardH));
+    else { const el = wordEl(opts[i], cf[i], cardW, cardH); const base = Math.min(...opts.map((o, j) => fitSize(o, cf[j], cardW, cardH) / (cf[j].scale || 1))); el.style.font = fcss(cf[i], Math.floor(Math.min(fitSize(opts[i], cf[i], cardW, cardH), base * (cf[i].scale || 1)))); c.appendChild(el); }
     choices.appendChild(c); cards.push(c);
   }
   alive(run);
@@ -2310,15 +2322,27 @@ async function endScreen(run) {
   const wrap = document.createElement('div'); wrap.className = 'endwrap';
   const row = document.createElement('div'); row.className = 'endrow';
   wrap.appendChild(row); stage.appendChild(wrap);
-  const n = R.words.length;
-  const cw = Math.min(innerWidth * 0.86 / n - innerWidth * 0.03, innerHeight * 0.36);
+  const n = R.words.length, EW = innerWidth, EH = innerHeight, gap = Math.max(10, Math.min(EW, EH) * 0.025);
+  let best = { cw: 0, c: n };
+  for (let c = 1; c <= n; c++) {
+    const rows = Math.ceil(n / c);
+    const cw = Math.min((EW * 0.92 - gap * (c - 1)) / c, ((EH * 0.86 - gap * (rows - 1)) / rows) / 1.05, EH * 0.36);
+    if (cw >= best.cw - 0.5) best = { cw, c };   /* 크기가 같으면 줄을 적게 */
+  }
+  const cw = best.cw, imS = cw * 0.6, txH = cw * 0.3;
+  row.style.gap = gap + 'px'; row.style.maxWidth = (best.c * cw + (best.c - 1) * gap + 2) + 'px'; row.style.margin = '0 auto';
+  const fonts = R.words.map(() => randFonts(1)[0]);
+  const base = Math.min(...R.words.map((w, j) => fitSize(w, fonts[j], cw * 0.9, txH) / (fonts[j].scale || 1)));
   const cards = [];
-  for (const w of R.words) {
+  for (let j = 0; j < R.words.length; j++) {
+    const w = R.words[j];
     if (!(await Pics.url(w))) continue;
     const c = document.createElement('div'); c.className = 'endcard'; c.dataset.w = w;
+    Object.assign(c.style, { width: cw + 'px', padding: (cw * 0.05) + 'px', gap: (cw * 0.03) + 'px', boxSizing: 'border-box' });
     const im = new Image(); im.src = await Pics.url(w);
-    im.style.width = im.style.height = Math.min(cw * 0.8, innerHeight * 0.22) + 'px';
-    c.append(im, wordEl(w, randFonts(1)[0], cw, innerHeight * 0.14));
+    im.style.width = im.style.height = imS + 'px';
+    const el = wordEl(w, fonts[j], cw * 0.9, txH); el.style.font = fcss(fonts[j], Math.floor(base * (fonts[j].scale || 1))); el.style.lineHeight = '1.1';
+    c.append(im, el);
     row.appendChild(c); cards.push(c);
   }
   alive(run);
@@ -2511,7 +2535,8 @@ async function trial(ans, run) {
   const gr = feed ? 0.34 : 0.4; gq('#ground').style.height = (gr * 100) + '%';
   const groundH = H * gr, th = groundH - 14 - 22;
   const gap = Math.max(feed ? 14 : 36, W * (feed ? 0.025 : 0.05));
-  const cw = Math.min((W * 0.92 - gap * (opts.length - 1)) / opts.length, feed ? th : th * 1.25, 340);
+  const avail = W < 700 ? W - 120 : W * 0.92;   /* 좁은 화면: 오른쪽 아래 관리 버튼과 겹치지 않게 */
+  const cw = Math.min((avail - gap * (opts.length - 1)) / opts.length, feed ? th : th * 1.25, 340);
   box.style.gap = gap + 'px';
   const wfs = G.lv === 1 ? Math.min(cw * 0.24, 36) : Math.min(cw * 0.32, th * 0.26, 70);
   const showPic = G.lv === 1 ? 1 : G.lv === 2 ? 0.35 : 0;
@@ -2644,8 +2669,9 @@ async function picToWord(el, ans, run) {
     word.style.top = (cy - fs * 0.62) + 'px';
     pic.style.opacity = 0;
     await wait(300, run);
-    for (const sp of spans) { sp.classList.add('on'); await say(sp.textContent, run); await wait(60, run); }
-    await wait(120, run); await say(ans, run);
+    if (spans.length > 1) { for (const sp of spans) { sp.classList.add('on'); await say(sp.textContent, run); await wait(60, run); } await wait(120, run); }   /* 한 글자 낱말은 글자 소리와 낱말 소리가 같으므로 한 번만 */
+    else spans.forEach(sp => sp.classList.add('on'));
+    await say(ans, run);
   } else {
     pic.style.opacity = 0;
     word.style.top = (H * 0.62) + 'px';
@@ -2678,8 +2704,8 @@ async function labelToWord(el, ans, run, cx) {
   await wait(550, run);
   const spans = [...word.children];
   if (G.lv < 3) {
-    for (const sp of spans) { sp.classList.add('now'); await say(sp.textContent, run); sp.classList.remove('now'); await wait(60, run); }
-    await wait(120, run); await say(ans, run);
+    if (spans.length > 1) { for (const sp of spans) { sp.classList.add('now'); await say(sp.textContent, run); sp.classList.remove('now'); await wait(60, run); } await wait(120, run); }
+    await say(ans, run);
   } else {
     const big = Math.min(H * 0.3, W * 0.3);
     const p = document.createElement('img'); p.className = 'rv-pic'; p.src = G.pics[ans];
@@ -3120,6 +3146,7 @@ const Teacher = {
     afterFullscreen(() => { if (resume && wasGame) this.goGame(); else if (resume && !R.ended) runFrom(R.idx); });
   },
   refresh() {
+    setTimeout(() => ['tTop', 'tBottom'].forEach(id => { const b = document.getElementById(id); if (b && typeof tbarFade === 'function') tbarFade(b); }), 30);
     const a = $('#aqua'); a.classList.toggle('on', S.teacher); document.body.classList.toggle('tmode', S.teacher); a.querySelector('span').textContent = S.teacher ? '심' : 'charum';
     const inLesson = !$('#lesson').classList.contains('hidden');
     $('#tTop').classList.toggle('hidden', !(S.teacher && inLesson));
@@ -3191,6 +3218,9 @@ function startTour(kind) {
   if (!TOUR.steps.length) return;
   $('#tour').classList.add('show'); showStep();
 }
+function tbarFade(b) { const m = b.scrollWidth - b.clientWidth; b.classList.toggle('more-l', m > 2 && b.scrollLeft > 2); b.classList.toggle('more-r', m > 2 && b.scrollLeft < m - 2); }
+['tTop', 'tBottom'].forEach(id => { const b = document.getElementById(id); if (!b) return; b.addEventListener('scroll', () => { tbarFade(b); if (TOUR.on) placeTour(); }, { passive: true }); new ResizeObserver(() => tbarFade(b)).observe(b); });
+addEventListener('resize', () => ['tTop', 'tBottom'].forEach(id => { const b = document.getElementById(id); if (b) tbarFade(b); }));
 function showStep() {
   const s = TOUR.steps[TOUR.i]; if (!s) return endTour();
   $('#tourTitle').textContent = s.t; $('#tourText').textContent = s.x;
@@ -3198,6 +3228,7 @@ function showStep() {
   $('#tourNext').textContent = TOUR.i === TOUR.steps.length - 1 ? '끝' : '다음';
   const el = document.querySelector(s.el);
   if (el && $('#setup').contains(el)) { try { el.scrollIntoView({ block: 'center' }); } catch (e) {} }
+  const tb = el && el.closest('.tbar'); if (tb) { tb.scrollLeft = el.offsetLeft - (tb.clientWidth - el.offsetWidth) / 2; tbarFade(tb); }
   setTimeout(placeTour, 60);
 }
 function placeTour() {
