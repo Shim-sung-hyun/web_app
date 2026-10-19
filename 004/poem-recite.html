@@ -80,7 +80,7 @@ body.admin:not(.cover) .dock{display:flex}
 .dock .count{font-size:12.5px;color:var(--ink-soft);font-weight:700;padding:0 6px}
 .dock .note{font-size:12.5px;color:#9A2E1C;max-width:240px}
 .dock input.key{width:170px;font:inherit;font-size:14px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px}
-.dock label.small{font-size:12.5px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:4px;padding:0 4px}
+.dock label.small,.dock span.small{font-size:12.5px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:4px;padding:0 4px}
 
 /* ---------- 시 입력 창 ---------- */
 .modal-back{position:fixed;inset:0;background:rgba(43,42,38,.5);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:40;padding:20px}
@@ -100,6 +100,7 @@ body.admin:not(.cover) .dock{display:flex}
 .filedrop input[type=file]{margin-top:10px}
 .preview-box{background:var(--paper);border-radius:10px;padding:12px 14px;font-size:13.5px;white-space:pre-wrap;max-height:160px;overflow-y:auto}
 .modal-actions{display:flex;gap:10px;margin-top:6px}
+.vnote{font-size:13px;color:#8B8676;margin:4px 2px 12px;line-height:1.5}
 .modal-actions button{flex:1;border:none;padding:12px;border-radius:12px;font-weight:700;font-size:14.5px}
 .btn-cancel{background:var(--paper);color:var(--ink-soft)}
 .btn-del{background:#F6E3DE;color:#9A2E1C}
@@ -199,6 +200,7 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
         <div><input type="file" id="txtFileInput" accept=".txt,text/plain"></div></div>
       <div class="mf"><label>불러온 내용 미리보기</label><div class="preview-box" id="filePreview">파일을 고르면 여기에 미리보기가 나타나요.</div></div>
     </div>
+    <p class="vnote">새로 넣은 시는 Cloud 키가 있으면 기본 목소리와 같은 목소리로 읽어요. 키가 없으면 기기 목소리로 읽어요.</p>
     <div class="modal-actions">
       <button class="btn-cancel" id="cancelBtn" type="button">취소</button>
       <button class="btn-del" id="delBtn" type="button" hidden>이 시 지우기</button>
@@ -456,7 +458,7 @@ const ICON={
 
 /* ================= 상태 ================= */
 const S={active:'common', cols:null, font:'myeongjo', stage:'all', sound:true,
-  engine:'cloud', timbre:'Leda', cloudKey:'', saveCloud:false, engineNow:'', admin:false};
+  engine:'base', timbre:'Leda', cloudKey:'', saveCloud:false, engineNow:'', admin:false};
 const store={
   get(k){try{return localStorage.getItem('poemRecite.'+k)}catch(e){return null}},
   set(k,v){try{v==null?localStorage.removeItem('poemRecite.'+k):localStorage.setItem('poemRecite.'+k,v)}catch(e){}}
@@ -470,7 +472,7 @@ let customs=[]; /* 직접 입력한 시 여러 편 [{id,title,author,body}] */
   const c=store.get('cols'); if(['1','2','3','4'].includes(c)) S.cols=+c;
   if(store.get('font')==='easy') S.font='easy';
   S.sound=store.get('sound')!=='off';
-  const en=store.get('engine'); if(['cloud','device'].includes(en)) S.engine=en;
+  const en=store.get('engine'); if(['base','cloud','device'].includes(en)) S.engine=en;
   const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
   S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
   /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
@@ -487,7 +489,7 @@ function getCtx(){ if(!actx){ const C=window.AudioContext||window.webkitAudioCon
 function unlockAudio(){ try{ const c=getCtx(); if(!c) return; if(c.state==='suspended') c.resume();
   const b=c.createBuffer(1,240,24000), x=c.createBufferSource(); x.buffer=b; x.connect(c.destination); x.start(); }catch(e){} }
 /* 앞뒤 빈 곳과 끝에 따로 붙은 짧은 잡음만 정리, 시작·끝은 짧게 페이드 */
-function cleanPCM(bin,rate){
+function cleanPCM(bin,rate,lastOnly){
   const n=bin.length>>1, f=new Float32Array(n);
   for(let k=0;k<n;k++){ let v=bin.charCodeAt(2*k)|(bin.charCodeAt(2*k+1)<<8); if(v>32767) v-=65536; f[k]=v/32768; }
   const W=Math.round(rate*0.02), nw=Math.max(1,Math.floor(n/W)), rms=new Float32Array(nw); let mx=0;
@@ -495,6 +497,8 @@ function cleanPCM(bin,rate){
   const th=Math.max(0.003,mx*0.04), seg=[]; let on=-1;
   for(let w=0;w<=nw;w++){ const up=w<nw&&rms[w]>=th; if(up&&on<0) on=w; if(!up&&on>=0){ seg.push([on,w-1]); on=-1; } }
   while(seg.length>1){ const l=seg[seg.length-1], pv=seg[seg.length-2]; if(l[1]-l[0]+1<=3 && l[0]-pv[1]>=15) seg.pop(); else break; }
+  /* 한 글자는 "글자. ○."로 만들어 마지막 마디(쉰 곳 0.16초 이상 뒤)만 씀 */
+  if(lastOnly){ for(let i=seg.length-1;i>0;i--){ if(seg[i][0]-seg[i-1][1]>=8){ seg.splice(0,i); break; } } }
   const a=seg.length?seg[0][0]:0, z=seg.length?seg[seg.length-1][1]:nw-1;
   const st=Math.max(0,(a-4)*W), en=Math.min(n,(z+1)*W+Math.round(rate*0.22));
   const body=f.slice(st,en), L=body.length, fi=Math.min(L,Math.round(rate*0.008)), fo=Math.min(L,Math.round(rate*0.04));
@@ -527,15 +531,42 @@ vdb.ready=new Promise(r=>{ try{ const q=indexedDB.open('poemReciteVoice',1);
 async function idbGet(k){ await vdb.ready; if(!vdb.db) return null; return new Promise(r=>{ try{ const q=vdb.db.transaction('clips').objectStore('clips').get(k); q.onsuccess=()=>{ const v=q.result; r(v?{data:new Float32Array(v.buf),rate:v.rate}:null); }; q.onerror=()=>r(null); }catch(e){ r(null); } }); }
 function idbPut(k,clip){ try{ if(vdb.db) vdb.db.transaction('clips','readwrite').objectStore('clips').put({buf:clip.data.buffer.slice(0),rate:clip.rate},k); }catch(e){} }
 const VQ={list:[], busy:false, clips:new Map()};
-const timbre=()=>['Leda','Aoede','Kore'].includes(S.timbre)?S.timbre:'Leda';
-function chooseEngine(){ S.engineNow=(S.engine==='cloud'&&S.cloudKey)?'cloud':'device'; S.voiceNote=''; }
-/* Google 음성을 골랐는데 키가 없으면 읽지 않고 안내 (한 수업 한 목소리) */
+/* 기본 목소리는 늘 Leda(미리 만든 소리와 같은 목소리) */
+const timbre=()=>S.engine==='base'?'Leda':['Leda','Aoede','Kore'].includes(S.timbre)?S.timbre:'Leda';
+/* 이 시를 무엇으로 읽나 (한 편은 한 목소리)
+   기본 목소리: 들어 있는 시 → 미리 만든 소리(pre) / 새로 넣은 시 → 키가 있으면 Google Leda, 없으면 기기 */
+const isCustom=()=>!LIBRARY[S.active];
+function chooseEngine(){
+  if(S.engine==='base') S.engineNow=!isCustom()?'pre':S.cloudKey?'cloud':'device';
+  else S.engineNow=(S.engine==='cloud'&&S.cloudKey)?'cloud':'device';
+  S.voiceNote='';
+}
+/* 키가 없으면 읽지 않고 키 칸을 알려 줌 (한 수업 한 목소리)
+   기본 목소리 + 새로 넣은 시: 한 번만 알려 주고, 다시 누르면 기기 목소리로 읽음 */
+const keyAsked=new Set();
 function voiceReady(){
   if(S.engine==='cloud'&&!S.cloudKey){ renderDocks(); spotlight('#dockKey','Cloud 키를 넣어 주세요. 키가 없으면 "기기"를 고르세요.'); return false; }
+  if(S.engine==='base'&&isCustom()&&!S.cloudKey&&!keyAsked.has(S.active)){ keyAsked.add(S.active); renderDocks(); spotlight('#dockKey','새로 넣은 시는 Cloud 키를 넣으면 기본 목소리로 읽어요. 키 없이 다시 누르면 기기 목소리로 읽어요.'); return false; }
   chooseEngine(); return true;
 }
+/* 미리 만든 소리: voice/leda/index.json 의 목록(말 조각의 SHA-1 앞 16자리) */
+const PRE={set:null};
+function preSet(){ if(!PRE.set) PRE.set=fetch('voice/leda/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
+async function preHash(t){ const d=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
+async function preClip(text){
+  const set=await preSet(); let h=null;
+  try{ if(window.crypto&&crypto.subtle) h=await preHash(text); }catch(e){}
+  if(h&&set.has(h)){
+    try{ const r=await fetch('voice/leda/'+h+'.mp3'); if(r.ok){ const ab=await r.arrayBuffer(), c=getCtx();
+      const buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
+      return {data:new Float32Array(buf.getChannelData(0)),rate:buf.sampleRate}; } }catch(e){}
+  }
+  /* 목록에 없는 말: 키가 있으면 같은 목소리(Leda)로 그때 만들고, 없으면 기기 목소리 */
+  if(S.cloudKey) return synth(text);
+  const er=new Error('no pre'); er.noPre=true; throw er;
+}
 function getClip(text,urgent){
-  const k=S.engineNow+'|'+timbre()+'|'+text;
+  const k=S.engineNow+'|'+timbre()+'|'+text+(oneSyl(text)?'|s':'');
   let c=VQ.clips.get(k);
   if(!c){
     c={text,key:k,engine:S.engineNow,done:false}; c.p=new Promise((res,rej)=>{c.res=res; c.rej=rej;}); c.p.catch(()=>{});
@@ -551,12 +582,14 @@ async function pumpVoice(){
     if(c.engine!==S.engineNow){ c.rej(new Error('engine changed')); VQ.clips.delete(c.key); continue; }
     let tries=0;
     for(;;){
-      try{ const clip=await synth(c.text); c.done=true; idbPut(c.key,clip); c.res(clip); break; }
+      try{ const clip=c.engine==='pre'?await preClip(c.text):await synth(c.text); c.done=true; if(c.engine!=='pre') idbPut(c.key,clip); c.res(clip); break; }
       catch(e){
         tries++;
+        if(e.noPre){ c.rej(e); VQ.clips.delete(c.key); break; }
         if(e.quota){
           if(tries<=2){ await new Promise(r=>setTimeout(r,12000)); continue; }
           /* 사용량 초과: 이번 수업 전체를 기기 목소리로 한 번만 바꾸고 교사 메뉴에 알림 */
+          if(c.engine==='pre'){ c.rej(e); VQ.clips.delete(c.key); break; }
           S.engineNow='device'; S.voiceNote='Google 목소리 사용량이 다 되어, 이번 수업은 기기 목소리로 바꿨어요.';
           renderDocks(); VQ.list.forEach(x=>{x.rej(e); VQ.clips.delete(x.key);}); VQ.list=[];
           c.rej(e); VQ.clips.delete(c.key); break;
@@ -568,18 +601,21 @@ async function pumpVoice(){
   }
   VQ.busy=false;
 }
+/* 한 글자 말(예: "꽃.")은 Google이 거의 소리를 내지 않아 짧은 말 속에서 만듦 */
+const oneSyl=t=>/^[가-힣][.,!?]?$/.test(String(t).trim());
 async function synth(text){
+  const one=oneSyl(text), sendText=one?'글자. '+text.trim().replace(/[.,!?]$/,'')+'.':text;
   const call=async withRate=>{
     const audioConfig={audioEncoding:'LINEAR16',sampleRateHertz:24000}; if(withRate) audioConfig.speakingRate=0.92;
     return fetch('https://texttospeech.googleapis.com/v1/text:synthesize?key='+encodeURIComponent(S.cloudKey),{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({input:{text},voice:{languageCode:'ko-KR',name:`ko-KR-Chirp3-HD-${timbre()}`},audioConfig})});
+      body:JSON.stringify({input:{text:sendText},voice:{languageCode:'ko-KR',name:`ko-KR-Chirp3-HD-${timbre()}`},audioConfig})});
   };
   let r=await call(S.cloudRate!==false);
   if(r.status===400 && S.cloudRate!==false){ S.cloudRate=false; r=await call(false); }
   if(!r.ok){ let m=''; try{m=(await r.json()).error.message||'';}catch(e){} S.ttsError=r.status+' '+m; const er=new Error(S.ttsError); if(r.status===429) er.quota=true; throw er; }
   const j=await r.json(); const bin=atob(j.audioContent||'');
   const di=bin.indexOf('data'); const pcm=di>=0&&di<200?bin.slice(di+8):bin.slice(44);
-  return cleanPCM(pcm,24000);
+  return cleanPCM(pcm,24000,one);
 }
 /* 문장·쉼표 단위로 나눠 만들고 이어서 재생 */
 function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim()).filter(Boolean); }
@@ -630,7 +666,7 @@ function speak(text,onEnd){
       let clip=null;
       try{ clip=await Promise.race([ps[i],new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),20000))]); }catch(e){}
       if(id!==speakSeq) return;
-      if(!clip){ if(S.engineNow==='device'){ deviceSay(parts.slice(i).join(' '),id,done); return; } continue; }
+      if(!clip){ if(S.engineNow==='device'||S.engineNow==='pre'){ deviceSay(parts.slice(i).join(' '),id,done); return; } continue; }
       await playClip(clip);
       if(id!==speakSeq) return;
       if(i<parts.length-1) await new Promise(r=>setTimeout(r,/,$/.test(parts[i])?220:320));
@@ -665,6 +701,8 @@ function setAdmin(on){
 
 /* ================= 교사 메뉴 ================= */
 function renderDocks(){
+  /* 키 칸: Google(키)을 골랐을 때, 또는 기본 목소리로 새로 넣은 시를 고를 때만 */
+  const needKey=S.engine==='cloud'||(S.engine==='base'&&isCustom());
   const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
   $('dockTop').innerHTML=
     `<div class="g" id="gStage"><span class="lbl">가리기</span>${STAGES.map(s=>b('stage:'+s.k,s.label,S.stage===s.k)).join('')}</div>`+
@@ -673,9 +711,9 @@ function renderDocks(){
     `<div class="g" id="gFont"><span class="lbl">글꼴</span>${b('font:myeongjo','명조',S.font==='myeongjo')}${b('font:easy','둥근 글씨',S.font==='easy')}</div>`+
     `<div class="g">${b('sound',(S.sound?ICON.sndOn:ICON.sndOff)+(S.sound?'소리':'소리 끔'),S.sound)}</div>`+
     /* 목소리: 수업 내내 한 목소리. Google 음성은 Cloud 키가 있어야 읽어 줌 */
-    `<div class="g" id="gVoice"><span class="lbl">목소리</span>${b('engine:cloud','Google',S.engine==='cloud')}${b('engine:device','기기',S.engine==='device')}<a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">${ICON.key}키가 있으면: 키 목록</a><a class="help" href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a>${S.engine==='cloud'?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
+    `<div class="g" id="gVoice"><span class="lbl">목소리</span>${b('engine:base','기본 목소리',S.engine==='base')}${b('engine:cloud','Google (키)',S.engine==='cloud')}${b('engine:device','기기',S.engine==='device')}${needKey?`<a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">${ICON.key}키가 있으면: 키 목록</a><a class="help" href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a>`:''}${needKey?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
     `<div class="g">`+
-      (S.engine==='cloud'?`${[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join('')}
+      (needKey?`${S.engine==='cloud'?[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join(''):'<span class="small">새 시 목소리:</span>'}
         <input class="key" id="dockKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button>`:'')+
       `${b('vtest','들어 보기')}${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`;
   const dk=$('dockKey');
@@ -702,7 +740,7 @@ function onDock(e){
   const btn=e.target.closest('button[data-a]'); if(!btn||btn.disabled) return;
   const [a,v]=btn.dataset.a.split(':');
   if(a==='stage') applyStage(v);
-  if(a==='poem'){ stopReading(); S.active=v; store.set('active',v); rebuildEntries(); }
+  if(a==='poem'){ stopReading(); S.active=v; store.set('active',v); chooseEngine(); rebuildEntries(); }
   if(a==='new') openModal(null);
   if(a==='cols'){ S.cols=v==='auto'?null:+v; store.set('cols',S.cols); refitLayout(); }
   if(a==='font'){ S.font=v; store.set('font',v==='easy'?'easy':'myeongjo'); applyFont(); refitLayout(); }
@@ -739,7 +777,7 @@ function buildEntry(key){
 }
 function poemLines(){ return entry?[entry.title,entry.author,...entry.lines.slice(2).filter(l=>!l.blank).map(l=>l.text)]:[]; }
 function rebuildEntries(){
-  stopReading(); nextId=0; entry=buildEntry(S.active); S.stage='all';
+  stopReading(); nextId=0; entry=buildEntry(S.active); S.stage='all'; chooseEngine();
   /* 이 시의 모든 줄 목소리를 미리 만들어 둠 */
   prefetchVoice(poemLines());
   refitLayout(); if(S.admin) renderDocks();
@@ -935,8 +973,8 @@ function printSheet(){
 
 /* ================= 시작 ================= */
 applyFont();
-/* Cloud 키가 없으면 처음에는 기기 목소리로 (관리 메뉴에서 바꿈) */
-if(!store.get('engine')&&!S.cloudKey) S.engine='device';
+/* 처음에는 기본 목소리(미리 만든 소리, 키 없이). 예전에 키 없이 기기 목소리를 쓰던 기기는 한 번 기본 목소리로 바꿈 */
+if(!store.get('baseMig')){ store.set('baseMig','1'); if(S.engine==='device'&&!S.cloudKey){ S.engine='base'; store.set('engine','base'); } }
 /* ================= 빠뜨린 곳 알려 주기 =================
    필요한 것을 안 하고 넘어가려 할 때, 그곳을 빨간 테두리로 비추고 말풍선으로 할 일을 알려 줌.
    비춘 곳은 바로 누를 수 있고, 아무 데나 누르면 사라짐 */
@@ -970,7 +1008,7 @@ const TOUR_STEPS=[
   {el:'#gCols', t:'단', x:'시를 몇 단으로 나눠 보일지 정해요. "자동"은 화면에 가장 크게 보이는 쪽을 골라요.'},
   {el:'#gFont', t:'글꼴', x:'명조는 시다운 글꼴, 둥근 글씨는 글자를 처음 읽는 학생에게 좋아요.'},
   {el:'#dockTop [data-a="sound"]', t:'소리', x:'읽어 주는 목소리를 켜고 꺼요.'},
-  {el:'#gVoice', t:'목소리', x:'"기기"는 키 없이 바로 나오고, "Google"은 더 자연스러워요. Google은 Cloud 키가 필요해요(옆 "Cloud 키 넣는 방법").'},
+  {el:'#gVoice', t:'목소리', x:'"기본 목소리"는 키 없이 바로 나오는 Google 목소리예요. 새로 넣은 시와 다른 Google 목소리는 Cloud 키가 필요해요(휴대폰으로 받기도 돼요). "기기"는 이 기기의 목소리예요.'},
   {el:'html.kr-ready #dockTop [data-kr]', t:'휴대폰으로 받기', x:'Cloud 키를 휴대폰에서 이 화면으로 보내요. 번호 4자리가 나오면 휴대폰에서 그 번호와 키를 넣고 보내기를 눌러요.'},
   {el:'#dockTop [data-a="vtest"]', t:'들어 보기', x:'고른 목소리로 미리 들어 봐요.'},
   {el:'#dockBot [data-a="read"]', t:'들려주기', x:'제목 → 작가 → 본문을 이어서 읽고, 지금 읽는 줄에 옅은 바탕이 생겨요. 가린 글자도 소리로는 다 읽어 줘요.'},
