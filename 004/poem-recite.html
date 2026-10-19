@@ -549,13 +549,15 @@ function voiceReady(){
   if(S.engine==='base'&&isCustom()&&!S.cloudKey&&!keyAsked.has(S.active)){ keyAsked.add(S.active); renderDocks(); spotlight('#dockKey','새로 넣은 시는 Cloud 키를 넣으면 기본 목소리로 읽어요. 키 없이 다시 누르면 기기 목소리로 읽어요.'); return false; }
   chooseEngine(); return true;
 }
-/* 미리 만든 소리: voice/leda/index.json 의 목록(말 조각의 SHA-1 앞 16자리) */
+/* 미리 만든 소리: voice/leda/index.json 의 목록
+   시를 통째로 낭송해 만든 뒤 줄마다 나눈 것이라, 파일 이름 = SHA-1("시|줄 번호|줄 글") 앞 16자리
+   (같은 글이 되풀이되는 줄도 그 자리의 소리로 읽음) */
 const PRE={set:null};
 function preSet(){ if(!PRE.set) PRE.set=fetch('voice/leda/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
 async function preHash(t){ const d=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
-async function preClip(text){
+async function preClip(text,ctx){
   const set=await preSet(); let h=null;
-  try{ if(window.crypto&&crypto.subtle) h=await preHash(text); }catch(e){}
+  try{ if(window.crypto&&crypto.subtle) h=await preHash(ctx?ctx.poem+'|'+ctx.k+'|'+text:text); }catch(e){}
   if(h&&set.has(h)){
     try{ const r=await fetch('voice/leda/'+h+'.mp3'); if(r.ok){ const ab=await r.arrayBuffer(), c=getCtx();
       const buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
@@ -565,11 +567,12 @@ async function preClip(text){
   if(S.cloudKey) return synth(text);
   const er=new Error('no pre'); er.noPre=true; throw er;
 }
-function getClip(text,urgent){
-  const k=S.engineNow+'|'+timbre()+'|'+text+(oneSyl(text)?'|s':'');
+function getClip(text,urgent,ctx){
+  if(S.engineNow!=='pre') ctx=null;
+  const k=S.engineNow+'|'+timbre()+'|'+(ctx?ctx.poem+'|'+ctx.k+'|':'')+text+(oneSyl(text)?'|s':'');
   let c=VQ.clips.get(k);
   if(!c){
-    c={text,key:k,engine:S.engineNow,done:false}; c.p=new Promise((res,rej)=>{c.res=res; c.rej=rej;}); c.p.catch(()=>{});
+    c={text,ctx,key:k,engine:S.engineNow,done:false}; c.p=new Promise((res,rej)=>{c.res=res; c.rej=rej;}); c.p.catch(()=>{});
     VQ.clips.set(k,c);
     idbGet(k).then(v=>{ if(v){ c.done=true; c.res(v); } else { urgent?VQ.list.unshift(c):VQ.list.push(c); pumpVoice(); } });
   } else if(urgent && !c.done){ const i=VQ.list.indexOf(c); if(i>0){ VQ.list.splice(i,1); VQ.list.unshift(c); } }
@@ -582,7 +585,7 @@ async function pumpVoice(){
     if(c.engine!==S.engineNow){ c.rej(new Error('engine changed')); VQ.clips.delete(c.key); continue; }
     let tries=0;
     for(;;){
-      try{ const clip=c.engine==='pre'?await preClip(c.text):await synth(c.text); c.done=true; if(c.engine!=='pre') idbPut(c.key,clip); c.res(clip); break; }
+      try{ const clip=c.engine==='pre'?await preClip(c.text,c.ctx):await synth(c.text); c.done=true; if(c.engine!=='pre') idbPut(c.key,clip); c.res(clip); break; }
       catch(e){
         tries++;
         if(e.noPre){ c.rej(e); VQ.clips.delete(c.key); break; }
@@ -621,7 +624,8 @@ async function synth(text){
 function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim()).filter(Boolean); }
 function prefetchVoice(lines){
   if(S.engineNow==='device') return;
-  const parts=[]; lines.forEach(t=>splitSay(t).forEach(x=>{ if(!parts.includes(x)) parts.push(x); }));
+  if(S.engineNow==='pre'){ lines.forEach(l=>getClip(l.text,false,{poem:S.active,k:l.k})); return; }
+  const parts=[]; lines.forEach(l=>splitSay(l.text).forEach(x=>{ if(!parts.includes(x)) parts.push(x); }));
   parts.forEach(x=>getClip(x,false));
 }
 /* 기기 목소리: 좋은 한국어 목소리를 고르고, 끊은 뒤 잠깐 쉬었다 말함(사파리 앞소리 뭉개짐 방지) */
@@ -650,17 +654,18 @@ function deviceSay(text,id,done){
 let hiddenSay=null;
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){ stopVoice(); speakSeq++; }
-  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; speak(h[0],h[1]); }
+  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; speak(h[0],h[1],h[2]); }
 });
-function speak(text,onEnd){
-  if(document.hidden){ hiddenSay=[text||lastSay,onEnd]; return; }
+function speak(text,onEnd,ctx){
+  if(document.hidden){ hiddenSay=[text||lastSay,onEnd,ctx]; return; }
   if(text) lastSay=text;
   stopVoice();
   const id=++speakSeq; let fired=false; const done=()=>{ if(fired) return; fired=true; if(onEnd) onEnd(); };
   if(!S.engineNow) chooseEngine();
   if(!S.sound||!lastSay){ if(onEnd) setTimeout(done,Math.max(1200,(lastSay||'').length*180)); return; }
   if(S.engineNow==='device'){ deviceSay(lastSay,id,done); return; }
-  const parts=splitSay(lastSay), ps=parts.map(x=>getClip(x,true));
+  /* 미리 만든 시의 줄은 그 자리의 소리 하나로 */
+  const whole=S.engineNow==='pre'&&ctx, parts=whole?[lastSay]:splitSay(lastSay), ps=parts.map(x=>getClip(x,true,whole?ctx:null));
   (async()=>{
     for(let i=0;i<parts.length;i++){
       let clip=null;
@@ -755,7 +760,10 @@ function onDock(e){
   if(a==='sound'){ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); if(!S.sound) stopReading(); }
   if(a==='engine'){ S.engine=v; store.set('engine',v); stopReading(); chooseEngine(); if(entry) prefetchVoice(poemLines()); }
   if(a==='timbre'){ S.timbre=v; store.set('timbre',v); stopReading(); chooseEngine(); if(entry) prefetchVoice(poemLines()); }
-  if(a==='vtest'){ if(!voiceReady()){ renderDocks(); return; } stopReading(); speak('산에는 산새, 들에는 들새.'); }
+  if(a==='vtest'){ if(!voiceReady()){ renderDocks(); return; } stopReading();
+    /* 미리 만든 소리면 공통시 첫 두 줄을 그 소리로 */
+    if(S.engineNow==='pre'){ const id0=speakSeq+1; speak('산에는 산새',()=>setTimeout(()=>{ if(speakSeq===id0) speak('들에는 들새',null,{poem:'common',k:3}); },420),{poem:'common',k:2}); }
+    else speak('산에는 산새, 들에는 들새.'); }
   if(a==='read') startReading('all');
   if(a==='echo') startReading('echo');
   if(a==='stopread') stopReading();
@@ -783,7 +791,7 @@ function buildEntry(key){
   e.lines.forEach(l=>l.tokens.forEach(t=>{ if(t.id) e.vis[t.id]=true; }));
   return e;
 }
-function poemLines(){ return entry?[entry.title,entry.author,...entry.lines.slice(2).filter(l=>!l.blank).map(l=>l.text)]:[]; }
+function poemLines(){ return entry?entry.lines.map((l,k)=>({text:k===0?entry.title:k===1?entry.author:l.text,k,blank:l.blank})).filter(l=>!l.blank):[]; }
 function rebuildEntries(){
   stopReading(); nextId=0; entry=buildEntry(S.active); S.stage='all'; chooseEngine();
   /* 이 시의 모든 줄 목소리를 미리 만들어 둠 */
@@ -917,7 +925,7 @@ function step(){
       markLine(p.k,'echo');
       PB.timer=setTimeout(()=>{ PB.idx++; step(); },Math.max(2000,dur*1.4)+(p.pause>800?600:0));
     } else PB.timer=setTimeout(()=>{ PB.idx++; step(); },p.pause);
-  });
+  },{poem:entry.key,k:p.k});
 }
 function stopReading(){
   if(!PB.on&&PB.k==null) return;
