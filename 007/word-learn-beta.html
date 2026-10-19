@@ -424,12 +424,12 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
      <label class="t">편</label>
      <div class="seg" id="bookSeg"><button data-v="1">1편 나와 우리 집</button><button data-v="2">2편 안전하게</button><button data-v="3">3편 학교에서</button><button data-v="4">4편 마을에서</button><button data-v="5">5편 일터에서</button><button data-v="6">내가 넣은 낱말</button></div>
     </div>
+    <div class="row" id="madangRow"><label class="t">마당</label><div class="mchips" id="madangChips"></div></div>
     <div class="row">
      <label class="t">고르는 방법</label>
      <div class="seg" id="modeSeg"><button data-v="bundle">묶음대로</button><button data-v="cons">자음별</button><button data-v="vow">모음별</button><button data-v="free">직접 고르기</button></div>
     </div>
     <div id="bundleBox">
-     <div class="row"><label class="t">마당</label><div class="mchips" id="madangChips"></div></div>
      <div class="row"><label class="t">묶음 <span class="note" style="font-weight:400">✓ 마친 묶음</span></label><div class="bchips" id="bundleChips"></div></div>
     </div>
     <div id="jamoBox" class="hidden row">
@@ -1163,6 +1163,7 @@ const S = {
   mode: LS.get('mode', 'bundle'),    /* bundle 묶음대로 · cons 자음별 · vow 모음별 · free 직접 */
   book: LS.get('book', 1),
   mi: LS.get('mi', 0),
+  mAll: LS.get('mAll', true),   /* 자음별·모음별·직접 고르기에서 편 전체(true) 또는 고른 마당만(false) */
   bi: LS.get('bi', 0),
   jcons: LS.get('jcons', 'ㄱ'),
   jvow: LS.get('jvow', 'ㅏ'),
@@ -3724,7 +3725,7 @@ function onStudentChange() {
 /* ---------- 오늘 배울 낱말: 편 → 마당 → 묶음 ---------- */
 function matchJamo(w, type, c) { const j = jamo(w[0]); return !!j && (type === 'cons' ? j.cho === c : j.jung === c); }
 function bookWords(p) { return p === 6 ? S.mine.map(x => x.w) : BOOK.filter(x => x.p === p).flatMap(x => x.w); }
-function saveSel() { LS.set('book', S.book); LS.set('mi', S.mi); LS.set('bi', S.bi); LS.set('mode', S.mode); }
+function saveSel() { LS.set('book', S.book); LS.set('mi', S.mi); LS.set('mAll', S.mAll); LS.set('bi', S.bi); LS.set('mode', S.mode); }
 /* 다음에 할 묶음으로 (묶음대로 고르기일 때) */
 function pickResume() {
   if (S.mode !== 'bundle') return;
@@ -3732,9 +3733,11 @@ function pickResume() {
   if (!nx) return;
   S.book = BOOK[nx.mi].p; S.mi = nx.mi; S.bi = nx.bi; saveSel();
 }
+/* 자음별·모음별·직접 고르기에서 고를 낱말: 편 전체 또는 고른 마당 */
+function scopeWords() { return S.mode !== 'bundle' && !S.mAll && S.book !== 6 ? (madang(S.mi).w || []) : bookWords(S.book); }
 function poolWords() {
   if (S.mode === 'bundle') return bundlesOf(S.mi, curLevel())[S.bi] || [];
-  const list = bookWords(S.book);
+  const list = scopeWords();
   if (S.mode === 'free') return list;
   const type = S.mode, c = type === 'cons' ? S.jcons : S.jvow;
   return list.map((w, i) => ({ w, i })).filter(x => matchJamo(x.w, type, c))
@@ -3763,12 +3766,18 @@ function renderMadang() {
   const lv = curLevel(), ms = madangs(S.book), el = $('#madangChips');
   if (!ms.some(m => m.i === S.mi)) { S.mi = ms[0].i; S.bi = 0; }
   el.innerHTML = '';
+  if (S.mode !== 'bundle' && S.book !== 6) {   /* 묶음대로가 아니면: 편 전체 또는 마당 하나 */
+    const a = document.createElement('button'); a.className = 'mchip' + (S.mAll ? ' on' : '');
+    a.innerHTML = `<b>편 전체</b><small>${bookWords(S.book).length}낱말</small>`;
+    a.onclick = () => { S.mAll = true; saveSel(); renderAll(); };
+    el.appendChild(a);
+  }
   ms.forEach(m => {
     const bs = bundlesOf(m.i, lv), done = m.i < 0 ? 0 : bs.filter((_, bi) => Prog.isDone(m.i, lv, bi)).length;
     const b = document.createElement('button');
-    b.className = 'mchip' + (m.i === S.mi ? ' on' : '');
+    b.className = 'mchip' + (m.i === S.mi && (S.mode === 'bundle' || !S.mAll || S.book === 6) ? ' on' : '');
     b.innerHTML = `<b>${esc(m.mn)}</b><small>${m.w.length}낱말 · 묶음 ${bs.length}${done ? ' · ✓' + done : ''}</small>`;
-    b.onclick = () => { S.mi = m.i; S.bi = 0; if (m.i >= 0) { const k = bs.findIndex((_, bi) => !Prog.isDone(m.i, lv, bi)); if (k > 0) S.bi = k; } saveSel(); renderAll(); };
+    b.onclick = () => { S.mi = m.i; S.bi = 0; S.mAll = false; if (m.i >= 0) { const k = bs.findIndex((_, bi) => !Prog.isDone(m.i, lv, bi)); if (k > 0) S.bi = k; } saveSel(); renderAll(); };
     el.appendChild(b);
   });
 }
@@ -3791,7 +3800,7 @@ async function renderBundles() {
 function renderJamo() {
   if (S.mode !== 'cons' && S.mode !== 'vow') return;
   const type = S.mode, order = type === 'cons' ? CONS_ORDER : VOW_ORDER, cur = type === 'cons' ? S.jcons : S.jvow;
-  const words = bookWords(S.book);
+  const words = scopeWords();
   const el = $('#jamoChips'); el.innerHTML = '';
   order.forEach((c, i) => {
     const n = words.filter(w => matchJamo(w, type, c)).length;
@@ -3839,8 +3848,8 @@ function paintResume() {
   const n = Object.keys(p.done).filter(k => k.split('|')[1] === String(lv)).length;
   let title = '';
   if (S.mode === 'bundle') { const m = madang(S.mi); title = (m.p === 6 ? '내가 넣은 낱말' : m.p + '편 ' + PNAMES[m.p] + ' · ' + m.mn) + ' · 묶음 ' + (S.bi + 1); }
-  else if (S.mode === 'free') title = (S.book === 6 ? '내가 넣은 낱말' : S.book + '편 ' + PNAMES[S.book]) + ' · 직접 고르기';
-  else title = (S.book === 6 ? '내가 넣은 낱말' : S.book + '편') + ' · ' + (S.mode === 'cons' ? S.jcons + '(으)로 시작하는 낱말' : S.jvow + ' 모음이 든 낱말');
+  else if (S.mode === 'free') title = (S.book === 6 ? '내가 넣은 낱말' : S.book + '편 ' + PNAMES[S.book] + (S.mAll ? '' : ' · ' + madang(S.mi).mn)) + ' · 직접 고르기';
+  else title = (S.book === 6 ? '내가 넣은 낱말' : S.book + '편' + (S.mAll ? '' : ' · ' + madang(S.mi).mn)) + ' · ' + (S.mode === 'cons' ? S.jcons + '(으)로 시작하는 낱말' : S.jvow + ' 모음이 든 낱말');
   $('#todayTitle').textContent = title;
   $('#resumeTxt').textContent = last ? `지난번: ${BOOK[last.mi].mn} 묶음 ${last.bi + 1} · 수준 ${lv}에서 마친 묶음 ${n}개` : '아직 마친 묶음이 없어요';
   $('#resumeRow').classList.toggle('hidden', S.mode !== 'bundle');
