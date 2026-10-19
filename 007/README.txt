@@ -5,7 +5,9 @@
 - word-learn-v0.html       예전 판(버전 0) — 따로 남겨 둠, 게시판에는 걸지 않음
 - word-learn-beta.html     베타 주소로 들어오면 word-learn.html로 넘겨 줌
 - word-learn01~20.jpg      화면 캡처 1366×768 (설명서 그림)
-- word-learn_manual.html   게시판 본문용 설명서 (에디터 소스 모드에 붙여 넣기)
+- word-learn_manual.html   게시판 본문용 짧은 설명서 (에디터 소스 모드에 붙여 넣기)
+- word-learn_guide.html    자세한 설명 페이지 (짧은 설명서의 "자세한 설명 보기"에서 열림)
+- word-learn-promo.jpg     게시판 맨 위 홍보 그림 (1366×768)
 - cloud-key.html           Cloud 키 넣는 방법 (앱에서 연결)
 - pics/                    낱말 그림 349개 (webp)
 - game/                    놀이 그림(먹이 주기·스티커)
@@ -21,11 +23,11 @@
 [게시판]
 - 확장 변수 app_url: https://shim-sung-hyun.github.io/web_app/007/word-learn.html
 - 본문: word-learn_manual.html 내용을 소스 모드에 붙여 넣기
-- 썸네일: word-learn05.jpg (그림이 붓이 되어 쓰는 장면) 한 장
+- 썸네일: word-learn-promo.jpg 한 장
 
 [저장 칸]
 - 학생 명단: webapp.students (다른 앱과 함께 씀, 학생 칸 wl = 수준)
-- 기록·설정: wl007b_* (log, prog, mine, level …) / 사진·목소리: IndexedDB wordlearn007beta
+- 기록·설정: wl007b_* (log, prog, resume=학생마다 멈춘 곳, mine, level …) / 사진·목소리: IndexedDB wordlearn007beta
   (이름은 베타 때 그대로 둠 — 베타로 쓴 기록이 그대로 이어짐)
 - 예전 판(wl007_log, wl007_words, IndexedDB wordlearn007)은 처음 열 때 한 번 옮김(migV0)
 - 키: wordLearn.cloudKey (+ webapp.cloudKey)
