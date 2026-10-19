@@ -455,6 +455,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
     <summary>목소리 <span class="sum" id="voiceSum"></span></summary>
     <div class="row">
      <div class="seg" id="engSeg"><button data-v="base">기본 목소리</button><button data-v="google">Google 음성 (키)</button><button data-v="device">기기 목소리</button></div>
+     <div class="seg" id="volSeg" style="margin-top:6px"><button data-v="1">소리 보통</button><button data-v="2">크게</button><button data-v="3">아주 크게</button></div>
      <div class="seg" id="voiceSeg" style="margin-top:6px"><button data-v="Leda">밝고 귀여운</button><button data-v="Aoede">산뜻하고 부드러운</button><button data-v="Kore">또렷하고 씩씩한</button></div>
      <div class="row keybar" style="margin:10px 0 4px"><button class="kr-open" data-kr="1" type="button" id="krBoth">📱 휴대폰으로 받기</button><span class="note">전자칠판이라면 휴대폰에서 Google 음성 키를 보내요.</span></div>
      <details class="keyhelp">
@@ -908,6 +909,8 @@ const TXTPIC = new Set(["식당","마트","경찰서","빵집","약국","편의�
 const PAIRS = [["위험","금지"],["위험","정지"],["금지","정지"],["물","우유"],["물","컵"],["우유","컵"],["강아지","개"],["생쥐","쥐"],["새","참새"],["닭","병아리"],["손","손톱"],["다리","무릎"],["우체국","우체통"],["우체통","우편함"],["승강기","엘리베이터"],["급식","급식실"],["걸레","대걸레"],["색종이","종이"],["색연필","색종이"],["공","농구공"],["바다","바닷가"],["물","물고기"],["스마트폰","휴대폰"],["책","책가방"],["책","책꽂이"],["신발","신발주머니"],["회사","출근"],["회사","퇴근"],["출근","퇴근"],["행주","걸레"],["주스","음료수"],["컵","종이컵"],["지하철","기차"],["컴퓨터","텔레비전"],["탈의실","사물함"],["박물관","미술관"],["현금인출기","번호표"],["라면","국수"],["라면","냉면"],["국수","냉면"],["감자","고구마"],["배추","상추"],["사과","자두"],["붕어","잉어"],["붕어","물고기"],["잉어","물고기"],["까치","까마귀"],["소","송아지"],["말","당나귀"],["개구리","두꺼비"],["비닐봉지","쓰레기봉투"],["헬멧","안전모"],["약","약국"],["빵","빵집"],["경찰","경찰서"],["접시","쟁반"],["리본","머리핀"],["교실","칠판"],["교실","급식실"],["책","공책"],["책","교과서"],["공책","교과서"],["의자","책상"],["신발","실내화"],["신발","안전화"],["신발","장화"],["모자","안전모"],["모자","위생모"],["장갑","고무장갑"],["가방","책가방"],["하늘","구름"],["구름","비"],["바다","파도"],["꽃","장미"],["꽃","해바라기"],["꽃","나팔꽃"],["나뭇잎","낙엽"],["새","까치"],["새","까마귀"],["새","독수리"],["새","황새"],["새","오리"],["놀이터","그네"],["놀이터","미끄럼틀"],["놀이터","시소"],["커피","종이컵"],["걸레","수건"],["휴지","물티슈"],["종이","서류"],["자동차","택시"],["고기","치킨"],["밥","그릇"],["국수","떡국"],["김치","반찬"],["급식","반찬"],["사과","토마토"],["연필","색연필"],["색연필","크레파스"],["공책","스케치북"],["운동장","체육관"],["페트병","물통"]];
 /* 그림이 없어 묶음에서 뺀 낱말: 사진을 넣어 "내가 넣은 낱말"로 */
 const SUGGEST = ['동생','누나','언니','오빠','형','친구','여자','월급'];
+/* 묶음 채우기: 묶음이 기본 낱말 수보다 적을 때 가져올 비슷한 주제의 낱말(마당 번호 → 낱말, 앞에서부터) */
+const TOPUP = {"0": ["새우", "김밥", "감자", "떡볶이"], "1": ["얼굴", "배", "팔", "무릎", "손톱"], "2": ["가족", "남자", "의사", "간호사", "경찰"], "3": ["젓가락", "그릇", "식탁", "거울", "전등", "냄비"], "4": ["안경", "목도리", "스웨터", "한복", "장화", "비옷"], "5": ["공책", "지우개", "크레파스", "인형", "그네", "놀이터"], "6": ["택시", "지하철", "헬리콥터", "소방차", "구급차", "정류장"], "7": ["원숭이", "다람쥐", "펭귄", "하마", "사슴"], "8": ["하늘", "구름", "무지개", "산", "바다", "나뭇잎"], "9": ["손", "발", "눈", "코", "입", "다리", "귀", "머리", "이"], "10": ["비누", "칫솔", "휴지", "주사", "병원", "약국"], "11": ["신호등", "소방차", "경찰서"], "12": ["사과", "우유", "빵", "라면", "과자", "떡볶이"], "13": ["침대", "컵", "숟가락", "텔레비전", "시계"], "14": ["모자", "양말", "장갑", "신발", "티셔츠"], "15": ["연필", "가위", "책", "의자"], "16": ["공책", "연필", "가위", "책"], "17": ["밥", "반찬", "숟가락", "젓가락", "약", "밴드", "마스크", "물"], "18": ["공", "헬멧", "물통", "수건", "놀이터", "그네"], "19": ["피자", "케이크", "과자", "사탕"], "20": ["식당", "우체국", "약국"], "21": ["병원", "편지", "은행"], "22": ["버스", "자동차", "기차", "자전거", "신호등", "횡단보도"], "23": ["자전거", "풍선", "공"], "24": ["해", "달", "별", "꽃", "나무"], "25": ["토끼", "곰", "오리", "고양이"], "26": ["여우", "원숭이", "개구리", "오리"], "27": ["컴퓨터", "책상", "의자"], "28": ["장갑", "마스크", "모자", "신발", "헬멧", "바지", "티셔츠", "수건", "물통"], "29": ["청소기", "휴지", "물티슈", "비누", "수건"], "30": ["냄비", "그릇", "접시", "종이봉투"]};
 
 /* 자음·모음 추천 순서
    - 1·2학년 교과서 고빈도 어절의 자소 빈도(초성 ㄱ·ㄹ·ㄴ·ㅅ·ㅎ·ㅈ, 중성 ㅏ·ㅣ·ㅗ·ㅡ·ㅜ, 종성 ㄹ·ㄴ·ㅇ: 이다은 외)
@@ -1132,7 +1135,16 @@ function bundlesOf(mi, lv) {
   if (mi === -1) return chunk(m.w, size);
   const cs = m.cs[size], out = [];
   m.w.forEach((w, k) => { (out[cs[k]] = out[cs[k]] || []).push(w); });
-  return out.filter(Boolean);
+  /* 묶음이 수준의 기본 낱말 수(4·6·10)보다 적으면 비슷한 주제의 낱말로 채움(헷갈리는 짝·같은 그림은 넣지 않음, 늘 같은 순서) */
+  return out.filter(Boolean).map(b => {
+    const extra = TOPUP[mi] || [];
+    for (const x of extra) {
+      if (b.length >= size) break;
+      if (b.includes(x) || !PICS[x] || b.some(y => isPair(x, y) || PICS[y] === PICS[x])) continue;
+      b.push(x);
+    }
+    return b;
+  });
 }
 
 /* =========================================================
@@ -1160,6 +1172,7 @@ const S = {
   games: LS.get('games', 'on'),
   bubble: LS.get('bubble', 'on'),
   ceil: LS.get('ceil', 'auto'),
+  vol: LS.get('vol', 2),
   glyph: LS.get('glyph', 'bareon'),   /* 쓰기 글자 모양: bareon 바른바탕 · stroke 획 글자 */
   level: LS.get('level', 1)
 };
@@ -1322,15 +1335,17 @@ function lastPhrase(b, ctx) {
 const quietBuf = b => { try { const d = b.getChannelData(0); let m = 0; for (let i = 0; i < d.length; i += 4) { const v = Math.abs(d[i]); if (v > m) m = v; } return m < 0.03; } catch (e) { return false; } };
 const SAY_FIX = { '색연필': '생년필', '나뭇잎': '나문닙', '담요': '담뇨', '물고기': '물꼬기', '눈사람': '눈싸람', '빵집': '빵찝', '밀가루': '밀까루', '빨대': '빨때', '치과': '치꽈', '비빔밥': '비빔빱', '줄넘기': '줄럼끼', '열쇠': '열쐬', '알림장': '알림짱', '경찰서': '경찰써', '신발주머니': '신발쭈머니', '김밥': '김빱' };   /* 표준 발음대로 소리 내기(화면 글자는 그대로) */
 const sayFix = t => t.replace(/신발주머니|색연필|나뭇잎|물고기|눈사람|밀가루|비빔밥|줄넘기|알림장|경찰서|담요|빵집|빨대|치과|열쇠|김밥/g, m => SAY_FIX[m]);
+const VK = () => [1, 1, 1.45, 2][+S.vol || 2] || 1.45;   /* 소리 크기 배율(보통 1 · 크게 1.45 · 아주 크게 2) */
 const Speech = {
   ctx: null, gain: null, buf: new Map(), gen: 0, cur: null, fellBack: false, devVoice: null,
   initAudio() {
     try {
-      if (!this.ctx) { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); this.gain = this.ctx.createGain(); this.gain.gain.value = 0.8; this.gain.connect(this.ctx.destination); }
+      if (!this.ctx) { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); this.gain = this.ctx.createGain(); this.comp = this.ctx.createDynamicsCompressor(); try { this.comp.threshold.value = -8; this.comp.knee.value = 6; this.comp.ratio.value = 12; this.comp.attack.value = 0.003; this.comp.release.value = 0.2; } catch (e) {} this.gain.connect(this.comp); this.comp.connect(this.ctx.destination); this.applyVol(); }
       if (this.ctx.state === 'suspended') this.ctx.resume();
     } catch (e) {}
   },
   engine() { return this.fellBack ? 'device' : S.engine; },
+  applyVol() { if (this.gain) this.gain.gain.value = 0.8 * VK(); },
   chunks(text) {
     text = sayFix(text);
     const out = [];
@@ -1454,7 +1469,7 @@ const Speech = {
     await new Promise(res => {
       try {
         const u = new SpeechSynthesisUtterance((/Windows/i.test(navigator.userAgent) ? ', ' : '') + t);   /* 윈도우: 첫소리 잘림 막기 */
-        u.lang = 'ko-KR'; u.rate = 0.76; u.volume = 0.8; if (this.devVoice) u.voice = this.devVoice;
+        u.lang = 'ko-KR'; u.rate = 0.76; u.volume = Math.min(1, 0.8 * VK()); if (this.devVoice) u.voice = this.devVoice;
         u.onend = res; u.onerror = res;
         speechSynthesis.speak(u);
         setTimeout(res, 1500 + t.length * 420);
@@ -1801,7 +1816,7 @@ function strokeCue(svg, x, y, col) {
     tickAC = tickAC || new (window.AudioContext || window.webkitAudioContext)();
     const o = tickAC.createOscillator(), g = tickAC.createGain(), t = tickAC.currentTime;
     o.type = 'sine'; o.frequency.value = 880;
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.04, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.14);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.04 * VK(), t + 0.01); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.14);
     o.connect(g).connect(tickAC.destination); o.start(t); o.stop(t + 0.16);
   } catch (e) {}
 }
@@ -2423,7 +2438,7 @@ function chime() {
   try {
     AC = AC || new (window.AudioContext || window.webkitAudioContext)();
     [660, 880].forEach((f, i) => { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.value = f;
-      const t = AC.currentTime + i * 0.12; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.35);
+      const t = AC.currentTime + i * 0.12; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05 * VK(), t + 0.02); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.35);
       o.connect(g).connect(AC.destination); o.start(t); o.stop(t + 0.4); });
   } catch (e) {}
 }
@@ -2843,7 +2858,7 @@ function popSnd(big) {
     BAC = BAC || new (window.AudioContext || window.webkitAudioContext)();
     const o = BAC.createOscillator(), g = BAC.createGain(), t = BAC.currentTime;
     o.type = 'sine'; o.frequency.setValueAtTime(big ? 760 : 620, t); o.frequency.exponentialRampToValueAtTime(big ? 380 : 300, t + 0.08);
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(big ? 0.06 : 0.04, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.11);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime((big ? 0.06 : 0.04) * VK(), t + 0.008); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.11);
     o.connect(g).connect(BAC.destination); o.start(t); o.stop(t + 0.12);
   } catch (e) {}
 }
@@ -2851,7 +2866,7 @@ function popSnd(big) {
 function bubbleMusic(paused) {
   if (!S.sound) return { stop() {} };
   let ac; try { ac = BAC = BAC || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return { stop() {} }; }
-  const out = ac.createGain(); out.gain.value = 0.55; out.connect(ac.destination);
+  const out = ac.createGain(); out.gain.value = 0.55 * VK(); out.connect(ac.destination);
   /* 경쾌하고 통통 튀는 장조 노래(도·솔·라·파 화음 되풀이), 짧게 끊는 소리 + 살짝 뛰는 박자 */
   const F = n => 440 * Math.pow(2, (n - 69) / 12);
   const N = { B4: 71, C5: 72, D5: 74, E5: 76, F5: 77, G5: 79, A5: 81, B5: 83, C6: 84, D6: 86 };
@@ -2905,6 +2920,23 @@ async function bubbleGame(words, run) {
   const barIn = document.createElement('i'); Object.assign(barIn.style, { display: 'block', height: '100%', width: '100%', background: '#9BB6E6', transformOrigin: 'left' }); bar.appendChild(barIn);
   box.append(cv, bar, ban); GM.appendChild(box);
   const cx = cv.getContext('2d'); cx.scale(dpr, dpr);
+  /* 벽돌 천장(천장 위쪽 전체): 차분한 색, 한 번만 그려 두고 씀 */
+  const brick = document.createElement('canvas');
+  {
+    const ch = Math.max(1, Math.round(topY + hdr + 4)); brick.width = Math.round(W * dpr); brick.height = Math.round(ch * dpr);
+    const b = brick.getContext('2d'); b.scale(dpr, dpr);
+    b.fillStyle = '#F4EBE2'; b.fillRect(0, 0, W, ch);
+    const bh = Math.max(22, Math.min(40, H * 0.04)), bw = bh * 2.3, gap = 3, cols3 = ['#E6CDB9', '#E9D2BF', '#E2C7B1', '#EBD6C5'];
+    let row = 0;
+    for (let y = ch - bh; y > -bh; y -= bh, row++) {
+      for (let x = (row % 2 ? -bw / 2 : 0); x < W; x += bw) {
+        b.fillStyle = cols3[(row * 7 + Math.round(x / bw) * 3) % cols3.length];
+        const rx = x + gap / 2, ry = y + gap / 2, rw = bw - gap, rh = bh - gap, rr = 3;
+        b.beginPath(); b.moveTo(rx + rr, ry); b.arcTo(rx + rw, ry, rx + rw, ry + rh, rr); b.arcTo(rx + rw, ry + rh, rx, ry + rh, rr); b.arcTo(rx, ry + rh, rx, ry, rr); b.arcTo(rx, ry, rx + rw, ry, rr); b.fill();
+      }
+    }
+    b.fillStyle = '#C9AA92'; b.fillRect(0, ch - 3, W, 3);
+  }
 
   /* 그림 */
   const imgs = {};
@@ -2931,7 +2963,8 @@ async function bubbleGame(words, run) {
   const showTgt = () => {
     ban.innerHTML = lv === 3 ? '<svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#5E7FA8"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="#5E7FA8" stroke-width="2" stroke-linecap="round"/></svg>'
       : lv === 2 ? `<img src="${G.pics[target]}" alt="" style="height:${hdr * 0.56}px;width:${hdr * 0.56}px;object-fit:contain"><span>${esc(target)}</span>` : esc(target);
-    ban.style.opacity = 1;
+    ban.style.opacity = lv === 3 ? 0 : 1;   /* 수준 3은 소리만: 위쪽 스피커는 두지 않고 아래쪽 다시 듣기만 */
+    ban.style.pointerEvents = lv === 3 ? 'none' : '';
   };
   let jokerUsed = false;
   const pickTarget = (forceW) => {
@@ -3077,7 +3110,7 @@ async function bubbleGame(words, run) {
   };
   const draw = () => {
     cx.clearRect(0, 0, W, H);
-    if (topY) { cx.fillStyle = 'rgba(214,222,240,.55)'; cx.fillRect(0, 0, W, ceil - 2); cx.fillStyle = 'rgba(150,165,200,.6)'; cx.fillRect(0, ceil - 3, W, 3); }   /* 낮춘 천장 */
+    cx.drawImage(brick, 0, 0, W, ceil);   /* 벽돌 천장 */
     cx.save(); cx.setLineDash([10, 10]); cx.strokeStyle = 'rgba(150,140,175,.35)'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(W * 0.04, limitY); cx.lineTo(W * 0.96, limitY); cx.stroke(); cx.restore();
     for (const [k, g] of grid) { const [r, c] = k.split(',').map(Number); const [x, y] = posOf(r, c, g); drawBubble(x, y, g.ci, g.w, 1, !!g.joker); }
     for (const b of rising) drawBubble(b.x, b.y, b.ci, b.w, b.sz, b.joker);
@@ -3504,7 +3537,7 @@ function paintEngine() {
 }
 function paintVoiceSum() {
   const VN = { Leda: '밝고 귀여운', Aoede: '산뜻하고 부드러운', Kore: '또렷하고 씩씩한' };
-  $('#voiceSum').textContent = S.engine === 'base' ? '기본 목소리' : S.engine === 'google' ? 'Google 음성 · ' + VN[S.voice] + (S.ttsKey ? '' : ' · 키를 넣어 주세요') : '기기 목소리';
+  $('#voiceSum').textContent = (S.engine === 'base' ? '기본 목소리' : S.engine === 'google' ? 'Google 음성 · ' + VN[S.voice] + (S.ttsKey ? '' : ' · 키를 넣어 주세요') : '기기 목소리') + ' · ' + ['', '소리 보통', '소리 크게', '소리 아주 크게'][S.vol || 2];
 }
 function paintMoreSum() {
   $('#moreSum').textContent = '놀이 ' + (S.games === 'on' ? '하기' + (S.bubble !== 'off' ? '(+비눗방울)' : '') : '안 함') + ' · ' + WMODE_TXT[S.writeMode] + ' · ' + (S.glyph === 'stroke' ? '획 글자' : '바른바탕');
@@ -3516,6 +3549,7 @@ segInit('#writeSeg', 'writeMode', paintWriteNote);
 segInit('#gameSeg', 'games', paintGameNote);
 segInit('#bubbleSeg', 'bubble', () => setTimeout(paintMoreSum, 0));
 segInit('#ceilSeg', 'ceil');
+segInit('#volSeg', 'vol', () => { Speech.applyVol(); paintVoiceSum(); });
 segInit('#glyphSeg', 'glyph', () => { GlyphFont.load(); paintMoreSum(); });
 function paintWriteNote() {
   setTimeout(paintMoreSum, 0);
