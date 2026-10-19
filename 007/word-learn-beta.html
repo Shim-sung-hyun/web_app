@@ -3081,10 +3081,10 @@ async function bubbleGame(words, run) {
     if (!hit) { if (w) streak = 0; return; }   /* 신호와 다른 방울은 터지지 않음 */
     if (h.b) { rising.splice(h.i, 1); addFx(h.b.x, h.b.y, h.b.ci, true); }
     else popCell(h.r, h.c, true);
-    streak++; Speech.say(w).catch(() => {});
+    streak++; Speech.stop();   /* 맞히면 신호 말을 바로 멈춤(신호가 그 낱말이라 다시 말하지 않음) */
     if (g.joker) jokerPop(h.b ? null : h.r, h.b ? null : h.c, h.b && h.b.x, h.b && h.b.y);
     else reward(h.b ? null : h.r, h.b ? null : h.c, Math.min(3, streak), h.b && h.b.x, h.b && h.b.y);
-    demo = false; ban.style.opacity = 0; target = null; tgtAt = t + 1.4;   /* 잠깐 쉬었다가 다음 신호 (떨어진 방울을 따로 터뜨리지 않음: 그냥 터지는 방울 없게) */
+    demo = false; ban.style.opacity = 0; target = null; tgtAt = t + 0.7;   /* 잠깐 뒤 바로 다음 낱말 */   /* 잠깐 쉬었다가 다음 신호 (떨어진 방울을 따로 터뜨리지 않음: 그냥 터지는 방울 없게) */
   });
 
   /* 그리기 */
