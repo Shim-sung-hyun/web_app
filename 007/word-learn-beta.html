@@ -2788,19 +2788,30 @@ function bubbleMusic(paused) {
   if (!S.sound) return { stop() {} };
   let ac; try { ac = BAC = BAC || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return { stop() {} }; }
   const out = ac.createGain(); out.gain.value = 0.55; out.connect(ac.destination);
-  const SC = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.5];   /* 도 레 미 솔 라 (5음계) */
-  const BASS = [130.81, 146.83, 164.81, 196, 220];
-  let i = 3, step = 0, next = ac.currentTime + 0.1, alive = true;
-  const note = (f, t, len, vol, type) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0003, t + len); o.connect(g).connect(out); o.start(t); o.stop(t + len + 0.02); };
-  const blub = t => { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(380, t); o.frequency.exponentialRampToValueAtTime(900, t + 0.09); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.012, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0003, t + 0.12); o.connect(g).connect(out); o.start(t); o.stop(t + 0.14); };
-  const B = 60 / 112 / 2;   /* 8분음표 */
+  /* 경쾌하고 통통 튀는 장조 노래(도·솔·라·파 화음 되풀이), 짧게 끊는 소리 + 살짝 뛰는 박자 */
+  const F = n => 440 * Math.pow(2, (n - 69) / 12);
+  const N = { B4: 71, C5: 72, D5: 74, E5: 76, F5: 77, G5: 79, A5: 81, B5: 83, C6: 84, D6: 86 };
+  const MEL = [
+    ['E5', 0, 'G5', 'E5', 'C6', 0, 'G5', 0], ['D5', 0, 'G5', 'D5', 'B5', 0, 'A5', 'G5'],
+    ['A5', 0, 'C6', 'A5', 'E5', 0, 'G5', 'A5'], ['F5', 0, 'A5', 'C6', 'A5', 'G5', 'F5', 'D5'],
+    ['E5', 0, 'G5', 'E5', 'C6', 0, 'D6', 'C6'], ['B5', 0, 'G5', 'B5', 'D6', 0, 'B5', 0],
+    ['A5', 'C6', 'A5', 'E5', 'F5', 0, 'A5', 0], ['G5', 0, 'D5', 'B4', 'C5', 0, 0, 0]];
+  const CH = [[48, 55, 64], [43, 50, 59], [45, 52, 60], [41, 48, 57], [48, 55, 64], [43, 50, 59], [41, 48, 57], [43, 50, 55]];
+  let step = 0, next = ac.currentTime + 0.1, alive = true;
+  const note = (f, t, len, vol, type, bend) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.setValueAtTime(f * (bend || 1), t); if (bend) o.frequency.exponentialRampToValueAtTime(f, t + 0.03); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0003, t + len); o.connect(g).connect(out); o.start(t); o.stop(t + len + 0.02); };
+  const blub = t => { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(1100, t + 0.07); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.012, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0003, t + 0.09); o.connect(g).connect(out); o.start(t); o.stop(t + 0.11); };
+  const B = 60 / 138 / 2;   /* 8분음표(빠르기 138) */
   const iv = setInterval(() => {
     if (!alive) return;
     if (paused() || !document.getElementById('bub')) { next = ac.currentTime + 0.1; if (!document.getElementById('bub')) stop(); return; }
     while (next < ac.currentTime + 0.3) {
-      if (step % 8 === 0) note(BASS[(step / 8) % BASS.length | 0], next, 0.5, 0.016, 'triangle');
-      if (Math.random() < 0.72) { i = Math.max(0, Math.min(SC.length - 1, i + [-2, -1, -1, 1, 1, 2][Math.floor(Math.random() * 6)])); note(SC[i], next, 0.28, 0.02, 'sine'); }
-      if (Math.random() < 0.12) blub(next + B / 2);
+      const bar = (step >> 3) % 8, e = step & 7, t = next + (e & 1 ? B * 0.14 : 0);   /* 뒷박을 살짝 늦춰 통통 뛰게 */
+      const c = CH[bar];
+      if (e === 0 || e === 4) note(F(e ? c[1] : c[0]), t, 0.16, 0.03, 'triangle', 1.06);   /* 쿵 */
+      if (e === 2 || e === 6) { note(F(c[1] + 12), t, 0.07, 0.008, 'square'); note(F(c[2] + 12), t, 0.07, 0.008, 'square'); }   /* 짝 */
+      const m = MEL[bar][e];
+      if (m) note(F(N[m]), t, 0.13, 0.024, 'triangle', 1.03);
+      else if (Math.random() < 0.35) blub(t);
       next += B; step++;
     }
   }, 100);
