@@ -10,6 +10,8 @@
 - word-learn-promo.jpg     게시판 맨 위 홍보 그림 (1366×768)
 - cloud-key.html           Cloud 키 넣는 방법 (앱에서 연결)
 - pics/                    낱말 그림 349개 (webp)
+                           몸 부위(손·발·눈·코·입·귀·머리·이·다리)는 같은 아이·같은 틀로 다시 그림(Gemini, 2026-10-20).
+                           보기에서 그 부위만 비춤(스포트라이트, 한 번), 고르기·놀이에서는 비추지 않음.
 - game/                    놀이 그림(먹이 주기·스티커)
 - fonts/                   학교안심 바른바탕 B (woff2)
 - voice/leda/              기본 목소리(Google Leda, 미리 만든 mp3 + index.json, 3,331개)

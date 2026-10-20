@@ -390,6 +390,8 @@ details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margi
 #bookSeg button.closed .soon{font-size:.78em;color:#8A7F6E;margin-left:2px}
 .setup-head .edition{font-size:13px;font-weight:700;color:#fff;background:#2F7D5B;border-radius:999px;padding:2px 10px;align-self:center;white-space:nowrap}
 
+.spotlay{position:fixed;z-index:8;pointer-events:none;border-radius:11.7%}
+
 body.tmode #stage,body.tmode #game{pointer-events:none}
 .tbar button.cur{border-color:#9FF3F5;border-style:dashed}
 .tbar button.go{background:#2F7D5B;border-color:#2F7D5B;font-weight:700}
@@ -925,6 +927,9 @@ const PAIRS = [["위험","금지"],["위험","정지"],["금지","정지"],["물
 const SUGGEST = ['동생','누나','언니','오빠','형','친구','여자','월급'];
 /* 묶음 채우기: 묶음이 기본 낱말 수보다 적을 때 가져올 비슷한 주제의 낱말(마당 번호 → 낱말, 앞에서부터) */
 const TOPUP = {"0": ["새우", "김밥", "감자", "떡볶이"], "1": ["신발", "모자", "장갑", "양말", "얼굴", "배", "팔", "무릎", "손톱"], "2": ["집", "학교", "선물", "침대", "가족", "남자", "의사", "간호사", "경찰"], "3": ["의자", "우산", "책", "젓가락", "그릇", "식탁", "거울", "전등", "냄비"], "4": ["가방", "시계", "안경", "목도리", "스웨터", "한복", "장화", "비옷"], "5": ["자전거", "모자", "시계", "공책", "지우개", "크레파스", "인형", "그네", "놀이터"], "6": ["학교", "집", "화장실", "가방", "택시", "지하철", "헬리콥터", "소방차", "구급차", "정류장"], "7": ["나무", "꽃", "원숭이", "다람쥐", "펭귄", "하마", "사슴"], "8": ["물", "새", "우산", "나비", "하늘", "구름", "무지개", "산", "바다", "나뭇잎"], "9": ["손", "발", "눈", "코", "입", "다리", "귀", "머리", "이"], "10": ["비누", "칫솔", "휴지", "주사", "병원", "약국"], "11": ["신호등", "소방차", "경찰서"], "12": ["사과", "우유", "빵", "라면", "과자", "떡볶이"], "13": ["침대", "컵", "숟가락", "텔레비전", "시계"], "14": ["모자", "양말", "장갑", "신발", "티셔츠"], "15": ["연필", "가위", "책", "의자"], "16": ["공책", "연필", "가위", "책"], "17": ["밥", "반찬", "숟가락", "젓가락", "약", "밴드", "마스크", "물"], "18": ["공", "헬멧", "물통", "수건", "놀이터", "그네"], "19": ["피자", "케이크", "과자", "사탕"], "20": ["식당", "우체국", "약국"], "21": ["병원", "편지", "은행"], "22": ["버스", "자동차", "기차", "자전거", "신호등", "횡단보도"], "23": ["자전거", "풍선", "공"], "24": ["해", "달", "별", "꽃", "나무"], "25": ["토끼", "곰", "오리", "고양이"], "26": ["여우", "원숭이", "개구리", "오리"], "27": ["컴퓨터", "책상", "의자"], "28": ["장갑", "마스크", "모자", "신발", "헬멧", "바지", "티셔츠", "수건", "물통"], "29": ["청소기", "휴지", "물티슈", "비누", "수건"], "30": ["냄비", "그릇", "접시", "종이봉투"]};
+
+/* 몸 부위: 보기에서 그 부위만 비추는 자리(그림 512 기준 가운데 x·y, 반지름 x·y). 고르기·놀이에서는 비추지 않음(단서 걷기) */
+const BODY_SPOT = {"손": [400, 275, 90, 115], "발": [256, 385, 200, 85], "눈": [256, 200, 100, 42], "코": [253, 236, 42, 50], "입": [254, 278, 58, 32], "귀": [184, 225, 42, 62], "머리": [256, 125, 135, 95], "이": [256, 282, 60, 34], "다리": [256, 318, 95, 125]};
 
 /* 자음·모음 추천 순서
    - 1·2학년 교과서 고빈도 어절의 자소 빈도(초성 ㄱ·ㄹ·ㄴ·ㅅ·ㅎ·ㅈ, 중성 ㅏ·ㅣ·ㅗ·ㅡ·ㅜ, 종성 ㄹ·ㄴ·ㅇ: 이다은 외)
@@ -1925,7 +1930,8 @@ async function stageLook(w, run) {
   setPen(W / 2, H * 0.48, big * 0.85); pen.style.opacity = 0;
   await tween(500, t => { pen.style.opacity = t; setPen(W / 2, H * 0.48, big * (0.85 + 0.15 * t)); }, run);
   pen.style.opacity = 1;
-  await wait(250, run); await say(w, run); await wait(500, run);
+  if (BODY_SPOT[w]) await spotLook(w, W / 2, H * 0.48, big, run);
+  else { await wait(250, run); await say(w, run); await wait(500, run); }
 
   let penSize = Math.max(54, 100 * k * 0.42);
   const first = ws.strokes[0] ? toScr(ws.strokes[0].pts[0]) : [W / 2, H / 2];
@@ -1974,6 +1980,21 @@ async function stageLook(w, run) {
   await say(w, run);
   await wait(S.focus ? 900 : 300, run);
 
+
+/* 몸 부위 비추기: 그림 둘레가 천천히 어두워지고 그 부위만 밝게 남음 → 이름 → 다시 밝아짐. 한 번만, 깜빡이지 않음 */
+async function spotLook(w, x, y, s, run) {
+  const [cx, cy, rx, ry] = BODY_SPOT[w], F = 16, P = v => (v / 512 * 100).toFixed(2) + '%';
+  const o = document.createElement('div'); o.className = 'spotlay';
+  Object.assign(o.style, { left: (x - s / 2) + 'px', top: (y - s / 2) + 'px', width: s + 'px', height: s + 'px', opacity: 0,
+    background: `radial-gradient(ellipse ${P(rx + F)} ${P(ry + F)} at ${P(cx)} ${P(cy)}, rgba(20,24,36,0) ${Math.round((Math.min(rx, ry) - F) / (Math.min(rx, ry) + F) * 100)}%, rgba(20,24,36,.6) 100%)` });
+  document.body.appendChild(o);   /* 그림(#pen) 위에 오도록 body에 둠, 멈추거나 넘어가도 지움 */
+  try {
+    await wait(250, run);
+    await tween(900, t => o.style.opacity = t, run);
+    await say(w, run); await wait(1100, run);
+    await tween(450, t => o.style.opacity = 1 - t, run);
+  } finally { o.remove(); }
+}
   /* 여러 글꼴로 바뀜 */
   const box = { x: svgX, y: svgY, w: L.svgW, h: L.svgH };
   const fonts = randFonts(3);
