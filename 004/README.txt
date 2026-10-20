@@ -17,8 +17,8 @@
   cloud-key.html            Cloud 키 넣는 방법 안내 페이지 (앱의 관리 메뉴에서 연결)
                             주소: https://shim-sung-hyun.github.io/web_app/004/cloud-key.html
   poem-recite_manual.html   게시판 본문용 설명서
-  voice/leda/               기본 목소리(미리 만든 Google Leda 소리, mp3 + index.json)
-                            들어 있는 시 다섯 편과 '들어 보기' 말. 파일 이름 = 말 조각의 SHA-1 앞 16자리
+  voice/leda/               기본 목소리: 들어 있는 시 다섯 편을 Gemini Leda로 통째로 낭송해 만들고 줄마다 나눈 mp3 + index.json
+                            파일 이름 = SHA-1("시|줄 번호|줄 글") 앞 16자리 (되풀이되는 줄도 그 자리의 소리)
 
 휴대폰으로 키 받기
   키 칸 옆 "📱 휴대폰으로 받기" 단추는 중계 서버 https://charum.org/key-relay.php 를 씁니다.

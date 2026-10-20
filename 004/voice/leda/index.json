@@ -1,1 +1,105 @@
-{"voice": "Leda", "rate": 0.92, "made": "2026-10-19", "note": "한 글자는 \"글자. ○.\" 속에서 만들어 마지막 마디만 씀", "files": ["091ec86c14086d6f", "1670486482bf082d", "2b050fb9bef1772d", "3656c4c75526b7a1", "382c9157b1073a15", "3ce7f29d6248b2f9", "409b2c8dcba1078c", "4997720a62922c16", "4a43d7b6401f7a98", "4b4ff9d412d8f1e2", "5370ecf0a7202082", "545f7f7ecc2eb5fd", "54988a27f8eafb40", "5df1c381c6530b4d", "5df43c0de5299736", "5ebc518941f26e1f", "672b2c48e971e6fb", "6897884d8ccbb9b6", "6965242791016620", "6c978bbb58297e12", "713d42bd90b2611a", "7c306e4bdc016615", "80140cf2834edce3", "80ffdff2677f1ba4", "81a0ae3b01bd7993", "8446d3f15add0fd2", "89f5343cf8dfa985", "8cac1b9830e5b24a", "93760adc6259589d", "ab995a17483a691e", "b5865d735b811837", "b81a4adfbcf4cf46", "ba850c6a242eb686", "bb30b516b10fc204", "bb931441cc13fb3c", "bc634c4bc4e9ebdb", "ca110973bb9b8945", "ca7c67c71e26c391", "ccde8ef07d5996af", "cdb4194333eb68fb", "ce007e915c196bf9", "d74cedc9d672c1de", "dfa345ed3a9b04bd", "e3c201f02ab1d2a2", "e5f0dc1df209ef4a", "ea2581fc55436ebf", "eaa5f313d35d8324", "ec2ec5370e437aa6", "f181f10bbfe1d88e", "f5e525e5d97ff005", "ffc2643012a2fb60"]}
+{
+"voice": "Leda",
+"kind": "poem-lines",
+"made": "2026-10-20",
+"note": "시를 통째로 낭송해 만든 뒤 줄마다 나눔. 파일 이름 = sha1(\"시|줄 번호|줄 글\") 앞 16자리",
+"settings": {
+"common": {
+"pick": "gemini",
+"rate": 0.86,
+"feel": "밝고 재미있게, 말놀이처럼 리듬을 살려서. 마지막 \"듣는 사람이 / 새가 아니란 거야.\"는 살짝 웃음을 머금고 천천히.",
+"read": {},
+"model": "gemini-3.8-flash-tts"
+},
+"spring": {
+"pick": "gemini",
+"rate": 0.82,
+"feel": "고요하고 담담하게. 꽃이 피고 지는 것을 멀리서 바라보듯 차분히, 조금 쓸쓸하게. 되풀이되는 말은 같은 박자로.",
+"read": {},
+"model": "gemini-3.8-flash-tts"
+},
+"summer": {
+"pick": "gemini",
+"rate": 0.72,
+"feel": "옛시조를 읊듯 아주 천천히. 구절마다 넉넉히 쉬고, 아침이 밝았으니 어서 일어나 밭 갈러 가자고 부르는 느낌으로.",
+"read": {
+"2": "동창이 밝았느냐 / 노고지리 우지진다",
+"3": "소 치는 아이는 / 상기 아니 일었느냐",
+"4": "재 너머 사래 긴 밭을 / 언제 갈려 하나니"
+},
+"model": "gemini-3.8-flash-tts"
+},
+"autumn": {
+"pick": "gemini",
+"rate": 0.84,
+"feel": "따뜻하고 조용하게. 그리운 사람을 떠올리듯 부드럽게. \"당신이 그립습니다.\"는 천천히.",
+"read": {},
+"model": "gemini-3.8-flash-tts"
+},
+"winter": {
+"pick": "gemini",
+"rate": 0.84,
+"feel": "조용하고 포근하게. 눈이 소리 없이 내리는 밤처럼 낮고 부드럽게. 속삭이지는 말고.",
+"read": {},
+"model": "gemini-3.8-flash-tts"
+}
+},
+"files": [
+"00398b0c5e5b3eb5",
+"00c2db1067a875c7",
+"09a2d23deb5dcc46",
+"0aad24a8a5dfc989",
+"0ba0e4a58592cc42",
+"0ba114132ef65ccb",
+"0c165cb9de3a2152",
+"141da9446d445e33",
+"21f5db1311ca4aa8",
+"23a61bc0de76fcb0",
+"2c71330fcfd5fac2",
+"34a53e0ecbde3fb0",
+"36443a4d68a6cb28",
+"364a4d4fde4a9832",
+"3a1f0dcb6e0e7645",
+"3d69c06e5c2e9ba8",
+"438d82b2314ba313",
+"461e525d7fae5271",
+"49dd54ac49cf1416",
+"4bba2c2eb72cb8e8",
+"590112f172168cec",
+"5caafdc2e615a8f3",
+"6393c51189e6b788",
+"679dbbdb64a6081c",
+"695bfcbaecb2e5a7",
+"69a462cdbc7fb5de",
+"6c1706337be68e12",
+"71ccd81492e5b49c",
+"7cb1756be23f066d",
+"800ddac47c41dbe0",
+"80a106b9e70c427e",
+"8aa8b0a8cc10ff5e",
+"8d6e0f013b995acf",
+"8edd355fcf0030d2",
+"97a0ada19352133c",
+"9cfd7232b1a8a189",
+"a28a2b77aac64442",
+"a731592bf6b0f338",
+"a98cb80a333a5828",
+"ac8d1de73265662c",
+"acd0ca41ef7ac506",
+"af848206b1de1663",
+"bba7527519098ca2",
+"cdf07691191e6043",
+"d12f15ab63e6c53a",
+"d1fed6debb834ef7",
+"df6370ef94dabd20",
+"e0c16e99e45ca5a6",
+"e224ffd9ff169be9",
+"e85fda4134f39bd1",
+"e924657f9e281d0a",
+"ebdb4b392ca477ba",
+"ec50d3acc4787602",
+"ed77caa1a14468ae",
+"f2cd79ad476f60c3",
+"feb6b4244a2649c9"
+]
+}
