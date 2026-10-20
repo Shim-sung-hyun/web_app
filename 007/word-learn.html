@@ -363,7 +363,7 @@ details.more[open]>summary::before{content:'▾ '}
 .settings details.more{margin:0;border-top:1px solid var(--line);padding:12px 0}
 .settings details.more:first-child{border-top:0}
 details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margin-left:8px}
-#pickBox{margin-top:12px}
+#pickBox{margin-top:4px}
 /* 좁은 화면: 교사 메뉴 줄이 넘치면 좌우로 밀어 움직임(잘리지 않게) */
 .tbar{overflow-x:auto;overflow-y:hidden;justify-content:flex-start;touch-action:pan-x;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .tbar::-webkit-scrollbar{display:none}
@@ -407,7 +407,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
 <!-- ================= 설정 화면 ================= -->
 <div id="setup">
  <div class="setup-wrap one">
-  <div class="setup-head"><h1>글자 익히기</h1><span class="edition" id="edition"></span><span class="sub">그림이 붓이 되어 글자를 써요</span>
+  <div class="setup-head"><h1>글자 익히기</h1><span class="sub">그림이 붓이 되어 글자를 써요</span>
    <span style="margin-left:auto;display:flex;gap:6px"><button class="btn mini" id="recBtn">교사용 기록</button><button class="btn mini" id="setupHelp">도움말</button></span></div>
   <div id="pauseBar" class="hidden"><span id="pauseTxt"></span><button class="btn main" id="resumeBtn">이어 하기</button><button class="btn" id="quitBtn">멈춘 곳 지우기</button></div>
 
@@ -429,16 +429,10 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
    </div>
   </section>
 
-  <section class="step" id="stepWhat">
-   <h2><span class="n">2</span>오늘 배울 낱말</h2>
-   <div class="today">
-    <div class="today-head"><b id="todayTitle"></b><span class="note" id="resumeTxt"></span></div>
-    <div class="chips" id="wordChips"></div>
-    <div class="note" id="wordNote"></div>
-    <div class="today-btns" id="resumeRow"><button class="btn mini main" id="nextBundle">다음 묶음으로</button></div>
-   </div>
+  <section class="step" id="stepPick">
+   <h2><span class="n">2</span>낱말 고르기</h2>
    <details class="more" id="pickBox">
-    <summary>다른 낱말 고르기 (편 · 마당 · 묶음 · 자음별 · 모음별)</summary>
+    <summary>바꾸기 <span class="note" style="font-weight:400">편 · 마당 · 고르는 방법 · 묶음</span></summary>
     <div class="row">
      <label class="t">편</label>
      <div class="seg" id="bookSeg"><button data-v="1">1편 나와 우리 집</button><button data-v="2">2편 안전하게</button><button data-v="3">3편 학교에서</button><button data-v="4">4편 마을에서</button><button data-v="5">5편 일터에서</button><button data-v="6">내가 넣은 낱말</button></div>
@@ -463,6 +457,15 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
    </details>
   </section>
 
+  <section class="step" id="stepWhat">
+   <h2><span class="n">3</span>오늘 배울 낱말</h2>
+   <div class="today">
+    <div class="today-head"><b id="todayTitle"></b><span class="note" id="resumeTxt"></span></div>
+    <div class="chips" id="wordChips"></div>
+    <div class="note" id="wordNote"></div>
+    <div class="today-btns" id="resumeRow"><button class="btn mini main" id="nextBundle">다음 묶음으로</button></div>
+   </div>
+  </section>
 
   <section class="step settings">
    <details class="more" id="voiceBox">
@@ -491,14 +494,14 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
    <details class="more" id="moreBox">
     <summary>수업 방식 <span class="sum" id="moreSum"></span></summary>
      <div class="row">
-      <label class="t">묶음 끝 놀이</label>
+      <label class="t">묶음 끝 정리하기</label>
       <div class="seg" id="gameSeg"><button data-v="on">하기</button><button data-v="off">하지 않기</button></div>
       <div class="note" id="gameNote"></div>
      </div>
      <div class="row">
       <label class="t">보상 놀이 (비눗방울)</label>
       <div class="seg" id="bubbleSeg"><button data-v="on">하기</button><button data-v="off">하지 않기</button></div>
-      <div class="note">묶음 끝 놀이를 마치면 비눗방울을 터뜨려요(수준 1·2·3: 1분·1분 30초·2분, 다 차면 먼저 끝). 기록은 남기지 않아요.</div>
+      <div class="note">학습을 마치면 비눗방울을 터뜨려요(수준 1·2·3: 1분·1분 30초·2분, 다 차면 먼저 끝). 기록은 남기지 않아요.</div>
      </div>
      <div class="row">
       <label class="t">놀이 소리</label>
@@ -3391,7 +3394,7 @@ const TOUR_STEPS = {
     { el: '#levelSeg', t: '수준', x: '수준 1은 4낱말씩 듣고 고르기, 2는 6낱말씩 글자 알아보기, 3은 10낱말씩 읽기예요. 학생마다 저장돼요.' },
     { el: '.today', t: '오늘 배울 낱말', x: '지난번 다음 묶음이 저절로 골라져요. 낱말을 누르면 빼거나 다시 넣어요.' },
     { el: '#nextBundle', t: '다음 묶음으로', x: '아직 하지 않은 다음 묶음으로 바꿔요.' },
-    { el: '#pickBox', t: '다른 낱말 고르기', x: '편·마당·묶음을 직접 고르거나, 자음별·모음별로 골라요. 선생님이 넣은 낱말과 사진도 여기서 관리해요.' },
+    { el: '#pickBox', t: '낱말 고르기', x: '편·마당·묶음을 직접 고르거나, 자음별·모음별로 골라요. 선생님이 넣은 낱말과 사진도 여기서 관리해요.' },
     { el: '#startBtn', t: '시작', x: '전체 화면으로 수업을 시작해요. 묶음을 다 배우면 그 낱말로 놀이를 해요.' },
     { el: '#sheetBtn', t: '쓰기 연습지', x: '오늘 낱말을 A4에 한 장씩 인쇄해요.' },
     { el: '#voiceBox', t: '목소리', x: '기본 목소리는 키 없이 바로 쓰는 Google 목소리예요. 다른 Google 목소리는 Cloud 키가 필요해요(휴대폰으로 받기도 돼요).' },
@@ -3559,7 +3562,7 @@ function recordHTML(forPrint) {
     return `<tr><td>${d.slice(5).replace('-', '/')}</td><td style="text-align:left">${ws.slice(0, 8).map(esc).join(', ')}${ws.length > 8 ? ' …' : ''}</td><td>${pc == null ? '-' : '바로 ' + pc + '%'}</td><td>${modes || '-'}</td></tr>`;
   }).join('');
   h += `<h3 style="margin:10px 0 4px">날짜별 흐름</h3><table class="rtable"><tr><th>날짜</th><th>낱말</th><th>고르기</th><th>쓰기 방식</th></tr>${flow}</table>`;
-  h += '<p class="note">바로 / 도움: 바로 맞힌 횟수 / 도움(빛나는 테두리·대신 긋기)을 받고 맞힌 횟수. 놀이(복습)는 묶음 끝 놀이에서 고른 결과예요.</p>';
+  h += '<p class="note">바로 / 도움: 바로 맞힌 횟수 / 도움(빛나는 테두리·대신 긋기)을 받고 맞힌 횟수. 놀이(복습)는 묶음 끝 정리하기에서 고른 결과예요.</p>';
   h += '<p class="note">익힘: 그림 고르기(글자만 보고 그림 찾기)를 바로 맞힌 횟수가 모두 세 번 이상이면 익힌 낱말로 봐요. 자동으로 고를 때 빼요.</p>';
   return h;
 }
@@ -3669,7 +3672,7 @@ function paintGameNote() {
   setTimeout(paintMoreSum, 0);
   const g = S.chosen.length >= 2 ? gameFor(S.chosen) : null;
   $('#gameNote').textContent = S.games === 'on'
-    ? '묶음을 다 배우면 그 낱말로 짧게 놀아요(배운 낱말 수만큼, 낱말마다 한 번).' + (g ? ' 지금 낱말은 "' + GAME_NAMES[g] + '"예요.' : '') + ' 놀이 결과는 기록에 "놀이(복습)"으로 따로 남아요.'
+    ? '묶음을 다 배우면 그 낱말로 짧게 정리해요(배운 낱말 수만큼, 낱말마다 한 번).' + (g ? ' 지금 낱말은 "' + GAME_NAMES[g] + '"예요.' : '') + ' 결과는 기록에 "놀이(복습)"으로 따로 남아요.'
     : '묶음을 다 배우면 오늘 배운 낱말을 보여 주고 끝나요.';
 }
 paintWriteNote();
@@ -3786,17 +3789,24 @@ async function worksheetHTML(words) {
     const n = Math.max(1, [...w].filter(c => c !== ' ').length);
     const modelCell = Math.min(52, 140 / n), picMM = 42;
     const practiceH = 271 - 22 - Math.max(modelCell, picMM) - 8;
-    let cell = 62, per = 1, rows = 6;
-    for (; cell >= 16; cell--) {
-      per = Math.max(1, Math.floor((180 + 8) / (n * cell * 1.04 + 8)));
-      rows = Math.ceil(WS_ORDER.length / per);
-      if (rows * cell * 1.04 + (rows - 1) * 8 <= practiceH && n * cell * 1.04 <= 180) break;
+    /* 종이를 꽉 채우게: 칸 크기와 줄·칸 수를 함께 골라 연습 칸 넓이가 가장 큰 배치를 씀(칸은 6개 이상).
+       칸이 남으면 뒤쪽 단계(혼자 → 시작점 → 점선 → 흐리게)부터 하나씩 더 줌 */
+    let best = null;
+    for (let c = 62; c >= 18; c--) {
+      const per = Math.floor((180 + 8) / (n * c * 1.04 + 8)); if (per < 1) continue;
+      const rows = Math.floor((practiceH + 8) / (c * 1.04 + 8)), T = per * rows; if (T < 6) continue;
+      const cover = T * c * c;
+      if (!best || cover > best.cover * 1.02) best = { cell: c, per, rows, T: Math.min(T, 18), cover };
     }
+    if (!best) best = { cell: 18, T: 6 };
+    const cell = best.cell, cnt = { dark: 1, light: 2, dot: 1, start: 1, blank: 1 }, more = ['blank', 'start', 'dot', 'light', 'dark'];
+    for (let i = 0; i < best.T - 6; i++) cnt[more[i % more.length]]++;
+    const order = ['dark', 'light', 'dot', 'start', 'blank'].flatMap(k => Array(cnt[k]).fill(k));
     const url = await Pics.url(w);
     html += `<div class="ws">
       <div class="ws-top"><span>이름<span class="ln"></span>&nbsp;&nbsp;날짜<span class="ln"></span></span><span class="hint">진하게 → 흐리게 → 점선 → 시작점 → 혼자</span></div>
       <div class="ws-model">${url ? `<img src="${url}" style="width:${picMM}mm;height:${picMM}mm" alt="">` : ''}${wsWordSvg(w, 'model', modelCell)}</div>
-      <div class="ws-grid">${WS_ORDER.map(k => wsWordSvg(w, k, cell)).join('')}</div>
+      <div class="ws-grid">${order.map(k => wsWordSvg(w, k, cell)).join('')}</div>
     </div>`;
   }
   return html;
@@ -3865,7 +3875,7 @@ function autoPick() {
 function paintBook() {
   if (S.book === 6 && !S.mine.length) S.book = 1;
   if (!isOpenBook(S.book)) { S.book = OPEN_BOOKS[0] || 1; const m = madangs(S.book)[0]; S.mi = m ? m.i : 0; S.bi = 0; saveSel(); }
-  { const n = $('#bookNote'); if (n) { const c = CLOSED_BOOKS; n.textContent = c.length ? (c.length > 1 && c[c.length - 1] - c[0] === c.length - 1 ? c[0] + '~' + c[c.length - 1] : c.join('·')) + '편은 확인하고 있어요. 차례로 열려요.' : ''; n.classList.toggle('hidden', !c.length); } }
+  { const n = $('#bookNote'); if (n) { const c = CLOSED_BOOKS; n.textContent = c.length ? (c.length > 1 && c[c.length - 1] - c[0] === c.length - 1 ? c[0] + '~' + c[c.length - 1] : c.join('·')) + '편은 준비하고 있어요. 차례로 열려요.' : ''; n.classList.toggle('hidden', !c.length); } }
   $$('#bookSeg button').forEach(b => {
     const v = +b.dataset.v;
     b.classList.toggle('on', v === S.book);
@@ -4193,6 +4203,5 @@ window.AdminGate = (function () {
 })();
 </script>
 <script>try { showPauseBar(); } catch (e) {}</script>
-<script>try { document.getElementById('edition').textContent = EDITION; } catch (e) {}</script>
 </body>
 </html>
