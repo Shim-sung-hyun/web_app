@@ -721,7 +721,7 @@ function renderDocks(){
   const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
   $('dockTop').innerHTML=
     `<div class="g" id="gStage"><span class="lbl">가리기</span>${STAGES.map(s=>b('stage:'+s.k,s.label,S.stage===s.k)).join('')}</div>`+
-    `<div class="g" id="gPoem"><span class="lbl">시</span>${poemList().map(p=>b('poem:'+p.key,esc(p.label==='내가 입력'?p.title:p.label),S.active===p.key,`title="${esc(p.title)}"`)).join('')}${b('new',ICON.plus+'새 시')}</div>`+
+    `<div class="g" id="gPoem"><span class="lbl">시</span>${poemList().map(p=>b('poem:'+p.key,esc(p.label==='내가 입력'?p.title:p.label),S.active===p.key,`title="${esc(p.title)}"`)).join('')}${b('new',ICON.plus+'새 시')}${isCustom()?b('edit',ICON.edit+'고치기'):''}</div>`+
     `<div class="g" id="gCols"><span class="lbl">단</span>${b('cols:auto','자동',S.cols===null)}${[1,2,3,4].map(n=>b('cols:'+n,n+'단',S.cols===n)).join('')}</div>`+
     `<div class="g" id="gFont"><span class="lbl">글꼴</span>${b('font:myeongjo','명조',S.font==='myeongjo')}${b('font:easy','둥근 글씨',S.font==='easy')}</div>`+
     `<div class="g">${b('sound',(S.sound?ICON.sndOn:ICON.sndOff)+(S.sound?'소리':'소리 끔'),S.sound)}</div>`+
@@ -759,6 +759,7 @@ function onDock(e){
   if(a==='stage') applyStage(v);
   if(a==='poem'){ stopReading(); S.active=v; store.set('active',v); chooseEngine(); rebuildEntries(); }
   if(a==='new') openModal(null);
+  if(a==='edit'&&isCustom()) openModal(S.active);
   if(a==='cols'){ S.cols=v==='auto'?null:+v; store.set('cols',S.cols); refitLayout(); }
   if(a==='font'){ S.font=v; store.set('font',v==='easy'?'easy':'myeongjo'); applyFont(); refitLayout(); }
   if(a==='sound'){ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); if(!S.sound) stopReading(); }
@@ -1020,7 +1021,7 @@ document.addEventListener('scroll',()=>{ if(SPOT.el) placeSpot(); },true);
 /* ================= 도움말: 교사 메뉴를 말풍선으로 하나씩 ================= */
 const TOUR_STEPS=[
   {el:'#gStage', t:'가리기', x:'한꺼번에 지우지 않고 조금씩 지워 가며 외워요. 전체 → 반 가리기 → 낱말 첫 글자 → 줄 첫 글자 → 다 가리기.'},
-  {el:'#gPoem', t:'시', x:'공통시와 계절시 가운데 골라요. "+ 새 시"로 직접 입력하거나 .txt 파일을 불러와요.'},
+  {el:'#gPoem', t:'시', x:'공통시와 계절시 가운데 골라요. "+ 새 시"로 직접 입력하거나 .txt 파일을 불러와요. 넣은 시를 고르면 "고치기"가 나와요.'},
   {el:'#gCols', t:'단', x:'시를 몇 단으로 나눠 보일지 정해요. "자동"은 화면에 가장 크게 보이는 쪽을 골라요.'},
   {el:'#gFont', t:'글꼴', x:'명조는 시다운 글꼴, 둥근 글씨는 글자를 처음 읽는 학생에게 좋아요.'},
   {el:'#dockTop [data-a="sound"]', t:'소리', x:'읽어 주는 목소리를 켜고 꺼요.'},
