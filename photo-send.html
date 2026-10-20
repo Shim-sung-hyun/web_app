@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>전자칠판으로 사진 보내기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d2133;--sub:#5b6077;--line:#d9dcea;--pri:#1F6C75;--pri2:#16525A;--bg:#f1f6f6;--ok:#1b7f3a;--err:#c62828}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:520px;margin:0 auto;padding:22px 16px 40px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:28px;margin:6px 0 6px;color:var(--pri2)}
+.lead{margin:0 0 18px;color:var(--sub);font-size:15px;line-height:1.6}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 16px;margin-bottom:14px}
+label.t{display:block;font-weight:700;margin:0 0 8px;font-size:16px}
+input.f{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+#code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:44px;letter-spacing:.3em;text-align:center;padding:8px 0 8px .3em}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick button{font:inherit;font-size:18px;font-weight:700;padding:18px 8px;border-radius:16px;border:1px solid var(--line);background:#fff;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:6px}
+.pick button.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.pick svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.warn{margin:12px 2px 0;padding:10px 12px;border-radius:12px;background:#FFF4E5;color:#7A4A00;font-size:15px;line-height:1.5}
+#preview{display:none;margin:14px 0 0;text-align:center}
+#preview img{max-width:100%;max-height:44vh;border-radius:14px;border:1px solid var(--line)}
+#send{width:100%;font:inherit;font-size:20px;font-weight:700;padding:16px;border:0;border-radius:16px;background:var(--pri);color:#fff;margin-top:12px}
+#send:disabled{opacity:.6}
+#state{min-height:1.6em;margin:14px 2px 0;font-size:16px;line-height:1.55;text-align:center}
+#state.err{color:var(--err);font-weight:700}
+.res-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px 18px 22px;text-align:center;margin-bottom:14px}
+.res-big{width:88px;height:88px;margin:0 auto 14px;border-radius:50%;background:#e6f2f3;color:var(--pri2);font-size:44px;line-height:88px;font-weight:700}
+.res-big.ok{background:#e7f5ec;color:var(--ok);font-size:54px}
+.res-big.err{background:#fdecec;color:var(--err)}
+.res-card h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:30px;margin:0 0 8px}
+.res-card p{margin:0;color:var(--sub);font-size:16px;line-height:1.6}
+#again{width:100%;font:inherit;font-size:18px;font-weight:700;padding:14px;border:1px solid var(--line);border-radius:16px;background:#fff;color:var(--ink)}
+.safe{font-size:13px;color:var(--sub);line-height:1.6;margin:18px 4px 0}
+.safe b{color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+<div id="form">
+  <h1>전자칠판으로 사진 보내기</h1>
+  <p class="lead">전자칠판의 <b>사진을 골라요</b> 화면에서 <b>📱 휴대폰으로 보내기</b>를 누르면 번호 4자리가 나와요.</p>
+
+  <div class="card">
+    <label class="t" for="code">전자칠판의 번호</label>
+    <input class="f" id="code" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="0000" aria-label="번호 4자리">
+  </div>
+
+  <div class="card">
+    <label class="t">사진</label>
+    <div class="pick">
+      <button class="pri" type="button" id="shoot"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg>사진 찍기</button>
+      <button type="button" id="album"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M20.5 16l-5-5-8 8"/></svg>앨범에서 고르기</button>
+    </div>
+    <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
+    <input type="file" id="fileIn" accept="image/*" hidden>
+    <p class="warn"><b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 물건이 화면 안에 통째로 들어오면 도형을 잘 찾아요.</p>
+    <div id="preview"><img id="pv" alt="보낼 사진"></div>
+    <button id="send" type="button" disabled>전자칠판으로 보내기</button>
+    <p id="state" aria-live="polite"></p>
+  </div>
+</div>
+<div id="result" hidden>
+  <div class="res-card">
+    <div class="res-big" id="resIcon" aria-hidden="true">…</div>
+    <h2 id="resTitle">보냈어요</h2>
+    <p id="resMsg">전자칠판이 받기를 기다리는 중이에요.</p>
+  </div>
+  <button id="again" type="button">다른 사진 보내기</button>
+</div>
+<p class="safe"><b>안전하게 보내요.</b> 사진은 이 휴대폰에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있어요. 중간의 중계 서버는 사진을 볼 수 없고, 전자칠판이 받는 순간 지워져요. 3분이 지나도 지워져요.</p>
+</main>
+<script>
+(function(){
+const RELAY='https://charum.org/photo-relay.php';
+const $=id=>document.getElementById(id);
+const m=/c=(\d{4})/.exec(location.hash||''); if(m) $('code').value=m[1];
+if(location.hash) history.replaceState(null,'',location.pathname+location.search);
+
+const b64u={ enc:b=>{ const u=new Uint8Array(b); let s=''; for(let i=0;i<u.length;i+=0x8000) s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
+  dec:s=>{ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return Uint8Array.from(atob(s),c=>c.charCodeAt(0)); } };
+async function call(body){
+  const r=await fetch(RELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
+  let j={}; try{ j=await r.json(); }catch(e){}
+  if(!r.ok||j.error) throw Object.assign(new Error(j.error||'http'),{code:j.error||('http '+r.status)});
+  return j;
+}
+const say=(t,cls)=>{ const s=$('state'); s.textContent=t; s.className=cls||''; };
+
+/* 사진을 긴 쪽 1600px로 줄여 JPEG로 (전자칠판은 다시 1280으로 줄임) */
+let jpeg=null;
+function shrink(file){
+  return new Promise((res,rej)=>{
+    const u=URL.createObjectURL(file), im=new Image();
+    im.onload=()=>{
+      const k=Math.min(1,1600/Math.max(im.naturalWidth,im.naturalHeight));
+      const c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(u);
+      c.toBlob(b=>b?res(b):rej(new Error('jpeg')),'image/jpeg',0.85);
+    };
+    im.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('load')); };
+    im.src=u;
+  });
+}
+async function got(input){
+  const f=input.files&&input.files[0]; input.value=''; if(!f) return;
+  say('사진을 준비하고 있어요…');
+  try{ jpeg=await shrink(f); }catch(e){ jpeg=null; say('이 사진을 열 수 없어요. 다른 사진을 골라 주세요.','err'); return; }
+  $('pv').src=URL.createObjectURL(jpeg); $('preview').style.display='block';
+  $('send').disabled=false; say('');
+  $('send').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+$('shoot').onclick=()=>$('camIn').click();
+$('album').onclick=()=>$('fileIn').click();
+$('camIn').onchange=e=>got(e.target);
+$('fileIn').onchange=e=>got(e.target);
+
+let watch=null;
+function setRes(state,title,msg){ const i=$('resIcon'); i.className='res-big'+(state?' '+state:''); i.textContent=state==='ok'?'✓':state==='err'?'!':'…';
+  $('resTitle').textContent=title; $('resMsg').textContent=msg; }
+function showResult(code,tk){
+  $('form').hidden=true; $('result').hidden=false; scrollTo(0,0);
+  setRes('','보냈어요','전자칠판이 받기를 기다리는 중이에요.');
+  clearTimeout(watch); const end=Date.now()+200*1000;
+  const tick=async()=>{
+    let r=null; try{ r=await call({a:'check',code,tk}); }catch(e){}
+    if(r&&r.status==='done'){ setRes('ok','전자칠판이 받았어요','전자칠판에서 수업을 이어 가세요.'); try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){} return; }
+    if((r&&r.status==='gone')||Date.now()>end){ setRes('err','전자칠판이 받지 못했어요','전자칠판에서 창을 닫았거나 3분이 지났어요. 전자칠판에서 다시 눌러 새 번호로 보내 주세요.'); return; }
+    watch=setTimeout(tick,2000);
+  };
+  watch=setTimeout(tick,1200);
+}
+$('again').onclick=()=>{ clearTimeout(watch); $('result').hidden=true; $('form').hidden=false; jpeg=null; $('preview').style.display='none'; $('send').disabled=true; say('다른 사진은 전자칠판에서 다시 눌러 나온 새 번호로 보내요.'); $('code').value=''; $('code').focus(); };
+
+$('send').onclick=async()=>{
+  const code=$('code').value.trim();
+  if(!/^\d{4}$/.test(code)){ say('전자칠판에 나온 번호 4자리를 넣어 주세요.','err'); $('code').focus(); return; }
+  if(!jpeg){ say('먼저 사진을 찍거나 골라 주세요.','err'); return; }
+  if(!window.crypto||!crypto.subtle){ say('이 브라우저에서는 보낼 수 없어요. 다른 브라우저로 열어 주세요.','err'); return; }
+  $('send').disabled=true; say('보내는 중이에요…');
+  try{
+    const {pub}=await call({a:'pub',code});
+    const wb=await crypto.subtle.importKey('raw',b64u.dec(pub),{name:'ECDH',namedCurve:'P-256'},false,[]);
+    const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+    const bits=await crypto.subtle.deriveBits({name:'ECDH',public:wb},kp.privateKey,256);
+    const hk=await crypto.subtle.importKey('raw',bits,'HKDF',false,['deriveKey']);
+    const key=await crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:new TextEncoder().encode('webapp-photo-relay|'+code),info:new TextEncoder().encode('v1')},hk,{name:'AES-GCM',length:256},false,['encrypt']);
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,await jpeg.arrayBuffer());
+    const sent=await call({a:'send',code,epub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),iv:b64u.enc(iv),ct:b64u.enc(ct)});
+    say(''); showResult(code,sent.tk);
+  }catch(e){
+    const c=e&&e.code;
+    if(c==='nocode') say('번호를 찾을 수 없어요. 3분이 지났거나 이미 보낸 번호라면 전자칠판에서 다시 눌러 주세요.','err');
+    else if(c==='busy'||c===429) say('잠시 뒤에 다시 보내 주세요.','err');
+    else if(c==='toolarge') say('사진이 너무 커요. 다른 사진을 골라 주세요.','err');
+    else say('중계 서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요. ('+(c||(e&&e.name)||'network')+')','err');
+  }finally{ $('send').disabled=!jpeg; }
+};
+})();
+</script>
+</body>
+</html>
