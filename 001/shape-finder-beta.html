@@ -550,6 +550,8 @@ const KO_COUNT = ['한','두','세','네','다섯','여섯','일곱','여덟','�
 const SAMPLE_URL = 'https://raw.githubusercontent.com/Shim-sung-hyun/charum/main/images/semple.jpeg';
 /* 차름 AI 중계(Cloudflare Worker): 선생님은 키 없이 목소리·사진 분석·끝 그림을 씀(지침 5절) */
 const AI_URL = 'https://charum-ai.simdoly.workers.dev';
+/* 사진 분석은 한국 서버에서(Worker는 Gemini가 막힌 지역에서 돌 때가 있어 'User location is not supported'가 남) */
+const GEMINI_RELAY = 'https://charum.org/gemini-relay.php';
 const NUM_WORD = ['하나','둘','셋','넷','다섯','여섯'];
 
 /* ================= 상태 ================= */
@@ -1443,7 +1445,7 @@ async function callGemini(withSchema){
   let r=null;
   /* 먼저 중계로(만든 사람의 무료 키). 오늘 양을 다 썼거나 안 되면, 이 기기에 선생님 키가 있을 때만 그 키로 */
   if(!S.geminiOwn){
-    try{ r=await fetch(AI_URL+'/gemini',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)}); }
+    try{ r=await fetch(GEMINI_RELAY,{method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body), cache:'no-store'}); }
     catch(e){ r=null; }
     if(!(r&&r.ok) && S.apiKey && (!r || r.status===429 || r.status>=500) && await checkKey()) S.geminiOwn=true;
   }
