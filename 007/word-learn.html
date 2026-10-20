@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>글자 익히기</title>
+<title>차름 한글</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Jua&family=Nanum+Gothic:wght@700&family=Gowun+Dodum&family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@600&family=Nanum+Myeongjo:wght@700&family=Gowun+Batang:wght@700&family=Song+Myung&family=Black+Han+Sans&family=Gaegu:wght@700&family=Nanum+Pen+Script&family=Hi+Melody&family=Gamja+Flower&display=swap" rel="stylesheet">
@@ -407,7 +407,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
 <!-- ================= 설정 화면 ================= -->
 <div id="setup">
  <div class="setup-wrap one">
-  <div class="setup-head"><h1>글자 익히기</h1><span class="sub">그림이 붓이 되어 글자를 써요</span>
+  <div class="setup-head"><h1>차름 한글</h1><span class="sub">그림이 붓이 되어 글자를 써요</span>
    <span style="margin-left:auto;display:flex;gap:6px"><button class="btn mini" id="recBtn">교사용 기록</button><button class="btn mini" id="setupHelp">도움말</button></span></div>
   <div id="pauseBar" class="hidden"><span id="pauseTxt"></span><button class="btn main" id="resumeBtn">이어 하기</button><button class="btn" id="quitBtn">멈춘 곳 지우기</button></div>
 
@@ -860,7 +860,7 @@ if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스�
 <script>
 "use strict";
 /* =========================================================
-   글자 익히기 (007) 베타 — 1~5편 생활 낱말 통글자 학습 (수준 1~3, 묶음, 묶음 끝 놀이)
+   차름 한글 (007) 베타 — 1~5편 생활 낱말 통글자 학습 (수준 1~3, 묶음, 묶음 끝 놀이)
    ========================================================= */
 
 /* ---------- 작은 도구 ---------- */
@@ -3525,7 +3525,7 @@ const view = { student: '', range: 'recent' };
 function recordHTML(forPrint) {
   let h = '';
   const sid = view.student, name = Rec.nameOf(sid);
-  if (forPrint) h += `<h1>글자 익히기 · 교사용 기록</h1><div style="margin-bottom:10px">학생: <b>${esc(name || '(기록 안 함)')}</b> · 출력한 날: ${today()}</div>`;
+  if (forPrint) h += `<h1>차름 한글 · 교사용 기록</h1><div style="margin-bottom:10px">학생: <b>${esc(name || '(기록 안 함)')}</b> · 출력한 날: ${today()}</div>`;
   if (R.trials.length && (!sid || sid === Rec.recId)) {
     h += `<h3 style="margin:6px 0">이번 수업</h3><table class="rtable"><tr><th>낱말</th><th>같은 글자 찾기</th><th>낱말 고르기</th><th>그림 고르기</th><th>쓰기</th><th>놀이(복습)</th></tr>`;
     R.words.forEach(w => {
@@ -3623,7 +3623,7 @@ $('#importFile').addEventListener('change', async e => {
 });
 $('#wipeBtn').addEventListener('click', () => {
   if (!Rec.log.length) return;
-  if (!confirm(`이 기기의 글자 익히기 기록 ${Rec.log.length}개를 모두 지울까요?\n(학생 명단은 남아요. 먼저 내보내기로 저장해 두세요.)`)) return;
+  if (!confirm(`이 기기의 차름 한글 기록 ${Rec.log.length}개를 모두 지울까요?\n(학생 명단은 남아요. 먼저 내보내기로 저장해 두세요.)`)) return;
   Rec.log = []; Rec.saveLog(); updateRecMark(); showRecords(); renderWordChips();
 });
 
@@ -4062,7 +4062,7 @@ function parseTxt(text) {
   });
   const seen = new Set(); return out.filter(x => !seen.has(x.w) && seen.add(x.w));
 }
-function toTxt() { return '# 글자 익히기 — 내가 넣은 낱말. 한 줄에 낱말 하나\n' + S.mine.map(x => x.w).join('\n') + '\n'; }
+function toTxt() { return '# 차름 한글 — 내가 넣은 낱말. 한 줄에 낱말 하나\n' + S.mine.map(x => x.w).join('\n') + '\n'; }
 function addMine(list) {
   let add = 0, skip = [];
   list.forEach(it => { if (PICS[it.w]) skip.push(it.w); else if (!S.mine.some(x => x.w === it.w)) { S.mine.push({ w: it.w }); add++; } });
