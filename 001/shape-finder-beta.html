@@ -228,6 +228,7 @@ body.setup main{overflow:auto}
 .link-btn{background:none;border:0;color:var(--accent);font-weight:700;text-decoration:underline;font-size:18px;padding:8px}
 .phone-btn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--accent);border:2px solid var(--accent);border-radius:18px;padding:12px 26px;font-family:var(--f-display);font-size:24px;cursor:pointer;margin-top:4px}
 .phone-btn svg{width:30px;height:30px}
+.err-detail{margin:-12px 0 0;font-size:14px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
 .waiting{display:flex;gap:14px}
 .waiting i{width:24px;height:24px;border-radius:50%;background:var(--line);display:block}
 .waiting i.on{background:var(--accent)}
@@ -436,7 +437,7 @@ let active=null;
 async function receive(opts){
   opts=opts||{}; ensureCss(); close();
   const box=document.createElement('div'); box.id='prBox'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true');
-  box.innerHTML=`<div class="pr-card"><h2>휴대폰으로 사진 보내기</h2>
+  box.innerHTML=`<div class="pr-card"><h2>휴대폰에서 사진 받기</h2>
     <p class="pr-sub">휴대폰으로 찍은 사진을 이 화면으로 보내요. 사진은 잠가서 보내고, 중계 서버는 사진을 볼 수 없어요.</p>
     <div class="pr-main"><div class="pr-qr" id="prQr"></div>
       <div class="pr-codebox"><div class="pr-code" id="prCode">····</div>
@@ -1352,7 +1353,7 @@ function runAnalysis(){
   const myImg=S.img;
   analyze().then(r=>{ if(S.img!==myImg) return; S.analysis={status:'done',shapes:r}; onAnalysis(); })
     .catch(err=>{ if(S.img!==myImg) return;
-      S.analysis = S.demo ? {status:'done',shapes:sampleShapes()} : {status:'error',message:err.message};
+      S.analysis = S.demo ? {status:'done',shapes:sampleShapes()} : {status:'error',message:err.message,detail:err.detail||''};
       onAnalysis(); });
 }
 
@@ -1364,7 +1365,7 @@ function showPhoto(){
     <div class="center">
       <button class="huge-btn" id="pickBtn" type="button">${ICON.photo}사진 고르기</button>
       <input type="file" id="fileIn" accept="image/*" hidden>
-      <button class="phone-btn" id="phonePick" type="button">${ICON.phone}휴대폰으로 보내기</button>
+      <button class="phone-btn" id="phonePick" type="button">${ICON.phone}휴대폰에서 받기</button>
       <button class="link-btn" id="demoPick" type="button">예시 사진으로 하기</button>
     </div>`,'사진을 골라요.');
   $('demoPick').onclick=()=>{ goFull(); startDemo(); };
@@ -1473,7 +1474,7 @@ function friendly(e){
   if(s===429) m='오늘 함께 쓰는 사진 분석을 다 썼어요. 예시 사진으로 해요.';
   else if(s>=500||s===403||s===404) m='지금은 사진을 볼 수 없어요. 잠시 뒤 다시 해 주세요.';
   else if(e instanceof TypeError) m='인터넷 연결을 확인해 주세요.';
-  return new Error(m);
+  const out=new Error(m); out.detail=[s||'',String(e.message||'').slice(0,90)].filter(Boolean).join(' '); return out;
 }
 /* 같은 도형은 최대 5개, 사진 곳곳에 고르게. 겹치는 것은 하나만. 전체 최대 12개 */
 const PER_TYPE=5, MAX_ALL=12;
@@ -1582,7 +1583,7 @@ function onAnalysis(){
   const a=S.analysis;
   if(!a||a.status==='pending'){ if(S.view!=='wait') showWaiting(); return; }
   S.brushDone=false;
-  if(a.status==='error'){ showError(a.message); return; }
+  if(a.status==='error'){ showError(a.message,a.detail); return; }
   if(!a.shapes.length){ showError('이 사진에서는 도형을 찾지 못했어요. 다른 사진을 골라요.'); return; }
   buildLesson(a.shapes);
   if(!S.cartoon) startCartoon();
@@ -1592,9 +1593,9 @@ function showWaiting(){
   screen('photo','wait',`<div class="center"><h2 class="say">도형을 찾고 있어요</h2>${waitingHTML()}</div>`,'도형을 찾고 있어요. 잠시 기다리세요.');
   spin();
 }
-function showError(msg){
+function showError(msg,detail){
   S.brushDone=false;
-  screen('photo','error',`<div class="center"><h2 class="say">${esc(msg)}</h2>
+  screen('photo','error',`<div class="center"><h2 class="say">${esc(msg)}</h2>${detail?`<p class="err-detail">(${esc(detail)})</p>`:''}
     <div class="row" style="justify-content:center">
       <button class="btn" id="eDemo" type="button">예시 사진으로</button>
       <button class="btn primary" id="eAgain" type="button">다른 사진 고르기</button>
