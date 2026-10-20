@@ -26,7 +26,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
 [hidden]{display:none!important}
 svg.ic{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
-/* ---------- 첫 화면: 큰 제목만 (관리 버튼을 누르면 시와 메뉴가 나옴) ---------- */
+/* ---------- 첫 화면: 큰 제목만 (누르면 제목은 그대로, 위아래에 관리 메뉴) ---------- */
 #cover{display:none;position:fixed;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:18px}
 body.cover #cover{display:flex}
 body.cover #app{display:none}
@@ -66,7 +66,7 @@ body.admin #echoTag{bottom:calc(var(--dockBotH,80px) + 8px)}
 .dock{position:fixed;left:0;right:0;margin:0 auto;width:fit-content;max-width:calc(100% - 24px);z-index:25;display:none;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;
   padding:7px 10px;border-radius:18px;background:rgba(255,255,255,.96);box-shadow:0 10px 30px rgba(43,42,38,.18),inset 0 0 0 1px var(--line)}
 #dockTop{top:10px} #dockBot{bottom:12px}
-body.admin:not(.cover) .dock{display:flex}
+body.admin .dock{display:flex}
 .dock .g{display:flex;align-items:center;gap:3px;padding:0 6px;flex-wrap:wrap}
 .dock .g+.g{border-left:1px solid var(--line)}
 .dock .lbl{font-size:12px;color:var(--ink-soft);font-weight:800;margin-right:3px}
@@ -472,7 +472,7 @@ let customs=[]; /* 직접 입력한 시 여러 편 [{id,title,author,body}] */
   const c=store.get('cols'); if(['1','2','3','4'].includes(c)) S.cols=+c;
   if(store.get('font')==='easy') S.font='easy';
   S.sound=store.get('sound')!=='off';
-  const en=store.get('engine'); if(['base','cloud','device'].includes(en)) S.engine=en;
+  const en=store.get('engine'); if(['base','cloud'].includes(en)) S.engine=en; /* 예전 '기기' 설정은 기본 목소리로 */
   const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
   S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
   /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
@@ -545,7 +545,7 @@ function chooseEngine(){
    기본 목소리 + 새로 넣은 시: 한 번만 알려 주고, 다시 누르면 기기 목소리로 읽음 */
 const keyAsked=new Set();
 function voiceReady(){
-  if(S.engine==='cloud'&&!S.cloudKey){ renderDocks(); spotlight('#dockKey','Cloud 키를 넣어 주세요. 키가 없으면 "기기"를 고르세요.'); return false; }
+  if(S.engine==='cloud'&&!S.cloudKey){ renderDocks(); spotlight('#dockKey','Cloud 키를 넣어 주세요. 키가 없으면 "기본 목소리"를 고르세요.'); return false; }
   if(S.engine==='base'&&isCustom()&&!S.cloudKey&&!keyAsked.has(S.active)){ keyAsked.add(S.active); renderDocks(); spotlight('#dockKey','새로 넣은 시는 Cloud 키를 넣으면 기본 목소리로 읽어요. 키 없이 다시 누르면 기기 목소리로 읽어요.'); return false; }
   chooseEngine(); return true;
 }
@@ -688,23 +688,25 @@ function goFull(){ try{ const d=document.documentElement; if(document.fullscreen
 function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(document.webkitFullscreenElement) document.webkitExitFullscreen(); }catch(e){} }
 $('app').addEventListener('pointerdown',()=>{ if(!S.admin&&!$('modalBack').classList.contains('show')) goFull(); },true);
 
-/* ================= 교사 모드 버튼 =================
-   이 앱은 교사가 다루는 앱이라 한 번 누르면 바로 켜고 끔.
-   첫 화면에서 켜면 시와 메뉴가 나오고, 끄면 그대로 수업 시작(전체 화면) */
+/* ================= 첫 화면 → 관리 메뉴 → 시 화면 =================
+   첫 화면의 "시 암송하기"(또는 관리 버튼)를 누르면 제목은 그대로 두고 위아래에 관리 메뉴가 나옴.
+   메뉴에서 시·가리기 단계·들려주기를 고르거나 관리 버튼으로 메뉴를 닫으면 시 화면으로 */
+const onCover=()=>document.body.classList.contains('cover');
+function coverMenu(){
+  if(!onCover()||S.admin) return;
+  unlockAudio(); S.active='common'; store.set('active','common');
+  applyFont(); chooseEngine(); rebuildEntries(); setAdmin(true);
+}
+function leaveCover(){ if(!onCover()) return; document.body.classList.remove('cover'); refitLayout(); if(S.admin) renderDocks(); }
+$('coverTitle').addEventListener('click',coverMenu);
+$('coverTitle').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); coverMenu(); } });
+/* 교사 모드 버튼: 교사가 다루는 앱이라 한 번 누르면 바로 켜고 끔. 끄면 전체 화면으로 수업 */
 $('adminBtn').addEventListener('click',e=>{
   e.stopPropagation(); unlockAudio();
-  if(document.body.classList.contains('cover')){ document.body.classList.remove('cover'); applyFont(); chooseEngine(); rebuildEntries(); setAdmin(true); return; }
+  if(onCover()&&!S.admin){ coverMenu(); return; }
   setAdmin(!S.admin);
-  if(!S.admin) goFull();
+  if(!S.admin){ leaveCover(); goFull(); }
 });
-/* 첫 화면 제목을 누르면 공통시로 바로 시작(전체 화면). 메뉴는 관리 버튼으로 */
-function startFromCover(){
-  if(!document.body.classList.contains('cover')) return;
-  unlockAudio(); S.active='common'; store.set('active','common');
-  document.body.classList.remove('cover'); applyFont(); chooseEngine(); goFull(); rebuildEntries();
-}
-$('coverTitle').addEventListener('click',startFromCover);
-$('coverTitle').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); startFromCover(); } });
 function setAdmin(on){
   S.admin=on; document.body.classList.toggle('admin',on);
   $('adminBtn').setAttribute('aria-label', on?'관리 끄기 (수업 시작)':'관리');
@@ -724,11 +726,11 @@ function renderDocks(){
     `<div class="g" id="gFont"><span class="lbl">글꼴</span>${b('font:myeongjo','명조',S.font==='myeongjo')}${b('font:easy','둥근 글씨',S.font==='easy')}</div>`+
     `<div class="g">${b('sound',(S.sound?ICON.sndOn:ICON.sndOff)+(S.sound?'소리':'소리 끔'),S.sound)}</div>`+
     /* 목소리: 수업 내내 한 목소리. Google 음성은 Cloud 키가 있어야 읽어 줌 */
-    `<div class="g" id="gVoice"><span class="lbl">목소리</span>${b('engine:base','기본 목소리',S.engine==='base')}${b('engine:cloud','Google (키)',S.engine==='cloud')}${b('engine:device','기기',S.engine==='device')}${needKey?`<a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">${ICON.key}키가 있으면: 키 목록</a><a class="help" href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a>`:''}${needKey?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
+    `<div class="g" id="gVoice"><span class="lbl">목소리</span>${b('engine:base','기본 목소리',S.engine==='base')}${b('engine:cloud','Google (키)',S.engine==='cloud')}${needKey?`<a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">${ICON.key}키가 있으면: 키 목록</a><a class="help" href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a>`:''}${needKey?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
     `<div class="g">`+
       (needKey?`${S.engine==='cloud'?[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join(''):'<span class="small">새 시 목소리:</span>'}
         <input class="key" id="dockKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button>`:'')+
-      `${b('vtest','들어 보기')}${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`;
+      `${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`;
   const dk=$('dockKey');
   if(dk){
     const save=()=>store.set('cloudKey',KeyRelay.share('cloud',S.saveCloud&&S.cloudKey?S.cloudKey:null));
@@ -752,6 +754,8 @@ let lastAdminFit=false;
 function onDock(e){
   const btn=e.target.closest('button[data-a]'); if(!btn||btn.disabled) return;
   const [a,v]=btn.dataset.a.split(':');
+  /* 첫 화면에서 시·가리기 단계·들려주기를 고르면 시 화면으로 */
+  if(['poem','stage','read','echo'].includes(a)) leaveCover();
   if(a==='stage') applyStage(v);
   if(a==='poem'){ stopReading(); S.active=v; store.set('active',v); chooseEngine(); rebuildEntries(); }
   if(a==='new') openModal(null);
@@ -760,10 +764,6 @@ function onDock(e){
   if(a==='sound'){ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); if(!S.sound) stopReading(); }
   if(a==='engine'){ S.engine=v; store.set('engine',v); stopReading(); chooseEngine(); if(entry) prefetchVoice(poemLines()); }
   if(a==='timbre'){ S.timbre=v; store.set('timbre',v); stopReading(); chooseEngine(); if(entry) prefetchVoice(poemLines()); }
-  if(a==='vtest'){ if(!voiceReady()){ renderDocks(); return; } stopReading();
-    /* 미리 만든 소리면 공통시 첫 두 줄을 그 소리로 */
-    if(S.engineNow==='pre'){ const id0=speakSeq+1; speak('산에는 산새',()=>setTimeout(()=>{ if(speakSeq===id0) speak('들에는 들새',null,{poem:'common',k:3}); },420),{poem:'common',k:2}); }
-    else speak('산에는 산새, 들에는 들새.'); }
   if(a==='read') startReading('all');
   if(a==='echo') startReading('echo');
   if(a==='stopread') stopReading();
@@ -974,7 +974,7 @@ $('delBtn').onclick=()=>{
   if(S.active===editing){ S.active='common'; store.set('active','common'); }
   closeModal(); afterPoemChange();
 };
-function afterPoemChange(){ rebuildEntries(); renderDocks(); }
+function afterPoemChange(){ rebuildEntries(); leaveCover(); renderDocks(); }
 
 /* ================= 출력: 지금 가린 모습 그대로 빈칸 활동지 (A4 한 장) ================= */
 function printSheet(){
@@ -1024,9 +1024,8 @@ const TOUR_STEPS=[
   {el:'#gCols', t:'단', x:'시를 몇 단으로 나눠 보일지 정해요. "자동"은 화면에 가장 크게 보이는 쪽을 골라요.'},
   {el:'#gFont', t:'글꼴', x:'명조는 시다운 글꼴, 둥근 글씨는 글자를 처음 읽는 학생에게 좋아요.'},
   {el:'#dockTop [data-a="sound"]', t:'소리', x:'읽어 주는 목소리를 켜고 꺼요.'},
-  {el:'#gVoice', t:'목소리', x:'"기본 목소리"는 키 없이 바로 나오는 Google 목소리예요. 새로 넣은 시와 다른 Google 목소리는 Cloud 키가 필요해요(휴대폰으로 받기도 돼요). "기기"는 이 기기의 목소리예요.'},
+  {el:'#gVoice', t:'목소리', x:'"기본 목소리"는 키 없이 바로 나오는 Google 목소리예요. 새로 넣은 시와 다른 Google 목소리는 Cloud 키가 필요해요(휴대폰으로 받기도 돼요). 들어 보려면 아래 "들려주기"를 눌러요.'},
   {el:'html.kr-ready #dockTop [data-kr]', t:'휴대폰으로 받기', x:'Cloud 키를 휴대폰에서 이 화면으로 보내요. 번호 4자리가 나오면 휴대폰에서 그 번호와 키를 넣고 보내기를 눌러요.'},
-  {el:'#dockTop [data-a="vtest"]', t:'들어 보기', x:'고른 목소리로 미리 들어 봐요.'},
   {el:'#dockBot [data-a="read"]', t:'들려주기', x:'제목 → 작가 → 본문을 이어서 읽고, 지금 읽는 줄에 옅은 바탕이 생겨요. 가린 글자도 소리로는 다 읽어 줘요.'},
   {el:'#dockBot [data-a="echo"]', t:'한 줄씩 따라 읽기', x:'한 줄을 읽어 준 뒤 "따라 해요"가 나오고, 학생이 따라 말할 시간을 준 다음 저절로 다음 줄로 가요.'},
   {el:'#dockBot [data-a="print"]', t:'출력', x:'지금 가린 모습 그대로 이름 칸과 함께 A4 한 장에 인쇄해요.'},
@@ -1059,11 +1058,6 @@ $('tourNext').addEventListener('click',()=>{ TOUR.i++; showTourStep(); });
 $('tourEnd').addEventListener('click',endTour);
 document.addEventListener('keydown',e=>{ if(TOUR.on&&e.key==='Escape') endTour(); });
 window.addEventListener('resize',()=>{ if(TOUR.on) placeTour(); });
-/* 앱을 열면 첫 화면 없이 공통시와 관리 메뉴를 바로 보여 줌. 관리 버튼을 한 번 누르면 메뉴가 닫히고 전체 화면으로 수업 */
-(function openWithMenu(){
-  S.active='common'; store.set('active','common');
-  document.body.classList.remove('cover'); applyFont(); chooseEngine(); rebuildEntries(); setAdmin(true);
-})();
 </script>
 </body>
 </html>
