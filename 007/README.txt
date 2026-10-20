@@ -14,7 +14,7 @@
                            보기에서 그 부위만 비춤(스포트라이트, 한 번), 고르기·놀이에서는 비추지 않음.
 - game/                    놀이 그림(먹이 주기·스티커)
 - fonts/                   학교안심 바른바탕 B (woff2)
-- voice/leda/              기본 목소리(Google Leda, 미리 만든 mp3 + index.json, 3,331개)
+- voice/leda/              기본 목소리(Google Leda, 미리 만든 mp3 + index.json, 3,339개)
 - voice/fixes.json         고쳐 만든 소리 기록(다시 만들 때 참고)
 - words-*.txt, words-frequency.csv, word-games.html   예전 판 자료(버전 1에서는 쓰지 않음)
 
