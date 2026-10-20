@@ -1059,6 +1059,11 @@ $('tourNext').addEventListener('click',()=>{ TOUR.i++; showTourStep(); });
 $('tourEnd').addEventListener('click',endTour);
 document.addEventListener('keydown',e=>{ if(TOUR.on&&e.key==='Escape') endTour(); });
 window.addEventListener('resize',()=>{ if(TOUR.on) placeTour(); });
+/* 앱을 열면 첫 화면 없이 공통시와 관리 메뉴를 바로 보여 줌. 관리 버튼을 한 번 누르면 메뉴가 닫히고 전체 화면으로 수업 */
+(function openWithMenu(){
+  S.active='common'; store.set('active','common');
+  document.body.classList.remove('cover'); applyFont(); chooseEngine(); rebuildEntries(); setAdmin(true);
+})();
 </script>
 </body>
 </html>

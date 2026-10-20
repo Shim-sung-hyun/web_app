@@ -13,7 +13,7 @@
 
 파일
   poem-recite.html          웹앱
-  poem-recite01~08.jpg      화면 그림 (첫 화면, 관리 메뉴, 전체, 반 가리기, 낱말 첫 글자, 들려주기, 따라 읽기, 둥근 글씨)
+  poem-recite01~08.jpg      화면 그림 (첫 화면(예전), 앱을 연 모습(관리 메뉴), 전체, 반 가리기, 낱말 첫 글자, 들려주기, 따라 읽기, 둥근 글씨)
   cloud-key.html            Cloud 키 넣는 방법 안내 페이지 (앱의 관리 메뉴에서 연결)
                             주소: https://shim-sung-hyun.github.io/web_app/004/cloud-key.html
   poem-recite_manual.html   게시판 본문용 설명서
