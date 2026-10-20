@@ -271,6 +271,24 @@ body.paused #main .admin-only{pointer-events:auto}
 .opt b{display:block}
 .opt span{font-size:14px;color:var(--muted)}
 .opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.pick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pick-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:17px;font-weight:700;cursor:pointer}
+.pick-btn svg{width:40px;height:40px}
+.pick-btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.pick-show{display:flex;gap:14px;align-items:center;background:#F3F7F8;border-radius:12px;padding:10px}
+.pick-show img{width:132px;height:96px;object-fit:cover;border-radius:10px;flex:none;background:#fff}
+.pick-show div{display:flex;flex-direction:column;gap:4px;font-size:15px}
+.pick-show .good{color:#1b7f3a;font-weight:700} .pick-show .bad{color:#c62828;font-weight:700}
+details.card.more{padding:14px 20px;gap:10px}
+details.more>summary{cursor:pointer;list-style:none;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;font-size:17px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::before{content:"▸";color:var(--accent);font-size:15px}
+details.more[open]>summary::before{content:"▾"}
+details.more>summary .sum{font-size:14px;color:var(--muted);font-weight:400}
+details.more>summary~*{margin-top:6px}
+details.more .note{margin:0;border-left:0;padding:0;background:none}
+.start-bar{position:sticky;bottom:0;display:flex;justify-content:flex-end;padding:10px 0 4px;background:linear-gradient(transparent,var(--bg) 35%)}
+.start-bar .btn{min-width:180px;font-size:22px;padding:14px 28px}
 .note{font-size:15px;color:var(--muted);background:var(--surface);border-left:4px solid var(--aqua);padding:10px 14px;border-radius:0 10px 10px 0}
 details.log{background:var(--surface);border-radius:14px;padding:12px 16px;width:100%;max-width:620px;text-align:left}
 details.log summary{cursor:pointer;font-weight:700}
@@ -1216,17 +1234,31 @@ function showSetup(o={}){
   if('speechSynthesis' in window) speechSynthesis.cancel();
   document.body.classList.add('setup'); setAdmin(false);
   const opt=(name,val,cur,t,d)=>`<label class="opt"><input type="radio" name="${name}" value="${val}" ${String(cur)===String(val)?'checked':''}><div><b>${t}</b><span>${d}</span></div></label>`;
+  newSession();
+  const sum=()=>[S.showSec+'초', S.paint?'칠하기 켬':'칠하기 끔', S.cartoonOn?'끝 그림 켬':'끝 그림 끔', S.errorMode==='show'?'바로 정답':'한 번 더 기회', S.engine==='cloud'?'Google 음성':'기기 목소리'].join(' · ');
   main.innerHTML=`<section class="setup-page">
     <div><h1>사진 속 도형 찾기</h1>
-    <p class="lead">학생이 고른 사진을 옅게 하고, Gemini가 찾은 도형을 그 위에 선으로 그려 줍니다. 학생은 도형을 하나씩 보고, 붓으로 칠하고, 사진에서 직접 찾아봅니다. 이 화면은 교사·보호자용입니다.</p></div>
+    <p class="lead">사진 속 물건에서 동그라미·세모·네모를 찾아 배우고, 칠하고, 직접 찾아요. 이 화면은 선생님용이에요.</p></div>
 
-    <div class="card"><h2>수업 정하기</h2>
-      <h3>단계</h3>
+    <div class="card" id="pickCard"><h2><span class="n">1</span>사진</h2>
+      <div class="pick-row">
+        <button class="pick-btn pri" id="sPick" type="button">${ICON.photo}<span>이 기기에서 고르기</span></button>
+        <button class="pick-btn" id="sPhone" type="button">${ICON.phone}<span>휴대폰에서 받기</span></button>
+        <button class="pick-btn" id="sDemo" type="button">${ICON.learn}<span>예시 사진</span></button>
+      </div>
+      <input type="file" id="sFile" accept="image/*" hidden>
+      <div class="pick-show" id="pickShow" hidden><img id="pickImg" alt="고른 사진"><div><b id="pickTitle"></b><span id="pickInfo"></span></div></div>
+    </div>
+
+    <div class="card"><h2><span class="n">2</span>단계</h2>
       <div class="opts">
         ${opt('level',1,S.level,'1단계 · 도형 이름','동그라미·세모·네모 이름 배우고 찾기')}
         ${opt('level',2,S.level,'2단계 · 변과 꼭짓점','원·삼각형·사각형 + 변과 꼭짓점 세기')}
         ${opt('level',3,S.level,'3단계 · 각','각 세기 + 직각')}
       </div>
+    </div>
+
+    <details class="card more" id="moreSet"><summary><b>더 정하기</b><span class="sum" id="moreSum">${sum()}</span></summary>
       <h3>도형 하나를 보여 주는 시간</h3>
       <div class="opts">
         ${opt('showSec',4,S.showSec,'4초','집중 시간이 짧은 학생')}
@@ -1240,8 +1272,8 @@ function showSetup(o={}){
       </div>
       <h3>끝 화면 그림</h3>
       <div class="opts">
-        ${opt('cartoonOn','on',S.cartoonOn?'on':'off','그림으로 바꾸기 (기본)','학생이 고른 사진을 깔끔한 그림으로 바꾸고 찾은 도형을 또렷하게 보여 줘요. 그림이 늦거나 오늘 쓸 양을 다 쓰면 칠한 사진이 나와요.')}
-        ${opt('cartoonOn','off',S.cartoonOn?'on':'off','칠한 사진','학생이 칠한 사진을 그대로 보여 줘요.')}
+        ${opt('cartoonOn','on',S.cartoonOn?'on':'off','그림으로 바꾸기 (기본)','사진을 만화 그림으로 바꾸고 찾은 도형을 또렷하게. 늦거나 오늘 쓸 양을 다 쓰면 칠한 사진')}
+        ${opt('cartoonOn','off',S.cartoonOn?'on':'off','칠한 사진','학생이 칠한 사진을 그대로')}
       </div>
       <h3>틀렸을 때</h3>
       <div class="opts">
@@ -1259,15 +1291,15 @@ function showSetup(o={}){
         ${opt('timbre','Kore',S.timbre,'또렷한 목소리','')}
       </div>
       <div class="row"><button class="btn" id="voiceTest" type="button">목소리 들어 보기</button><span class="status" id="voiceStatus"></span></div>
-    </div>
+    </details>
 
-    <p class="note"><b>학생 화면에서는 메뉴가 모두 숨겨져요.</b> 화면 오른쪽 아래의 옅은 동그라미(charum)를 <b>3초 동안 누르면</b> 교사 모드가 켜지고 수업이 멈춰요. 오른쪽에 <b>수업 설정</b>(단계·시간·칠하기·목소리·틀렸을 때)이 나오고, 맨 아래 <b>도움말</b>을 누르면 설정마다 설명이 나와요. 위쪽 <b>사진 · 배우기 · 찾기 · 끝</b>으로 원하는 단계로 바로 갈 수 있어요. 동그라미를 <b>한 번 누르면</b> 바꾼 설정으로, 멈췄던 단계의 처음부터 다시 해요. <b>새 설정으로 시작하기</b>는 사진 고르기부터 새로 시작해요. 시작을 누르면 전체 화면으로 바뀌어요.<br>
-    <b>키나 가입 없이 바로 쓸 수 있어요.</b> 목소리·사진 분석·끝 그림은 함께 쓰는 중계 서버를 거쳐요. 하루에 함께 쓰는 양이 정해져 있어서, 다 쓰면 그날은 예시 사진·기기 목소리·칠한 사진으로 이어서 해요.<br>
-    고른 사진은 도형을 찾고 그림을 그리기 위해 Google Gemini와 Cloudflare로 보내지고, Google이 서비스 개선에 쓸 수 있어요. <b>학생 얼굴이나 이름이 보이는 사진은 넣지 마세요.</b> 소리는 기본으로 켜져 있어요.</p>
+    <details class="card more"><summary><b>알아 두기</b><span class="sum">교사 모드 · 사진 안내</span></summary>
+      <p class="note"><b>학생 화면에서는 메뉴가 모두 숨겨져요.</b> 오른쪽 아래의 옅은 동그라미(charum)를 <b>3초 동안 누른 뒤</b> 왼쪽 위에 잠깐 나타나는 작은 점을 누르면 교사 모드가 켜지고 수업이 멈춰요. 위쪽 <b>사진 · 배우기 · 찾기 · 끝</b>으로 단계를 바로 고를 수 있어요.<br>
+      <b>키나 가입 없이 바로 쓸 수 있어요.</b> 목소리·사진 분석·끝 그림은 함께 쓰는 중계 서버를 거쳐요. 하루에 함께 쓰는 양을 다 쓰면 그날은 예시 사진·기기 목소리·칠한 사진으로 이어서 해요.<br>
+      고른 사진은 도형을 찾고 그림을 그리기 위해 Google Gemini와 Cloudflare로 보내지고, Google이 서비스 개선에 쓸 수 있어요. <b>학생 얼굴이나 이름이 보이는 사진은 넣지 마세요.</b></p>
+    </details>
 
-    <div class="row" style="justify-content:flex-end">
-      <button class="btn primary" id="startBtn" type="button">시작</button>
-    </div>
+    <div class="start-bar"><button class="btn primary" id="startBtn" type="button">시작</button></div>
   </section>`;
   main.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
     if(r.name==='level'){S.level=+r.value; store.set('level',S.level);}
@@ -1277,7 +1309,16 @@ function showSetup(o={}){
     if(r.name==='errorMode'){S.errorMode=r.value; store.set('errorMode',S.errorMode);}
     if(r.name==='engine'){S.engine=r.value; store.set('engine',S.engine); $('timbreRow').hidden=S.engine!=='cloud';}
     if(r.name==='timbre'){S.timbre=r.value; store.set('timbre',S.timbre);}
+    const m=$('moreSum'); if(m) m.textContent=sum();
   });
+  /* 사진: 고르는 즉시 분석을 시작해 두어 시작을 누르면 기다림 없이 */
+  const fi=$('sFile');
+  $('sPick').onclick=()=>fi.click();
+  fi.onchange=async()=>{ const f=fi.files&&fi.files[0]; fi.value=''; if(!f) return; hideSpot(); showPick('사진을 여는 중…');
+    if(!await preparePhoto(f)){ S.img=null; showPick(); spotlight('#pickCard','이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; } showPick('내 사진'); };
+  $('sPhone').onclick=()=>PhotoRelay.receive({onPhoto:async blob=>{ if(!$('pickCard')) return; hideSpot(); showPick('사진을 여는 중…');
+    if(!await preparePhoto(blob)){ S.img=null; showPick(); return; } showPick('휴대폰에서 받은 사진'); }});
+  $('sDemo').onclick=async()=>{ hideSpot(); showPick('예시 사진을 가져오는 중…'); await prepareDemo(); showPick('예시 사진'); };
   $('voiceTest').onclick=async()=>{
     unlockAudio();
     const st=$('voiceStatus'); st.className='status'; st.textContent='';
@@ -1292,9 +1333,25 @@ function showSetup(o={}){
   };
   $('startBtn').onclick=()=>{
     unlockAudio();
+    if(!S.img){ spotlight('#pickCard','먼저 수업할 사진을 골라 주세요.'); return; }
     chooseEngine(); prefetchVoice(FIXED_LINES());
-    newSession(); showPhoto();
+    goFull(); showBrush();   /* 사진은 이미 골랐으니 바로 학생 화면(붓 고르기)부터 */
   };
+}
+/* 설정 화면의 고른 사진 칸: 미리 보기 + 도형 찾기 상태 */
+function showPick(title){
+  const box=$('pickShow'); if(!box) return;
+  if(!title){ box.hidden=true; return; }
+  box.hidden=false; $('pickTitle').textContent=title;
+  const im=$('pickImg'); if(S.img){ im.src=S.img.url; im.hidden=false; } else im.hidden=true;
+  pickInfo();
+}
+function pickInfo(){
+  const el=$('pickInfo'); if(!el||!S.img) return;
+  const a=S.analysis||{};
+  if(a.status==='pending'){ el.textContent='도형을 찾고 있어요… 기다리는 동안 다른 설정을 해도 돼요.'; el.className=''; }
+  else if(a.status==='done'){ const n=a.shapes.length; el.textContent=n?`도형 ${n}개를 찾았어요. 시작을 누르세요.`:'이 사진에서는 도형을 찾지 못했어요. 다른 사진을 골라 주세요.'; el.className=n?'good':'bad'; }
+  else if(a.status==='error'){ el.textContent=a.message+(a.detail?` (${a.detail})`:''); el.className='bad'; }
 }
 function rankModel(m){
   const v=(m.match(/gemini-(\d+(?:\.\d+)?)/)||[])[1]; let s=v?parseFloat(v)*100:0;
@@ -1353,10 +1410,10 @@ async function startDemo(){
 }
 function runAnalysis(){
   const myImg=S.img;
-  analyze().then(r=>{ if(S.img!==myImg) return; S.analysis={status:'done',shapes:r}; onAnalysis(); })
+  analyze().then(r=>{ if(S.img!==myImg) return; S.analysis={status:'done',shapes:r}; pickInfo(); onAnalysis(); })
     .catch(err=>{ if(S.img!==myImg) return;
       S.analysis = S.demo ? {status:'done',shapes:sampleShapes()} : {status:'error',message:err.message,detail:err.detail||''};
-      onAnalysis(); });
+      pickInfo(); onAnalysis(); });
 }
 
 /* ================= 1. 사진 ================= */
@@ -1378,10 +1435,19 @@ function showPhoto(){
   $('phonePick').onclick=()=>PhotoRelay.receive({onPhoto:blob=>{ if(S.view==='photo') usePhoto(blob); }});
 }
 async function usePhoto(f){
-  try{ S.img=await loadPhoto(f); }catch(e){ showError('이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; }
-  S.demo=false; S.analysis={status:'pending'};
-  runAnalysis();
+  if(!await preparePhoto(f)){ showError('이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; }
   showBrush();
+}
+/* 사진을 받아 두고 바로 분석을 시작(화면은 그대로). 설정 화면에서 미리 고를 때도 씀 */
+async function preparePhoto(f){
+  let img; try{ img=await loadPhoto(f); }catch(e){ return false; }
+  S.img=img; S.demo=false; S.shapes=[]; S.cartoon=null; S.analysis={status:'pending'};
+  runAnalysis(); return true;
+}
+async function prepareDemo(){
+  S.demo=true; S.shapes=[]; S.cartoon=null;
+  try{ S.img=await loadSample(); S.analysis={status:'done',shapes:sampleShapes()}; }
+  catch(e){ const d=makeDemo(); S.img=d.img; S.analysis={status:'done',shapes:d.shapes}; }
 }
 function loadPhoto(file){
   return new Promise((res,rej)=>{
@@ -1417,11 +1483,11 @@ Rules:
 - Include shapes a child can see: at least about 3% of the image width. Skip tiny details.
 - Only include things whose WHOLE outline is inside the photo. Skip anything cut off by the edge of the photo (for example a laptop screen that runs off the side) or mostly hidden behind something, because its corners would not be real.
 - Do not include people's faces or bodies.
-- At most 5 shapes of the same type. If there are many of the same type (keyboard keys, tiles, planks, windows), pick at most 5 that are spread out across different parts of the photo, not bunched together.
+- If there are many things of the same shape (keyboard keys, tiles, buttons, planks, windows), include 4 or 5 of them (not just one), spread out across different parts of the photo, not bunched together. Never more than 5 of the same type.
 - At most 12 shapes in total. Try to include more than one shape type when the photo allows it.
 - "object": a short, everyday Korean noun for the thing or part (1-3 words, e.g. 도토리, 컵 입구, 컵 몸통, 컵 받침, 창문, 책, 나무판).
 - "box_2d": [ymin, xmin, ymax, xmax], integers normalized to 0-1000, tightly around that shape's outline only.
-- "points": for triangle and quadrilateral, the corner points as [y, x] pairs normalized to 0-1000 in clockwise order, placed on the corners in the photo (3 for triangle, 4 for quadrilateral). For circle and ellipse, an empty list.
+- "points": for triangle and quadrilateral, the corner points as [y, x] pairs normalized to 0-1000 in clockwise order, placed exactly on the visible corners in the photo (3 for triangle, 4 for quadrilateral). Things seen at an angle (a book lying on a desk, a laptop, a tilted phone) look like slanted diamonds or parallelograms in the photo: put each point on its real corner and follow the slanted edges. Never turn them into a straight upright rectangle. For circle and ellipse, an empty list.
 - "right_angles": for a quadrilateral, true if the real object has right-angled (90 degree) corners in real life, such as a book, window, door, phone, sheet of paper, picture frame, screen or box face, even when the photo shows it at an angle. Otherwise false. Always false for other shapes.
 - "real_ratio": for a quadrilateral, the REAL object's width divided by its height when seen straight on, keeping the same up/down direction as in the photo. Use what you know about the real object, not how stretched it looks in the photo (a standing book cover about 0.7, an upright A4 sheet about 0.71, a wide picture frame about 1.4, a phone lying sideways about 2.1, a square tile 1). Use 0 for other shapes.
 If there are no suitable shapes, return an empty "shapes" list.`;
@@ -2172,13 +2238,13 @@ const CARTOON_EN={circle:'circle',ellipse:'oval (ellipse)',triangle:'triangle',q
 function cartoonPrompt(){
   const list=S.shapes.map(s=>{
     const cx=Math.round((s.box.x0+s.box.x1)/20), cy=Math.round((s.box.y0+s.box.y1)/20);
-    return `- a ${CARTOON_EN[s.type]} (about ${cx}% from the left, ${cy}% from the top)`;
+    return `- a ${CARTOON_EN[s.type]}: the ${s.obj} (about ${cx}% from the left, ${cy}% from the top)`;
   }).join('\n');
-  /* 연령 적합성: 유아용 만화체가 아니라 깔끔한 일러스트 */
-  return `Redraw image 0 as a clean, calm flat illustration, like a modern textbook or infographic picture: simple shapes, soft natural colors, clear dark outlines, plain light background areas, no heavy textures.
-Keep exactly the same composition, camera angle, objects and their positions, so the original photo is easy to recognize.
-Do not add anything new: no people, faces, animals, characters, text, letters, numbers or logos. Remove any writing or brand names.
-Give these shapes a thick, clear outline so they stand out, and keep them clean and geometric:
+  /* 예전 그림풍 그대로(교사 요청 2026-10-20) */
+  return `Redraw this exact photo as a bright, cute cartoon illustration for young children, in the style of a soft, rounded 3D preschool TV animation: cheerful pastel colors, smooth simple surfaces, clean outlines, gentle lighting.
+Keep the same composition, camera angle, objects and their positions, so a child can recognize the original photo.
+Do not add any characters, people, animals, faces, text, letters, numbers or logos. Remove any brand names or writing.
+Make these shapes stand out clearly, each with a thick bright outline and a soft glow, and make them look clean and geometric:
 ${list}`;
 }
 function startCartoon(){
