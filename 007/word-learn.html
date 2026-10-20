@@ -385,6 +385,10 @@ details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margi
 .startbar.one{position:static;margin:0 0 20px}
 .rosterpanel{margin:10px 0 4px;padding:12px 14px;border:1px dashed var(--line);border-radius:14px;background:#FBFAF7}
 .rosterpanel .addline{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+/* 편 차례 공개 */
+#bookSeg button.closed{opacity:.45;cursor:default;background:#F1EEE8}
+#bookSeg button.closed .soon{font-size:.78em;color:#8A7F6E;margin-left:2px}
+.setup-head .edition{font-size:13px;font-weight:700;color:#fff;background:#2F7D5B;border-radius:999px;padding:2px 10px;align-self:center;white-space:nowrap}
 
 body.tmode #stage,body.tmode #game{pointer-events:none}
 .tbar button.cur{border-color:#9FF3F5;border-style:dashed}
@@ -401,7 +405,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
 <!-- ================= 설정 화면 ================= -->
 <div id="setup">
  <div class="setup-wrap one">
-  <div class="setup-head"><h1>글자 익히기</h1><span class="sub">그림이 붓이 되어 글자를 써요</span>
+  <div class="setup-head"><h1>글자 익히기</h1><span class="edition" id="edition"></span><span class="sub">그림이 붓이 되어 글자를 써요</span>
    <span style="margin-left:auto;display:flex;gap:6px"><button class="btn mini" id="recBtn">교사용 기록</button><button class="btn mini" id="setupHelp">도움말</button></span></div>
   <div id="pauseBar" class="hidden"><span id="pauseTxt"></span><button class="btn main" id="resumeBtn">이어 하기</button><button class="btn" id="quitBtn">멈춘 곳 지우기</button></div>
 
@@ -436,6 +440,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
     <div class="row">
      <label class="t">편</label>
      <div class="seg" id="bookSeg"><button data-v="1">1편 나와 우리 집</button><button data-v="2">2편 안전하게</button><button data-v="3">3편 학교에서</button><button data-v="4">4편 마을에서</button><button data-v="5">5편 일터에서</button><button data-v="6">내가 넣은 낱말</button></div>
+     <div class="note" id="bookNote"></div>
     </div>
     <div class="row" id="madangRow"><label class="t">마당</label><div class="mchips" id="madangChips"></div></div>
     <div class="row">
@@ -1123,7 +1128,13 @@ const LEVELS = {
   2: { size: 6, n: 3, steps: [1, 2, 3, 4, 5], write: 'trace', name: '2 글자 알아보기' },
   3: { size: 10, n: 4, steps: [3, 4, 5], write: 'copy', name: '3 읽기' }
 };
-const BOOK_WORDS = BOOK.flatMap(x => x.w);
+const OPEN_BOOKS = [1];   /* 공개한 편: 1편판 → [1], 1_2편판 → [1, 2] … */
+const ALL_OPEN = /[?&]all=1\b/.test(location.search);   /* 만든 사람 미리 보기 */
+const isOpenBook = p => p === 6 || ALL_OPEN || OPEN_BOOKS.includes(p);
+const EDITION = (ALL_OPEN ? [1, 2, 3, 4, 5] : OPEN_BOOKS).join('_') + '편판';
+const BOOK_WORDS = BOOK.filter(x => isOpenBook(x.p)).flatMap(x => x.w);
+const OPEN_WORDS = new Set(BOOK_WORDS);
+const CLOSED_BOOKS = [1, 2, 3, 4, 5].filter(p => !isOpenBook(p));
 const MADANG_OF = new Map(); BOOK.forEach((x, i) => x.w.forEach(w => MADANG_OF.set(w, i)));
 const isPair = (a, b) => PAIRS.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
 /* 묶음 나누기: 끝 묶음이 크기의 반보다 작으면 앞 묶음에 붙임 */
@@ -1149,7 +1160,7 @@ function bundlesOf(mi, lv) {
     const extra = TOPUP[mi] || [];
     for (const x of extra) {
       if (b.length >= size) break;
-      if (b.includes(x) || !PICS[x] || b.some(y => isPair(x, y) || PICS[y] === PICS[x])) continue;
+      if (b.includes(x) || !PICS[x] || !OPEN_WORDS.has(x) || b.some(y => isPair(x, y) || PICS[y] === PICS[x])) continue;
       b.push(x);
     }
     return b;
@@ -1614,7 +1625,7 @@ function setLevel(v) {
 const Resume = {
   all() { return LS.get('resume', {}); },
   key(sid) { return (sid != null ? sid : Rec.recId) || '_'; },
-  get(sid) { const v = this.all()[this.key(sid)]; return v && v.words && v.words.length ? v : null; },
+  get(sid) { const v = this.all()[this.key(sid)]; if (v && v.bundle && BOOK[v.bundle.mi] && !isOpenBook(BOOK[v.bundle.mi].p)) return null; return v && v.words && v.words.length ? v : null; },
   save(o) { const a = this.all(); a[this.key()] = o; LS.set('resume', a); },
   clear(sid) { const a = this.all(); delete a[this.key(sid)]; LS.set('resume', a); }
 };
@@ -1634,14 +1645,14 @@ const Prog = {
   next(lv) {
     const p = this.of(Rec.recId), last = p.last;
     const list = [];
-    BOOK.forEach((x, mi) => bundlesOf(mi, lv).forEach((_, bi) => list.push({ mi, bi })));
+    BOOK.forEach((x, mi) => { if (isOpenBook(x.p)) bundlesOf(mi, lv).forEach((_, bi) => list.push({ mi, bi })); });
     let start = 0;
     if (last) {
       const k = list.findIndex(x => x.mi === last.mi && (last.lv !== lv || x.bi === last.bi));
       if (k >= 0) start = last.lv === lv ? k + 1 : k;
     }
     for (let j = 0; j < list.length; j++) { const x = list[(start + j) % list.length]; if (!p.done[this.key(x.mi, lv, x.bi)]) return x; }
-    return list[start % list.length];
+    return null;   /* 공개된 편을 다 마침: 다음 편은 준비 중(선생님이 복습할 묶음을 고름) */
   }
 };
 
@@ -3832,12 +3843,15 @@ function autoPick() {
 }
 function paintBook() {
   if (S.book === 6 && !S.mine.length) S.book = 1;
+  if (!isOpenBook(S.book)) { S.book = OPEN_BOOKS[0] || 1; const m = madangs(S.book)[0]; S.mi = m ? m.i : 0; S.bi = 0; saveSel(); }
+  { const n = $('#bookNote'); if (n) { const c = CLOSED_BOOKS; n.textContent = c.length ? (c.length > 1 && c[c.length - 1] - c[0] === c.length - 1 ? c[0] + '~' + c[c.length - 1] : c.join('·')) + '편은 확인하고 있어요. 차례로 열려요.' : ''; n.classList.toggle('hidden', !c.length); } }
   $$('#bookSeg button').forEach(b => {
     const v = +b.dataset.v;
     b.classList.toggle('on', v === S.book);
     b.classList.toggle('hidden', v === 6 && !S.mine.length);
     if (!b.dataset.label) b.dataset.label = b.innerHTML;
-    b.innerHTML = b.dataset.label + ' <small style="opacity:.7">' + bookWords(v).length + '</small>';
+    const shut = v !== 6 && !isOpenBook(v); b.classList.toggle('closed', shut); b.disabled = shut;
+    b.innerHTML = b.dataset.label + (shut ? ' <small class="soon">준비 중</small>' : ' <small style="opacity:.7">' + bookWords(v).length + '</small>');
   });
   paintSeg('#modeSeg', 'mode');
   $('#bundleBox').classList.toggle('hidden', S.mode !== 'bundle');
@@ -3932,7 +3946,7 @@ function paintResume() {
   else if (S.mode === 'free') title = (S.book === 6 ? '내가 넣은 낱말' : S.book + '편 ' + PNAMES[S.book] + (S.mAll ? '' : ' · ' + madang(S.mi).mn)) + ' · 직접 고르기';
   else title = (S.book === 6 ? '내가 넣은 낱말' : S.book + '편' + (S.mAll ? '' : ' · ' + madang(S.mi).mn)) + ' · ' + (S.mode === 'cons' ? S.jcons + '(으)로 시작하는 낱말' : S.jvow + ' 모음이 든 낱말');
   $('#todayTitle').textContent = title;
-  $('#resumeTxt').textContent = last ? `지난번: ${BOOK[last.mi].mn} 묶음 ${last.bi + 1} · 수준 ${lv}에서 마친 묶음 ${n}개` : '아직 마친 묶음이 없어요';
+  $('#resumeTxt').textContent = (S.mode === 'bundle' && !Prog.next(lv)) ? `${OPEN_BOOKS.join('·')}편을 다 마쳤어요. 다음 편은 준비 중이에요. 복습할 묶음을 골라 주세요.` : last ? `지난번: ${BOOK[last.mi].mn} 묶음 ${last.bi + 1} · 수준 ${lv}에서 마친 묶음 ${n}개` : '아직 마친 묶음이 없어요';
   $('#resumeRow').classList.toggle('hidden', S.mode !== 'bundle');
 }
 /* 누구와 하나요: 학생을 누르면 그 학생으로 기록 시작, "연습"은 기록 안 함 */
@@ -4158,5 +4172,6 @@ window.AdminGate = (function () {
 })();
 </script>
 <script>try { showPauseBar(); } catch (e) {}</script>
+<script>try { document.getElementById('edition').textContent = EDITION; } catch (e) {}</script>
 </body>
 </html>
