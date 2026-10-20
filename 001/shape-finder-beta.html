@@ -1445,8 +1445,11 @@ async function callGemini(withSchema){
   let r=null;
   /* 먼저 중계로(만든 사람의 무료 키). 오늘 양을 다 썼거나 안 되면, 이 기기에 선생님 키가 있을 때만 그 키로 */
   if(!S.geminiOwn){
-    try{ r=await fetch(GEMINI_RELAY,{method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body), cache:'no-store'}); }
-    catch(e){ r=null; }
+    /* 45초 안에 답이 없으면 기다리지 않고 멈춤(학생이 오래 기다리지 않게) */
+    const ac=new AbortController(), to=setTimeout(()=>ac.abort(),45000);
+    try{ r=await fetch(GEMINI_RELAY,{method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body), cache:'no-store', signal:ac.signal}); }
+    catch(e){ r=null; if(ac.signal.aborted && !S.apiKey){ clearTimeout(to); throw Object.assign(new Error('timeout 45s'),{status:504}); } }
+    clearTimeout(to);
     if(!(r&&r.ok) && S.apiKey && (!r || r.status===429 || r.status>=500) && await checkKey()) S.geminiOwn=true;
   }
   if(S.geminiOwn){
