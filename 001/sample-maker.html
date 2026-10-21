@@ -215,14 +215,20 @@ async function imgB64(src){ const im=new Image(); im.src=src; await im.decode();
 async function analyzeOne(i){
   const d=DATA[i]; const data=await imgB64(d.file);
   const body={contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data}},{text:PROMPT}]}],generationConfig:{responseMimeType:'application/json',responseSchema:SCHEMA,temperature:0.2}};
-  const r=await fetch(RELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
-  const j=await r.json().catch(()=>({}));
+  /* 오래 기다려도 되는 확인 페이지라 ?long=1(서버가 170초까지), 504(시간 초과)·503(붐빔)이면 30초 쉬고 한 번 더 */
+  let r, j;
+  for(let t=0;t<2;t++){
+    r=await fetch(RELAY+'?long=1',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
+    j=await r.json().catch(()=>({}));
+    if(!(r.status===504||r.status===503)||t===1) break;
+    say(d.title+': Google이 늦게 답해서 30초 뒤 다시 해요…'); await new Promise(z=>setTimeout(z,30000));
+  }
   if(!r.ok) throw new Error(r.status+' '+((j.error&&j.error.message)||''));
   const text=((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join(''); const m=text.match(/\{[\s\S]*\}/);
   const raw=m?JSON.parse(m[0]).shapes||[]:[];
   d.shapes=raw.map(normShape).filter(Boolean); d.ok=false; d.model=j.model||''; saveLocal();
 }
-$('bAna').onclick=async()=>{ const i=cur; say('분석하는 중… (30~80초)'); $('bAna').disabled=true;
+$('bAna').onclick=async()=>{ const i=cur; say('분석하는 중… (30초~3분)'); $('bAna').disabled=true;
   try{ await analyzeOne(i); if(cur===i){ side(); draw(); say('도형 '+DATA[i].shapes.length+'개 ('+(DATA[i].model||'')+'). 맞춰 보고 확인해 주세요.','ok'); } }
   catch(e){ say('분석 실패: '+e.message,'bad'); } finally{ $('bAna').disabled=false; list(); } };
 $('bAll').onclick=async()=>{ $('bAll').disabled=true;
