@@ -360,22 +360,28 @@ details.card.more .btn{min-height:40px;padding:6px 14px;font-size:15px;border-ra
 .end-photo{width:min(70vw,900px)}
 .reveal-art{position:relative}
 .reveal-art .ra{position:relative;display:inline-block;line-height:0}
-.reveal-art .ra img.cartoon{max-width:min(92vw,1300px);max-height:calc(100vh - 150px);display:block}
+.reveal-art .ra img.cartoon{max-width:min(92vw,1300px);max-height:calc(100vh - 240px);display:block}
 .reveal-art .photo-under{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;border-radius:20px;animation:artOut 2.4s ease forwards}
 .reveal-art .cartoon{animation:artIn 2.4s ease forwards}
-.reveal-art.still .photo-under{position:static;animation:none;max-width:min(92vw,1300px);max-height:calc(100vh - 150px);width:auto;height:auto}
+.reveal-art.still .photo-under{position:static;animation:none;max-width:min(92vw,1300px);max-height:calc(100vh - 240px);width:auto;height:auto}
 @keyframes artOut{0%,30%{opacity:1}100%{opacity:0}}
 @keyframes artIn{0%,30%{opacity:0}100%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.reveal-art .photo-under{display:none}.reveal-art .cartoon{animation:none}}
-.color-wrap{display:flex;gap:18px;align-items:center;justify-content:center;width:100%;height:100%;min-height:0}
-.color-stage{position:relative;flex:1;min-width:0;height:100%;display:flex;align-items:center;justify-content:center}
-.color-stage canvas{max-width:100%;max-height:calc(100vh - 140px);border-radius:16px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.08);cursor:pointer}
+.color-wrap{display:flex;gap:18px;align-items:stretch;justify-content:center;width:100%;flex:1;min-height:0}
+.color-stage{position:relative;flex:1;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.color-stage canvas{display:block;border-radius:16px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.08);cursor:pointer}
 .waiting-mini{position:absolute}
-.palette{display:grid;grid-template-columns:repeat(2,64px);gap:12px;flex:none}
+.palette{display:grid;grid-template-columns:repeat(2,64px);gap:12px;flex:none;align-content:center}
 .pal{width:64px;height:64px;border-radius:50%;border:4px solid #fff;background:var(--c);box-shadow:0 0 0 1px rgba(0,0,0,.15);cursor:pointer;touch-action:none}
 .pal[aria-pressed="true"]{box-shadow:0 0 0 4px var(--ink)}
-@media (orientation:portrait){.color-wrap{flex-direction:column}.palette{grid-template-columns:repeat(6,52px)}.pal{width:52px;height:52px}.color-stage canvas{max-height:calc(100vh - 300px)}}
-.end-btns{justify-content:center;margin-top:10px}
+@media (orientation:portrait){.color-wrap{flex-direction:column}.palette{grid-template-columns:repeat(6,52px);justify-content:center}.pal{width:52px;height:52px}}
+.end-btns{justify-content:center;margin-top:10px;flex:none}
+.end-swap{font-family:var(--f-display);font-size:20px;font-weight:400;border-color:var(--accent);color:var(--accent)}
+.end-swap:disabled{opacity:.35;cursor:default}
+.end-swap.ready{background:var(--accent);color:#fff;box-shadow:0 0 0 5px var(--accent-soft);transition:background .6s,box-shadow .6s}
+body.admin #main .end-swap{pointer-events:auto}
+.end-wrap{flex:1;min-height:0;display:flex;flex-direction:column}
+.reveal-art{flex:1;min-height:0}
 .give-show{display:flex;gap:12px;align-items:center;background:#F3F7F6;border-radius:12px;padding:8px}
 .give-show img{width:110px;height:82px;object-fit:cover;border-radius:8px}
 .give-show div{display:flex;flex-direction:column;font-size:14px}
@@ -1281,7 +1287,7 @@ function restartCurrentStage(){
   const st=S.stage, v=S.view;
   const go = st==='learn' ? ()=>{ S.li=0; showLearn(); }
            : st==='find'  ? ()=>{ S.ti=0; showFind(); }
-           : st==='end'   ? ()=>showEnd()
+           : st==='end'   ? ((v==='color'||v==='art')?null:()=>showEnd())   /* 색칠·그림 중이면 칠한 것을 지우지 않고 이어서 */
            : v==='photo'  ? ()=>showPhoto()
            : v==='brush'  ? ()=>showBrush()
            : v==='reveal' ? ()=>showReveal()
@@ -2861,14 +2867,15 @@ function paintArt(){
   } else fitIds=[];
 }
 function onCartoon(){
-  if(S.view==='artwait') showEnd();
+  if(S.view==='artwait'){ if(S.wantArt){ S.wantArt=false; showArtFromColor(); } else showEnd(); }
 }
-function endTools(){
+function endTools(swap){
   const rows=S.log.map(l=>`<tr><td>${esc(l.task)}</td><td>${esc(l.result)}${l.obj?' ('+esc(l.obj)+')':''}</td></tr>`).join('');
-  return `<div class="row admin-only end-btns">
-        <button class="btn" id="same" type="button">같은 사진 한 번 더</button>
-        <button class="btn primary" id="again" type="button">다른 사진으로</button>
-        <button class="btn" id="printBtn" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>출력 (색칠용)</button>
+  return `<div class="row end-btns">
+        <button class="btn admin-only" id="same" type="button">같은 사진 한 번 더</button>
+        <button class="btn primary admin-only" id="again" type="button">다른 사진으로</button>
+        ${swap?`<button class="btn end-swap" id="swapBtn" type="button" ${swap.off?'disabled':''}>${swap.label}</button>`:''}
+        <button class="btn admin-only" id="printBtn" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>출력 (색칠용)</button>
       </div>
       <details class="log admin-only"><summary>교사용 기록 (${S.level}단계 · ${S.errorMode==='show'?'바로 정답 보여주기':'한 번 더 기회'}${S.demo?' · 예시 사진':''})</summary>
         <table><thead><tr><th>과제</th><th>결과</th></tr></thead><tbody>${rows||'<tr><td colspan="2">기록 없음</td></tr>'}</tbody></table>
@@ -2894,17 +2901,22 @@ function showEnd(){
   if(!S.cartoonOn){ showColor(); return; }
   const done=c.status==='done';
   screen('end','art',`<div class="end-wrap"><div class="end-art reveal-art${done?'':' still'}" id="art">
-      <div class="ra">${done?`<img class="cartoon" src="${c.url}" alt="그림">`:''}<img class="photo-under" src="${S.img.url}" alt=""></div></div>${endTools()}</div>`,
+      <div class="ra">${done?`<img class="cartoon" src="${c.url}" alt="그림">`:''}<img class="photo-under" src="${S.img.url}" alt=""></div></div>${endTools({label:'🖍️ 이 그림으로 그리기'})}</div>`,
     done?'다 했어요. 사진이 그림이 되었어요.':'다 했어요.');
-  bindEndTools();
+  bindEndTools(); $('swapBtn').onclick=()=>showColor();
 }
+const hasArt=()=>!!(S.cartoon&&(S.cartoon.status==='done'||S.cartoon.status==='pending'));
+/* 색칠을 마친 뒤 길동이(Gemini) 그림 보여 주기: 그림 화면으로(사진 → 그림) */
+function showArtFromColor(){ const keep=S.cartoonOn; S.cartoonOn=true; S.view=''; showEnd(); S.cartoonOn=keep; }
 /* 색칠하기: 그림(없으면 사진)의 선을 따서, 학생이 색을 고르고 칸을 누르면 그 칸이 칠해짐. 지는 것·끝 없음(교사가 마침) */
 async function showColor(){
   screen('end','color',`<div class="color-wrap">
       <div class="color-stage" id="cst"><canvas id="ccv" aria-label="색칠하기"></canvas><div class="waiting-mini" id="cwait">${waitingHTML()}</div></div>
       <div class="palette" id="pal" role="radiogroup" aria-label="색">${COLORS.map(c=>`<button class="pal" type="button" data-c="${c.key}" style="--c:${c.hex}" aria-label="${c.name}" aria-pressed="${c.key===S.color}"></button>`).join('')}</div>
-    </div>${endTools()}`,'');   /* 색칠은 말 없이(팔레트만 보면 알 수 있음, 소리 부담↓) */
+    </div>${endTools(hasArt()?{label:'🎨 길동이에게 그려 보라 하기',off:true}:null)}`,'');   /* 색칠은 말 없이(팔레트만 보면 알 수 있음, 소리 부담↓) */
   bindEndTools(); spin();
+  const goal=0.8+Math.random()*0.2;   /* 이만큼 칠하면 길동이 그림을 볼 수 있음(매번 조금씩 다르게) */
+  const sw=$('swapBtn'); if(sw) sw.onclick=()=>{ if(sw.disabled) return; S.wantArt=true; showArtFromColor(); };
   let pick=COLORS.find(c=>c.key===S.color)||COLORS[0];
   document.querySelectorAll('#pal .pal').forEach(b=>b.onpointerdown=e=>{ e.preventDefault(); pick=COLORS.find(c=>c.key===b.dataset.c);
     document.querySelectorAll('#pal .pal').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); });
@@ -2913,6 +2925,12 @@ async function showColor(){
   if(tk!==token) return;
   const cv=$('ccv'), g=cv.getContext('2d'); cv.width=L.W; cv.height=L.H; $('cwait').remove();
   const out=g.createImageData(L.W,L.H), o=out.data, filled=new Uint32Array(L.n+1);
+  /* 다 칠한 정도: 아주 작은 칸은 빼고, 칠한 넓이 ÷ 칠할 넓이 */
+  const area=new Uint32Array(L.n); for(let i=0;i<L.W*L.H;i++) if(L.lab[i]>=0) area[L.lab[i]]++;
+  const big=Math.max(60,L.W*L.H*0.002); let total=0; for(let r=0;r<L.n;r++) if(area[r]>=big) total+=area[r];
+  const progress=()=>{ let got=0; for(let r=0;r<L.n;r++) if(area[r]>=big&&filled[r]) got+=area[r]; return total?got/total:1; };
+  const fitCv=()=>{ const st=$('cst'); if(!st||!cv.isConnected) return; const r=st.getBoundingClientRect(), k=Math.min(r.width/L.W,r.height/L.H); cv.style.width=Math.floor(L.W*k)+'px'; cv.style.height=Math.floor(L.H*k)+'px'; };
+  new ResizeObserver(fitCv).observe($('cst')); fitCv();
   const paint=()=>{ for(let i=0,N=L.W*L.H;i<N;i++){ const k=i*4, lab=L.lab[i], v=L.ink[i]/255;
       let f=lab>=0?filled[lab]:0;
       if(!f&&lab<0){ /* 선 위: 바로 옆 칸 색을 따라 칠해 틈이 하얗게 남지 않게 */ const x=i%L.W; for(const j of [i-1,i+1,i-L.W,i+L.W]){ if(j>=0&&j<N&&L.lab[j]>=0&&filled[L.lab[j]]&&(Math.abs(j%L.W-x)<=1)){ f=filled[L.lab[j]]; break; } } }
@@ -2926,6 +2944,7 @@ async function showColor(){
     for(let d=0;d<=14&&lab<0;d+=2) for(let a=0;a<8&&lab<0;a++){ const xx=Math.round(x+Math.cos(a*Math.PI/4)*d), yy=Math.round(y+Math.sin(a*Math.PI/4)*d); if(xx>=0&&yy>=0&&xx<L.W&&yy<L.H) lab=L.lab[yy*L.W+xx]; }
     if(lab<0) return;
     filled[lab]=parseInt(pick.hex.slice(1),16)||1; paint();
+    const sb=$('swapBtn'); if(sb&&sb.disabled&&progress()>=goal){ sb.disabled=false; sb.classList.add('ready'); }
   });
 }
 /* 색칠할 선 그림 만들기: 선(어두운 곳)을 굵게 하고, 나머지를 칸으로 나눔. 아주 작은 칸은 선으로 */
