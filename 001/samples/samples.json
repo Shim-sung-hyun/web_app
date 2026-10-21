@@ -45,7 +45,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/car-wheel-line.png"
  },
  {
   "id": "bus-wheel",
@@ -145,7 +146,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/bus-wheel-line.png"
  },
  {
   "id": "manhole",
@@ -245,7 +247,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/manhole-line.png"
  },
  {
   "id": "parking-sign",
@@ -344,7 +347,8 @@
     "realRight": true,
     "ratio": 3.5
    }
-  ]
+  ],
+  "line": "samples/parking-sign-line.png"
  },
  {
   "id": "tissue",
@@ -379,7 +383,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/tissue-line.png"
  },
  {
   "id": "wall-clock",
@@ -414,7 +419,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/wall-clock-line.png"
  },
  {
   "id": "paper-cup",
@@ -640,7 +646,8 @@
     "realRight": true,
     "ratio": 0.9
    }
-  ]
+  ],
+  "line": "samples/school-bus-line.png"
  },
  {
   "id": "shoe-rack",
@@ -799,7 +806,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/shoe-rack-line.png"
  },
  {
   "id": "car-wheel-2",
@@ -1074,7 +1082,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/bookshelf-line.png"
  },
  {
   "id": "board",
@@ -1169,7 +1178,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/board-line.png"
  },
  {
   "id": "hallway",
@@ -1371,7 +1381,8 @@
     "realRight": true,
     "ratio": 0.49
    }
-  ]
+  ],
+  "line": "samples/hallway-line.png"
  },
  {
   "id": "door",
@@ -1500,7 +1511,8 @@
     "realRight": true,
     "ratio": 0.43
    }
-  ]
+  ],
+  "line": "samples/door-line.png"
  },
  {
   "id": "mug-monitor",
@@ -1608,7 +1620,8 @@
     "realRight": true,
     "ratio": 1.65
    }
-  ]
+  ],
+  "line": "samples/mug-monitor-line.png"
  },
  {
   "id": "water-purifier",
@@ -1733,7 +1746,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/water-purifier-line.png"
  },
  {
   "id": "recycle-bins",
@@ -1901,7 +1915,8 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/recycle-bins-line.png"
  },
  {
   "id": "bottles",
@@ -2069,7 +2084,8 @@
     "realRight": true,
     "ratio": 1
    }
-  ]
+  ],
+  "line": "samples/bottles-line.png"
  },
  {
   "id": "milk-basket",
@@ -2198,7 +2214,8 @@
     "realRight": true,
     "ratio": 3.5
    }
-  ]
+  ],
+  "line": "samples/milk-basket-line.png"
  },
  {
   "id": "cup-drawings",
@@ -2280,6 +2297,7 @@
     "realRight": false,
     "ratio": 0
    }
-  ]
+  ],
+  "line": "samples/cup-drawings-line.png"
  }
 ]

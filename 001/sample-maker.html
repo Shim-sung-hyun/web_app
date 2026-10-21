@@ -250,7 +250,7 @@ $('bArtOk').onclick=async()=>{ if(!artUrl) return; const d=DATA[cur];
   const im=new Image(); im.src=artUrl; await im.decode(); const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0);
   const a=document.createElement('a'); a.href=c.toDataURL('image/jpeg',0.88); a.download=d.id+'-art.jpg'; a.click(); d.art=true; saveLocal(); list(); };
 /* ---- 결과 ---- */
-$('bSave').onclick=()=>{ const out=ALL.map(d=>({id:d.id,title:d.title,file:d.file,ok:!!d.ok,art:typeof d.art==='string'?d.art:d.art?`samples/${d.id}-art.jpg`:null,shapes:d.shapes||null}));
+$('bSave').onclick=()=>{ const out=ALL.map(d=>({id:d.id,title:d.title,file:d.file,ok:!!d.ok,art:typeof d.art==='string'?d.art:d.art?`samples/${d.id}-art.jpg`:null,line:d.line||null,shapes:d.shapes||null}));
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(out,null,1)],{type:'application/json'})); a.download='samples.json'; a.click(); };
 load();
 </script>

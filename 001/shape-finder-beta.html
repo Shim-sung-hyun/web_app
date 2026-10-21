@@ -359,8 +359,11 @@ details.card.more .btn{min-height:40px;padding:6px 14px;font-size:15px;border-ra
 /* 끝: 그림 → 색칠 */
 .end-photo{width:min(70vw,900px)}
 .reveal-art{position:relative}
-.reveal-art .photo-under{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:18px;animation:artOut 2.4s ease forwards}
+.reveal-art .ra{position:relative;display:inline-block;line-height:0}
+.reveal-art .ra img.cartoon{max-width:min(92vw,1300px);max-height:calc(100vh - 150px);display:block}
+.reveal-art .photo-under{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;border-radius:20px;animation:artOut 2.4s ease forwards}
 .reveal-art .cartoon{animation:artIn 2.4s ease forwards}
+.reveal-art.still .photo-under{position:static;animation:none;max-width:min(92vw,1300px);max-height:calc(100vh - 150px);width:auto;height:auto}
 @keyframes artOut{0%,30%{opacity:1}100%{opacity:0}}
 @keyframes artIn{0%,30%{opacity:0}100%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.reveal-art .photo-under{display:none}.reveal-art .cartoon{animation:none}}
@@ -1579,7 +1582,7 @@ function showSetup(o={}){
   document.body.classList.add('setup'); setAdmin(false);
   const opt=(name,val,cur,t,d)=>`<label class="opt"><input type="radio" name="${name}" value="${val}" ${String(cur)===String(val)?'checked':''}><div><b>${t}</b><span>${d}</span></div></label>`;
   newSession();
-  const sum=()=>[S.showSec+'초', S.paint?'칠하기 켬':'칠하기 끔', S.cartoonOn?'끝 그림 켬':'끝 그림 끔', S.errorMode==='show'?'바로 정답':'한 번 더 기회', voiceName(S.engine)].join(' · ');
+  const sum=()=>[S.showSec+'초', S.paint?'칠하기 켬':'칠하기 끔', S.cartoonOn?'끝: 그림':'끝: 색칠', S.errorMode==='show'?'바로 정답':'한 번 더 기회', voiceName(S.engine)].join(' · ');
   const lv=[[1,'1단계 · 도형 이름','동그라미·세모·네모의 이름을 배우고 찾아요.'],[2,'2단계 · 변과 꼭짓점','원·삼각형·사각형의 변과 꼭짓점을 세어요.'],[3,'3단계 · 각','각을 세고 직각을 찾아요.']];
   main.innerHTML=`<section class="setup-page math">
     <header class="m-head"><div class="m-title"><h1>사진 속 도형 찾기</h1><span class="m-mark" aria-hidden="true"><i class="o"></i><i class="t"></i><i class="s"></i></span></div>
@@ -1621,10 +1624,10 @@ function showSetup(o={}){
         ${opt('paint','on',S.paint?'on':'off','켬','도형을 본 뒤 붓으로 직접 칠하기')}
         ${opt('paint','off',S.paint?'on':'off','끔','보기만 하고 넘어가기')}
       </div>
-      <h3>끝 화면 그림</h3>
+      <h3>끝 화면</h3>
       <div class="opts">
-        ${opt('cartoonOn','on',S.cartoonOn?'on':'off','그림 → 색칠 (기본)','사진을 예쁜 그림으로 바꿔 보여 주고, 그 그림에 색칠해요. 내 사진은 결제를 연결한 Gemini 키일 때만 그림(한 장 약 50원)')}
-        ${opt('cartoonOn','off',S.cartoonOn?'on':'off','바로 색칠','그림 없이 사진의 선을 따라 바로 색칠해요')}
+        ${opt('cartoonOn','on',S.cartoonOn?'on':'off','그림으로 바뀌기 (기본)','다 하면 사진이 그림으로 스르르 바뀌어요')}
+        ${opt('cartoonOn','off',S.cartoonOn?'on':'off','바로 색칠','그림의 연필 선 위에 팔레트로 색칠해요')}
       </div>
       <h3>틀렸을 때</h3>
       <div class="opts">
@@ -1649,7 +1652,7 @@ function showSetup(o={}){
       <b>예시 사진은 키나 가입 없이 바로 쓸 수 있어요.</b> 도형·목소리·끝 그림을 미리 만들어 두었어요.<br>
       <b>내 사진</b>은 <b>휴대폰에서 받기</b>로 보내요. QR을 찍어 사진을 보내면서, 처음 한 번은 같은 화면에 선생님 본인의 <b>Gemini 키</b>(도형 찾기, 필수)와 <b>Google 음성 키</b>(목소리, 선택)를 함께 넣어요. Gemini 키는 Google AI Studio에서 휴대폰으로 1~2분이면 받을 수 있어요(<a href="https://shim-sung-hyun.github.io/web_app/gemini-key.html" target="_blank" rel="noopener">키 받는 법</a>). 키는 이 기기에만 저장돼요. Google 음성 키가 없으면 내 사진 수업은 기기 목소리로 해요.<br>
       <b>내 사진은 이 기기(이 브라우저)에 보관</b>돼요. 도형을 찾은 결과와 그림도 함께 두어, 다음에는 키 없이 바로 써요. 브라우저 기록을 지우면 함께 지워져요.<br>
-      <b>끝 그림</b>: 찾기를 마치면 사진이 예쁜 그림으로 바뀌고, 그 그림에 학생이 색칠해요. 예시 사진은 그림을 미리 만들어 두었어요. 내 사진은 결제를 연결한 Gemini 키일 때만 그림을 그리고(한 장 약 50원, 한 번 그리면 보관), 아니면 사진의 선을 따라 바로 색칠해요.<br>
+      <b>끝 화면</b>: 찾기를 마치면 사진이 그림으로 스르르 바뀌어요. <b>바로 색칠</b>로 정하면 그 그림의 연필 선 위에 학생이 팔레트로 색칠해요. 연필 선 그림은 <b>출력(색칠용)</b>으로 뽑아 종이에도 칠할 수 있어요. 예시 사진은 그림을 미리 만들어 두었어요. 내 사진은 결제를 연결한 Gemini 키일 때만 그림을 그리고(한 장 약 50원, 한 번 그리면 보관), 아니면 사진 그대로 두거나 사진의 선을 따서 색칠해요.<br>
       <b>기증</b>: 내 사진 아래 <b>기증</b>을 누르면 다른 선생님도 쓰는 예시 사진이 될 수 있어요. 보내기 전에 사람·얼굴·이름·번호가 있는지 Gemini로 살펴 막고, 만든 사람이 한 번 더 보고 올려요.<br>
       사진과 키는 잠가서 charum.org 중계 서버를 거쳐 오고, 중계 서버는 열어 볼 수 없어요. 고른 사진은 도형을 찾으려고 Google Gemini로 보내지고, 결제를 연결하지 않은 키는 Google이 서비스 개선에 쓸 수 있어요. <b>학생 얼굴이나 이름이 보이는 사진은 넣지 마세요.</b></p>
     </details>
@@ -1714,7 +1717,7 @@ let SAMPLES=null;
 async function loadSamples(){
   if(SAMPLES) return SAMPLES;
   try{ const r=await fetch(gh('samples/samples.json'),{cache:'no-cache'}); const j=await r.json();
-    SAMPLES=j.filter(x=>x.ok&&Array.isArray(x.shapes)&&x.shapes.length).map(x=>({...x,file:gh(x.file),art:typeof x.art==='string'?gh(x.art):null})); }catch(e){ SAMPLES=[]; }
+    SAMPLES=j.filter(x=>x.ok&&Array.isArray(x.shapes)&&x.shapes.length).map(x=>({...x,file:gh(x.file),art:typeof x.art==='string'?gh(x.art):null,line:typeof x.line==='string'?gh(x.line):null})); }catch(e){ SAMPLES=[]; }
   return SAMPLES;
 }
 async function openGallery(){
@@ -1733,7 +1736,7 @@ async function useSample(x){
   try{ const blob=await (await fetch(x.file)).blob(); S.img=await loadPhoto(blob); }catch(e){ S.img=null; markSample(); showPick(); return; }
   S.demo=true; S.shapes=[]; S.sampleId=x.id;
   S.analysis={status:'done',shapes:x.shapes.map(s=>({...s,box:{...s.box},pts:s.pts&&s.pts.map(p=>[...p])}))};
-  S.sampleArt=x.art||null;   /* 미리 골라 둔 끝 그림 */
+  S.sampleArt=x.art||null; S.sampleLine=x.line||null;   /* 미리 그려 둔 끝 그림 · 그 그림의 연필 선 그림 */
   showPick('예시 · '+x.title); goPlan();
 }
 /* 사진을 고르면 ③ 도형 찾기 사진으로 바로(머뭇거리지 않게) */
@@ -1760,7 +1763,7 @@ function planInfo(){
   const el=$('planFlow'); if(!el) return;
   const a=S.analysis||{}, sh=a.status==='done'?a.shapes:[];
   const kinds=[...new Set(sh.map(x=>TYPES[x.type]&&TYPES[x.type]['l'+Math.min(S.level,2)]||TYPES[x.type].l1))];
-  const step=['보기','칠하기','찾기','그림·색칠'].filter(t=>!(t==='칠하기'&&!S.paint));
+  const step=['보기','칠하기','찾기',S.cartoonOn?'그림':'색칠'].filter(t=>!(t==='칠하기'&&!S.paint));
   $('planShapes').textContent=!S.img?'사진을 고르면 찾을 도형이 여기에 나와요.':a.status==='pending'?'도형을 찾고 있어요…':sh.length?`찾을 도형: ${kinds.join(' · ')}`:'찾은 도형이 없어요.';
   el.innerHTML=step.map((t,i)=>`<li><span>${i+1}</span>${t}</li>`).join('');
   const pv=$('planVoice'); if(pv){ chooseEngine(); pv.textContent='목소리: '+voiceName(S.engineNow)+(S.voiceNote?' — '+S.voiceNote:''); }
@@ -1888,7 +1891,7 @@ async function renderMine(){
 }
 async function useMine(x){
   hideSpot(); showPick('사진을 여는 중…');
-  S.img={url:x.img,w:x.w,h:x.h}; S.demo=false; S.sampleId=null; S.sampleArt=null; S.mineId=x.id; S.mineArt=x.art||null; S.shapes=[]; S.cartoon=null;
+  S.img={url:x.img,w:x.w,h:x.h}; S.demo=false; S.sampleId=null; S.sampleArt=null; S.sampleLine=null; S.mineId=x.id; S.mineArt=x.art||null; S.shapes=[]; S.cartoon=null;
   S.analysis={status:'done',shapes:x.shapes.map(s=>({...s,box:{...s.box},pts:s.pts&&s.pts.map(p=>[...p])}))};
   markSample(); showPick('내 사진 · '+x.title); goPlan();
   if(!S.mineArt) startCartoon();
@@ -1977,12 +1980,12 @@ function needKey(then){
 /* 사진을 받아 두고 바로 분석을 시작(화면은 그대로). 설정 화면에서 미리 고를 때도 씀 */
 async function preparePhoto(f){ S.sampleId=null; S.mineId=null; S.mineArt=null; markSample();
   let img; try{ img=await loadPhoto(f); }catch(e){ return false; }
-  S.img=img; S.demo=false; S.sampleArt=null; S.shapes=[]; S.cartoon=null; S.analysis={status:'pending'};
+  S.img=img; S.demo=false; S.sampleArt=null; S.sampleLine=null; S.shapes=[]; S.cartoon=null; S.analysis={status:'pending'};
   runAnalysis(); return true;
 }
 async function prepareDemo(){
   markSample();
-  S.demo=true; S.sampleArt=null; S.shapes=[]; S.cartoon=null;
+  S.demo=true; S.sampleArt=null; S.sampleLine=null; S.shapes=[]; S.cartoon=null;
   try{ S.img=await loadSample(); S.analysis={status:'done',shapes:sampleShapes()}; }
   catch(e){ const d=makeDemo(); S.img=d.img; S.analysis={status:'done',shapes:d.shapes}; }
 }
@@ -2801,7 +2804,7 @@ function cartoonPrompt(){
 }
 function startCartoon(){
   /* 예시 사진: 만든 사람이 미리 그려 둔 그림. 내 사진: 보관한 그림이 있으면 그것, 없으면 선생님 키(결제 연결)로 한 번 그려 보관 */
-  if(!S.cartoonOn||!S.img){ S.cartoon={status:'none'}; return; }
+  if(!S.img){ S.cartoon={status:'none'}; return; }
   if(S.demo){ S.cartoon=S.sampleArt?{status:'done',url:S.sampleArt}:{status:'none'}; return; }
   if(S.mineArt){ S.cartoon={status:'done',url:S.mineArt}; return; }
   if(S.cartoon&&S.cartoon.status!=='none') return;
@@ -2877,7 +2880,8 @@ function bindEndTools(){
   $('same').onclick=()=>{S.cartoon=S.cartoon&&S.cartoon.status==='done'?S.cartoon:null; buildLesson(S.shapes); showReveal();};
   $('printBtn').onclick=()=>printSheet();
 }
-/* 끝: 찾기를 마치면 (그림이 있으면) 사진이 그림이 되는 모습을 잠깐 → 그 그림에 색칠. 그림이 아직이면 잠깐 기다림(최대 40초) */
+/* 끝: 기본은 사진이 그림으로 스르르 바뀌고 그대로 멈춤(교사가 마침). '바로 색칠'이면 그림의 연필 선 위에 색칠.
+   그림이 아직이면 잠깐 기다림(최대 40초) */
 function showEnd(){
   const c=S.cartoon||{status:'none'};
   if(c.status==='pending'){
@@ -2887,10 +2891,12 @@ function showEnd(){
     }
     return;
   }
-  if(c.status!=='done'){ showColor(); return; }
-  screen('end','art',`<div class="end-wrap"><div class="end-art reveal-art" id="art">
-      <img class="photo-under" src="${S.img.url}" alt=""><img class="cartoon" src="${c.url}" alt="그림"></div></div>`,'다 했어요. 사진이 그림이 되었어요.');
-  later(5200,()=>{ if(S.view==='art') showColor(); });
+  if(!S.cartoonOn){ showColor(); return; }
+  const done=c.status==='done';
+  screen('end','art',`<div class="end-wrap"><div class="end-art reveal-art${done?'':' still'}" id="art">
+      <div class="ra">${done?`<img class="cartoon" src="${c.url}" alt="그림">`:''}<img class="photo-under" src="${S.img.url}" alt=""></div></div>${endTools()}</div>`,
+    done?'다 했어요. 사진이 그림이 되었어요.':'다 했어요.');
+  bindEndTools();
 }
 /* 색칠하기: 그림(없으면 사진)의 선을 따서, 학생이 색을 고르고 칸을 누르면 그 칸이 칠해짐. 지는 것·끝 없음(교사가 마침) */
 async function showColor(){
@@ -2907,10 +2913,11 @@ async function showColor(){
   if(tk!==token) return;
   const cv=$('ccv'), g=cv.getContext('2d'); cv.width=L.W; cv.height=L.H; $('cwait').remove();
   const out=g.createImageData(L.W,L.H), o=out.data, filled=new Uint32Array(L.n+1);
-  const paint=()=>{ for(let i=0,N=L.W*L.H;i<N;i++){ const k=i*4, lab=L.lab[i];
-      if(lab<0){ const v=L.ink[i]; o[k]=o[k+1]=o[k+2]=v; }
-      else { const f=filled[lab]; if(f){ o[k]=f>>16&255; o[k+1]=f>>8&255; o[k+2]=f&255; } else { o[k]=o[k+1]=o[k+2]=255; } }
-      o[k+3]=255; } g.putImageData(out,0,0); };
+  const paint=()=>{ for(let i=0,N=L.W*L.H;i<N;i++){ const k=i*4, lab=L.lab[i], v=L.ink[i]/255;
+      let f=lab>=0?filled[lab]:0;
+      if(!f&&lab<0){ /* 선 위: 바로 옆 칸 색을 따라 칠해 틈이 하얗게 남지 않게 */ const x=i%L.W; for(const j of [i-1,i+1,i-L.W,i+L.W]){ if(j>=0&&j<N&&L.lab[j]>=0&&filled[L.lab[j]]&&(Math.abs(j%L.W-x)<=1)){ f=filled[L.lab[j]]; break; } } }
+      const r=f?f>>16&255:255, gg=f?f>>8&255:255, b=f?f&255:255;
+      o[k]=r*v; o[k+1]=gg*v; o[k+2]=b*v; o[k+3]=255; } g.putImageData(out,0,0); };
   paint();
   cv.style.touchAction='none';
   cv.addEventListener('pointerdown',e=>{ e.preventDefault();
@@ -2923,12 +2930,12 @@ async function showColor(){
 }
 /* 색칠할 선 그림 만들기: 선(어두운 곳)을 굵게 하고, 나머지를 칸으로 나눔. 아주 작은 칸은 선으로 */
 async function colorPage(){
-  const url=await makeLineArt(true);
+  const url=await lineArtURL();
   const im=await loadImg(url);
   const W0=im.naturalWidth, H0=im.naturalHeight, k=Math.min(1,900/Math.max(W0,H0)), W=Math.round(W0*k), H=Math.round(H0*k), N=W*H;
   const c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,W,H); g.drawImage(im,0,0,W,H);
   const d=g.getImageData(0,0,W,H).data, ink=new Uint8Array(N); let line=new Uint8Array(N);
-  for(let i=0;i<N;i++){ const v=d[i*4]; ink[i]=v; line[i]=v<170?1:0; }
+  for(let i=0;i<N;i++){ const v=d[i*4]; ink[i]=v; line[i]=v<205?1:0; }
   const dil=new Uint8Array(N);   /* 선을 한 칸 굵게 해서 틈을 막음 */
   for(let y=0;y<H;y++) for(let x=0;x<W;x++){ const i=y*W+x; if(line[i]){ dil[i]=1; if(x>0) dil[i-1]=1; if(x<W-1) dil[i+1]=1; if(y>0) dil[i-W]=1; if(y<H-1) dil[i+W]=1; } }
   line=dil;
@@ -2944,12 +2951,44 @@ async function colorPage(){
       for(const j of nb){ if(j>=0&&j<N&&!line[j]&&lab[j]<0){ lab[j]=n; q[t++]=j; } } }
     if(t<MIN){ for(let z=0;z<t;z++){ lab[q[z]]=-1; ink[q[z]]=Math.min(ink[q[z]],120); } } else n++;
   }
-  for(let i=0;i<N;i++) if(lab[i]<0&&!line[i]) ink[i]=120; else if(line[i]) ink[i]=Math.min(ink[i],60);
   return {W,H,lab,ink,n};
 }
 
 /* ================= 색칠용 출력: 색을 빼고 선만 ================= */
 const loadImg=url=>new Promise((res,rej)=>{const im=new Image(); if(/^https?:/.test(url)) im.crossOrigin='anonymous'; im.onload=()=>res(im); im.onerror=rej; im.src=url;});   /* 다른 주소(GitHub) 그림도 캔버스에서 읽게 */
+/* 연필 선 그림: 예시는 미리 만든 것(samples/*-line.png), 그림이 있으면 그 그림의 윤곽을 따고, 없으면 사진에서 */
+async function lineArtURL(){
+  if(S.demo&&S.sampleLine&&S.cartoon&&S.cartoon.status==='done') return S.sampleLine;
+  if(S.cartoon&&S.cartoon.status==='done'){ if(!S.lineCache||S.lineCache.src!==S.cartoon.url) S.lineCache={src:S.cartoon.url,url:await pencilFrom(S.cartoon.url)}; return S.lineCache.url; }
+  return makeLineArt(true);
+}
+/* 그림에서 연필 선 따기(예시 선 그림을 만든 방법과 같음): 둘레보다 어두운 가는 선 + 색이 크게 바뀌는 경계 */
+async function pencilFrom(url){
+  const im=await loadImg(url); const k=Math.min(1,1024/Math.max(im.naturalWidth,im.naturalHeight));
+  const W=Math.round(im.naturalWidth*k), H=Math.round(im.naturalHeight*k), N=W*H;
+  const c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d'); g.drawImage(im,0,0,W,H);
+  const id=g.getImageData(0,0,W,H), d=id.data;
+  const blur=(f,r)=>{ let a=f; for(let pass=0;pass<2;pass++){ const o=new Float32Array(N);
+      for(let y=0;y<H;y++){ let t=0,n=0; for(let x=-r;x<W;x++){ if(x+r<W){t+=a[y*W+x+r]; n++;} if(x-r-1>=0){t-=a[y*W+x-r-1]; n--;} if(x>=0) o[y*W+x]=t/n; } }
+      const o2=new Float32Array(N);
+      for(let x=0;x<W;x++){ let t=0,n=0; for(let y=-r;y<H;y++){ if(y+r<H){t+=o[(y+r)*W+x]; n++;} if(y-r-1>=0){t-=o[(y-r-1)*W+x]; n--;} if(y>=0) o2[y*W+x]=t/n; } }
+      a=o2; } return a; };
+  const ch=[0,1,2].map(q=>{ const f=new Float32Array(N); for(let i=0;i<N;i++) f[i]=d[i*4+q]/255; return f; });
+  const L=new Float32Array(N); for(let i=0;i<N;i++) L[i]=.299*ch[0][i]+.587*ch[1][i]+.114*ch[2][i];
+  const Ls=blur(L,1);
+  const mm=(f,isMax)=>{ const o=new Float32Array(N), o2=new Float32Array(N), r=3;   /* 7×7 닫기 */
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){ let m=isMax?-1:2; for(let q=-r;q<=r;q++){ const xx=Math.min(W-1,Math.max(0,x+q)), v=f[y*W+xx]; m=isMax?Math.max(m,v):Math.min(m,v); } o[y*W+x]=m; }
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){ let m=isMax?-1:2; for(let q=-r;q<=r;q++){ const yy=Math.min(H-1,Math.max(0,y+q)), v=o[yy*W+x]; m=isMax?Math.max(m,v):Math.min(m,v); } o2[y*W+x]=m; } return o2; };
+  const cl=mm(mm(Ls,true),false);
+  const cs=ch.map(f=>blur(f,1));
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){ const i=y*W+x;
+    let gsum=0;
+    if(x>0&&y>0&&x<W-1&&y<H-1) for(const f of cs){ const gx=-f[i-W-1]-2*f[i-1]-f[i+W-1]+f[i-W+1]+2*f[i+1]+f[i+W+1], gy=-f[i-W-1]-2*f[i-W]-f[i-W+1]+f[i+W-1]+2*f[i+W]+f[i+W+1]; gsum+=gx*gx+gy*gy; }
+    let v=Math.max(Math.min(1,Math.max(0,(cl[i]-Ls[i])*4)), Math.min(1,Math.max(0,(Math.sqrt(gsum)-0.35)*1.2))*0.8);
+    if(v<0.18) v=0; const out=Math.round(Math.max(0,Math.min(1,1-v*0.85))*255);
+    d[i*4]=d[i*4+1]=d[i*4+2]=out; d[i*4+3]=255; }
+  g.putImageData(id,0,0); return c.toDataURL('image/png');
+}
 async function makeLineArt(forColor){
   const cartoon=!!(S.cartoon&&S.cartoon.status==='done');
   const im=await loadImg(cartoon?S.cartoon.url:S.img.url);
@@ -2992,7 +3031,7 @@ async function makeLineArt(forColor){
 async function printSheet(){
   const b=$('printBtn'); const label=b.innerHTML; b.disabled=true; b.textContent='준비하고 있어요…';
   try{
-    const url=await makeLineArt();
+    const url=await lineArtURL();
     const legend=S.types.map(t=>`<span>${shapeIcon(t,'#111','',false)}${esc(nm(t))}, ${esc(objList(ofType(t),5))}</span>`).join('');
     $('printArea').innerHTML=`<div class="pa-head"><h1>도형에 색칠해요</h1><div>이름: ____________</div></div>
       <img class="pa-img" id="paImg" src="${url}" alt=""><div class="pa-legend">${legend}</div>`;
