@@ -3,49 +3,418 @@
   "id": "car-wheel",
   "title": "자동차 바퀴",
   "file": "samples/car-wheel.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/car-wheel-art.jpg",
+  "shapes": [
+   {
+    "type": "circle",
+    "obj": "바퀴",
+    "box": {
+     "x0": 359,
+     "y0": 282,
+     "x1": 679,
+     "y1": 818
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "휠",
+    "box": {
+     "x0": 407,
+     "y0": 369,
+     "x1": 631,
+     "y1": 755
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "휠 캡",
+    "box": {
+     "x0": 502,
+     "y0": 538,
+     "x1": 537,
+     "y1": 595
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "bus-wheel",
   "title": "버스 바퀴",
   "file": "samples/bus-wheel.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/bus-wheel-art.jpg",
+  "shapes": [
+   {
+    "type": "ellipse",
+    "obj": "타이어",
+    "box": {
+     "x0": 277,
+     "y0": 52,
+     "x1": 808,
+     "y1": 839
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "바퀴 휠",
+    "box": {
+     "x0": 396,
+     "y0": 295,
+     "x1": 691,
+     "y1": 722
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "바퀴 중심",
+    "box": {
+     "x0": 499,
+     "y0": 472,
+     "x1": 593,
+     "y1": 609
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "휠 구멍",
+    "box": {
+     "x0": 558,
+     "y0": 315,
+     "x1": 603,
+     "y1": 391
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "휠 구멍",
+    "box": {
+     "x0": 473,
+     "y0": 333,
+     "x1": 516,
+     "y1": 408
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "휠 구멍",
+    "box": {
+     "x0": 421,
+     "y0": 422,
+     "x1": 451,
+     "y1": 494
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "휠 구멍",
+    "box": {
+     "x0": 633,
+     "y0": 376,
+     "x1": 663,
+     "y1": 448
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "manhole",
   "title": "맨홀 뚜껑",
   "file": "samples/manhole.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/manhole-art.jpg",
+  "shapes": [
+   {
+    "type": "circle",
+    "obj": "맨홀 뚜껑",
+    "box": {
+     "x0": 211,
+     "y0": 112,
+     "x1": 672,
+     "y1": 908
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "가운데 원",
+    "box": {
+     "x0": 382,
+     "y0": 412,
+     "x1": 477,
+     "y1": 574
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "맨홀 구멍",
+    "box": {
+     "x0": 459,
+     "y0": 186,
+     "x1": 491,
+     "y1": 239
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "맨홀 구멍",
+    "box": {
+     "x0": 260,
+     "y0": 398,
+     "x1": 296,
+     "y1": 451
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "맨홀 구멍",
+    "box": {
+     "x0": 583,
+     "y0": 522,
+     "x1": 620,
+     "y1": 579
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "맨홀 구멍",
+    "box": {
+     "x0": 375,
+     "y0": 752,
+     "x1": 412,
+     "y1": 809
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "맨홀 구멍",
+    "box": {
+     "x0": 432,
+     "y0": 622,
+     "x1": 467,
+     "y1": 675
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "parking-sign",
   "title": "주차 금지 표지판",
   "file": "samples/parking-sign.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/parking-sign-art.jpg",
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "표지판",
+    "box": {
+     "x0": 276,
+     "y0": 48,
+     "x1": 735,
+     "y1": 492
+    },
+    "pts": [
+     [
+      284,
+      48
+     ],
+     [
+      727,
+      52
+     ],
+     [
+      718,
+      489
+     ],
+     [
+      296,
+      485
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.62
+   },
+   {
+    "type": "quad",
+    "obj": "안내판",
+    "box": {
+     "x0": 311,
+     "y0": 128,
+     "x1": 700,
+     "y1": 464
+    },
+    "pts": [
+     [
+      311,
+      132
+     ],
+     [
+      700,
+      128
+     ],
+     [
+      700,
+      464
+     ],
+     [
+      319,
+      461
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.65
+   },
+   {
+    "type": "quad",
+    "obj": "손잡이 구멍",
+    "box": {
+     "x0": 399,
+     "y0": 64,
+     "x1": 610,
+     "y1": 107
+    },
+    "pts": [
+     [
+      407,
+      64
+     ],
+     [
+      602,
+      64
+     ],
+     [
+      602,
+      107
+     ],
+     [
+      407,
+      107
+     ]
+    ],
+    "realRight": true,
+    "ratio": 3.5
+   }
+  ]
  },
  {
   "id": "tissue",
   "title": "두루마리 휴지",
   "file": "samples/tissue.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/tissue-art.jpg",
+  "shapes": [
+   {
+    "type": "circle",
+    "obj": "휴지 윗면",
+    "box": {
+     "x0": 309,
+     "y0": 298,
+     "x1": 561,
+     "y1": 430
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "휴지심 구멍",
+    "box": {
+     "x0": 386,
+     "y0": 320,
+     "x1": 494,
+     "y1": 377
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "wall-clock",
   "title": "벽시계",
   "file": "samples/wall-clock.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/wall-clock-art.jpg",
+  "shapes": [
+   {
+    "type": "circle",
+    "obj": "벽시계",
+    "box": {
+     "x0": 85,
+     "y0": 332,
+     "x1": 980,
+     "y1": 804
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "시계 중심 원",
+    "box": {
+     "x0": 471,
+     "y0": 521,
+     "x1": 587,
+     "y1": 584
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "paper-cup",
@@ -75,17 +444,362 @@
   "id": "school-bus",
   "title": "통학 버스",
   "file": "samples/school-bus.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/school-bus-art.jpg",
+  "shapes": [
+   {
+    "type": "ellipse",
+    "obj": "바퀴 휠",
+    "box": {
+     "x0": 672,
+     "y0": 612,
+     "x1": 728,
+     "y1": 769
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "버스 창문",
+    "box": {
+     "x0": 740,
+     "y0": 82,
+     "x1": 864,
+     "y1": 328
+    },
+    "pts": [
+     [
+      740,
+      82
+     ],
+     [
+      855,
+      153
+     ],
+     [
+      864,
+      328
+     ],
+     [
+      754,
+      305
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.5
+   },
+   {
+    "type": "quad",
+    "obj": "버스 창문",
+    "box": {
+     "x0": 586,
+     "y0": 9,
+     "x1": 752,
+     "y1": 307
+    },
+    "pts": [
+     [
+      586,
+      9
+     ],
+     [
+      737,
+      84
+     ],
+     [
+      752,
+      307
+     ],
+     [
+      604,
+      279
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.2
+   },
+   {
+    "type": "quad",
+    "obj": "버스 짐칸 문",
+    "box": {
+     "x0": 757,
+     "y0": 459,
+     "x1": 823,
+     "y1": 716
+    },
+    "pts": [
+     [
+      757,
+      473
+     ],
+     [
+      822,
+      459
+     ],
+     [
+      823,
+      671
+     ],
+     [
+      757,
+      716
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.1
+   },
+   {
+    "type": "quad",
+    "obj": "버스 짐칸 문",
+    "box": {
+     "x0": 822,
+     "y0": 448,
+     "x1": 896,
+     "y1": 672
+    },
+    "pts": [
+     [
+      822,
+      459
+     ],
+     [
+      894,
+      448
+     ],
+     [
+      896,
+      627
+     ],
+     [
+      823,
+      672
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.1
+   },
+   {
+    "type": "quad",
+    "obj": "버스 짐칸 문",
+    "box": {
+     "x0": 894,
+     "y0": 440,
+     "x1": 951,
+     "y1": 628
+    },
+    "pts": [
+     [
+      894,
+      448
+     ],
+     [
+      951,
+      440
+     ],
+     [
+      951,
+      594
+     ],
+     [
+      898,
+      628
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.1
+   },
+   {
+    "type": "quad",
+    "obj": "점검구",
+    "box": {
+     "x0": 589,
+     "y0": 564,
+     "x1": 629,
+     "y1": 649
+    },
+    "pts": [
+     [
+      589,
+      570
+     ],
+     [
+      625,
+      564
+     ],
+     [
+      629,
+      631
+     ],
+     [
+      595,
+      649
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.9
+   }
+  ]
  },
  {
   "id": "shoe-rack",
   "title": "신발장",
   "file": "samples/shoe-rack.jpg",
-  "ok": false,
+  "ok": true,
   "art": null,
-  "shapes": null
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "액자",
+    "box": {
+     "x0": 858,
+     "y0": 42,
+     "x1": 938,
+     "y1": 146
+    },
+    "pts": [
+     [
+      862,
+      45
+     ],
+     [
+      938,
+      42
+     ],
+     [
+      931,
+      142
+     ],
+     [
+      858,
+      146
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.33
+   },
+   {
+    "type": "quad",
+    "obj": "바닥 타일",
+    "box": {
+     "x0": 760,
+     "y0": 716,
+     "x1": 928,
+     "y1": 949
+    },
+    "pts": [
+     [
+      827,
+      716
+     ],
+     [
+      928,
+      758
+     ],
+     [
+      878,
+      949
+     ],
+     [
+      760,
+      874
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1
+   },
+   {
+    "type": "quad",
+    "obj": "신발장",
+    "box": {
+     "x0": 321,
+     "y0": 124,
+     "x1": 645,
+     "y1": 742
+    },
+    "pts": [
+     [
+      321,
+      180
+     ],
+     [
+      642,
+      124
+     ],
+     [
+      645,
+      489
+     ],
+     [
+      361,
+      742
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "신발장",
+    "box": {
+     "x0": 335,
+     "y0": 301,
+     "x1": 532,
+     "y1": 564
+    },
+    "pts": [
+     [
+      335,
+      382
+     ],
+     [
+      528,
+      301
+     ],
+     [
+      532,
+      441
+     ],
+     [
+      352,
+      564
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "타일",
+    "box": {
+     "x0": 607,
+     "y0": 732,
+     "x1": 796,
+     "y1": 986
+    },
+    "pts": [
+     [
+      703,
+      732
+     ],
+     [
+      796,
+      782
+     ],
+     [
+      708,
+      986
+     ],
+     [
+      607,
+      896
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "car-wheel-2",
@@ -147,17 +861,315 @@
   "id": "bookshelf",
   "title": "책장",
   "file": "samples/bookshelf.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/bookshelf-art.jpg",
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "노란 상자",
+    "box": {
+     "x0": 703,
+     "y0": 232,
+     "x1": 775,
+     "y1": 365
+    },
+    "pts": [
+     [
+      709,
+      232
+     ],
+     [
+      775,
+      238
+     ],
+     [
+      765,
+      365
+     ],
+     [
+      703,
+      357
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.05
+   },
+   {
+    "type": "quad",
+    "obj": "연필꽂이",
+    "box": {
+     "x0": 321,
+     "y0": 458,
+     "x1": 365,
+     "y1": 600
+    },
+    "pts": [
+     [
+      322,
+      458
+     ],
+     [
+      363,
+      474
+     ],
+     [
+      365,
+      600
+     ],
+     [
+      321,
+      583
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.9
+   },
+   {
+    "type": "quad",
+    "obj": "노란 정리함",
+    "box": {
+     "x0": 32,
+     "y0": 296,
+     "x1": 143,
+     "y1": 410
+    },
+    "pts": [
+     [
+      32,
+      296
+     ],
+     [
+      140,
+      312
+     ],
+     [
+      143,
+      410
+     ],
+     [
+      47,
+      381
+     ]
+    ],
+    "realRight": true,
+    "ratio": 2.1
+   },
+   {
+    "type": "quad",
+    "obj": "노란 정리함",
+    "box": {
+     "x0": 41,
+     "y0": 441,
+     "x1": 152,
+     "y1": 527
+    },
+    "pts": [
+     [
+      41,
+      441
+     ],
+     [
+      150,
+      445
+     ],
+     [
+      152,
+      527
+     ],
+     [
+      52,
+      518
+     ]
+    ],
+    "realRight": true,
+    "ratio": 2.1
+   },
+   {
+    "type": "quad",
+    "obj": "파란 바구니",
+    "box": {
+     "x0": 180,
+     "y0": 743,
+     "x1": 278,
+     "y1": 826
+    },
+    "pts": [
+     [
+      180,
+      743
+     ],
+     [
+      278,
+      761
+     ],
+     [
+      278,
+      826
+     ],
+     [
+      183,
+      803
+     ]
+    ],
+    "realRight": true,
+    "ratio": 2.2
+   },
+   {
+    "type": "quad",
+    "obj": "투명 상자",
+    "box": {
+     "x0": 343,
+     "y0": 738,
+     "x1": 455,
+     "y1": 871
+    },
+    "pts": [
+     [
+      344,
+      743
+     ],
+     [
+      453,
+      757
+     ],
+     [
+      449,
+      870
+     ],
+     [
+      347,
+      857
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.8
+   },
+   {
+    "type": "quad",
+    "obj": "책등",
+    "box": {
+     "x0": 508,
+     "y0": 379,
+     "x1": 526,
+     "y1": 587
+    },
+    "pts": [
+     [
+      510,
+      384
+     ],
+     [
+      526,
+      379
+     ],
+     [
+      520,
+      587
+     ],
+     [
+      508,
+      584
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "board",
   "title": "전자칠판",
   "file": "samples/board.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/board-art.jpg",
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "전자칠판",
+    "box": {
+     "x0": 261,
+     "y0": 10,
+     "x1": 792,
+     "y1": 898
+    },
+    "pts": [
+     [
+      261,
+      10
+     ],
+     [
+      785,
+      70
+     ],
+     [
+      792,
+      740
+     ],
+     [
+      277,
+      898
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.77
+   },
+   {
+    "type": "quad",
+    "obj": "타이머",
+    "box": {
+     "x0": 187,
+     "y0": 265,
+     "x1": 250,
+     "y1": 396
+    },
+    "pts": [
+     [
+      187,
+      268
+     ],
+     [
+      248,
+      268
+     ],
+     [
+      249,
+      394
+     ],
+     [
+      188,
+      394
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1
+   },
+   {
+    "type": "circle",
+    "obj": "꽃 리스",
+    "box": {
+     "x0": 93,
+     "y0": 275,
+     "x1": 173,
+     "y1": 427
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "꽃 장식",
+    "box": {
+     "x0": 14,
+     "y0": 300,
+     "x1": 73,
+     "y1": 407
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "hallway",

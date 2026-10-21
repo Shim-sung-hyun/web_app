@@ -136,19 +136,20 @@ Style: smooth soft shading, simplified textures, crisp clean outlines, gentle li
 
 const $=id=>document.getElementById(id);
 const KEY='sf001.maker';
-let DATA=[], cur=-1, sel=-1, artUrl='';
+let ALL=[], DATA=[], cur=-1, sel=-1, artUrl='';
 function saveLocal(){ try{ localStorage.setItem(KEY,JSON.stringify(DATA.map(d=>({id:d.id,shapes:d.shapes,ok:d.ok,art:d.art})))); }catch(e){} }
 function say(t,c){ const m=$('msg'); m.textContent=t||''; m.className=c||''; }
 async function load(){
-  const r=await fetch('samples/samples.json',{cache:'no-store'}); DATA=await r.json();
+  const r=await fetch('samples/samples.json',{cache:'no-store'}); ALL=await r.json();
+  DATA=ALL.filter(d=>!d.ok);   /* 이미 확인해 올린 사진은 목록에서 뺌(내보낼 때는 그대로 다시 넣음) */
   let saved=[]; try{ saved=JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){}
   DATA.forEach(d=>{ const s=saved.find(x=>x.id===d.id); if(s){ d.shapes=s.shapes; d.ok=s.ok; d.art=s.art; } });
-  list(); pick(0);
+  list(); if(DATA.length) pick(0); else say('남은 사진이 없어요. 모두 확인했어요.','ok');
 }
 function list(){
   $('list').innerHTML=DATA.map((d,i)=>`<div class="item${i===cur?' on':''}" data-i="${i}"><img src="${d.file}" alt=""><div>${d.title}<small>${d.ok?'<span class="ok">✓ 확인</span>':d.shapes?('도형 '+d.shapes.length+'개'):'분석 전'}${d.art?' · 그림':''}</small></div></div>`).join('');
   $('list').querySelectorAll('.item').forEach(el=>el.onclick=()=>pick(+el.dataset.i));
-  const n=DATA.filter(d=>d.ok).length; $('stat').textContent=`확인 ${n} / ${DATA.length}`;
+  const n=DATA.filter(d=>d.ok).length, done=ALL.length-DATA.length; $('stat').textContent=`확인 ${n} / ${DATA.length}`+(done?` · 앞서 확인해 올린 ${done}장은 뺐어요`:'');
 }
 function pick(i){ cur=i; sel=-1; artUrl=''; $('art').style.display='none'; $('bArtOk').disabled=true; const d=DATA[i]; $('title').textContent=d.title+' ('+d.id+')'; say(''); $('photo').onload=draw; $('photo').src=d.file; list(); side(); }
 /* ---- 그리기: 좌표는 0~1000 ---- */
@@ -249,7 +250,7 @@ $('bArtOk').onclick=async()=>{ if(!artUrl) return; const d=DATA[cur];
   const im=new Image(); im.src=artUrl; await im.decode(); const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0);
   const a=document.createElement('a'); a.href=c.toDataURL('image/jpeg',0.88); a.download=d.id+'-art.jpg'; a.click(); d.art=true; saveLocal(); list(); };
 /* ---- 결과 ---- */
-$('bSave').onclick=()=>{ const out=DATA.map(d=>({id:d.id,title:d.title,file:d.file,ok:!!d.ok,art:d.art?`samples/${d.id}-art.jpg`:null,shapes:d.shapes||null}));
+$('bSave').onclick=()=>{ const out=ALL.map(d=>({id:d.id,title:d.title,file:d.file,ok:!!d.ok,art:typeof d.art==='string'?d.art:d.art?`samples/${d.id}-art.jpg`:null,shapes:d.shapes||null}));
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(out,null,1)],{type:'application/json'})); a.download='samples.json'; a.click(); };
 load();
 </script>
