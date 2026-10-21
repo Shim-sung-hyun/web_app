@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>기증 사진 확인</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{--ink:#1A2B2E;--sub:#55686B;--line:#CBDAD7;--pri:#17766F;--bg:#EEF4F2;--ok:#1b7f3a;--err:#c62828}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;font-size:15px}
+main{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:30px;margin:0 0 6px;color:var(--pri)}
+.lead{margin:0 0 14px;color:var(--sub);line-height:1.7}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input.f{flex:1;min-width:240px;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+button{font:inherit;padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+button.pri{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700}
+button:disabled{opacity:.5}
+#state{margin:8px 0 0;min-height:1.5em} #state.err{color:var(--err)} #state.ok{color:var(--ok)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.it{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px}
+.it.sel{border-color:var(--pri)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pv{position:relative} .pv img,.pv svg{width:100%;display:block;border-radius:8px}
+.pv svg{position:absolute;inset:0;height:100%}
+.ph{aspect-ratio:4/3;background:#F2F5F4;border-radius:8px;display:grid;place-items:center;color:var(--sub);font-size:13px}
+.bar{display:flex;gap:6px;align-items:center;justify-content:space-between;margin-top:6px}
+.bar small{color:var(--sub)}
+.note{font-size:13px;color:var(--sub);line-height:1.6}
+</style>
+</head>
+<body>
+<main>
+<h1>기증 사진 확인</h1>
+<p class="lead">선생님들이 기증한 사진을 만든 사람이 보고 고르는 화면이에요. 고른 사진은 zip으로 받아 Claude에게 보내면 예시 사진 확인(sample-maker)으로 들어가요. 수업하는 선생님은 쓰지 않아요.</p>
+<div class="card">
+  <div class="row"><input class="f" id="tok" type="password" autocomplete="off" placeholder="donate.php 맨 위에 넣은 확인 글자"><button class="pri" id="load" type="button">불러오기</button></div>
+  <p class="note">사람·얼굴·이름·번호가 보이면 <b>지우기</b>. 도형 표시(빨간 선)가 엉뚱한 것은 sample-maker에서 고칠 수 있어요. 받은 뒤에는 서버에서 지우기를 눌러 대기함을 비워 주세요.</p>
+  <div class="row"><button id="zip" type="button" disabled>고른 것 zip 받기</button><button id="delSel" type="button" disabled>고른 것 서버에서 지우기</button><span id="cnt" class="note"></span></div>
+  <p id="state"></p>
+</div>
+<div class="grid" id="grid"></div>
+</main>
+<script>
+const API='https://charum.org/donate.php';
+const $=id=>document.getElementById(id);
+const say=(t,c)=>{ $('state').textContent=t; $('state').className=c||''; };
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+$('tok').value=ls.get('donateReview.tok')||'';
+let ITEMS={}, SEL=new Set();
+async function call(o){ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({...o,token:$('tok').value.trim()})}); const j=await r.json(); if(j.error) throw new Error(j.error); return j; }
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function overlay(d){ return `<svg viewBox="0 0 1000 1000" preserveAspectRatio="none">${d.shapes.map(s=>{ const b=s.box;
+  if(s.pts&&s.pts.length>2) return `<polygon points="${s.pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#e53935" stroke-width="5" vector-effect="non-scaling-stroke"/>`;
+  return `<ellipse cx="${(b.x0+b.x1)/2}" cy="${(b.y0+b.y1)/2}" rx="${(b.x1-b.x0)/2}" ry="${(b.y1-b.y0)/2}" fill="none" stroke="#e53935" stroke-width="5" vector-effect="non-scaling-stroke"/>`; }).join('')}</svg>`; }
+function count(){ $('cnt').textContent=`고름 ${SEL.size} / ${Object.keys(ITEMS).length}`; $('zip').disabled=$('delSel').disabled=!SEL.size; }
+$('load').onclick=async()=>{ ls.set('donateReview.tok',$('tok').value.trim()); say('불러오는 중…'); $('grid').innerHTML=''; ITEMS={}; SEL.clear();
+  try{ const {list}=await call({a:'list'}); if(!list.length){ say('대기함이 비어 있어요.','ok'); count(); return; }
+    for(const m of list){ const d=await call({a:'get',id:m.id}); ITEMS[d.id]=d;
+      const el=document.createElement('div'); el.className='it'; el.innerHTML=`<div class="pair"><div class="pv"><img src="data:image/jpeg;base64,${d.img}" alt="">${overlay(d)}</div>${d.art?`<div class="pv"><img src="data:image/jpeg;base64,${d.art}" alt=""></div>`:'<div class="ph">그림 없음</div>'}</div>
+        <div class="bar"><span><b>${esc(d.title)}</b><br><small>${new Date(d.t*1000).toLocaleString('ko-KR')} · 도형 ${d.shapes.length}개 · ${esc([...new Set(d.shapes.map(s=>s.obj))].join(', '))}</small></span>
+        <span class="row"><label><input type="checkbox" data-a="sel"> 고르기</label><button type="button" data-a="del">지우기</button></span></div>`;
+      el.querySelector('[data-a=sel]').onchange=e=>{ e.target.checked?SEL.add(d.id):SEL.delete(d.id); el.classList.toggle('sel',e.target.checked); count(); };
+      el.querySelector('[data-a=del]').onclick=async()=>{ await call({a:'del',id:d.id}); delete ITEMS[d.id]; SEL.delete(d.id); el.remove(); count(); };
+      $('grid').appendChild(el); count(); }
+    say(list.length+'장을 불러왔어요.','ok');
+  }catch(e){ say(e.message==='token'?'확인 글자가 맞지 않아요(donate.php 맨 위 $REVIEW_TOKEN).':'불러오지 못했어요: '+e.message,'err'); } };
+$('zip').onclick=async()=>{ if(typeof JSZip==='undefined'){ say('zip 도구를 불러오지 못했어요. 새로 고침해 주세요.','err'); return; }
+  const z=new JSZip(), meta=[];
+  for(const id of SEL){ const d=ITEMS[id], sid='d'+id; z.file(sid+'.jpg',d.img,{base64:true}); if(d.art) z.file(sid+'-art.jpg',d.art,{base64:true});
+    meta.push({id:sid,title:d.title,file:`samples/${sid}.jpg`,ok:false,art:d.art?`samples/${sid}-art.jpg`:null,shapes:d.shapes,donated:true}); }
+  z.file('donations.json',JSON.stringify(meta,null,1));
+  const b=await z.generateAsync({type:'blob'}); const l=document.createElement('a'); l.href=URL.createObjectURL(b); l.download='donations-001.zip'; l.click();
+  say(SEL.size+'장을 받았어요. Claude에게 보내 주세요. 그다음 "고른 것 서버에서 지우기".','ok'); };
+$('delSel').onclick=async()=>{ for(const id of [...SEL]){ await call({a:'del',id}); delete ITEMS[id]; SEL.delete(id); } $('load').onclick(); };
+</script>
+</body>
+</html>

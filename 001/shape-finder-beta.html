@@ -332,6 +332,54 @@ body.setup{background-color:var(--bg)}
 .flow li{display:flex;align-items:center;gap:8px;font-weight:700;padding:6px 14px 6px 6px;border-radius:8px;background:#F2F7F5;border:1px solid var(--line)}
 .flow li span{width:24px;height:24px;border-radius:5px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:13px}
 @media (max-width:620px){.seg{grid-template-columns:1fr}.my-row{grid-template-columns:1fr}.ex-strip{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}}
+/* 사진 고르기 단추 · 내 사진 · ③ 강조 · 더 정하기 작게 */
+.src-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.src-row .pick-btn{padding:12px 8px;gap:4px;font-size:16px}
+.src-row .pick-btn svg{width:30px;height:30px}
+.src-row .pick-btn small{font-weight:400;font-size:13px;opacity:.8}
+.src-row .pick-btn:not(.pri){color:var(--accent);border-color:var(--accent)}
+.src-row #sDemo.on{background:var(--accent-soft)}
+.status.small{font-size:13px}
+.ex-item.mine{padding:4px;cursor:default}
+.mine-pick{display:flex;flex-direction:column;gap:3px;border:0;background:none;padding:0;font:inherit;text-align:center;cursor:pointer}
+.mine-pick img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px}
+.mine-pick span{font-size:13px;font-weight:700;line-height:1.3}
+.mine-act{display:flex;gap:4px;justify-content:center;margin-top:3px;align-items:center}
+.mine-act button{font:inherit;font-size:12px;padding:3px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--muted);cursor:pointer}
+.mine-act small{font-size:12px;color:var(--ok)}
+.plan.just{box-shadow:0 0 0 4px var(--accent-soft),0 0 0 6px var(--accent);transition:box-shadow .4s}
+details.card.more .opts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+details.card.more .opt{padding:8px 10px;gap:8px;border-radius:10px}
+details.card.more .opt b{font-size:15px}
+details.card.more .opt span{font-size:13px}
+details.card.more .opt input{width:16px;height:16px;margin-top:3px}
+details.card.more h3{font-size:15px;margin:4px 0 0}
+details.card.more .btn{min-height:40px;padding:6px 14px;font-size:15px;border-radius:10px}
+@media (max-width:620px){.src-row{grid-template-columns:1fr}}
+/* 끝: 그림 → 색칠 */
+.end-photo{width:min(70vw,900px)}
+.reveal-art{position:relative}
+.reveal-art .photo-under{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:18px;animation:artOut 2.4s ease forwards}
+.reveal-art .cartoon{animation:artIn 2.4s ease forwards}
+@keyframes artOut{0%,30%{opacity:1}100%{opacity:0}}
+@keyframes artIn{0%,30%{opacity:0}100%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.reveal-art .photo-under{display:none}.reveal-art .cartoon{animation:none}}
+.color-wrap{display:flex;gap:18px;align-items:center;justify-content:center;width:100%;height:100%;min-height:0}
+.color-stage{position:relative;flex:1;min-width:0;height:100%;display:flex;align-items:center;justify-content:center}
+.color-stage canvas{max-width:100%;max-height:calc(100vh - 140px);border-radius:16px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.08);cursor:pointer}
+.waiting-mini{position:absolute}
+.palette{display:grid;grid-template-columns:repeat(2,64px);gap:12px;flex:none}
+.pal{width:64px;height:64px;border-radius:50%;border:4px solid #fff;background:var(--c);box-shadow:0 0 0 1px rgba(0,0,0,.15);cursor:pointer;touch-action:none}
+.pal[aria-pressed="true"]{box-shadow:0 0 0 4px var(--ink)}
+@media (orientation:portrait){.color-wrap{flex-direction:column}.palette{grid-template-columns:repeat(6,52px)}.pal{width:52px;height:52px}.color-stage canvas{max-height:calc(100vh - 300px)}}
+.end-btns{justify-content:center;margin-top:10px}
+.give-show{display:flex;gap:12px;align-items:center;background:#F3F7F6;border-radius:12px;padding:8px}
+.give-show img{width:110px;height:82px;object-fit:cover;border-radius:8px}
+.give-show div{display:flex;flex-direction:column;font-size:14px}
+.give-ok{display:flex;gap:8px;align-items:flex-start;font-size:15px;line-height:1.5}
+.give-ok input{width:18px;height:18px;margin-top:3px;accent-color:var(--accent)}
+.key-msg.ok{color:var(--ok);font-weight:700}
+#giveBox{position:fixed;inset:0;z-index:2147482100;background:rgba(18,32,30,.55);display:flex;align-items:center;justify-content:center;padding:12px}
 /* 선생님 키 창 */
 #keyBox{position:fixed;inset:0;z-index:2147482100;background:rgba(18,32,30,.55);display:flex;align-items:center;justify-content:center;padding:12px}
 .key-card{background:#fff;border-radius:18px;padding:20px 22px;width:min(560px,100%);max-height:calc(100vh - 24px);overflow:auto;display:flex;flex-direction:column;gap:12px;border-top:6px solid var(--accent)}
@@ -1130,7 +1178,7 @@ const withP=(p,rest)=>p?`${p}. ${rest}`:rest;
 const FIXED_LINES=()=>[
   '사진을 골라요.', ...COLORS.map(c=>c.name+' 붓.'), '사진을 보아요.', '사진에 도형이 있어요.',
   ...Object.values(PHRASES).flat().map(x=>x+'.'), ...NUM_WORD.map(x=>x+'.'),
-  '다시 찾아요.', '여기 있어요. 눌러요.', '찾았어요. 또 찾아요.', '도형을 찾고 있어요. 잠시 기다리세요.', '다 했어요.', '와! 사진이 그림이 되었어요.'
+  '다시 찾아요.', '여기 있어요. 눌러요.', '찾았어요. 또 찾아요.', '도형을 찾고 있어요. 잠시 기다리세요.', '다 했어요.', '와! 사진이 그림이 되었어요.', '색칠해요.', '다 했어요. 사진이 그림이 되었어요.'
 ];
 function renderSoundBtn(){
   const b=$('soundBtn'); b.setAttribute('aria-pressed',S.sound);
@@ -1537,23 +1585,24 @@ function showSetup(o={}){
     <header class="m-head"><div class="m-title"><h1>사진 속 도형 찾기</h1><span class="m-mark" aria-hidden="true"><i class="o"></i><i class="t"></i><i class="s"></i></span></div>
       <p class="lead">사진 속 물건에서 도형을 찾아 배우고, 칠하고, 직접 찾아요.</p></header>
 
-    <div class="card" id="pickCard"><h2><span class="n">1</span>어떤 사진으로 할까요?</h2>
-      <p class="sub-h">예시 사진 <small>키 없이 바로</small></p>
-      <div class="ex-strip" id="exStrip"><span class="status">예시 사진을 가져오는 중…</span></div>
-      <p class="sub-h">내 사진 <small>선생님 Gemini 키 필요 · 처음 한 번, 사진과 함께 휴대폰에서 넣어요</small></p>
-      <div class="my-row">
-        <button class="pick-btn pri" id="sPhone" type="button">${ICON.phone}<span>휴대폰에서 받기</span></button>
-        <button class="pick-btn" id="sPick" type="button">${ICON.photo}<span>이 기기에서 고르기</span></button>
-      </div>
-      <input type="file" id="sFile" accept="image/*" hidden>
-    </div>
-
-    <div class="card" id="levelCard"><h2><span class="n">2</span>단계</h2>
+    <div class="card" id="levelCard"><h2><span class="n">1</span>단계</h2>
       <div class="seg" role="radiogroup">${lv.map(([v,t])=>`<label class="seg-b"><input type="radio" name="level" value="${v}" ${S.level===v?'checked':''}><span>${t}</span></label>`).join('')}</div>
       <p class="status" id="lvDesc">${lv[S.level-1][2]}</p>
     </div>
 
-    <div class="card plan"><h2><span class="n">3</span>오늘 할 것</h2>
+    <div class="card" id="pickCard"><h2><span class="n">2</span>어떤 사진으로 할까요?</h2>
+      <div class="src-row">
+        <button class="pick-btn" id="sDemo" type="button" aria-expanded="false">${ICON.learn}<span>예시 사진</span><small>키 없이 바로</small></button>
+        <button class="pick-btn pri" id="sPhone" type="button">${ICON.phone}<span>휴대폰에서 받기</span><small>찍어서 보내기</small></button>
+        <button class="pick-btn" id="sPick" type="button">${ICON.photo}<span>이 기기에서 고르기</span><small>사진 파일</small></button>
+      </div>
+      <input type="file" id="sFile" accept="image/*" hidden>
+      <div id="exWrap" hidden><div class="ex-strip" id="exStrip"><span class="status">예시 사진을 가져오는 중…</span></div></div>
+      <div id="mineWrap" hidden><p class="sub-h">내 사진 <small>이 기기에 보관해 두었어요 · 다시 쓸 때는 키 없이 바로</small></p><div class="ex-strip" id="mineStrip"></div></div>
+      <p class="status small">내 사진은 처음 한 번 선생님 Gemini 키가 필요해요. 휴대폰에서 사진을 보낼 때 같은 화면에서 넣어요.</p>
+    </div>
+
+    <div class="card plan" id="planCard"><h2><span class="n">3</span>도형 찾기 사진</h2>
       <div class="pick-show" id="pickShow" hidden><img id="pickImg" alt="고른 사진"><div><b id="pickTitle"></b><span id="pickInfo"></span></div></div>
       <p class="status" id="planShapes"></p>
       <ol class="flow" id="planFlow"></ol>
@@ -1574,8 +1623,8 @@ function showSetup(o={}){
       </div>
       <h3>끝 화면 그림</h3>
       <div class="opts">
-        ${opt('cartoonOn','on',S.cartoonOn?'on':'off','그림 (기본)','예시 사진은 미리 그려 둔 그림으로. 내 사진은 칠한 사진')}
-        ${opt('cartoonOn','off',S.cartoonOn?'on':'off','칠한 사진','학생이 칠한 사진을 그대로')}
+        ${opt('cartoonOn','on',S.cartoonOn?'on':'off','그림 → 색칠 (기본)','사진을 예쁜 그림으로 바꿔 보여 주고, 그 그림에 색칠해요. 내 사진은 결제를 연결한 Gemini 키일 때만 그림(한 장 약 50원)')}
+        ${opt('cartoonOn','off',S.cartoonOn?'on':'off','바로 색칠','그림 없이 사진의 선을 따라 바로 색칠해요')}
       </div>
       <h3>틀렸을 때</h3>
       <div class="opts">
@@ -1599,6 +1648,9 @@ function showSetup(o={}){
       <p class="note"><b>학생 화면에서는 메뉴가 모두 숨겨져요.</b> 오른쪽 아래의 옅은 동그라미(charum)를 <b>3초 동안 누른 뒤</b> 왼쪽 위에 잠깐 나타나는 작은 점을 누르면 교사 모드가 켜지고 수업이 멈춰요. 위쪽 <b>사진 · 배우기 · 찾기 · 끝</b>으로 단계를 바로 고를 수 있어요.<br>
       <b>예시 사진은 키나 가입 없이 바로 쓸 수 있어요.</b> 도형·목소리·끝 그림을 미리 만들어 두었어요.<br>
       <b>내 사진</b>은 <b>휴대폰에서 받기</b>로 보내요. QR을 찍어 사진을 보내면서, 처음 한 번은 같은 화면에 선생님 본인의 <b>Gemini 키</b>(도형 찾기, 필수)와 <b>Google 음성 키</b>(목소리, 선택)를 함께 넣어요. Gemini 키는 Google AI Studio에서 휴대폰으로 1~2분이면 받을 수 있어요(<a href="https://shim-sung-hyun.github.io/web_app/gemini-key.html" target="_blank" rel="noopener">키 받는 법</a>). 키는 이 기기에만 저장돼요. Google 음성 키가 없으면 내 사진 수업은 기기 목소리로 해요.<br>
+      <b>내 사진은 이 기기(이 브라우저)에 보관</b>돼요. 도형을 찾은 결과와 그림도 함께 두어, 다음에는 키 없이 바로 써요. 브라우저 기록을 지우면 함께 지워져요.<br>
+      <b>끝 그림</b>: 찾기를 마치면 사진이 예쁜 그림으로 바뀌고, 그 그림에 학생이 색칠해요. 예시 사진은 그림을 미리 만들어 두었어요. 내 사진은 결제를 연결한 Gemini 키일 때만 그림을 그리고(한 장 약 50원, 한 번 그리면 보관), 아니면 사진의 선을 따라 바로 색칠해요.<br>
+      <b>기증</b>: 내 사진 아래 <b>기증</b>을 누르면 다른 선생님도 쓰는 예시 사진이 될 수 있어요. 보내기 전에 사람·얼굴·이름·번호가 있는지 Gemini로 살펴 막고, 만든 사람이 한 번 더 보고 올려요.<br>
       사진과 키는 잠가서 charum.org 중계 서버를 거쳐 오고, 중계 서버는 열어 볼 수 없어요. 고른 사진은 도형을 찾으려고 Google Gemini로 보내지고, 결제를 연결하지 않은 키는 Google이 서비스 개선에 쓸 수 있어요. <b>학생 얼굴이나 이름이 보이는 사진은 넣지 마세요.</b></p>
     </details>
 
@@ -1613,7 +1665,11 @@ function showSetup(o={}){
     if(r.name==='engine'){S.engine=r.value; store.set('voice2',S.engine); $('voiceStatus').textContent='';}
     const m=$('moreSum'); if(m) m.textContent=sum(); planInfo();
   });
-  /* 예시 사진: 화면에 바로 늘어놓고 누르면 고름 */
+  /* 예시 사진: 단추로 펴고 접음(이 기기에 기억) */
+  const exOpen=v=>{ $('exWrap').hidden=!v; $('sDemo').setAttribute('aria-expanded',String(!!v)); $('sDemo').classList.toggle('on',!!v); store.set('exOpen',v?'1':'0'); };
+  exOpen(store.get('exOpen')!=='0');
+  $('sDemo').onclick=()=>exOpen($('exWrap').hidden);
+  renderMine();
   loadSamples().then(list=>{ const box=$('exStrip'); if(!box) return;
     if(!list.length){ box.innerHTML='<button class="btn" id="exOne" type="button">예시 사진 하나로 하기</button>'; $('exOne').onclick=async()=>{ showPick('예시 사진을 가져오는 중…'); await prepareDemo(); showPick('예시 사진'); }; return; }
     box.innerHTML=list.map(x=>`<button class="ex-item" type="button" data-id="${esc(x.id)}" aria-pressed="false"><img src="${x.file}" alt="" loading="lazy"><span>${esc(x.title)}</span></button>`).join('');
@@ -1630,9 +1686,9 @@ function showSetup(o={}){
   const fi=$('sFile');
   $('sPick').onclick=()=>needKey(()=>fi.click());
   fi.onchange=async()=>{ const f=fi.files&&fi.files[0]; fi.value=''; if(!f) return; hideSpot(); showPick('사진을 여는 중…');
-    if(!await preparePhoto(f)){ S.img=null; showPick(); spotlight('#pickCard','이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; } showPick('내 사진'); };
+    if(!await preparePhoto(f)){ S.img=null; showPick(); spotlight('#pickCard','이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; } showPick('내 사진'); goPlan(); };
   $('sPhone').onclick=()=>phoneReceive(async blob=>{ if(!$('pickCard')) return; hideSpot(); showPick('사진을 여는 중…'); keyRow();
-    if(!await preparePhoto(blob)){ S.img=null; showPick(); return; } showPick('휴대폰에서 받은 사진'); });
+    goPlan(); if(!await preparePhoto(blob)){ S.img=null; showPick(); return; } showPick('휴대폰에서 받은 사진'); goPlan(); });
   $('voiceTest').onclick=async()=>{
     unlockAudio();
     const st=$('voiceStatus'); st.className='status'; st.textContent='';
@@ -1673,14 +1729,16 @@ async function openGallery(){
   box.querySelectorAll('.gal-item').forEach(b=>b.onclick=()=>{ close(); useSample(list[+b.dataset.i]); });
 }
 async function useSample(x){
-  showPick('사진을 여는 중…'); markSample(x.id);
+  S.mineId=null; S.mineArt=null; showPick('사진을 여는 중…'); markSample(x.id);
   try{ const blob=await (await fetch(x.file)).blob(); S.img=await loadPhoto(blob); }catch(e){ S.img=null; markSample(); showPick(); return; }
   S.demo=true; S.shapes=[]; S.sampleId=x.id;
   S.analysis={status:'done',shapes:x.shapes.map(s=>({...s,box:{...s.box},pts:s.pts&&s.pts.map(p=>[...p])}))};
   S.sampleArt=x.art||null;   /* 미리 골라 둔 끝 그림 */
-  showPick('예시 · '+x.title);
+  showPick('예시 · '+x.title); goPlan();
 }
-function markSample(id){ document.querySelectorAll('.ex-item').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id))); }
+/* 사진을 고르면 ③ 도형 찾기 사진으로 바로(머뭇거리지 않게) */
+function goPlan(){ const c=$('planCard'); if(!c) return; c.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'}); c.classList.add('just'); clearTimeout(goPlan.t); goPlan.t=setTimeout(()=>c.classList.remove('just'),1800); }
+function markSample(id){ document.querySelectorAll('#exStrip .ex-item').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id))); document.querySelectorAll('#mineStrip .ex-item').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===S.mineId))); }
 /* 설정 화면의 고른 사진 칸: 미리 보기 + 도형 찾기 상태 */
 function showPick(title){
   const box=$('pickShow'); if(!box) return;
@@ -1702,11 +1760,13 @@ function planInfo(){
   const el=$('planFlow'); if(!el) return;
   const a=S.analysis||{}, sh=a.status==='done'?a.shapes:[];
   const kinds=[...new Set(sh.map(x=>TYPES[x.type]&&TYPES[x.type]['l'+Math.min(S.level,2)]||TYPES[x.type].l1))];
-  const step=['보기','칠하기','찾기','끝 그림'].filter(t=>!(t==='칠하기'&&!S.paint));
+  const step=['보기','칠하기','찾기','그림·색칠'].filter(t=>!(t==='칠하기'&&!S.paint));
   $('planShapes').textContent=!S.img?'사진을 고르면 찾을 도형이 여기에 나와요.':a.status==='pending'?'도형을 찾고 있어요…':sh.length?`찾을 도형: ${kinds.join(' · ')}`:'찾은 도형이 없어요.';
   el.innerHTML=step.map((t,i)=>`<li><span>${i+1}</span>${t}</li>`).join('');
   const pv=$('planVoice'); if(pv){ chooseEngine(); pv.textContent='목소리: '+voiceName(S.engineNow)+(S.voiceNote?' — '+S.voiceNote:''); }
 }
+/* 그림은 장마다 돈이 들어 값이 싼 모델부터 */
+function imgCost(n){ if(/pro/.test(n)) return 9; if(/nano-banana-2\.1/.test(n)) return 0; if(/lite/.test(n)) return 1; if(/flash|nano-banana/.test(n)) return 2; return 5; }
 function rankModel(m){
   const v=(m.match(/gemini-(\d+(?:\.\d+)?)/)||[])[1]; let s=v?parseFloat(v)*100:0;
   if(/flash/.test(m)) s+=40; if(/pro/.test(m)) s+=10; if(/lite/.test(m)) s-=25; if(/preview|exp/.test(m)) s-=15;
@@ -1725,6 +1785,9 @@ async function checkKey(){
       .filter(n=>/^gemini/.test(n)&&!/(tts|image|audio|live|embedding|transcribe|thinking|computer)/.test(n));
     if(!names.length) return false;
     names.sort((a,b)=>rankModel(b)-rankModel(a));
+    const imgs=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace(/^models\//,''))
+      .filter(n=>(/^gemini.*image/.test(n)||/nano-banana/.test(n))&&!/imagen/.test(n));
+    imgs.sort((a,b)=>imgCost(a)-imgCost(b)||rankModel(b)-rankModel(a)); S.imageModel=imgs[0]||'';
     S.models=names; if(!names.includes(S.model)) S.model=names[0];
     store.set('model',S.model); S.modelChecked=true; return true;
   }catch(e){ return false; }
@@ -1764,7 +1827,7 @@ async function startDemo(){
 }
 function runAnalysis(){
   const myImg=S.img;
-  analyze().then(r=>{ if(S.img!==myImg) return; S.analysis={status:'done',shapes:r}; pickInfo(); onAnalysis(); })
+  analyze().then(async r=>{ if(S.img!==myImg) return; S.analysis={status:'done',shapes:r}; pickInfo(); await saveMine(); if(S.img!==myImg) return; startCartoon(); onAnalysis(); })
     .catch(err=>{ if(S.img!==myImg) return;
       S.analysis = S.demo ? {status:'done',shapes:sampleShapes()} : {status:'error',message:err.message,detail:err.detail||''};
       pickInfo(); onAnalysis(); });
@@ -1792,6 +1855,87 @@ async function usePhoto(f){
   if(!await preparePhoto(f)){ showError('이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; }
   chooseEngine();
   showBrush();
+}
+/* ===== 내 사진 보관: 분석한 사진·도형·그림을 이 기기(이 브라우저)에 두고 키 없이 다시 씀 ===== */
+const mineDB=new Promise(r=>{ try{ const q=indexedDB.open('shapeFinderMine',1); q.onupgradeneeded=()=>q.result.createObjectStore('p',{keyPath:'id'}); q.onsuccess=()=>r(q.result); q.onerror=()=>r(null); }catch(e){ r(null); } });
+async function mineAll(){ const db=await mineDB; if(!db) return []; return new Promise(r=>{ try{ const q=db.transaction('p').objectStore('p').getAll(); q.onsuccess=()=>r((q.result||[]).sort((a,b)=>b.t-a.t)); q.onerror=()=>r([]); }catch(e){ r([]); } }); }
+async function minePut(x){ const db=await mineDB; if(!db) return; return new Promise(r=>{ try{ const tx=db.transaction('p','readwrite'); tx.objectStore('p').put(x); tx.oncomplete=()=>r(); tx.onerror=()=>r(); }catch(e){ r(); } }); }
+async function mineDel(id){ const db=await mineDB; if(!db) return; return new Promise(r=>{ try{ const tx=db.transaction('p','readwrite'); tx.objectStore('p').delete(id); tx.oncomplete=()=>r(); tx.onerror=()=>r(); }catch(e){ r(); } }); }
+async function mineGet(id){ return (await mineAll()).find(x=>x.id===id)||null; }
+const mineTitle=sh=>[...new Set(sh.map(x=>x.obj))].slice(0,3).join(' · ')||'내 사진';
+async function saveMine(){
+  if(S.demo||!S.img||!S.analysis||S.analysis.status!=='done'||!S.analysis.shapes.length) return;
+  if(S.mineId){ const old=await mineGet(S.mineId); if(old){ old.shapes=S.analysis.shapes; await minePut(old); return; } }
+  const id='m'+Date.now().toString(36);
+  await minePut({id,t:Date.now(),img:S.img.url,w:S.img.w,h:S.img.h,shapes:S.analysis.shapes,title:mineTitle(S.analysis.shapes),art:null,given:false});
+  S.mineId=id;
+  const all=await mineAll(); for(const x of all.slice(60)) await mineDel(x.id);   /* 60장까지 보관(오래된 것부터 지움) */
+  renderMine();
+}
+async function mineSetArt(id,url){ const x=await mineGet(id); if(!x) return; x.art=await shrinkData(url,1024,0.86); await minePut(x); renderMine(); }
+function shrinkData(url,max,q){ return new Promise(res=>{ const im=new Image(); im.onload=()=>{ const k=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight)); const c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',q)); }; im.onerror=()=>res(url); im.src=url; }); }
+async function renderMine(){
+  const box=$('mineStrip'); if(!box) return;
+  const list=await mineAll(); $('mineWrap').hidden=!list.length;
+  box.innerHTML=list.map(x=>`<div class="ex-item mine" data-id="${x.id}" aria-pressed="${x.id===S.mineId}">
+      <button class="mine-pick" type="button" data-act="pick"><img src="${x.img}" alt=""><span>${esc(x.title)}</span></button>
+      <div class="mine-act">${x.given?'<small>기증함</small>':'<button type="button" data-act="give">기증</button>'}<button type="button" data-act="del" aria-label="지우기">지우기</button></div></div>`).join('');
+  box.querySelectorAll('[data-act]').forEach(b=>b.onclick=async()=>{ const id=b.closest('.mine').dataset.id, x=list.find(y=>y.id===id); if(!x) return;
+    if(b.dataset.act==='pick') useMine(x);
+    if(b.dataset.act==='del'){ if(b.dataset.sure!=='1'){ b.dataset.sure='1'; b.textContent='정말 지울까요?'; setTimeout(()=>{ b.dataset.sure=''; b.textContent='지우기'; },3000); return; }
+      await mineDel(id); if(S.mineId===id){ S.mineId=null; } renderMine(); }
+    if(b.dataset.act==='give') giveMine(x); });
+}
+async function useMine(x){
+  hideSpot(); showPick('사진을 여는 중…');
+  S.img={url:x.img,w:x.w,h:x.h}; S.demo=false; S.sampleId=null; S.sampleArt=null; S.mineId=x.id; S.mineArt=x.art||null; S.shapes=[]; S.cartoon=null;
+  S.analysis={status:'done',shapes:x.shapes.map(s=>({...s,box:{...s.box},pts:s.pts&&s.pts.map(p=>[...p])}))};
+  markSample(); showPick('내 사진 · '+x.title); goPlan();
+  if(!S.mineArt) startCartoon();
+}
+/* ===== 기증: 선생님이 고른 내 사진을 다른 선생님도 쓰는 예시 사진으로 =====
+   보내기 전에 이 앱이 Gemini로 사람·얼굴·이름·번호를 살펴 있으면 막음 → charum.org 대기함 → 만든 사람이 보고 골라 GitHub에 */
+const DONATE='https://charum.org/donate.php';
+function giveMine(x){
+  const old=$('giveBox'); if(old) old.remove();
+  const box=document.createElement('div'); box.id='giveBox'; box.className='key-box';
+  box.innerHTML=`<div class="key-card" role="dialog" aria-label="사진 기증">
+    <h2>이 사진을 기증할까요?</h2>
+    <div class="give-show"><img src="${x.img}" alt=""><div><b>${esc(x.title)}</b><span>${x.shapes.length}개 도형${x.art?' · 그림 함께':''}</span></div></div>
+    <p>기증한 사진은 만든 사람이 살펴본 뒤 <b>모든 선생님이 쓰는 예시 사진</b>이 돼요. 도형·목소리·그림을 미리 만들어 두어, 다른 선생님은 키 없이 쓸 수 있어요.</p>
+    <label class="give-ok"><input type="checkbox" id="giveChk"> 사람·얼굴·이름·전화번호·차 번호 같은 개인 정보가 없는 사진이에요. 제가 찍었고 기증에 동의해요.</label>
+    <p class="key-msg" id="giveMsg"></p>
+    <div class="key-row end"><button class="btn" id="giveX" type="button">닫기</button><button class="btn primary" id="giveGo" type="button">기증하기</button></div></div>`;
+  document.body.appendChild(box);
+  const msg=(t,c)=>{ const m=$('giveMsg'); m.textContent=t; m.className='key-msg '+(c||''); };
+  $('giveX').onclick=()=>box.remove(); box.addEventListener('pointerdown',e=>{ if(e.target===box) box.remove(); });
+  $('giveGo').onclick=async()=>{
+    if(!$('giveChk').checked){ msg('확인 칸에 표시해 주세요.','bad'); return; }
+    if(!S.apiKey){ box.remove(); needKey(()=>giveMine(x)); return; }
+    const go=$('giveGo'); go.disabled=true;
+    try{
+      msg('개인 정보가 있는지 살펴보고 있어요…');
+      const bad=await privacyCheck(x.img);
+      if(bad){ msg('이 사진은 기증할 수 없어요: '+bad+'. 그런 것이 보이지 않게 다시 찍어 주세요. (이 기기에서는 그대로 쓸 수 있어요)','bad'); go.disabled=false; return; }
+      msg('보내고 있어요…');
+      const r=await fetch(DONATE,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({a:'give',title:x.title,shapes:x.shapes,img:x.img.split(',')[1],art:x.art?x.art.split(',')[1]:''})});
+      let j={}; try{ j=await r.json(); }catch(e){}
+      if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
+      x.given=true; await minePut(x); renderMine();
+      msg('고마워요! 기증했어요. 만든 사람이 살펴본 뒤 예시 사진에 넣을게요.','ok'); go.hidden=true;
+    }catch(e){ msg('보내지 못했어요. 잠시 뒤 다시 해 주세요. ('+(e.message||e)+')','bad'); go.disabled=false; }
+  };
+}
+async function privacyCheck(dataUrl){
+  if(!await checkKey()) throw new Error('Gemini 키를 확인해 주세요');
+  const body={contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data:dataUrl.split(',')[1]}},{text:'Look at this photo for privacy problems before it is shared publicly. Return JSON only: {"person":bool,"face":bool,"name_text":bool,"phone_or_id_number":bool,"license_plate":bool}. person = any human or body part; face = any face including on posters or screens; name_text = any readable personal name; phone_or_id_number = any phone, student or ID number; license_plate = readable vehicle plate.'}]}],
+    generationConfig:{responseMimeType:'application/json',temperature:0}};
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(S.model)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},body:JSON.stringify(body)});
+  if(!r.ok) throw new Error('검사 '+r.status);
+  const j=await r.json(); let o={};
+  try{ o=JSON.parse(((j.candidates||[])[0].content.parts||[]).map(p=>p.text||'').join('').replace(/^```(json)?|```$/g,'')); }catch(e){ throw new Error('검사 결과를 읽지 못했어요'); }
+  const why=[]; if(o.person||o.face) why.push('사람이나 얼굴'); if(o.name_text) why.push('이름'); if(o.phone_or_id_number) why.push('번호'); if(o.license_plate) why.push('차 번호판');
+  return why.join(', ');
 }
 /* ===== 휴대폰에서 받기: 사진 하나에 필요한 키(Gemini 필수 · Google 음성 선택)를 함께 =====
    QR 하나로 사진을 보내면서, 이 기기에 없는 키만 휴대폰 화면에 칸이 나옴 */
@@ -1831,7 +1975,7 @@ function needKey(then){
   $('keyPhone').onclick=()=>KeyRelay.receive({want:missingKeys(), onKeys:got=>{ if(got&&got.cloud) saveCloudKey(got.cloud.trim()); if(got&&got.gemini) use(got.gemini); }});
 }
 /* 사진을 받아 두고 바로 분석을 시작(화면은 그대로). 설정 화면에서 미리 고를 때도 씀 */
-async function preparePhoto(f){ markSample(); S.sampleId=null;
+async function preparePhoto(f){ S.sampleId=null; S.mineId=null; S.mineArt=null; markSample();
   let img; try{ img=await loadPhoto(f); }catch(e){ return false; }
   S.img=img; S.demo=false; S.sampleArt=null; S.shapes=[]; S.cartoon=null; S.analysis={status:'pending'};
   runAnalysis(); return true;
@@ -2041,7 +2185,7 @@ function onAnalysis(){
   if(a.status==='error'){ showError(a.message,a.detail); return; }
   if(!a.shapes.length){ showError('이 사진에서는 도형을 찾지 못했어요. 다른 사진을 골라요.'); return; }
   buildLesson(a.shapes);
-  S.cartoon=S.cartoonOn&&S.demo&&S.sampleArt?{status:'done',url:S.sampleArt}:{status:'none'};
+  if(!S.cartoon||S.cartoon.status==='none') startCartoon();
   showReveal();
 }
 function showWaiting(){
@@ -2646,26 +2790,38 @@ function nextFind(){
 }
 
 /* ================= 4. 끝: 그림으로 바꾸기 ================= */
+const CARTOON_PROMPT=`Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.`;
 const CARTOON_EN={circle:'circle',ellipse:'oval (ellipse)',triangle:'triangle',quad:'rectangle / four-sided shape'};
 function cartoonPrompt(){
-  /* 도형 목록·위치를 넣으면 작은 그림 모델이 그 자리에 없던 모양을 새로 그려 넣음(휴대폰 위 타원 두 개) → 넣지 않음.
-     사진을 그대로 옮겨 그리는 것만 시킴: 덜 바꿀수록 더 깔끔하고 사진과 같음. 찾은 도형은 앱이 따로 보여 줌 */
-  return `Turn image 0 into a clean, high-quality illustration of the very same scene.
-Copy the photo faithfully: every object stays exactly where it is, with the same shape, size, angle, number and real colors. Keep all edges and outlines in the same place.
-Do not add, remove, move, merge or invent anything. Do not put new shapes, patterns or objects on top of anything.
-Style: smooth soft shading, simplified textures, crisp clean outlines, gentle light, slightly brighter colors. No text, letters, numbers or logos.`;
+  /* 끝 그림: 학생이 공부한 사진을 예쁜 그림으로. 도형은 또렷하게 살리되 표시·빛·글자 없이(학습 티 나지 않게). 아기 같지 않게 */
+  return CARTOON_PROMPT;
 }
 function startCartoon(){
-  /* 2026-10-21: 그림 중계(Cloudflare)를 쓰지 않음. 예시 사진은 미리 그린 그림(useSample), 내 사진은 칠한 사진 */
-  S.cartoon={status:'none'}; return;
-  if(!S.cartoonOn || !S.img){ S.cartoon={status:'none'}; return; }
-  S.cartoon={status:'pending'}; const myImg=S.img;
-  (async()=>{
-    /* 같은 사진은 다시 그리지 않음: 그린 그림을 이 기기에 저장해 다시 씀(지침 5-2) */
-    const ck=await artKey(S.img.url); const hit=await artGet(ck); if(hit) return hit;
-    const url=await drawCartoon(); artPut(ck,url); return url;
-  })().then(url=>{ if(S.img!==myImg) return; S.cartoon={status:'done',url}; onCartoon(); })
-     .catch(e=>{ if(S.img!==myImg) return; S.cartoon={status:'error',msg:String(e.message||e)}; onCartoon(); });
+  /* 예시 사진: 만든 사람이 미리 그려 둔 그림. 내 사진: 보관한 그림이 있으면 그것, 없으면 선생님 키(결제 연결)로 한 번 그려 보관 */
+  if(!S.cartoonOn||!S.img){ S.cartoon={status:'none'}; return; }
+  if(S.demo){ S.cartoon=S.sampleArt?{status:'done',url:S.sampleArt}:{status:'none'}; return; }
+  if(S.mineArt){ S.cartoon={status:'done',url:S.mineArt}; return; }
+  if(S.cartoon&&S.cartoon.status!=='none') return;
+  const today=new Date().toISOString().slice(0,10);
+  if(!S.apiKey||store.get('imgBlock')===today){ S.cartoon={status:'none'}; return; }
+  S.cartoon={status:'pending'}; const myImg=S.img, mid=S.mineId;
+  (async()=>{ if(!await checkKey()||!S.imageModel) throw new Error('그림 모델이 없어요'); return drawCartoon(); })()
+    .then(url=>{ if(mid) mineSetArt(mid,url); if(S.img!==myImg) return; S.cartoon={status:'done',url}; S.mineArt=url; onCartoon(); })
+    .catch(e=>{ const m=String(e.message||e); if(/^(400|403|429)/.test(m)) store.set('imgBlock',today);   /* 결제를 연결하지 않은 키: 오늘은 다시 묻지 않음 */
+      if(S.img!==myImg) return; S.cartoon={status:'error',msg:m}; onCartoon(); });
+}
+async function drawCartoon(){
+  const body={contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data:S.img.url.split(',')[1]}},{text:cartoonPrompt()}]}],generationConfig:{responseModalities:['TEXT','IMAGE']}};
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(S.imageModel)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},body:JSON.stringify(body)});
+  if(!r.ok){ let m=''; try{m=(await r.json()).error.message||'';}catch(e){} throw new Error(r.status+' '+m); }
+  const j=await r.json();
+  const part=((j.candidates||[])[0]?.content?.parts||[]).find(p=>p.inlineData||p.inline_data);
+  if(!part) throw new Error('그림이 오지 않았어요');
+  const d=part.inlineData||part.inline_data;
+  return `data:${d.mimeType||d.mime_type||'image/png'};base64,${d.data}`;
 }
 const artDB=new Promise(r=>{ try{ const q=indexedDB.open('shapeFinderArt',1); q.onupgradeneeded=()=>q.result.createObjectStore('art'); q.onsuccess=()=>r(q.result); q.onerror=()=>r(null); }catch(e){ r(null); } });
 async function artKey(url){ try{ const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(url+'|'+cartoonPrompt())); return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''); }catch(e){ return ''; } }
@@ -2702,18 +2858,11 @@ function paintArt(){
   } else fitIds=[];
 }
 function onCartoon(){
-  if(S.view!=='end') return;
-  paintArt();
-  if(S.cartoon.status==='done') speak('와! 사진이 그림이 되었어요.');
+  if(S.view==='artwait') showEnd();
 }
-function showEnd(){
-  const chips=S.types.map(t=>`<div class="chip">${shapeIcon(t,null,'')}<span>${esc(nm(t))}, ${esc(objList(ofType(t),5))}</span></div>`).join('');
+function endTools(){
   const rows=S.log.map(l=>`<tr><td>${esc(l.task)}</td><td>${esc(l.result)}${l.obj?' ('+esc(l.obj)+')':''}</td></tr>`).join('');
-  screen('end','end',`<div class="end-wrap">
-      <h2 class="say admin-only">다 했어요</h2>
-      <div class="end-art" id="art"></div>
-      <div class="chips">${chips}</div>
-      <div class="row admin-only" style="justify-content:center">
+  return `<div class="row admin-only end-btns">
         <button class="btn" id="same" type="button">같은 사진 한 번 더</button>
         <button class="btn primary" id="again" type="button">다른 사진으로</button>
         <button class="btn" id="printBtn" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>출력 (색칠용)</button>
@@ -2721,17 +2870,87 @@ function showEnd(){
       <details class="log admin-only"><summary>교사용 기록 (${S.level}단계 · ${S.errorMode==='show'?'바로 정답 보여주기':'한 번 더 기회'}${S.demo?' · 예시 사진':''})</summary>
         <table><thead><tr><th>과제</th><th>결과</th></tr></thead><tbody>${rows||'<tr><td colspan="2">기록 없음</td></tr>'}</tbody></table>
         <p class="status" style="margin:8px 0 0">이 기록은 화면을 닫으면 사라져요. 필요하면 사진으로 남겨 두세요.</p>
-      </details>
-    </div>`, S.cartoon&&S.cartoon.status==='done' ? '다 했어요. 사진이 그림이 되었어요.' : '다 했어요.');
-  paintArt();
+      </details>`;
+}
+function bindEndTools(){
   $('again').onclick=()=>{newSession(); showPhoto();};
-  $('same').onclick=()=>{buildLesson(S.shapes); showReveal();};
+  $('same').onclick=()=>{S.cartoon=S.cartoon&&S.cartoon.status==='done'?S.cartoon:null; buildLesson(S.shapes); showReveal();};
   $('printBtn').onclick=()=>printSheet();
+}
+/* 끝: 찾기를 마치면 (그림이 있으면) 사진이 그림이 되는 모습을 잠깐 → 그 그림에 색칠. 그림이 아직이면 잠깐 기다림(최대 40초) */
+function showEnd(){
+  const c=S.cartoon||{status:'none'};
+  if(c.status==='pending'){
+    if(S.view!=='artwait'){
+      screen('end','artwait',`<div class="center"><h2 class="say">다 했어요</h2><div class="end-photo">${photoHTML('eph',false)}</div>${waitingHTML()}</div>`,'다 했어요.');
+      fitIds=['eph']; fitPhoto('eph'); spin(); later(40000,()=>{ if(S.view==='artwait'){ S.cartoon={status:'error',msg:'시간이 지났어요'}; showEnd(); } });
+    }
+    return;
+  }
+  if(c.status!=='done'){ showColor(); return; }
+  screen('end','art',`<div class="end-wrap"><div class="end-art reveal-art" id="art">
+      <img class="photo-under" src="${S.img.url}" alt=""><img class="cartoon" src="${c.url}" alt="그림"></div></div>`,'다 했어요. 사진이 그림이 되었어요.');
+  later(5200,()=>{ if(S.view==='art') showColor(); });
+}
+/* 색칠하기: 그림(없으면 사진)의 선을 따서, 학생이 색을 고르고 칸을 누르면 그 칸이 칠해짐. 지는 것·끝 없음(교사가 마침) */
+async function showColor(){
+  screen('end','color',`<div class="color-wrap">
+      <div class="color-stage" id="cst"><canvas id="ccv" aria-label="색칠하기"></canvas><div class="waiting-mini" id="cwait">${waitingHTML()}</div></div>
+      <div class="palette" id="pal" role="radiogroup" aria-label="색">${COLORS.map(c=>`<button class="pal" type="button" data-c="${c.key}" style="--c:${c.hex}" aria-label="${c.name}" aria-pressed="${c.key===S.color}"></button>`).join('')}</div>
+    </div>${endTools()}`,'');   /* 색칠은 말 없이(팔레트만 보면 알 수 있음, 소리 부담↓) */
+  bindEndTools(); spin();
+  let pick=COLORS.find(c=>c.key===S.color)||COLORS[0];
+  document.querySelectorAll('#pal .pal').forEach(b=>b.onpointerdown=e=>{ e.preventDefault(); pick=COLORS.find(c=>c.key===b.dataset.c);
+    document.querySelectorAll('#pal .pal').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); });
+  const tk=token; let L;
+  try{ L=await colorPage(); }catch(e){ return; }
+  if(tk!==token) return;
+  const cv=$('ccv'), g=cv.getContext('2d'); cv.width=L.W; cv.height=L.H; $('cwait').remove();
+  const out=g.createImageData(L.W,L.H), o=out.data, filled=new Uint32Array(L.n+1);
+  const paint=()=>{ for(let i=0,N=L.W*L.H;i<N;i++){ const k=i*4, lab=L.lab[i];
+      if(lab<0){ const v=L.ink[i]; o[k]=o[k+1]=o[k+2]=v; }
+      else { const f=filled[lab]; if(f){ o[k]=f>>16&255; o[k+1]=f>>8&255; o[k+2]=f&255; } else { o[k]=o[k+1]=o[k+2]=255; } }
+      o[k+3]=255; } g.putImageData(out,0,0); };
+  paint();
+  cv.style.touchAction='none';
+  cv.addEventListener('pointerdown',e=>{ e.preventDefault();
+    const r=cv.getBoundingClientRect(), x=Math.floor((e.clientX-r.left)/r.width*L.W), y=Math.floor((e.clientY-r.top)/r.height*L.H);
+    let lab=-1;
+    for(let d=0;d<=14&&lab<0;d+=2) for(let a=0;a<8&&lab<0;a++){ const xx=Math.round(x+Math.cos(a*Math.PI/4)*d), yy=Math.round(y+Math.sin(a*Math.PI/4)*d); if(xx>=0&&yy>=0&&xx<L.W&&yy<L.H) lab=L.lab[yy*L.W+xx]; }
+    if(lab<0) return;
+    filled[lab]=parseInt(pick.hex.slice(1),16)||1; paint();
+  });
+}
+/* 색칠할 선 그림 만들기: 선(어두운 곳)을 굵게 하고, 나머지를 칸으로 나눔. 아주 작은 칸은 선으로 */
+async function colorPage(){
+  const url=await makeLineArt(true);
+  const im=await loadImg(url);
+  const W0=im.naturalWidth, H0=im.naturalHeight, k=Math.min(1,900/Math.max(W0,H0)), W=Math.round(W0*k), H=Math.round(H0*k), N=W*H;
+  const c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,W,H); g.drawImage(im,0,0,W,H);
+  const d=g.getImageData(0,0,W,H).data, ink=new Uint8Array(N); let line=new Uint8Array(N);
+  for(let i=0;i<N;i++){ const v=d[i*4]; ink[i]=v; line[i]=v<170?1:0; }
+  const dil=new Uint8Array(N);   /* 선을 한 칸 굵게 해서 틈을 막음 */
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){ const i=y*W+x; if(line[i]){ dil[i]=1; if(x>0) dil[i-1]=1; if(x<W-1) dil[i+1]=1; if(y>0) dil[i-W]=1; if(y<H-1) dil[i+W]=1; } }
+  line=dil;
+  { /* 선 위의 작은 점(잡티)은 지움: 칸이 얼룩덜룩해지지 않게 */
+    const seen=new Uint8Array(N), qq=new Int32Array(N), SMALL=Math.max(12,N*0.00012);
+    for(let s0=0;s0<N;s0++){ if(!line[s0]||seen[s0]) continue; let h=0,t=0; qq[t++]=s0; seen[s0]=1;
+      while(h<t){ const i=qq[h++], x=i%W; for(const j of [x>0?i-1:-1,x<W-1?i+1:-1,i-W,i+W]) if(j>=0&&j<N&&line[j]&&!seen[j]){ seen[j]=1; qq[t++]=j; } }
+      if(t<SMALL) for(let z=0;z<t;z++){ line[qq[z]]=0; ink[qq[z]]=255; } } }
+  const lab=new Int32Array(N).fill(-1); let n=0; const q=new Int32Array(N), MIN=Math.max(40,N*0.0006);
+  for(let s0=0;s0<N;s0++){ if(line[s0]||lab[s0]>=0) continue;
+    let h=0,t=0; q[t++]=s0; lab[s0]=n;
+    while(h<t){ const i=q[h++], x=i%W; const nb=[x>0?i-1:-1,x<W-1?i+1:-1,i-W,i+W];
+      for(const j of nb){ if(j>=0&&j<N&&!line[j]&&lab[j]<0){ lab[j]=n; q[t++]=j; } } }
+    if(t<MIN){ for(let z=0;z<t;z++){ lab[q[z]]=-1; ink[q[z]]=Math.min(ink[q[z]],120); } } else n++;
+  }
+  for(let i=0;i<N;i++) if(lab[i]<0&&!line[i]) ink[i]=120; else if(line[i]) ink[i]=Math.min(ink[i],60);
+  return {W,H,lab,ink,n};
 }
 
 /* ================= 색칠용 출력: 색을 빼고 선만 ================= */
-const loadImg=url=>new Promise((res,rej)=>{const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=url;});
-async function makeLineArt(){
+const loadImg=url=>new Promise((res,rej)=>{const im=new Image(); if(/^https?:/.test(url)) im.crossOrigin='anonymous'; im.onload=()=>res(im); im.onerror=rej; im.src=url;});   /* 다른 주소(GitHub) 그림도 캔버스에서 읽게 */
+async function makeLineArt(forColor){
   const cartoon=!!(S.cartoon&&S.cartoon.status==='done');
   const im=await loadImg(cartoon?S.cartoon.url:S.img.url);
   const sc=Math.min(1,1400/Math.max(im.naturalWidth,im.naturalHeight));
@@ -2762,7 +2981,7 @@ async function makeLineArt(){
   }
   g.putImageData(src,0,0);
   if(!cartoon){
-    const k=W/S.img.w; g.strokeStyle='#111'; g.lineJoin='round'; g.lineWidth=Math.max(3,W/170);
+    const k=W/S.img.w; g.strokeStyle=forColor?'#222':'#111'; g.lineJoin='round'; g.lineWidth=forColor?Math.max(2.5,W/260):Math.max(3,W/170);
     S.shapes.forEach(s=>{ const q=geo(s); g.beginPath();
       if(q.e) g.ellipse(q.cx*k,q.cy*k,q.rx*k,q.ry*k,0,0,Math.PI*2);
       else { q.P.forEach((p,i)=>i?g.lineTo(p[0]*k,p[1]*k):g.moveTo(p[0]*k,p[1]*k)); g.closePath(); }
