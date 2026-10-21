@@ -22,11 +22,11 @@
 - words-*.txt, words-frequency.csv, word-games.html   예전 판 자료(버전 1에서는 쓰지 않음)
 
 [주소]
-앱:   http://truespedu.org/study/007/word-learn.html (2026-10-21부터, 자료는 GitHub) · GitHub 주소 https://shim-sung-hyun.github.io/web_app/007/word-learn.html 도 그대로 열림
+앱:   https://www.charum.org/study/007/word-learn.html (2026-10-21부터, 자료는 GitHub) · GitHub 주소 https://shim-sung-hyun.github.io/web_app/007/word-learn.html 도 그대로 열림
 그림: https://shim-sung-hyun.github.io/web_app/007/word-learn01.jpg ~ word-learn20.jpg
 
 [게시판]
-- 확장 변수 app_url: http://truespedu.org/study/007/word-learn.html
+- 확장 변수 app_url: https://www.charum.org/study/007/word-learn.html
 - 본문: word-learn_manual.html 내용을 소스 모드에 붙여 넣기
 - 썸네일: word-learn-promo.jpg 한 장
 
@@ -67,4 +67,4 @@
 - 서버 폴더 이름은 게시판 이름(mid, 예: webapp)과 같게 하지 않는다(라이믹스 403).
 - 기록·학생 명단은 주소(도메인)마다 따로 저장된다: 옮길 때 교사용 기록 → 내보내기(CSV) → 새 주소에서 불러오기.
 - 앱을 고치면 GitHub의 word-learn.html과 내 서버의 word-learn.html을 함께 바꾼다.
-- 지금 내 도메인: http://truespedu.org/study/007/word-learn.html (https로 열면 http로 넘어감). http에서는 crypto.subtle이 없어 SHA-1을 직접 계산해 미리 만든 목소리를 찾는다(sha1Bytes). 휴대폰으로 키 받기(ECDH)는 https에서만 된다.
+- 지금 내 도메인: https://www.charum.org/study/007/word-learn.html (https). 혹시 http 주소에서 열려도 SHA-1을 직접 계산해 미리 만든 목소리를 찾는다(sha1Bytes). 휴대폰으로 키 받기(ECDH)는 https에서만 된다.
