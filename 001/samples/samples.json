@@ -647,7 +647,7 @@
   "title": "신발장",
   "file": "samples/shoe-rack.jpg",
   "ok": true,
-  "art": null,
+  "art": "samples/shoe-rack-art.jpg",
   "shapes": [
    {
     "type": "quad",
