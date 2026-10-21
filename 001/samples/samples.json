@@ -829,41 +829,536 @@
   "id": "bell",
   "title": "종",
   "file": "samples/bell.jpg",
-  "ok": false,
+  "ok": true,
   "art": null,
-  "shapes": null
+  "line": null,
+  "shapes": [
+   {
+    "type": "ellipse",
+    "obj": "종",
+    "box": {
+     "x0": 351,
+     "y0": 224,
+     "x1": 644,
+     "y1": 560
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "timetable",
   "title": "시간표 칠판",
   "file": "samples/timetable.jpg",
-  "ok": false,
+  "ok": true,
   "art": null,
-  "shapes": null
+  "line": null,
+  "shapes": [
+   {
+    "type": "circle",
+    "obj": "자석",
+    "box": {
+     "x0": 867,
+     "y0": 298,
+     "x1": 915,
+     "y1": 325
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "자석",
+    "box": {
+     "x0": 651,
+     "y0": 533,
+     "x1": 700,
+     "y1": 556
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "자석",
+    "box": {
+     "x0": 862,
+     "y0": 733,
+     "x1": 913,
+     "y1": 762
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "칠판자석",
+    "box": {
+     "x0": 21,
+     "y0": 240,
+     "x1": 133,
+     "y1": 296
+    },
+    "pts": [
+     [
+      21,
+      242
+     ],
+     [
+      125,
+      240
+     ],
+     [
+      133,
+      296
+     ],
+     [
+      29,
+      292
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "칠판자석",
+    "box": {
+     "x0": 421,
+     "y0": 210,
+     "x1": 526,
+     "y1": 269
+    },
+    "pts": [
+     [
+      422,
+      212
+     ],
+     [
+      520,
+      210
+     ],
+     [
+      526,
+      267
+     ],
+     [
+      421,
+      269
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "칠판자석",
+    "box": {
+     "x0": 63,
+     "y0": 717,
+     "x1": 156,
+     "y1": 778
+    },
+    "pts": [
+     [
+      63,
+      717
+     ],
+     [
+      149,
+      721
+     ],
+     [
+      156,
+      778
+     ],
+     [
+      82,
+      771
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "sink-cabinet",
   "title": "싱크대",
   "file": "samples/sink-cabinet.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/sink-cabinet-art.jpg",
+  "line": null,
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "상단 서랍",
+    "box": {
+     "x0": 131,
+     "y0": 199,
+     "x1": 381,
+     "y1": 407
+    },
+    "pts": [
+     [
+      131,
+      199
+     ],
+     [
+      379,
+      214
+     ],
+     [
+      381,
+      407
+     ],
+     [
+      148,
+      396
+     ]
+    ],
+    "realRight": true,
+    "ratio": 2.2
+   },
+   {
+    "type": "quad",
+    "obj": "중단 서랍",
+    "box": {
+     "x0": 148,
+     "y0": 426,
+     "x1": 383,
+     "y1": 595
+    },
+    "pts": [
+     [
+      148,
+      426
+     ],
+     [
+      381,
+      433
+     ],
+     [
+      383,
+      595
+     ],
+     [
+      159,
+      591
+     ]
+    ],
+    "realRight": true,
+    "ratio": 2.15
+   },
+   {
+    "type": "quad",
+    "obj": "하단 서랍",
+    "box": {
+     "x0": 160,
+     "y0": 630,
+     "x1": 389,
+     "y1": 792
+    },
+    "pts": [
+     [
+      160,
+      632
+     ],
+     [
+      385,
+      630
+     ],
+     [
+      389,
+      788
+     ],
+     [
+      172,
+      792
+     ]
+    ],
+    "realRight": true,
+    "ratio": 2.1
+   },
+   {
+    "type": "quad",
+    "obj": "좌측 수납장 문",
+    "box": {
+     "x0": 384,
+     "y0": 225,
+     "x1": 590,
+     "y1": 792
+    },
+    "pts": [
+     [
+      384,
+      225
+     ],
+     [
+      590,
+      236
+     ],
+     [
+      577,
+      792
+     ],
+     [
+      388,
+      780
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.2
+   },
+   {
+    "type": "quad",
+    "obj": "우측 수납장 문",
+    "box": {
+     "x0": 583,
+     "y0": 232,
+     "x1": 807,
+     "y1": 797
+    },
+    "pts": [
+     [
+      600,
+      232
+     ],
+     [
+      807,
+      234
+     ],
+     [
+      764,
+      797
+     ],
+     [
+      583,
+      796
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.85
+   },
+   {
+    "type": "circle",
+    "obj": "문 손잡이",
+    "box": {
+     "x0": 600,
+     "y0": 516,
+     "x1": 618,
+     "y1": 558
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "computer-desk",
   "title": "컴퓨터 책상",
   "file": "samples/computer-desk.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/computer-desk-art.jpg",
+  "line": null,
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "컴퓨터 모니터 화면",
+    "box": {
+     "x0": 460,
+     "y0": 119,
+     "x1": 787,
+     "y1": 662
+    },
+    "pts": [
+     [
+      460,
+      119
+     ],
+     [
+      787,
+      145
+     ],
+     [
+      775,
+      662
+     ],
+     [
+      467,
+      534
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.78
+   },
+   {
+    "type": "quad",
+    "obj": "본체 앞면",
+    "box": {
+     "x0": 168,
+     "y0": 208,
+     "x1": 241,
+     "y1": 648
+    },
+    "pts": [
+     [
+      168,
+      208
+     ],
+     [
+      218,
+      221
+     ],
+     [
+      241,
+      648
+     ],
+     [
+      194,
+      616
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.45
+   },
+   {
+    "type": "quad",
+    "obj": "키보드",
+    "box": {
+     "x0": 400,
+     "y0": 673,
+     "x1": 699,
+     "y1": 992
+    },
+    "pts": [
+     [
+      465,
+      673
+     ],
+     [
+      699,
+      848
+     ],
+     [
+      635,
+      992
+     ],
+     [
+      400,
+      770
+     ]
+    ],
+    "realRight": true,
+    "ratio": 2.5
+   }
+  ]
  },
  {
   "id": "desks",
   "title": "책상",
   "file": "samples/desks.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
+  "ok": true,
+  "art": "samples/desks-art.jpg",
+  "line": null,
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "책상 상판",
+    "box": {
+     "x0": 111,
+     "y0": 240,
+     "x1": 468,
+     "y1": 434
+    },
+    "pts": [
+     [
+      111,
+      240
+     ],
+     [
+      404,
+      241
+     ],
+     [
+      468,
+      400
+     ],
+     [
+      127,
+      434
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.45
+   },
+   {
+    "type": "quad",
+    "obj": "책상 상판",
+    "box": {
+     "x0": 409,
+     "y0": 237,
+     "x1": 711,
+     "y1": 390
+    },
+    "pts": [
+     [
+      409,
+      237
+     ],
+     [
+      624,
+      243
+     ],
+     [
+      711,
+      364
+     ],
+     [
+      472,
+      390
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.45
+   },
+   {
+    "type": "quad",
+    "obj": "책상 상판",
+    "box": {
+     "x0": 628,
+     "y0": 232,
+     "x1": 889,
+     "y1": 370
+    },
+    "pts": [
+     [
+      628,
+      236
+     ],
+     [
+      794,
+      232
+     ],
+     [
+      889,
+      360
+     ],
+     [
+      712,
+      370
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.45
+   }
+  ]
  },
  {
   "id": "bookshelf",
