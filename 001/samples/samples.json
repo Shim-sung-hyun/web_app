@@ -3,168 +3,1271 @@
   "id": "car-wheel",
   "title": "자동차 바퀴",
   "file": "samples/car-wheel.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "bus-wheel",
   "title": "버스 바퀴",
   "file": "samples/bus-wheel.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "manhole",
   "title": "맨홀 뚜껑",
   "file": "samples/manhole.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "parking-sign",
   "title": "주차 금지 표지판",
   "file": "samples/parking-sign.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "tissue",
   "title": "두루마리 휴지",
   "file": "samples/tissue.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "wall-clock",
   "title": "벽시계",
   "file": "samples/wall-clock.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "paper-cup",
   "title": "종이컵",
   "file": "samples/paper-cup.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "glasses",
   "title": "안경",
   "file": "samples/glasses.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "watering-can",
   "title": "물뿌리개",
   "file": "samples/watering-can.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "school-bus",
   "title": "통학 버스",
   "file": "samples/school-bus.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "shoe-rack",
   "title": "신발장",
   "file": "samples/shoe-rack.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "car-wheel-2",
   "title": "자동차 바퀴 2",
   "file": "samples/car-wheel-2.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "watering-can-2",
   "title": "물뿌리개 2",
   "file": "samples/watering-can-2.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "bell",
   "title": "종",
   "file": "samples/bell.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "timetable",
   "title": "시간표 칠판",
   "file": "samples/timetable.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "sink-cabinet",
   "title": "싱크대",
   "file": "samples/sink-cabinet.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "computer-desk",
   "title": "컴퓨터 책상",
   "file": "samples/computer-desk.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "desks",
   "title": "책상",
   "file": "samples/desks.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "bookshelf",
   "title": "책장",
   "file": "samples/bookshelf.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "board",
   "title": "전자칠판",
   "file": "samples/board.jpg",
+  "ok": false,
+  "art": null,
   "shapes": null
  },
  {
   "id": "hallway",
   "title": "복도",
   "file": "samples/hallway.jpg",
-  "shapes": null
+  "ok": true,
+  "art": "samples/hallway-art.jpg",
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "천장 조명",
+    "box": {
+     "x0": 315,
+     "y0": 68,
+     "x1": 735,
+     "y1": 407
+    },
+    "pts": [
+     [
+      315,
+      79
+     ],
+     [
+      735,
+      68
+     ],
+     [
+      653,
+      400
+     ],
+     [
+      442,
+      407
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0.55
+   },
+   {
+    "type": "quad",
+    "obj": "천장 조명",
+    "box": {
+     "x0": 502,
+     "y0": 548,
+     "x1": 609,
+     "y1": 585
+    },
+    "pts": [
+     [
+      502,
+      548
+     ],
+     [
+      609,
+      548
+     ],
+     [
+      609,
+      581
+     ],
+     [
+      504,
+      585
+     ]
+    ],
+    "realRight": true,
+    "ratio": 3.24
+   },
+   {
+    "type": "circle",
+    "obj": "천장 환풍기",
+    "box": {
+     "x0": 493,
+     "y0": 486,
+     "x1": 620,
+     "y1": 507
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "문",
+    "box": {
+     "x0": 106,
+     "y0": 620,
+     "x1": 233,
+     "y1": 991
+    },
+    "pts": [
+     [
+      161,
+      620
+     ],
+     [
+      233,
+      620
+     ],
+     [
+      187,
+      963
+     ],
+     [
+      106,
+      991
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.35
+   },
+   {
+    "type": "quad",
+    "obj": "게시판",
+    "box": {
+     "x0": 242,
+     "y0": 681,
+     "x1": 315,
+     "y1": 742
+    },
+    "pts": [
+     [
+      243,
+      681
+     ],
+     [
+      310,
+      681
+     ],
+     [
+      315,
+      737
+     ],
+     [
+      242,
+      742
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.03
+   },
+   {
+    "type": "quad",
+    "obj": "문",
+    "box": {
+     "x0": 553,
+     "y0": 684,
+     "x1": 634,
+     "y1": 767
+    },
+    "pts": [
+     [
+      556,
+      684
+     ],
+     [
+      632,
+      684
+     ],
+     [
+      634,
+      767
+     ],
+     [
+      553,
+      765
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.01
+   },
+   {
+    "type": "quad",
+    "obj": "정수기",
+    "box": {
+     "x0": 786,
+     "y0": 764,
+     "x1": 913,
+     "y1": 917
+    },
+    "pts": [
+     [
+      786,
+      766
+     ],
+     [
+      894,
+      764
+     ],
+     [
+      913,
+      917
+     ],
+     [
+      796,
+      917
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.49
+   }
+  ]
  },
  {
   "id": "door",
   "title": "교실 문",
   "file": "samples/door.jpg",
-  "shapes": null
+  "ok": true,
+  "art": "samples/door-art.jpg",
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "창문",
+    "box": {
+     "x0": 306,
+     "y0": 203,
+     "x1": 756,
+     "y1": 418
+    },
+    "pts": [
+     [
+      306,
+      203
+     ],
+     [
+      756,
+      207
+     ],
+     [
+      750,
+      417
+     ],
+     [
+      309,
+      418
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.6
+   },
+   {
+    "type": "quad",
+    "obj": "도어락",
+    "box": {
+     "x0": 206,
+     "y0": 437,
+     "x1": 274,
+     "y1": 502
+    },
+    "pts": [
+     [
+      212,
+      438
+     ],
+     [
+      274,
+      437
+     ],
+     [
+      269,
+      502
+     ],
+     [
+      206,
+      502
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.45
+   },
+   {
+    "type": "quad",
+    "obj": "문 하단 철판",
+    "box": {
+     "x0": 194,
+     "y0": 730,
+     "x1": 843,
+     "y1": 859
+    },
+    "pts": [
+     [
+      195,
+      738
+     ],
+     [
+      843,
+      730
+     ],
+     [
+      836,
+      851
+     ],
+     [
+      198,
+      859
+     ]
+    ],
+    "realRight": true,
+    "ratio": 3.6
+   },
+   {
+    "type": "quad",
+    "obj": "문",
+    "box": {
+     "x0": 155,
+     "y0": 73,
+     "x1": 907,
+     "y1": 859
+    },
+    "pts": [
+     [
+      155,
+      73
+     ],
+     [
+      907,
+      85
+     ],
+     [
+      842,
+      851
+     ],
+     [
+      195,
+      859
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.43
+   }
+  ]
  },
  {
   "id": "mug-monitor",
   "title": "머그컵과 모니터",
   "file": "samples/mug-monitor.jpg",
-  "shapes": null
+  "ok": true,
+  "art": "samples/mug-monitor-art.jpg",
+  "shapes": [
+   {
+    "type": "ellipse",
+    "obj": "컵 입구",
+    "box": {
+     "x0": 87,
+     "y0": 592,
+     "x1": 380,
+     "y1": 671
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "유리컵 입구",
+    "box": {
+     "x0": 645,
+     "y0": 533,
+     "x1": 915,
+     "y1": 600
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "유리컵 몸통",
+    "box": {
+     "x0": 631,
+     "y0": 564,
+     "x1": 910,
+     "y1": 772
+    },
+    "pts": [
+     [
+      639,
+      564
+     ],
+     [
+      910,
+      565
+     ],
+     [
+      856,
+      772
+     ],
+     [
+      631,
+      753
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.65
+   },
+   {
+    "type": "ellipse",
+    "obj": "유리컵 바닥",
+    "box": {
+     "x0": 648,
+     "y0": 709,
+     "x1": 856,
+     "y1": 766
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "모니터 받침대",
+    "box": {
+     "x0": 270,
+     "y0": 465,
+     "x1": 761,
+     "y1": 563
+    },
+    "pts": [
+     [
+      355,
+      465
+     ],
+     [
+      750,
+      474
+     ],
+     [
+      761,
+      563
+     ],
+     [
+      270,
+      549
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.65
+   }
+  ]
  },
  {
   "id": "water-purifier",
   "title": "정수기",
   "file": "samples/water-purifier.jpg",
-  "shapes": null
+  "ok": true,
+  "art": "samples/water-purifier-art.jpg",
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "정수기",
+    "box": {
+     "x0": 718,
+     "y0": 128,
+     "x1": 951,
+     "y1": 844
+    },
+    "pts": [
+     [
+      799,
+      128
+     ],
+     [
+      951,
+      138
+     ],
+     [
+      859,
+      725
+     ],
+     [
+      718,
+      844
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.35
+   },
+   {
+    "type": "quad",
+    "obj": "이것",
+    "box": {
+     "x0": 369,
+     "y0": 479,
+     "x1": 750,
+     "y1": 527
+    },
+    "pts": [
+     [
+      401,
+      479
+     ],
+     [
+      750,
+      505
+     ],
+     [
+      707,
+      527
+     ],
+     [
+      369,
+      499
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "이것",
+    "box": {
+     "x0": 428,
+     "y0": 336,
+     "x1": 496,
+     "y1": 362
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "이것",
+    "box": {
+     "x0": 583,
+     "y0": 343,
+     "x1": 650,
+     "y1": 364
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "이것",
+    "box": {
+     "x0": 417,
+     "y0": 125,
+     "x1": 772,
+     "y1": 297
+    },
+    "pts": [
+     [
+      428,
+      133
+     ],
+     [
+      772,
+      125
+     ],
+     [
+      756,
+      297
+     ],
+     [
+      417,
+      292
+     ]
+    ],
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "recycle-bins",
   "title": "분리수거함",
   "file": "samples/recycle-bins.jpg",
-  "shapes": null
+  "ok": true,
+  "art": "samples/recycle-bins-art.jpg",
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "쓰레기통 투입구",
+    "box": {
+     "x0": 216,
+     "y0": 178,
+     "x1": 379,
+     "y1": 423
+    },
+    "pts": [
+     [
+      216,
+      178
+     ],
+     [
+      368,
+      181
+     ],
+     [
+      379,
+      423
+     ],
+     [
+      233,
+      412
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.25
+   },
+   {
+    "type": "quad",
+    "obj": "쓰레기통 라벨",
+    "box": {
+     "x0": 221,
+     "y0": 421,
+     "x1": 395,
+     "y1": 550
+    },
+    "pts": [
+     [
+      221,
+      421
+     ],
+     [
+      389,
+      421
+     ],
+     [
+      395,
+      550
+     ],
+     [
+      227,
+      541
+     ]
+    ],
+    "realRight": true,
+    "ratio": 2.7
+   },
+   {
+    "type": "circle",
+    "obj": "열쇠구멍",
+    "box": {
+     "x0": 211,
+     "y0": 626,
+     "x1": 235,
+     "y1": 680
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "쓰레기통 투입구",
+    "box": {
+     "x0": 508,
+     "y0": 189,
+     "x1": 668,
+     "y1": 454
+    },
+    "pts": [
+     [
+      510,
+      189
+     ],
+     [
+      668,
+      194
+     ],
+     [
+      664,
+      454
+     ],
+     [
+      508,
+      443
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1.35
+   },
+   {
+    "type": "quad",
+    "obj": "쓰레기통 라벨",
+    "box": {
+     "x0": 492,
+     "y0": 444,
+     "x1": 678,
+     "y1": 591
+    },
+    "pts": [
+     [
+      493,
+      444
+     ],
+     [
+      678,
+      461
+     ],
+     [
+      675,
+      591
+     ],
+     [
+      492,
+      574
+     ]
+    ],
+    "realRight": true,
+    "ratio": 2.5
+   },
+   {
+    "type": "circle",
+    "obj": "열쇠구멍",
+    "box": {
+     "x0": 469,
+     "y0": 658,
+     "x1": 491,
+     "y1": 722
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "circle",
+    "obj": "열쇠구멍",
+    "box": {
+     "x0": 782,
+     "y0": 85,
+     "x1": 809,
+     "y1": 142
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  },
  {
   "id": "bottles",
   "title": "물병과 컵",
   "file": "samples/bottles.jpg",
-  "shapes": null
+  "ok": true,
+  "art": "samples/bottles-art.jpg",
+  "shapes": [
+   {
+    "type": "ellipse",
+    "obj": "텀블러 뚜껑",
+    "box": {
+     "x0": 57,
+     "y0": 364,
+     "x1": 380,
+     "y1": 435
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "컵 입구",
+    "box": {
+     "x0": 645,
+     "y0": 577,
+     "x1": 915,
+     "y1": 665
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "ellipse",
+    "obj": "컵 입구",
+    "box": {
+     "x0": 631,
+     "y0": 702,
+     "x1": 956,
+     "y1": 829
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   },
+   {
+    "type": "quad",
+    "obj": "타일",
+    "box": {
+     "x0": 74,
+     "y0": 27,
+     "x1": 306,
+     "y1": 121
+    },
+    "pts": [
+     [
+      74,
+      29
+     ],
+     [
+      282,
+      27
+     ],
+     [
+      306,
+      119
+     ],
+     [
+      106,
+      121
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1
+   },
+   {
+    "type": "quad",
+    "obj": "타일",
+    "box": {
+     "x0": 508,
+     "y0": 32,
+     "x1": 705,
+     "y1": 126
+    },
+    "pts": [
+     [
+      508,
+      32
+     ],
+     [
+      705,
+      32
+     ],
+     [
+      705,
+      126
+     ],
+     [
+      508,
+      126
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1
+   },
+   {
+    "type": "quad",
+    "obj": "타일",
+    "box": {
+     "x0": 106,
+     "y0": 127,
+     "x1": 320,
+     "y1": 217
+    },
+    "pts": [
+     [
+      106,
+      127
+     ],
+     [
+      309,
+      128
+     ],
+     [
+      320,
+      217
+     ],
+     [
+      133,
+      216
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1
+   },
+   {
+    "type": "quad",
+    "obj": "타일",
+    "box": {
+     "x0": 511,
+     "y0": 127,
+     "x1": 694,
+     "y1": 211
+    },
+    "pts": [
+     [
+      511,
+      130
+     ],
+     [
+      694,
+      127
+     ],
+     [
+      680,
+      211
+     ],
+     [
+      511,
+      211
+     ]
+    ],
+    "realRight": true,
+    "ratio": 1
+   }
+  ]
  },
  {
   "id": "milk-basket",
   "title": "우유 바구니",
   "file": "samples/milk-basket.jpg",
-  "shapes": null
+  "ok": true,
+  "art": "samples/milk-basket-art.jpg",
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "우유 팩",
+    "box": {
+     "x0": 313,
+     "y0": 346,
+     "x1": 396,
+     "y1": 536
+    },
+    "pts": [
+     [
+      313,
+      346
+     ],
+     [
+      394,
+      357
+     ],
+     [
+      396,
+      536
+     ],
+     [
+      323,
+      527
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.7
+   },
+   {
+    "type": "quad",
+    "obj": "우유 팩",
+    "box": {
+     "x0": 411,
+     "y0": 352,
+     "x1": 492,
+     "y1": 537
+    },
+    "pts": [
+     [
+      411,
+      352
+     ],
+     [
+      492,
+      357
+     ],
+     [
+      491,
+      537
+     ],
+     [
+      414,
+      531
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.7
+   },
+   {
+    "type": "quad",
+    "obj": "우유 팩",
+    "box": {
+     "x0": 517,
+     "y0": 369,
+     "x1": 604,
+     "y1": 549
+    },
+    "pts": [
+     [
+      521,
+      369
+     ],
+     [
+      604,
+      374
+     ],
+     [
+      595,
+      549
+     ],
+     [
+      517,
+      544
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.7
+   },
+   {
+    "type": "quad",
+    "obj": "바구니 앞면",
+    "box": {
+     "x0": 227,
+     "y0": 723,
+     "x1": 756,
+     "y1": 864
+    },
+    "pts": [
+     [
+      227,
+      723
+     ],
+     [
+      756,
+      739
+     ],
+     [
+      726,
+      864
+     ],
+     [
+      248,
+      843
+     ]
+    ],
+    "realRight": true,
+    "ratio": 3.5
+   }
+  ]
  },
  {
   "id": "cup-drawings",
   "title": "컵과 그림",
   "file": "samples/cup-drawings.jpg",
-  "shapes": null
+  "ok": true,
+  "art": "samples/cup-drawings-art.jpg",
+  "shapes": [
+   {
+    "type": "quad",
+    "obj": "그림 종이",
+    "box": {
+     "x0": 413,
+     "y0": 175,
+     "x1": 893,
+     "y1": 505
+    },
+    "pts": [
+     [
+      417,
+      175
+     ],
+     [
+      893,
+      194
+     ],
+     [
+      892,
+      505
+     ],
+     [
+      413,
+      503
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.71
+   },
+   {
+    "type": "quad",
+    "obj": "그림 종이",
+    "box": {
+     "x0": 404,
+     "y0": 546,
+     "x1": 902,
+     "y1": 887
+    },
+    "pts": [
+     [
+      426,
+      546
+     ],
+     [
+      902,
+      549
+     ],
+     [
+      889,
+      887
+     ],
+     [
+      404,
+      885
+     ]
+    ],
+    "realRight": true,
+    "ratio": 0.71
+   },
+   {
+    "type": "ellipse",
+    "obj": "컵 입구",
+    "box": {
+     "x0": 72,
+     "y0": 58,
+     "x1": 363,
+     "y1": 187
+    },
+    "pts": null,
+    "realRight": false,
+    "ratio": 0
+   }
+  ]
  }
 ]
