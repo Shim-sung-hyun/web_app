@@ -2735,7 +2735,7 @@ async function trial(ans, run) {
   const cw = Math.min((avail - gap * (opts.length - 1)) / opts.length, feed ? th : th * 1.25, 340);
   box.style.gap = gap + 'px';
   const wfs = G.lv === 1 ? Math.min(cw * 0.24, 36) : Math.min(cw * 0.32, th * 0.26, 70);
-  const showPic = G.lv === 1 ? 1 : G.lv === 2 ? 0.35 : 0;
+  const showPic = G.lv === 1 ? 1 : G.lv === 2 ? 0.12 : 0;   /* 수준 2: 아주 흐린 그림(신경 써야 보일 만큼) — 글자로 찾게 */
   let slotP = 0;
   const els = opts.map(w => {
     const d = document.createElement('div'); d.className = 'tg' + (feed ? '' : ' basket'); d.dataset.w = w;
@@ -2937,7 +2937,7 @@ async function trialBody(ans, run) {
   const ih = L.land ? Math.min((L.area.h * 0.66 - 14 * (n - 1)) / n, 130) : Math.min(L.area.h * 0.9, 130);
   const iw = L.land ? Math.min(L.area.w * 0.95, ih * 3.4) : Math.min((L.area.w - 12 * (n - 1)) / n, ih * 2.4);
   const fs = G.lv === 1 ? Math.min(ih * 0.34, 38) : Math.min(ih * 0.5, iw * 0.9 / 2.4, 64);
-  const showPic = G.lv === 1 ? 1 : G.lv === 2 ? 0.35 : 0;
+  const showPic = G.lv === 1 ? 1 : G.lv === 2 ? 0.12 : 0;   /* 수준 2: 아주 흐린 그림(신경 써야 보일 만큼) — 글자로 찾게 */
   const els = opts.map(w => {
     const d = document.createElement('div'); d.className = 'tg bl'; d.dataset.w = w; d.style.opacity = 0;
     Object.assign(d.style, { width: iw + 'px', height: ih + 'px' });
