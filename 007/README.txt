@@ -68,3 +68,4 @@
 - 기록·학생 명단은 주소(도메인)마다 따로 저장된다: 옮길 때 교사용 기록 → 내보내기(CSV) → 새 주소에서 불러오기.
 - 앱을 고치면 GitHub의 word-learn.html과 내 서버의 word-learn.html을 함께 바꾼다.
 - 지금 내 도메인: https://www.charum.org/study/007/word-learn.html (https). 혹시 http 주소에서 열려도 SHA-1을 직접 계산해 미리 만든 목소리를 찾는다(sha1Bytes). 휴대폰으로 키 받기(ECDH)는 https에서만 된다.
+- 내 서버에는 server-loader.html(약 1KB)을 word-learn.html 이름으로 한 번만 올려 둔다(2026-10-21). 열릴 때마다 GitHub의 최신 word-learn.html을 받아 그 주소에서 펼치므로, 앞으로 앱을 고쳐도 서버에 다시 올릴 필요가 없다(GitHub에 올리면 몇 분 안에 반영). 주소창은 내 도메인, 기록은 이 기기 브라우저(내 도메인 주소)에, 서버에는 아무것도 저장되지 않는다.
