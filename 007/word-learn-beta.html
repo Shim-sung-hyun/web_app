@@ -2209,7 +2209,6 @@ async function stageChoice(st, w, run) {
         const sp = say(instr, run);
         await wait(1000, run);
         choices.style.transition = 'opacity .5s ease'; choices.style.opacity = 1; choices.style.pointerEvents = '';
-        if (R.lv === 1) replayBtn(stage, () => { if (!resolved && run === R.run) { say(instr, run).catch(() => {}); armTimers(); } });   /* 수준 1만: 수준 2·3은 글자만 보고 고르는 것이 목표 */
         await sp; if (!resolved) armTimers();
       }
       catch (e) { clearInterval(chk); rej(e); }
