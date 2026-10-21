@@ -427,6 +427,15 @@ details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margi
 .insight .il{margin:0;padding-left:18px;font-size:14px;line-height:1.6}
 .insight .rtable{font-size:13px}
 a.btn{text-decoration:none;display:inline-flex;align-items:center}
+/* 진행 막대 (2026-10-21) */
+#dots{top:22px}
+#dots .pbar{display:flex;gap:8px}
+#dots .pbar i{width:44px;height:8px;border-radius:4px;background:#E3DED3;display:block}
+#dots .pbar i.done{background:#9DB6D8}
+#dots .pbar i.now{background:#3D6FB6}
+#dots .pline{display:block;width:min(440px,60vw);height:8px;border-radius:4px;background:#E3DED3;overflow:hidden}
+#dots .pline i{display:block;height:100%;background:#3D6FB6;border-radius:4px}
+.prompt .pword{border:3px solid #C9DBEF;box-sizing:border-box}
 
 body.tmode #stage,body.tmode #game{pointer-events:none}
 .tbar button.cur{border-color:#9FF3F5;border-style:dashed}
@@ -1784,7 +1793,9 @@ function buildItems(words) {
 function updateDots() {
   const d = $('#dots');
   const cur = R.items[Math.min(R.idx, R.items.length - 1)];
-  d.innerHTML = R.ended ? '' : `<b>${(cur ? cur.wi : 0) + 1}</b>/${R.words.length}`;
+  const n = R.words.length, i = cur ? cur.wi : 0;
+  d.setAttribute('aria-label', (i + 1) + ' / ' + n);
+  d.innerHTML = R.ended ? '' : n <= 10 ? '<span class="pbar">' + Array.from({ length: n }, (_, k) => `<i class="${k < i ? 'done' : k === i ? 'now' : ''}"></i>`).join('') + '</span>' : `<span class="pline"><i style="width:${Math.round((i + 1) * 100 / n)}%"></i></span>`;
 }
 function prepTexts(words) {
   const t = ['그림에 맞는 글자를 찾아 눌러요.', '똑같은 글자를 찾아 눌러요.', '글자에 맞는 그림을 찾아 눌러요.', '동그라미를 눌러요.', '다시 해요.', '다음 낱말이에요.', '글자에 맞는 그림을 찾아요.', '여기 있어요.', '글자를 눌러요.', '붓으로 따라 써요.', '오늘 배운 낱말이에요.', '다 했어요.', ...Praise.list, ...Praise.write];
