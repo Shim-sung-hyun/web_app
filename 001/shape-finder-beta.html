@@ -727,7 +727,7 @@ async function receive(opts){
     <p class="pr-sub">휴대폰으로 찍은 사진을 이 화면으로 보내요. 사진은 잠가서 보내고, 중계 서버는 사진을 볼 수 없어요.</p>
     <div class="pr-main"><div class="pr-qr" id="prQr"></div>
       <div class="pr-codebox"><div class="pr-code" id="prCode">····</div>
-        <ol class="pr-steps"><li>휴대폰 카메라로 QR을 찍거나<br><span class="pr-url">${SEND_PAGE.replace('https://','')}</span> 를 열어요.</li><li>사진을 찍거나 고르고 <b>보내기</b>.</li></ol></div></div>
+        <ol class="pr-steps"><li>휴대폰 카메라로 QR을 찍거나<br><span class="pr-url">${SEND_PAGE.replace('https://','')}</span> 를 열어요.</li><li>사진을 찍거나 골라요.</li>${(opts.want||[]).includes('gemini')?'<li>처음 한 번은 <b>Gemini 키</b>도 넣어요.<br><small>키가 없으면 그 화면의 "키 받는 법"(1~2분)</small></li>':''}<li><b>보내기</b>를 눌러요.</li></ol></div></div>
     <p class="pr-state" id="prState">번호를 만들고 있어요…</p>
     <div class="pr-btns"><button type="button" id="prCancel">닫기</button></div></div>`;
   document.body.appendChild(box);
@@ -747,7 +747,8 @@ async function receive(opts){
     if(me.dead) return;
     me.code=o.code; me.sid=o.sid;
     box.querySelector('#prCode').textContent=o.code;
-    box.querySelector('#prQr').innerHTML=QR.svg(SEND_PAGE+'#c='+o.code,196);
+    const want=(opts.want||[]).filter(x=>x==='gemini'||x==='cloud');
+    box.querySelector('#prQr').innerHTML=QR.svg(SEND_PAGE+'#c='+o.code+(want.length?'&k='+want.join(','):''),196);
     const end=Date.now()+(o.ttl||180)*1000;
     const left=()=>{ const s=Math.max(0,Math.round((end-Date.now())/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
     say('휴대폰에서 보내기를 기다리고 있어요 · 남은 시간 '+left());
@@ -764,8 +765,16 @@ async function receive(opts){
       try{
         const key=await aesFrom(kp.privateKey,b64u.dec(r.epub),me.code);
         const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(r.iv)},key,b64u.dec(r.ct));
-        const blob=new Blob([plain],{type:'image/jpeg'});
+        /* 휴대폰이 키도 함께 보냈으면: "CHRM" + 판(1) + JSON 길이(4바이트) + JSON + 사진 */
+        let u=new Uint8Array(plain), keys=null;
+        if(u.length>9&&u[0]===67&&u[1]===72&&u[2]===82&&u[3]===77&&u[4]===1){
+          const n=(u[5]<<24|u[6]<<16|u[7]<<8|u[8])>>>0;
+          try{ keys=JSON.parse(new TextDecoder().decode(u.slice(9,9+n))); }catch(e){}
+          u=u.slice(9+n);
+        }
+        const blob=new Blob([u],{type:'image/jpeg'});
         me.sid=''; close();
+        try{ if(keys&&opts.onKeys) opts.onKeys(keys); }catch(e){ console.error(e); }
         try{ opts.onPhoto&&opts.onPhoto(blob); }catch(e){ console.error(e); }
       }catch(e){ say('사진을 열지 못했어요. 새 번호로 다시 보내 주세요.','err'); retry(); }
     };
@@ -844,7 +853,7 @@ const NUM_WORD = ['하나','둘','셋','넷','다섯','여섯'];
 
 /* ================= 상태 ================= */
 const S = {
-  apiKey:'', saveKey:false, model:'', models:[], imageModel:'', ttsModel:'', engine:'cloud', timbre:'Leda', cloudKey:'', saveCloud:false, engineNow:'', cartoon:null,
+  apiKey:'', saveKey:false, model:'', models:[], imageModel:'', ttsModel:'', engine:'builtin', timbre:'Leda', cloudKey:'', saveCloud:false, engineNow:'', cartoon:null,
   level:1, errorMode:'show', sound:true, color:'yellow', showSec:6, paint:true,
   admin:false, stage:null, view:'',
   img:null, shapes:[], types:[], analysis:null, demo:false, brushDone:false,
@@ -863,10 +872,9 @@ const store = {
   const c=store.get('color'); if(COLORS.some(x=>x.key===c)) S.color=c;
   const sec=+store.get('showSec'); if([4,6,8].includes(sec)) S.showSec=sec;
   S.paint = store.get('paint')!=='off';
-  S.cartoonOn = store.get('cartoonOn')!=='off'; /* 끝 그림은 중계(무료 한도)로 그려서 기본은 켬 */
-  const en=store.get('engine'); if(['cloud','device'].includes(en)) S.engine=en;
-  const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
-  if(store.get('voice')==='device' && !en) S.engine='device';
+  S.cartoonOn = store.get('cartoonOn')!=='off'; /* 끝 그림은 예시 사진에 미리 그려 둔 것만 */
+  /* 목소리(2026-10-21): 내장(기본, 미리 만든 Google 목소리) · 기기 · 내 Google 음성 키. 예전 'engine' 값은 쓰지 않음 */
+  const en=store.get('voice2'); if(['builtin','device','cloud'].includes(en)) S.engine=en;
   S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
   /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
   if(!S.cloudKey){ for(const k of ['webapp.cloudKey','colorFind.cloudKey','poemRecite.cloudKey','placeValue.cloudKey','placeCount.cloudKey','wordLearn.cloudKey']){ try{ const v=localStorage.getItem(k); if(v){ S.cloudKey=v; break; } }catch(e){} } }
@@ -899,6 +907,10 @@ function unlockAudio(){
 function cleanPCM(bin,rate){
   const n=bin.length>>1, f=new Float32Array(n);
   for(let k=0;k<n;k++){ let v=bin.charCodeAt(2*k)|(bin.charCodeAt(2*k+1)<<8); if(v>32767) v-=65536; f[k]=v/32768; }
+  return cleanF(f,rate);
+}
+function cleanF(f,rate){
+  const n=f.length;
   const W=Math.round(rate*0.02), nw=Math.max(1,Math.floor(n/W)), rms=new Float32Array(nw); let mx=0;
   for(let w=0;w<nw;w++){ let t=0; for(let k=w*W;k<Math.min(n,(w+1)*W);k++) t+=f[k]*f[k]; rms[w]=Math.sqrt(t/W); if(rms[w]>mx) mx=rms[w]; }
   const th=Math.max(0.003,mx*0.04);
@@ -939,8 +951,20 @@ function idbPut(k,clip){ try{ if(vdb.db) vdb.db.transaction('clips','readwrite')
 
 const VQ={list:[], busy:false, clips:new Map()};
 const timbre=()=>['Leda','Aoede','Kore'].includes(S.timbre)?S.timbre:'Leda';
-function engineReady(e){ return e==='cloud'||e==='device'; } /* Google 음성은 중계로 늘 쓸 수 있음 */
-function chooseEngine(){ S.engineNow = engineReady(S.engine)?S.engine:'device'; S.voiceNote=''; }
+/* 내장 목소리: 정해진 말(예시 사진 18장의 말 포함)은 미리 만든 Leda 소리를 GitHub에서(키 없음).
+   내 사진은 물건 이름이 바뀌므로, 미리 만든 소리에 없는 말은 선생님 Google 음성 키로 같은 Leda 목소리를 만듦.
+   키가 없으면 한 수업이 한 목소리가 되도록 그 수업은 기기 목소리로 */
+const VBASE='https://shim-sung-hyun.github.io/web_app/001/voice/leda/';
+let VSET=null;
+const vset=()=>VSET||(VSET=fetch(VBASE+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()));
+async function sha16(t){ const d=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
+function engineReady(e){ return e==='builtin'||e==='device'||(e==='cloud'&&!!S.cloudKey); }
+function chooseEngine(){
+  S.voiceNote='';
+  if(S.engine==='builtin' && S.img && !S.demo && !S.cloudKey){ S.engineNow='device'; S.voiceNote='내 사진은 Google 음성 키가 없어서 기기 목소리로 해요.'; return; }
+  S.engineNow = engineReady(S.engine)?S.engine:'device';
+}
+const voiceName=e=>e==='builtin'?'내장 목소리':e==='cloud'?'내 Google 음성':'기기 목소리';
 function getClip(text,urgent){
   const k=S.engineNow+'|'+timbre()+'|'+text;
   let c=VQ.clips.get(k);
@@ -961,9 +985,10 @@ async function pumpVoice(){
       try{ const clip=await synth(c.text,c.engine); c.done=true; idbPut(c.key,clip); c.res(clip); break; }
       catch(e){
         tries++;
+        if(e.missing){ c.rej(e); VQ.clips.delete(c.key); break; }
         if(e.quota){
           if(tries<=2 && !e.daily){ await new Promise(r=>setTimeout(r,e.wait||12000)); continue; } /* 하루 양을 다 쓴 것은 기다려도 소용없음 */
-          S.engineNow='device'; S.voiceNote='오늘 함께 쓰는 Google 목소리를 다 써서, 이번 수업은 기기 목소리로 바꿨어요.';
+          S.engineNow='device'; S.voiceNote='Google 음성 키의 사용량이 다 되어, 이번 수업은 기기 목소리로 바꿨어요.';
           showVoiceNote(); VQ.list.forEach(x=>{x.rej(e); VQ.clips.delete(x.key);}); VQ.list=[];
           c.rej(e); VQ.clips.delete(c.key); break;
         }
@@ -975,23 +1000,27 @@ async function pumpVoice(){
   VQ.busy=false;
 }
 async function synth(text,engine){
+  if(engine==='builtin'){
+    const h=await sha16(text);
+    if((await vset()).has(h)){
+      const r=await fetch(VBASE+h+'.mp3'); if(!r.ok) throw new Error('pre '+r.status);
+      const ab=await r.arrayBuffer(), c=getCtx(); if(!c) throw new Error('audio');
+      const buf=await new Promise((res,rej)=>{ const p=c.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
+      return cleanF(buf.getChannelData(0).slice(0),buf.sampleRate);
+    }
+    if(S.cloudKey) return synth(text,'cloud');
+    throw Object.assign(new Error('missing'),{missing:true});
+  }
   if(engine==='cloud'){
-    const call=async withRate=>{
+    if(!S.cloudKey) throw Object.assign(new Error('no key'),{missing:true});
+    const call=withRate=>{
       const audioConfig={audioEncoding:'LINEAR16',sampleRateHertz:24000}; if(withRate) audioConfig.speakingRate=0.92;
-      const body=JSON.stringify({input:{text},voice:{languageCode:'ko-KR',name:`ko-KR-Chirp3-HD-${timbre()}`},audioConfig});
-      /* 먼저 중계로. 오늘 함께 쓰는 양을 다 썼거나 중계가 안 되면, 이 기기에 저장된 선생님 키가 있을 때만 그 키로 */
-      if(!S.ttsOwn){
-        try{
-          const r=await fetch(AI_URL+'/tts',{method:'POST',headers:{'Content-Type':'application/json'},body});
-          if(r.ok || !S.cloudKey || !(r.status===429||r.status>=500)) return r;
-        }catch(e){ if(!S.cloudKey) throw e; }
-        S.ttsOwn=true;
-      }
-      return fetch('https://texttospeech.googleapis.com/v1/text:synthesize?key='+encodeURIComponent(S.cloudKey),{method:'POST',headers:{'Content-Type':'application/json'},body});
+      return fetch('https://texttospeech.googleapis.com/v1/text:synthesize',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':S.cloudKey},
+        body:JSON.stringify({input:{text},voice:{languageCode:'ko-KR',name:'ko-KR-Chirp3-HD-Leda'},audioConfig})});
     };
     let r=await call(S.cloudRate!==false);
     if(r.status===400 && S.cloudRate!==false){ S.cloudRate=false; r=await call(false); }
-    if(!r.ok){ let m=''; try{m=(await r.json()).error.message||'';}catch(e){} S.ttsError=r.status+' '+m; const er=new Error(S.ttsError); if(r.status===429){ er.quota=true; if(/daily limit/.test(m)) er.daily=true; } throw er; }
+    if(!r.ok){ let m=''; try{m=(await r.json()).error.message||'';}catch(e){} S.ttsError=r.status+' '+m; const er=new Error(S.ttsError); if(r.status===429){ er.quota=true; } if(r.status===400||r.status===403){ er.quota=true; er.daily=true; } throw er; }
     const j=await r.json(); const bin=atob(j.audioContent||'');
     const di=bin.indexOf('data'); const pcm=di>=0&&di<200?bin.slice(di+8):bin.slice(44);
     return cleanPCM(pcm,24000);
@@ -1062,7 +1091,7 @@ function speak(text,onEnd){
       let clip=null;
       try{ clip=await Promise.race([ps[i],new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),20000))]); }catch(e){}
       if(id!==speakSeq) return;
-      if(!clip){ if(S.engineNow==='device'){ deviceSay(parts.slice(i).join(' '),id,done); return; } continue; }
+      if(!clip){ deviceSay(parts.slice(i).join(' '),id,done); return; }
       await playClip(clip,id);
       if(id!==speakSeq) return;
       if(i<parts.length-1) await new Promise(r=>setTimeout(r,/,$/.test(parts[i])?220:320));
@@ -1158,10 +1187,7 @@ function openPanel(){
       ${optHTML('paint','on',S.paint?'on':'off','켬','')}${optHTML('paint','off',S.paint?'on':'off','끔','')}
     </div></div>
     <div class="ap-group" id="ap-voice"><h3>목소리</h3><div class="opts">
-      ${optHTML('engine','cloud',S.engine,'Google 음성','')}${optHTML('engine','device',S.engine,'기기 목소리','')}
-    </div>
-    <div class="opts" id="apTimbre" style="margin-top:8px" ${S.engine==='cloud'?'':'hidden'}>
-      ${optHTML('timbre','Leda',S.timbre,'밝은','')}${optHTML('timbre','Aoede',S.timbre,'산뜻한','')}${optHTML('timbre','Kore',S.timbre,'또렷한','')}
+      ${optHTML('engine','builtin',S.engine,'내장','기본')}${optHTML('engine','device',S.engine,'기기','')}${optHTML('engine','cloud',S.engine,'내 Google 음성','')}
     </div>
     </div>
     <div class="ap-group" id="ap-error"><h3>틀렸을 때</h3><div class="opts">
@@ -1175,7 +1201,7 @@ function openPanel(){
     if(n==='showSec'){S.showSec=+v; store.set('showSec',S.showSec);}
     if(n==='paint'){S.paint=v==='on'; store.set('paint',v);}
     if(n==='errorMode'){S.errorMode=v; store.set('errorMode',S.errorMode);}
-    if(n==='engine'){S.engine=v; store.set('engine',S.engine); $('apTimbre').hidden=v!=='cloud';}
+    if(n==='engine'){S.engine=v; store.set('voice2',S.engine);}
     if(n==='timbre'){S.timbre=v; store.set('timbre',S.timbre);}
   });
   $('apFold').onclick=()=>{ const f=ap.classList.toggle('folded'); $('apFold').textContent=f?'펴기':'접기'; };
@@ -1505,7 +1531,7 @@ function showSetup(o={}){
   document.body.classList.add('setup'); setAdmin(false);
   const opt=(name,val,cur,t,d)=>`<label class="opt"><input type="radio" name="${name}" value="${val}" ${String(cur)===String(val)?'checked':''}><div><b>${t}</b><span>${d}</span></div></label>`;
   newSession();
-  const sum=()=>[S.showSec+'초', S.paint?'칠하기 켬':'칠하기 끔', S.cartoonOn?'끝 그림 켬':'끝 그림 끔', S.errorMode==='show'?'바로 정답':'한 번 더 기회', S.engine==='cloud'?'Google 음성':'기기 목소리'].join(' · ');
+  const sum=()=>[S.showSec+'초', S.paint?'칠하기 켬':'칠하기 끔', S.cartoonOn?'끝 그림 켬':'끝 그림 끔', S.errorMode==='show'?'바로 정답':'한 번 더 기회', voiceName(S.engine)].join(' · ');
   const lv=[[1,'1단계 · 도형 이름','동그라미·세모·네모의 이름을 배우고 찾아요.'],[2,'2단계 · 변과 꼭짓점','원·삼각형·사각형의 변과 꼭짓점을 세어요.'],[3,'3단계 · 각','각을 세고 직각을 찾아요.']];
   main.innerHTML=`<section class="setup-page math">
     <header class="m-head"><div class="m-title"><h1>사진 속 도형 찾기</h1><span class="m-mark" aria-hidden="true"><i class="o"></i><i class="t"></i><i class="s"></i></span></div>
@@ -1514,9 +1540,9 @@ function showSetup(o={}){
     <div class="card" id="pickCard"><h2><span class="n">1</span>어떤 사진으로 할까요?</h2>
       <p class="sub-h">예시 사진 <small>키 없이 바로</small></p>
       <div class="ex-strip" id="exStrip"><span class="status">예시 사진을 가져오는 중…</span></div>
-      <p class="sub-h">내 사진 <small>선생님 Gemini 키 필요 · 한 번만 넣으면 돼요</small></p>
+      <p class="sub-h">내 사진 <small>선생님 Gemini 키 필요 · 처음 한 번, 사진과 함께 휴대폰에서 넣어요</small></p>
       <div class="my-row">
-        <button class="pick-btn pri" id="sPhone" type="button">${ICON.phone}<span>휴대폰으로 찍어 보내기</span></button>
+        <button class="pick-btn pri" id="sPhone" type="button">${ICON.phone}<span>휴대폰에서 받기</span></button>
         <button class="pick-btn" id="sPick" type="button">${ICON.photo}<span>이 기기에서 고르기</span></button>
       </div>
       <input type="file" id="sFile" accept="image/*" hidden>
@@ -1531,6 +1557,7 @@ function showSetup(o={}){
       <div class="pick-show" id="pickShow" hidden><img id="pickImg" alt="고른 사진"><div><b id="pickTitle"></b><span id="pickInfo"></span></div></div>
       <p class="status" id="planShapes"></p>
       <ol class="flow" id="planFlow"></ol>
+      <p class="status" id="planVoice"></p>
     </div>
 
     <details class="card more" id="moreSet"><summary><b>더 정하기</b><span class="sum" id="moreSum">${sum()}</span></summary>
@@ -1547,7 +1574,7 @@ function showSetup(o={}){
       </div>
       <h3>끝 화면 그림</h3>
       <div class="opts">
-        ${opt('cartoonOn','on',S.cartoonOn?'on':'off','그림으로 바꾸기 (기본)','사진을 만화 그림으로 바꾸고 찾은 도형을 또렷하게. 늦거나 오늘 쓸 양을 다 쓰면 칠한 사진')}
+        ${opt('cartoonOn','on',S.cartoonOn?'on':'off','그림 (기본)','예시 사진은 미리 그려 둔 그림으로. 내 사진은 칠한 사진')}
         ${opt('cartoonOn','off',S.cartoonOn?'on':'off','칠한 사진','학생이 칠한 사진을 그대로')}
       </div>
       <h3>틀렸을 때</h3>
@@ -1557,24 +1584,22 @@ function showSetup(o={}){
       </div>
       <h3>목소리</h3>
       <div class="opts">
-        ${opt('engine','cloud',S.engine,'Google 음성 (기본)','자연스러운 목소리')}
+        ${opt('engine','builtin',S.engine,'내장 목소리 (기본)','미리 만든 Google 목소리. 키 없이')}
         ${opt('engine','device',S.engine,'기기 목소리','이 기기에 들어 있는 목소리')}
+        ${opt('engine','cloud',S.engine,'내 Google 음성','받아 둔 Google 음성 키로 만들기')}
       </div>
-      <div class="opts" id="timbreRow" ${S.engine==='cloud'?'':'hidden'}>
-        ${opt('timbre','Leda',S.timbre,'밝은 목소리','')}
-        ${opt('timbre','Aoede',S.timbre,'산뜻한 목소리','')}
-        ${opt('timbre','Kore',S.timbre,'또렷한 목소리','')}
-      </div>
+      <p class="status">내 사진은 물건 이름이 사진마다 달라서, 내장 목소리에 없는 말은 Google 음성 키가 있으면 같은 목소리로 만들고 없으면 그 수업은 기기 목소리로 해요.</p>
       <div class="row"><button class="btn" id="voiceTest" type="button">목소리 들어 보기</button><span class="status" id="voiceStatus"></span></div>
-      <h3>선생님 Gemini 키 <small class="status">내 사진을 분석할 때만 써요</small></h3>
-      <div class="row"><span class="status" id="keyState"></span><button class="btn" id="keyAct" type="button"></button></div>
+      <h3>선생님 키 <small class="status">내 사진에만 써요 · 이 기기에만 저장</small></h3>
+      <div class="row"><b style="min-width:110px">Gemini</b><span class="status" id="keyState"></span><button class="btn" id="keyAct" type="button"></button></div>
+      <div class="row"><b style="min-width:110px">Google 음성</b><span class="status" id="cKeyState"></span><button class="btn" id="cKeyAct" type="button"></button></div>
     </details>
 
     <details class="card more"><summary><b>알아 두기</b><span class="sum">교사 모드 · 사진 안내</span></summary>
       <p class="note"><b>학생 화면에서는 메뉴가 모두 숨겨져요.</b> 오른쪽 아래의 옅은 동그라미(charum)를 <b>3초 동안 누른 뒤</b> 왼쪽 위에 잠깐 나타나는 작은 점을 누르면 교사 모드가 켜지고 수업이 멈춰요. 위쪽 <b>사진 · 배우기 · 찾기 · 끝</b>으로 단계를 바로 고를 수 있어요.<br>
-      <b>예시 사진은 키나 가입 없이 바로 쓸 수 있어요.</b> 목소리와 끝 그림은 함께 쓰는 중계 서버를 거쳐요. 하루에 함께 쓰는 양을 다 쓰면 그날은 기기 목소리·칠한 사진으로 이어서 해요.<br>
-      <b>내 사진</b>은 선생님 본인의 Google Gemini 키로 도형을 찾아요. 키는 Google AI Studio에서 휴대폰으로 1~2분이면 무료로 받을 수 있고, 이 기기에만 저장돼요. <a href="https://shim-sung-hyun.github.io/web_app/gemini-key.html" target="_blank" rel="noopener">키 받는 법</a><br>
-      고른 사진은 Google Gemini와 Cloudflare로 보내지고, 무료 키는 Google이 서비스 개선에 쓸 수 있어요. <b>학생 얼굴이나 이름이 보이는 사진은 넣지 마세요.</b></p>
+      <b>예시 사진은 키나 가입 없이 바로 쓸 수 있어요.</b> 도형·목소리·끝 그림을 미리 만들어 두었어요.<br>
+      <b>내 사진</b>은 <b>휴대폰에서 받기</b>로 보내요. QR을 찍어 사진을 보내면서, 처음 한 번은 같은 화면에 선생님 본인의 <b>Gemini 키</b>(도형 찾기, 필수)와 <b>Google 음성 키</b>(목소리, 선택)를 함께 넣어요. Gemini 키는 Google AI Studio에서 휴대폰으로 1~2분이면 받을 수 있어요(<a href="https://shim-sung-hyun.github.io/web_app/gemini-key.html" target="_blank" rel="noopener">키 받는 법</a>). 키는 이 기기에만 저장돼요. Google 음성 키가 없으면 내 사진 수업은 기기 목소리로 해요.<br>
+      사진과 키는 잠가서 charum.org 중계 서버를 거쳐 오고, 중계 서버는 열어 볼 수 없어요. 고른 사진은 도형을 찾으려고 Google Gemini로 보내지고, 결제를 연결하지 않은 키는 Google이 서비스 개선에 쓸 수 있어요. <b>학생 얼굴이나 이름이 보이는 사진은 넣지 마세요.</b></p>
     </details>
 
     <div class="start-bar"><button class="btn primary" id="startBtn" type="button">시작</button></div>
@@ -1585,8 +1610,7 @@ function showSetup(o={}){
     if(r.name==='paint'){S.paint=r.value==='on'; store.set('paint',r.value);}
     if(r.name==='cartoonOn'){S.cartoonOn=r.value==='on'; store.set('cartoonOn',r.value);}
     if(r.name==='errorMode'){S.errorMode=r.value; store.set('errorMode',S.errorMode);}
-    if(r.name==='engine'){S.engine=r.value; store.set('engine',S.engine); $('timbreRow').hidden=S.engine!=='cloud';}
-    if(r.name==='timbre'){S.timbre=r.value; store.set('timbre',S.timbre);}
+    if(r.name==='engine'){S.engine=r.value; store.set('voice2',S.engine); $('voiceStatus').textContent='';}
     const m=$('moreSum'); if(m) m.textContent=sum(); planInfo();
   });
   /* 예시 사진: 화면에 바로 늘어놓고 누르면 고름 */
@@ -1596,26 +1620,30 @@ function showSetup(o={}){
     box.querySelectorAll('.ex-item').forEach(b=>b.onclick=()=>{ hideSpot(); useSample(list.find(x=>x.id===b.dataset.id)); });
     if(S.sampleId&&S.demo&&S.img) markSample(S.sampleId); });
   const keyRow=()=>{ const st=$('keyState'), bt=$('keyAct'); if(!st) return;
-    st.textContent=S.apiKey?'이 기기에 저장됨 '+keyTail():'아직 없어요'; bt.textContent=S.apiKey?'키 지우기':'키 넣기';
-    bt.onclick=()=>{ if(S.apiKey){ saveGemKey(''); keyRow(); } else needKey(keyRow); }; };
+    st.textContent=S.apiKey?'저장됨 '+keyTail():'없음'; bt.textContent=S.apiKey?'지우기':'넣기';
+    bt.onclick=()=>{ if(S.apiKey){ saveGemKey(''); keyRow(); } else needKey(keyRow); };
+    const cs=$('cKeyState'), cb=$('cKeyAct');
+    cs.textContent=S.cloudKey?'저장됨 ••••'+S.cloudKey.slice(-4):'없음 (선택)'; cb.textContent=S.cloudKey?'지우기':'넣기';
+    cb.onclick=()=>{ if(S.cloudKey){ saveCloudKey(''); keyRow(); planInfo(); } else KeyRelay.receive({want:['cloud'], onKeys:g=>{ if(g&&g.cloud){ saveCloudKey(g.cloud.trim()); keyRow(); planInfo(); } }}); }; };
   keyRow(); planInfo();
   /* 사진: 고르는 즉시 분석을 시작해 두어 시작을 누르면 기다림 없이 */
   const fi=$('sFile');
   $('sPick').onclick=()=>needKey(()=>fi.click());
   fi.onchange=async()=>{ const f=fi.files&&fi.files[0]; fi.value=''; if(!f) return; hideSpot(); showPick('사진을 여는 중…');
     if(!await preparePhoto(f)){ S.img=null; showPick(); spotlight('#pickCard','이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; } showPick('내 사진'); };
-  $('sPhone').onclick=()=>needKey(()=>PhotoRelay.receive({onPhoto:async blob=>{ if(!$('pickCard')) return; hideSpot(); showPick('사진을 여는 중…');
-    if(!await preparePhoto(blob)){ S.img=null; showPick(); return; } showPick('휴대폰에서 받은 사진'); }}));
+  $('sPhone').onclick=()=>phoneReceive(async blob=>{ if(!$('pickCard')) return; hideSpot(); showPick('사진을 여는 중…'); keyRow();
+    if(!await preparePhoto(blob)){ S.img=null; showPick(); return; } showPick('휴대폰에서 받은 사진'); });
   $('voiceTest').onclick=async()=>{
     unlockAudio();
     const st=$('voiceStatus'); st.className='status'; st.textContent='';
     chooseEngine();
     const line='안녕하세요. 사진에서 동그라미를 찾아볼까요?';
-    if(S.engineNow!=='device'){
-      st.textContent='목소리를 만드는 중…';
-      try{ await Promise.all(splitSay(line).map(x=>getClip(x,true))); st.textContent='이 목소리로 수업해요.'; st.className='status good'; }
-      catch(e){ chooseEngine(); st.textContent='지금은 Google 음성을 쓸 수 없어서 기기 목소리로 해요.'; st.className='status bad'; S.engineNow='device'; }
-    }
+    if(S.engine==='cloud'&&!S.cloudKey){ st.textContent='Google 음성 키가 없어서 기기 목소리로 해요. 아래 "선생님 키"에서 넣을 수 있어요.'; st.className='status bad'; }
+    else if(S.engineNow!=='device'){
+      st.textContent='목소리를 가져오는 중…';
+      try{ await Promise.all(splitSay(line).map(x=>getClip(x,true))); st.textContent=voiceName(S.engineNow)+'로 수업해요.'+(S.voiceNote?' '+S.voiceNote:''); st.className='status good'; }
+      catch(e){ st.textContent='지금은 '+voiceName(S.engineNow)+'를 쓸 수 없어서 기기 목소리로 해요.'; st.className='status bad'; S.engineNow='device'; }
+    } else if(S.voiceNote){ st.textContent=S.voiceNote; }
     const was=S.sound; S.sound=true; speak(line); S.sound=was;
   };
   $('startBtn').onclick=()=>{
@@ -1649,7 +1677,7 @@ async function useSample(x){
   try{ const blob=await (await fetch(x.file)).blob(); S.img=await loadPhoto(blob); }catch(e){ S.img=null; markSample(); showPick(); return; }
   S.demo=true; S.shapes=[]; S.sampleId=x.id;
   S.analysis={status:'done',shapes:x.shapes.map(s=>({...s,box:{...s.box},pts:s.pts&&s.pts.map(p=>[...p])}))};
-  S.cartoon=x.art?{status:'done',url:x.art}:null;   /* 미리 골라 둔 끝 그림이 있으면 그것을 */
+  S.sampleArt=x.art||null;   /* 미리 골라 둔 끝 그림 */
   showPick('예시 · '+x.title);
 }
 function markSample(id){ document.querySelectorAll('.ex-item').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id))); }
@@ -1677,6 +1705,7 @@ function planInfo(){
   const step=['보기','칠하기','찾기','끝 그림'].filter(t=>!(t==='칠하기'&&!S.paint));
   $('planShapes').textContent=!S.img?'사진을 고르면 찾을 도형이 여기에 나와요.':a.status==='pending'?'도형을 찾고 있어요…':sh.length?`찾을 도형: ${kinds.join(' · ')}`:'찾은 도형이 없어요.';
   el.innerHTML=step.map((t,i)=>`<li><span>${i+1}</span>${t}</li>`).join('');
+  const pv=$('planVoice'); if(pv){ chooseEngine(); pv.textContent='목소리: '+voiceName(S.engineNow)+(S.voiceNote?' — '+S.voiceNote:''); }
 }
 function rankModel(m){
   const v=(m.match(/gemini-(\d+(?:\.\d+)?)/)||[])[1]; let s=v?parseFloat(v)*100:0;
@@ -1757,12 +1786,19 @@ function showPhoto(){
   $('pickBtn').onclick=()=>needKey(()=>fi.click());
   fi.onchange=()=>{ const f=fi.files&&fi.files[0]; fi.value=''; if(f){ goFull(); usePhoto(f); } }; /* 브라우저가 허락하면 바로 전체 화면, 아니면 붓 화면에서 처음 누를 때 */
   /* 휴대폰으로 찍은 사진을 받아서 바로 수업 */
-  $('phonePick').onclick=()=>needKey(()=>PhotoRelay.receive({onPhoto:blob=>{ if(S.view==='photo') usePhoto(blob); }}));
+  $('phonePick').onclick=()=>phoneReceive(blob=>{ if(S.view==='photo') usePhoto(blob); });
 }
 async function usePhoto(f){
   if(!await preparePhoto(f)){ showError('이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; }
+  chooseEngine();
   showBrush();
 }
+/* ===== 휴대폰에서 받기: 사진 하나에 필요한 키(Gemini 필수 · Google 음성 선택)를 함께 =====
+   QR 하나로 사진을 보내면서, 이 기기에 없는 키만 휴대폰 화면에 칸이 나옴 */
+const missingKeys=()=>S.apiKey?[]:['gemini',...(S.cloudKey?[]:['cloud'])];   /* Google 음성 키는 처음 Gemini 키를 넣을 때만 함께 묻고, 나중엔 더 정하기에서 */
+function saveCloudKey(k){ S.cloudKey=k||''; store.set('cloudKey',k||null); try{ k?localStorage.setItem('webapp.cloudKey',k):localStorage.removeItem('webapp.cloudKey'); }catch(e){} }
+function takeKeys(k){ if(!k) return; if(k.gemini&&/^AIza[\w-]{20,}$/.test(k.gemini.trim())) saveGemKey(k.gemini.trim()); if(k.cloud&&/^AIza[\w-]{20,}$/.test(k.cloud.trim())) saveCloudKey(k.cloud.trim()); }
+function phoneReceive(onPhoto){ PhotoRelay.receive({want:missingKeys(), onKeys:takeKeys, onPhoto}); }
 /* ===== 선생님 Gemini 키: 내 사진(휴대폰·이 기기)을 분석할 때만 필요 ===== */
 function saveGemKey(k){ S.apiKey=k||''; S.modelChecked=false; store.set('key',k||null); try{ k?localStorage.setItem('webapp.geminiKey',k):localStorage.removeItem('webapp.geminiKey'); }catch(e){} }
 const keyTail=()=>S.apiKey?'••••'+S.apiKey.slice(-4):'';
@@ -1792,17 +1828,17 @@ function needKey(then){
     box.remove(); then(); };
   $('keyX').onclick=close; box.addEventListener('pointerdown',e=>{ if(e.target===box) close(); });
   $('keyOk').onclick=()=>use($('keyIn').value);
-  $('keyPhone').onclick=()=>KeyRelay.receive({want:['gemini'], onKeys:got=>{ if(got&&got.gemini) use(got.gemini); }});
+  $('keyPhone').onclick=()=>KeyRelay.receive({want:missingKeys(), onKeys:got=>{ if(got&&got.cloud) saveCloudKey(got.cloud.trim()); if(got&&got.gemini) use(got.gemini); }});
 }
 /* 사진을 받아 두고 바로 분석을 시작(화면은 그대로). 설정 화면에서 미리 고를 때도 씀 */
 async function preparePhoto(f){ markSample(); S.sampleId=null;
   let img; try{ img=await loadPhoto(f); }catch(e){ return false; }
-  S.img=img; S.demo=false; S.shapes=[]; S.cartoon=null; S.analysis={status:'pending'};
+  S.img=img; S.demo=false; S.sampleArt=null; S.shapes=[]; S.cartoon=null; S.analysis={status:'pending'};
   runAnalysis(); return true;
 }
 async function prepareDemo(){
   markSample();
-  S.demo=true; S.shapes=[]; S.cartoon=null;
+  S.demo=true; S.sampleArt=null; S.shapes=[]; S.cartoon=null;
   try{ S.img=await loadSample(); S.analysis={status:'done',shapes:sampleShapes()}; }
   catch(e){ const d=makeDemo(); S.img=d.img; S.analysis={status:'done',shapes:d.shapes}; }
 }
@@ -2005,7 +2041,7 @@ function onAnalysis(){
   if(a.status==='error'){ showError(a.message,a.detail); return; }
   if(!a.shapes.length){ showError('이 사진에서는 도형을 찾지 못했어요. 다른 사진을 골라요.'); return; }
   buildLesson(a.shapes);
-  if(!S.cartoon) startCartoon();
+  S.cartoon=S.cartoonOn&&S.demo&&S.sampleArt?{status:'done',url:S.sampleArt}:{status:'none'};
   showReveal();
 }
 function showWaiting(){
@@ -2082,8 +2118,36 @@ function buildLesson(shapes){
   shapes.forEach(x=>L.push(`${eun(x.obj)} ${shapeOf(x.type)}.`));
   if(S.level===2) L.push('변을 눌러서 세어요. 곧은 선을 변이라고 해요.','꼭짓점을 눌러서 세어요. 두 곧은 선이 만나는 점을 꼭짓점이라고 해요.');
   if(S.level===3) L.push('각을 눌러서 세어요. 한 점에서 그은 두 반직선으로 이루어진 도형을 각이라고 해요.',...Object.values(ANGLE_DEF),'직각이에요.','각이에요.');
-  prefetchVoice(L);
+  S.voiceL=L; prefetchVoice(L);
 }
+/* 내장 목소리 목록 만들기용: 지금 사진·단계에서 나올 수 있는 말을 모두(문장 조각 단위). voice-lines.json을 만들 때 씀 */
+function voiceLines(){
+  const out=new Set(), add=t=>splitSay(t).forEach(x=>out.add(x));
+  FIXED_LINES().forEach(add); (S.voiceL||[]).forEach(add);
+  ['사진을 골라요.','사진을 보아요.','사진에 도형이 있어요.','도형을 찾고 있어요. 잠시 기다리세요.','다 했어요. 사진이 그림이 되었어요.','안녕하세요. 사진에서 동그라미를 찾아볼까요?','반듯하게 펴 볼게요.'].forEach(add);
+  PHRASES.all.forEach(x=>add(x+'!'));
+  const shapes=S.shapes;
+  shapes.forEach(x=>{ add(`${eun(x.obj)} ${shapeOf(x.type)}.`); if(S.level===3&&hasRight(x)) add(`${x.obj}에 직각이 있어요.`); if(S.level===3&&x.type==='quad'&&x.realRight) add(`${eun(x.obj)} 비스듬히 찍혔어요.`); });
+  for(let n=1;n<=Math.max(1,shapes.length);n++) add(`직각이 있는 도형 ${KO_COUNT[n-1]||n} 개를 찾아 눌러요.`);
+  S.types.forEach(t=>{ const c=ofType(t).length; add(`${nm(t)} ${KO_COUNT[c-1]||c} 개를 찾아 눌러요.`); });
+  if(S.level>=2){
+    [['변','곧은 선을 변이라고 해요.'],['꼭짓점','두 곧은 선이 만나는 점을 꼭짓점이라고 해요.'],['각','한 점에서 그은 두 반직선으로 이루어진 도형을 각이라고 해요.']].forEach(([w,intro])=>{
+      add(`${eul(w)} 눌러서 세어요. ${intro}`);
+      S.types.filter(t=>TYPES[t].corners).forEach(t=>{ const name=nm(t), head=`${eun(name)} ${w}${batchim(w)?'이':'가'}`;
+        for(let n=3;n<=6;n++){ add(`${head} ${KO_COUNT[n-1]} 개 있어요.`); add(`${head} ${KO_COUNT[n-1]} 개 있는 도형이에요.`); } });
+    });
+    ['직각이에요.','각이에요.',...Object.values(ANGLE_DEF)].forEach(add);
+    for(let n=1;n<=6;n++) add(`직각이 ${KO_COUNT[n-1]} 개 있어요.`);
+  }
+  return [...out];
+}
+window.__voiceLines=async()=>{   /* 예시 사진 × 단계 1~3 */
+  const list=await loadSamples(), all=new Set(), keep={level:S.level,paint:S.paint};
+  const was=S.img;
+  for(const x of list){ const im=await loadImg(x.file).catch(()=>null); S.img={w:im?im.naturalWidth:1000,h:im?im.naturalHeight:1000,url:x.file};
+   for(const lv of [1,2,3]){ S.level=lv; S.paint=true; S.demo=true; buildLesson(x.shapes.map(s=>({...s}))); voiceLines().forEach(v=>all.add(v)); } }
+  S.img=was; S.level=keep.level; S.paint=keep.paint; VQ.list=[]; return [...all];
+};
 const ofType=t=>S.shapes.filter(s=>s.type===t);
 function objList(list,max=3){return [...new Set(list.map(s=>s.obj))].slice(0,max).join(', ');}
 const shapeOf=t=>`${nm(t)} 모양이에요`;
@@ -2592,6 +2656,8 @@ Do not add, remove, move, merge or invent anything. Do not put new shapes, patte
 Style: smooth soft shading, simplified textures, crisp clean outlines, gentle light, slightly brighter colors. No text, letters, numbers or logos.`;
 }
 function startCartoon(){
+  /* 2026-10-21: 그림 중계(Cloudflare)를 쓰지 않음. 예시 사진은 미리 그린 그림(useSample), 내 사진은 칠한 사진 */
+  S.cartoon={status:'none'}; return;
   if(!S.cartoonOn || !S.img){ S.cartoon={status:'none'}; return; }
   S.cartoon={status:'pending'}; const myImg=S.img;
   (async()=>{
