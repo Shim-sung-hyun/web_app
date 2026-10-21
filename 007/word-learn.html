@@ -381,8 +381,8 @@ details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margi
 .replay:active{transform:translateY(2px);box-shadow:0 1px 0 #e3dccd}
 /* 전자칠판: 누르는 동안 '화면 밀기'로 읽혀 취소되지 않게 */
 .card,.sdot,.anbtn,.wbtn,.tg,.endcard{touch-action:none}
-/* 시작 줄: 설정 맨 아래(떠 있지 않게) · 누구와 하나요 안의 학생 명단 */
-.startbar.one{position:static;margin:0 0 20px}
+/* 시작 줄: 설정이 한 화면에 다 들어가지 않을 때만 아래에 떠 있음(sticky, 2026-10-21) · 누구와 하나요 안의 학생 명단 */
+.startbar.one{margin:0 0 20px}
 .rosterpanel{margin:10px 0 4px;padding:12px 14px;border:1px dashed var(--line);border-radius:14px;background:#FBFAF7}
 .rosterpanel .addline{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 /* 편 차례 공개 */
