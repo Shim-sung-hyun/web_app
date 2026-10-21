@@ -4,7 +4,7 @@
 [파일]
 - word-learn.html          웹앱 (버전 1)
 - word-learn-v0.html       예전 판(버전 0) — 따로 남겨 둠, 게시판에는 걸지 않음
-- word-learn-beta.html     베타 주소로 들어오면 word-learn.html로 넘겨 줌
+- word-learn-beta.html     베타(2026-10-21): 진행 막대 · 수준 1 고르기 다시 듣기 · 견본 테두리. 확인 뒤 정식판에 합치고 다시 넘겨 주기로
 - word-learn01~20.jpg      화면 캡처 1366×768 (설명서 그림)
 - word-learn_manual.html   게시판 본문용 짧은 설명서 (에디터 소스 모드에 붙여 넣기)
 - word-learn_guide.html    자세한 설명 페이지 (짧은 설명서의 "자세한 설명 보기"에서 열림)
