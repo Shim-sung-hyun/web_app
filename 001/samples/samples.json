@@ -1166,7 +1166,7 @@
   "file": "samples/computer-desk.jpg",
   "ok": true,
   "art": "samples/computer-desk-art.jpg",
-  "line": null,
+  "line": "samples/computer-desk-line.png",
   "shapes": [
    {
     "type": "quad",
