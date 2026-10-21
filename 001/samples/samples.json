@@ -830,7 +830,7 @@
   "title": "종",
   "file": "samples/bell.jpg",
   "ok": true,
-  "art": null,
+  "art": "samples/bell-art.jpg",
   "line": null,
   "shapes": [
    {
@@ -853,7 +853,7 @@
   "title": "시간표 칠판",
   "file": "samples/timetable.jpg",
   "ok": true,
-  "art": null,
+  "art": "samples/timetable-art.jpg",
   "line": null,
   "shapes": [
    {
