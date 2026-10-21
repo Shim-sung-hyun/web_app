@@ -553,13 +553,13 @@ function voiceReady(){
    시를 통째로 낭송해 만든 뒤 줄마다 나눈 것이라, 파일 이름 = SHA-1("시|줄 번호|줄 글") 앞 16자리
    (같은 글이 되풀이되는 줄도 그 자리의 소리로 읽음) */
 const PRE={set:null};
-function preSet(){ if(!PRE.set) PRE.set=fetch('voice/leda/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
+function preSet(){ if(!PRE.set) PRE.set=fetch('https://shim-sung-hyun.github.io/web_app/004/voice/leda/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
 async function preHash(t){ const d=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
 async function preClip(text,ctx){
   const set=await preSet(); let h=null;
   try{ if(window.crypto&&crypto.subtle) h=await preHash(ctx?ctx.poem+'|'+ctx.k+'|'+text:text); }catch(e){}
   if(h&&set.has(h)){
-    try{ const r=await fetch('voice/leda/'+h+'.mp3'); if(r.ok){ const ab=await r.arrayBuffer(), c=getCtx();
+    try{ const r=await fetch('https://shim-sung-hyun.github.io/web_app/004/voice/leda/'+h+'.mp3'); if(r.ok){ const ab=await r.arrayBuffer(), c=getCtx();
       const buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
       return {data:new Float32Array(buf.getChannelData(0)),rate:buf.sampleRate}; } }catch(e){}
   }
@@ -726,7 +726,7 @@ function renderDocks(){
     `<div class="g" id="gFont"><span class="lbl">글꼴</span>${b('font:myeongjo','명조',S.font==='myeongjo')}${b('font:easy','둥근 글씨',S.font==='easy')}</div>`+
     `<div class="g">${b('sound',(S.sound?ICON.sndOn:ICON.sndOff)+(S.sound?'소리':'소리 끔'),S.sound)}</div>`+
     /* 목소리: 수업 내내 한 목소리. Google 음성은 Cloud 키가 있어야 읽어 줌 */
-    `<div class="g" id="gVoice"><span class="lbl">목소리</span>${b('engine:base','기본 목소리',S.engine==='base')}${b('engine:cloud','Google (키)',S.engine==='cloud')}${needKey?`<a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">${ICON.key}키가 있으면: 키 목록</a><a class="help" href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a>`:''}${needKey?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
+    `<div class="g" id="gVoice"><span class="lbl">목소리</span>${b('engine:base','기본 목소리',S.engine==='base')}${b('engine:cloud','Google (키)',S.engine==='cloud')}${needKey?`<a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">${ICON.key}키가 있으면: 키 목록</a><a class="help" href="https://shim-sung-hyun.github.io/web_app/004/cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a>`:''}${needKey?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
     `<div class="g">`+
       (needKey?`${S.engine==='cloud'?[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join(''):'<span class="small">새 시 목소리:</span>'}
         <input class="key" id="dockKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button>`:'')+

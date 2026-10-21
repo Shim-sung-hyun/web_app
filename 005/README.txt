@@ -17,3 +17,10 @@
   place-value_manual.html   게시판 본문용 설명서
   voice/leda/               목소리(미리 만든 Google Leda 조각, mp3 + index.json). 키 없이 씀
                             수를 자리마다 조각(예: 삼만 / 이천·오백·칠)으로 이어 읽음
+
+[내 도메인에서 열기] (2026-10-21)
+- 주소: https://www.charum.org/study/005/place-value.html (게시판 app_url도 이 주소로)
+- 서버 study/005/ 폴더에는 server-loader.html(1KB)을 place-value.html 이름으로 한 번만 올린다. 열릴 때마다 GitHub의 최신 place-value.html을 받아 그 주소에서 펼친다 → 앱을 고쳐도 GitHub에만 올리면 된다.
+- 앱이 읽는 자료(목소리·예시 사진·cloud-key.html 등)는 GitHub 절대 주소로 읽는다. 상대 주소를 새로 쓰지 말 것.
+- 기록·키는 그 기기 브라우저에 주소(도메인)별로 저장된다. 서버에는 아무것도 저장되지 않는다.
+- 휴대폰으로 키 받기(key-relay.php)·사진 보내기·AI 중계는 받는 주소 목록에 https://www.charum.org 가 있어야 한다.

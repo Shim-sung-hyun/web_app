@@ -692,7 +692,7 @@ function renderVoicePop(){
   p.innerHTML=`<div class="row">${[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>`<button type="button" class="tb${S.timbre===k?' on':''}" data-tb="${k}">${l}</button>`).join('')}<button type="button" class="tb" data-test="1">들어 보기</button></div>`+
     `<div class="row"><input class="key" id="voiceKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button></div>`+
     `<div class="row" style="justify-content:space-between"><label><input type="checkbox" id="voiceSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label></div>`+
-    `<div class="row" style="justify-content:space-between"><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키가 있으면: 키 목록</a><a href="cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a></div>`+
+    `<div class="row" style="justify-content:space-between"><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키가 있으면: 키 목록</a><a href="https://shim-sung-hyun.github.io/web_app/006/cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a></div>`+
     (S.voiceNote?`<div class="note">${esc(S.voiceNote)}</div>`:'');
   const k=$('voiceKey'), save=()=>store.set('cloudKey',KeyRelay.share('cloud',S.saveCloud&&S.cloudKey?S.cloudKey:null));
   k.oninput=()=>{ S.cloudKey=k.value.trim(); save(); chooseEngine(); };

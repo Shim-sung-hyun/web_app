@@ -786,7 +786,7 @@ function showSetup(){
       <div class="grp"><h2>목소리 (수업 내내 한 목소리)</h2>${seg('engine',{cloud:['Google 음성','자연스러움 · Cloud 키 필요'],device:['기기 목소리','키 없이 바로']})}</div>
       <div id="cloudRow" ${S.engine==='cloud'?'':'hidden'} style="display:flex;flex-direction:column;gap:10px">
         ${seg('timbre',{Leda:['밝은 목소리',''],Aoede:['산뜻한 목소리',''],Kore:['또렷한 목소리','']})}
-        <p class="hint"><b>Cloud 키 받기</b> · <b>키가 있으면</b> → <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키 목록</a>에서 <b>키 표시</b>를 눌러 복사 · <b>처음이면</b> → <a href="cloud-key.html" target="_blank" rel="noopener">Cloud 키 만드는 방법</a>(결제 등록·API 켜기·키 만들기, 매달 100만 자 무료)</p>
+        <p class="hint"><b>Cloud 키 받기</b> · <b>키가 있으면</b> → <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키 목록</a>에서 <b>키 표시</b>를 눌러 복사 · <b>처음이면</b> → <a href="https://shim-sung-hyun.github.io/web_app/003/cloud-key.html" target="_blank" rel="noopener">Cloud 키 만드는 방법</a>(결제 등록·API 켜기·키 만들기, 매달 100만 자 무료)</p>
         <div class="row"><input class="field" id="cloudKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}"><button class="btn" id="showKey" type="button">보기</button><button class="kr-open" data-kr="1" type="button">📱 휴대폰으로 받기</button></div>
         <label class="row" style="gap:8px"><input type="checkbox" id="saveCloud" ${S.saveCloud?'checked':''}> 이 기기에 키 저장 (여러 사람이 쓰는 컴퓨터라면 끄세요)</label>
       </div>
