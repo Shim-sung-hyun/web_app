@@ -436,6 +436,15 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 #dots .pline{display:block;width:min(440px,60vw);height:8px;border-radius:4px;background:#E3DED3;overflow:hidden}
 #dots .pline i{display:block;height:100%;background:#3D6FB6;border-radius:4px}
 .prompt .pword{border:3px solid #C9DBEF;box-sizing:border-box}
+/* 이미 한 묶음은 뒤로 들어가 흐리게, 할 묶음은 도드라지게 (2026-10-21) */
+.bchip:not(.done){box-shadow:0 3px 0 #D8DEE8}
+.bchip.on:not(.done){box-shadow:0 0 0 2px #2F5D8A inset,0 3px 0 #9DB6D8}
+.bchip.done{background:#EEF1F4;border-color:#E1E5EB;opacity:.6;box-shadow:inset 0 2px 4px rgba(30,40,60,.10)}
+.bchip.done.on{opacity:.85;border-color:#2F5D8A}
+#stepWhat .today:not(.done){box-shadow:0 4px 0 #DCE6F1}
+#stepWhat .today.done{background:#EEF1F4;box-shadow:inset 0 2px 5px rgba(30,40,60,.10)}
+#stepWhat .today.done .chips,#stepWhat .today.done #todayTitle{opacity:.6}
+#todayTitle[data-done="1"]::after{content:' · 이미 한 묶음';font-size:.8em;font-weight:400;color:#2E7D52}
 
 body.tmode #stage,body.tmode #game{pointer-events:none}
 .tbar button.cur{border-color:#9FF3F5;border-style:dashed}
@@ -3394,7 +3403,7 @@ const Teacher = {
     $('#tGame').addEventListener('click', goGame);
     $('#tNextB').addEventListener('click', () => {
       if (!R.bundle) return;
-      const nx = Prog.next(R.bundle.lv) || nextSeq(R.bundle.mi, R.bundle.bi, R.bundle.lv); if (!nx) return;   /* 다 마쳤으면 같은 마당의 다음 묶음(돌아서 처음) */
+      const nx = Prog.next(R.bundle.lv) || nextSeq(R.bundle.mi, R.bundle.bi, R.bundle.lv); if (!nx) return;   /* 다 마쳤으면 같은 편의 다음 묶음(돌아서 처음) */
       S.mode = 'bundle'; S.book = BOOK[nx.mi].p; S.mi = nx.mi; S.bi = nx.bi; saveSel();
       this.close(false); ++R.run; Speech.stop(); hideGame(); clearStage();
       renderAll(); prepareAndStart(bundlesOf(nx.mi, curLevel())[nx.bi] || []);
@@ -3450,7 +3459,7 @@ const TOUR_STEPS = {
     { el: '#who', t: '누구와 하나요?', x: '학생을 누르면 그 학생으로 기록을 시작하고, 그 학생의 수준과 다음 묶음을 불러와요. "연습"은 기록하지 않아요.' },
     { el: '#levelSeg', t: '수준', x: '수준 1은 4낱말씩 듣고 고르기, 2는 6낱말씩 글자 알아보기, 3은 10낱말씩 읽기예요. 학생마다 저장돼요.' },
     { el: '.today', t: '오늘 배울 낱말', x: '지난번 다음 묶음이 저절로 골라져요. 낱말을 누르면 빼거나 다시 넣어요.' },
-    { el: '#nextBundle', t: '다음 묶음으로', x: '같은 마당의 다음 묶음으로 바꿔요. 마지막 묶음 다음은 첫 묶음이에요. 다른 마당은 위의 바꾸기에서 골라요.' },
+    { el: '#nextBundle', t: '다음 묶음으로', x: '다음 묶음으로 바꿔요. 마당이 끝나면 다음 마당으로, 편의 마지막 다음은 처음으로 돌아요. 이미 한 묶음은 흐리게 보여요.' },
     { el: '#pickBox', t: '낱말 고르기', x: '편·마당·묶음을 직접 고르거나, 자음별·모음별로 골라요. 선생님이 넣은 낱말과 사진도 여기서 관리해요.' },
     { el: '#startBtn', t: '시작', x: '전체 화면으로 수업을 시작해요. 묶음을 다 배우면 그 낱말로 놀이를 해요.' },
     { el: '#sheetBtn', t: '쓰기 연습지', x: '오늘 낱말을 A4에 한 장씩 인쇄해요.' },
@@ -4037,7 +4046,7 @@ function paintResume() {
   $('#todayTitle').textContent = title;
   $('#resumeTxt').textContent = (S.mode === 'bundle' && !Prog.next(lv)) ? `${OPEN_BOOKS.join('·')}편을 다 마쳤어요. 다음 편은 준비 중이에요. 복습할 묶음을 골라 주세요.` : last ? `지난번: ${BOOK[last.mi].mn} 묶음 ${last.bi + 1} · 수준 ${lv}에서 마친 묶음 ${n}개` : '아직 마친 묶음이 없어요';
   $('#resumeRow').classList.toggle('hidden', S.mode !== 'bundle');
-  $('#nextBundle').disabled = S.mode === 'bundle' && bundlesOf(S.mi, curLevel()).length < 2;   /* 묶음이 하나뿐인 마당 */
+  { const dn = S.mode === 'bundle' && Prog.isDone(S.mi, curLevel(), S.bi); $('#stepWhat .today').classList.toggle('done', dn); $('#todayTitle').dataset.done = dn ? '1' : ''; }   /* 이미 한 묶음은 흐리게(뒤로), 할 묶음은 도드라지게 */
 }
 /* 누구와 하나요: 학생을 누르면 그 학생으로 기록 시작, "연습"은 기록 안 함 */
 function renderWho() {
@@ -4052,14 +4061,17 @@ $('#who').addEventListener('click', e => {
   if (t.dataset.add || t.dataset.edit) { const p = $('#rosterBox'); const show = t.dataset.add ? true : p.classList.contains('hidden'); p.classList.toggle('hidden', !show); if (show && t.dataset.add) $('#nameIn').focus(); return; }
   setRecording(t.dataset.id || '');
 });
-/* 같은 마당 안에서 (mi, bi) 다음 묶음. 마지막 다음은 첫 묶음 */
+/* 같은 편 안에서 (mi, bi) 다음 묶음: 마당의 마지막 묶음 다음은 다음 마당의 첫 묶음, 편의 마지막 다음은 편의 첫 묶음 */
 function nextSeq(mi, bi, lv) {
-  const n = bundlesOf(mi, lv).length; if (!n) return null;
-  return { mi, bi: (bi + 1) % n };
+  const p = mi === -1 ? 6 : BOOK[mi].p, list = [];
+  madangs(p).forEach(m => bundlesOf(m.i, lv).forEach((_, b) => list.push({ mi: m.i, bi: b })));
+  if (!list.length) return null;
+  const k = list.findIndex(x => x.mi === mi && x.bi === bi);
+  return list[(k + 1) % list.length];
 }
 $('#nextBundle').addEventListener('click', () => {
   const nx = nextSeq(S.mi, S.bi, curLevel()); if (!nx) return;
-  S.bi = nx.bi; saveSel(); renderAll();
+  S.mi = nx.mi; S.bi = nx.bi; saveSel(); renderAll();
 });
 function renderAll() {
   paintBook(); renderMadang(); renderBundles(); renderJamo(); autoPick(); renderWordChips(); paintGameNote(); paintResume();
