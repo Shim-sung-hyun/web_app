@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>예시 그림 색칠 도안 만들기</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{--ink:#1A2B2E;--sub:#55686B;--line:#CBDAD7;--pri:#17766F;--bg:#EEF4F2;--ok:#1b7f3a;--err:#c62828}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;font-size:15px}
+main{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:30px;margin:0 0 6px;color:var(--pri)}
+.lead{margin:0 0 14px;color:var(--sub);line-height:1.7}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input.f{flex:1;min-width:240px;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+button{font:inherit;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+button.pri{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700}
+button:disabled{opacity:.5;cursor:default}
+#state{margin:8px 0 0;min-height:1.5em}
+#state.err{color:var(--err)} #state.ok{color:var(--ok)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.it{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px}
+.it.sel{border-color:var(--pri)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pair img,.pair .ph{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;background:#F2F5F4;display:grid;place-items:center;color:var(--sub);font-size:13px}
+.it .bar{display:flex;gap:6px;align-items:center;justify-content:space-between;margin-top:6px}
+.it b{font-size:14px}
+.it label{font-size:14px;display:flex;gap:4px;align-items:center}
+.note{font-size:13px;color:var(--sub);line-height:1.6}
+</style>
+</head>
+<body>
+<main>
+<h1>예시 그림 색칠 도안 만들기</h1>
+<p class="lead">사진 속 도형 찾기(001)의 예시 그림마다 <b>색칠 도안</b>(바로 색칠·출력용 선 그림)을 Gemini로 그리는 화면이에요. 신발장 도안을 본보기로 함께 보내 모두 같은 꼴로 그려요. 앱을 만든 사람이 한 번만 해요.</p>
+<div class="card note">
+  ① 결제를 연결한 프로젝트의 Gemini 키가 필요해요(Gemini 그림은 무료 등급이 없어요). 한 장 약 50~90원 → 17장 약 1,000~1,500원.<br>
+  ② <b>모두 그리기</b> → 마음에 안 드는 것만 <b>다시</b> → 쓸 그림에 <b>쓰기</b> 표시 → <b>zip 받기</b> → 받은 zip을 Claude에게 보내 주세요.<br>
+  ③ 그린 그림은 이 브라우저에 남아 있어서 창을 닫았다 열어도 이어서 할 수 있어요.
+</div>
+<div class="card">
+  <div class="row"><input class="f" id="key" type="password" autocomplete="off" placeholder="Gemini 키(결제 연결)"><button id="chk" type="button">확인</button><span id="model" class="note"></span></div>
+  <div class="row" style="margin-top:10px"><button class="pri" id="all" type="button" disabled>모두 그리기</button><button id="zip" type="button" disabled>zip 받기</button><span id="cnt" class="note"></span></div>
+  <p id="state"></p>
+</div>
+<div class="grid" id="grid"></div>
+</main>
+<script>
+const PROMPT=`Image 1 is an illustration and image 2 is the coloring-book page made from it. Make the same kind of coloring-book page from image 3.
+Keep exactly the same scene, objects, positions, sizes, framing and aspect ratio as image 3.
+Use only clean, smooth, closed black outlines of even thickness on pure white, like image 2. No shading, no gray, no color, no texture, no hatching.
+Every area should be a closed shape that is easy to color; leave out tiny details.
+No text, letters, numbers or logos. Leave the bottom-right corner plain and empty.`;
+const EX_ART='samples/shoe-rack-art.jpg', EX_LINE='samples/shoe-rack-line.png';
+const $=id=>document.getElementById(id);
+const say=(t,c)=>{ $('state').textContent=t; $('state').className=c||''; };
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+$('key').value=ls.get('lineMaker.key')||ls.get('webapp.geminiKey')||'';
+let MODEL='', LIST=[], SEL=JSON.parse(ls.get('lineMaker.sel')||'{}');
+const DB={db:null,open(){return this.db||(this.db=new Promise((res,rej)=>{const r=indexedDB.open('lineMaker001',1);r.onupgradeneeded=()=>r.result.createObjectStore('a');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}));},
+  async get(k){const db=await this.open();return new Promise(res=>{const q=db.transaction('a').objectStore('a').get(k);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null);});},
+  async set(k,v){const db=await this.open();return new Promise(res=>{const tx=db.transaction('a','readwrite');tx.objectStore('a').put(v,k);tx.oncomplete=res;tx.onerror=res;});}};
+const cost=n=>/pro/.test(n)?9:/nano-banana-2\.1/.test(n)?0:/lite/.test(n)?1:/flash|nano-banana/.test(n)?2:5;
+$('chk').onclick=async()=>{
+  const key=$('key').value.trim(); if(!key){ say('키를 넣어 주세요.','err'); return; }
+  ls.set('lineMaker.key',key); say('확인하는 중…');
+  try{ const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':key}}); if(!r.ok) throw new Error(r.status);
+    const j=await r.json(); const imgs=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace(/^models\//,'')).filter(n=>(/^gemini.*image/.test(n)||/nano-banana/.test(n))&&!/imagen/.test(n));
+    imgs.sort((a,b)=>cost(a)-cost(b)); MODEL=imgs[0]||''; if(!MODEL) throw new Error('그림 모델 없음');
+    $('model').textContent='그림 모델: '+MODEL; $('all').disabled=false; say('준비됐어요.','ok');
+  }catch(e){ say('키를 확인해 주세요. ('+(e.message||e)+')','err'); }
+};
+function toB64(url){ return new Promise((res,rej)=>{ const im=new Image(); im.crossOrigin='anonymous'; im.onload=()=>{ const k=Math.min(1,1280/Math.max(im.naturalWidth,im.naturalHeight)); const c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',0.88).split(',')[1]); }; im.onerror=rej; im.src=url; }); }
+function toJpeg(url){ return new Promise(res=>{ const im=new Image(); im.onload=()=>{ const k=Math.min(1,1024/im.naturalWidth); const c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k); const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(im,0,0,c.width,c.height);
+  const d=g.getImageData(0,0,c.width,c.height), p=d.data; for(let i=0;i<p.length;i+=4){ let v=.299*p[i]+.587*p[i+1]+.114*p[i+2]; if(v>215) v=255; p[i]=p[i+1]=p[i+2]=v; p[i+3]=255; } g.putImageData(d,0,0);
+  const W=c.width,H=c.height; g.fillStyle='#fff'; g.fillRect(W-Math.round(W*0.07),H-Math.round(H*0.10),Math.round(W*0.07),Math.round(H*0.10));   /* Gemini 별 로고 자리 */
+  res(c.toDataURL('image/png')); }; im.src=url; }); }
+async function draw(x){
+  const key=$('key').value.trim();
+  const body={contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data:await toB64(EX_ART)}},{inline_data:{mime_type:'image/jpeg',data:await toB64(EX_LINE)}},{inline_data:{mime_type:'image/jpeg',data:await toB64(x.art)}},{text:PROMPT}]}],generationConfig:{responseModalities:['TEXT','IMAGE']}};
+  for(let a=0;a<3;a++){
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(MODEL)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(body)});
+    if(r.ok){ const j=await r.json(); const p=((j.candidates||[])[0]?.content?.parts||[]).find(p=>p.inlineData||p.inline_data); if(p){ const d=p.inlineData||p.inline_data; return toJpeg(`data:${d.mimeType||d.mime_type||'image/png'};base64,${d.data}`); } }
+    else if(r.status===400||r.status===403){ let m=''; try{m=(await r.json()).error.message}catch(e){} throw new Error(r.status+' '+m); }
+    await new Promise(s=>setTimeout(s,3000*(a+1)));
+  }
+  throw new Error('그리지 못했어요');
+}
+async function cell(x){
+  const art=await DB.get(x.id);
+  const el=document.getElementById('it-'+x.id);
+  el.className='it'+(SEL[x.id]&&art?' sel':'');
+  el.innerHTML=`<div class="pair"><img src="${x.art}" alt=""><${art?`img src="${art}" alt=""`:'div class="ph"'}>${art?'':'아직 없음</div>'}</div>
+    <div class="bar"><b>${x.title}</b><span class="row"><button type="button" data-a="redo">${art?'다시':'그리기'}</button>${art?`<label><input type="checkbox" data-a="sel" ${SEL[x.id]?'checked':''}>쓰기</label>`:''}</span></div>`;
+  el.querySelector('[data-a=redo]').onclick=async e=>{ if(!MODEL){ say('먼저 키를 확인해 주세요.','err'); return; } e.target.disabled=true; e.target.textContent='그리는 중…';
+    try{ await DB.set(x.id,await draw(x)); SEL[x.id]=true; ls.set('lineMaker.sel',JSON.stringify(SEL)); }catch(err){ say(x.title+': '+err.message,'err'); } cell(x); count(); };
+  const c=el.querySelector('[data-a=sel]'); if(c) c.onchange=()=>{ SEL[x.id]=c.checked; ls.set('lineMaker.sel',JSON.stringify(SEL)); el.classList.toggle('sel',c.checked); count(); };
+}
+async function count(){ let n=0; for(const x of LIST) if(SEL[x.id]&&await DB.get(x.id)) n++; $('cnt').textContent=`쓰기 ${n} / ${LIST.length}`; $('zip').disabled=!n; }
+$('all').onclick=async()=>{ $('all').disabled=true; let i=0;
+  for(const x of LIST){ i++; if(await DB.get(x.id)) continue; say(`그리는 중… ${i} / ${LIST.length} (${x.title})`);
+    try{ await DB.set(x.id,await draw(x)); SEL[x.id]=true; ls.set('lineMaker.sel',JSON.stringify(SEL)); }catch(e){ say(x.title+': '+e.message,'err'); if(/^(400|403)/.test(e.message)) break; }
+    await cell(x); await count(); }
+  $('all').disabled=false; say('다 그렸어요. 마음에 안 드는 것은 "다시", 쓸 것은 "쓰기" 표시 뒤 zip 받기.','ok'); };
+$('zip').onclick=async()=>{ if(typeof JSZip==='undefined'){ say('zip 도구를 불러오지 못했어요. 새로 고침해 주세요.','err'); return; }
+  const z=new JSZip(); let n=0;
+  for(const x of LIST){ if(!SEL[x.id]) continue; const a=await DB.get(x.id); if(!a) continue; z.file(x.id+'-line.png',a.split(',')[1],{base64:true}); n++; }
+  const b=await z.generateAsync({type:'blob'}); const l=document.createElement('a'); l.href=URL.createObjectURL(b); l.download='line-001-gemini.zip'; l.click(); say(n+'장을 받았어요. Claude에게 보내 주세요.','ok'); };
+fetch('samples/samples.json',{cache:'no-store'}).then(r=>r.json()).then(async j=>{
+  LIST=j.filter(x=>x.ok&&x.shapes&&x.shapes.length&&x.art&&x.id!=='shoe-rack');
+  $('grid').innerHTML=LIST.map(x=>`<div class="it" id="it-${x.id}"></div>`).join('');
+  for(const x of LIST) await cell(x); count();
+});
+</script>
+</body>
+</html>
