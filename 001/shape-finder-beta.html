@@ -271,6 +271,13 @@ body.paused #main .admin-only{pointer-events:auto}
 .opt b{display:block}
 .opt span{font-size:14px;color:var(--muted)}
 .opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+ #galBox{position:fixed;inset:0;z-index:2147482000;background:rgba(20,30,34,.55);display:flex;align-items:center;justify-content:center}
+.gal-card{background:#fff;border-radius:20px;padding:18px 20px;width:min(980px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto}
+.gal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.gal-head h2{margin:0;font-size:22px}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.gal-item{display:flex;flex-direction:column;gap:4px;align-items:stretch;padding:6px;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font:inherit;text-align:left}
+.gal-item img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px}
+.gal-item span{font-weight:700;font-size:16px}.gal-item small{color:var(--muted)}
 .pick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .pick-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:17px;font-weight:700;cursor:pointer}
 .pick-btn svg{width:40px;height:40px}
@@ -1318,7 +1325,7 @@ function showSetup(o={}){
     if(!await preparePhoto(f)){ S.img=null; showPick(); spotlight('#pickCard','이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; } showPick('내 사진'); };
   $('sPhone').onclick=()=>PhotoRelay.receive({onPhoto:async blob=>{ if(!$('pickCard')) return; hideSpot(); showPick('사진을 여는 중…');
     if(!await preparePhoto(blob)){ S.img=null; showPick(); return; } showPick('휴대폰에서 받은 사진'); }});
-  $('sDemo').onclick=async()=>{ hideSpot(); showPick('예시 사진을 가져오는 중…'); await prepareDemo(); showPick('예시 사진'); };
+  $('sDemo').onclick=()=>{ hideSpot(); openGallery(); };
   $('voiceTest').onclick=async()=>{
     unlockAudio();
     const st=$('voiceStatus'); st.className='status'; st.textContent='';
@@ -1337,6 +1344,30 @@ function showSetup(o={}){
     chooseEngine(); prefetchVoice(FIXED_LINES());
     goFull(); showBrush();   /* 사진은 이미 골랐으니 바로 학생 화면(붓 고르기)부터 */
   };
+}
+/* 예시 사진 묶음: 만든 사람이 미리 분석하고 눈으로 확인한 사진(samples/samples.json, ok=true만). 키·기다림 없이 바로 */
+let SAMPLES=null;
+async function loadSamples(){
+  if(SAMPLES) return SAMPLES;
+  try{ const r=await fetch('samples/samples.json',{cache:'no-cache'}); const j=await r.json();
+    SAMPLES=j.filter(x=>x.ok&&Array.isArray(x.shapes)&&x.shapes.length); }catch(e){ SAMPLES=[]; }
+  return SAMPLES;
+}
+async function openGallery(){
+  const list=await loadSamples();
+  if(!list.length){ showPick('예시 사진을 가져오는 중…'); await prepareDemo(); showPick('예시 사진'); return; }
+  const box=document.createElement('div'); box.id='galBox';
+  box.innerHTML=`<div class="gal-card"><div class="gal-head"><h2>예시 사진 고르기</h2><button class="btn" id="galX" type="button">닫기</button></div>
+    <div class="gal-grid">${list.map((x,i)=>`<button class="gal-item" type="button" data-i="${i}"><img src="${x.file}" alt="" loading="lazy"><span>${esc(x.title)}</span><small>${[...new Set(x.shapes.map(s=>TYPES[s.type].l1))].join('·')}</small></button>`).join('')}</div></div>`;
+  document.body.appendChild(box);
+  const close=()=>box.remove();
+  box.querySelector('#galX').onclick=close; box.addEventListener('pointerdown',e=>{ if(e.target===box) close(); });
+  box.querySelectorAll('.gal-item').forEach(b=>b.onclick=async()=>{ const x=list[+b.dataset.i]; close(); showPick('사진을 여는 중…');
+    try{ const blob=await (await fetch(x.file)).blob(); S.img=await loadPhoto(blob); }catch(e){ S.img=null; showPick(); return; }
+    S.demo=true; S.shapes=[];
+    S.analysis={status:'done',shapes:x.shapes.map(s=>({...s,box:{...s.box},pts:s.pts&&s.pts.map(p=>[...p])}))};
+    S.cartoon=x.art?{status:'done',url:x.art}:null;   /* 미리 골라 둔 끝 그림이 있으면 그것을 */
+    showPick('예시 · '+x.title); });
 }
 /* 설정 화면의 고른 사진 칸: 미리 보기 + 도형 찾기 상태 */
 function showPick(title){

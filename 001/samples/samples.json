@@ -1,0 +1,170 @@
+[
+ {
+  "id": "car-wheel",
+  "title": "자동차 바퀴",
+  "file": "samples/car-wheel.jpg",
+  "shapes": null
+ },
+ {
+  "id": "bus-wheel",
+  "title": "버스 바퀴",
+  "file": "samples/bus-wheel.jpg",
+  "shapes": null
+ },
+ {
+  "id": "manhole",
+  "title": "맨홀 뚜껑",
+  "file": "samples/manhole.jpg",
+  "shapes": null
+ },
+ {
+  "id": "parking-sign",
+  "title": "주차 금지 표지판",
+  "file": "samples/parking-sign.jpg",
+  "shapes": null
+ },
+ {
+  "id": "tissue",
+  "title": "두루마리 휴지",
+  "file": "samples/tissue.jpg",
+  "shapes": null
+ },
+ {
+  "id": "wall-clock",
+  "title": "벽시계",
+  "file": "samples/wall-clock.jpg",
+  "shapes": null
+ },
+ {
+  "id": "paper-cup",
+  "title": "종이컵",
+  "file": "samples/paper-cup.jpg",
+  "shapes": null
+ },
+ {
+  "id": "glasses",
+  "title": "안경",
+  "file": "samples/glasses.jpg",
+  "shapes": null
+ },
+ {
+  "id": "watering-can",
+  "title": "물뿌리개",
+  "file": "samples/watering-can.jpg",
+  "shapes": null
+ },
+ {
+  "id": "school-bus",
+  "title": "통학 버스",
+  "file": "samples/school-bus.jpg",
+  "shapes": null
+ },
+ {
+  "id": "shoe-rack",
+  "title": "신발장",
+  "file": "samples/shoe-rack.jpg",
+  "shapes": null
+ },
+ {
+  "id": "car-wheel-2",
+  "title": "자동차 바퀴 2",
+  "file": "samples/car-wheel-2.jpg",
+  "shapes": null
+ },
+ {
+  "id": "watering-can-2",
+  "title": "물뿌리개 2",
+  "file": "samples/watering-can-2.jpg",
+  "shapes": null
+ },
+ {
+  "id": "bell",
+  "title": "종",
+  "file": "samples/bell.jpg",
+  "shapes": null
+ },
+ {
+  "id": "timetable",
+  "title": "시간표 칠판",
+  "file": "samples/timetable.jpg",
+  "shapes": null
+ },
+ {
+  "id": "sink-cabinet",
+  "title": "싱크대",
+  "file": "samples/sink-cabinet.jpg",
+  "shapes": null
+ },
+ {
+  "id": "computer-desk",
+  "title": "컴퓨터 책상",
+  "file": "samples/computer-desk.jpg",
+  "shapes": null
+ },
+ {
+  "id": "desks",
+  "title": "책상",
+  "file": "samples/desks.jpg",
+  "shapes": null
+ },
+ {
+  "id": "bookshelf",
+  "title": "책장",
+  "file": "samples/bookshelf.jpg",
+  "shapes": null
+ },
+ {
+  "id": "board",
+  "title": "전자칠판",
+  "file": "samples/board.jpg",
+  "shapes": null
+ },
+ {
+  "id": "hallway",
+  "title": "복도",
+  "file": "samples/hallway.jpg",
+  "shapes": null
+ },
+ {
+  "id": "door",
+  "title": "교실 문",
+  "file": "samples/door.jpg",
+  "shapes": null
+ },
+ {
+  "id": "mug-monitor",
+  "title": "머그컵과 모니터",
+  "file": "samples/mug-monitor.jpg",
+  "shapes": null
+ },
+ {
+  "id": "water-purifier",
+  "title": "정수기",
+  "file": "samples/water-purifier.jpg",
+  "shapes": null
+ },
+ {
+  "id": "recycle-bins",
+  "title": "분리수거함",
+  "file": "samples/recycle-bins.jpg",
+  "shapes": null
+ },
+ {
+  "id": "bottles",
+  "title": "물병과 컵",
+  "file": "samples/bottles.jpg",
+  "shapes": null
+ },
+ {
+  "id": "milk-basket",
+  "title": "우유 바구니",
+  "file": "samples/milk-basket.jpg",
+  "shapes": null
+ },
+ {
+  "id": "cup-drawings",
+  "title": "컵과 그림",
+  "file": "samples/cup-drawings.jpg",
+  "shapes": null
+ }
+]
