@@ -33,7 +33,7 @@ body.cover #app{display:none}
 #cover h1{cursor:pointer;-webkit-user-select:none;user-select:none;font-family:"Nanum Myeongjo",serif;font-weight:800;font-size:clamp(52px,8vw,104px);letter-spacing:4px;margin:0;color:var(--ink)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* ---------- 시 화면 ---------- */
-#app{position:relative;min-height:100vh;display:flex;flex-direction:column}
+#app{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
 .content{flex:1;display:flex;flex-direction:column;padding:clamp(28px,4.5vh,48px) 0}
 /* 시는 남은 높이의 위아래 가운데에 (위로 몰리거나 아래가 비지 않게) */
 #poemsContainer{flex:1;display:flex;flex-direction:column;justify-content:center}
@@ -912,22 +912,34 @@ function updateCounter(){
 }
 /* 화면에 맞춰 단 수·글자 크기 자동 결정 (스크롤 생기면 다음 단으로) */
 const FONT_SIZES=[48,44,40,36,32,28,25,22,20,18];
-function fits(){
-  const d=document.documentElement;
-  if(d.scrollHeight>innerHeight+1||d.scrollWidth>innerWidth+1) return false;
-  /* 단마다 줄이 옆 단으로 넘치지 않는지도 확인 */
+/* 들어가는지 재기: 문서 전체 높이(휴대폰은 100vh가 보이는 높이보다 커서 늘 넘침) 대신
+   시가 메뉴 사이 빈 곳(보이는 높이 − 위아래 여백)에 들어가는지, 줄이 옆 단으로 넘치지 않는지 봄 */
+function widthOk(){
+  if(document.documentElement.scrollWidth>innerWidth+1) return false;
   return [...document.querySelectorAll('.poem-columns .col')].every(c=>c.scrollWidth<=c.clientWidth+1);
+}
+function fits(){
+  const sec=$('poemsContainer').firstElementChild, ct=document.querySelector('.content'); if(!sec||!ct) return false;
+  const cs=getComputedStyle(ct), avail=innerHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  return sec.getBoundingClientRect().height<=avail+1 && widthOk();
 }
 function refitLayout(){
   if(!entry||document.body.classList.contains('cover')) return;
   /* 자동: 단 수마다 들어가는 가장 큰 글자를 찾고, 글자가 가장 큰 쪽을 고름(같으면 단이 적은 쪽) */
-  const tryCols=S.cols?[S.cols]:[1,2,3,4]; let best=null;
+  const tryCols=S.cols?[S.cols]:[1,2,3,4]; let best=null, wide=null;
   for(const c of tryCols){
-    for(const f of FONT_SIZES){ layout={cols:c,fontSize:f}; render(); if(fits()){ if(!best||f>best.fontSize) best={cols:c,fontSize:f}; break; } }
+    for(const f of FONT_SIZES){ layout={cols:c,fontSize:f}; render();
+      if(!widthOk()) continue;
+      if(!wide||f>wide.fontSize) wide={cols:c,fontSize:f}; /* 높이는 넘쳐도 줄은 겹치지 않는 판 */
+      if(fits()){ if(!best||f>best.fontSize) best={cols:c,fontSize:f}; break; } }
     if(best&&best.fontSize===FONT_SIZES[0]) break;
   }
-  layout=best||{cols:tryCols[tryCols.length-1],fontSize:FONT_SIZES[FONT_SIZES.length-1]}; render();
+  /* 어디에도 다 들어가지 않으면: 줄이 겹치지 않는 판(아래로 밀어 봄), 그것도 없으면 1단 가장 작은 글자 */
+  layout=best||wide||{cols:1,fontSize:FONT_SIZES[FONT_SIZES.length-1]}; render();
 }
+/* 글꼴(명조·둥근 글씨)이 늦게 도착하면 넓이가 바뀌므로 다시 맞춤 */
+if(document.fonts){ let fT=null; const again=()=>{ clearTimeout(fT); fT=setTimeout(()=>{ if(!PB.on) refitLayout(); },120); };
+  document.fonts.ready.then(again); document.fonts.addEventListener?.('loadingdone',again); }
 let rzT=null; window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ refitLayout(); if(S.admin) renderDocks(); },200); });
 
 /* ================= 들려주기 · 한 줄씩 따라 읽기 =================
