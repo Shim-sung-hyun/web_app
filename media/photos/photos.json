@@ -1,0 +1,3133 @@
+{
+ "version": 1,
+ "base": "https://shim-sung-hyun.github.io/web_app/media/photos/",
+ "photos": [
+  {
+   "id": "car-wheel",
+   "title": "자동차 바퀴",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "car-wheel/photo.jpg",
+    "art": "car-wheel/art.jpg",
+    "line": "car-wheel/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "circle",
+       "obj": "바퀴",
+       "box": {
+        "x0": 359,
+        "y0": 282,
+        "x1": 679,
+        "y1": 818
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "휠",
+       "box": {
+        "x0": 407,
+        "y0": 369,
+        "x1": 631,
+        "y1": 755
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "휠 캡",
+       "box": {
+        "x0": 502,
+        "y0": 538,
+        "x1": 537,
+        "y1": 595
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "bus-wheel",
+   "title": "버스 바퀴",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "bus-wheel/photo.jpg",
+    "art": "bus-wheel/art.jpg",
+    "line": "bus-wheel/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "ellipse",
+       "obj": "타이어",
+       "box": {
+        "x0": 277,
+        "y0": 52,
+        "x1": 808,
+        "y1": 839
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "바퀴 휠",
+       "box": {
+        "x0": 396,
+        "y0": 295,
+        "x1": 691,
+        "y1": 722
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "바퀴 중심",
+       "box": {
+        "x0": 499,
+        "y0": 472,
+        "x1": 593,
+        "y1": 609
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "휠 구멍",
+       "box": {
+        "x0": 558,
+        "y0": 315,
+        "x1": 603,
+        "y1": 391
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "휠 구멍",
+       "box": {
+        "x0": 473,
+        "y0": 333,
+        "x1": 516,
+        "y1": 408
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "휠 구멍",
+       "box": {
+        "x0": 421,
+        "y0": 422,
+        "x1": 451,
+        "y1": 494
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "휠 구멍",
+       "box": {
+        "x0": 633,
+        "y0": 376,
+        "x1": 663,
+        "y1": 448
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "manhole",
+   "title": "맨홀 뚜껑",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "manhole/photo.jpg",
+    "art": "manhole/art.jpg",
+    "line": "manhole/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "circle",
+       "obj": "맨홀 뚜껑",
+       "box": {
+        "x0": 211,
+        "y0": 112,
+        "x1": 672,
+        "y1": 908
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "가운데 원",
+       "box": {
+        "x0": 382,
+        "y0": 412,
+        "x1": 477,
+        "y1": 574
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "맨홀 구멍",
+       "box": {
+        "x0": 459,
+        "y0": 186,
+        "x1": 491,
+        "y1": 239
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "맨홀 구멍",
+       "box": {
+        "x0": 260,
+        "y0": 398,
+        "x1": 296,
+        "y1": 451
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "맨홀 구멍",
+       "box": {
+        "x0": 583,
+        "y0": 522,
+        "x1": 620,
+        "y1": 579
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "맨홀 구멍",
+       "box": {
+        "x0": 375,
+        "y0": 752,
+        "x1": 412,
+        "y1": 809
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "맨홀 구멍",
+       "box": {
+        "x0": 432,
+        "y0": 622,
+        "x1": 467,
+        "y1": 675
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "parking-sign",
+   "title": "주차 금지 표지판",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "parking-sign/photo.jpg",
+    "art": "parking-sign/art.jpg",
+    "line": "parking-sign/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "표지판",
+       "box": {
+        "x0": 276,
+        "y0": 48,
+        "x1": 735,
+        "y1": 492
+       },
+       "pts": [
+        [
+         284,
+         48
+        ],
+        [
+         727,
+         52
+        ],
+        [
+         718,
+         489
+        ],
+        [
+         296,
+         485
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.62
+      },
+      {
+       "type": "quad",
+       "obj": "안내판",
+       "box": {
+        "x0": 311,
+        "y0": 128,
+        "x1": 700,
+        "y1": 464
+       },
+       "pts": [
+        [
+         311,
+         132
+        ],
+        [
+         700,
+         128
+        ],
+        [
+         700,
+         464
+        ],
+        [
+         319,
+         461
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.65
+      },
+      {
+       "type": "quad",
+       "obj": "손잡이 구멍",
+       "box": {
+        "x0": 399,
+        "y0": 64,
+        "x1": 610,
+        "y1": 107
+       },
+       "pts": [
+        [
+         407,
+         64
+        ],
+        [
+         602,
+         64
+        ],
+        [
+         602,
+         107
+        ],
+        [
+         407,
+         107
+        ]
+       ],
+       "realRight": true,
+       "ratio": 3.5
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "tissue",
+   "title": "두루마리 휴지",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "tissue/photo.jpg",
+    "art": "tissue/art.jpg",
+    "line": "tissue/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "circle",
+       "obj": "휴지 윗면",
+       "box": {
+        "x0": 309,
+        "y0": 298,
+        "x1": 561,
+        "y1": 430
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "휴지심 구멍",
+       "box": {
+        "x0": 386,
+        "y0": 320,
+        "x1": 494,
+        "y1": 377
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "wall-clock",
+   "title": "벽시계",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "wall-clock/photo.jpg",
+    "art": "wall-clock/art.jpg",
+    "line": "wall-clock/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "circle",
+       "obj": "벽시계",
+       "box": {
+        "x0": 85,
+        "y0": 332,
+        "x1": 980,
+        "y1": 804
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "시계 중심 원",
+       "box": {
+        "x0": 471,
+        "y0": 521,
+        "x1": 587,
+        "y1": 584
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "paper-cup",
+   "title": "종이컵",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "paper-cup/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": null
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "glasses",
+   "title": "안경",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "glasses/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": null
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "watering-can",
+   "title": "물뿌리개",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "watering-can/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": null
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "school-bus",
+   "title": "통학 버스",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "school-bus/photo.jpg",
+    "art": "school-bus/art.jpg",
+    "line": "school-bus/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "ellipse",
+       "obj": "바퀴 휠",
+       "box": {
+        "x0": 672,
+        "y0": 612,
+        "x1": 728,
+        "y1": 769
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "버스 창문",
+       "box": {
+        "x0": 740,
+        "y0": 82,
+        "x1": 864,
+        "y1": 328
+       },
+       "pts": [
+        [
+         740,
+         82
+        ],
+        [
+         855,
+         153
+        ],
+        [
+         864,
+         328
+        ],
+        [
+         754,
+         305
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.5
+      },
+      {
+       "type": "quad",
+       "obj": "버스 창문",
+       "box": {
+        "x0": 586,
+        "y0": 9,
+        "x1": 752,
+        "y1": 307
+       },
+       "pts": [
+        [
+         586,
+         9
+        ],
+        [
+         737,
+         84
+        ],
+        [
+         752,
+         307
+        ],
+        [
+         604,
+         279
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.2
+      },
+      {
+       "type": "quad",
+       "obj": "버스 짐칸 문",
+       "box": {
+        "x0": 757,
+        "y0": 459,
+        "x1": 823,
+        "y1": 716
+       },
+       "pts": [
+        [
+         757,
+         473
+        ],
+        [
+         822,
+         459
+        ],
+        [
+         823,
+         671
+        ],
+        [
+         757,
+         716
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.1
+      },
+      {
+       "type": "quad",
+       "obj": "버스 짐칸 문",
+       "box": {
+        "x0": 822,
+        "y0": 448,
+        "x1": 896,
+        "y1": 672
+       },
+       "pts": [
+        [
+         822,
+         459
+        ],
+        [
+         894,
+         448
+        ],
+        [
+         896,
+         627
+        ],
+        [
+         823,
+         672
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.1
+      },
+      {
+       "type": "quad",
+       "obj": "버스 짐칸 문",
+       "box": {
+        "x0": 894,
+        "y0": 440,
+        "x1": 951,
+        "y1": 628
+       },
+       "pts": [
+        [
+         894,
+         448
+        ],
+        [
+         951,
+         440
+        ],
+        [
+         951,
+         594
+        ],
+        [
+         898,
+         628
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.1
+      },
+      {
+       "type": "quad",
+       "obj": "점검구",
+       "box": {
+        "x0": 589,
+        "y0": 564,
+        "x1": 629,
+        "y1": 649
+       },
+       "pts": [
+        [
+         589,
+         570
+        ],
+        [
+         625,
+         564
+        ],
+        [
+         629,
+         631
+        ],
+        [
+         595,
+         649
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.9
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "shoe-rack",
+   "title": "신발장",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "shoe-rack/photo.jpg",
+    "art": "shoe-rack/art.jpg",
+    "line": "shoe-rack/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "액자",
+       "box": {
+        "x0": 858,
+        "y0": 42,
+        "x1": 938,
+        "y1": 146
+       },
+       "pts": [
+        [
+         862,
+         45
+        ],
+        [
+         938,
+         42
+        ],
+        [
+         931,
+         142
+        ],
+        [
+         858,
+         146
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.33
+      },
+      {
+       "type": "quad",
+       "obj": "바닥 타일",
+       "box": {
+        "x0": 760,
+        "y0": 716,
+        "x1": 928,
+        "y1": 949
+       },
+       "pts": [
+        [
+         827,
+         716
+        ],
+        [
+         928,
+         758
+        ],
+        [
+         878,
+         949
+        ],
+        [
+         760,
+         874
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1
+      },
+      {
+       "type": "quad",
+       "obj": "신발장",
+       "box": {
+        "x0": 321,
+        "y0": 124,
+        "x1": 645,
+        "y1": 742
+       },
+       "pts": [
+        [
+         321,
+         180
+        ],
+        [
+         642,
+         124
+        ],
+        [
+         645,
+         489
+        ],
+        [
+         361,
+         742
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "신발장",
+       "box": {
+        "x0": 335,
+        "y0": 301,
+        "x1": 532,
+        "y1": 564
+       },
+       "pts": [
+        [
+         335,
+         382
+        ],
+        [
+         528,
+         301
+        ],
+        [
+         532,
+         441
+        ],
+        [
+         352,
+         564
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "타일",
+       "box": {
+        "x0": 607,
+        "y0": 732,
+        "x1": 796,
+        "y1": 986
+       },
+       "pts": [
+        [
+         703,
+         732
+        ],
+        [
+         796,
+         782
+        ],
+        [
+         708,
+         986
+        ],
+        [
+         607,
+         896
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "car-wheel-2",
+   "title": "자동차 바퀴 2",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "car-wheel-2/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": null
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "watering-can-2",
+   "title": "물뿌리개 2",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "watering-can-2/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": null
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "bell",
+   "title": "종",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "bell/photo.jpg",
+    "art": "bell/art.jpg",
+    "line": "bell/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "ellipse",
+       "obj": "종",
+       "box": {
+        "x0": 351,
+        "y0": 224,
+        "x1": 644,
+        "y1": 560
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "timetable",
+   "title": "시간표 칠판",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "timetable/photo.jpg",
+    "art": "timetable/art.jpg",
+    "line": "timetable/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "circle",
+       "obj": "자석",
+       "box": {
+        "x0": 867,
+        "y0": 298,
+        "x1": 915,
+        "y1": 325
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "자석",
+       "box": {
+        "x0": 651,
+        "y0": 533,
+        "x1": 700,
+        "y1": 556
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "자석",
+       "box": {
+        "x0": 862,
+        "y0": 733,
+        "x1": 913,
+        "y1": 762
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "칠판자석",
+       "box": {
+        "x0": 21,
+        "y0": 240,
+        "x1": 133,
+        "y1": 296
+       },
+       "pts": [
+        [
+         21,
+         242
+        ],
+        [
+         125,
+         240
+        ],
+        [
+         133,
+         296
+        ],
+        [
+         29,
+         292
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "칠판자석",
+       "box": {
+        "x0": 421,
+        "y0": 210,
+        "x1": 526,
+        "y1": 269
+       },
+       "pts": [
+        [
+         422,
+         212
+        ],
+        [
+         520,
+         210
+        ],
+        [
+         526,
+         267
+        ],
+        [
+         421,
+         269
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "칠판자석",
+       "box": {
+        "x0": 63,
+        "y0": 717,
+        "x1": 156,
+        "y1": 778
+       },
+       "pts": [
+        [
+         63,
+         717
+        ],
+        [
+         149,
+         721
+        ],
+        [
+         156,
+         778
+        ],
+        [
+         82,
+         771
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "sink-cabinet",
+   "title": "싱크대",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "sink-cabinet/photo.jpg",
+    "art": "sink-cabinet/art.jpg",
+    "line": "sink-cabinet/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "상단 서랍",
+       "box": {
+        "x0": 131,
+        "y0": 199,
+        "x1": 381,
+        "y1": 407
+       },
+       "pts": [
+        [
+         131,
+         199
+        ],
+        [
+         379,
+         214
+        ],
+        [
+         381,
+         407
+        ],
+        [
+         148,
+         396
+        ]
+       ],
+       "realRight": true,
+       "ratio": 2.2
+      },
+      {
+       "type": "quad",
+       "obj": "중단 서랍",
+       "box": {
+        "x0": 148,
+        "y0": 426,
+        "x1": 383,
+        "y1": 595
+       },
+       "pts": [
+        [
+         148,
+         426
+        ],
+        [
+         381,
+         433
+        ],
+        [
+         383,
+         595
+        ],
+        [
+         159,
+         591
+        ]
+       ],
+       "realRight": true,
+       "ratio": 2.15
+      },
+      {
+       "type": "quad",
+       "obj": "하단 서랍",
+       "box": {
+        "x0": 160,
+        "y0": 630,
+        "x1": 389,
+        "y1": 792
+       },
+       "pts": [
+        [
+         160,
+         632
+        ],
+        [
+         385,
+         630
+        ],
+        [
+         389,
+         788
+        ],
+        [
+         172,
+         792
+        ]
+       ],
+       "realRight": true,
+       "ratio": 2.1
+      },
+      {
+       "type": "quad",
+       "obj": "좌측 수납장 문",
+       "box": {
+        "x0": 384,
+        "y0": 225,
+        "x1": 590,
+        "y1": 792
+       },
+       "pts": [
+        [
+         384,
+         225
+        ],
+        [
+         590,
+         236
+        ],
+        [
+         577,
+         792
+        ],
+        [
+         388,
+         780
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.2
+      },
+      {
+       "type": "quad",
+       "obj": "우측 수납장 문",
+       "box": {
+        "x0": 583,
+        "y0": 232,
+        "x1": 807,
+        "y1": 797
+       },
+       "pts": [
+        [
+         600,
+         232
+        ],
+        [
+         807,
+         234
+        ],
+        [
+         764,
+         797
+        ],
+        [
+         583,
+         796
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.85
+      },
+      {
+       "type": "circle",
+       "obj": "문 손잡이",
+       "box": {
+        "x0": 600,
+        "y0": 516,
+        "x1": 618,
+        "y1": 558
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "computer-desk",
+   "title": "컴퓨터 책상",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "computer-desk/photo.jpg",
+    "art": "computer-desk/art.jpg",
+    "line": "computer-desk/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "컴퓨터 모니터 화면",
+       "box": {
+        "x0": 460,
+        "y0": 119,
+        "x1": 787,
+        "y1": 662
+       },
+       "pts": [
+        [
+         460,
+         119
+        ],
+        [
+         787,
+         145
+        ],
+        [
+         775,
+         662
+        ],
+        [
+         467,
+         534
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.78
+      },
+      {
+       "type": "quad",
+       "obj": "본체 앞면",
+       "box": {
+        "x0": 168,
+        "y0": 208,
+        "x1": 241,
+        "y1": 648
+       },
+       "pts": [
+        [
+         168,
+         208
+        ],
+        [
+         218,
+         221
+        ],
+        [
+         241,
+         648
+        ],
+        [
+         194,
+         616
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.45
+      },
+      {
+       "type": "quad",
+       "obj": "키보드",
+       "box": {
+        "x0": 400,
+        "y0": 673,
+        "x1": 699,
+        "y1": 992
+       },
+       "pts": [
+        [
+         465,
+         673
+        ],
+        [
+         699,
+         848
+        ],
+        [
+         635,
+         992
+        ],
+        [
+         400,
+         770
+        ]
+       ],
+       "realRight": true,
+       "ratio": 2.5
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "desks",
+   "title": "책상",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "desks/photo.jpg",
+    "art": "desks/art.jpg",
+    "line": "desks/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "책상 상판",
+       "box": {
+        "x0": 111,
+        "y0": 240,
+        "x1": 468,
+        "y1": 434
+       },
+       "pts": [
+        [
+         111,
+         240
+        ],
+        [
+         404,
+         241
+        ],
+        [
+         468,
+         400
+        ],
+        [
+         127,
+         434
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.45
+      },
+      {
+       "type": "quad",
+       "obj": "책상 상판",
+       "box": {
+        "x0": 409,
+        "y0": 237,
+        "x1": 711,
+        "y1": 390
+       },
+       "pts": [
+        [
+         409,
+         237
+        ],
+        [
+         624,
+         243
+        ],
+        [
+         711,
+         364
+        ],
+        [
+         472,
+         390
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.45
+      },
+      {
+       "type": "quad",
+       "obj": "책상 상판",
+       "box": {
+        "x0": 628,
+        "y0": 232,
+        "x1": 889,
+        "y1": 370
+       },
+       "pts": [
+        [
+         628,
+         236
+        ],
+        [
+         794,
+         232
+        ],
+        [
+         889,
+         360
+        ],
+        [
+         712,
+         370
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.45
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "bookshelf",
+   "title": "책장",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "bookshelf/photo.jpg",
+    "art": "bookshelf/art.jpg",
+    "line": "bookshelf/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "노란 상자",
+       "box": {
+        "x0": 703,
+        "y0": 232,
+        "x1": 775,
+        "y1": 365
+       },
+       "pts": [
+        [
+         709,
+         232
+        ],
+        [
+         775,
+         238
+        ],
+        [
+         765,
+         365
+        ],
+        [
+         703,
+         357
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.05
+      },
+      {
+       "type": "quad",
+       "obj": "연필꽂이",
+       "box": {
+        "x0": 321,
+        "y0": 458,
+        "x1": 365,
+        "y1": 600
+       },
+       "pts": [
+        [
+         322,
+         458
+        ],
+        [
+         363,
+         474
+        ],
+        [
+         365,
+         600
+        ],
+        [
+         321,
+         583
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.9
+      },
+      {
+       "type": "quad",
+       "obj": "노란 정리함",
+       "box": {
+        "x0": 32,
+        "y0": 296,
+        "x1": 143,
+        "y1": 410
+       },
+       "pts": [
+        [
+         32,
+         296
+        ],
+        [
+         140,
+         312
+        ],
+        [
+         143,
+         410
+        ],
+        [
+         47,
+         381
+        ]
+       ],
+       "realRight": true,
+       "ratio": 2.1
+      },
+      {
+       "type": "quad",
+       "obj": "노란 정리함",
+       "box": {
+        "x0": 41,
+        "y0": 441,
+        "x1": 152,
+        "y1": 527
+       },
+       "pts": [
+        [
+         41,
+         441
+        ],
+        [
+         150,
+         445
+        ],
+        [
+         152,
+         527
+        ],
+        [
+         52,
+         518
+        ]
+       ],
+       "realRight": true,
+       "ratio": 2.1
+      },
+      {
+       "type": "quad",
+       "obj": "파란 바구니",
+       "box": {
+        "x0": 180,
+        "y0": 743,
+        "x1": 278,
+        "y1": 826
+       },
+       "pts": [
+        [
+         180,
+         743
+        ],
+        [
+         278,
+         761
+        ],
+        [
+         278,
+         826
+        ],
+        [
+         183,
+         803
+        ]
+       ],
+       "realRight": true,
+       "ratio": 2.2
+      },
+      {
+       "type": "quad",
+       "obj": "투명 상자",
+       "box": {
+        "x0": 343,
+        "y0": 738,
+        "x1": 455,
+        "y1": 871
+       },
+       "pts": [
+        [
+         344,
+         743
+        ],
+        [
+         453,
+         757
+        ],
+        [
+         449,
+         870
+        ],
+        [
+         347,
+         857
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.8
+      },
+      {
+       "type": "quad",
+       "obj": "책등",
+       "box": {
+        "x0": 508,
+        "y0": 379,
+        "x1": 526,
+        "y1": 587
+       },
+       "pts": [
+        [
+         510,
+         384
+        ],
+        [
+         526,
+         379
+        ],
+        [
+         520,
+         587
+        ],
+        [
+         508,
+         584
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "board",
+   "title": "전자칠판",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "board/photo.jpg",
+    "art": "board/art.jpg",
+    "line": "board/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "전자칠판",
+       "box": {
+        "x0": 261,
+        "y0": 10,
+        "x1": 792,
+        "y1": 898
+       },
+       "pts": [
+        [
+         261,
+         10
+        ],
+        [
+         785,
+         70
+        ],
+        [
+         792,
+         740
+        ],
+        [
+         277,
+         898
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.77
+      },
+      {
+       "type": "quad",
+       "obj": "타이머",
+       "box": {
+        "x0": 187,
+        "y0": 265,
+        "x1": 250,
+        "y1": 396
+       },
+       "pts": [
+        [
+         187,
+         268
+        ],
+        [
+         248,
+         268
+        ],
+        [
+         249,
+         394
+        ],
+        [
+         188,
+         394
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1
+      },
+      {
+       "type": "circle",
+       "obj": "꽃 리스",
+       "box": {
+        "x0": 93,
+        "y0": 275,
+        "x1": 173,
+        "y1": 427
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "꽃 장식",
+       "box": {
+        "x0": 14,
+        "y0": 300,
+        "x1": 73,
+        "y1": 407
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "hallway",
+   "title": "복도",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "hallway/photo.jpg",
+    "art": "hallway/art.jpg",
+    "line": "hallway/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "천장 조명",
+       "box": {
+        "x0": 315,
+        "y0": 68,
+        "x1": 735,
+        "y1": 407
+       },
+       "pts": [
+        [
+         315,
+         79
+        ],
+        [
+         735,
+         68
+        ],
+        [
+         653,
+         400
+        ],
+        [
+         442,
+         407
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0.55
+      },
+      {
+       "type": "quad",
+       "obj": "천장 조명",
+       "box": {
+        "x0": 502,
+        "y0": 548,
+        "x1": 609,
+        "y1": 585
+       },
+       "pts": [
+        [
+         502,
+         548
+        ],
+        [
+         609,
+         548
+        ],
+        [
+         609,
+         581
+        ],
+        [
+         504,
+         585
+        ]
+       ],
+       "realRight": true,
+       "ratio": 3.24
+      },
+      {
+       "type": "circle",
+       "obj": "천장 환풍기",
+       "box": {
+        "x0": 493,
+        "y0": 486,
+        "x1": 620,
+        "y1": 507
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "문",
+       "box": {
+        "x0": 106,
+        "y0": 620,
+        "x1": 233,
+        "y1": 991
+       },
+       "pts": [
+        [
+         161,
+         620
+        ],
+        [
+         233,
+         620
+        ],
+        [
+         187,
+         963
+        ],
+        [
+         106,
+         991
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.35
+      },
+      {
+       "type": "quad",
+       "obj": "게시판",
+       "box": {
+        "x0": 242,
+        "y0": 681,
+        "x1": 315,
+        "y1": 742
+       },
+       "pts": [
+        [
+         243,
+         681
+        ],
+        [
+         310,
+         681
+        ],
+        [
+         315,
+         737
+        ],
+        [
+         242,
+         742
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.03
+      },
+      {
+       "type": "quad",
+       "obj": "문",
+       "box": {
+        "x0": 553,
+        "y0": 684,
+        "x1": 634,
+        "y1": 767
+       },
+       "pts": [
+        [
+         556,
+         684
+        ],
+        [
+         632,
+         684
+        ],
+        [
+         634,
+         767
+        ],
+        [
+         553,
+         765
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.01
+      },
+      {
+       "type": "quad",
+       "obj": "정수기",
+       "box": {
+        "x0": 786,
+        "y0": 764,
+        "x1": 913,
+        "y1": 917
+       },
+       "pts": [
+        [
+         786,
+         766
+        ],
+        [
+         894,
+         764
+        ],
+        [
+         913,
+         917
+        ],
+        [
+         796,
+         917
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.49
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "door",
+   "title": "교실 문",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "door/photo.jpg",
+    "art": "door/art.jpg",
+    "line": "door/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "창문",
+       "box": {
+        "x0": 306,
+        "y0": 203,
+        "x1": 756,
+        "y1": 418
+       },
+       "pts": [
+        [
+         306,
+         203
+        ],
+        [
+         756,
+         207
+        ],
+        [
+         750,
+         417
+        ],
+        [
+         309,
+         418
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.6
+      },
+      {
+       "type": "quad",
+       "obj": "도어락",
+       "box": {
+        "x0": 206,
+        "y0": 437,
+        "x1": 274,
+        "y1": 502
+       },
+       "pts": [
+        [
+         212,
+         438
+        ],
+        [
+         274,
+         437
+        ],
+        [
+         269,
+         502
+        ],
+        [
+         206,
+         502
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.45
+      },
+      {
+       "type": "quad",
+       "obj": "문 하단 철판",
+       "box": {
+        "x0": 194,
+        "y0": 730,
+        "x1": 843,
+        "y1": 859
+       },
+       "pts": [
+        [
+         195,
+         738
+        ],
+        [
+         843,
+         730
+        ],
+        [
+         836,
+         851
+        ],
+        [
+         198,
+         859
+        ]
+       ],
+       "realRight": true,
+       "ratio": 3.6
+      },
+      {
+       "type": "quad",
+       "obj": "문",
+       "box": {
+        "x0": 155,
+        "y0": 73,
+        "x1": 907,
+        "y1": 859
+       },
+       "pts": [
+        [
+         155,
+         73
+        ],
+        [
+         907,
+         85
+        ],
+        [
+         842,
+         851
+        ],
+        [
+         195,
+         859
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.43
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "mug-monitor",
+   "title": "머그컵과 모니터",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "mug-monitor/photo.jpg",
+    "art": "mug-monitor/art.jpg",
+    "line": "mug-monitor/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "ellipse",
+       "obj": "컵 입구",
+       "box": {
+        "x0": 87,
+        "y0": 592,
+        "x1": 380,
+        "y1": 671
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "유리컵 입구",
+       "box": {
+        "x0": 645,
+        "y0": 533,
+        "x1": 915,
+        "y1": 600
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "유리컵 몸통",
+       "box": {
+        "x0": 631,
+        "y0": 564,
+        "x1": 910,
+        "y1": 772
+       },
+       "pts": [
+        [
+         639,
+         564
+        ],
+        [
+         910,
+         565
+        ],
+        [
+         856,
+         772
+        ],
+        [
+         631,
+         753
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.65
+      },
+      {
+       "type": "ellipse",
+       "obj": "유리컵 바닥",
+       "box": {
+        "x0": 648,
+        "y0": 709,
+        "x1": 856,
+        "y1": 766
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "모니터 받침대",
+       "box": {
+        "x0": 270,
+        "y0": 465,
+        "x1": 761,
+        "y1": 563
+       },
+       "pts": [
+        [
+         355,
+         465
+        ],
+        [
+         750,
+         474
+        ],
+        [
+         761,
+         563
+        ],
+        [
+         270,
+         549
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.65
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "water-purifier",
+   "title": "정수기",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "water-purifier/photo.jpg",
+    "art": "water-purifier/art.jpg",
+    "line": "water-purifier/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "정수기",
+       "box": {
+        "x0": 718,
+        "y0": 128,
+        "x1": 951,
+        "y1": 844
+       },
+       "pts": [
+        [
+         799,
+         128
+        ],
+        [
+         951,
+         138
+        ],
+        [
+         859,
+         725
+        ],
+        [
+         718,
+         844
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.35
+      },
+      {
+       "type": "quad",
+       "obj": "이것",
+       "box": {
+        "x0": 369,
+        "y0": 479,
+        "x1": 750,
+        "y1": 527
+       },
+       "pts": [
+        [
+         401,
+         479
+        ],
+        [
+         750,
+         505
+        ],
+        [
+         707,
+         527
+        ],
+        [
+         369,
+         499
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "이것",
+       "box": {
+        "x0": 428,
+        "y0": 336,
+        "x1": 496,
+        "y1": 362
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "이것",
+       "box": {
+        "x0": 583,
+        "y0": 343,
+        "x1": 650,
+        "y1": 364
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "이것",
+       "box": {
+        "x0": 417,
+        "y0": 125,
+        "x1": 772,
+        "y1": 297
+       },
+       "pts": [
+        [
+         428,
+         133
+        ],
+        [
+         772,
+         125
+        ],
+        [
+         756,
+         297
+        ],
+        [
+         417,
+         292
+        ]
+       ],
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "recycle-bins",
+   "title": "분리수거함",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "recycle-bins/photo.jpg",
+    "art": "recycle-bins/art.jpg",
+    "line": "recycle-bins/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "쓰레기통 투입구",
+       "box": {
+        "x0": 216,
+        "y0": 178,
+        "x1": 379,
+        "y1": 423
+       },
+       "pts": [
+        [
+         216,
+         178
+        ],
+        [
+         368,
+         181
+        ],
+        [
+         379,
+         423
+        ],
+        [
+         233,
+         412
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.25
+      },
+      {
+       "type": "quad",
+       "obj": "쓰레기통 라벨",
+       "box": {
+        "x0": 221,
+        "y0": 421,
+        "x1": 395,
+        "y1": 550
+       },
+       "pts": [
+        [
+         221,
+         421
+        ],
+        [
+         389,
+         421
+        ],
+        [
+         395,
+         550
+        ],
+        [
+         227,
+         541
+        ]
+       ],
+       "realRight": true,
+       "ratio": 2.7
+      },
+      {
+       "type": "circle",
+       "obj": "열쇠구멍",
+       "box": {
+        "x0": 211,
+        "y0": 626,
+        "x1": 235,
+        "y1": 680
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "쓰레기통 투입구",
+       "box": {
+        "x0": 508,
+        "y0": 189,
+        "x1": 668,
+        "y1": 454
+       },
+       "pts": [
+        [
+         510,
+         189
+        ],
+        [
+         668,
+         194
+        ],
+        [
+         664,
+         454
+        ],
+        [
+         508,
+         443
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1.35
+      },
+      {
+       "type": "quad",
+       "obj": "쓰레기통 라벨",
+       "box": {
+        "x0": 492,
+        "y0": 444,
+        "x1": 678,
+        "y1": 591
+       },
+       "pts": [
+        [
+         493,
+         444
+        ],
+        [
+         678,
+         461
+        ],
+        [
+         675,
+         591
+        ],
+        [
+         492,
+         574
+        ]
+       ],
+       "realRight": true,
+       "ratio": 2.5
+      },
+      {
+       "type": "circle",
+       "obj": "열쇠구멍",
+       "box": {
+        "x0": 469,
+        "y0": 658,
+        "x1": 491,
+        "y1": 722
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "circle",
+       "obj": "열쇠구멍",
+       "box": {
+        "x0": 782,
+        "y0": 85,
+        "x1": 809,
+        "y1": 142
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "bottles",
+   "title": "물병과 컵",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "bottles/photo.jpg",
+    "art": "bottles/art.jpg",
+    "line": "bottles/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "ellipse",
+       "obj": "텀블러 뚜껑",
+       "box": {
+        "x0": 57,
+        "y0": 364,
+        "x1": 380,
+        "y1": 435
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "컵 입구",
+       "box": {
+        "x0": 645,
+        "y0": 577,
+        "x1": 915,
+        "y1": 665
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "ellipse",
+       "obj": "컵 입구",
+       "box": {
+        "x0": 631,
+        "y0": 702,
+        "x1": 956,
+        "y1": 829
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      },
+      {
+       "type": "quad",
+       "obj": "타일",
+       "box": {
+        "x0": 74,
+        "y0": 27,
+        "x1": 306,
+        "y1": 121
+       },
+       "pts": [
+        [
+         74,
+         29
+        ],
+        [
+         282,
+         27
+        ],
+        [
+         306,
+         119
+        ],
+        [
+         106,
+         121
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1
+      },
+      {
+       "type": "quad",
+       "obj": "타일",
+       "box": {
+        "x0": 508,
+        "y0": 32,
+        "x1": 705,
+        "y1": 126
+       },
+       "pts": [
+        [
+         508,
+         32
+        ],
+        [
+         705,
+         32
+        ],
+        [
+         705,
+         126
+        ],
+        [
+         508,
+         126
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1
+      },
+      {
+       "type": "quad",
+       "obj": "타일",
+       "box": {
+        "x0": 106,
+        "y0": 127,
+        "x1": 320,
+        "y1": 217
+       },
+       "pts": [
+        [
+         106,
+         127
+        ],
+        [
+         309,
+         128
+        ],
+        [
+         320,
+         217
+        ],
+        [
+         133,
+         216
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1
+      },
+      {
+       "type": "quad",
+       "obj": "타일",
+       "box": {
+        "x0": 511,
+        "y0": 127,
+        "x1": 694,
+        "y1": 211
+       },
+       "pts": [
+        [
+         511,
+         130
+        ],
+        [
+         694,
+         127
+        ],
+        [
+         680,
+         211
+        ],
+        [
+         511,
+         211
+        ]
+       ],
+       "realRight": true,
+       "ratio": 1
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "milk-basket",
+   "title": "우유 바구니",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "milk-basket/photo.jpg",
+    "art": "milk-basket/art.jpg",
+    "line": "milk-basket/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "우유 팩",
+       "box": {
+        "x0": 313,
+        "y0": 346,
+        "x1": 396,
+        "y1": 536
+       },
+       "pts": [
+        [
+         313,
+         346
+        ],
+        [
+         394,
+         357
+        ],
+        [
+         396,
+         536
+        ],
+        [
+         323,
+         527
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.7
+      },
+      {
+       "type": "quad",
+       "obj": "우유 팩",
+       "box": {
+        "x0": 411,
+        "y0": 352,
+        "x1": 492,
+        "y1": 537
+       },
+       "pts": [
+        [
+         411,
+         352
+        ],
+        [
+         492,
+         357
+        ],
+        [
+         491,
+         537
+        ],
+        [
+         414,
+         531
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.7
+      },
+      {
+       "type": "quad",
+       "obj": "우유 팩",
+       "box": {
+        "x0": 517,
+        "y0": 369,
+        "x1": 604,
+        "y1": 549
+       },
+       "pts": [
+        [
+         521,
+         369
+        ],
+        [
+         604,
+         374
+        ],
+        [
+         595,
+         549
+        ],
+        [
+         517,
+         544
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.7
+      },
+      {
+       "type": "quad",
+       "obj": "바구니 앞면",
+       "box": {
+        "x0": 227,
+        "y0": 723,
+        "x1": 756,
+        "y1": 864
+       },
+       "pts": [
+        [
+         227,
+         723
+        ],
+        [
+         756,
+         739
+        ],
+        [
+         726,
+         864
+        ],
+        [
+         248,
+         843
+        ]
+       ],
+       "realRight": true,
+       "ratio": 3.5
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  },
+  {
+   "id": "cup-drawings",
+   "title": "컵과 그림",
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "tags": [],
+   "files": {
+    "photo": "cup-drawings/photo.jpg",
+    "art": "cup-drawings/art.jpg",
+    "line": "cup-drawings/line.png"
+   },
+   "uses": {
+    "shape": {
+     "ok": true,
+     "shapes": [
+      {
+       "type": "quad",
+       "obj": "그림 종이",
+       "box": {
+        "x0": 175,
+        "y0": 107,
+        "x1": 505,
+        "y1": 587
+       },
+       "pts": [
+        [
+         175,
+         583
+        ],
+        [
+         194,
+         107
+        ],
+        [
+         505,
+         108
+        ],
+        [
+         503,
+         587
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.71
+      },
+      {
+       "type": "quad",
+       "obj": "그림 종이",
+       "box": {
+        "x0": 546,
+        "y0": 98,
+        "x1": 887,
+        "y1": 596
+       },
+       "pts": [
+        [
+         546,
+         574
+        ],
+        [
+         549,
+         98
+        ],
+        [
+         887,
+         111
+        ],
+        [
+         885,
+         596
+        ]
+       ],
+       "realRight": true,
+       "ratio": 0.71
+      },
+      {
+       "type": "ellipse",
+       "obj": "컵 입구",
+       "box": {
+        "x0": 58,
+        "y0": 637,
+        "x1": 187,
+        "y1": 928
+       },
+       "pts": null,
+       "realRight": false,
+       "ratio": 0
+      }
+     ]
+    },
+    "puzzle": true
+   }
+  }
+ ]
+}
