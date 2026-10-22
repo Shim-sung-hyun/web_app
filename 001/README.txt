@@ -33,3 +33,4 @@ GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-find
   예시 사진·끝 그림·색칠 도안 → 차름 사진 모음 media/photos/ (photos.json 의 uses.shape)
   내장 목소리 → 차름 소리 모음 media/voice/leda-0.92/
   001/samples/ · 001/voice/leda/ 는 확인이 끝나면 지움(그때까지 대비로만)
+  만들기 화면 sample-maker·art-maker·line-maker 도 사진 모음(photos.json)을 읽고 그 꼴로 내보냄(2026-10-23)

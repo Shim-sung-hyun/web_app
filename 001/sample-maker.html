@@ -47,7 +47,7 @@ button:disabled{opacity:.5;cursor:default}
   <button class="pri" id="bAna">이 사진 분석</button>
   <button id="bAll">분석 안 한 것 모두</button>
   <button id="bOk">✓ 확인함</button>
-  <button id="bSave" class="pri">결과 내려받기 (samples.json)</button>
+  <button id="bSave" class="pri">결과 내려받기 (photos.json)</button>
   <span id="stat"></span>
 </header>
 <div class="wrap">
@@ -145,14 +145,25 @@ Do not add, remove, move, merge or invent anything. Do not put new shapes, patte
 Style: smooth soft shading, simplified textures, crisp clean outlines, gentle light, slightly brighter colors. No text, letters, numbers or logos.`;
 }
 
+/* 차름 사진 모음(media/photos/photos.json)을 읽어 이 화면이 쓰는 꼴(id·title·file·art·line·ok·shapes)로. 주소는 늘 GitHub 절대 주소 */
+const PHOTOS='https://shim-sung-hyun.github.io/web_app/media/photos/';
+let CAT=null;
+async function loadPhotos(){
+  const r=await fetch(PHOTOS+'photos.json',{cache:'no-store'}); CAT=await r.json(); const base=CAT.base||PHOTOS;
+  return CAT.photos.map(p=>{ const f=p.files||{}, u=(p.uses&&p.uses.shape)||null;
+    return {id:p.id,title:p.title,file:f.photo?base+f.photo:null,art:f.art?base+f.art:null,line:f.line?base+f.line:null,
+      hasShape:!!u,ok:!!(u&&u.ok),shapes:u&&u.shapes&&u.shapes.length?u.shapes:null,src:p}; }).filter(x=>x.file);
+}
 const $=id=>document.getElementById(id);
 const KEY='sf001.maker';
 let ALL=[], DATA=[], cur=-1, sel=-1, artUrl='';
 function saveLocal(){ try{ localStorage.setItem(KEY,JSON.stringify(DATA.map(d=>({id:d.id,shapes:d.shapes,ok:d.ok,art:d.art})))); }catch(e){} }
 function say(t,c){ const m=$('msg'); m.textContent=t||''; m.className=c||''; }
 async function load(){
-  const r=await fetch('samples/samples.json',{cache:'no-store'}); ALL=await r.json();
-  DATA=ALL.filter(d=>!d.ok);   /* 이미 확인해 올린 사진은 목록에서 뺌(내보낼 때는 그대로 다시 넣음) */
+  ALL=await loadPhotos();
+  /* 도형 찾기(001)에 쓸 사진 가운데 아직 확인하지 않은 것만(이미 확인해 올린 것·퍼즐에만 쓰는 사진은 뺌, 내보낼 때는 목록 그대로).
+     기증 사진은 목록에 넣을 때 uses.shape = {ok:false, shapes:[…]}로 들어옴 */
+  DATA=ALL.filter(d=>d.hasShape&&!d.ok);
   let saved=[]; try{ saved=JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){}
   DATA.forEach(d=>{ const s=saved.find(x=>x.id===d.id); if(s){ d.shapes=s.shapes; d.ok=s.ok; d.art=s.art; } });
   list(); if(DATA.length) pick(0); else say('남은 사진이 없어요. 모두 확인했어요.','ok');
@@ -224,7 +235,7 @@ document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ const d=DATA[
 $('bOk').onclick=()=>{ const d=DATA[cur]; if(!d.shapes||!d.shapes.length){ say('도형이 없어요.','bad'); return; }
   if(d.shapes.some(x=>!String(x.obj||'').trim()||x.obj==='이것')){ say('이름이 없는 도형이 있어요. 학생이 아는 물건 이름을 넣거나 빼 주세요.','bad'); return; } d.ok=true; saveLocal(); list(); say('확인했어요.','ok'); if(cur<DATA.length-1) setTimeout(()=>pick(cur+1),400); };
 /* ---- 분석(앱과 같은 지시·같은 정리) ---- */
-async function imgB64(src){ const im=new Image(); im.src=src; await im.decode(); const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0); return c.toDataURL('image/jpeg',0.86).split(',')[1]; }
+async function imgB64(src){ const im=new Image(); im.crossOrigin='anonymous'; im.src=src; await im.decode(); const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0); return c.toDataURL('image/jpeg',0.86).split(',')[1]; }
 async function analyzeOne(i){
   const d=DATA[i]; const data=await imgB64(d.file);
   const body={contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data}},{text:PROMPT}]}],generationConfig:{responseMimeType:'application/json',responseSchema:SCHEMA,temperature:0.2}};
@@ -257,8 +268,10 @@ $('bArtOk').onclick=async()=>{ if(!artUrl) return; const d=DATA[cur];
   const im=new Image(); im.src=artUrl; await im.decode(); const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0);
   const a=document.createElement('a'); a.href=c.toDataURL('image/jpeg',0.88); a.download=d.id+'-art.jpg'; a.click(); d.art=true; saveLocal(); list(); };
 /* ---- 결과 ---- */
-$('bSave').onclick=()=>{ const out=ALL.map(d=>({id:d.id,title:d.title,file:d.file,ok:!!d.ok,art:typeof d.art==='string'?d.art:d.art?`samples/${d.id}-art.jpg`:null,line:d.line||null,shapes:d.shapes||null}));
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(out,null,1)],{type:'application/json'})); a.download='samples.json'; a.click(); };
+/* 차름 사진 모음 목록 전체를 그대로 두고, 여기서 손본 사진의 도형 분석(uses.shape)만 바꿔 photos.json으로 내려받음 → Claude에게 */
+$('bSave').onclick=()=>{ const out=JSON.parse(JSON.stringify(CAT));
+  for(const d of DATA){ const p=out.photos.find(x=>x.id===d.id); if(!p) continue; p.uses=p.uses||{}; p.uses.shape={ok:!!d.ok,shapes:d.shapes||[]}; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(out,null,1)],{type:'application/json'})); a.download='photos.json'; a.click(); };
 load();
 </script>
 </body>

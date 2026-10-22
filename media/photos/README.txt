@@ -42,4 +42,9 @@
 ■ 옛 주소
   001/samples/ 는 001·002가 새 목록으로 옮긴 뒤(2026-10-22) 목록을 못 받을 때의 대비로만 남겨 둠.
   선생님 확인이 끝나면 지움. 그 뒤로 예시 사진을 고칠 때는 이 폴더와 photos.json만 고침.
-  (sample-maker·art-maker·line-maker는 아직 001/samples 꼴로 내보내므로, 새 예시는 Claude가 이 꼴로 옮겨 넣음)
+
+■ 제작자용 만들기 화면 (001 폴더, 2026-10-23부터 이 목록을 읽고 이 꼴로 내보냄)
+  001/sample-maker.html  도형 분석·확인 — uses.shape 가 있고 ok=false 인 사진만 → "photos.json" 통째로 내려받기
+  001/art-maker.html     끝 그림 — 모든 사진(그림 없는 것이 위, "모두 그리기"는 그림 없는 것만) → zip(<id>/art.jpg)
+  001/line-maker.html    색칠 도안 — 001에서 확인했고 도안이 없는 사진만, 본보기는 shoe-rack/art·line → zip(<id>/line.png)
+  받은 photos.json·zip을 Claude에게 보내면 이 폴더에 그대로 넣음

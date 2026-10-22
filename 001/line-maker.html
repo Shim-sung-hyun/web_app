@@ -37,9 +37,9 @@ button:disabled{opacity:.5;cursor:default}
 <body>
 <main>
 <h1>예시 그림 색칠 도안 만들기</h1>
-<p class="lead">일상 속 도형 찾기(001)의 예시 그림마다 <b>색칠 도안</b>(바로 색칠·출력용 선 그림)을 Gemini로 그리는 화면이에요. 신발장 도안을 본보기로 함께 보내 모두 같은 꼴로 그려요. 앱 제작자가 한 번만 해요.</p>
+<p class="lead">차름 사진 모음에서 001 도형 찾기에 쓰는 사진 가운데 <b>아직 색칠 도안이 없는 것</b>만 Gemini로 도안(바로 색칠·출력용 선 그림)을 그리는 화면이에요. 신발장 그림·도안을 본보기로 함께 보내 모두 같은 꼴로 그려요. 제작자만 써요.</p>
 <div class="card note">
-  ① 결제를 연결한 프로젝트의 Gemini 키가 필요해요(Gemini 그림은 무료 등급이 없어요). 한 장 약 50~90원 → 5장 약 250~450원.<br>
+  ① 결제를 연결한 프로젝트의 Gemini 키가 필요해요(Gemini 그림은 무료 등급이 없어요). 한 장 약 50~90원. 끝 그림이 없는 사진은 art-maker에서 먼저 그리면 더 깔끔해요.<br>
   ② <b>모두 그리기</b> → 마음에 안 드는 것만 <b>다시</b> → 쓸 그림에 <b>쓰기</b> 표시 → <b>zip 받기</b> → 받은 zip을 Claude에게 보내 주세요.<br>
   ③ 그린 그림은 이 브라우저에 남아 있어서 창을 닫았다 열어도 이어서 할 수 있어요.
 </div>
@@ -56,7 +56,16 @@ Keep exactly the same scene, objects, positions, sizes, framing and aspect ratio
 Use only clean, smooth, closed black outlines of even thickness on pure white, like image 2. No shading, no gray, no color, no texture, no hatching.
 Every area should be a closed shape that is easy to color; leave out tiny details.
 No text, letters, numbers or logos. Leave the bottom-right corner plain and empty.`;
-const EX_ART='samples/shoe-rack-art.jpg', EX_LINE='samples/shoe-rack-line.png';
+/* 차름 사진 모음(media/photos/photos.json)을 읽어 이 화면이 쓰는 꼴(id·title·file·art·line·ok·shapes)로. 주소는 늘 GitHub 절대 주소 */
+const PHOTOS='https://shim-sung-hyun.github.io/web_app/media/photos/';
+let CAT=null;
+async function loadPhotos(){
+  const r=await fetch(PHOTOS+'photos.json',{cache:'no-store'}); CAT=await r.json(); const base=CAT.base||PHOTOS;
+  return CAT.photos.map(p=>{ const f=p.files||{}, u=(p.uses&&p.uses.shape)||null;
+    return {id:p.id,title:p.title,file:f.photo?base+f.photo:null,art:f.art?base+f.art:null,line:f.line?base+f.line:null,
+      hasShape:!!u,ok:!!(u&&u.ok),shapes:u&&u.shapes&&u.shapes.length?u.shapes:null,src:p}; }).filter(x=>x.file);
+}
+const EX_ART=PHOTOS+'shoe-rack/art.jpg', EX_LINE=PHOTOS+'shoe-rack/line.png';   /* 본보기 짝 */
 const $=id=>document.getElementById(id);
 const say=(t,c)=>{ $('state').textContent=t; $('state').className=c||''; };
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
@@ -109,10 +118,11 @@ $('all').onclick=async()=>{ $('all').disabled=true; let i=0;
   $('all').disabled=false; say('다 그렸어요. 마음에 안 드는 것은 "다시", 쓸 것은 "쓰기" 표시 뒤 zip 받기.','ok'); };
 $('zip').onclick=async()=>{ if(typeof JSZip==='undefined'){ say('zip 도구를 불러오지 못했어요. 새로 고침해 주세요.','err'); return; }
   const z=new JSZip(); let n=0;
-  for(const x of LIST){ if(!SEL[x.id]) continue; const a=await DB.get(x.id); if(!a) continue; z.file(x.id+'-line.png',a.split(',')[1],{base64:true}); n++; }
-  const b=await z.generateAsync({type:'blob'}); const l=document.createElement('a'); l.href=URL.createObjectURL(b); l.download='line-001-gemini.zip'; l.click(); say(n+'장을 받았어요. Claude에게 보내 주세요.','ok'); };
-fetch('samples/samples.json',{cache:'no-store'}).then(r=>r.json()).then(async j=>{
-  LIST=j.filter(x=>x.ok&&x.shapes&&x.shapes.length&&!x.line&&x.id!=='shoe-rack').map(x=>({...x,src:x.art||x.file}));   /* 아직 도안이 없는 것만. 끝 그림이 없으면 사진에서 */
+  for(const x of LIST){ if(!SEL[x.id]) continue; const a=await DB.get(x.id); if(!a) continue; z.file(x.id+'/line.png',a.split(',')[1],{base64:true}); n++; }   /* 사진 모음 꼴: <id>/line.png */
+  const b=await z.generateAsync({type:'blob'}); const l=document.createElement('a'); l.href=URL.createObjectURL(b); l.download='line-'+new Date().toISOString().slice(0,10)+'.zip'; l.click(); say(n+'장을 받았어요. Claude에게 보내 주세요.','ok'); };
+loadPhotos().then(async j=>{
+  LIST=j.filter(x=>x.ok&&x.shapes&&!x.line&&x.id!=='shoe-rack').map(x=>({...x,src:x.art||x.file}));   /* 001에서 확인한 사진 가운데 아직 도안이 없는 것만. 끝 그림이 없으면 사진에서 */
+  if(!LIST.length) say('도안이 없는 사진이 없어요. 모두 도안이 있어요.','ok');
   $('grid').innerHTML=LIST.map(x=>`<div class="it" id="it-${x.id}"></div>`).join('');
   for(const x of LIST) await cell(x); count();
 });
