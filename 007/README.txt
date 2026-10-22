@@ -3,7 +3,6 @@
 
 [파일]
 - word-learn.html          웹앱 (버전 1)
-- word-learn-v0.html       예전 판(버전 0) — 따로 남겨 둠, 게시판에는 걸지 않음
 - word-learn-beta.html     베타 주소로 들어오면 word-learn.html로 넘겨 줌 (2026-10-21 진행 막대·견본 테두리를 정식판에 합침)
 - word-learn01~20.jpg      화면 캡처 1366×768 (설명서 그림)
 - word-learn_manual.html   게시판 본문용 짧은 설명서 (에디터 소스 모드에 붙여 넣기)
@@ -20,7 +19,8 @@
 - 기본 목소리(Google Leda, 빠르기 0.90, 3,339개)는 차름 소리 모음 ../media/voice/leda-0.90/ 에서 읽음(2026-10-22부터)
   (mp3 + index.json, 고쳐 만든 소리 기록 fixes.json 도 거기에)
 - voice/leda/ · voice/fixes.json  옛 자리. 소리 모음에서 잘 되는 것을 확인한 뒤 지움
-- words-*.txt, words-frequency.csv, word-games.html   예전 판 자료(버전 1에서는 쓰지 않음)
+- words-*.txt, words-frequency.csv   예전 판 자료(버전 1에서는 쓰지 않음)
+  (예전 판 word-learn-v0.html·word-games.html은 2026-10-22에 지움 — 미리 만든 소리를 쓰지 않던 판)
 
 [주소]
 앱:   https://www.charum.org/study/007/word-learn.html (2026-10-21부터, 자료는 GitHub) · GitHub 주소 https://shim-sung-hyun.github.io/web_app/007/word-learn.html 도 그대로 열림
