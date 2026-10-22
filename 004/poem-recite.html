@@ -31,6 +31,11 @@ svg.ic{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;strok
 body.cover #cover{display:flex}
 body.cover #app{display:none}
 #cover h1{cursor:pointer;-webkit-user-select:none;user-select:none;font-family:"Nanum Myeongjo",serif;font-weight:800;font-size:clamp(52px,8vw,104px);letter-spacing:4px;margin:0;color:var(--ink)}
+/* 첫 화면 시작 단추: 메뉴가 열렸을 때만 (깜빡이지 않고 그대로) */
+#coverStart,#coverHint{display:none}
+body.cover.admin #coverStart{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:16px;background:var(--accent);color:#fff;font-family:var(--f-display);font-size:28px;padding:14px 44px;min-height:64px;box-shadow:0 10px 24px -12px rgba(31,66,104,.6);position:relative;z-index:30}
+body.cover.admin #coverStart svg{width:26px;height:26px}
+body.cover.admin #coverHint{display:block;margin:0;font-size:15px;color:var(--ink-soft);position:relative;z-index:30}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* ---------- 시 화면 ---------- */
 #app{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
@@ -182,7 +187,9 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
 </head>
 <body class="cover">
 
-<section id="cover"><h1 id="coverTitle" role="button" tabindex="0">시 암송하기</h1></section>
+<section id="cover"><h1 id="coverTitle" role="button" tabindex="0">시 암송하기</h1>
+  <button type="button" id="coverStart"><svg class="ic" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span id="coverStartLbl">시작</span></button>
+  <p id="coverHint">지금은 공통시예요 · 다른 시는 위에서 골라요</p></section>
 
 <div id="app">
   <div class="content">
@@ -715,6 +722,8 @@ function coverMenu(){
 }
 function leaveCover(){ if(!onCover()) return; document.body.classList.remove('cover'); refitLayout(); if(S.admin) renderDocks(); }
 $('coverTitle').addEventListener('click',coverMenu);
+/* 시작: 관리 버튼을 한 번 누른 것과 같음(메뉴 닫고 전체 화면으로 시) */
+$('coverStart').addEventListener('click',e=>{ e.stopPropagation(); unlockAudio(); setAdmin(false); leaveCover(); goFull(); });
 $('coverTitle').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); coverMenu(); } });
 /* 교사 모드 버튼: 교사가 다루는 앱이라 한 번 누르면 바로 켜고 끔. 끄면 전체 화면으로 수업 */
 $('adminBtn').addEventListener('click',e=>{
@@ -1066,6 +1075,7 @@ document.addEventListener('scroll',()=>{ if(SPOT.el) placeSpot(); },true);
 
 /* ================= 도움말: 교사 메뉴를 말풍선으로 하나씩 ================= */
 const TOUR_STEPS=[
+  {el:'body.cover #coverStart', t:'시작', x:'공통시가 골라져 있어요. 다른 시나 가리기를 고르면 바로 시 화면으로 가고, 그대로 시작하려면 이 단추를 눌러요. 메뉴가 닫히고 전체 화면이 돼요.'},
   {el:'#gStage', t:'가리기', x:'한꺼번에 지우지 않고 조금씩 지워 가며 외워요. 전체 → 반 가리기 → 낱말 첫 글자 → 줄 첫 글자 → 다 가리기.'},
   {el:'#gPoem', t:'시', x:'공통시와 계절시 가운데 골라요. "+ 새 시"로 직접 입력하거나 .txt 파일을 불러와요. 넣은 시를 고르면 "고치기"가 나와요.'},
   {el:'#gCols', t:'단', x:'시를 몇 단으로 나눠 보일지 정해요. "자동"은 화면에 가장 크게 보이는 쪽을 골라요.'},
