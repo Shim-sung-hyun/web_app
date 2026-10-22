@@ -17,10 +17,10 @@ GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-find
   shape-finder01~10.jpg      화면(설정, 도형 찾기 사진, 붓, 사진을 보아요, 배우기, 칠하기, 찾기, 끝 그림, 색칠, 선생님 메뉴)
   samples/                   예시 사진 · samples.json(ok=true만 앱에) · ○○-art.jpg(끝 그림) · ○○-line.png(색칠 도안)
   voice/leda/                내장 목소리(Leda, 391마디) · voice-lines.json(만든 말 목록)
-  sample-maker.html          (만든 사람) 예시 사진 도형 확인
-  art-maker.html             (만든 사람) 예시 끝 그림 한꺼번에 그리기(결제 Gemini 키)
-  line-maker.html            (만든 사람) 색칠 도안 한꺼번에 그리기(결제 Gemini 키, 신발장 도안이 본보기)
-  donate-review.html         (만든 사람) 기증 사진 확인(donate.php 맨 위 확인 글자)
+  sample-maker.html          (제작자) 예시 사진 도형 확인
+  art-maker.html             (제작자) 예시 끝 그림 한꺼번에 그리기(결제 Gemini 키)
+  line-maker.html            (제작자) 색칠 도안 한꺼번에 그리기(결제 Gemini 키, 신발장 도안이 본보기)
+  donate-review.html         (제작자) 기증 사진 확인(donate.php 맨 위 확인 글자)
   cloud-key.html             Google 음성 키 만드는 법
 
 서버(charum.org 루트): key-relay.php · photo-relay.php · donate.php

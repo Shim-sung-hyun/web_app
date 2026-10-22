@@ -1661,7 +1661,7 @@ function showSetup(o={}){
       <b>내 사진</b>은 <b>휴대폰에서 받기</b>로 보내요. QR을 찍어 사진을 보내면서, 처음 한 번은 같은 화면에 선생님 본인의 <b>Gemini 키</b>(도형 찾기, 필수)와 <b>Google 음성 키</b>(목소리, 선택)를 함께 넣어요. Gemini 키는 Google AI Studio에서 휴대폰으로 1~2분이면 받을 수 있어요(<a href="https://shim-sung-hyun.github.io/web_app/gemini-key.html" target="_blank" rel="noopener">키 받는 법</a>). 키는 이 기기에만 저장돼요. Google 음성 키가 없으면 내 사진 수업은 기기 목소리로 해요.<br>
       <b>내 사진은 이 기기(이 브라우저)에 보관</b>돼요. 도형을 찾은 결과와 그림도 함께 두어, 다음에는 키 없이 바로 써요. 브라우저 기록을 지우면 함께 지워져요.<br>
       <b>끝 화면</b>: 찾기를 마치면 사진이 그림으로 스르르 바뀌어요. <b>바로 색칠</b>로 정하면 그 그림의 연필 선 위에 학생이 팔레트로 색칠해요. 연필 선 그림은 <b>출력(색칠용)</b>으로 뽑아 종이에도 칠할 수 있어요. 예시 사진은 그림을 미리 만들어 두었어요. 내 사진은 결제를 연결한 Gemini 키일 때만 그림을 그리고(한 장 약 50원, 한 번 그리면 보관), 아니면 사진 그대로 두거나 사진의 선을 따서 색칠해요.<br>
-      <b>기증</b>: 내 사진 아래 <b>기증</b>을 누르면 다른 선생님도 쓰는 예시 사진이 될 수 있어요. 보내기 전에 사람·얼굴·이름·번호가 있는지 Gemini로 살펴 막고, 만든 사람이 한 번 더 보고 올려요.<br>
+      <b>기증</b>: 내 사진 아래 <b>기증</b>을 누르면 다른 선생님도 쓰는 예시 사진이 될 수 있어요. 보내기 전에 사람·얼굴·이름·번호가 있는지 Gemini로 살펴 막고, 제작자가 한 번 더 보고 올려요.<br>
       사진과 키는 잠가서 charum.org 중계 서버를 거쳐 오고, 중계 서버는 열어 볼 수 없어요. 고른 사진은 도형을 찾으려고 Google Gemini로 보내지고, 결제를 연결하지 않은 키는 Google이 서비스 개선에 쓸 수 있어요. <b>학생 얼굴이나 이름이 보이는 사진은 넣지 마세요.</b></p>
     </details>
 
@@ -1720,7 +1720,7 @@ function showSetup(o={}){
     goFull(); showBrush();   /* 사진은 이미 골랐으니 바로 학생 화면(붓 고르기)부터 */
   };
 }
-/* 예시 사진 묶음: 만든 사람이 미리 분석하고 눈으로 확인한 사진(samples/samples.json, ok=true만). 키·기다림 없이 바로 */
+/* 예시 사진 묶음: 제작자가 미리 분석하고 눈으로 확인한 사진(samples/samples.json, ok=true만). 키·기다림 없이 바로 */
 let SAMPLES=null;
 async function loadSamples(){
   if(SAMPLES) return SAMPLES;
@@ -1907,7 +1907,7 @@ async function useMine(x){
   if(!S.mineArt) startCartoon();
 }
 /* ===== 기증: 선생님이 고른 내 사진을 다른 선생님도 쓰는 예시 사진으로 =====
-   보내기 전에 이 앱이 Gemini로 사람·얼굴·이름·번호를 살펴 있으면 막음 → charum.org 대기함 → 만든 사람이 보고 골라 GitHub에 */
+   보내기 전에 이 앱이 Gemini로 사람·얼굴·이름·번호를 살펴 있으면 막음 → charum.org 대기함 → 제작자가 보고 골라 GitHub에 */
 const DONATE='https://charum.org/donate.php';
 function giveMine(x){
   const old=$('giveBox'); if(old) old.remove();
@@ -1915,7 +1915,7 @@ function giveMine(x){
   box.innerHTML=`<div class="key-card" role="dialog" aria-label="사진 기증">
     <h2>이 사진을 기증할까요?</h2>
     <div class="give-show"><img src="${x.img}" alt=""><div><b>${esc(x.title)}</b><span>${x.shapes.length}개 도형${x.art?' · 그림 함께':''}</span></div></div>
-    <p>기증한 사진은 만든 사람이 살펴본 뒤 <b>모든 선생님이 쓰는 예시 사진</b>이 돼요. 도형·목소리·그림을 미리 만들어 두어, 다른 선생님은 키 없이 쓸 수 있어요.</p>
+    <p>기증한 사진은 제작자가 살펴본 뒤 <b>모든 선생님이 쓰는 예시 사진</b>이 돼요. 도형·목소리·그림을 미리 만들어 두어, 다른 선생님은 키 없이 쓸 수 있어요.</p>
     <label class="give-ok"><input type="checkbox" id="giveChk"> 사람·얼굴·이름·전화번호·차 번호 같은 개인 정보가 없는 사진이에요. 제가 찍었고 기증에 동의해요.</label>
     <p class="key-msg" id="giveMsg"></p>
     <div class="key-row end"><button class="btn" id="giveX" type="button">닫기</button><button class="btn primary" id="giveGo" type="button">기증하기</button></div></div>`;
@@ -1935,7 +1935,7 @@ function giveMine(x){
       let j={}; try{ j=await r.json(); }catch(e){}
       if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
       x.given=true; await minePut(x); renderMine();
-      msg('고마워요! 기증했어요. 만든 사람이 살펴본 뒤 예시 사진에 넣을게요.','ok'); go.hidden=true;
+      msg('고마워요! 기증했어요. 제작자가 살펴본 뒤 예시 사진에 넣을게요.','ok'); go.hidden=true;
     }catch(e){ msg('보내지 못했어요. 잠시 뒤 다시 해 주세요. ('+(e.message||e)+')','bad'); go.disabled=false; }
   };
 }
@@ -2813,7 +2813,7 @@ function cartoonPrompt(){
   return CARTOON_PROMPT;
 }
 function startCartoon(){
-  /* 예시 사진: 만든 사람이 미리 그려 둔 그림. 내 사진: 보관한 그림이 있으면 그것, 없으면 선생님 키(결제 연결)로 한 번 그려 보관 */
+  /* 예시 사진: 제작자가 미리 그려 둔 그림. 내 사진: 보관한 그림이 있으면 그것, 없으면 선생님 키(결제 연결)로 한 번 그려 보관 */
   if(!S.img){ S.cartoon={status:'none'}; return; }
   if(S.demo){ S.cartoon=S.sampleArt?{status:'done',url:S.sampleArt}:{status:'none'}; return; }
   if(S.mineArt){ S.cartoon={status:'done',url:S.mineArt}; return; }
