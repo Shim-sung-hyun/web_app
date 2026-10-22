@@ -1,30 +1,26 @@
-003 · 무지개 색 찾기
+003 · 무지개 색 찾기 (차름 색깔 — 이름은 아직 확정 전)
 
-[GitHub에 올리기]  web_app 저장소 → Add file → Upload files
-  → 이 003 폴더를 통째로 끌어다 놓기 → Commit changes
-
-  앱 주소:   https://shim-sung-hyun.github.io/web_app/003/rainbow-finder.html
-  그림 주소: https://shim-sung-hyun.github.io/web_app/003/rainbow-finder01.jpg (02~09 같은 방식)
-
-[게시판 글]  차름 갤러리 · webapp 게시판
-  - 웹앱주소(app_url): 위 앱 주소
-  - 본문: rainbow-finder_manual.html 내용을 '소스' 모드에 붙여 넣기 (그림은 GitHub에서 불러옴)
-  - 썸네일: rainbow-finder02.jpg 한 장만 첨부 (갤러리 카드용)
+주소
+  앱:      https://www.charum.org/study/003/rainbow-finder.html  (서버 study/003/에는 server-loader.html을 이 이름으로 한 번만)
+  GitHub:  https://shim-sung-hyun.github.io/web_app/003/rainbow-finder.html
+  게시판:  차름 webapp 59262 · app_url은 내 도메인 주소 · 본문은 rainbow-finder_manual.html(소스 모드) · 썸네일 rainbow-finder-promo.jpg
 
 파일
   rainbow-finder.html          웹앱
-  rainbow-finder01~09.jpg      화면 그림 (동그라미 10개, 터지는 순간, 동그라미 15개, 물건 모양, 교사 모드, 학생 혼자 고르기, 학생 혼자 끝, 이름 듣고 찾기, 도와주기)
-  cloud-key.html               Cloud 키 넣는 방법 안내 페이지 (설정 화면 목소리 칸에서 연결)
-                               주소: https://shim-sung-hyun.github.io/web_app/003/cloud-key.html
-  rainbow-finder_manual.html   게시판 본문용 설명서
+  rainbow-finder01~11.jpg      화면(1366×768): 01 설정 · 02 ③ 오늘 할 단계(기록 보고 권하기) · 03 같은 색 찾기 · 04 터지는 순간 · 05 도와주기
+                               · 06 물건 모양 · 07 이름 듣고 찾기 · 08 학생 혼자 고르기 · 09 끝 · 10 선생님 메뉴 · 11 교사용 기록(예시 홍길동)
+  rainbow-finder-promo.jpg     홍보 그림·썸네일
+  rainbow-finder_manual.html   게시판 본문
+  rainbow-finder_guide.html    자세한 설명
+  voice/leda/                  내장 목소리(Leda, 빠르기 0.92, mp3 + index.json, 이름 = 문장 조각 SHA-1 앞 16자리)
+  voice-lines.json             앱이 하는 말 전체(앱 콘솔 __voiceLines()와 같음, 24마디)
+  voice-maker.html, voice-lines-new.json   내장 목소리 만들기 화면(만든 사람용, 한 번 쓰고 지움)
 
-휴대폰으로 키 받기
-  키 칸 옆 "📱 휴대폰으로 받기" 단추는 중계 서버 https://charum.org/key-relay.php 를 씁니다.
-  중계 서버와 보내기 페이지는 key-relay.zip을 보세요.
+목소리 (2026-10-22)
+  키 없이 내장 목소리. 말 24마디 가운데 하나라도 없으면 그 수업 전체를 기기 목소리로(섞지 않음).
+  Cloud 키·휴대폰으로 키 받기·목소리 세 가지는 앱에서 뺐다.
+  cloud-key.html은 이 앱에선 안 쓰지만 공통 key-send.html·photo-send.html이 링크하므로 지우지 않는다.
 
-[내 도메인에서 열기] (2026-10-21)
-- 주소: https://www.charum.org/study/003/rainbow-finder.html (게시판 app_url도 이 주소로)
-- 서버 study/003/ 폴더에는 server-loader.html(1KB)을 rainbow-finder.html 이름으로 한 번만 올린다. 열릴 때마다 GitHub의 최신 rainbow-finder.html을 받아 그 주소에서 펼친다 → 앱을 고쳐도 GitHub에만 올리면 된다.
-- 앱이 읽는 자료(목소리·예시 사진·cloud-key.html 등)는 GitHub 절대 주소로 읽는다. 상대 주소를 새로 쓰지 말 것.
-- 기록·키는 그 기기 브라우저에 주소(도메인)별로 저장된다. 서버에는 아무것도 저장되지 않는다.
-- 휴대폰으로 키 받기(key-relay.php)·사진 보내기·AI 중계는 받는 주소 목록에 https://www.charum.org 가 있어야 한다.
+저장 칸
+  localStorage colorFind.* (설정, rec = 기록 중 학생, log = 기록), 명단 webapp.students(다른 앱과 함께)
+  기록 한 줄 = 문제 하나 {s,t,g(판),c,res(first/retry/help),wrong,way,look,n,k,sp,hp,mode}
