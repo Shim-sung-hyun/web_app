@@ -8,10 +8,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
-/* 원래 앱의 모습(종이 바탕·명조체·초록)을 그대로 살림 */
+/* 종이 바탕·명조체는 원래 앱 그대로, 영역 색은 국어 파랑(007보다 조금 깊은 파랑) */
 :root{
   --paper:#FAF7EF; --panel:#FFFFFF; --ink:#2B2A26; --ink-soft:#8B8676; --line:#E3DED0;
-  --accent:#3F6B52; --accent-tint:#E7EEE7; --warm:#F4E7C6;
+  --accent:#2F5D8A; --accent-tint:#E4ECF5; --warm:#F4E7C6;
   --shadow:0 8px 26px -14px rgba(43,42,38,.28);
   --f-poem:"Nanum Myeongjo",serif;
   --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
@@ -34,7 +34,9 @@ body.cover #app{display:none}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* ---------- 시 화면 ---------- */
 #app{position:relative;min-height:100vh;display:flex;flex-direction:column}
-.content{flex:1;display:flex;flex-direction:column;padding-top:clamp(40px,5vh,56px)}
+.content{flex:1;display:flex;flex-direction:column;padding:clamp(28px,4.5vh,48px) 0}
+/* 시는 남은 높이의 위아래 가운데에 (위로 몰리거나 아래가 비지 않게) */
+#poemsContainer{flex:1;display:flex;flex-direction:column;justify-content:center}
 body.admin .content{padding-top:var(--dockTopH,120px);padding-bottom:var(--dockBotH,80px)}
 .head{text-align:center;padding:0 16px clamp(12px,2.4vh,20px)}
 .title-line{font-family:var(--f-poem);font-weight:800;font-size:clamp(26px,4.2vw,42px);letter-spacing:1px}
@@ -63,22 +65,38 @@ body.echoing #echoTag{display:flex}
 body.admin #echoTag{bottom:calc(var(--dockBotH,80px) + 8px)}
 
 /* ---------- 교사 메뉴 (떠 있는 두 줄) ---------- */
-.dock{position:fixed;left:0;right:0;margin:0 auto;width:fit-content;max-width:calc(100% - 24px);z-index:25;display:none;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;
-  padding:7px 10px;border-radius:18px;background:rgba(255,255,255,.96);box-shadow:0 10px 30px rgba(43,42,38,.18),inset 0 0 0 1px var(--line)}
+.dock{position:fixed;left:0;right:0;margin:0 auto;width:fit-content;max-width:calc(100% - 24px);z-index:25;display:none;align-items:center;
+  padding:7px 6px;border-radius:18px;background:rgba(255,255,255,.96);box-shadow:0 10px 30px rgba(43,42,38,.18),inset 0 0 0 1px var(--line)}
 #dockTop{top:10px} #dockBot{bottom:12px}
+#dockBot.lift{bottom:calc(70px + env(safe-area-inset-bottom,0px))}
 body.admin .dock{display:flex}
-.dock .g{display:flex;align-items:center;gap:3px;padding:0 6px;flex-wrap:wrap}
+/* 메뉴는 한 줄: 좁으면 좌우로 밀고, 넘친 쪽은 흐리게 */
+.dock .sc{display:flex;align-items:center;gap:4px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;padding:0 4px;max-width:100%}
+.dock .sc::-webkit-scrollbar{display:none}
+.dock .g{display:flex;align-items:center;gap:3px;padding:0 6px;flex:none;white-space:nowrap}
 .dock .g+.g{border-left:1px solid var(--line)}
 .dock .lbl{font-size:12px;color:var(--ink-soft);font-weight:800;margin-right:3px}
 .dock button{border:0;background:transparent;border-radius:10px;min-height:42px;min-width:42px;padding:5px 11px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:6px}
 .dock button svg{width:20px;height:20px}
 .dock button[aria-pressed="true"]{background:var(--accent-tint);color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
 .dock button.main{background:var(--accent);color:#fff}
-.dock button.main[aria-pressed="true"]{background:#2C4C3A;color:#fff;box-shadow:none}
+.dock button.main[aria-pressed="true"]{background:#1F4268;color:#fff;box-shadow:none}
 .dock a.help{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:5px 11px;border-radius:10px;color:var(--accent);font-weight:700;font-size:14.5px;text-decoration:underline;text-underline-offset:3px}
 .dock a.help svg{width:20px;height:20px}
 .dock .count{font-size:12.5px;color:var(--ink-soft);font-weight:700;padding:0 6px}
-.dock .note{font-size:12.5px;color:#9A2E1C;max-width:240px}
+.dock .note{font-size:12.5px;color:#9A2E1C;white-space:normal;max-width:260px}
+/* 더 정하기: 거의 안 바꾸는 것(목소리·키)을 작은 글씨로 */
+#dockMore{position:fixed;left:0;right:0;margin:0 auto;width:fit-content;max-width:calc(100% - 24px);z-index:26;display:none;flex-direction:column;align-items:center;gap:6px;padding:10px 12px;border-radius:14px;background:#fff;box-shadow:0 10px 30px rgba(43,42,38,.2),inset 0 0 0 1px var(--line);font-size:13px}
+body.admin #dockMore.open{display:flex}
+#dockMore .row{justify-content:center;gap:4px}
+#dockMore .lbl{font-size:12px;color:var(--ink-soft);font-weight:800;margin-right:3px}
+#dockMore button{border:0;background:transparent;border-radius:9px;min-height:36px;padding:4px 10px;font-weight:700;font-size:13px}
+#dockMore button[aria-pressed="true"]{background:var(--accent-tint);color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+#dockMore input.key{width:190px;font:inherit;font-size:13px;padding:6px 9px;border:1.5px solid var(--line);border-radius:9px}
+#dockMore a.help{color:var(--accent);font-weight:700;font-size:12.5px;text-underline-offset:3px;padding:4px 6px}
+#dockMore .small{font-size:12px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:4px}
+#dockMore .hint{font-size:12px;color:var(--ink-soft);max-width:520px;text-align:center;line-height:1.5;margin:0}
+#dockMore .note{font-size:12.5px;color:#9A2E1C}
 .dock input.key{width:170px;font:inherit;font-size:14px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px}
 .dock label.small,.dock span.small{font-size:12.5px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:4px;padding:0 4px}
 
@@ -169,14 +187,14 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
 <div id="app">
   <div class="content">
     <div id="poemsContainer"></div>
-    <div class="foot-space"></div>
-  </div>
+      </div>
 
 </div>
 <div id="echoTag"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>따라 해요</div>
 
 <div class="dock" id="dockTop"></div>
 <div class="dock" id="dockBot"></div>
+<div id="dockMore"></div>
 <div id="tour"><div id="tourHole"></div><div id="tourTip" class="below"><h4 id="tourTitle"></h4><p id="tourText"></p>
   <div class="tour-foot"><span id="tourStep"></span><div><button type="button" id="tourEnd">그만</button><button type="button" class="next" id="tourNext">다음</button></div></div></div></div>
 <button id="adminBtn" type="button" aria-label="관리"><span class="ab-label" id="abLabel">charum</span></button>
@@ -200,7 +218,7 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
         <div><input type="file" id="txtFileInput" accept=".txt,text/plain"></div></div>
       <div class="mf"><label>불러온 내용 미리보기</label><div class="preview-box" id="filePreview">파일을 고르면 여기에 미리보기가 나타나요.</div></div>
     </div>
-    <p class="vnote">새로 넣은 시는 Cloud 키가 있으면 기본 목소리와 같은 목소리로 읽어요. 키가 없으면 기기 목소리로 읽어요.</p>
+    <p class="vnote">새로 넣은 시는 기기 목소리로 읽어요. (메뉴의 "더 정하기"에 Google 음성 키를 넣은 기기는 기본 목소리와 같은 목소리로 읽어요.)</p>
     <div class="modal-actions">
       <button class="btn-cancel" id="cancelBtn" type="button">취소</button>
       <button class="btn-del" id="delBtn" type="button" hidden>이 시 지우기</button>
@@ -541,12 +559,10 @@ function chooseEngine(){
   else S.engineNow=(S.engine==='cloud'&&S.cloudKey)?'cloud':'device';
   S.voiceNote='';
 }
-/* 키가 없으면 읽지 않고 키 칸을 알려 줌 (한 수업 한 목소리)
-   기본 목소리 + 새로 넣은 시: 한 번만 알려 주고, 다시 누르면 기기 목소리로 읽음 */
-const keyAsked=new Set();
+/* "Google (키)"를 직접 골랐는데 키가 없을 때만 키 칸을 알려 줌 (한 수업 한 목소리) */
 function voiceReady(){
-  if(S.engine==='cloud'&&!S.cloudKey){ renderDocks(); spotlight('#dockKey','Cloud 키를 넣어 주세요. 키가 없으면 "기본 목소리"를 고르세요.'); return false; }
-  if(S.engine==='base'&&isCustom()&&!S.cloudKey&&!keyAsked.has(S.active)){ keyAsked.add(S.active); renderDocks(); spotlight('#dockKey','새로 넣은 시는 Cloud 키를 넣으면 기본 목소리로 읽어요. 키 없이 다시 누르면 기기 목소리로 읽어요.'); return false; }
+  if(S.engine==='cloud'&&!S.cloudKey){ S.more=true; renderDocks(); spotlight('#dockKey','Google 음성 키를 넣어 주세요. 키가 없으면 "기본 목소리"를 고르세요.'); return false; }
+  /* 기본 목소리 + 새로 넣은 시 + 키 없음: 묻지 않고 기기 목소리로 읽음 */
   chooseEngine(); return true;
 }
 /* 미리 만든 소리: voice/leda/index.json 의 목록
@@ -716,41 +732,55 @@ function setAdmin(on){
 
 /* ================= 교사 메뉴 ================= */
 function renderDocks(){
-  /* 키 칸: Google(키)을 골랐을 때, 또는 기본 목소리로 새로 넣은 시를 고를 때만 */
-  const needKey=S.engine==='cloud'||(S.engine==='base'&&isCustom());
   const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
-  $('dockTop').innerHTML=
+  const keepL=[...document.querySelectorAll('.dock .sc')].map(x=>x.scrollLeft);
+  $('dockTop').innerHTML='<div class="sc">'+
     `<div class="g" id="gStage"><span class="lbl">가리기</span>${STAGES.map(s=>b('stage:'+s.k,s.label,S.stage===s.k)).join('')}</div>`+
     `<div class="g" id="gPoem"><span class="lbl">시</span>${poemList().map(p=>b('poem:'+p.key,esc(p.label==='내가 입력'?p.title:p.label),S.active===p.key,`title="${esc(p.title)}"`)).join('')}${b('new',ICON.plus+'새 시')}${isCustom()?b('edit',ICON.edit+'고치기'):''}</div>`+
     `<div class="g" id="gCols"><span class="lbl">단</span>${b('cols:auto','자동',S.cols===null)}${[1,2,3,4].map(n=>b('cols:'+n,n+'단',S.cols===n)).join('')}</div>`+
     `<div class="g" id="gFont"><span class="lbl">글꼴</span>${b('font:myeongjo','명조',S.font==='myeongjo')}${b('font:easy','둥근 글씨',S.font==='easy')}</div>`+
-    `<div class="g">${b('sound',(S.sound?ICON.sndOn:ICON.sndOff)+(S.sound?'소리':'소리 끔'),S.sound)}</div>`+
-    /* 목소리: 수업 내내 한 목소리. Google 음성은 Cloud 키가 있어야 읽어 줌 */
-    `<div class="g" id="gVoice"><span class="lbl">목소리</span>${b('engine:base','기본 목소리',S.engine==='base')}${b('engine:cloud','Google (키)',S.engine==='cloud')}${needKey?`<a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">${ICON.key}키가 있으면: 키 목록</a><a class="help" href="https://shim-sung-hyun.github.io/web_app/004/cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a>`:''}${needKey?`<label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label>`:''}</div>`+
-    `<div class="g">`+
-      (needKey?`${S.engine==='cloud'?[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join(''):'<span class="small">새 시 목소리:</span>'}
-        <input class="key" id="dockKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button>`:'')+
-      `${S.voiceNote?`<span class="note">${esc(S.voiceNote)}</span>`:''}</div>`;
+    `<div class="g">${b('sound',(S.sound?ICON.sndOn:ICON.sndOff)+(S.sound?'소리':'소리 끔'),S.sound)}${b('more',ICON.gear+'더 정하기',!!S.more,'id="moreBtn"')}</div>`+'</div>';
+  /* 더 정하기: 목소리·키 (거의 안 바꾸는 것). 수업 내내 한 목소리 */
+  const needKey=S.engine==='cloud'||isCustom()||!!S.cloudKey;
+  $('dockMore').className=S.more?'open':'';
+  $('dockMore').innerHTML=S.more?
+    `<div class="row" id="gVoice"><span class="lbl">목소리</span>${b('engine:base','기본 목소리',S.engine==='base')}${b('engine:cloud','Google (키)',S.engine==='cloud')}${S.engine==='cloud'?[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join(''):''}</div>`+
+    `<p class="hint">들어 있는 시는 키 없이 기본 목소리로 읽어요. 새로 넣은 시는 기기 목소리로 읽고, Google 음성 키를 넣으면 기본 목소리와 같은 목소리로 읽어요. 키가 없어도 수업에는 지장이 없어요.</p>`+
+    (needKey?`<div class="row"><input class="key" id="dockKey" type="password" autocomplete="off" placeholder="Google 음성(Cloud) 키" value="${esc(S.cloudKey)}" aria-label="Google 음성(Cloud) 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button><label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label></div>`+
+      `<div class="row"><a class="help" href="https://shim-sung-hyun.github.io/web_app/004/cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a><a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키가 있으면: 키 목록</a></div>`:'')+
+    `${S.voiceNote?`<p class="note">${esc(S.voiceNote)}</p>`:''}`:'';
   const dk=$('dockKey');
   if(dk){
     const save=()=>store.set('cloudKey',KeyRelay.share('cloud',S.saveCloud&&S.cloudKey?S.cloudKey:null));
     dk.oninput=()=>{ S.cloudKey=dk.value.trim(); save(); chooseEngine(); };
     $('dockSave').onchange=e=>{ S.saveCloud=e.target.checked; save(); };
     /* 휴대폰으로 키 받기 */
-    $('dockTop').querySelector('[data-kr]').onclick=e=>{ e.stopPropagation(); KeyRelay.receive({want:['cloud'],onKeys:k=>{ S.cloudKey=k.cloud; S.saveCloud=true; store.set('cloudKey',KeyRelay.share('cloud',k.cloud)); chooseEngine(); renderDocks(); }}); };
+    $('dockMore').querySelector('[data-kr]').onclick=e=>{ e.stopPropagation(); KeyRelay.receive({want:['cloud'],onKeys:k=>{ S.cloudKey=k.cloud; S.saveCloud=true; store.set('cloudKey',KeyRelay.share('cloud',k.cloud)); chooseEngine(); renderDocks(); }}); };
   }
-  $('dockBot').innerHTML=
+  $('dockBot').innerHTML='<div class="sc">'+
     `<div class="g">${b('read',ICON.play+'들려주기',PB.on&&PB.mode==='all','class="main"')}${b('echo',ICON.echo+'한 줄씩 따라 읽기',PB.on&&PB.mode==='echo','class="main"')}${PB.on?b('stopread',ICON.stop+'멈춤'):''}</div>`+
     `<div class="g">${b('print',ICON.print+'출력 (빈칸 활동지)')}<span class="count" id="hiddenCounter"></span></div>`+
-    `<div class="g">${b('tour',ICON.q+'도움말')}</div>`;
+    `<div class="g">${b('tour',ICON.q+'도움말')}</div>`+'</div>';
+  document.querySelectorAll('.dock .sc').forEach((x,i)=>{ x.scrollLeft=keepL[i]||0; x.onscroll=()=>fadeSc(x); fadeSc(x); });
   updateCounter();
   requestAnimationFrame(()=>{
-    document.body.style.setProperty('--dockTopH',($('dockTop').getBoundingClientRect().bottom+14)+'px');
-    document.body.style.setProperty('--dockBotH',(innerHeight-$('dockBot').getBoundingClientRect().top+14)+'px');
+    const tb=$('dockTop').getBoundingClientRect().bottom; $('dockMore').style.top=(tb+6)+'px';
+    document.body.style.setProperty('--dockTopH',(tb+14)+'px');
+    document.querySelectorAll('.dock .sc').forEach(fadeSc);
+    const db=$('dockBot'); db.classList.remove('lift'); const dr=db.getBoundingClientRect();
+    const hit=['adminBtn','reportBtn'].some(id=>{ const e=$(id); if(!e) return false; const r=e.getBoundingClientRect(); return r.width&&r.right>dr.left-6&&r.left<dr.right+6&&r.bottom>dr.top&&r.top<dr.bottom; });
+    if(hit) db.classList.add('lift');
+    document.body.style.setProperty('--dockBotH',(innerHeight-db.getBoundingClientRect().top+14)+'px');
     if(S.admin!==lastAdminFit){ lastAdminFit=S.admin; refitLayout(); }
   });
 }
 let lastAdminFit=false;
+/* 넘친 쪽만 흐리게 (번쩍임 없이) */
+function fadeSc(x){ const l=x.scrollLeft>2, r=x.scrollLeft+x.clientWidth<x.scrollWidth-2;
+  const m=l||r?`linear-gradient(to right,${l?'transparent 0,#000 36px':'#000 0'},${r?'#000 calc(100% - 36px),transparent 100%':'#000 100%'})`:'none';
+  x.style.webkitMaskImage=m; x.style.maskImage=m; }
+/* 더 정하기 밖을 누르면 접음 */
+document.addEventListener('pointerdown',e=>{ if(!S.more) return; if(e.target.closest('#dockMore,#moreBtn,#krBox,#tour,#spotTip,#modalBack')) return; S.more=false; renderDocks(); },true);
 function onDock(e){
   const btn=e.target.closest('button[data-a]'); if(!btn||btn.disabled) return;
   const [a,v]=btn.dataset.a.split(':');
@@ -769,10 +799,11 @@ function onDock(e){
   if(a==='echo') startReading('echo');
   if(a==='stopread') stopReading();
   if(a==='print') printSheet();
+  if(a==='more') S.more=!S.more;
   if(a==='tour'){ startTour(); return; }
   renderDocks();
 }
-$('dockTop').addEventListener('click',onDock); $('dockBot').addEventListener('click',onDock);
+$('dockTop').addEventListener('click',onDock); $('dockBot').addEventListener('click',onDock); $('dockMore').addEventListener('click',onDock);
 function applyFont(){ document.body.classList.toggle('easyfont',S.font==='easy'); }
 
 /* ================= 시 → 줄·글자 ================= */
@@ -864,7 +895,10 @@ function render(){
   const body=entry.lines.slice(2), per=Math.ceil(body.length/layout.cols)||1;
   for(let c=0;c<layout.cols;c++){
     const col=document.createElement('div'); col.className='col';
-    body.slice(c*per,c*per+per).forEach((line,j)=>col.appendChild(renderLine(line,2+c*per+j)));
+    /* 단의 맨 위·맨 아래에 오는 빈 줄(연 나눔)은 그리지 않음 — 시가 위아래 가운데에 바르게 놓이게 */
+    const part=body.slice(c*per,c*per+per).map((line,j)=>[line,2+c*per+j]);
+    while(part.length&&part[0][0].blank) part.shift(); while(part.length&&part[part.length-1][0].blank) part.pop();
+    part.forEach(([line,k])=>col.appendChild(renderLine(line,k)));
     pc.appendChild(col);
   }
   stage.appendChild(pc); sec.appendChild(stage); box.appendChild(sec);
@@ -898,7 +932,7 @@ let rzT=null; window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setT
 
 /* ================= 들려주기 · 한 줄씩 따라 읽기 =================
    들려주기: 제목 → 작가 → 본문을 이어서 읽고, 읽는 줄에 옅은 바탕색을 칠함
-   따라 읽기: 한 줄을 읽고(초록 바탕) → 학생이 따라 할 시간(노란 바탕, "따라 해요") → 다음 줄 */
+   따라 읽기: 한 줄을 읽고(파랑 바탕) → 학생이 따라 할 시간(노란 바탕, "따라 해요") → 다음 줄 */
 const PB={on:false,mode:'all',parts:[],idx:0,timer:null,k:null,cls:null};
 function markLine(k,cls){
   PB.k=k; PB.cls=cls;
@@ -1025,8 +1059,7 @@ const TOUR_STEPS=[
   {el:'#gCols', t:'단', x:'시를 몇 단으로 나눠 보일지 정해요. "자동"은 화면에 가장 크게 보이는 쪽을 골라요.'},
   {el:'#gFont', t:'글꼴', x:'명조는 시다운 글꼴, 둥근 글씨는 글자를 처음 읽는 학생에게 좋아요.'},
   {el:'#dockTop [data-a="sound"]', t:'소리', x:'읽어 주는 목소리를 켜고 꺼요.'},
-  {el:'#gVoice', t:'목소리', x:'"기본 목소리"는 키 없이 바로 나오는 Google 목소리예요. 새로 넣은 시와 다른 Google 목소리는 Cloud 키가 필요해요(휴대폰으로 받기도 돼요). 들어 보려면 아래 "들려주기"를 눌러요.'},
-  {el:'html.kr-ready #dockTop [data-kr]', t:'휴대폰으로 받기', x:'Cloud 키를 휴대폰에서 이 화면으로 보내요. 번호 4자리가 나오면 휴대폰에서 그 번호와 키를 넣고 보내기를 눌러요.'},
+  {el:'#moreBtn', t:'더 정하기', x:'목소리를 정해요. 들어 있는 시는 키 없이 기본 목소리로 읽고, 새로 넣은 시는 기기 목소리로 읽어요. Google 음성 키가 있는 선생님만 여기에 넣으면 돼요.'},
   {el:'#dockBot [data-a="read"]', t:'들려주기', x:'제목 → 작가 → 본문을 이어서 읽고, 지금 읽는 줄에 옅은 바탕이 생겨요. 가린 글자도 소리로는 다 읽어 줘요.'},
   {el:'#dockBot [data-a="echo"]', t:'한 줄씩 따라 읽기', x:'한 줄을 읽어 준 뒤 "따라 해요"가 나오고, 학생이 따라 말할 시간을 준 다음 저절로 다음 줄로 가요.'},
   {el:'#dockBot [data-a="print"]', t:'출력', x:'지금 가린 모습 그대로 이름 칸과 함께 A4 한 장에 인쇄해요.'},
@@ -1046,6 +1079,7 @@ function showTourStep(){
 }
 function placeTour(){
   const s=TOUR.list[TOUR.i]; if(!s) return; const el=document.querySelector(s.el); if(!el) return;
+  try{ const sc=el.closest('.sc'); if(sc){ const er=el.getBoundingClientRect(), sr=sc.getBoundingClientRect(); if(er.left<sr.left+30||er.right>sr.right-30) sc.scrollLeft+=er.left-sr.left-(sr.width-er.width)/2; } }catch(e){}
   const r=el.getBoundingClientRect(), pad=6, hole=$('tourHole'), tip=$('tourTip');
   Object.assign(hole.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});
   const tw=tip.offsetWidth, th=tip.offsetHeight;

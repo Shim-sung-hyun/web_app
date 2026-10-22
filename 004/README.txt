@@ -22,6 +22,7 @@
   poem-recite_manual.html   게시판 본문용 짧은 소개
   poem-recite_guide.html    자세한 설명 페이지
                             주소: https://shim-sung-hyun.github.io/web_app/004/poem-recite_guide.html
+  (목소리 키는 "더 정하기"에 접혀 있음. 새로 넣은 시는 기기 목소리, 키가 있으면 Leda)
   voice/leda/               기본 목소리: 들어 있는 시 다섯 편을 Gemini Leda로 통째로 낭송해 만들고 줄마다 나눈 mp3 + index.json
                             파일 이름 = SHA-1("시|줄 번호|줄 글") 앞 16자리 (되풀이되는 줄도 그 자리의 소리)
 
