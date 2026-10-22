@@ -2131,7 +2131,7 @@ function giveMine(x){
     <h2>이 사진을 기증할까요?</h2>
     <div class="give-show"><img src="${x.img}" alt=""><div><b>${esc(x.title)}</b><span>${x.shapes.length}개 도형${x.art?' · 그림 함께':''}</span></div></div>
     <p>기증한 사진은 제작자가 살펴본 뒤 <b>모든 선생님이 쓰는 예시 사진</b>이 돼요. 도형·목소리·그림을 미리 만들어 두어, 다른 선생님은 키 없이 쓸 수 있어요.</p>
-    <label class="give-ok"><input type="checkbox" id="giveChk"> 사람·얼굴·이름·전화번호·차 번호 같은 개인 정보가 없는 사진이에요. 제가 찍었고 기증에 동의해요.</label>
+    <label class="give-ok"><input type="checkbox" id="giveChk"> 사람·얼굴·이름·전화번호·차 번호·학교 이름 같은 개인 정보가 없는 사진이에요. 제가 찍었고 기증에 동의해요.</label>
     <p class="key-msg" id="giveMsg"></p>
     <div class="key-row end"><button class="btn" id="giveX" type="button">닫기</button><button class="btn primary" id="giveGo" type="button">기증하기</button></div></div>`;
   document.body.appendChild(box);
@@ -2146,7 +2146,7 @@ function giveMine(x){
       const bad=await privacyCheck(x.img);
       if(bad){ msg('이 사진은 기증할 수 없어요: '+bad+'. 그런 것이 보이지 않게 다시 찍어 주세요. (이 기기에서는 그대로 쓸 수 있어요)','bad'); go.disabled=false; return; }
       msg('보내고 있어요…');
-      const r=await fetch(DONATE,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({a:'give',title:x.title,shapes:x.shapes,img:x.img.split(',')[1],art:x.art?x.art.split(',')[1]:''})});
+      const r=await fetch(DONATE,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({a:'give',app:'001',check:'gemini',title:x.title,shapes:x.shapes,img:x.img.split(',')[1],art:x.art?x.art.split(',')[1]:''})});
       let j={}; try{ j=await r.json(); }catch(e){}
       if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
       x.given=true; await minePut(x); renderMine();
@@ -2156,13 +2156,13 @@ function giveMine(x){
 }
 async function privacyCheck(dataUrl){
   if(!await checkKey()) throw new Error('Gemini 키를 확인해 주세요');
-  const body={contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data:dataUrl.split(',')[1]}},{text:'Look at this photo for privacy problems before it is shared publicly. Return JSON only: {"person":bool,"face":bool,"name_text":bool,"phone_or_id_number":bool,"license_plate":bool}. person = any human or body part; face = any face including on posters or screens; name_text = any readable personal name; phone_or_id_number = any phone, student or ID number; license_plate = readable vehicle plate.'}]}],
+  const body={contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data:dataUrl.split(',')[1]}},{text:'Look at this photo for privacy problems before it is shared publicly. Return JSON only: {"person":bool,"face":bool,"name_text":bool,"phone_or_id_number":bool,"license_plate":bool,"school_name":bool}. person = any human or body part; face = any face including on posters or screens; name_text = any readable personal name; phone_or_id_number = any phone, student or ID number; license_plate = readable vehicle plate; school_name = readable school or institution name.'}]}],
     generationConfig:{responseMimeType:'application/json',temperature:0}};
   const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(S.model)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},body:JSON.stringify(body)});
   if(!r.ok) throw new Error('검사 '+r.status);
   const j=await r.json(); let o={};
   try{ o=JSON.parse(((j.candidates||[])[0].content.parts||[]).map(p=>p.text||'').join('').replace(/^```(json)?|```$/g,'')); }catch(e){ throw new Error('검사 결과를 읽지 못했어요'); }
-  const why=[]; if(o.person||o.face) why.push('사람이나 얼굴'); if(o.name_text) why.push('이름'); if(o.phone_or_id_number) why.push('번호'); if(o.license_plate) why.push('차 번호판');
+  const why=[]; if(o.person||o.face) why.push('사람이나 얼굴'); if(o.name_text) why.push('이름'); if(o.phone_or_id_number) why.push('번호'); if(o.license_plate) why.push('차 번호판'); if(o.school_name) why.push('학교 이름');
   return why.join(', ');
 }
 /* ===== 휴대폰에서 받기: 사진 하나에 필요한 키(Gemini 필수 · Google 음성 선택)를 함께 =====

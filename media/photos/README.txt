@@ -28,6 +28,12 @@
   파일: 목록의 base + files.photo (예: .../media/photos/bell/art.jpg)
   늘 GitHub 절대 주소로, 캔버스에 그리면 crossOrigin='anonymous'.
 
+■ 기증 받는 길 (2026-10-22)
+  · 001 "내 사진" 아래 기증 (도형 분석·끝 그림 함께, Gemini 검사 필수)
+  · 휴대폰 "폰에서 받기"(photo-send.html) 아래 "이 사진 기증하기"(선택, 기본 꺼짐, 물건 이름 + 동의 칸)
+    휴대폰에 Gemini 키가 있으면 검사, 없거나 실패하면 check=none(확인 화면에 "검사 안 함")
+  · 서버 원본은 저장소 server/donate.php(확인 글자는 서버에서만 넣음)
+
 ■ 새 사진 넣기
   1) 기증 → review.html에서 골라 zip(폴더 + donations.json)
   2) Claude에게 보내면: 개인 정보 다시 확인 → 001 도형 분석(sample-maker) → 끝 그림·도안 → 목록에 추가
