@@ -1,4 +1,4 @@
-001 · 사진 속 도형 찾기 (2026-10-22 정식판)
+001 · 일상 속 도형 찾기 (2026-10-22 정식판)
 
 앱 주소(학생·선생님):  https://www.charum.org/study/001/shape-finder.html
 GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-finder.html
