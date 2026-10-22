@@ -14,10 +14,10 @@
   rainbow-finder_guide.html    자세한 설명
   voice/leda/                  내장 목소리(Leda, 빠르기 0.92, mp3 + index.json, 이름 = 문장 조각 SHA-1 앞 16자리)
   voice-lines.json             앱이 하는 말 전체(앱 콘솔 __voiceLines()와 같음, 24마디)
-  voice-maker.html, voice-lines-new.json   내장 목소리 만들기 화면(만든 사람용, 한 번 쓰고 지움)
 
 목소리 (2026-10-22)
-  키 없이 내장 목소리. 말 24마디 가운데 하나라도 없으면 그 수업 전체를 기기 목소리로(섞지 않음).
+  키 없이 내장 목소리 24마디(2026-10-22 모두 넣음, 만들기 화면은 지움. 새 말이 생기면 001처럼 만들기 화면을 다시 만들어 쓰고 지움).
+  말 24마디 가운데 하나라도 없으면 그 수업 전체를 기기 목소리로(섞지 않음).
   Cloud 키·휴대폰으로 키 받기·목소리 세 가지는 앱에서 뺐다.
   cloud-key.html은 이 앱에선 안 쓰지만 공통 key-send.html·photo-send.html이 링크하므로 지우지 않는다.
 
