@@ -573,17 +573,17 @@ function voiceReady(){
   /* 기본 목소리 + 새로 넣은 시 + 키 없음: 묻지 않고 기기 목소리로 읽음 */
   chooseEngine(); return true;
 }
-/* 미리 만든 소리: voice/leda/index.json 의 목록
+/* 미리 만든 소리: media/voice/poem/index.json(차름 소리 모음) 의 목록
    시를 통째로 낭송해 만든 뒤 줄마다 나눈 것이라, 파일 이름 = SHA-1("시|줄 번호|줄 글") 앞 16자리
    (같은 글이 되풀이되는 줄도 그 자리의 소리로 읽음) */
 const PRE={set:null};
-function preSet(){ if(!PRE.set) PRE.set=fetch('https://shim-sung-hyun.github.io/web_app/004/voice/leda/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
+function preSet(){ if(!PRE.set) PRE.set=fetch('https://shim-sung-hyun.github.io/web_app/media/voice/poem/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
 async function preHash(t){ const d=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
 async function preClip(text,ctx){
   const set=await preSet(); let h=null;
   try{ if(window.crypto&&crypto.subtle) h=await preHash(ctx?ctx.poem+'|'+ctx.k+'|'+text:text); }catch(e){}
   if(h&&set.has(h)){
-    try{ const r=await fetch('https://shim-sung-hyun.github.io/web_app/004/voice/leda/'+h+'.mp3'); if(r.ok){ const ab=await r.arrayBuffer(), c=getCtx();
+    try{ const r=await fetch('https://shim-sung-hyun.github.io/web_app/media/voice/poem/'+h+'.mp3'); if(r.ok){ const ab=await r.arrayBuffer(), c=getCtx();
       const buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
       return {data:new Float32Array(buf.getChannelData(0)),rate:buf.sampleRate}; } }catch(e){}
   }

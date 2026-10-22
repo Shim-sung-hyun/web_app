@@ -330,7 +330,7 @@ const TOPBAR={list:true,pan:'pan-x'}; /* 위 줄은 좌우로 밀 수 있게 */
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 /* ================= 목소리: 미리 만든 Google 목소리(Leda)를 이어 읽음 =================
-   수는 끝없이 바뀌므로 자리마다 조각을 미리 만들어 둠(voice/leda).
+   수는 끝없이 바뀌므로 자리마다 조각을 미리 만들어 둠(차름 소리 모음 media/voice/leda-0.92, 001·003과 함께).
    예) 32507 → [삼만] [이천·오백·칠]  — 조각 사이는 아주 짧게, 만·억 묶음 사이는 조금 쉼.
    키는 쓰지 않음. 소리 파일을 못 받으면 그 수만 기기 목소리. */
 let lastSay='', lastN=0, speakSeq=0, actx=null, curSrc=null;
@@ -365,7 +365,7 @@ function numPieces(n){
   return groups;
 }
 const PRE={set:null, clips:new Map()};
-function preSet(){ if(!PRE.set) PRE.set=fetch('https://shim-sung-hyun.github.io/web_app/005/voice/leda/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
+function preSet(){ if(!PRE.set) PRE.set=fetch('https://shim-sung-hyun.github.io/web_app/media/voice/leda-0.92/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
 /* 소리 파일 이름 = 조각 글자의 SHA-1 앞 16자리. http 주소에서는 crypto.subtle이 없으니 직접 계산 */
 function sha1Hex(str){
   const b=new TextEncoder().encode(str), l=b.length, n=((l+9+63)>>6)<<6, m=new Uint8Array(n); m.set(b); m[l]=0x80;
@@ -387,7 +387,7 @@ function piece(t){
   let p=PRE.clips.get(t);
   if(!p){ p=(async()=>{
       const set=await preSet(), h=await preHash(t); if(!set.has(h)) throw new Error('no piece '+t);
-      const r=await fetch('https://shim-sung-hyun.github.io/web_app/005/voice/leda/'+h+'.mp3'); if(!r.ok) throw new Error('pre '+r.status);
+      const r=await fetch('https://shim-sung-hyun.github.io/web_app/media/voice/leda-0.92/'+h+'.mp3'); if(!r.ok) throw new Error('pre '+r.status);
       const ab=await r.arrayBuffer(), c=getCtx(); const buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
       return {data:new Float32Array(buf.getChannelData(0)),rate:buf.sampleRate}; })();
     PRE.clips.set(t,p); p.catch(()=>PRE.clips.delete(t)); }

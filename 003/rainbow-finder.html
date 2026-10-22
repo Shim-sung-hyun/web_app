@@ -415,8 +415,8 @@ function stopVoice(){
   try{speechSynthesis.cancel();}catch(e){}
   if(curSrc){ const {src,g,res}=curSrc; curSrc=null; try{ src.onended=null; const t=actx.currentTime; g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+0.05); src.stop(t+0.06); }catch(e){} if(res) res(); }
 }
-/* 내장 목소리: 003/voice/leda/ (mp3 + index.json, 이름 = 문장 조각 SHA-1 앞 16자리). 앱 안의 자료는 GitHub 절대 주소로 */
-const VBASE='https://shim-sung-hyun.github.io/web_app/003/voice/leda/';
+/* 내장 목소리: 차름 소리 모음 media/voice/leda-0.92/ (001·003·005 함께, mp3 + index.json, 이름 = 문장 조각 SHA-1 앞 16자리). 앱 안의 자료는 GitHub 절대 주소로 */
+const VBASE='https://shim-sung-hyun.github.io/web_app/media/voice/leda-0.92/';
 let VSET=null;
 const voiceReady=fetch(VBASE+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>{ VSET=new Set(j.files||[]); }).catch(()=>{ VSET=new Set(); });
 /* SHA-1 (보안 연결이 아닌 http에서는 crypto.subtle이 없어서 직접 계산) */
