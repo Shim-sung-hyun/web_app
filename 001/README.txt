@@ -16,7 +16,7 @@ GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-find
   shape-finder-promo.jpg     홍보 그림(1366×768)
   shape-finder01~12.jpg      화면(설정, 오늘 할 사진, 붓, 사진을 보아요, 배우기, 칠하기, 찾기, 끝 그림, 색칠, 선생님 메뉴, 모아 보기, 학생 혼자)
   samples/                   예시 사진 · samples.json(ok=true만 앱에) · ○○-art.jpg(끝 그림) · ○○-line.png(색칠 도안)
-  voice/leda/                내장 목소리(Leda, 391마디) · voice-lines.json(만든 말 목록)
+  voice/leda/                내장 목소리(Leda, 401마디) · voice-lines.json(만든 말 목록)
   sample-maker.html          (제작자) 예시 사진 도형 확인(제작자의 Gemini 키, 이름 없는 도형은 확인되지 않음)
   art-maker.html             (제작자) 예시 끝 그림 한꺼번에 그리기(결제 Gemini 키)
   line-maker.html            (제작자) 색칠 도안 한꺼번에 그리기(결제 Gemini 키, 신발장 도안이 본보기)
