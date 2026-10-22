@@ -74,7 +74,7 @@ details.how .go{display:block;text-align:center;background:var(--pri);color:#fff
     </div>
     <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
     <input type="file" id="fileIn" accept="image/*" hidden>
-    <p class="warn"><b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 물건이 화면 안에 통째로 들어오면 도형을 잘 찾아요.</p>
+    <p class="warn" id="warnTip"><b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 물건이 화면 안에 통째로 들어오면 도형을 잘 찾아요.</p>
     <div id="preview"><img id="pv" alt="보낼 사진"></div>
   </div>
   <div class="card keys" id="keyCard" hidden>
@@ -121,6 +121,8 @@ details.how .go{display:block;text-align:center;background:var(--pri);color:#fff
 const RELAY='https://charum.org/photo-relay.php';
 const $=id=>document.getElementById(id);
 const m=/c=(\d{4})/.exec(location.hash||''); if(m) $('code').value=m[1];
+/* 그림 조각 맞추기(002)에서 열면 안내를 퍼즐에 맞게 */
+if(/app=puzzle/.test(location.hash||'')) $('warnTip').innerHTML='<b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 학생이 좋아하는 물건이나 장소를 화면 가득 찍으면 퍼즐이 재미있어요.';
 /* 전자칠판에 없는 키(k=gemini,cloud)만 칸을 보여 줌 */
 const km=/k=([a-z,]+)/.exec(location.hash||''); const WANT=km?km[1].split(',').filter(x=>x==='gemini'||x==='cloud'):[];
 const ls={ get:k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set:(k,v)=>{ try{ v?localStorage.setItem(k,v):localStorage.removeItem(k); }catch(e){} } };
