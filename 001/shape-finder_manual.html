@@ -1,104 +1,35 @@
-<div style="max-width:760px;margin:0 auto;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:16px;line-height:1.7;color:#1C2A31;">
+<div style="max-width:820px;margin:0 auto;font-family:'Noto Sans KR',sans-serif;color:#1A2B2E;line-height:1.6;font-size:16px;">
 
-<h2 style="margin:0 0 6px;font-size:26px;line-height:1.3;color:#1F6C75;">사진 속 도형 찾기 사용 설명서</h2>
-<p style="margin:0 0 24px;font-size:14px;color:#56666E;">전자칠판·태블릿용 웹앱 · 설치 없이 바로 실행</p>
+<p style="margin:0 0 14px;color:#55686B;font-size:15px;line-height:1.7;">교실·복도·운동장에서 찍은 <b>실제 사진</b> 속 물건으로 동그라미·세모·네모를 배우고, 붓으로 칠하고, 직접 찾는 앱입니다. 다 하면 사진이 그림으로 바뀌고, 그 그림에 색칠할 수 있습니다.</p>
 
-<h3 style="margin:28px 0 8px;padding-left:10px;border-left:5px solid #1F6C75;font-size:20px;color:#1C2A31;">무엇을 하나요</h3>
-<p style="margin:0 0 12px;">학생이 고른 사진에서 Gemini(AI)가 원·삼각형·사각형을 찾아 줍니다. 학생은 사진 속 물체로 도형의 이름을 배우고, 붓으로 칠하고, 직접 찾아봅니다. 전자칠판이나 태블릿의 브라우저(크롬·사파리)에서 이 글 위의 <b>▶ 앱 바로 실행</b> 버튼만 누르면 됩니다. 설치는 필요 없습니다.</p>
+<div style="background:#E6F2EF;border:1px solid #B8DCD4;border-radius:12px;padding:12px 16px;margin:0 0 14px;color:#1F4A45;font-size:15px;line-height:1.7;"><b>새 판(2026-10-22)</b>: 예시 사진 23장은 <b>키 없이</b> 바로 씁니다(도형·목소리·그림·색칠 도안을 미리 만들어 두었습니다). 내 사진은 <b>휴대폰에서 받기</b>로 찍어 보내고, 처음 한 번만 선생님의 Gemini 키를 함께 넣습니다(무료로 받을 수 있습니다).</div>
 
-<h3 style="margin:28px 0 8px;padding-left:10px;border-left:5px solid #1F6C75;font-size:20px;color:#1C2A31;">처음 한 번 준비</h3>
-<ol style="margin:0 0 12px;padding-left:24px;">
-  <li style="margin-bottom:6px;"><b>앱 열기</b>: 이 글 위의 <b>▶ 앱 바로 실행</b> 버튼을 누릅니다. 새 탭에서 앱이 열립니다.</li>
-  <li style="margin-bottom:6px;"><b>Gemini 키 (꼭 필요)</b>: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#1F6C75;">aistudio.google.com/apikey</a>에서 Create API key를 누르고, 키를 복사해 첫 화면에 붙여 넣은 뒤 <b>키 확인</b>을 누릅니다. 사진 분석은 이 키로 무료입니다(결제를 연결하지 않은 키). Google 음성용으로 결제를 연결한 프로젝트에서 만든 키는 유료가 되니, Gemini 키는 AI Studio에서 따로 만드세요.</li>
-  <li style="margin-bottom:6px;"><b>목소리 (고르기)</b>
-    <ul style="margin:4px 0 0;padding-left:20px;">
-      <li><b>Google 음성</b>: 자연스럽고 빠릅니다. <a href="https://console.cloud.google.com" target="_blank" rel="noopener" style="color:#1F6C75;">console.cloud.google.com</a>에서 Cloud Text-to-Speech API를 사용 설정하고 API 키를 만들어 넣습니다. 결제 카드 등록이 필요하지만 매달 100만 자까지 무료입니다. 차례대로 따라 하는 안내: <a href="https://shim-sung-hyun.github.io/web_app/001/cloud-key.html" target="_blank" rel="noopener" style="color:#1F6C75;">Cloud 키 넣는 방법</a>. 다른 앱(003~006)에 저장한 키가 있으면 자동으로 채워집니다. 전자칠판처럼 키를 붙여 넣기 어려우면 키 칸 옆 <b>📱 휴대폰으로 받기</b>를 누르세요. 휴대폰으로 QR을 찍고 화면의 번호 4자리와 키를 넣어 보내면 Gemini 키와 Cloud 키를 한꺼번에 전자칠판에 들어갑니다(키는 잠가서 보내고, 받는 즉시 중계 서버에서 지워집니다).</li>
-      <li><b>기기 목소리</b>: 키 없이 바로 나오지만 기계 소리입니다.</li>
-      <li><b>목소리 들어 보기</b>로 미리 확인하세요.</li>
-    </ul>
-  </li>
-  <li style="margin-bottom:6px;"><b>키 저장</b>: 첫 화면 <b>1 키 설정</b>에 Gemini 키와 Google 음성 키를 함께 넣습니다. 넣은 키는 이 기기에 저장되어 다음부터 다시 넣지 않아도 됩니다. 여러 사람이 쓰는 컴퓨터라면 수업을 마친 뒤 <b>키 지우기</b>를 누르세요.</li>
-  <li style="margin-bottom:6px;"><b>끝 화면 그림 (돈이 드는 기능)</b>: 기본은 "칠한 사진"이라 돈이 들지 않습니다. "만화 그림"을 고르면 Gemini 그림을 그리는데, 결제 등록이 필요하고 그림 한 장마다 약 50원이 듭니다. 쓰실 때는 Google Cloud 결제의 <b>예산 및 알림</b>(예: 1만 원)을 먼저 걸어 두세요.</li>
-</ol>
-<p style="margin:0 0 12px;padding:10px 14px;background:#EDF5F6;border-radius:8px;">Gemini 키가 없어도 <b>시작</b>을 누르면 "사진을 골라요" 화면에서 <b>예시 사진으로 하기</b>로 수업할 수 있어요. 키 없이 <b>사진 고르기</b>를 누르면 키를 넣는 칸으로 돌아가 다시 안내해요.</p>
+<p style="margin:0 0 14px;"><img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder-promo.jpg" alt="사진 속 도형 찾기" style="width:100%;border-radius:14px;display:block;"></p>
 
-<h3 style="margin:28px 0 8px;padding-left:10px;border-left:5px solid #1F6C75;font-size:20px;color:#1C2A31;">수업 정하기</h3>
-<p style="margin:0 0 10px;">학생 수준에 맞는 단계를 고릅니다. 용어는 초등 교과서에 처음 나오는 표현을 씁니다.</p>
-<table style="width:100%;border-collapse:collapse;margin:0 0 12px;font-size:15px;">
-  <thead>
-    <tr style="background:#1F6C75;color:#FFFFFF;">
-      <th style="padding:8px 10px;text-align:left;border:1px solid #1F6C75;">단계</th>
-      <th style="padding:8px 10px;text-align:left;border:1px solid #1F6C75;">배우는 것</th>
-      <th style="padding:8px 10px;text-align:left;border:1px solid #1F6C75;">학생이 하는 일</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td style="padding:8px 10px;border:1px solid #C9D4D8;"><b>1단계</b> · 도형 이름</td><td style="padding:8px 10px;border:1px solid #C9D4D8;">동그라미·세모·네모</td><td style="padding:8px 10px;border:1px solid #C9D4D8;">이름 듣기, 칠하기, 찾기</td></tr>
-    <tr style="background:#F5F8F9;"><td style="padding:8px 10px;border:1px solid #C9D4D8;"><b>2단계</b> · 변과 꼭짓점</td><td style="padding:8px 10px;border:1px solid #C9D4D8;">원·삼각형·사각형, 변, 꼭짓점</td><td style="padding:8px 10px;border:1px solid #C9D4D8;">변과 꼭짓점을 눌러서 세기</td></tr>
-    <tr><td style="padding:8px 10px;border:1px solid #C9D4D8;"><b>3단계</b> · 각</td><td style="padding:8px 10px;border:1px solid #C9D4D8;">각, 직각</td><td style="padding:8px 10px;border:1px solid #C9D4D8;">각을 눌러서 세기, 직각 찾기</td></tr>
-  </tbody>
+<p style="text-align:center;margin:0 0 22px;"><a href="https://www.charum.org/study/001/shape-finder.html" target="_blank" style="display:inline-block;background:#17766F;color:#fff;font-weight:700;font-size:21px;padding:14px 40px;border-radius:12px;text-decoration:none;">▶ 바로 열기</a></p>
+
+<table style="width:100%;border-collapse:separate;border-spacing:10px 0;table-layout:fixed;">
+<tr>
+<td style="vertical-align:top;text-align:center;"><img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder01.jpg" alt="설정" style="width:100%;border-radius:10px;border:1px solid #CBDAD7;"><div style="margin-top:6px;"><span style="display:inline-block;width:30px;height:30px;line-height:30px;border-radius:7px;background:#17766F;color:#fff;font-weight:700;">1</span></div><div style="font-weight:700;font-size:18px;">단계 · 사진 고르고 → 시작</div><div style="font-size:14px;color:#55686B;">예시 사진은 누르기만</div></td>
+<td style="vertical-align:top;text-align:center;"><img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder06.jpg" alt="배우고 칠하기" style="width:100%;border-radius:10px;border:1px solid #CBDAD7;"><div style="margin-top:6px;"><span style="display:inline-block;width:30px;height:30px;line-height:30px;border-radius:7px;background:#17766F;color:#fff;font-weight:700;">2</span></div><div style="font-weight:700;font-size:18px;">보고 · 칠하고 · 찾습니다</div><div style="font-size:14px;color:#55686B;">끝나면 저절로 다음</div></td>
+<td style="vertical-align:top;text-align:center;"><img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder09.jpg" alt="그림과 색칠" style="width:100%;border-radius:10px;border:1px solid #CBDAD7;"><div style="margin-top:6px;"><span style="display:inline-block;width:30px;height:30px;line-height:30px;border-radius:7px;background:#17766F;color:#fff;font-weight:700;">3</span></div><div style="font-weight:700;font-size:18px;">그림으로 · 색칠</div><div style="font-size:14px;color:#55686B;">사진이 그림이 되고, 그 그림에 색칠</div></td>
+</tr>
 </table>
-<p style="margin:0 0 12px;">그 밖의 설정: 도형 하나를 보여 주는 시간(4·6·8초), 붓으로 칠하기 켬/끔, 틀렸을 때(바로 정답 보여주기 / 한 번 더 기회).</p>
 
-<h3 style="margin:28px 0 8px;padding-left:10px;border-left:5px solid #1F6C75;font-size:20px;color:#1C2A31;">수업 흐름</h3>
-<p style="margin:0 0 16px;">시작을 누른 뒤에는 학생이 할 일을 끝내면 저절로 다음으로 넘어갑니다. 학생 화면에는 메뉴가 없습니다. 아래 그림은 <b>예시 사진</b>으로 1단계를 해 본 화면입니다.</p>
-<div style="margin:0 0 22px;">
-  <p style="margin:0 0 6px;font-size:17px;"><span style="display:inline-block;min-width:26px;height:26px;line-height:26px;margin-right:6px;border-radius:13px;background:#1F6C75;color:#FFFFFF;text-align:center;font-size:14px;font-weight:bold;">1</span><b>사진 고르기</b></p>
-  <p style="margin:0 0 8px;">교사가 수업할 사진을 고릅니다. 사진을 고르는 순간 Gemini가 사진 속 도형을 찾기 시작합니다.</p>
-</div>
-<div style="margin:0 0 22px;">
-  <p style="margin:0 0 6px;font-size:17px;"><span style="display:inline-block;min-width:26px;height:26px;line-height:26px;margin-right:6px;border-radius:13px;background:#1F6C75;color:#FFFFFF;text-align:center;font-size:14px;font-weight:bold;">2</span><b>붓 고르기</b></p>
-  <p style="margin:0 0 8px;">학생이 칠할 붓 색을 고릅니다. 한 번에 3색씩 보이고, "다음 색"을 누르면 다른 색이 나옵니다(모두 12색). 학생이 고르는 동안 Gemini가 사진을 분석합니다.</p>
-  <img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder01.jpg" alt="붓 고르기 화면" style="display:block;width:100%;height:auto;border:1px solid #C9D4D8;border-radius:8px;">
-  <p style="margin:6px 0 0;font-size:14px;color:#56666E;">▲ "어떤 붓으로 칠할까요?" — 색을 누르면 "노랑 붓."처럼 색 이름을 말해 줍니다.</p>
-</div>
-<div style="margin:0 0 22px;">
-  <p style="margin:0 0 6px;font-size:17px;"><span style="display:inline-block;min-width:26px;height:26px;line-height:26px;margin-right:6px;border-radius:13px;background:#1F6C75;color:#FFFFFF;text-align:center;font-size:14px;font-weight:bold;">3</span><b>사진을 보아요</b></p>
-  <p style="margin:0 0 8px;">사진이 크게 나옵니다. 학생이 사진을 누르면 사진이 옅어지고, 그 위에 찾은 도형이 선으로 그려집니다.</p>
-  <img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder02.jpg" alt="사진을 보아요 화면" style="display:block;width:100%;height:auto;border:1px solid #C9D4D8;border-radius:8px;">
-  <p style="margin:6px 0 0;font-size:14px;color:#56666E;">▲ "사진에 도형이 있어요" — 감 2개는 동그라미로, 스피커·휴대폰·책은 네모로 그려졌습니다. 위쪽 그림(액자)은 사진 가장자리에 잘려서 도형으로 쓰지 않았습니다.</p>
-</div>
-<div style="margin:0 0 22px;">
-  <p style="margin:0 0 6px;font-size:17px;"><span style="display:inline-block;min-width:26px;height:26px;line-height:26px;margin-right:6px;border-radius:13px;background:#1F6C75;color:#FFFFFF;text-align:center;font-size:14px;font-weight:bold;">4</span><b>배우기</b></p>
-  <p style="margin:0 0 8px;">도형이 하나씩 사진에서 빠져나와 오른쪽에 이름과 함께 놓입니다. "감은 동그라미 모양이에요"처럼 사진 속 물체와 도형 이름을 이어 줍니다.</p>
-  <img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder03.jpg" alt="배우기 화면" style="display:block;width:100%;height:auto;border:1px solid #C9D4D8;border-radius:8px;">
-  <p style="margin:6px 0 0;font-size:14px;color:#56666E;">▲ 동그라미(감)를 배운 뒤, 네모(스피커·휴대폰·책)의 이름을 알려 주는 모습입니다. 앞에서 배운 동그라미는 위로 작게 올라갑니다.</p>
-</div>
-<div style="margin:0 0 22px;">
-  <p style="margin:0 0 6px;font-size:17px;"><span style="display:inline-block;min-width:26px;height:26px;line-height:26px;margin-right:6px;border-radius:13px;background:#1F6C75;color:#FFFFFF;text-align:center;font-size:14px;font-weight:bold;">5</span><b>붓으로 칠하기</b></p>
-  <p style="margin:0 0 8px;">학생이 같은 모양의 도형을 모두 칠합니다. 다 칠하면 칠한 자리에 진짜 사진이 선명하게 드러나고, 오른쪽에도 그 모양대로 사진이 보입니다. 2·3단계에서는 이어서 변·꼭짓점·각을 눌러서 셉니다.</p>
-  <img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder04.jpg" alt="붓으로 칠하기 화면" style="display:block;width:100%;height:auto;border:1px solid #C9D4D8;border-radius:8px;">
-  <p style="margin:6px 0 0;font-size:14px;color:#56666E;">▲ 감 2개를 다 칠한 모습 — "다 채웠어요. 감은 동그라미 모양이에요." (칭찬하는 말은 할 때마다 조금씩 달라집니다.)</p>
-</div>
-<div style="margin:0 0 22px;">
-  <p style="margin:0 0 6px;font-size:17px;"><span style="display:inline-block;min-width:26px;height:26px;line-height:26px;margin-right:6px;border-radius:13px;background:#1F6C75;color:#FFFFFF;text-align:center;font-size:14px;font-weight:bold;">6</span><b>찾기</b></p>
-  <p style="margin:0 0 8px;">"동그라미 2개를 찾아 눌러요"처럼, 사진에서 같은 도형을 모두 찾아 누릅니다. 맞히면 그 물체가 선명해지고 크게 보여 줍니다. 찾은 물체는 다음 문제에서도 밝게 남습니다.</p>
-  <img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder05.jpg" alt="찾기 화면" style="display:block;width:100%;height:auto;border:1px solid #C9D4D8;border-radius:8px;">
-  <p style="margin:6px 0 0;font-size:14px;color:#56666E;">▲ 감 하나를 찾은 모습 — 찾은 감이 선명해지고, 오른쪽 동그라미 표시 2개 중 1개가 채워졌습니다.</p>
-</div>
-<div style="margin:0 0 22px;">
-  <p style="margin:0 0 6px;font-size:17px;"><span style="display:inline-block;min-width:26px;height:26px;line-height:26px;margin-right:6px;border-radius:13px;background:#1F6C75;color:#FFFFFF;text-align:center;font-size:14px;font-weight:bold;">7</span><b>끝</b></p>
-  <p style="margin:0 0 8px;">학생이 칠한 사진과 찾은 도형 이름이 나옵니다. 처음 설정의 <b>끝 화면 그림</b>을 "만화 그림"으로 고르면 Gemini가 사진을 만화로 그려 줍니다. <b>만화 그림은 무료가 아닙니다.</b> 결제 등록이 필요하고, 그림을 한 장 그릴 때마다 약 50원이 듭니다(요금은 바뀔 수 있습니다). 같은 사진의 그림은 이 기기에 저장해 다시 쓰지만, 새 사진이나 다른 기기·브라우저에서는 다시 듭니다. 기본은 돈이 들지 않는 "칠한 사진"입니다.</p>
+<div style="background:#F2F7F5;border:1px solid #CBDAD7;border-radius:12px;padding:12px 16px;margin:22px 0 0;">
+<table style="width:100%;border-collapse:collapse;"><tr>
+<td style="width:34%;vertical-align:middle;padding-right:12px;"><img src="https://shim-sung-hyun.github.io/web_app/001/shape-finder10.jpg" alt="선생님 메뉴" style="width:100%;border-radius:8px;border:1px solid #CBDAD7;"></td>
+<td style="vertical-align:middle;"><div style="font-weight:700;font-size:18px;margin-bottom:4px;">선생님 메뉴</div>
+<div>오른쪽 아래 유리알 <b>3초</b> → 왼쪽 위 <b>점</b> 누르기</div>
+<div style="font-size:14px;color:#55686B;">단계 고르기 · 소리 · 설정 · 같은 사진 한 번 더 · 색칠 도안 출력 · 기록</div></td>
+</tr></table>
 </div>
 
-<h3 style="margin:28px 0 8px;padding-left:10px;border-left:5px solid #1F6C75;font-size:20px;color:#1C2A31;">교사 모드</h3>
-<p style="margin:0 0 10px;">화면 오른쪽 아래의 작은 파란 유리알 버튼(<b>charum</b>)을 <b>3초 동안 누른 뒤</b>, 왼쪽 위에 잠깐 나타나는 <b>작은 점을 누르면</b> 교사 모드가 켜지고(<b>심</b>) 진행 중인 화면과 버튼이 모두 멈춥니다. 켜져 있을 때 버튼을 <b>한 번 누르면</b> 바꾼 설정으로, <b>멈췄던 단계의 처음부터</b> 다시 합니다(예: 찾기에서 멈췄으면 찾기 처음부터). 이때 바로 전체 화면 학생 화면이 됩니다.</p>
-<p style="margin:0 0 10px;">키를 넣지 않고 넘어가려 하면(예: 키 없이 내 사진 고르기, Google 음성인데 키 없음) 그 칸을 빨간 테두리로 비추고 할 일을 알려 줍니다.</p>
-<ul style="margin:0 0 12px;padding-left:24px;">
-  <li style="margin-bottom:6px;"><b>수업 설정</b>(오른쪽): 단계, 도형을 보여 주는 시간, 붓으로 칠하기, 목소리, 틀렸을 때를 바꿉니다. 맨 아래 <b>새 설정으로 시작하기</b>를 누르면 바꾼 설정으로 <b>사진 고르기부터</b> 새로 시작합니다. <b>도움말</b>을 누르면 설정마다 설명이 차례로 나옵니다.</li>
-  <li style="margin-bottom:6px;"><b>위쪽 메뉴</b>: 사진 · 배우기 · 찾기 · 끝 중 원하는 단계로 바로 갑니다. 누르면 교사 모드가 닫히고 그 단계가 바로 시작됩니다. 소리 켜기/끄기, 처음 설정(키 바꾸기)도 여기에 있습니다.</li>
-  <li style="margin-bottom:6px;"><b>끝 화면</b>: 교사용 기록(과제별 바로 맞힘/도움 받아 맞힘), 같은 사진 한 번 더, 다른 사진으로, <b>출력(색칠용)</b>. 출력은 색을 빼고 선만 남긴 그림을 A4 한 장에 인쇄합니다.</li>
-</ul>
-<p style="margin:0 0 12px;">기록은 화면을 닫으면 사라집니다. 필요하면 화면을 캡처해 두세요.</p>
-
-<h3 style="margin:28px 0 8px;padding-left:10px;border-left:5px solid #1F6C75;font-size:20px;color:#1C2A31;">좋은 사진과 주의할 점</h3>
-<ul style="margin:0 0 12px;padding-left:24px;">
-  <li style="margin-bottom:6px;"><b>물체가 화면 안에 통째로</b> 들어오게 찍습니다. 가장자리에 잘린 물체는 도형으로 쓰지 않습니다.</li>
-  <li style="margin-bottom:6px;">3단계(각)를 할 때는 책·액자·휴대폰 같은 <b>직각 물체</b>를 넣어 찍으면 좋습니다.</li>
-  <li style="margin-bottom:6px;">학생 <b>얼굴이나 이름</b>이 보이는 사진은 피하세요. 사진은 분석을 위해 Google Gemini로 보내집니다.</li>
-  <li style="margin-bottom:6px;">사진에 따라 AI가 도형을 조금 어긋나게 잡을 수 있습니다. 수업 전에 한 번 해 보세요.</li>
-  <li style="margin-bottom:6px;"><b>돈이 드는 기능</b>: "만화 그림"은 그림 한 장마다 약 50원이 듭니다(결제 등록 필요). 사진 분석은 AI Studio에서 결제를 연결하지 않고 만든 Gemini 키로 하면 돈이 들지 않지만, Google 음성용으로 결제를 연결한 프로젝트에서 만든 키는 분석에도 요금이 붙습니다. 예산 알림(예: 1만 원)을 걸어 두세요.</li>
-  <li style="margin-bottom:6px;">API 키는 개인 것입니다. 다른 분에게는 이 글 주소만 알려 드리고, 키는 각자 만들어 쓰도록 안내해 주세요.</li>
+<ul style="margin:18px 0 0;padding-left:20px;font-size:15px;color:#2C4044;">
+<li><b>단계</b>: 1 도형 이름(동그라미·세모·네모) → 2 변과 꼭짓점 → 3 각과 직각.</li>
+<li><b>내 사진</b>은 그 기기에 보관되어 다음에는 키 없이 다시 씁니다. 좋은 사진은 <b>기증</b>하면 살펴본 뒤 모든 선생님의 예시 사진이 됩니다. 학생 얼굴·이름이 보이는 사진은 넣지 마십시오.</li>
+<li><b>끝 화면</b>은 사진이 그림으로 바뀌는 것(기본)과 <b>바로 색칠</b> 가운데 고릅니다. 색칠 도안은 종이로 출력할 수도 있습니다.</li>
 </ul>
 
+<p style="text-align:center;margin:22px 0 0;"><a href="https://shim-sung-hyun.github.io/web_app/001/shape-finder_guide.html" target="_blank" style="display:inline-block;border:2px solid #17766F;color:#17766F;font-weight:700;font-size:17px;padding:10px 26px;border-radius:12px;text-decoration:none;">자세한 설명 보기 →</a></p>
 </div>
