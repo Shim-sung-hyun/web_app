@@ -10,21 +10,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F4F4F6; --panel:#FFFFFF; --ink:#26283B; --ink-soft:#7A7C90; --line:#E4E4EA;
-  --shadow:0 6px 20px -10px rgba(38,40,59,.18);
-  --base:#2C5FCF; --dark:#1E4396; --tint:#E3EAFB; --rec:#E0353B;
-  --g-man:#C0559E; --g-eok:#C23B4E; --g-jo:#6B4FA0;
+  /* 수학 영역(청록·초록): 001 #17766F · 005 #1B6E87과 같은 바탕에서 조금 초록 쪽으로 */
+  --paper:#EEF5F2; --panel:#FFFFFF; --ink:#1D3340; --ink-soft:#5A6E70; --line:#CFE0DA; --grid:#DCEAE5;
+  --shadow:0 6px 20px -10px rgba(29,51,64,.2);
+  --base:#1E7F6A; --dark:#145C4D; --tint:#DCF0E9; --rec:#E0353B;
+  --done:#A3D4C6; --rest:#DCE6E2;
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;overflow:hidden;color:var(--ink);font-family:'Noto Sans KR',sans-serif;background:var(--paper);
+html,body{margin:0;padding:0;height:100%;overflow:hidden;color:var(--ink);font-family:'Noto Sans KR',sans-serif;
+  background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;
   -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 button{font-family:inherit;color:inherit;cursor:pointer}
 #app{position:fixed;inset:0;display:flex;flex-direction:column;padding:clamp(10px,2vw,22px)}
 
 /* ---------- 위쪽 설정줄 (만져 보면 아는 단추들) ---------- */
-.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.topbar{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:10px;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:4px 2px 10px;margin:-4px -2px -6px}
+.topbar::-webkit-scrollbar{display:none}
+/* 좁으면 좌우로 밀기 + 넘친 쪽 흐리게 */
+.topbar.fade-r{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent)}
+.topbar.fade-l{-webkit-mask-image:linear-gradient(to left,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to left,#000 calc(100% - 36px),transparent)}
+.topbar.fade-l.fade-r{-webkit-mask-image:linear-gradient(to right,transparent,#000 36px,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to right,transparent,#000 36px,#000 calc(100% - 36px),transparent)}
 .icon-btn{flex:none}
-.tb-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tb-left{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;flex:none}
+.segbox,.sb{flex:none;white-space:nowrap}
 .segbox{display:flex;align-items:center;gap:4px;background:var(--panel);border-radius:12px;padding:5px;box-shadow:var(--shadow);position:relative}
 .segbox .lab{font-size:12px;color:var(--ink-soft);font-weight:800;padding:0 4px 0 6px}
 .sb{border:none;background:transparent;color:var(--ink-soft);font-weight:800;font-size:14px;min-height:38px;padding:6px 13px;border-radius:9px}
@@ -35,16 +44,6 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .rec{display:none;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--rec);opacity:.75;padding:0 6px;white-space:nowrap}
 .rec::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--rec);box-shadow:0 0 0 3px rgba(224,53,59,.18)}
 body.recording .rec{display:inline-flex}
-/* 목소리 창: Google을 고르면 키 넣는 칸이 열림 */
-#voicePop{position:absolute;top:calc(100% + 8px);left:0;z-index:30;background:#fff;border-radius:14px;box-shadow:0 14px 40px rgba(38,40,59,.22);padding:12px;width:330px;display:none;flex-direction:column;gap:8px}
-#voicePop.show{display:flex}
-#voicePop .row{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
-#voicePop .tb{border:0;background:var(--paper);border-radius:9px;min-height:38px;padding:5px 12px;font-weight:700;font-size:13.5px}
-#voicePop .tb.on{background:var(--tint);color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--base)}
-#voicePop input.key{flex:1;font:inherit;font-size:14px;padding:9px 10px;border:1.5px solid var(--line);border-radius:10px;-webkit-user-select:text;user-select:text}
-#voicePop label{font-size:12.5px;color:var(--ink-soft);display:flex;align-items:center;gap:5px}
-#voicePop a{color:var(--dark);font-weight:700;font-size:13.5px;text-underline-offset:3px}
-#voicePop .note{font-size:12.5px;color:#9A2E1C;font-weight:700}
 
 /* ---------- 가운데: 자리 이름만 (숫자와 짝짓기 전, 순서를 말로 외우는 단계) ---------- */
 .stage{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:0;overflow:hidden}
@@ -57,20 +56,26 @@ body.recording .rec{display:inline-flex}
 /* 누르는 곳은 글자 자체만 (칸의 빈 곳을 누르면 한 칸 늘리기) */
 .nm .tx{cursor:pointer;border-radius:.12em}
 .nm.suffix{align-items:flex-end}
-.nm.g-man{color:var(--g-man)} .nm.g-eok{color:var(--g-eok)} .nm.g-jo{color:var(--g-jo)}
-.pop{animation:pop .32s ease}
-@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.15)}100%{transform:scale(1)}}
-.nm.suffix.blink{animation:suffixBlink .6s ease}
-@keyframes suffixBlink{0%,100%{opacity:1;transform:scale(1)}45%{opacity:.45;transform:scale(1.12)}}
+/* 글자는 모두 한 색(묶음마다 색을 바꾸면 색이 자리를 알려 주는 단서가 됨). 만·억·조는 아래로 내려온 자리로 구분 */
+/* 새 칸은 한 번 천천히 나타남(커졌다 작아지지 않음) */
+.nm.come{animation:come .5s ease-out}
+@keyframes come{from{opacity:0}to{opacity:1}}
+/* 십·백·천이 붙을 때 그 묶음의 만·억·조 아래에 옅은 밑줄이 한 번 천천히 나타났다 사라짐(깜빡임 없음) */
+.nm .tx{position:relative}
+.nm.suffix .tx::after{content:"";position:absolute;left:8%;right:8%;bottom:-.06em;height:.07em;border-radius:.05em;background:var(--base);opacity:0}
+.nm.suffix.cue .tx::after{animation:cue 1.6s ease-in-out}
+@keyframes cue{0%{opacity:0}35%{opacity:.55}100%{opacity:0}}
 
 /* ---------- 아래: 통과 횟수 ---------- */
 .bottom{display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:4px}
-.dots-row{display:flex;gap:clamp(6px,1.2vw,9px)}
-.dot{width:clamp(10px,1.8vw,13px);height:clamp(10px,1.8vw,13px);border-radius:50%;background:var(--line);transition:background .2s ease}
-.dot.filled{background:var(--base)}
-.rep-text{font-family:'Jua',sans-serif;font-size:clamp(15px,2vw,18px);color:var(--base)}
+/* 진행: 맨 위 가운데, 통과할 것마다 한 칸(숫자 없음) */
+.prog{display:flex;justify-content:center;gap:6px;padding:10px 0 0;min-height:18px}
+.prog i{display:block;width:var(--cw,44px);height:8px;border-radius:4px;background:var(--rest)}
+.prog i.done{background:var(--done)} .prog i.now{background:var(--base)}
+.voice-warn{font-size:13px;color:var(--ink-soft);font-weight:700;min-height:1em;text-align:center}
+.voice-warn:empty{display:none}
 .btn-row{display:flex;gap:10px}
-.action-btn{border:none;font-weight:800;font-size:clamp(15px,2vw,17px);padding:13px 26px;border-radius:14px;box-shadow:var(--shadow)}
+.action-btn{touch-action:none;border:none;font-weight:800;font-size:clamp(15px,2vw,17px);padding:13px 26px;border-radius:14px;box-shadow:var(--shadow)}
 .action-btn.ghost{background:var(--panel);color:var(--ink-soft)}
 .action-btn.primary{background:var(--base);color:#fff}
 .action-btn.primary:disabled{background:var(--line);color:var(--ink-soft);box-shadow:none;cursor:default}
@@ -170,15 +175,14 @@ body.admin #stage{pointer-events:none}
       <div class="segbox" id="segTarget"><span class="lab">목표</span>
         <button class="sb" type="button" data-target="5">5번</button><button class="sb" type="button" data-target="10">10번</button></div>
       <div class="segbox" id="segSound"><span class="lab">소리</span>
-        <button class="sb" type="button" data-snd="off">끔</button><button class="sb" type="button" data-snd="device">기기</button><button class="sb" type="button" data-snd="cloud">Google</button>
-        <div id="voicePop"></div></div>
+        <button class="sb" type="button" data-snd="off">끔</button><button class="sb" type="button" data-snd="on">켬</button></div>
     </div>
     <button class="icon-btn" id="helpBtn" type="button" aria-label="사용법"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9.2 9a3 3 0 1 1 4.1 2.8c-.8.3-1.3 1-1.3 1.9v.6M12 17.5h.01"/></svg></button>
   </div>
+  <div class="prog" id="prog" aria-label="통과한 횟수"></div>
   <div class="stage" id="stage"><div class="numline" id="numline"></div></div>
   <div class="bottom">
-    <div class="dots-row" id="dotsRow"></div>
-    <div class="rep-text" id="repText"></div>
+    <div class="voice-warn" id="voiceWarn"></div>
     <div class="btn-row">
       <button class="action-btn ghost" id="againBtn" type="button">다시</button>
       <button class="action-btn primary" id="passBtn" type="button">통과 ✓</button>
@@ -219,261 +223,39 @@ body.admin #stage{pointer-events:none}
 <div id="tour"><div id="tourHole"></div><div id="tourTip" class="below"><h4 id="tourTitle"></h4><p id="tourText"></p>
   <div class="tour-foot"><span id="tourStep"></span><div><button type="button" id="tourEnd">그만</button><button type="button" class="next" id="tourNext">다음</button></div></div></div></div>
 
-<script id="keyRelay">
-/* ===== 휴대폰으로 키 받기 (전자칠판 쪽) — 공통 모듈 ===== */
-(function(){
-const RELAY='https://charum.org/key-relay.php';
-/* 중계 서버 주소를 넣기 전에는 "휴대폰으로 받기" 단추를 감춤 */
-const READY=/^https?:\/\//.test(RELAY);
-const SEND_PAGE='https://shim-sung-hyun.github.io/web_app/key-send.html';
-
-/* --- 작은 QR 만들기(바이트 모드, 오류 정정 M, 1~10판) --- */
-const QR=(function(){
-  const EXP=new Array(512), LOG=new Array(256); let x=1;
-  for(let i=0;i<255;i++){ EXP[i]=x; LOG[x]=i; x<<=1; if(x&256) x^=0x11d; }
-  for(let i=255;i<512;i++) EXP[i]=EXP[i-255];
-  const mul=(a,b)=>a&&b?EXP[LOG[a]+LOG[b]]:0;
-  function rsGen(n){ let g=[1]; for(let i=0;i<n;i++){ const ng=new Array(g.length+1).fill(0); for(let j=0;j<g.length;j++){ ng[j]^=g[j]; ng[j+1]^=mul(g[j],EXP[i]); } g=ng; } return g; }
-  function rsRem(data,n){ const g=rsGen(n), r=new Array(n).fill(0); for(const d of data){ const f=d^r.shift(); r.push(0); for(let i=0;i<n;i++) r[i]^=mul(g[i+1],f); } return r; }
-  /* 판마다 [블록당 오류정정 수, 블록 수 그룹1, 그룹1 데이터 수, 블록 수 그룹2, 그룹2 데이터 수] (M) */
-  const T=[null,[10,1,16,0,0],[16,1,28,0,0],[26,1,44,0,0],[18,2,32,0,0],[24,2,43,0,0],[16,4,27,0,0],[18,4,31,0,0],[22,2,38,2,39],[22,3,36,2,37],[26,4,43,1,44]];
-  const ALIGN=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50]];
-  function make(text){
-    const bytes=Array.from(new TextEncoder().encode(text));
-    let v=1; for(;v<=9;v++){ const t=T[v], cap=t[1]*t[2]+t[3]*t[4]; if(4+(v<10?8:16)+bytes.length*8<=cap*8) break; }
-    if(v>9) throw new Error('too long');
-    const t=T[v], cap=t[1]*t[2]+t[3]*t[4];
-    const bits=[]; const put=(val,n)=>{ for(let i=n-1;i>=0;i--) bits.push((val>>>i)&1); };
-    put(4,4); put(bytes.length,v<10?8:16); bytes.forEach(b=>put(b,8));
-    put(0,Math.min(4,cap*8-bits.length)); while(bits.length%8) bits.push(0);
-    const data=[]; for(let i=0;i<bits.length;i+=8){ let b=0; for(let j=0;j<8;j++) b=(b<<1)|bits[i+j]; data.push(b); }
-    for(let p=0;data.length<cap;p++) data.push(p%2?0x11:0xEC);
-    const blocks=[], ecs=[]; let k=0;
-    for(let g=0;g<2;g++) for(let b=0;b<t[1+g*2];b++){ const d=data.slice(k,k+t[2+g*2]); k+=d.length; blocks.push(d); ecs.push(rsRem(d,t[0])); }
-    const all=[]; const maxD=Math.max(...blocks.map(b=>b.length));
-    for(let i=0;i<maxD;i++) for(const b of blocks) if(i<b.length) all.push(b[i]);
-    for(let i=0;i<t[0];i++) for(const e of ecs) all.push(e[i]);
-    const N=17+v*4, M=[], F=[]; for(let i=0;i<N;i++){ M.push(new Array(N).fill(0)); F.push(new Array(N).fill(false)); }
-    const set=(r,c,val)=>{ M[r][c]=val?1:0; F[r][c]=true; };
-    const finder=(r,c)=>{ for(let i=-1;i<=7;i++) for(let j=-1;j<=7;j++){ const rr=r+i, cc=c+j; if(rr<0||cc<0||rr>=N||cc>=N) continue;
-      const on=(i>=0&&i<=6&&(j===0||j===6))||(j>=0&&j<=6&&(i===0||i===6))||(i>=2&&i<=4&&j>=2&&j<=4); set(rr,cc,on); } };
-    finder(0,0); finder(0,N-7); finder(N-7,0);
-    for(let i=8;i<N-8;i++){ set(6,i,i%2===0); set(i,6,i%2===0); }
-    const al=ALIGN[v], L=al[al.length-1]; for(const r of al) for(const c of al){ if((r===6&&c===6)||(r===6&&c===L)||(r===L&&c===6)) continue; for(let i=-2;i<=2;i++) for(let j=-2;j<=2;j++) set(r+i,c+j,Math.max(Math.abs(i),Math.abs(j))!==1); }
-    set(N-8,8,1);
-    for(let i=0;i<9;i++){ if(!F[8][i]) F[8][i]=true; if(!F[i][8]) F[i][8]=true; }
-    for(let i=0;i<8;i++){ F[8][N-1-i]=true; F[N-1-i][8]=true; }
-    if(v>=7){ for(let i=0;i<6;i++) for(let j=0;j<3;j++){ F[i][N-11+j]=true; F[N-11+j][i]=true; } }
-    const dbits=[]; all.forEach(b=>{ for(let i=7;i>=0;i--) dbits.push((b>>>i)&1); });
-    let bi=0, up=true;
-    for(let c=N-1;c>0;c-=2){ if(c===6) c=5;
-      for(let n=0;n<N;n++){ const r=up?N-1-n:n; for(let d=0;d<2;d++){ const cc=c-d; if(F[r][cc]) continue; M[r][cc]=bi<dbits.length?dbits[bi++]:0; } }
-      up=!up; }
-    const masks=[(r,c)=>(r+c)%2===0,(r)=>r%2===0,(r,c)=>c%3===0,(r,c)=>(r+c)%3===0,(r,c)=>(Math.floor(r/2)+Math.floor(c/3))%2===0,(r,c)=>(r*c)%2+(r*c)%3===0,(r,c)=>((r*c)%2+(r*c)%3)%2===0,(r,c)=>((r+c)%2+(r*c)%3)%2===0];
-    function fmt(Mx,mask){ let d=(0<<3)|mask; /* M = 00 */ let rem=d; for(let i=0;i<10;i++) rem=(rem<<1)^((rem>>>9)*0x537); const f=((d<<10)|rem)^0x5412;
-      const b=i=>(f>>>i)&1;
-      for(let i=0;i<=5;i++) Mx[i][8]=b(i); Mx[7][8]=b(6); Mx[8][8]=b(7); Mx[8][7]=b(8); for(let i=9;i<15;i++) Mx[8][14-i]=b(i);
-      for(let i=0;i<8;i++) Mx[8][N-1-i]=b(i); for(let i=8;i<15;i++) Mx[N-15+i][8]=b(i);
-      Mx[N-8][8]=1;
-      if(v>=7){ let rv=v; for(let i=0;i<12;i++) rv=(rv<<1)^((rv>>>11)*0x1f25); const vb=(v<<12)|rv;
-        for(let i=0;i<18;i++){ const bit=(vb>>>i)&1, a=N-11+(i%3), bb=Math.floor(i/3); Mx[bb][a]=bit; Mx[a][bb]=bit; } } }
-    function penalty(Mx){ let p=0;
-      for(let r=0;r<N;r++){ let run=1; for(let c=1;c<N;c++){ if(Mx[r][c]===Mx[r][c-1]){ run++; if(run===5) p+=3; else if(run>5) p++; } else run=1; } }
-      for(let c=0;c<N;c++){ let run=1; for(let r=1;r<N;r++){ if(Mx[r][c]===Mx[r-1][c]){ run++; if(run===5) p+=3; else if(run>5) p++; } else run=1; } }
-      for(let r=0;r<N-1;r++) for(let c=0;c<N-1;c++){ const s=Mx[r][c]+Mx[r+1][c]+Mx[r][c+1]+Mx[r+1][c+1]; if(s===0||s===4) p+=3; }
-      const pat=[1,0,1,1,1,0,1,0,0,0,0], pat2=[0,0,0,0,1,0,1,1,1,0,1];
-      for(let r=0;r<N;r++) for(let c=0;c+11<=N;c++){ let a=true,b=true,a2=true,b2=true; for(let k=0;k<11;k++){ if(Mx[r][c+k]!==pat[k]) a=false; if(Mx[r][c+k]!==pat2[k]) b=false; if(Mx[c+k][r]!==pat[k]) a2=false; if(Mx[c+k][r]!==pat2[k]) b2=false; } p+=40*(a+b+a2+b2); }
-      let dark=0; for(let r=0;r<N;r++) for(let c=0;c<N;c++) dark+=Mx[r][c]; p+=Math.floor(Math.abs(dark*20-N*N*10)/(N*N))*10; return p; }
-    let best=null, bp=1e9;
-    for(let m=0;m<8;m++){ const Mx=M.map(r=>r.slice()); for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(!F[r][c]&&masks[m](r,c)) Mx[r][c]^=1; fmt(Mx,m); const p=penalty(Mx); if(p<bp){ bp=p; best=Mx; } }
-    return best;
-  }
-  function svg(text,px){ const m=make(text), N=m.length, q=4, S=N+q*2; let d='';
-    for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(m[r][c]) d+=`M${c+q} ${r+q}h1v1h-1z`;
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}" width="${px}" height="${px}" shape-rendering="crispEdges" role="img" aria-label="QR 코드"><rect width="${S}" height="${S}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`; }
-  return {make,svg};
-})();
-
-/* --- 자물쇠(ECDH P-256 → HKDF → AES-GCM) --- */
-const b64u={ enc:b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''),
-  dec:s=>{ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return Uint8Array.from(atob(s),c=>c.charCodeAt(0)); } };
-async function aesFrom(priv,pubRaw,code){
-  const pub=await crypto.subtle.importKey('raw',pubRaw,{name:'ECDH',namedCurve:'P-256'},false,[]);
-  const bits=await crypto.subtle.deriveBits({name:'ECDH',public:pub},priv,256);
-  const hk=await crypto.subtle.importKey('raw',bits,'HKDF',false,['deriveKey']);
-  return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:new TextEncoder().encode('webapp-key-relay|'+code),info:new TextEncoder().encode('v1')},hk,{name:'AES-GCM',length:256},false,['decrypt']);
-}
-async function call(body){
-  const r=await fetch(RELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
-  let j={}; try{ j=await r.json(); }catch(e){}
-  if(!r.ok||j.error) throw Object.assign(new Error(j.error||('http'+r.status)),{code:j.error||('http '+r.status)});
-  return j;
-}
-
-/* --- 화면 --- */
-const CSS=`
-#krBox{position:fixed;inset:0;z-index:2147483000;background:rgba(20,24,40,.55);display:flex;align-items:center;justify-content:center;font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;color:#1d2133}
-#krBox .kr-card{background:#fff;border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:26px 30px 22px;width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;box-sizing:border-box}
-#krBox h2{margin:0 0 4px;font-size:22px}
-#krBox .kr-sub{margin:0 0 18px;color:#5b6077;font-size:15px;line-height:1.55}
-#krBox .kr-main{display:flex;gap:26px;align-items:center;justify-content:center;flex-wrap:wrap}
-#krBox .kr-qr{box-sizing:content-box;background:#fff;border:1px solid #e3e5ee;border-radius:14px;padding:6px;line-height:0}
-#krBox .kr-code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:78px;letter-spacing:.14em;line-height:1;color:#1E4396;text-align:center;padding-left:.14em}
-#krBox .kr-codebox{display:flex;flex-direction:column;align-items:center;gap:10px}
-#krBox .kr-steps{margin:0;padding-left:20px;font-size:15px;line-height:1.7;color:#30344a}
-#krBox .kr-url{font-size:13px;color:#5b6077;word-break:break-all}
-#krBox .kr-state{margin:16px 0 0;font-size:15px;color:#30344a;min-height:1.6em;text-align:center}
-#krBox .kr-state.err{color:#c62828;font-weight:700}
-#krBox .kr-state.ok{color:#1b7f3a;font-weight:700}
-#krBox .kr-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
-#krBox button{font:inherit;font-size:16px;padding:10px 22px;border-radius:12px;border:1px solid #c9cde0;background:#f4f5fa;color:#1d2133;cursor:pointer;min-height:44px}
-#krBox button.kr-pri{background:#2C5FCF;border-color:#2C5FCF;color:#fff}
-html:not(.kr-ready) .kr-open{display:none!important}
-#krBox .kr-done{text-align:center}
-#krBox .kr-big{width:84px;height:84px;margin:6px auto 12px;border-radius:50%;background:#e7f5ec;color:#1b7f3a;font-size:52px;line-height:84px;font-weight:700}
-#krBox .kr-done h2{font-size:26px;margin:0 0 14px}
-#krBox .kr-list{list-style:none;margin:0 auto 14px;padding:0;display:inline-flex;flex-direction:column;gap:10px;text-align:left}
-#krBox .kr-list li{display:flex;align-items:center;gap:10px;font-size:18px}
-#krBox .kr-list .kr-ok{color:#1b7f3a;font-weight:700}
-#krBox .kr-list code{font-family:ui-monospace,Menlo,monospace;font-size:18px;background:#f1f3f8;border-radius:8px;padding:3px 10px;color:#30344a}
-.kr-open{font:inherit;font-size:14px;padding:6px 12px;border-radius:10px;border:1px solid #9fb3e6;background:#eef3ff;color:#1E4396;cursor:pointer;white-space:nowrap;min-height:36px}
-`;
-function ensureCss(){ if(document.getElementById('krCss')) return; const s=document.createElement('style'); s.id='krCss'; s.textContent=CSS; document.head.appendChild(s); }
-
-function mask(k){ return '••••'+esc(k.slice(-4)); }
-function esc(t){ return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-/* 받은 뒤: 저절로 닫지 않고 완료 화면을 보여 줌(교사가 고개를 들었을 때도 남아 있게) */
-function showDone(box,got,stop){
-  const rows=[['gemini','Gemini 키'],['cloud','Google 음성 키 (Cloud)']].filter(([k])=>got[k])
-    .map(([k,l])=>`<li><span class="kr-ok">✓</span><b>${l}</b><code>${mask(got[k])}</code></li>`).join('');
-  box.querySelector('.kr-card').innerHTML=`<div class="kr-done"><div class="kr-big" aria-hidden="true">✓</div><h2>키를 받았어요</h2>
-    <ul class="kr-list">${rows}</ul>
-    <p class="kr-sub">끝 네 자리가 휴대폰에서 보낸 키와 같은지 보세요. 받은 키는 이 기기에 저장했어요.</p>
-    <div class="kr-btns"><button type="button" class="kr-pri" id="krOk">확인</button></div></div>`;
-  const ok=box.querySelector('#krOk'); ok.onclick=stop; try{ ok.focus({preventScroll:true}); }catch(e){}
-}
-
-let active=null;
-async function receive(opts){
-  opts=opts||{}; ensureCss(); close();
-  const box=document.createElement('div'); box.id='krBox'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true');
-  box.innerHTML=`<div class="kr-card"><h2>휴대폰으로 키 받기</h2>
-    <p class="kr-sub">키를 휴대폰에서 이 화면으로 보내요. 키는 잠가서 보내고, 중계 서버는 키를 볼 수 없어요.</p>
-    <div class="kr-main"><div class="kr-qr" id="krQr" style="width:196px;height:196px;box-sizing:content-box"></div>
-      <div class="kr-codebox"><div class="kr-code" id="krCode">····</div>
-        <ol class="kr-steps"><li>휴대폰으로 QR을 찍거나<br><span class="kr-url">${SEND_PAGE.replace('https://','')}</span> 를 열어요.</li><li>위 번호 4자리와 키를 넣고 <b>보내기</b>.</li></ol></div></div>
-    <p class="kr-state" id="krState">번호를 만들고 있어요…</p>
-    <div class="kr-btns"><button type="button" id="krCancel">닫기</button></div></div>`;
-  document.body.appendChild(box);
-  const st=box.querySelector('#krState'), stop=()=>close();
-  box.querySelector('#krCancel').onclick=stop;
-  box.addEventListener('pointerdown',e=>{ if(e.target===box) stop(); });
-  /* 이 창을 누른 것이 뒤의 앱(전체 화면 들어가기, 다음으로 넘어가기 등)에 닿지 않게 */
-  ['pointerdown','pointerup','click','touchstart','touchend','mousedown','mouseup'].forEach(t=>box.addEventListener(t,e=>e.stopPropagation()));
-  const me=active={box,timer:null,tick:null,code:'',sid:'',dead:false};
-  const say=(t,cls)=>{ st.textContent=t; st.className='kr-state'+(cls?' '+cls:''); };
-  const retry=()=>{ const b=box.querySelector('.kr-btns'); b.innerHTML='<button type="button" class="kr-pri" id="krAgain">다시 받기</button><button type="button" id="krCancel2">닫기</button>';
-    b.querySelector('#krAgain').onclick=()=>receive(opts); b.querySelector('#krCancel2').onclick=stop; };
-  try{
-    if(!window.crypto||!crypto.subtle) throw Object.assign(new Error('insecure'),{code:'insecure'});
-    const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},false,['deriveBits']);
-    const pubRaw=await crypto.subtle.exportKey('raw',kp.publicKey);
-    const o=await call({a:'open',pub:b64u.enc(pubRaw),want:(opts.want||['cloud','gemini']).join(',')});
-    if(me.dead) return;
-    me.code=o.code; me.sid=o.sid;
-    box.querySelector('#krCode').textContent=o.code;
-    box.querySelector('#krQr').innerHTML=QR.svg(SEND_PAGE+'#c='+o.code+'&w='+(opts.want||['cloud','gemini']).join(','),196);
-    const end=Date.now()+(o.ttl||180)*1000;
-    const left=()=>{ const s=Math.max(0,Math.round((end-Date.now())/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
-    say('휴대폰에서 보내기를 기다리고 있어요 · 남은 시간 '+left());
-    me.tick=setInterval(()=>{ if(Date.now()>end){ clearInterval(me.tick); clearTimeout(me.timer); me.dead=true; say('시간이 지났어요. 다시 받아 주세요.','err'); retry(); return; }
-      say('휴대폰에서 보내기를 기다리고 있어요 · 남은 시간 '+left()); },1000);
-    const poll=async()=>{
-      if(me.dead) return;
-      let r; try{ r=await call({a:'poll',code:me.code,sid:me.sid}); }catch(e){ me.timer=setTimeout(poll,3000); return; }
-      if(me.dead) return;
-      if(r.status==='wait'){ me.timer=setTimeout(poll,2000); return; }
-      if(r.status!=='done'){ clearInterval(me.tick); me.dead=true; say('번호가 끝났어요. 다시 받아 주세요.','err'); retry(); return; }
-      clearInterval(me.tick); me.dead=true;
-      try{
-        const key=await aesFrom(kp.privateKey,b64u.dec(r.epub),me.code);
-        const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(r.iv)},key,b64u.dec(r.ct));
-        const k=JSON.parse(new TextDecoder().decode(plain))||{};
-        const got={}; if(typeof k.cloud==='string'&&k.cloud.trim()) got.cloud=k.cloud.trim(); if(typeof k.gemini==='string'&&k.gemini.trim()) got.gemini=k.gemini.trim();
-        /* 두 키를 모두 이 기기에 남겨 두어, 다른 앱(예: 001 Gemini)을 열 때도 채워지게 함 */
-        if(got.gemini){ try{ localStorage.setItem('webapp.geminiKey',got.gemini); }catch(e){} }
-        if(got.cloud){ try{ localStorage.setItem('webapp.cloudKey',got.cloud); }catch(e){} }
-        const want=opts.want||['cloud','gemini']; const useful=want.filter(w=>got[w]);
-        if(!useful.length){ say(want.includes('gemini')&&!want.includes('cloud')?'Gemini 키가 오지 않았어요. 휴대폰에서 Gemini 키를 넣어 보내 주세요.':'Cloud 키가 오지 않았어요. 휴대폰에서 Cloud 키를 넣어 보내 주세요.','err'); retry(); return; }
-        me.sid=''; /* 받아 갔다는 표시는 서버에 남겨 휴대폰이 확인하게 함(닫을 때 지우지 않음) */
-        try{ opts.onKeys&&opts.onKeys(got); }catch(e){ console.error(e); }
-        showDone(box,got,stop);
-      }catch(e){ say('키를 풀지 못했어요. 다시 받아 주세요.','err'); retry(); }
-    };
-    me.timer=setTimeout(poll,1500);
-  }catch(e){
-    const c=e&&e.code;
-    say(c==='insecure'?'이 화면은 https 주소에서만 키를 받을 수 있어요.':c==='busy'||c===429?'지금은 번호를 만들 수 없어요. 잠시 뒤에 다시 해 주세요.':c==='origin'?'중계 서버가 이 주소의 요청을 받지 않아요(origin). key-relay.php 맨 위 설정을 확인해 주세요.':'중계 서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요. ('+(c||(e&&e.name)||'network')+')','err');
-    retry();
-  }
-}
-function close(){
-  if(!active) return; const me=active; active=null; me.dead=true;
-  clearInterval(me.tick); clearTimeout(me.timer);
-  if(me.code&&me.sid) call({a:'close',code:me.code,sid:me.sid}).catch(()=>{});
-  me.box.remove();
-}
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
-/* 모든 앱이 함께 쓰는 키 자리(webapp.cloudKey·webapp.geminiKey): 앱이 키를 저장하거나 지울 때 같이 맞춤 */
-function share(kind,val){ const k=kind==='gemini'?'webapp.geminiKey':'webapp.cloudKey'; try{ val?localStorage.setItem(k,val):localStorage.removeItem(k); }catch(e){} return val; }
-window.KeyRelay={receive,close,QR,share,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
-ensureCss();
-if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
-})();
-</script>
 <script>
 'use strict';
 /* ================= 저장 · 상태 ================= */
 const ls={ get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}} };
 const store={ get:k=>ls.get('placeCount.'+k), set:(k,v)=>ls.set('placeCount.'+k,v) };
-const S={unit:'만', target:10, pass:0, count:0,
-  sound:true, engine:'device', timbre:'Leda', cloudKey:'', saveCloud:false, engineNow:'', admin:false};
+const S={unit:'만', target:10, pass:0, count:0, sound:true, admin:false};
 (function load(){
   const u=store.get('unit'); if(['천','만','억','조'].includes(u)) S.unit=u;
   const t=+store.get('target'); if([5,10].includes(t)) S.target=t;
   const sn=store.get('snd'); S.sound=sn!=='off';
-  const en=store.get('engine'); if(['cloud','device'].includes(en)) S.engine=en;
-  const tb=store.get('timbre'); if(['Leda','Aoede','Kore'].includes(tb)) S.timbre=tb;
-  S.cloudKey=store.get('cloudKey')||''; S.saveCloud=!!S.cloudKey;
-  /* 같은 사이트의 다른 앱에 저장해 둔 Cloud 키가 있으면 빈칸에 채움 */
-  if(!S.cloudKey){ for(const k of ['webapp.cloudKey','placeValue.cloudKey','poemRecite.cloudKey','colorFind.cloudKey','shapeFinder.cloudKey','wordLearn.cloudKey']){ const v=ls.get(k); if(v){ S.cloudKey=v; break; } } }
-  if(S.engine==='cloud'&&!S.cloudKey) S.engine='device';
 })();
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function voiceNote(t){ S.voiceNote=t||''; if($('voicePop').classList.contains('show')) renderVoicePop(); }
+/* 전자칠판 터치: 살짝 누르면 미끄러지거나 취소된다 → 누른 자리에서 60px 안에서 떼거나 취소돼도 누른 것으로.
+   list=true(밀어서 보는 줄)면 30px·취소는 밀기로 보고 넘김. 뒤따르는 click은 한 번 무시 */
+let lastTapAt=0;
+function onTap(el,fn,opt){
+  opt=opt||{}; const tol=opt.list?30:60; let st=null;
+  el.style.touchAction=opt.list?(opt.pan||'pan-y'):'none';
+  el.addEventListener('pointerdown',e=>{ if(e.button>0) return; st={x:e.clientX,y:e.clientY,id:e.pointerId}; });
+  el.addEventListener('pointerup',e=>{ if(!st||st.id!==e.pointerId) return; const ok=Math.hypot(e.clientX-st.x,e.clientY-st.y)<=tol; st=null; if(ok){ lastTapAt=Date.now(); fn(e); } });
+  el.addEventListener('pointercancel',e=>{ if(!st||st.id!==e.pointerId) return; st=null; if(!opt.list){ lastTapAt=Date.now(); fn(e); } });
+  el.addEventListener('click',e=>{ if(Date.now()-lastTapAt<700) return; fn(e); }); /* 키보드·보조 기기 */
+}
+const TOPBAR={list:true,pan:'pan-x'}; /* 위 줄은 좌우로 밀 수 있게 */
 
-/* ================= 목소리: 한 수업은 한 목소리 ================= */
+/* ================= 목소리: 한 수업은 한 목소리 =================
+   자리 이름은 차름 소리 모음(media/voice/leda-0.92, Google Leda 0.92 — 001·003·005와 함께)에서 받아 읽음. 키 없음.
+   단위를 고를 때 그 단위의 말을 모두 확인해, 하나라도 없거나 받지 못하면 그 수업(단위를 바꿀 때까지)은 모두 기기 목소리 */
 let lastSay='', speakSeq=0, actx=null, curSrc=null;
 function getCtx(){ if(!actx){ const C=window.AudioContext||window.webkitAudioContext; if(C) actx=new C(); } return actx; }
 function unlockAudio(){ try{ const c=getCtx(); if(!c) return; if(c.state==='suspended') c.resume();
   const b=c.createBuffer(1,240,24000), x=c.createBufferSource(); x.buffer=b; x.connect(c.destination); x.start(); }catch(e){} }
-function cleanPCM(bin,rate){
-  const n=bin.length>>1, f=new Float32Array(n);
-  for(let k=0;k<n;k++){ let v=bin.charCodeAt(2*k)|(bin.charCodeAt(2*k+1)<<8); if(v>32767) v-=65536; f[k]=v/32768; }
-  const W=Math.round(rate*0.02), nw=Math.max(1,Math.floor(n/W)), rms=new Float32Array(nw); let mx=0;
-  for(let w=0;w<nw;w++){ let t=0; for(let k=w*W;k<Math.min(n,(w+1)*W);k++) t+=f[k]*f[k]; rms[w]=Math.sqrt(t/W); if(rms[w]>mx) mx=rms[w]; }
-  const th=Math.max(0.003,mx*0.04), seg=[]; let on=-1;
-  for(let w=0;w<=nw;w++){ const up=w<nw&&rms[w]>=th; if(up&&on<0) on=w; if(!up&&on>=0){ seg.push([on,w-1]); on=-1; } }
-  while(seg.length>1){ const l=seg[seg.length-1], pv=seg[seg.length-2]; if(l[1]-l[0]+1<=3 && l[0]-pv[1]>=15) seg.pop(); else break; }
-  const a=seg.length?seg[0][0]:0, z=seg.length?seg[seg.length-1][1]:nw-1;
-  const st=Math.max(0,(a-4)*W), en=Math.min(n,(z+1)*W+Math.round(rate*0.22));
-  const body=f.slice(st,en), L=body.length, fi=Math.min(L,Math.round(rate*0.008)), fo=Math.min(L,Math.round(rate*0.04));
-  for(let k=0;k<fi;k++) body[k]*=k/fi;
-  for(let k=0;k<fo;k++) body[L-1-k]*=k/fo;
-  const lead=Math.round(rate*0.06), out=new Float32Array(lead+L); out.set(body,lead);
-  return {data:out,rate};
-}
 function playClip(clip){
   return new Promise(res=>{
     const c=getCtx(); if(!c){res(); return;}
@@ -490,64 +272,47 @@ function stopVoice(){
   try{speechSynthesis.cancel();}catch(e){}
   if(curSrc){ const {src,g,res}=curSrc; curSrc=null; try{ src.onended=null; const t=actx.currentTime; g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+0.05); src.stop(t+0.06); }catch(e){} if(res) res(); }
 }
-/* 만든 목소리는 브라우저(IndexedDB)에 저장해 다시 만들지 않음 */
-const vdb={db:null, ready:null};
-vdb.ready=new Promise(r=>{ try{ const q=indexedDB.open('placeCountVoice',1);
-  q.onupgradeneeded=()=>q.result.createObjectStore('clips');
-  q.onsuccess=()=>{vdb.db=q.result; r();}; q.onerror=()=>r(); }catch(e){ r(); } });
-async function idbGet(k){ await vdb.ready; if(!vdb.db) return null; return new Promise(r=>{ try{ const q=vdb.db.transaction('clips').objectStore('clips').get(k); q.onsuccess=()=>{ const v=q.result; r(v?{data:new Float32Array(v.buf),rate:v.rate}:null); }; q.onerror=()=>r(null); }catch(e){ r(null); } }); }
-function idbPut(k,clip){ try{ if(vdb.db) vdb.db.transaction('clips','readwrite').objectStore('clips').put({buf:clip.data.buffer.slice(0),rate:clip.rate},k); }catch(e){} }
-const VQ={list:[], busy:false, clips:new Map()};
-const timbre=()=>['Leda','Aoede','Kore'].includes(S.timbre)?S.timbre:'Leda';
-function chooseEngine(){ S.engineNow=(S.engine==='cloud'&&S.cloudKey)?'cloud':'device'; }
-function getClip(text,urgent){
-  const k=S.engineNow+'|'+timbre()+'|'+text;
-  let c=VQ.clips.get(k);
-  if(!c){
-    c={text,key:k,engine:S.engineNow,done:false}; c.p=new Promise((res,rej)=>{c.res=res; c.rej=rej;}); c.p.catch(()=>{});
-    VQ.clips.set(k,c);
-    idbGet(k).then(v=>{ if(v){ c.done=true; c.res(v); } else { urgent?VQ.list.unshift(c):VQ.list.push(c); pumpVoice(); } });
-  } else if(urgent && !c.done){ const i=VQ.list.indexOf(c); if(i>0){ VQ.list.splice(i,1); VQ.list.unshift(c); } }
-  return c.p;
+const VBASE='https://shim-sung-hyun.github.io/web_app/media/voice/leda-0.92/';
+const PRE={set:null, clips:new Map()};
+function preSet(){ if(!PRE.set) PRE.set=fetch(VBASE+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
+/* 소리 파일 이름 = 말의 SHA-1 앞 16자리. http 주소에서는 crypto.subtle이 없으니 직접 계산 */
+function sha1Hex(str){
+  const b=new TextEncoder().encode(str), l=b.length, n=((l+9+63)>>6)<<6, m=new Uint8Array(n); m.set(b); m[l]=0x80;
+  const dv=new DataView(m.buffer); dv.setUint32(n-4,(l*8)>>>0); dv.setUint32(n-8,Math.floor(l/0x20000000));
+  let h0=0x67452301,h1=0xEFCDAB89,h2=0x98BADCFE,h3=0x10325476,h4=0xC3D2E1F0; const w=new Uint32Array(80), rl=(x,k)=>(x<<k)|(x>>>(32-k));
+  for(let o=0;o<n;o+=64){
+    for(let i=0;i<16;i++) w[i]=dv.getUint32(o+i*4); for(let i=16;i<80;i++) w[i]=rl(w[i-3]^w[i-8]^w[i-14]^w[i-16],1);
+    let a=h0,bb=h1,c=h2,d=h3,e=h4;
+    for(let i=0;i<80;i++){ const f=i<20?(bb&c)|(~bb&d):i<40?bb^c^d:i<60?(bb&c)|(bb&d)|(c&d):bb^c^d, k=i<20?0x5A827999:i<40?0x6ED9EBA1:i<60?0x8F1BBCDC:0xCA62C1D6;
+      const t=(rl(a,5)+f+e+k+w[i])>>>0; e=d; d=c; c=rl(bb,30)>>>0; bb=a; a=t; }
+    h0=(h0+a)>>>0; h1=(h1+bb)>>>0; h2=(h2+c)>>>0; h3=(h3+d)>>>0; h4=(h4+e)>>>0; }
+  return [h0,h1,h2,h3,h4].map(x=>x.toString(16).padStart(8,'0')).join('');
 }
-async function pumpVoice(){
-  if(VQ.busy) return; VQ.busy=true;
-  while(VQ.list.length){
-    const c=VQ.list.shift();
-    if(c.engine!==S.engineNow){ c.rej(new Error('engine changed')); VQ.clips.delete(c.key); continue; }
-    let tries=0;
-    for(;;){
-      try{ const clip=await synth(c.text); c.done=true; idbPut(c.key,clip); c.res(clip); break; }
-      catch(e){
-        tries++;
-        if(e.quota){
-          if(tries<=2){ await new Promise(r=>setTimeout(r,12000)); continue; }
-          /* 사용량 초과: 이번 수업 전체를 기기 목소리로 한 번만 바꾸고 알림 */
-          S.engineNow='device'; voiceNote('Google 목소리 사용량이 다 되어, 이번 수업은 기기 목소리로 바꿨어요.');
-          VQ.list.forEach(x=>{x.rej(e); VQ.clips.delete(x.key);}); VQ.list=[];
-          c.rej(e); VQ.clips.delete(c.key); break;
-        }
-        if(tries<2){ await new Promise(r=>setTimeout(r,1500)); continue; }
-        c.rej(e); VQ.clips.delete(c.key); break;
-      }
-    }
-  }
-  VQ.busy=false;
+async function preHash(t){
+  if(window.crypto&&crypto.subtle){ try{ const d=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }catch(e){} }
+  return sha1Hex(t).slice(0,16);
 }
-async function synth(text){
-  const call=async withRate=>{
-    const audioConfig={audioEncoding:'LINEAR16',sampleRateHertz:24000}; if(withRate) audioConfig.speakingRate=0.92;
-    return fetch('https://texttospeech.googleapis.com/v1/text:synthesize?key='+encodeURIComponent(S.cloudKey),{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({input:{text},voice:{languageCode:'ko-KR',name:`ko-KR-Chirp3-HD-${timbre()}`},audioConfig})});
-  };
-  let r=await call(S.cloudRate!==false);
-  if(r.status===400 && S.cloudRate!==false){ S.cloudRate=false; r=await call(false); }
-  if(!r.ok){ let m=''; try{m=(await r.json()).error.message||'';}catch(e){} const er=new Error(r.status+' '+m); if(r.status===429) er.quota=true; throw er; }
-  const j=await r.json(); const bin=atob(j.audioContent||'');
-  const di=bin.indexOf('data'); const pcm=di>=0&&di<200?bin.slice(di+8):bin.slice(44);
-  return cleanPCM(pcm,24000);
+function piece(t){
+  let p=PRE.clips.get(t);
+  if(!p){ p=(async()=>{
+      const set=await preSet(), h=await preHash(t); if(!set.has(h)) throw new Error('no piece '+t);
+      const r=await fetch(VBASE+h+'.mp3'); if(!r.ok) throw new Error('pre '+r.status);
+      const ab=await r.arrayBuffer(), c=getCtx(); if(!c) throw new Error('no audio');
+      const buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
+      return {data:new Float32Array(buf.getChannelData(0)),rate:buf.sampleRate}; })();
+    PRE.clips.set(t,p); p.catch(()=>PRE.clips.delete(t)); }
+  return p;
 }
-function prefetchVoice(text){ if(S.engineNow==='cloud'&&S.sound&&text) getClip(text,false); }
+const VOICE={device:false, check:0};
+function voiceToDevice(){
+  if(VOICE.device) return; VOICE.device=true;
+  $('voiceWarn').textContent='소리 파일이 없어 이번 수업은 기기 목소리로 읽어요';
+}
+/* 단위를 고르면 그 단위의 말을 모두 미리 받아 둠. 하나라도 없으면 이 단위 수업 전체를 기기 목소리로(섞지 않음) */
+function preloadUnit(){
+  VOICE.device=false; $('voiceWarn').textContent=''; const id=++VOICE.check;
+  Promise.all(CELLS.map(c=>piece(c.say))).catch(()=>{ if(id===VOICE.check) voiceToDevice(); });
+}
 let koVoice=null;
 function pickKoVoice(){
   const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.replace('_','-').toLowerCase().startsWith('ko')):[];
@@ -576,20 +341,21 @@ function speak(text){
   if(text) lastSay=text;
   stopVoice();
   const id=++speakSeq;
-  if(!S.engineNow) chooseEngine();
   if(!S.sound||!lastSay) return;
-  if(S.engineNow==='device'){ deviceSay(lastSay,id); return; }
+  if(VOICE.device){ deviceSay(lastSay,id); return; }
+  const say=lastSay;
   (async()=>{
     let clip=null;
-    try{ clip=await Promise.race([getClip(lastSay,true),new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),20000))]); }catch(e){}
+    try{ clip=await Promise.race([piece(say),new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),8000))]); }catch(e){}
     if(id!==speakSeq) return;
-    if(!clip){ if(S.engineNow==='device') deviceSay(lastSay,id); return; }
+    if(!clip){ voiceToDevice(); deviceSay(say,id); return; }
     await playClip(clip);
   })();
 }
-/* 계속 누르는 동안은 기다렸다가 마지막으로 누른 뒤에 읽음. "3초 뒤"면 학생이 먼저 읽어 볼 시간을 줌 */
+/* 계속 누르는 동안은 기다렸다가 마지막으로 누른 뒤에 읽음(0.65초) */
 let sayTimer=null;
-function sayLater(text){ clearTimeout(sayTimer); stopVoice(); speakSeq++; sayTimer=setTimeout(()=>speak(text), Math.max(650,S.wait*1000)); }
+const SAY_WAIT=650;
+function sayLater(text){ clearTimeout(sayTimer); stopVoice(); speakSeq++; sayTimer=setTimeout(()=>speak(text), SAY_WAIT); }
 function hush(){ clearTimeout(sayTimer); stopVoice(); speakSeq++; }
 
 /* ================= 전체 화면 ================= */
@@ -616,13 +382,12 @@ function rebuild(){
   const line=$('numline'); line.innerHTML=''; colEls=[]; nmEls=[];
   CELLS.forEach((c,i)=>{
     const col=document.createElement('div'); col.className='col'; col.dataset.i=i;
-    col.innerHTML=`<div class="nm${c.suffix?' suffix':''}${c.g?' g-'+c.g:''}" data-i="${i}"></div>`;
+    col.innerHTML=`<div class="nm${c.suffix?' suffix':''}" data-i="${i}"></div>`;
     line.appendChild(col); colEls.push(col); nmEls.push(col.lastChild);
   });
   CELLS.forEach((c,i)=>paintLabel(i));
-  prefetchNames(); fitLine();
+  preloadUnit(); fitLine();
 }
-function prefetchNames(){ if(S.engineNow==='cloud'&&S.sound) CELLS.slice().reverse().forEach(c=>prefetchVoice(c.say)); }
 /* 화면 크기에 맞춰 되도록 크게 (숨은 칸 자리도 미리 비워 두어 칸이 늘어도 자리가 흔들리지 않음) */
 function fitLine(){
   const line=$('numline'), st=$('stage');
@@ -632,19 +397,27 @@ function fitLine(){
     line.style.setProperty('--fs',Math.max(20,Math.min(100*W/w,100*H/h,190))+'px');
   });
 }
-let rzT=null; window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ fitLine(); if(TOUR.on) placeTour(); },150); });
+let rzT=null; window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ fitLine(); renderProg(); topFade(); if(TOUR.on) placeTour(); },150); });
+function topFade(){ const t=document.querySelector('.topbar'), m=t.scrollWidth-t.clientWidth; t.classList.toggle('fade-l',m>2&&t.scrollLeft>2); t.classList.toggle('fade-r',m>2&&t.scrollLeft<m-2); }
+document.querySelector('.topbar').addEventListener('scroll',topFade,{passive:true});
 
 function render(revealed,blink){
   for(let i=0;i<N;i++) colEls[i].classList.toggle('shown',i>=N-S.count);
-  if(revealed!=null) [nmEls[revealed]].forEach(el=>{ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); });
-  if(blink!=null){ const b=nmEls[blink]; b.classList.remove('blink'); void b.offsetWidth; b.classList.add('blink'); }
-  const dr=$('dotsRow'); dr.innerHTML=''; for(let d=0;d<S.target;d++){ const x=document.createElement('div'); x.className='dot'+(d<S.pass?' filled':''); dr.appendChild(x); }
+  if(revealed!=null){ const el=nmEls[revealed]; el.classList.remove('come'); void el.offsetWidth; el.classList.add('come'); }
+  if(blink!=null){ const b=nmEls[blink]; b.classList.remove('cue'); void b.offsetWidth; b.classList.add('cue'); }
+  renderProg();
   const done=S.pass>=S.target;
-  $('repText').textContent=S.pass+' / '+S.target+'번 통과';
   $('passBtn').disabled=done; $('passBtn').textContent=done?'다 했어요':'통과 ✓';
   document.querySelectorAll('#segUnit .sb').forEach(b=>b.classList.toggle('on',b.dataset.unit===S.unit));
   document.querySelectorAll('#segTarget .sb').forEach(b=>b.classList.toggle('on',+b.dataset.target===S.target));
-  document.querySelectorAll('#segSound .sb').forEach(b=>b.classList.toggle('on',b.dataset.snd===(S.sound?S.engine:'off')));
+  document.querySelectorAll('#segSound .sb').forEach(b=>b.classList.toggle('on',b.dataset.snd===(S.sound?'on':'off')));
+}
+/* 진행 막대: 통과할 것마다 한 칸(마친 칸 · 지금 칸 · 남은 칸). 좁은 화면은 칸 폭을 줄임 */
+function renderProg(){
+  const p=$('prog'), n=S.target;
+  p.style.setProperty('--cw',Math.max(14,Math.min(44,Math.floor((p.clientWidth||innerWidth)*0.8/n)-6))+'px');
+  let h=''; for(let d=0;d<n;d++) h+=`<i class="${d<S.pass?'done':d===S.pass?'now':''}"></i>`;
+  p.innerHTML=h;
 }
 /* 한 번 누를 때마다 오른쪽(일)부터 한 칸씩. 십·백·천이 붙을 때 이미 붙은 만·억·조가 한 번 깜빡여 "십만"임을 알려 줌 */
 function advance(){
@@ -655,57 +428,41 @@ function advance(){
   render(i,blink);
   sayLater(c.say);
 }
-$('stage').addEventListener('click',e=>{
-  unlockAudio(); closeVoicePop();
-  /* 글자를 누르면 그 이름만 가리기·보이기, 나머지 곳은 한 칸 늘리기 */
-  const tx=e.target.closest('.tx');
+/* 화면은 닿는 순간 반응(전자칠판에서 미끄러져도). 글자를 누르면 그 이름만 가리기·보이기, 나머지 곳은 한 칸 늘리기.
+   전체 화면·소리 열기는 손을 뗄 때(터치는 뗄 때만 허락됨) */
+function stageTap(e){
+  if(S.admin||TOUR.on) return;   /* 메뉴가 열려 있으면 반응하지 않음 */
+  const tx=e.target.closest&&e.target.closest('.tx');
   if(tx&&tx.closest('.col.shown')){ const i=+tx.dataset.i; if(rowOn(i)){ labVis[i]=!labVis[i]; paintLabel(i); return; } }
-  if(S.admin) return;   /* 메뉴가 열려 있으면 반응하지 않음 */
-  goFull(); advance();
-});
+  advance();
+}
+$('stage').style.touchAction='none';
+let stageDownAt=0;
+$('stage').addEventListener('pointerdown',e=>{ if(e.button>0) return; stageDownAt=Date.now(); unlockAudio(); stageTap(e); });
+$('stage').addEventListener('pointerup',()=>{ unlockAudio(); if(!S.admin&&!TOUR.on) goFull(); });
+$('stage').addEventListener('click',e=>{ if(Date.now()-stageDownAt<900||Date.now()-lastTapAt<700) return; unlockAudio(); stageTap(e); if(!S.admin&&!TOUR.on) goFull(); });
 document.addEventListener('keydown',e=>{
   if(TOUR.on){ if(e.code==='Escape') endTour(); return; }
   if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
   if(e.code==='Space'){ e.preventDefault(); if(S.admin) setAdmin(false); advance(); }
 });
 /* 통과: 학생이 끝까지 다 읽으면 교사가 누름. 가린 칸은 그대로 두고 수만 새로 */
-$('passBtn').addEventListener('click',()=>{
+onTap($('passBtn'),()=>{
   if(S.pass>=S.target) return;
   logPass(); S.pass++; S.count=0; hush(); render();
 });
-$('againBtn').addEventListener('click',()=>{ S.count=0; hush(); resetMarks(); CELLS.forEach((c,i)=>paintLabel(i)); render(); });
-document.querySelectorAll('#segUnit .sb').forEach(b=>b.addEventListener('click',()=>{ S.unit=b.dataset.unit; store.set('unit',S.unit); S.pass=0; S.count=0; hush(); rebuild(); render(); }));
-document.querySelectorAll('#segTarget .sb').forEach(b=>b.addEventListener('click',()=>{ S.target=+b.dataset.target; store.set('target',S.target); S.pass=0; S.count=0; hush(); resetMarks(); CELLS.forEach((c,i)=>paintLabel(i)); render(); }));
+onTap($('againBtn'),()=>{ S.count=0; hush(); resetMarks(); CELLS.forEach((c,i)=>paintLabel(i)); render(); });
+document.querySelectorAll('#segUnit .sb').forEach(b=>onTap(b,()=>{ unlockAudio(); S.unit=b.dataset.unit; store.set('unit',S.unit); S.pass=0; S.count=0; hush(); rebuild(); render(); },TOPBAR));
+document.querySelectorAll('#segTarget .sb').forEach(b=>onTap(b,()=>{ S.target=+b.dataset.target; store.set('target',S.target); S.pass=0; S.count=0; hush(); resetMarks(); CELLS.forEach((c,i)=>paintLabel(i)); render(); },TOPBAR));
 
-/* ================= 소리: 끔 · 기기 · Google ================= */
-document.querySelectorAll('#segSound .sb').forEach(b=>b.addEventListener('click',e=>{
-  e.stopPropagation(); unlockAudio();
-  const v=b.dataset.snd;
-  if(v==='off'){ S.sound=false; store.set('snd','off'); hush(); closeVoicePop(); }
-  else{ S.sound=true; store.set('snd','on'); S.engine=v; store.set('engine',v); chooseEngine(); prefetchNames();
-    if(v==='cloud'){ renderVoicePop(); $('voicePop').classList.add('show'); } else closeVoicePop(); }
+/* ================= 소리: 끔 · 켬 (목소리는 하나로 고정) ================= */
+document.querySelectorAll('#segSound .sb').forEach(b=>onTap(b,()=>{
+  unlockAudio();
+  S.sound=b.dataset.snd==='on'; store.set('snd',S.sound?'on':'off');
+  if(S.sound) speak('십만'); else hush();
   render();
-}));
-function closeVoicePop(){ $('voicePop').classList.remove('show'); }
-function renderVoicePop(){
-  const p=$('voicePop');
-  p.innerHTML=`<div class="row">${[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>`<button type="button" class="tb${S.timbre===k?' on':''}" data-tb="${k}">${l}</button>`).join('')}<button type="button" class="tb" data-test="1">들어 보기</button></div>`+
-    `<div class="row"><input class="key" id="voiceKey" type="password" autocomplete="off" placeholder="Cloud 키를 넣어 주세요" value="${esc(S.cloudKey)}" aria-label="Google Cloud 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button></div>`+
-    `<div class="row" style="justify-content:space-between"><label><input type="checkbox" id="voiceSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label></div>`+
-    `<div class="row" style="justify-content:space-between"><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키가 있으면: 키 목록</a><a href="https://shim-sung-hyun.github.io/web_app/006/cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a></div>`+
-    (S.voiceNote?`<div class="note">${esc(S.voiceNote)}</div>`:'');
-  const k=$('voiceKey'), save=()=>store.set('cloudKey',KeyRelay.share('cloud',S.saveCloud&&S.cloudKey?S.cloudKey:null));
-  k.oninput=()=>{ S.cloudKey=k.value.trim(); save(); chooseEngine(); };
-  $('voiceSave').onchange=e=>{ S.saveCloud=e.target.checked; save(); };
-}
-$('voicePop').addEventListener('click',e=>{
-  e.stopPropagation();
-  const t=e.target.closest('button'); if(!t) return; unlockAudio();
-  if(t.dataset.tb){ S.timbre=t.dataset.tb; store.set('timbre',S.timbre); chooseEngine(); prefetchNames(); renderVoicePop(); }
-  if(t.dataset.kr){ KeyRelay.receive({want:['cloud'],onKeys:x=>{ S.cloudKey=x.cloud; S.saveCloud=true; store.set('cloudKey',KeyRelay.share('cloud',x.cloud)); chooseEngine(); prefetchNames(); S.voiceNote=''; renderVoicePop(); $('voicePop').classList.add('show'); }}); return; }
-  if(t.dataset.test){ if(!S.cloudKey){ spotlight('#voiceKey','Cloud 키를 넣어 주세요. 키가 없으면 "기기"를 고르세요.'); } else { voiceNote(''); chooseEngine(); speak('십만'); renderVoicePop(); } }
-});
-document.addEventListener('click',e=>{ if(!e.target.closest('#segSound')) closeVoicePop(); });
+},TOPBAR));
+onTap($('helpBtn'),()=>startTour(),TOPBAR);
 
 /* ================= 학생 기록 =================
    학생 명단은 같은 사이트의 다른 앱과 함께 씀(webapp.students).
@@ -825,29 +582,30 @@ $('wipeBtn').addEventListener('click',()=>{
 });
 
 /* ================= 관리 버튼 (한 번 누르면 열고 닫음): 학생 기록만 ================= */
-$('adminBtn').addEventListener('click',e=>{ e.stopPropagation(); unlockAudio(); setAdmin(!S.admin); });
+onTap($('adminBtn'),e=>{ e.stopPropagation&&e.stopPropagation(); unlockAudio(); setAdmin(!S.admin); });
 function setAdmin(on){
   S.admin=on; document.body.classList.toggle('admin',on);
   $('adminBtn').setAttribute('aria-label',on?'관리 닫기':'관리');
   $('abLabel').textContent=on?'심':'charum';
-  if(on){ loadRec(); renderDrawer(); leaveFull(); closeVoicePop(); }
+  if(on){ loadRec(); renderDrawer(); leaveFull(); }
   else{ $('newName').blur(); goFull(); }
 }
 
 /* ================= 사용법: 말풍선 둘러보기 ================= */
 const STEPS=[
   {el:'#stage', t:'한 칸씩 늘리기', x:'화면을 누를 때마다 오른쪽 "일"부터 한 칸씩 왼쪽으로 늘어나고, 그 자리 이름을 읽어 줘요. 스페이스바도 돼요.', prep:()=>{ while(S.count<6) advance(); hush(); }},
-  {el:'.nm.suffix', t:'만 · 억 · 조', x:'"만"은 한 칸 아래로 내려와 붙어요. 그다음 십·백·천이 붙을 때 "만"이 한 번 깜빡여 십만·백만·천만을 알려 줘요.', need:()=>S.unit!=='천'},
+  {el:'.nm.suffix', t:'만 · 억 · 조', x:'"만"은 한 칸 아래로 내려와 붙어요. 그다음 십·백·천이 붙을 때 "만" 아래에 옅은 줄이 한 번 나타나, 십만·백만·천만이라고 읽는 것을 알려 줘요.', need:()=>S.unit!=='천'},
   {el:'.col.shown .nm .tx', t:'이름 가리기', x:'자리 이름을 누르면 흐린 점(·)으로 가려져요. 다시 누르면 보여요. 외웠는지 확인할 때 써요.'},
   {el:'#segUnit', t:'단위', x:'어디까지 셀지 골라요. 천 → 만 → 억 → 조.'},
-  {el:'#passBtn', t:'통과', x:'학생이 끝까지 읽으면 눌러요. 점이 하나 채워지고 처음부터 다시 시작해요. 가린 이름은 그대로 남아요.'},
+  {el:'#passBtn', t:'통과', x:'학생이 끝까지 읽으면 눌러요. 맨 위 막대가 한 칸 채워지고 처음부터 다시 시작해요. 가린 이름은 그대로 남아요.'},
+  {el:'#prog', t:'오늘 한 만큼', x:'통과할 때마다 한 칸씩 채워져요. 진한 칸이 지금 하는 차례예요.'},
   {el:'#againBtn', t:'다시', x:'처음부터 다시 해요. 가린 이름도 모두 다시 보여요.'},
   {el:'#segTarget', t:'목표', x:'오늘 몇 번 통과할지 정해요.'},
-  {el:'#segSound', t:'소리', x:'자리 이름을 읽어 줄지 정해요. Google은 Cloud 키가 필요해요.'},
+  {el:'#segSound', t:'소리', x:'자리 이름을 읽어 줄지 정해요. 키 없이 쓰는 Google 밝은 목소리로 읽어요. 소리 크기는 기기에서 맞춰요.'},
   {el:'#adminBtn', t:'학생 기록', x:'학생을 넣고 고르면 "통과"할 때마다 기록돼요. 기록 중에는 왼쪽 위에 빨간 점이 보여요. 가운데를 누르면 바로 수업으로 돌아와요.'}
 ];
 const TOUR={on:false,i:0};
-function startTour(){ hush(); if(S.admin) setAdmin(false); closeVoicePop(); leaveFull(); TOUR.on=true; TOUR.i=0; $('tour').classList.add('show'); showStep(); }
+function startTour(){ hush(); if(S.admin) setAdmin(false); leaveFull(); TOUR.on=true; TOUR.i=0; $('tour').classList.add('show'); showStep(); }
 function realSteps(){ return STEPS.filter(s=>!s.need||s.need()); }
 function showStep(){
   const s=STEPS[TOUR.i]; if(!s) return endTour();
@@ -875,9 +633,8 @@ function placeTour(){
 function endTour(){ TOUR.on=false; $('tour').classList.remove('show'); }
 $('tourNext').addEventListener('click',()=>{ TOUR.i++; showStep(); });
 $('tourEnd').addEventListener('click',endTour);
-$('helpBtn').addEventListener('click',startTour);
 
-chooseEngine(); rebuild(); render(); updateRec();
+rebuild(); render(); updateRec(); topFade();
 /* ================= 빠뜨린 곳 알려 주기 =================
    필요한 것을 안 하고 넘어가려 할 때, 그곳을 빨간 테두리로 비추고 말풍선으로 할 일을 알려 줌.
    비춘 곳은 바로 누를 수 있고, 아무 데나 누르면 사라짐 */

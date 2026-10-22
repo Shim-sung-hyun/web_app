@@ -1,30 +1,23 @@
-006 · 자리 세기 (숫자 익히기 전 학습: 자리 이름 순서 외우기, 숫자 없음)
+006 · 자리 세기 (차름 자리) — 숫자 익히기(005) 전 학습: 자리 이름 순서 외우기, 숫자 없음
 
-[GitHub에 올리기]  web_app 저장소 → Add file → Upload files
-  → 이 006 폴더를 통째로 끌어다 놓기 → Commit changes
-
-  앱 주소:   https://shim-sung-hyun.github.io/web_app/006/place-count.html
-  그림 주소: https://shim-sung-hyun.github.io/web_app/006/place-count01.jpg (02~05 같은 방식)
-
-[게시판 글]  차름 갤러리 · webapp 게시판
-  - 웹앱주소(app_url): 위 앱 주소
-  - 본문: place-count_manual.html 내용을 '소스' 모드에 붙여 넣기 (그림은 GitHub에서 불러옴)
-  - 썸네일: place-count01.jpg 한 장만 첨부 (갤러리 카드용)
+앱 주소(학생·선생님): https://www.charum.org/study/006/place-count.html
+GitHub 주소:          https://shim-sung-hyun.github.io/web_app/006/place-count.html
+게시판 글:            https://www.charum.org/webapp/59200
 
 파일
-  place-count.html          웹앱
-  place-count01~05.jpg      화면 그림 (만 단위 진행, 조 단위 끝까지, 이름 가리기와 기록 중, 사용법 말풍선, 학생 기록)
-  cloud-key.html            Cloud 키 넣는 방법 안내 페이지 (위쪽 소리 → Google에서 연결)
-                            주소: https://shim-sung-hyun.github.io/web_app/006/cloud-key.html
-  place-count_manual.html   게시판 본문용 설명서
+  place-count.html          웹앱 (교사 전용, 관리 버튼 한 번)
+  place-count01~05.jpg      화면 그림 1366×768 (01 만 단위 진행, 02 조 단위 끝까지, 03 이름 가리기·기록 중, 04 사용법 말풍선, 05 학생 기록)
+  place-count-promo.jpg     홍보 그림·게시판 썸네일
+  place-count_manual.html   게시판 본문 (소스 모드로 붙여 넣기)
+  place-count_guide.html    자세한 설명
+  server-loader.html        내 도메인 불러오기 파일 (서버 study/006/에 place-count.html 이름으로 한 번만)
+  voice-maker.html          (일회용, 제작자용) 소리 모음에 없는 말 5개(억·조·십조·백조·천조) 만들기 → zip을 Claude에게 → 소리 모음에 넣은 뒤 지움
 
-휴대폰으로 키 받기
-  키 칸 옆 "📱 휴대폰으로 받기" 단추는 중계 서버 https://charum.org/key-relay.php 를 씁니다.
-  중계 서버와 보내기 페이지는 key-relay.zip을 보세요.
+목소리 (2026-10-23)
+  차름 소리 모음 media/voice/leda-0.92/ (Leda 0.92, 001·003·005와 함께)에서 읽음. 키 없음.
+  필요한 말 16개: 일 십 백 천 만 십만 백만 천만 억 십억 백억 천억 조 십조 백조 천조
+  단위를 고를 때 그 단위의 말을 모두 미리 받고, 하나라도 없으면 그 단위 수업 전체를 기기 목소리로 + 아래 한 줄 알림.
+  (voice-maker로 5개를 넣기 전까지 억·조 단위는 기기 목소리)
 
-[내 도메인에서 열기] (2026-10-21)
-- 주소: https://www.charum.org/study/006/place-count.html (게시판 app_url도 이 주소로)
-- 서버 study/006/ 폴더에는 server-loader.html(1KB)을 place-count.html 이름으로 한 번만 올린다. 열릴 때마다 GitHub의 최신 place-count.html을 받아 그 주소에서 펼친다 → 앱을 고쳐도 GitHub에만 올리면 된다.
-- 앱이 읽는 자료(목소리·예시 사진·cloud-key.html 등)는 GitHub 절대 주소로 읽는다. 상대 주소를 새로 쓰지 말 것.
-- 기록·키는 그 기기 브라우저에 주소(도메인)별로 저장된다. 서버에는 아무것도 저장되지 않는다.
-- 휴대폰으로 키 받기(key-relay.php)·사진 보내기·AI 중계는 받는 주소 목록에 https://www.charum.org 가 있어야 한다.
+저장 칸: placeCount.unit · target · snd · log, 학생 명단 webapp.students (다른 앱과 함께)
+기록은 그 기기 브라우저에만. 서버에는 아무것도 저장하지 않음. 앱 안의 자료는 GitHub 절대 주소로.
