@@ -1323,7 +1323,8 @@ const DATA_HOME = 'https://shim-sung-hyun.github.io/web_app/007/';
 const DATA_LOCAL = /(^|\.)shim-sung-hyun\.github\.io$/.test(location.hostname) || (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /\/web_app\/007\//.test(location.pathname));
 const DBASE = DATA_LOCAL ? '' : DATA_HOME;
 const PBASE = DBASE + 'pics/';
-const VBASE = PBASE.replace(/pics\/$/, 'voice/leda/');
+/* 미리 만든 소리: 차름 소리 모음 media/voice/leda-0.90/ (007 묶음, 빠르기 0.90). 늘 GitHub 절대 주소 */
+const VBASE = 'https://shim-sung-hyun.github.io/web_app/media/voice/leda-0.90/';
 const GBASE = DBASE + 'game/';
 const Pics = {
   cache: new Map(), stored: new Map(),
@@ -1483,7 +1484,7 @@ const Speech = {
   key(t, v) { return 'g|' + (v || S.voice) + '|' + G_RATE + '|' + t + (oneSyl(t) ? '|s' : ''); },
   /* 쓰는 Google 목소리: 기본 목소리 모드는 늘 Leda(미리 만든 소리와 같은 목소리) */
   gVoice() { return S.engine === 'base' ? 'Leda' : S.voice; },
-  /* 미리 만든 소리: voice/leda/index.json 의 목록(낱말·문장의 SHA-1 앞 16자리) */
+  /* 미리 만든 소리: media/voice/leda-0.90/index.json 의 목록(낱말·문장의 SHA-1 앞 16자리) */
   pre: null,
   preReady() {
     if (!this.pre) this.pre = fetch(VBASE + 'index.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : { files: [] }).then(j => new Set(j.files || [])).catch(() => new Set());
