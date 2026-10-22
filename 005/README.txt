@@ -9,7 +9,7 @@
 [게시판 글]  차름 갤러리 · webapp 게시판
   - 웹앱주소(app_url): 위 앱 주소
   - 본문: place-value_manual.html 내용을 '소스' 모드에 붙여 넣기 (그림은 GitHub에서 불러옴)
-  - 썸네일: place-value-promo.jpg 한 장만 첨부 (갤러리 카드용, 따로 바꿔야 함)
+  - 썸네일: 첨부 파일이 없으면 본문 첫 그림(홍보 그림)이 저절로 썸네일. 옛 그림이 남으면 place-value-promo.jpg를 첨부해 다시 등록
 
 파일
   place-value.html          웹앱
