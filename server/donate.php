@@ -1,9 +1,10 @@
 <?php
 /* =====================================================================
-   차름 사진 기증함 (donate.php) — 2026-10-22 판
+   차름 사진 기증함 (donate.php) — 2026-10-23 판
    선생님이 사진을 기증하면 여기 대기함에 쌓이고,
    제작자가 확인 화면(media/photos/review.html)에서 보고 골라 차름 사진 모음(media/photos)에 올린다.
-   - 어느 앱에서든 보냄: 001 "내 사진" 기증(도형 분석 함께), 휴대폰 "폰에서 받기" 기증(사진만).
+   - 어느 앱에서든 보냄: 001 "내 사진" 기증(도형 분석 함께), 휴대폰 "폰에서 받기" 기증(사진만),
+     제작자 "사진 모으기"(media/photos/collect.html, app 000 — 이름·장소·태그·추천 앱을 meta로).
    - 앱·휴대폰이 보내기 전에 Gemini로 사람·얼굴·이름·번호를 살펴 막는다(서버는 사진 속을 판단하지 못함).
      키가 없어 살피지 못한 사진은 check=none 으로 와서 확인 화면에 "검사 안 함"이 붙는다(제작자가 더 꼼꼼히).
    - 서버는 모양만 검사: 진짜 JPEG인지, 크기, 동의했는지, 하루 횟수, 전체 개수.
@@ -17,6 +18,7 @@ $ALLOW_ORIGINS = ['https://shim-sung-hyun.github.io', 'https://www.charum.org', 
 $MAX_IMG       = 3 * 1024 * 1024;   // 사진·그림 하나의 base64 최대 길이(약 2MB)
 $MAX_BODY      = 7 * 1024 * 1024;
 $PER_IP_DAY    = 20;                // 한 곳(IP)에서 하루 기증 최대
+$PER_IP_DAY_COLLECT = 60;           // 제작자 "사진 모으기"(app 000)는 하루 최대
 $MAX_PENDING   = 300;               // 대기함 최대 개수
 
 header('Content-Type: application/json; charset=utf-8');
@@ -39,7 +41,7 @@ if (!is_dir($DIR)) {
   @file_put_contents($DIR . '/index.html', '');
 }
 /* 주소창에서 열면 점검: token_set 이 true 여야 확인 화면이 열림 */
-if ($_SERVER['REQUEST_METHOD'] === 'GET') out(['ok' => true, 'name' => 'charum donate', 'version' => '2026-10-22', 'pending' => count(glob($DIR . '/d_*.json') ?: []), 'token_set' => strlen($REVIEW_TOKEN) >= 20, 'data_dir' => is_writable($DIR) ? 'ok' : 'cannot write']);
+if ($_SERVER['REQUEST_METHOD'] === 'GET') out(['ok' => true, 'name' => 'charum donate', 'version' => '2026-10-23', 'pending' => count(glob($DIR . '/d_*.json') ?: []), 'token_set' => strlen($REVIEW_TOKEN) >= 20, 'data_dir' => is_writable($DIR) ? 'ok' : 'cannot write']);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') out(['error' => 'method']);
 if (!$origin || !in_array($origin, $ALLOW_ORIGINS, true)) out(['error' => 'origin']);
 
@@ -71,7 +73,7 @@ if ($a === 'give') {
   $ip = $_SERVER['REMOTE_ADDR'] ?? '0'; $day = gmdate('Y-m-d', time() + 9 * 3600);
   $rf = $DIR . '/r_' . substr(hash('sha256', $ip . '|' . $day . '|charum'), 0, 24);
   $n = is_file($rf) ? (int)@file_get_contents($rf) : 0;
-  if ($n >= $PER_IP_DAY) out(['error' => 'busy']);
+  if ($n >= ($app === '000' ? $PER_IP_DAY_COLLECT : $PER_IP_DAY)) out(['error' => 'busy']);
   if (!isJpeg($in['img'] ?? '', $MAX_IMG)) out(['error' => 'img']);
   $art = $in['art'] ?? '';
   if ($art !== '' && !isJpeg($art, $MAX_IMG)) $art = '';
@@ -89,8 +91,14 @@ if ($a === 'give') {
   }
   if ($app === '001' && !count($okShapes) && !isset($in['agree'])) out(['error' => 'shapes']);   /* 예전 001 기증 창은 도형이 꼭 있음 */
   $title = clean($in['title'] ?? '', 40);
+  /* 사진 모으기의 분류(있으면): 장소·태그·추천 앱·메모 */
+  $meta = null;
+  if (is_array($in['meta'] ?? null)) { $m = $in['meta']; $tags = [];
+    foreach (array_slice(is_array($m['tags'] ?? null) ? $m['tags'] : [], 0, 6) as $t) { $t = clean($t, 12); if ($t !== '') $tags[] = $t; }
+    $meta = ['place' => clean($m['place'] ?? '', 12), 'tags' => $tags,
+      'suggest' => ['shape' => !empty($m['suggest']['shape']), 'puzzle' => !empty($m['suggest']['puzzle'])], 'note' => clean($m['note'] ?? '', 80)]; }
   $id = gmdate('ymdHis') . bin2hex(random_bytes(4));
-  $d = ['id' => $id, 't' => time(), 'app' => $app, 'check' => $check, 'title' => $title, 'shapes' => $okShapes, 'img' => $in['img'], 'art' => $art];
+  $d = ['id' => $id, 't' => time(), 'app' => $app, 'check' => $check, 'title' => $title, 'shapes' => $okShapes, 'img' => $in['img'], 'art' => $art, 'meta' => $meta];
   if (@file_put_contents($DIR . '/d_' . $id . '.json', json_encode($d, JSON_UNESCAPED_UNICODE), LOCK_EX) === false) out(['error' => 'storage']);
   @file_put_contents($rf, (string)($n + 1), LOCK_EX);
   foreach (glob($DIR . '/r_*') ?: [] as $f) { if (@filemtime($f) < time() - 2 * 86400) @unlink($f); }
@@ -103,7 +111,7 @@ if ($a === 'list') {
   $list = [];
   foreach (glob($DIR . '/d_*.json') ?: [] as $f) { $d = json_decode((string)@file_get_contents($f), true); if (!$d) continue;
     $list[] = ['id' => $d['id'], 't' => $d['t'], 'title' => $d['title'], 'n' => count($d['shapes'] ?? []), 'art' => ($d['art'] ?? '') !== '',
-      'app' => $d['app'] ?? '001', 'check' => $d['check'] ?? 'gemini']; }
+      'app' => $d['app'] ?? '001', 'check' => $d['check'] ?? 'gemini', 'meta' => $d['meta'] ?? null]; }
   usort($list, function ($x, $y) { return $x['t'] <=> $y['t']; });
   out(['list' => $list]);
 }

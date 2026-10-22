@@ -39,7 +39,7 @@ button:disabled{opacity:.5}
 <body>
 <main>
 <h1>기증 사진 확인</h1>
-<p class="lead">선생님들이 기증한 사진을 제작자가 보고 고르는 화면이에요. 어느 앱에서 보냈든 여기 한곳에 모여요. 고른 사진은 zip으로 받아 Claude에게 보내면 <b>차름 사진 모음</b>(media/photos)에 들어가요. 수업하는 선생님은 쓰지 않아요.</p>
+<p class="lead">선생님들이 기증한 사진을 제작자가 보고 고르는 화면이에요. 어느 앱에서 보냈든 여기 한곳에 모여요. 고른 사진은 zip으로 받아 Claude에게 보내면 <b>차름 사진 모음</b>(media/photos)에 들어가요. 수업하는 선생님은 쓰지 않아요. 제작자가 휴대폰으로 사진을 모을 때는 <a href="collect.html">사진 모으기</a>를 써요.</p>
 <div class="card">
   <div class="row"><input class="f" id="tok" type="password" autocomplete="off" placeholder="donate.php 맨 위에 넣은 확인 글자"><button class="pri" id="load" type="button">불러오기</button></div>
   <p class="note">사람·얼굴·이름·번호·차 번호판·학교 이름이 보이면 <b>지우기</b>. <span class="tag none">검사 안 함</span>이 붙은 사진은 앱 검사 없이 온 것이니 더 꼼꼼히 봐 주세요. 도형 표시(빨간 선)가 엉뚱한 것은 sample-maker에서 고칠 수 있어요. 받은 뒤에는 서버에서 지우기를 눌러 대기함을 비워 주세요.</p>
@@ -65,7 +65,7 @@ $('load').onclick=async()=>{ ls.set('donateReview.tok',$('tok').value.trim()); s
   try{ const {list}=await call({a:'list'}); if(!list.length){ say('대기함이 비어 있어요.','ok'); count(); return; }
     for(const m of list){ const d=await call({a:'get',id:m.id}); ITEMS[d.id]=d;
       const el=document.createElement('div'); el.className='it'; el.innerHTML=`<div class="pair"><div class="pv"><img src="data:image/jpeg;base64,${d.img}" alt="">${overlay(d)}</div>${d.art?`<div class="pv"><img src="data:image/jpeg;base64,${d.art}" alt=""></div>`:'<div class="ph">그림 없음</div>'}</div>
-        <div class="bar"><span><b>${esc(d.title)}</b><br><small><span class="tag">${esc(d.app||'001')}</span>${d.check==='none'?'<span class="tag none">검사 안 함</span>':''}${new Date(d.t*1000).toLocaleString('ko-KR')}${(d.shapes||[]).length?` · 도형 ${d.shapes.length}개 · ${esc([...new Set(d.shapes.map(s=>s.obj))].join(', '))}`:''}</small></span>
+        <div class="bar"><span><b>${esc(d.title)}</b><br><small><span class="tag">${d.app==='000'?'모으기':esc(d.app||'001')}</span>${d.meta&&d.meta.place?`<span class="tag">${esc(d.meta.place)}</span>`:''}${d.meta&&d.meta.suggest&&d.meta.suggest.shape?'<span class="tag">도형 찾기</span>':''}${d.meta&&d.meta.suggest&&d.meta.suggest.puzzle?'<span class="tag">그림 조각</span>':''}${d.check==='none'?'<span class="tag none">검사 안 함</span>':''}${d.meta&&d.meta.tags&&d.meta.tags.length?esc(d.meta.tags.join(' · '))+' · ':''}${new Date(d.t*1000).toLocaleString('ko-KR')}${d.meta&&d.meta.note?'<br>'+esc(d.meta.note):''}${(d.shapes||[]).length?` · 도형 ${d.shapes.length}개 · ${esc([...new Set(d.shapes.map(s=>s.obj))].join(', '))}`:''}</small></span>
         <span class="row"><label><input type="checkbox" data-a="sel"> 고르기</label><button type="button" data-a="del">지우기</button></span></div>`;
       el.querySelector('[data-a=sel]').onchange=e=>{ e.target.checked?SEL.add(d.id):SEL.delete(d.id); el.classList.toggle('sel',e.target.checked); count(); };
       el.querySelector('[data-a=del]').onclick=async()=>{ await call({a:'del',id:d.id}); delete ITEMS[d.id]; SEL.delete(d.id); el.remove(); count(); };
@@ -74,14 +74,17 @@ $('load').onclick=async()=>{ ls.set('donateReview.tok',$('tok').value.trim()); s
   }catch(e){ say(e.message==='token'?'확인 글자가 맞지 않아요(donate.php 맨 위 $REVIEW_TOKEN).':'불러오지 못했어요: '+e.message,'err'); } };
 $('zip').onclick=async()=>{ if(typeof JSZip==='undefined'){ say('zip 도구를 불러오지 못했어요. 새로 고침해 주세요.','err'); return; }
   const z=new JSZip(), meta=[];
-  const day=new Date().toISOString().slice(0,10);
+  const day=new Date().toLocaleDateString('sv-SE');
   for(const id of SEL){ const d=ITEMS[id], sid='d'+id, files={photo:`${sid}/photo.jpg`};
     z.file(files.photo,d.img,{base64:true}); if(d.art){ files.art=`${sid}/art.jpg`; z.file(files.art,d.art,{base64:true}); }
     /* 차름 사진 모음(media/photos/photos.json) 한 줄 꼴 그대로. 도형 분석은 sample-maker에서 확인한 뒤 ok=true */
-    meta.push({id:sid,title:d.title,source:'donated',added:day,privacy:'',check:d.check||'gemini',from:d.app||'001',tags:[],files,
-      uses:{shape:{ok:false,shapes:d.shapes||[]},puzzle:false}}); }
+    const mt=d.meta||{}, sg=mt.suggest||{};
+    /* 모으기(000)는 제작자 사진. tags = 장소 + 태그. suggest = Gemini가 권한 앱(도형 찾기에 권하면 uses.shape를 만들어 sample-maker에 뜨게) */
+    meta.push({id:sid,title:d.title,source:d.app==='000'?'maker':'donated',added:day,privacy:'',check:d.check||'gemini',from:d.app||'001',
+      tags:[mt.place,...(mt.tags||[])].filter(Boolean),files,suggest:{shape:!!sg.shape,puzzle:!!sg.puzzle},note:mt.note||'',
+      uses:{...((d.shapes&&d.shapes.length)||sg.shape||d.app==='001'?{shape:{ok:false,shapes:d.shapes||[]}}:{}),puzzle:false}}); }
   z.file('donations.json',JSON.stringify(meta,null,1));
-  const b=await z.generateAsync({type:'blob'}); const l=document.createElement('a'); l.href=URL.createObjectURL(b); l.download='donations-'+new Date().toISOString().slice(0,10)+'.zip'; l.click();
+  const b=await z.generateAsync({type:'blob'}); const l=document.createElement('a'); l.href=URL.createObjectURL(b); l.download='donations-'+new Date().toLocaleDateString('sv-SE')+'.zip'; l.click();
   say(SEL.size+'장을 받았어요. Claude에게 보내 주세요. 그다음 "고른 것 서버에서 지우기".','ok'); };
 $('delSel').onclick=async()=>{ for(const id of [...SEL]){ await call({a:'del',id}); delete ITEMS[id]; SEL.delete(id); } $('load').onclick(); };
 </script>
