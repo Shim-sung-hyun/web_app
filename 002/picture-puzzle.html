@@ -730,14 +730,18 @@ function makeExample(){
   [[1200,520,150],[1100,600,110],[1300,600,110],[1200,420,110]].forEach(a=>circ(a[0],a[1],a[2],'#3E9E4F'));
   return c.toDataURL('image/jpeg',0.92);
 }
-/* 일상 그림: "일상 속 도형 찾기"(001)의 예시 사진을 옮긴 끝 그림. 사람·글자 없는 깔끔한 그림이라 퍼즐에 알맞음 */
+/* 일상 그림: 차름 사진 모음(media/photos/photos.json)에서 퍼즐로 괜찮은 것(uses.puzzle)의 끝 그림. 사람·글자 없는 깔끔한 그림이라 퍼즐에 알맞음.
+   id는 옛 001 예시와 같아 고른 그림·기록이 그대로 이어짐. 목록을 못 받으면 옛 001 목록으로 */
 let ARTS=null;
 async function loadArts(){
   if(ARTS) return ARTS;
   try{
-    const r=await fetch(GH+'001/samples/samples.json',{cache:'no-cache'}); const j=await r.json();
-    ARTS=j.filter(x=>x.ok&&x.art).map(x=>({id:x.id,title:x.title,url:GH+'001/'+x.art}));
-  }catch(e){ ARTS=[]; }
+    const r=await fetch(GH+'media/photos/photos.json',{cache:'no-cache'}); const j=await r.json(); const base=j.base||GH+'media/photos/';
+    ARTS=j.photos.filter(x=>x.uses&&x.uses.puzzle&&x.files&&x.files.art).map(x=>({id:x.id,title:x.title,url:base+x.files.art}));
+  }catch(e){
+    try{ const r=await fetch(GH+'001/samples/samples.json',{cache:'no-cache'}); const j=await r.json();
+      ARTS=j.filter(x=>x.ok&&x.art).map(x=>({id:x.id,title:x.title,url:GH+'001/'+x.art})); }catch(e2){ ARTS=[]; }
+  }
   return ARTS;
 }
 async function loadArt(id){ const a=(await loadArts()).find(x=>x.id===id); if(!a) throw new Error('no art'); return preparePhoto(a.url,a.title,'art',a.id); }
@@ -809,11 +813,11 @@ function phoneLoop(n,onAdd){
   }});
 }
 
-/* ================= 그림 고르기 창: 이 기기에 보관한 사진 + 일상 그림(001). 누르면 바로 넣고 빼기 ================= */
+/* ================= 그림 고르기 창: 이 기기에 보관한 사진 + 일상 그림(차름 사진 모음). 누르면 바로 넣고 빼기 ================= */
 async function openGallery(){
   const box=$('galBox');
   box.innerHTML=`<div class="ov-card"><div class="ov-head"><h2>그림 고르기</h2><span class="hint" style="margin:0" id="galCount"></span><button class="mini pri" type="button" id="galX">다 골랐어요</button></div>
-    <div class="ov-body"><div id="galMine"></div><h3 class="gh">일상 그림 <small>"일상 속 도형 찾기"의 사진을 옮긴 그림</small></h3><div class="gal" id="galList"><p class="note">그림을 불러오는 중이에요…</p></div></div></div>`;
+    <div class="ov-body"><div id="galMine"></div><h3 class="gh">일상 그림 <small>학교 안팎 사진을 옮긴 그림</small></h3><div class="gal" id="galList"><p class="note">그림을 불러오는 중이에요…</p></div></div></div>`;
   box.classList.add('on'); box.querySelector('#galX').onclick=()=>box.classList.remove('on');
   const count=()=>{ box.querySelector('#galCount').textContent=`오늘 할 그림 ${S.list.length} / ${MAXP} · 누르면 넣고, 다시 누르면 빼요`; };
   const toggle=(b,it)=>{ const k=itemKey(it); if(S.list.some(x=>itemKey(x)===k)){ removeFromList(k); b.classList.remove('on'); }
