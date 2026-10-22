@@ -1043,7 +1043,7 @@ const timbre=()=>['Leda','Aoede','Kore'].includes(S.timbre)?S.timbre:'Leda';
 /* 내장 목소리: 정해진 말(예시 사진 18장의 말 포함)은 미리 만든 Leda 소리를 GitHub에서(키 없음).
    내 사진은 물건 이름이 바뀌므로, 미리 만든 소리에 없는 말은 선생님 Google 음성 키로 같은 Leda 목소리를 만듦.
    키가 없으면 한 수업이 한 목소리가 되도록 그 수업은 기기 목소리로 */
-const VBASE='https://shim-sung-hyun.github.io/web_app/001/voice/leda/';
+const VBASE='https://shim-sung-hyun.github.io/web_app/media/voice/leda-0.92/';   /* 차름 소리 모음(001·003·005 함께) */
 let VSET=null;
 const vset=()=>VSET||(VSET=fetch(VBASE+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()));
 async function sha16(t){
@@ -1922,12 +1922,21 @@ function backBtnHTML(){
   if(S.endSingle&&S.results.filter(Boolean).length>1) return '<button class="btn end-back" id="backBtn" type="button">다른 그림</button>';
   return '';
 }
-/* 예시 사진 묶음: 제작자가 미리 분석하고 눈으로 확인한 사진(samples/samples.json, ok=true만). 키·기다림 없이 바로 */
+/* 예시 사진 묶음: 차름 사진 모음(media/photos/photos.json)에서 제작자가 도형 분석을 확인한 것(uses.shape.ok)만. 키·기다림 없이 바로.
+   id는 옛 001/samples와 같아 고른 사진·저장 칸이 그대로 이어짐. 목록을 못 받으면 옛 001/samples/samples.json으로 */
 let SAMPLES=null;
+const PHOTOS='https://shim-sung-hyun.github.io/web_app/media/photos/';
 async function loadSamples(){
   if(SAMPLES) return SAMPLES;
-  try{ const r=await fetch(gh('samples/samples.json'),{cache:'no-cache'}); const j=await r.json();
-    SAMPLES=j.filter(x=>x.ok&&Array.isArray(x.shapes)&&x.shapes.length).map(x=>({...x,file:gh(x.file),art:typeof x.art==='string'?gh(x.art):null,line:typeof x.line==='string'?gh(x.line):null})); }catch(e){ SAMPLES=[]; }
+  const good=x=>x.ok&&Array.isArray(x.shapes)&&x.shapes.length;
+  try{ const r=await fetch(PHOTOS+'photos.json',{cache:'no-cache'}); const j=await r.json(); const base=j.base||PHOTOS;
+    SAMPLES=j.photos.map(p=>{ const u=(p.uses&&p.uses.shape)||{}, f=p.files||{};
+      return {id:p.id,title:p.title,ok:!!u.ok,shapes:u.shapes||[],file:f.photo?base+f.photo:null,art:f.art?base+f.art:null,line:f.line?base+f.line:null}; })
+      .filter(x=>x.file&&good(x)); }
+  catch(e){
+    try{ const r=await fetch(gh('samples/samples.json'),{cache:'no-cache'}); const j=await r.json();
+      SAMPLES=j.filter(good).map(x=>({...x,file:gh(x.file),art:typeof x.art==='string'?gh(x.art):null,line:typeof x.line==='string'?gh(x.line):null})); }catch(e2){ SAMPLES=[]; }
+  }
   return SAMPLES;
 }
 async function openGallery(){

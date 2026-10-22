@@ -28,3 +28,8 @@ GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-find
 
 예시 사진을 늘릴 때
   sample-maker → samples.json → 새 말 목소리(만들기 화면, 쓰고 지움) → 끝 그림(Gemini) → 색칠 도안(line-maker 또는 Gemini, 같은 비율)
+
+■ 사진·소리 자리 (2026-10-22)
+  예시 사진·끝 그림·색칠 도안 → 차름 사진 모음 media/photos/ (photos.json 의 uses.shape)
+  내장 목소리 → 차름 소리 모음 media/voice/leda-0.92/
+  001/samples/ · 001/voice/leda/ 는 확인이 끝나면 지움(그때까지 대비로만)
