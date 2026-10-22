@@ -423,30 +423,6 @@
   "line": "samples/wall-clock-line.png"
  },
  {
-  "id": "paper-cup",
-  "title": "종이컵",
-  "file": "samples/paper-cup.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
- },
- {
-  "id": "glasses",
-  "title": "안경",
-  "file": "samples/glasses.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
- },
- {
-  "id": "watering-can",
-  "title": "물뿌리개",
-  "file": "samples/watering-can.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
- },
- {
   "id": "school-bus",
   "title": "통학 버스",
   "file": "samples/school-bus.jpg",
@@ -808,22 +784,6 @@
    }
   ],
   "line": "samples/shoe-rack-line.png"
- },
- {
-  "id": "car-wheel-2",
-  "title": "자동차 바퀴 2",
-  "file": "samples/car-wheel-2.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
- },
- {
-  "id": "watering-can-2",
-  "title": "물뿌리개 2",
-  "file": "samples/watering-can-2.jpg",
-  "ok": false,
-  "art": null,
-  "shapes": null
  },
  {
   "id": "bell",

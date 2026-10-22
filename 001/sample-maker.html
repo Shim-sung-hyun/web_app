@@ -43,6 +43,7 @@ button:disabled{opacity:.5;cursor:default}
 <body>
 <header>
   <h1>001 예시 사진 만들기</h1>
+  <input id="gkey" type="password" autocomplete="off" placeholder="Gemini 키" style="width:170px;padding:6px 8px;border:1px solid #C9D4D8;border-radius:8px">
   <button class="pri" id="bAna">이 사진 분석</button>
   <button id="bAll">분석 안 한 것 모두</button>
   <button id="bOk">✓ 확인함</button>
@@ -59,14 +60,24 @@ button:disabled{opacity:.5;cursor:default}
     </div>
     <div class="card"><h3>도형</h3><div id="shapes"></div></div>
     <div class="card"><h3>끝 그림 (고르기)</h3>
-      <div class="row"><button id="bArt">그림 만들기</button><button id="bArtOk" disabled>이 그림 쓰기 (내려받기)</button></div>
+      <div class="row"><button id="bArt">끝 그림은 art-maker에서</button><button id="bArtOk" disabled>이 그림 쓰기 (내려받기)</button></div>
       <img id="art" alt="끝 그림">
       <p class="hint">마음에 들 때만 "이 그림 쓰기". 내려받은 그림 파일도 결과와 함께 보내 주세요.</p>
     </div>
   </div>
 </div>
 <script>
-const RELAY='https://charum.org/gemini-relay.php', AI_URL='https://charum-ai.simdoly.workers.dev';
+/* 분석은 제작자의 Gemini 키로(이 기기에 저장된 webapp.geminiKey를 먼저 채움). 중계 서버(gemini-relay)·Worker는 쓰지 않음 */
+let GKEY=''; try{ GKEY=localStorage.getItem('webapp.geminiKey')||''; }catch(e){}
+let GMODEL='';
+async function gemModel(){
+  if(GMODEL) return GMODEL;
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':GKEY}}); if(!r.ok) throw new Error('키 확인 '+r.status);
+  const names=((await r.json()).models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace(/^models\//,''))
+    .filter(n=>/^gemini/.test(n)&&/flash/.test(n)&&!/(tts|image|audio|live|embedding|lite|thinking)/.test(n));
+  const v=n=>parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/)||[])[1]||0)-(/preview|exp/.test(n)?0.05:0);
+  names.sort((a,b)=>v(b)-v(a)); if(!names.length) throw new Error('쓸 수 있는 모델이 없어요'); return GMODEL=names[0];
+}
 const TYPES={circle:{l:'동그라미',corners:0},ellipse:{l:'타원',corners:0},triangle:{l:'세모',corners:3},quad:{l:'네모',corners:4}};
 const COLOR={circle:'#FF6F61',ellipse:'#9B6CF0',triangle:'#F2A93B',quad:'#2BA3DA'};
 const PROMPT = `You are helping a special-education teacher make a shape-recognition lesson for students with developmental disabilities.
@@ -120,7 +131,7 @@ function normShape(s){
   if(x1-x0<15||y1-y0<15) return null;
   let pts=Array.isArray(s.points)?s.points.filter(p=>Array.isArray(p)&&p.length===2).map(([y,x])=>[clamp(x),clamp(y)]):[];
   if(pts.length!==TYPES[t].corners||pts.length===0) pts=null;
-  return {type:t, obj:String(s.object||'').trim().slice(0,10)||'이것', box:{x0,y0,x1,y1}, pts, realRight:t==='quad'&&s.right_angles===true, ratio:(t==='quad'&&+s.real_ratio>0.15&&+s.real_ratio<7)?+s.real_ratio:0};
+  return {type:t, obj:String(s.object||'').trim().slice(0,10), box:{x0,y0,x1,y1}, pts, realRight:t==='quad'&&s.right_angles===true, ratio:(t==='quad'&&+s.real_ratio>0.15&&+s.real_ratio<7)?+s.real_ratio:0};
 }
 
 
@@ -208,23 +219,27 @@ function setType(s,t){
   if(t!=='quad'){ s.realRight=false; s.ratio=0; }
 }
 document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ const d=DATA[cur]; d.shapes=d.shapes||[];
-  const s={type:'circle',obj:'이것',box:{x0:400,y0:400,x1:600,y1:600},pts:null,realRight:false,ratio:0}; setType(s,b.dataset.add);
+  const s={type:'circle',obj:'',box:{x0:400,y0:400,x1:600,y1:600},pts:null,realRight:false,ratio:0}; setType(s,b.dataset.add);
   d.shapes.push(s); sel=d.shapes.length-1; d.ok=false; side(); draw(); saveLocal(); list(); });
-$('bOk').onclick=()=>{ const d=DATA[cur]; if(!d.shapes||!d.shapes.length){ say('도형이 없어요.','bad'); return; } d.ok=true; saveLocal(); list(); say('확인했어요.','ok'); if(cur<DATA.length-1) setTimeout(()=>pick(cur+1),400); };
+$('bOk').onclick=()=>{ const d=DATA[cur]; if(!d.shapes||!d.shapes.length){ say('도형이 없어요.','bad'); return; }
+  if(d.shapes.some(x=>!String(x.obj||'').trim()||x.obj==='이것')){ say('이름이 없는 도형이 있어요. 학생이 아는 물건 이름을 넣거나 빼 주세요.','bad'); return; } d.ok=true; saveLocal(); list(); say('확인했어요.','ok'); if(cur<DATA.length-1) setTimeout(()=>pick(cur+1),400); };
 /* ---- 분석(앱과 같은 지시·같은 정리) ---- */
 async function imgB64(src){ const im=new Image(); im.src=src; await im.decode(); const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0); return c.toDataURL('image/jpeg',0.86).split(',')[1]; }
 async function analyzeOne(i){
   const d=DATA[i]; const data=await imgB64(d.file);
   const body={contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data}},{text:PROMPT}]}],generationConfig:{responseMimeType:'application/json',responseSchema:SCHEMA,temperature:0.2}};
   /* 오래 기다려도 되는 확인 페이지라 ?long=1(서버가 170초까지), 504(시간 초과)·503(붐빔)이면 30초 쉬고 한 번 더 */
+  GKEY=($('gkey').value||GKEY).trim(); if(!/^AIza[\w-]{20,}$/.test(GKEY)) throw new Error('Gemini 키를 넣어 주세요');
+  const model=await gemModel();
   let r, j;
   for(let t=0;t<2;t++){
-    r=await fetch(RELAY+'?long=1',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
+    r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':GKEY},body:JSON.stringify(body),cache:'no-store'});
     j=await r.json().catch(()=>({}));
     if(!(r.status===504||r.status===503)||t===1) break;
     say(d.title+': Google이 늦게 답해서 30초 뒤 다시 해요…'); await new Promise(z=>setTimeout(z,30000));
   }
   if(!r.ok) throw new Error(r.status+' '+((j.error&&j.error.message)||''));
+  j.model=j.model||model;
   const text=((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join(''); const m=text.match(/\{[\s\S]*\}/);
   const raw=m?JSON.parse(m[0]).shapes||[]:[];
   d.shapes=raw.map(normShape).filter(Boolean); d.ok=false; d.model=j.model||''; saveLocal();
@@ -237,15 +252,7 @@ $('bAll').onclick=async()=>{ $('bAll').disabled=true;
     try{ await analyzeOne(i); }catch(e){ say(DATA[i].title+': '+e.message,'bad'); if(/429/.test(e.message)) break; } list(); if(i===cur){ side(); draw(); } }
   $('bAll').disabled=false; list(); };
 /* ---- 끝 그림 ---- */
-$('bArt').onclick=async()=>{ const d=DATA[cur]; $('bArt').disabled=true; say('그림 만드는 중…');
-  try{ const im=new Image(); im.src=d.file; await im.decode(); const k=Math.min(1,500/Math.max(im.naturalWidth,im.naturalHeight));
-    const c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-    const big=Math.min(1,1024/Math.max(im.naturalWidth,im.naturalHeight)), r16=v=>Math.max(256,Math.round(v/16)*16);
-    const r=await fetch(AI_URL+'/cartoon',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:c.toDataURL('image/jpeg',0.88).split(',')[1],prompt:cartoonPrompt(),width:r16(im.naturalWidth*big),height:r16(im.naturalHeight*big)})});
-    const j=await r.json(); if(!r.ok||!j.image) throw new Error(r.status+' '+((j.error&&j.error.message)||''));
-    const mime=j.image.startsWith('iVBOR')?'image/png':'image/jpeg'; artUrl=`data:${mime};base64,${j.image}`;
-    $('art').src=artUrl; $('art').style.display='block'; $('bArtOk').disabled=false; say('마음에 들면 "이 그림 쓰기".','ok');
-  }catch(e){ say('그림 실패: '+e.message,'bad'); } finally{ $('bArt').disabled=false; } };
+$('bArt').onclick=()=>window.open('art-maker.html','_blank');   /* 끝 그림은 art-maker(Gemini 그림)에서 */
 $('bArtOk').onclick=async()=>{ if(!artUrl) return; const d=DATA[cur];
   const im=new Image(); im.src=artUrl; await im.decode(); const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0);
   const a=document.createElement('a'); a.href=c.toDataURL('image/jpeg',0.88); a.download=d.id+'-art.jpg'; a.click(); d.art=true; saveLocal(); list(); };

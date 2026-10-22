@@ -348,6 +348,36 @@ body.setup{background-color:var(--bg)}
 .mine-act{display:flex;gap:4px;justify-content:center;margin-top:3px;align-items:center}
 .mine-act button{font:inherit;font-size:12px;padding:3px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--muted);cursor:pointer}
 .mine-act small{font-size:12px;color:var(--ok)}
+.seg.two{grid-template-columns:repeat(2,1fr)}
+.seg-b span small{display:block;font-weight:400;font-size:13px;opacity:.85;margin-top:2px}
+.pcount{margin-left:auto;font-size:14px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 10px}
+.plist{display:flex;flex-direction:column;gap:8px}
+.pi{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px}
+.pi.err{border-color:#c62828}
+.pi .pn{width:26px;height:26px;border-radius:6px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}
+.pi img{width:84px;height:62px;object-fit:cover;border-radius:7px;flex:none;background:#eee}
+.pi .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pi .pt b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pi .pt small{font-size:13px;color:var(--muted)} .pi .pt small.bad{color:#c62828;font-weight:700}
+.pa{display:flex;gap:4px;flex:none}
+.pa button{width:38px;height:38px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-size:18px;color:var(--ink);cursor:pointer}
+.pa button:disabled{opacity:.3;cursor:default}
+#prog{position:fixed;top:8px;left:0;right:0;margin:0 auto;width:fit-content;display:flex;gap:6px;z-index:30;pointer-events:none}
+#prog i{width:44px;height:8px;border-radius:4px;background:#E3DED3}
+#prog i.d{background:#9CCFC9} #prog i.c{background:#17766F}
+body.setup #prog, body.admin #prog{display:none}
+.choose-grid{flex:1;min-height:0;width:100%;display:flex;flex-wrap:wrap;gap:22px;align-content:center;justify-content:center;padding:10px 20px}
+.choose-pic{position:relative;width:min(30vw,300px);aspect-ratio:4/3;padding:0;border:3px solid var(--line);border-radius:18px;overflow:hidden;background:#fff;cursor:pointer;touch-action:none}
+.choose-pic img{width:100%;height:100%;object-fit:cover;display:block}
+.choose-pic.did{border-color:#9CCFC9}
+.choose-pic .tick{position:absolute;right:10px;top:8px;width:40px;height:40px;border-radius:50%;background:#17766F;color:#fff;font-style:normal;font-size:24px;display:grid;place-items:center}
+.gal-end{justify-content:center}
+.gal-row{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;align-items:center;max-width:96vw}
+.gal-pic{padding:0;border:3px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;cursor:pointer;touch-action:none;line-height:0}
+.gal-pic img{max-width:min(28vw,340px);max-height:calc((100vh - 260px)/1.4);display:block}
+.gal-hint{margin:0;font-family:var(--f-display);font-size:24px;color:var(--ink)}
+.end-back{font-family:var(--f-display);font-size:20px;font-weight:400}
+@media (max-width:620px){.choose-pic{width:44vw}.gal-pic img{max-width:42vw}.pi img{width:56px;height:44px}.pa button{width:32px;height:32px;font-size:16px}.pi .pt b{white-space:normal}}
 .plan.just{box-shadow:0 0 0 4px var(--accent-soft),0 0 0 6px var(--accent);transition:box-shadow .4s}
 details.card.more .opts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
 details.card.more .opt{padding:8px 10px;gap:8px;border-radius:10px}
@@ -904,10 +934,6 @@ const KO_COUNT = ['한','두','세','네','다섯','여섯','일곱','여덟','�
 const GH001='https://shim-sung-hyun.github.io/web_app/001/';
 const gh=u=>u&&!/^(https?:|blob:|data:)/.test(u)?GH001+u:u;
 const SAMPLE_URL = 'https://raw.githubusercontent.com/Shim-sung-hyun/charum/main/images/semple.jpeg';
-/* 차름 AI 중계(Cloudflare Worker): 선생님은 키 없이 목소리·사진 분석·끝 그림을 씀(지침 5절) */
-const AI_URL = 'https://charum-ai.simdoly.workers.dev';
-/* 사진 분석은 한국 서버에서(Worker는 Gemini가 막힌 지역에서 돌 때가 있어 'User location is not supported'가 남) */
-const GEMINI_RELAY = 'https://charum.org/gemini-relay.php';
 const NUM_WORD = ['하나','둘','셋','넷','다섯','여섯'];
 
 /* ================= 상태 ================= */
@@ -916,8 +942,11 @@ const S = {
   level:1, errorMode:'show', sound:true, color:'yellow', showSec:6, paint:true,
   admin:false, stage:null, view:'',
   img:null, shapes:[], types:[], analysis:null, demo:false, brushDone:false,
-  steps:[], li:0, tasks:[], ti:0, log:[], zoom:{}
+  steps:[], li:0, tasks:[], ti:0, log:[], zoom:{},
+  /* 오늘 할 사진(최대 5장) · 함께/혼자 */
+  mode:'teacher', list:[], idx:0, inList:false, doneKeys:new Set(), results:[], logAll:[], brushOnce:false, endSingle:false, listMine:false
 };
+const MAXP=5;
 const store = {
   get(k){try{return localStorage.getItem('shapeFinder.'+k)}catch(e){return null}},
   set(k,v){try{v==null?localStorage.removeItem('shapeFinder.'+k):localStorage.setItem('shapeFinder.'+k,v)}catch(e){}}
@@ -931,6 +960,7 @@ const store = {
   const c=store.get('color'); if(COLORS.some(x=>x.key===c)) S.color=c;
   const sec=+store.get('showSec'); if([4,6,8].includes(sec)) S.showSec=sec;
   S.paint = store.get('paint')!=='off';
+  S.mode = store.get('mode')==='solo'?'solo':'teacher';
   S.cartoonOn = store.get('cartoonOn')!=='off'; /* 끝 그림은 예시 사진에 미리 그려 둔 것만 */
   /* 목소리(2026-10-21): 내장(기본, 미리 만든 Google 목소리) · 기기 · 내 Google 음성 키. 예전 'engine' 값은 쓰지 않음 */
   const en=store.get('voice2'); if(['builtin','device','cloud'].includes(en)) S.engine=en;
@@ -1016,11 +1046,30 @@ const timbre=()=>['Leda','Aoede','Kore'].includes(S.timbre)?S.timbre:'Leda';
 const VBASE='https://shim-sung-hyun.github.io/web_app/001/voice/leda/';
 let VSET=null;
 const vset=()=>VSET||(VSET=fetch(VBASE+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()));
-async function sha16(t){ const d=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
+async function sha16(t){
+  const u=new TextEncoder().encode(t);
+  if(window.crypto&&crypto.subtle){ const d=await crypto.subtle.digest('SHA-1',u); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
+  return sha1js(u).slice(0,16);   /* http 주소에서는 crypto.subtle이 없어 직접 계산 */
+}
+function sha1js(m){
+  const l=m.length, n=((l+8>>6)+1)*16, w=new Uint32Array(n);
+  for(let i=0;i<l;i++) w[i>>2]|=m[i]<<(24-(i%4)*8);
+  w[l>>2]|=0x80<<(24-(l%4)*8); w[n-1]=l*8;
+  let h0=0x67452301,h1=0xEFCDAB89,h2=0x98BADCFE,h3=0x10325476,h4=0xC3D2E1F0; const W=new Uint32Array(80);
+  for(let i=0;i<n;i+=16){
+    for(let t=0;t<16;t++) W[t]=w[i+t];
+    for(let t=16;t<80;t++){ const x=W[t-3]^W[t-8]^W[t-14]^W[t-16]; W[t]=x<<1|x>>>31; }
+    let a=h0,b=h1,c=h2,d=h3,e=h4;
+    for(let t=0;t<80;t++){
+      const f=t<20?(b&c)|(~b&d):t<40?b^c^d:t<60?(b&c)|(b&d)|(c&d):b^c^d, k=t<20?0x5A827999:t<40?0x6ED9EBA1:t<60?0x8F1BBCDC:0xCA62C1D6;
+      const tmp=((a<<5|a>>>27)+f+e+k+W[t])>>>0; e=d; d=c; c=b<<30|b>>>2; b=a; a=tmp; }
+    h0=h0+a>>>0; h1=h1+b>>>0; h2=h2+c>>>0; h3=h3+d>>>0; h4=h4+e>>>0; }
+  return [h0,h1,h2,h3,h4].map(v=>v.toString(16).padStart(8,'0')).join('');
+}
 function engineReady(e){ return e==='builtin'||e==='device'||(e==='cloud'&&!!S.cloudKey); }
 function chooseEngine(){
   S.voiceNote='';
-  if(S.engine==='builtin' && S.img && !S.demo && !S.cloudKey){ S.engineNow='device'; S.voiceNote='내 사진은 Google 음성 키가 없어서 기기 목소리로 해요.'; return; }
+  if(S.engine==='builtin' && ((S.img && !S.demo)||S.listMine) && !S.cloudKey){ S.engineNow='device'; S.voiceNote='내 사진은 Google 음성 키가 없어서 기기 목소리로 해요.'; return; }
   S.engineNow = engineReady(S.engine)?S.engine:'device';
 }
 const voiceName=e=>e==='builtin'?'내장 목소리':e==='cloud'?'내 Google 음성':'기기 목소리';
@@ -1289,7 +1338,8 @@ function restartCurrentStage(){
   const st=S.stage, v=S.view;
   const go = st==='learn' ? ()=>{ S.li=0; showLearn(); }
            : st==='find'  ? ()=>{ S.ti=0; showFind(); }
-           : st==='end'   ? ((v==='color'||v==='art')?null:()=>showEnd())   /* 색칠·그림 중이면 칠한 것을 지우지 않고 이어서 */
+           : st==='end'   ? ((v==='color'||v==='art'||v==='gallery'||v==='mid')?null:()=>showEnd())   /* 색칠·그림·모아 보기 중이면 그대로 이어서 */
+           : v==='choose' ? ()=>showChooser()
            : v==='photo'  ? ()=>showPhoto()
            : v==='brush'  ? ()=>showBrush()
            : v==='reveal' ? ()=>showReveal()
@@ -1302,7 +1352,7 @@ function restartWithPanel(){
   const o=panelSnap; panelSnap=null;
   if(o && (o.engine!==S.engine||o.timbre!==S.timbre)){ stopVoice(); chooseEngine(); }
   adminOffFlags(); dropPause();
-  newSession(); showPhoto();
+  showSetup(); setTimeout(()=>{ const c=$('pickCard'); if(c) c.scrollIntoView({block:'center'}); },60);   /* 설정의 ② 사진 고르기로 */
 }
 /* 위 단계 메뉴: 설정을 반영하고 교사 모드를 닫은 뒤 그 단계로 */
 function leaveAdminQuiet(){
@@ -1320,7 +1370,7 @@ const COACH=[
   ['#ap-voice','목소리','내장은 미리 만든 Google 목소리예요(키 없이). 기기는 이 기기에 들어 있는 목소리, 내 Google 음성은 받아 둔 Google 음성 키로 만들어요. 한 수업은 한 목소리로 말해요.'],
   ['#ap-error','틀렸을 때','바로 정답: 틀리면 정답 자리를 바로 보여 줘요(무오류 학습). 한 번 더 기회: 한 번 더 해 보고, 또 틀리면 보여 줘요.'],
   ['#apGo','바꾼 설정으로 이어서','위쪽 일정표에서 고른 단계로 가서 이어 해요. 고른 것이 없으면 멈춘 단계의 처음부터 해요. 메뉴가 열려 있는 동안 일정표를 누르면 고르기만 돼요.'],
-  ['#apStart','새 사진으로 시작','바꾼 설정으로 사진 고르기부터 새로 시작해요.'],
+  ['#apStart','새 사진으로 시작','설정 화면의 "어떤 사진으로 할까요?"로 가서 사진을 새로 골라요.'],
   ['#adminBtn','관리 버튼','3초 누르면 교사 모드가 켜지고 수업이 멈춰요. 켜져 있을 때 한 번 누르면 바꾼 설정으로, 멈췄던 단계의 처음부터 다시 해요.']
 ];
 let coachEl=null;
@@ -1411,7 +1461,8 @@ function applyPick(){
 /* 교사 모드: 위 메뉴로 단계 이동 */
 function goStage(k){
   if('speechSynthesis' in window) speechSynthesis.cancel();
-  if(k==='photo'){ if(S.stage==='photo'||!S.shapes.length){ newSession(); showPhoto(); } else showReveal(); return; }
+  if(k==='photo'){ if(S.inList&&S.mode==='solo'){ showChooser(); return; } if(S.inList&&S.list.length){ if(S.shapes.length) showReveal(); else playItem(S.idx); return; }
+    if(S.stage==='photo'||!S.shapes.length){ newSession(); showPhoto(); } else showReveal(); return; }
   if(!S.shapes.length) return;
   if(k==='learn'){ S.li=0; showLearn(); }
   if(k==='find'){ S.ti=0; showFind(); }
@@ -1596,28 +1647,36 @@ function showSetup(o={}){
     <header class="m-head"><div class="m-title"><h1>일상 속 도형 찾기</h1><span class="m-mark" aria-hidden="true"><i class="o"></i><i class="t"></i><i class="s"></i></span></div>
       <p class="lead">사진 속 물건에서 도형을 찾아 배우고, 칠하고, 직접 찾아요.</p></header>
 
-    <div class="card" id="levelCard"><h2><span class="n">1</span>단계</h2>
+    <div class="card" id="levelCard"><h2><span class="n">1</span>누구와, 어떤 단계로 할까요?</h2>
+      <p class="sub-h">함께 하나요, 혼자 하나요?</p>
+      <div class="seg two" role="radiogroup" id="modeSeg">
+        <label class="seg-b"><input type="radio" name="mode" value="teacher" ${S.mode==='teacher'?'checked':''}><span>선생님과 함께<small>고른 사진을 차례대로</small></span></label>
+        <label class="seg-b"><input type="radio" name="mode" value="solo" ${S.mode==='solo'?'checked':''}><span>학생 혼자<small>학생이 사진을 골라서</small></span></label>
+      </div>
+      <p class="sub-h">단계</p>
       <div class="seg" role="radiogroup">${lv.map(([v,t])=>`<label class="seg-b"><input type="radio" name="level" value="${v}" ${S.level===v?'checked':''}><span>${t}</span></label>`).join('')}</div>
       <p class="status" id="lvDesc">${lv[S.level-1][2]}</p>
     </div>
 
-    <div class="card" id="pickCard"><h2><span class="n">2</span>어떤 사진으로 할까요?</h2>
+    <div class="card" id="pickCard"><h2><span class="n">2</span>어떤 사진으로 할까요?<span class="pcount" id="pcount"></span></h2>
       <div class="src-row">
         <button class="pick-btn" id="sDemo" type="button" aria-expanded="false">${ICON.learn}<span>예시 사진</span><small>키 없이 바로</small></button>
         <button class="pick-btn" id="sPhone" type="button">${ICON.phone}<span>휴대폰에서 받기</span><small>찍어서 보내기</small></button>
         <button class="pick-btn" id="sPick" type="button">${ICON.photo}<span>이 기기에서 고르기</span><small>사진 파일</small></button>
       </div>
-      <input type="file" id="sFile" accept="image/*" hidden>
+      <input type="file" id="sFile" accept="image/*" multiple hidden>
+      <p class="status small" id="pickHint">누르면 오늘 할 사진에 넣고, 다시 누르면 빼요. ${MAXP}장까지 넣을 수 있어요.</p>
       <div id="exWrap" hidden><div class="ex-strip" id="exStrip"><span class="status">예시 사진을 가져오는 중…</span></div></div>
       <div id="mineWrap" hidden><p class="sub-h">내 사진 <small>이 기기에 보관해 두었어요 · 다시 쓸 때는 키 없이 바로</small></p><div class="ex-strip" id="mineStrip"></div></div>
       <p class="status small">내 사진은 처음 한 번 선생님 Gemini 키가 필요해요. 휴대폰에서 사진을 보낼 때 같은 화면에서 넣어요.</p>
     </div>
 
-    <div class="card plan" id="planCard"><h2><span class="n">3</span>도형 찾기 사진</h2>
-      <div class="pick-show" id="pickShow" hidden><img id="pickImg" alt="고른 사진"><div><b id="pickTitle"></b><span id="pickInfo"></span></div></div>
+    <div class="card plan" id="planCard"><h2><span class="n">3</span><span id="planTitle">오늘 할 사진</span></h2>
+      <div class="plist" id="plist"></div>
       <p class="status" id="planShapes"></p>
       <ol class="flow" id="planFlow"></ol>
       <p class="status" id="planVoice"></p>
+      <p class="status small" id="modeHint"></p>
     </div>
 
     <details class="card more" id="moreSet"><summary><b>더 정하기</b><span class="sum" id="moreSum">${sum()}</span></summary>
@@ -1657,6 +1716,7 @@ function showSetup(o={}){
 
     <details class="card more"><summary><b>알아 두기</b><span class="sum">교사 모드 · 사진 안내</span></summary>
       <p class="note"><b>학생 화면에서는 메뉴가 모두 숨겨져요.</b> 오른쪽 아래의 옅은 동그라미(charum)를 <b>3초 동안 누른 뒤</b> 왼쪽 위에 잠깐 나타나는 작은 점을 누르면 교사 모드가 켜지고 수업이 멈춰요. 위쪽 <b>사진 · 배우기 · 찾기 · 끝</b>으로 단계를 바로 고를 수 있어요.<br>
+      <b>선생님과 함께</b>는 넣은 사진(5장까지)을 차례대로 하고 맨 위 막대로 몇 장째인지 보여요. 다 하면 마친 그림을 모아 학생이 하나를 골라 색칠해요. <b>학생 혼자</b>는 학생이 넣은 사진 가운데 골라서 하고, 다 하면 "사진 고르기"로 돌아가요.<br>
       <b>예시 사진은 키나 가입 없이 바로 쓸 수 있어요.</b> 도형·목소리·끝 그림을 미리 만들어 두었어요.<br>
       <b>내 사진</b>은 <b>휴대폰에서 받기</b>로 보내요. QR을 찍어 사진을 보내면서, 처음 한 번은 같은 화면에 선생님 본인의 <b>Gemini 키</b>(도형 찾기, 필수)와 <b>Google 음성 키</b>(목소리, 선택)를 함께 넣어요. Gemini 키는 Google AI Studio에서 휴대폰으로 1~2분이면 받을 수 있어요(<a href="https://shim-sung-hyun.github.io/web_app/gemini-key.html" target="_blank" rel="noopener">키 받는 법</a>). 키는 이 기기에만 저장돼요. Google 음성 키가 없으면 내 사진 수업은 기기 목소리로 해요.<br>
       <b>내 사진은 이 기기(이 브라우저)에 보관</b>돼요. 도형을 찾은 결과와 그림도 함께 두어, 다음에는 키 없이 바로 써요. 브라우저 기록을 지우면 함께 지워져요.<br>
@@ -1668,6 +1728,7 @@ function showSetup(o={}){
     <div class="start-bar"><button class="btn primary" id="startBtn" type="button">시작</button></div>
   </section>`;
   main.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
+    if(r.name==='mode'){S.mode=r.value; store.set('mode',S.mode); renderPlan();}
     if(r.name==='level'){S.level=+r.value; store.set('level',S.level); $('lvDesc').textContent=lv[S.level-1][2];}
     if(r.name==='showSec'){S.showSec=+r.value; store.set('showSec',S.showSec);}
     if(r.name==='paint'){S.paint=r.value==='on'; store.set('paint',r.value);}
@@ -1684,22 +1745,23 @@ function showSetup(o={}){
   loadSamples().then(list=>{ const box=$('exStrip'); if(!box) return;
     if(!list.length){ box.innerHTML='<button class="btn" id="exOne" type="button">예시 사진 하나로 하기</button>'; $('exOne').onclick=async()=>{ showPick('예시 사진을 가져오는 중…'); await prepareDemo(); showPick('예시 사진'); }; return; }
     box.innerHTML=list.map(x=>`<button class="ex-item" type="button" data-id="${esc(x.id)}" aria-pressed="false"><img src="${x.file}" alt="" loading="lazy"><span>${esc(x.title)}</span></button>`).join('');
-    box.querySelectorAll('.ex-item').forEach(b=>b.onclick=()=>{ hideSpot(); useSample(list.find(x=>x.id===b.dataset.id)); });
-    if(S.sampleId&&S.demo&&S.img) markSample(S.sampleId); });
+    box.querySelectorAll('.ex-item').forEach(b=>b.onclick=()=>{ hideSpot(); const x=list.find(y=>y.id===b.dataset.id); toggleItem({key:'d:'+x.id,src:'demo',id:x.id,from:'demo',title:x.title,thumb:x.file,status:'ready',n:x.shapes.length}); });
+    markList(); });
   const keyRow=()=>{ const st=$('keyState'), bt=$('keyAct'); if(!st) return;
     st.textContent=S.apiKey?'저장됨 '+keyTail():'없음'; bt.textContent=S.apiKey?'지우기':'넣기';
     bt.onclick=()=>{ if(S.apiKey){ saveGemKey(''); keyRow(); } else needKey(keyRow); };
     const cs=$('cKeyState'), cb=$('cKeyAct');
     cs.textContent=S.cloudKey?'저장됨 ••••'+S.cloudKey.slice(-4):'없음 (선택)'; cb.textContent=S.cloudKey?'지우기':'넣기';
     cb.onclick=()=>{ if(S.cloudKey){ saveCloudKey(''); keyRow(); planInfo(); } else KeyRelay.receive({want:['cloud'], onKeys:g=>{ if(g&&g.cloud){ saveCloudKey(g.cloud.trim()); keyRow(); planInfo(); } }}); }; };
-  keyRow(); planInfo();
-  /* 사진: 고르는 즉시 분석을 시작해 두어 시작을 누르면 기다림 없이 */
+  keyRow(); restoreList().then(()=>{ renderPlan(); markList(); });
+  /* 내 사진: 넣는 즉시 도형을 찾아 두어(선생님 Gemini 키) 시작을 누르면 기다림 없이 */
   const fi=$('sFile');
-  $('sPick').onclick=()=>needKey(()=>fi.click());
-  fi.onchange=async()=>{ const f=fi.files&&fi.files[0]; fi.value=''; if(!f) return; hideSpot(); S.src='pick'; showPick('사진을 여는 중…');
-    if(!await preparePhoto(f)){ S.img=null; showPick(); spotlight('#pickCard','이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); return; } showPick('내 사진'); goPlan(); };
-  $('sPhone').onclick=()=>phoneReceive(async blob=>{ if(!$('pickCard')) return; hideSpot(); S.src='phone'; showPick('사진을 여는 중…'); keyRow();
-    goPlan(); if(!await preparePhoto(blob)){ S.img=null; showPick(); return; } showPick('휴대폰에서 받은 사진'); goPlan(); });
+  $('sPick').onclick=()=>{ if(!roomLeft()) return; needKey(()=>fi.click()); };
+  fi.onchange=async()=>{ const fs=[...(fi.files||[])]; fi.value=''; hideSpot();
+    for(const f of fs){ if(!roomLeft()) break; if(!await addNewPhoto(f,'pick')) spotlight('#pickCard','이 사진을 열 수 없어요. 다른 사진을 골라 주세요.'); } };
+  /* 휴대폰: 한 장 받으면 새 번호로 이어서 받음(그만 보내려면 닫기) */
+  const phoneLoop=()=>{ if(!roomLeft()) return; phoneReceive(async blob=>{ if(!$('pickCard')) return; hideSpot(); keyRow(); await addNewPhoto(blob,'phone'); if(S.list.length<MAXP) phoneLoop(); }); };
+  $('sPhone').onclick=phoneLoop;
   $('voiceTest').onclick=async()=>{
     unlockAudio();
     const st=$('voiceStatus'); st.className='status'; st.textContent='';
@@ -1715,10 +1777,150 @@ function showSetup(o={}){
   };
   $('startBtn').onclick=()=>{
     unlockAudio();
-    if(!S.img){ spotlight('#pickCard','먼저 수업할 사진을 골라 주세요.'); return; }
-    chooseEngine(); prefetchVoice(FIXED_LINES());
-    goFull(); showBrush();   /* 사진은 이미 골랐으니 바로 학생 화면(붓 고르기)부터 */
+    if(!S.list.length){ spotlight('#pickCard','먼저 수업할 사진을 골라 주세요.'); return; }
+    if(S.list.some(x=>x.status==='pending')){ spotlight('#plist','도형을 찾고 있는 사진이 있어요. 잠시 기다려 주세요.'); return; }
+    if(S.list.some(x=>x.status==='error')){ spotlight('#plist','도형을 찾지 못한 사진이 있어요. × 를 눌러 빼 주세요.'); return; }
+    startList();
   };
+}
+/* ================= 오늘 할 사진(최대 5장) =================
+   한 칸: {key, src:'demo'|'mine'|'new', id, from:'demo'|'mine'|'phone'|'pick', title, thumb, status:'ready'|'pending'|'error', n}
+   예시·내 사진(이 기기에 보관)만 다음에도 그대로 남김. 새로 넣은 사진은 도형을 찾으면 내 사진으로 보관돼요 */
+const saveList=()=>store.set('list',JSON.stringify(S.list.filter(x=>x.status==='ready'&&x.src!=='new').map(({key,src,id,from,title})=>({key,src,id,from,title}))));
+let listRestored=false;
+async function restoreList(){
+  if(listRestored) return; listRestored=true;
+  let L=[]; try{ L=JSON.parse(store.get('list')||'[]'); }catch(e){}
+  const samples=await loadSamples(), out=[];
+  for(const it of (Array.isArray(L)?L:[]).slice(0,MAXP)){
+    if(it.src==='demo'){ const x=samples.find(y=>y.id===it.id); if(x) out.push({key:'d:'+x.id,src:'demo',id:x.id,from:'demo',title:x.title,thumb:x.file,status:'ready',n:x.shapes.length}); }
+    else if(it.src==='mine'){ const x=await mineGet(it.id); if(x) out.push({key:'m:'+x.id,src:'mine',id:x.id,from:it.from||'mine',title:'내 사진 · '+x.title,thumb:x.img,status:'ready',n:x.shapes.length}); }
+  }
+  if(!S.list.length) S.list=out;
+}
+const roomLeft=()=>{ if(S.list.length<MAXP) return true; spotlight('#plist',`사진은 ${MAXP}장까지 넣을 수 있어요. 빼고 싶은 사진의 × 를 누르세요.`); return false; };
+function toggleItem(it){
+  const i=S.list.findIndex(x=>x.key===it.key);
+  if(i>=0) S.list.splice(i,1); else { if(!roomLeft()) return; S.list.push(it); }
+  saveList(); renderPlan(); markList();
+}
+/* 휴대폰·이 기기 사진: 받아서 바로 도형 찾기 → 내 사진으로 보관 */
+async function addNewPhoto(blob,from){
+  if(!roomLeft()) return true;
+  let img; try{ img=await loadPhoto(blob); }catch(e){ return false; }
+  const it={key:'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),src:'new',from,title:from==='phone'?'휴대폰 사진':'이 기기 사진',thumb:img.url,status:'pending',n:0};
+  S.list.push(it); renderPlan(); markList();
+  analyze(img).then(async shapes=>{
+    if(!shapes.length){ it.status='error'; it.msg='이 사진에서는 도형을 찾지 못했어요'; renderPlan(); return; }
+    const id='m'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
+    await minePut({id,t:Date.now(),img:img.url,w:img.w,h:img.h,shapes,title:mineTitle(shapes),art:null,given:false});
+    const all=await mineAll(); for(const x of all.slice(60)) if(!S.list.some(y=>y.id===x.id)) await mineDel(x.id);   /* 60장까지 보관 */
+    Object.assign(it,{key:'m:'+id,src:'mine',id,title:'내 사진 · '+mineTitle(shapes),status:'ready',n:shapes.length});
+    saveList(); renderPlan(); renderMine();
+  }).catch(e=>{ it.status='error'; it.msg=(e&&e.message)||'도형을 찾지 못했어요'; renderPlan(); });
+  return true;
+}
+/* 고른 사진 표시: 예시·내 사진 칸은 넣은 것에 테두리, 출처 단추는 넣은 출처만 영역 색 */
+function markList(){
+  const has=k=>S.list.some(x=>x.key===k);
+  document.querySelectorAll('#exStrip .ex-item').forEach(b=>b.setAttribute('aria-pressed',String(has('d:'+b.dataset.id))));
+  document.querySelectorAll('#mineStrip .ex-item').forEach(b=>b.setAttribute('aria-pressed',String(has('m:'+b.dataset.id))));
+  [['sDemo','demo'],['sPhone','phone'],['sPick','pick']].forEach(([id,k])=>{ const b=$(id); if(b) b.classList.toggle('sel',S.list.some(x=>x.from===k)); });
+  const pc=$('pcount'); if(pc) pc.textContent=`${S.list.length} / ${MAXP}`;
+}
+function renderPlan(){
+  const box=$('plist'); if(!box) return;
+  $('planTitle').textContent=S.mode==='solo'?'학생이 고를 사진':'오늘 할 사진';
+  if(!S.list.length) box.innerHTML=`<p class="status">아직 넣은 사진이 없어요. 위에서 골라 넣으세요(${MAXP}장까지).</p>`;
+  else box.innerHTML=S.list.map((it,i)=>{
+    const st=it.status==='pending'?'<small>도형을 찾는 중…</small>':it.status==='error'?`<small class="bad">${esc(it.msg||'도형을 찾지 못했어요')}</small>`:`<small>도형 ${it.n}개</small>`;
+    return `<div class="pi${it.status==='error'?' err':''}" data-k="${esc(it.key)}"><span class="pn">${i+1}</span><img src="${it.thumb}" alt=""><div class="pt"><b>${esc(it.title)}</b>${st}</div>
+      <div class="pa"><button type="button" data-mv="-1" aria-label="앞으로" ${i===0?'disabled':''}>‹</button><button type="button" data-mv="1" aria-label="뒤로" ${i===S.list.length-1?'disabled':''}>›</button><button type="button" data-rm="1" aria-label="빼기">×</button></div></div>`; }).join('');
+  box.querySelectorAll('.pi').forEach(el=>{ const k=el.dataset.k;
+    el.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{ const i=S.list.findIndex(x=>x.key===k), j=i+(+b.dataset.mv); if(j<0||j>=S.list.length) return; [S.list[i],S.list[j]]=[S.list[j],S.list[i]]; saveList(); renderPlan(); });
+    el.querySelector('[data-rm]').onclick=()=>{ S.list=S.list.filter(x=>x.key!==k); saveList(); renderPlan(); markList(); }; });
+  planInfo(); markList();
+}
+/* 시작: 함께 = 1번 사진부터 차례대로(첫 사진 전에만 붓 고르기), 혼자 = 학생이 고르는 화면 */
+function startList(){
+  newSession(); S.inList=true; S.idx=0; S.doneKeys=new Set(); S.results=[]; S.logAll=[]; S.brushOnce=false;
+  S.listMine=S.list.some(x=>x.src!=='demo');
+  chooseEngine(); prefetchVoice(FIXED_LINES()); goFull();
+  if(S.mode==='solo') showChooser(); else playItem(0);
+}
+const cloneShapes=sh=>sh.map(s=>({...s,box:{...s.box},pts:s.pts&&s.pts.map(p=>[...p])}));
+async function loadItemInto(it){
+  S.shapes=[]; S.types=[]; S.cartoon=null; S.steps=[]; S.li=0; S.tasks=[]; S.ti=0; S.log=[]; S.brushDone=false; S.lineCache=null; S.palCache=null; S.endSingle=false;
+  if(it.src==='demo'){
+    const x=(await loadSamples()).find(y=>y.id===it.id); if(!x) throw new Error('gone');
+    S.img=await loadPhoto(await (await fetch(x.file)).blob());
+    Object.assign(S,{demo:true,sampleId:x.id,sampleArt:x.art||null,sampleLine:x.line||null,mineId:null,mineArt:null,analysis:{status:'done',shapes:cloneShapes(x.shapes)}});
+  } else {
+    const x=await mineGet(it.id); if(!x) throw new Error('gone');
+    S.img={url:x.img,w:x.w,h:x.h};
+    Object.assign(S,{demo:false,sampleId:null,sampleArt:null,sampleLine:null,mineId:x.id,mineArt:x.art||null,analysis:{status:'done',shapes:cloneShapes(x.shapes)}});
+  }
+  S.src=it.src; S.itemKey=it.key;
+}
+async function playItem(i){
+  S.idx=i; renderProg();
+  screen('photo','loading',`<div class="center"><h2 class="say">사진을 가져오고 있어요</h2>${waitingHTML()}</div>`,''); spin();
+  const tk=token;
+  try{ await loadItemInto(S.list[i]); }catch(e){ if(tk!==token) return; if(S.mode!=='solo'&&i+1<S.list.length) return playItem(i+1); showSetup(); return; }
+  if(tk!==token) return;
+  S.inList=true;
+  if(!S.brushOnce){ S.brushOnce=true; showBrush(); } else { S.brushDone=true; onAnalysis(); }
+}
+/* 진행 막대(선생님과 함께, 사진이 2장 이상): 사진마다 한 칸 */
+function renderProg(){
+  let el=$('prog'); if(!el){ el=document.createElement('div'); el.id='prog'; el.setAttribute('aria-hidden','true'); document.body.appendChild(el); }
+  const n=S.list.length, on=S.inList&&S.mode!=='solo'&&n>1;
+  el.hidden=!on; if(!on) return;
+  const done=S.view==='gallery'?n:S.idx;
+  el.innerHTML=S.list.map((_,i)=>`<i class="${i<done?'d':i===done?'c':''}"></i>`).join('');
+}
+/* 한 장을 마치면: 결과를 모아 둠(끝에 모아 보기·색칠, 교사용 기록) */
+function finishItem(){
+  if(!S.inList||!S.itemKey||S.doneKeys.has(S.itemKey)) return;
+  S.doneKeys.add(S.itemKey);
+  const it=S.list[S.idx]||{}, title=(it.title||'').replace(/^내 사진 · /,'');
+  S.results[S.idx]={key:S.itemKey,title,img:S.img,cartoon:S.cartoon,demo:S.demo,sampleId:S.sampleId,sampleArt:S.sampleArt,sampleLine:S.sampleLine,mineId:S.mineId,mineArt:S.mineArt,shapes:S.shapes,types:S.types};
+  S.logAll.push(...S.log.map(l=>({...l,task:title+' · '+l.task})));
+}
+function useResult(r){
+  Object.assign(S,{img:r.img,cartoon:r.cartoon,demo:r.demo,sampleId:r.sampleId,sampleArt:r.sampleArt,sampleLine:r.sampleLine,mineId:r.mineId,mineArt:r.mineArt,shapes:r.shapes,types:r.types,itemKey:r.key,lineCache:null,palCache:null});
+}
+/* 함께: 마지막이 아닌 사진은 그림으로 바뀌는 것을 잠깐 보고 저절로 다음 사진(관리 메뉴가 열려 있으면 기다림) */
+function showMid(){
+  const c=S.cartoon||{}, done=c.status==='done';
+  screen('end','mid',`<div class="end-wrap"><div class="end-art reveal-art${done?'':' still'}" id="art">
+      <div class="ra">${done?`<img class="cartoon" src="${c.url}" alt="그림">`:''}<img class="photo-under" src="${S.img.url}" alt=""></div></div></div>`,
+    done?'다 했어요. 사진이 그림이 되었어요.':'다 했어요.');
+  later(done?5200:3600,()=>playItem(S.idx+1));
+}
+/* 함께: 다 하면 마친 그림을 모아 보여 주고, 학생이 하나를 골라 색칠(보상) */
+async function showGallery(){
+  S.endSingle=false;
+  const R=S.results.filter(Boolean);
+  for(const r of R){ if(!(r.cartoon&&r.cartoon.status==='done')){ const u=r.demo?r.sampleArt:r.mineId?((await mineGet(r.mineId))||{}).art:null; if(u) r.cartoon={status:'done',url:u}; } }
+  screen('end','gallery',`<div class="end-wrap gal-end"><div class="gal-row">${R.map((r,i)=>`<button class="gal-pic" type="button" data-i="${i}"><img src="${r.cartoon&&r.cartoon.status==='done'?r.cartoon.url:r.img.url}" alt=""></button>`).join('')}</div>
+      <p class="gal-hint">🖍️ 그리고 싶은 그림을 눌러요</p>${endTools(null)}</div>`,'다 했어요.');
+  renderProg(); bindEndTools();
+  document.querySelectorAll('.gal-pic').forEach(b=>b.addEventListener('pointerdown',e=>{ e.preventDefault(); const r=R[+b.dataset.i]; useResult(r); S.endSingle=true; showColor(); }));
+}
+/* 혼자: 고른 사진을 펼쳐 놓고 학생이 하나를 골라 함. 마친 사진에는 ✓ */
+function showChooser(){
+  S.inList=true; renderProg();
+  screen('photo','choose',`<h2 class="say">사진을 골라요</h2><div class="choose-grid">${S.list.map((it,i)=>{ const did=S.doneKeys.has(it.key);
+      return `<button class="choose-pic${did?' did':''}" type="button" data-i="${i}"><img src="${it.thumb}" alt="">${did?'<i class="tick" aria-label="했어요">✓</i>':''}</button>`; }).join('')}</div>`,'사진을 골라요.');
+  document.querySelectorAll('.choose-pic').forEach(b=>b.addEventListener('pointerdown',e=>{ e.preventDefault(); playItem(+b.dataset.i); }));
+}
+/* 학생 단추: 혼자 = 사진 고르기로, 함께(모아 보기에서 색칠 중) = 다른 그림 */
+function backBtnHTML(){
+  if(!S.inList) return '';
+  if(S.mode==='solo') return '<button class="btn end-back" id="backBtn" type="button">사진 고르기</button>';
+  if(S.endSingle&&S.results.filter(Boolean).length>1) return '<button class="btn end-back" id="backBtn" type="button">다른 그림</button>';
+  return '';
 }
 /* 예시 사진 묶음: 제작자가 미리 분석하고 눈으로 확인한 사진(samples/samples.json, ok=true만). 키·기다림 없이 바로 */
 let SAMPLES=null;
@@ -1771,12 +1973,15 @@ function pickInfo(){
 /* ③ 오늘 할 것: 고른 설정으로 저절로 */
 function planInfo(){
   const el=$('planFlow'); if(!el) return;
-  const a=S.analysis||{}, sh=a.status==='done'?a.shapes:[];
-  const kinds=[...new Set(sh.map(x=>TYPES[x.type]&&TYPES[x.type]['l'+Math.min(S.level,2)]||TYPES[x.type].l1))];
-  const step=['보기','칠하기','찾기',S.cartoonOn?'그림':'색칠'].filter(t=>!(t==='칠하기'&&!S.paint));
-  $('planShapes').textContent=!S.img?'사진을 고르면 찾을 도형이 여기에 나와요.':a.status==='pending'?'도형을 찾고 있어요…':sh.length?`찾을 도형: ${kinds.join(' · ')}`:'찾은 도형이 없어요.';
+  const n=S.list.length, multi=n>1, solo=S.mode==='solo';
+  const step=['보기','칠하기','찾기',multi&&!solo?'그림':S.cartoonOn?'그림':'색칠'].filter(t=>!(t==='칠하기'&&!S.paint));
+  if(multi&&!solo) step.push('모아 보기 · 색칠');
+  $('planShapes').textContent=!n?'사진을 넣으면 사진마다 이 순서로 해요.':multi?(solo?`학생이 ${n}장 가운데 골라서 해요. 사진마다:`:`${n}장을 차례대로 해요. 사진마다:`):'이 순서로 해요:';
   el.innerHTML=step.map((t,i)=>`<li><span>${i+1}</span>${t}</li>`).join('');
-  const pv=$('planVoice'); if(pv){ chooseEngine(); pv.textContent='목소리: '+voiceName(S.engineNow)+(S.voiceNote?' — '+S.voiceNote:''); }
+  S.listMine=S.list.some(x=>x.src!=='demo');
+  const pv=$('planVoice'); if(pv){ const keep=S.img; S.img=null; chooseEngine(); S.img=keep; pv.textContent='목소리: '+voiceName(S.engineNow)+(S.voiceNote?' — '+S.voiceNote:''); }
+  const mh=$('modeHint'); if(mh) mh.textContent=solo?'학생 혼자: 학생 화면에 넣은 사진이 펼쳐져요. 학생이 하나를 골라 하고, 다 하면 "사진 고르기"로 다른 사진을 골라요. 마친 사진에는 ✓ 가 붙어요.'
+    :multi?'선생님과 함께: 한 장을 마치면 사진이 그림으로 바뀌는 것을 잠깐 보고 저절로 다음 사진으로 가요. 다 하면 마친 그림을 모아 보여 주고, 학생이 하나를 골라 색칠해요.':'';
 }
 /* 그림은 장마다 돈이 들어 값이 싼 모델부터 */
 function imgCost(n){ if(/pro/.test(n)) return 9; if(/nano-banana-2\.1/.test(n)) return 0; if(/lite/.test(n)) return 1; if(/flash|nano-banana/.test(n)) return 2; return 5; }
@@ -1810,6 +2015,7 @@ async function checkKey(){
 function newSession(){
   S.img=null; S.shapes=[]; S.types=[]; S.analysis=null; S.demo=false; S.brushDone=false; S.cartoon=null;
   S.steps=[]; S.li=0; S.tasks=[]; S.ti=0; S.log=[];
+  S.inList=false; S.itemKey=null; S.endSingle=false; renderProg();
 }
 const waitingHTML=()=>'<div class="waiting" id="wait"><i></i><i></i><i></i></div>';
 function spin(){
@@ -1890,13 +2096,13 @@ function shrinkData(url,max,q){ return new Promise(res=>{ const im=new Image(); 
 async function renderMine(){
   const box=$('mineStrip'); if(!box) return;
   const list=await mineAll(); $('mineWrap').hidden=!list.length;
-  box.innerHTML=list.map(x=>`<div class="ex-item mine" data-id="${x.id}" aria-pressed="${x.id===S.mineId}">
+  box.innerHTML=list.map(x=>`<div class="ex-item mine" data-id="${x.id}" aria-pressed="${S.list.some(y=>y.key==='m:'+x.id)}">
       <button class="mine-pick" type="button" data-act="pick"><img src="${x.img}" alt=""><span>${esc(x.title)}</span></button>
       <div class="mine-act">${x.given?'<small>기증함</small>':'<button type="button" data-act="give">기증</button>'}<button type="button" data-act="del" aria-label="지우기">지우기</button></div></div>`).join('');
   box.querySelectorAll('[data-act]').forEach(b=>b.onclick=async()=>{ const id=b.closest('.mine').dataset.id, x=list.find(y=>y.id===id); if(!x) return;
-    if(b.dataset.act==='pick') useMine(x);
+    if(b.dataset.act==='pick'){ hideSpot(); toggleItem({key:'m:'+x.id,src:'mine',id:x.id,from:'mine',title:'내 사진 · '+x.title,thumb:x.img,status:'ready',n:x.shapes.length}); }
     if(b.dataset.act==='del'){ if(b.dataset.sure!=='1'){ b.dataset.sure='1'; b.textContent='정말 지울까요?'; setTimeout(()=>{ b.dataset.sure=''; b.textContent='지우기'; },3000); return; }
-      await mineDel(id); if(S.mineId===id){ S.mineId=null; } renderMine(); }
+      await mineDel(id); if(S.mineId===id){ S.mineId=null; } S.list=S.list.filter(y=>y.key!=='m:'+id); saveList(); renderPlan(); renderMine(); }
     if(b.dataset.act==='give') giveMine(x); });
 }
 async function useMine(x){
@@ -2053,9 +2259,10 @@ const SCHEMA = {
   }, required:['type','object','box_2d','points','right_angles','real_ratio'] } } },
   required:['shapes']
 };
-async function callGemini(withSchema){
+async function callGemini(withSchema,img){
+  img=img||S.img;
   const body={
-    contents:[{parts:[{inline_data:{mime_type:'image/jpeg', data:S.img.url.split(',')[1]}},{text:PROMPT}]}],
+    contents:[{parts:[{inline_data:{mime_type:'image/jpeg', data:img.url.split(',')[1]}},{text:PROMPT}]}],
     generationConfig: withSchema ? {responseMimeType:'application/json', responseSchema:SCHEMA, temperature:0.2} : {temperature:0.2}
   };
   /* 내 사진은 선생님 본인의 Gemini 키로 분석(2026-10-21). 예시 사진은 미리 분석해 두어 키가 필요 없음 */
@@ -2070,11 +2277,11 @@ async function callGemini(withSchema){
   const m=text.match(/\{[\s\S]*\}/); if(!m) throw Object.assign(new Error('응답을 읽지 못했어요.'),{status:0});
   return JSON.parse(m[0]);
 }
-async function analyze(){
+async function analyze(img){
   let data;
-  try{ data=await callGemini(true); }
+  try{ data=await callGemini(true,img); }
   catch(e){
-    if(e.status===400 && !/API key|API_KEY|prompt|image/i.test(e.message)) data=await callGemini(false).catch(err=>{throw friendly(err)});
+    if(e.status===400 && !/API key|API_KEY|prompt|image/i.test(e.message)) data=await callGemini(false,img).catch(err=>{throw friendly(err)});
     else throw friendly(e);
   }
   /* 사진 가장자리에 걸려 잘린 도형은 뺌 (잘린 모서리는 진짜 꼭짓점·각이 아니므로) */
@@ -2127,7 +2334,9 @@ function normShape(s){
   if(x1-x0<15||y1-y0<15) return null;
   let pts=Array.isArray(s.points)?s.points.filter(p=>Array.isArray(p)&&p.length===2).map(([y,x])=>[clamp(x),clamp(y)]):[];
   if(pts.length!==TYPES[t].corners||pts.length===0) pts=null;
-  return {type:t, obj:String(s.object||'').trim().slice(0,10)||'이것', box:{x0,y0,x1,y1}, pts, realRight:t==='quad'&&s.right_angles===true, ratio:(t==='quad'&&+s.real_ratio>0.15&&+s.real_ratio<7)?+s.real_ratio:0};
+  const obj=String(s.object||'').trim().slice(0,10);
+  if(!obj||obj==='이것') return null;   /* 이름 없는 도형은 쓰지 않음(학생이 아는 말로만) */
+  return {type:t, obj, box:{x0,y0,x1,y1}, pts, realRight:t==='quad'&&s.right_angles===true, ratio:(t==='quad'&&+s.real_ratio>0.15&&+s.real_ratio<7)?+s.real_ratio:0};
 }
 
 /* ================= 예시 사진 ================= */
@@ -2840,21 +3049,6 @@ const artDB=new Promise(r=>{ try{ const q=indexedDB.open('shapeFinderArt',1); q.
 async function artKey(url){ try{ const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(url+'|'+cartoonPrompt())); return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''); }catch(e){ return ''; } }
 async function artGet(k){ const db=await artDB; if(!db||!k) return null; return new Promise(r=>{ try{ const q=db.transaction('art').objectStore('art').get(k); q.onsuccess=()=>r(q.result||null); q.onerror=()=>r(null); }catch(e){ r(null); } }); }
 async function artPut(k,v){ const db=await artDB; if(!db||!k) return; try{ db.transaction('art','readwrite').objectStore('art').put(v,k); }catch(e){} }
-/* 사진 → 그림: 중계(Cloudflare Workers AI, FLUX.2 klein). 보내는 사진은 512 안쪽으로 줄임 */
-async function drawCartoon(){
-  const im=await loadImg(S.img.url);
-  const k=Math.min(1,500/Math.max(im.naturalWidth,im.naturalHeight));
-  const c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k);
-  c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-  const small=c.toDataURL('image/jpeg',0.88).split(',')[1];
-  const big=Math.min(1,1024/Math.max(S.img.w,S.img.h)), r16=v=>Math.max(256,Math.round(v/16)*16);
-  const r=await fetch(AI_URL+'/cartoon',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({image:small, prompt:cartoonPrompt(), width:r16(S.img.w*big), height:r16(S.img.h*big)})});
-  if(!r.ok){ let m=''; try{m=(await r.json()).error.message||'';}catch(e){} throw new Error(r.status+' '+m); }
-  const j=await r.json(); if(!j.image) throw new Error('그림이 오지 않았어요');
-  const mime=j.image.startsWith('iVBOR')?'image/png':j.image.startsWith('UklG')?'image/webp':'image/jpeg';
-  return `data:${mime};base64,${j.image}`;
-}
 function artHTML(){
   const c=S.cartoon||{status:'none'};
   if(c.status==='done') return `<img class="cartoon" src="${c.url}" alt="도형이 강조된 그림">`;
@@ -2874,11 +3068,11 @@ function onCartoon(){
   if(S.view==='artwait'){ if(S.wantArt){ S.wantArt=false; showArtFromColor(); } else showEnd(); }
 }
 function endTools(swap){
-  const rows=S.log.map(l=>`<tr><td>${esc(l.task)}</td><td>${esc(l.result)}${l.obj?' ('+esc(l.obj)+')':''}</td></tr>`).join('');
+  const rows=(S.inList&&S.logAll.length?S.logAll:S.log).map(l=>`<tr><td>${esc(l.task)}</td><td>${esc(l.result)}${l.obj?' ('+esc(l.obj)+')':''}</td></tr>`).join('');
   return `<div class="row end-btns">
-        <button class="btn admin-only" id="same" type="button">같은 사진 한 번 더</button>
+        <button class="btn admin-only" id="same" type="button">${S.inList&&S.mode!=='solo'&&S.list.length>1?'처음부터 한 번 더':'같은 사진 한 번 더'}</button>
         <button class="btn primary admin-only" id="again" type="button">다른 사진으로</button>
-        ${swap?`<button class="btn end-swap" id="swapBtn" type="button" ${swap.off?'disabled':''}>${swap.label}</button>`:''}
+        ${backBtnHTML()}${swap?`<button class="btn end-swap" id="swapBtn" type="button" ${swap.off?'disabled':''}>${swap.label}</button>`:''}
         <button class="btn admin-only" id="printBtn" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>출력 (색칠용)</button>
       </div>
       <details class="log admin-only"><summary>교사용 기록 (${S.level}단계 · ${S.errorMode==='show'?'바로 정답 보여주기':'한 번 더 기회'}${S.demo?' · 예시 사진':''})</summary>
@@ -2887,13 +3081,17 @@ function endTools(swap){
       </details>`;
 }
 function bindEndTools(){
-  $('again').onclick=()=>{newSession(); showPhoto();};
-  $('same').onclick=()=>{S.cartoon=S.cartoon&&S.cartoon.status==='done'?S.cartoon:null; buildLesson(S.shapes); showReveal();};
+  $('again').onclick=()=>{ if(S.inList){ showSetup(); setTimeout(()=>{ const c=$('pickCard'); if(c) c.scrollIntoView({block:'center'}); },60); return; } newSession(); showPhoto(); };
+  $('same').onclick=()=>{ if(S.inList&&S.mode!=='solo'&&S.list.length>1){ leaveAdminQuiet(); startList(); return; }
+    S.cartoon=S.cartoon&&S.cartoon.status==='done'?S.cartoon:null; S.doneKeys.delete(S.itemKey); buildLesson(S.shapes); showReveal();};
+  const bb=$('backBtn'); if(bb) bb.addEventListener('pointerdown',e=>{ e.preventDefault(); if(S.mode==='solo') showChooser(); else showGallery(); });
   $('printBtn').onclick=()=>printSheet();
 }
 /* 끝: 기본은 사진이 그림으로 스르르 바뀌고 그대로 멈춤(교사가 마침). '바로 색칠'이면 그림의 연필 선 위에 색칠.
    그림이 아직이면 잠깐 기다림(최대 40초) */
 function showEnd(){
+  finishItem();
+  if(S.inList&&S.mode!=='solo'&&S.list.length>1&&!S.endSingle){ if(S.idx<S.list.length-1){ showMid(); return; } showGallery(); return; }
   const c=S.cartoon||{status:'none'};
   if(c.status==='pending'){
     if(S.view!=='artwait'){
