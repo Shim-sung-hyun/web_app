@@ -53,8 +53,15 @@ body.playing #pickScreen{display:none}
 /* ---------- 연습 화면 ---------- */
 #playScreen{display:none}
 body.playing #playScreen{display:flex}
-.topbar{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.tb-side{display:flex;align-items:center;gap:8px;flex:1}
+.topbar{width:100%;max-width:1000px;display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:8px;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:4px 2px 10px;margin-bottom:-6px}
+.topbar::-webkit-scrollbar{display:none}
+/* 좁으면 좌우로 밀기 + 넘친 쪽 흐리게 */
+.topbar.fade-r{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent)}
+.topbar.fade-l{-webkit-mask-image:linear-gradient(to left,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to left,#000 calc(100% - 36px),transparent)}
+.topbar.fade-l.fade-r{-webkit-mask-image:linear-gradient(to right,transparent,#000 36px,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to right,transparent,#000 36px,#000 calc(100% - 36px),transparent)}
+.tb-side{display:flex;align-items:center;gap:8px;flex:1 0 auto}
+@media (max-width:600px){.badge-range{display:none}.icon-btn{height:42px;min-width:42px;border-radius:13px}.badge{padding:8px 14px}.tb-side{gap:6px}}
 .tb-side.right{justify-content:flex-end}
 .icon-btn{border:none;background:var(--panel);color:var(--ink);height:46px;min-width:46px;border-radius:15px;flex-shrink:0;padding:0 11px;
   display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:var(--shadow);font-weight:700;font-size:13.5px}
@@ -91,6 +98,7 @@ body.recording .rec{display:inline-flex}
 .footer-row{width:100%;max-width:1000px;display:flex;align-items:center;padding-bottom:4px}
 .counter{font-size:13px;color:var(--ink-soft);font-weight:700;display:flex;align-items:center;gap:6px}
 .counter .dot{width:6px;height:6px;border-radius:50%;background:var(--base)}
+.voice-warn{margin-left:auto;margin-right:64px;font-size:12.5px;font-weight:700;color:#9A2E1C;text-align:right}
 
 /* ---------- 관리: 학생 기록 (오른쪽 서랍) ---------- */
 #drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);z-index:40;background:#fff;box-shadow:-12px 0 40px rgba(38,40,59,.18);
@@ -212,7 +220,7 @@ body.admin #stage{pointer-events:none}
     <div class="pv-table" id="pvTable"></div>
     <div class="hint" id="hintText"></div>
   </div>
-  <div class="footer-row"><div class="counter"><span class="dot"></span><span id="counterText">오늘 만든 수 0개</span></div></div>
+  <div class="footer-row"><div class="counter"><span class="dot"></span><span id="counterText">오늘 만든 수 0개</span></div><span class="voice-warn" id="voiceWarn"></span></div>
 </section>
 
 <!-- ============== 관리: 학생 기록 ============== -->
@@ -289,6 +297,18 @@ const S={mode:null, top:null, mix:{}, labels:{0:true,1:true,2:true,3:true,4:true
   const w=+store.get('wait'); if([0,3,5].includes(w)) S.wait=w;
 })();
 const $=id=>document.getElementById(id);
+/* 전자칠판 터치: 살짝 누르면 미끄러지거나 취소된다 → 누른 자리에서 tol px 안에서 떼거나 취소돼도 누른 것으로.
+   list=true(밀어서 보는 목록)면 30px·취소는 밀기로 보고 넘김. 뒤따르는 click은 한 번 무시 */
+let lastTapAt=0; /* 화면이 바뀐 뒤 따라오는 click이 새 화면을 누르지 않게 */
+function onTap(el,fn,opt){
+  opt=opt||{}; const tol=opt.list?30:60; let st=null;
+  el.style.touchAction=opt.list?(opt.pan||'pan-y'):'none';
+  el.addEventListener('pointerdown',e=>{ if(e.button>0) return; st={x:e.clientX,y:e.clientY,id:e.pointerId}; });
+  el.addEventListener('pointerup',e=>{ if(!st||st.id!==e.pointerId) return; const ok=Math.hypot(e.clientX-st.x,e.clientY-st.y)<=tol; st=null; if(ok){ lastTapAt=Date.now(); fn(e); } });
+  el.addEventListener('pointercancel',e=>{ if(!st||st.id!==e.pointerId) return; st=null; if(!opt.list){ lastTapAt=Date.now(); fn(e); } });
+  el.addEventListener('click',e=>{ if(Date.now()-lastTapAt<700) return; fn(e); }); /* 키보드·보조 기기 */
+}
+const TOPBAR={list:true,pan:'pan-x'}; /* 위 줄은 좌우로 밀 수 있게 */
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 /* ================= 목소리: 미리 만든 Google 목소리(Leda)를 이어 읽음 =================
@@ -328,7 +348,23 @@ function numPieces(n){
 }
 const PRE={set:null, clips:new Map()};
 function preSet(){ if(!PRE.set) PRE.set=fetch('https://shim-sung-hyun.github.io/web_app/005/voice/leda/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set()); return PRE.set; }
-async function preHash(t){ const d=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
+/* 소리 파일 이름 = 조각 글자의 SHA-1 앞 16자리. http 주소에서는 crypto.subtle이 없으니 직접 계산 */
+function sha1Hex(str){
+  const b=new TextEncoder().encode(str), l=b.length, n=((l+9+63)>>6)<<6, m=new Uint8Array(n); m.set(b); m[l]=0x80;
+  const dv=new DataView(m.buffer); dv.setUint32(n-4,(l*8)>>>0); dv.setUint32(n-8,Math.floor(l/0x20000000));
+  let h0=0x67452301,h1=0xEFCDAB89,h2=0x98BADCFE,h3=0x10325476,h4=0xC3D2E1F0; const w=new Uint32Array(80), rl=(x,k)=>(x<<k)|(x>>>(32-k));
+  for(let o=0;o<n;o+=64){
+    for(let i=0;i<16;i++) w[i]=dv.getUint32(o+i*4); for(let i=16;i<80;i++) w[i]=rl(w[i-3]^w[i-8]^w[i-14]^w[i-16],1);
+    let a=h0,bb=h1,c=h2,d=h3,e=h4;
+    for(let i=0;i<80;i++){ const f=i<20?(bb&c)|(~bb&d):i<40?bb^c^d:i<60?(bb&c)|(bb&d)|(c&d):bb^c^d, k=i<20?0x5A827999:i<40?0x6ED9EBA1:i<60?0x8F1BBCDC:0xCA62C1D6;
+      const t=(rl(a,5)+f+e+k+w[i])>>>0; e=d; d=c; c=rl(bb,30)>>>0; bb=a; a=t; }
+    h0=(h0+a)>>>0; h1=(h1+bb)>>>0; h2=(h2+c)>>>0; h3=(h3+d)>>>0; h4=(h4+e)>>>0; }
+  return [h0,h1,h2,h3,h4].map(x=>x.toString(16).padStart(8,'0')).join('');
+}
+async function preHash(t){
+  if(window.crypto&&crypto.subtle){ try{ const d=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }catch(e){} }
+  return sha1Hex(t).slice(0,16);
+}
 function piece(t){
   let p=PRE.clips.get(t);
   if(!p){ p=(async()=>{
@@ -372,17 +408,25 @@ document.addEventListener('visibilitychange',()=>{
   if(document.hidden){ stopVoice(); speakSeq++; }
   else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; speak(h); }
 });
+/* 한 수업은 한 목소리: 조각을 하나라도 못 받으면 그 수업(처음 화면으로 돌아갈 때까지)은 모두 기기 목소리 */
+const VOICE={device:false};
+function voiceToDevice(){
+  if(VOICE.device) return; VOICE.device=true;
+  const t='소리 파일을 받지 못해 이번 수업은 기기 목소리로 읽어요'; $('voiceWarn').textContent=t; if(!document.body.classList.contains('playing')) voiceNote(t);
+}
+function voiceReset(){ VOICE.device=false; $('voiceWarn').textContent=''; voiceNote(''); }
 function speak(n){
   if(document.hidden){ hiddenSay=n||lastN; return; }
   if(n){ lastN=n; lastSay=readKo(n); }
   stopVoice();
   const id=++speakSeq;
   if(!S.sound||!lastN) return;
+  if(VOICE.device){ deviceSay(lastSay,id); return; }
   (async()=>{
     let clip=null;
     try{ clip=await Promise.race([numClip(lastN),new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),15000))]); }catch(e){}
     if(id!==speakSeq) return;
-    if(!clip){ deviceSay(lastSay,id); return; }
+    if(!clip){ voiceToDevice(); deviceSay(lastSay,id); return; }
     await playClip(clip);
   })();
 }
@@ -401,10 +445,10 @@ function addCard(color,name,range,onClick){
   const btn=document.createElement('button'); btn.className='tier-card'; btn.type='button';
   btn.style.setProperty('--tcard-base',color.base); btn.style.setProperty('--tcard-dark',color.dark); btn.style.setProperty('--tcard-tint',color.tint);
   btn.innerHTML=`<span class="tc-name">${name}</span><span class="tc-range">${range}</span><span class="tc-dot"></span>`;
-  btn.addEventListener('click',()=>{
+  onTap(btn,()=>{
     unlockAudio();
     onClick(); if(!S.admin) goFull();
-  });
+  },{list:true});
   $('pickGrid').appendChild(btn);
 }
 TIERS.forEach(t=>addCard(t.color,t.label,t.range.length>16?t.range.replace(' ~ ','<br>~ '):t.range,()=>startTier(t.top)));
@@ -425,8 +469,9 @@ renderVoiceRow();
 /* ================= 시작 · 자리 바꾸기 ================= */
 function applyTheme(c){ const r=document.documentElement.style; r.setProperty('--base',c.base); r.setProperty('--dark',c.dark); r.setProperty('--tint',c.tint); }
 function enterPlay(){
+  if(!document.body.classList.contains('playing')) voiceReset();
   document.body.classList.add('playing'); S.cur=null; S.count=0;
-  refreshNext(); renderEmpty(); updateCounter();
+  refreshNext(); renderEmpty(); updateCounter(); requestAnimationFrame(topFade);
 }
 function startTier(top){
   S.mode='tier'; S.top=top; S.mix={}; for(let e=top-1;e>=0;e--) S.mix[e]=true;
@@ -440,8 +485,8 @@ function startBig(){
   applyTheme(BIG_COLOR); $('tierBadge').textContent='큰 수'; $('tierRange').textContent='천 ~ 천억 사이의 수';
   $('chipRow').innerHTML=''; enterPlay();
 }
-function goHome(){ hush(); document.body.classList.remove('playing'); S.mode=null; applyTheme(TIER_COLORS[1]); }
-$('backBtn').addEventListener('click',goHome);
+function goHome(){ hush(); document.body.classList.remove('playing'); S.mode=null; applyTheme(TIER_COLORS[1]); voiceReset(); }
+onTap($('backBtn'),goHome,TOPBAR);
 
 /* 자리 칩: 켠 자리에는 1~9, 끈 자리에는 0 (교사가 고른 모양 그대로 나옴) */
 function renderChips(){
@@ -449,7 +494,7 @@ function renderChips(){
   const top=document.createElement('span'); top.className='chip fixed'; top.textContent=fullPlaceName(S.top)+'의 자리'; row.appendChild(top);
   for(let e=S.top-1;e>=0;e--){
     const c=document.createElement('button'); c.type='button'; c.className='chip'+(S.mix[e]?' on':''); c.textContent=fullPlaceName(e)+'의 자리'; c.dataset.exp=e;
-    c.addEventListener('click',()=>{ S.mix[e]=!S.mix[e]; c.classList.toggle('on',S.mix[e]); refreshNext(); });
+    onTap(c,()=>{ S.mix[e]=!S.mix[e]; c.classList.toggle('on',S.mix[e]); refreshNext(); });
     row.appendChild(c);
   }
 }
@@ -523,8 +568,8 @@ let rzT=null; window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setT
 
 /* ================= 누르기 =================
    자리 이름을 누르면 그 이름만 켜고 끔. 나머지 곳을 누르면 새 수.
-   관리가 열린 채로 수를 누르면 관리를 닫고 바로 학생 화면으로 */
-$('stage').addEventListener('click',e=>{
+   관리 창이 열린 동안은 반응하지 않음(지침 3절) */
+function stageTap(e){
   unlockAudio();
   const tx=e.target.closest('.pv-label .tx'), lab=tx&&tx.parentElement;
   if(lab&&!lab.classList.contains('spacer')){
@@ -533,7 +578,13 @@ $('stage').addEventListener('click',e=>{
   }
   if(S.admin) return;   /* 메뉴가 열려 있으면 반응하지 않음 */
   goFull(); showNumber();
-});
+}
+/* 수 화면은 닿는 순간 반응(전자칠판에서 미끄러져도). 전체 화면·소리 열기는 손을 뗄 때 한 번 더(터치는 뗄 때만 허락됨) */
+$('stage').style.touchAction='none';
+let stageDownAt=0;
+$('stage').addEventListener('pointerdown',e=>{ if(e.button>0) return; stageDownAt=Date.now(); stageTap(e); });
+$('stage').addEventListener('pointerup',()=>{ unlockAudio(); if(!S.admin&&document.body.classList.contains('playing')) goFull(); });
+$('stage').addEventListener('click',e=>{ if(Date.now()-stageDownAt<900||Date.now()-lastTapAt<700) return; stageTap(e); });
 document.addEventListener('keydown',e=>{
   if(TOUR.on){ if(e.code==='Escape') endTour(); return; }
   if(!document.body.classList.contains('playing')||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
@@ -542,16 +593,18 @@ document.addEventListener('keydown',e=>{
 
 /* ================= 위쪽 단추 ================= */
 function syncLabelBtn(){ $('labelBtn').classList.toggle('on',Object.keys(S.labels).every(k=>S.labels[k])); }
-$('labelBtn').addEventListener('click',()=>{
+onTap($('labelBtn'),()=>{
   const on=!$('labelBtn').classList.contains('on'); for(let e=0;e<=11;e++) S.labels[e]=on; syncLabelBtn();
   $('pvTable').querySelectorAll('.pv-col').forEach(col=>{ const l=col.querySelector('.pv-label'); if(!l||l.classList.contains('spacer')) return;
     const ex=+col.dataset.exp; l.classList.toggle('hidden',!on); l.innerHTML='<span class="tx">'+(on?chartLabel(ex):'·')+'</span>'; });
-});
+},TOPBAR);
 function syncVoiceBtn(){ $('voiceBtn').classList.toggle('on',S.sound); $('vOn').style.display=S.sound?'':'none'; $('vOff').style.display=S.sound?'none':''; }
-$('voiceBtn').addEventListener('click',()=>{ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); syncVoiceBtn(); if(!S.sound) hush(); else if(S.next) prefetchVoice(S.next.n); });
+onTap($('voiceBtn'),()=>{ S.sound=!S.sound; store.set('sound',S.sound?'on':'off'); syncVoiceBtn(); if(!S.sound) hush(); else if(S.next) prefetchVoice(S.next.n); },TOPBAR);
 function syncWaitBtn(){ $('waitText').textContent=S.wait?S.wait+'초 뒤':'바로'; $('waitBtn').classList.toggle('on',S.wait>0); }
-$('waitBtn').addEventListener('click',()=>{ S.wait=S.wait===0?3:S.wait===3?5:0; store.set('wait',S.wait); syncWaitBtn(); });
+onTap($('waitBtn'),()=>{ S.wait=S.wait===0?3:S.wait===3?5:0; store.set('wait',S.wait); syncWaitBtn(); },TOPBAR);
 syncVoiceBtn(); syncWaitBtn();
+function topFade(){ const t=document.querySelector('.topbar'), m=t.scrollWidth-t.clientWidth; t.classList.toggle('fade-l',m>2&&t.scrollLeft>2); t.classList.toggle('fade-r',m>2&&t.scrollLeft<m-2); }
+document.querySelector('.topbar').addEventListener('scroll',topFade,{passive:true}); window.addEventListener('resize',topFade);
 
 /* ================= 학생 기록 =================
    학생 명단은 같은 사이트의 다른 앱과 함께 씀(webapp.students).
@@ -704,7 +757,7 @@ const PLAY_STEPS=[
   {el:'#waitBtn', t:'읽어 주는 때', x:'바로 → 3초 뒤 → 5초 뒤. 학생이 먼저 읽어 볼 시간을 준 뒤 읽어 줘요.'},
   {el:'#labelBtn', t:'자리 이름 모두', x:'자리 이름을 한꺼번에 감추거나 보여요.'},
   {el:'#voiceBtn', t:'소리', x:'읽어 주는 소리를 켜고 꺼요.'},
-  {el:'#adminBtn', t:'학생 기록', x:'학생을 고르면 기록이 시작되고, 왼쪽 위에 빨간 점과 "기록 중"이 보여요. 설정하고 가운데 수를 누르면 바로 학생 화면으로 돌아와요.'},
+  {el:'#adminBtn', t:'학생 기록', x:'학생을 고르면 기록이 시작되고, 왼쪽 위에 빨간 점과 "기록 중"이 보여요. 창이 열린 동안은 수 화면이 눌리지 않아요. 이 단추를 다시 누르면 닫혀요.'},
   {el:'#backBtn', t:'처음 화면', x:'처음 화면으로 돌아가 자리를 다시 골라요.'}
 ];
 const TOUR={on:false, steps:[], i:0};
@@ -744,8 +797,8 @@ function placeTour(){
 function endTour(){ TOUR.on=false; $('tour').classList.remove('show'); }
 $('tourNext').addEventListener('click',()=>{ TOUR.i++; showStep(); });
 $('tourEnd').addEventListener('click',endTour);
-$('howtoBtn').addEventListener('click',()=>startTour(true));
-$('helpBtn').addEventListener('click',()=>startTour(false));
+onTap($('howtoBtn'),()=>startTour(true));
+onTap($('helpBtn'),()=>startTour(false),TOPBAR);
 
 applyTheme(TIER_COLORS[1]); updateRec();
 /* ================= 빠뜨린 곳 알려 주기 =================
