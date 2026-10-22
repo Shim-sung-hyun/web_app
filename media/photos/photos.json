@@ -498,63 +498,6 @@
    }
   },
   {
-   "id": "paper-cup",
-   "title": "종이컵",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
-   "tags": [],
-   "files": {
-    "photo": "paper-cup/photo.jpg"
-   },
-   "uses": {
-    "shape": {
-     "ok": false,
-     "shapes": null
-    },
-    "puzzle": false
-   }
-  },
-  {
-   "id": "glasses",
-   "title": "안경",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
-   "tags": [],
-   "files": {
-    "photo": "glasses/photo.jpg"
-   },
-   "uses": {
-    "shape": {
-     "ok": false,
-     "shapes": null
-    },
-    "puzzle": false
-   }
-  },
-  {
-   "id": "watering-can",
-   "title": "물뿌리개",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
-   "tags": [],
-   "files": {
-    "photo": "watering-can/photo.jpg"
-   },
-   "uses": {
-    "shape": {
-     "ok": false,
-     "shapes": null
-    },
-    "puzzle": false
-   }
-  },
-  {
    "id": "school-bus",
    "title": "통학 버스",
    "source": "maker",
@@ -939,44 +882,6 @@
      ]
     },
     "puzzle": true
-   }
-  },
-  {
-   "id": "car-wheel-2",
-   "title": "자동차 바퀴 2",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
-   "tags": [],
-   "files": {
-    "photo": "car-wheel-2/photo.jpg"
-   },
-   "uses": {
-    "shape": {
-     "ok": false,
-     "shapes": null
-    },
-    "puzzle": false
-   }
-  },
-  {
-   "id": "watering-can-2",
-   "title": "물뿌리개 2",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
-   "tags": [],
-   "files": {
-    "photo": "watering-can-2/photo.jpg"
-   },
-   "uses": {
-    "shape": {
-     "ok": false,
-     "shapes": null
-    },
-    "puzzle": false
    }
   },
   {
