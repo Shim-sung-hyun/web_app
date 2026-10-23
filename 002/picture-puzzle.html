@@ -708,7 +708,7 @@ async function preparePhoto(url,name,src,id){
 }
 /* 예시 사진: GitHub 주소(내 도메인에서 열어도 되게 절대 주소) → (인터넷이 없으면) 앱 안에서 그린 그림 */
 const GH='https://shim-sung-hyun.github.io/web_app/';
-const SAMPLE_SRC=[GH+'002/semple.jpeg','https://raw.githubusercontent.com/Shim-sung-hyun/web_app/main/002/semple.jpeg'];
+const SAMPLE_SRC=[GH+'media/photos/demo/puzzle-demo.jpg','https://raw.githubusercontent.com/Shim-sung-hyun/web_app/main/media/photos/demo/puzzle-demo.jpg'];   /* 예시 사진(책상), 차름 사진 모음 demo 폴더 */
 let sampleCache=null;
 async function loadSample(){
   if(sampleCache) return sampleCache;
@@ -731,17 +731,14 @@ function makeExample(){
   return c.toDataURL('image/jpeg',0.92);
 }
 /* 일상 그림: 차름 사진 모음(media/photos/photos.json)에서 퍼즐로 괜찮은 것(uses.puzzle)의 끝 그림. 사람·글자 없는 깔끔한 그림이라 퍼즐에 알맞음.
-   id는 옛 001 예시와 같아 고른 그림·기록이 그대로 이어짐. 목록을 못 받으면 옛 001 목록으로 */
+   id는 옛 001 예시와 같아 고른 그림·기록이 그대로 이어짐 */
 let ARTS=null;
 async function loadArts(){
   if(ARTS) return ARTS;
   try{
     const r=await fetch(GH+'media/photos/photos.json',{cache:'no-cache'}); const j=await r.json(); const base=j.base||GH+'media/photos/';
     ARTS=j.photos.filter(x=>x.uses&&x.uses.puzzle&&x.files&&x.files.art).map(x=>({id:x.id,title:x.title,url:base+x.files.art}));
-  }catch(e){
-    try{ const r=await fetch(GH+'001/samples/samples.json',{cache:'no-cache'}); const j=await r.json();
-      ARTS=j.filter(x=>x.ok&&x.art).map(x=>({id:x.id,title:x.title,url:GH+'001/'+x.art})); }catch(e2){ ARTS=[]; }
-  }
+  }catch(e){ ARTS=[]; }
   return ARTS;
 }
 async function loadArt(id){ const a=(await loadArts()).find(x=>x.id===id); if(!a) throw new Error('no art'); return preparePhoto(a.url,a.title,'art',a.id); }

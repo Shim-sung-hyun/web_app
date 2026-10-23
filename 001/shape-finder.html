@@ -933,7 +933,7 @@ const RIGHT_TOL = 1.5;
 const KO_COUNT = ['한','두','세','네','다섯','여섯','일곱','여덟','아홉','열'];
 const GH001='https://shim-sung-hyun.github.io/web_app/001/';
 const gh=u=>u&&!/^(https?:|blob:|data:)/.test(u)?GH001+u:u;
-const SAMPLE_URL = 'https://raw.githubusercontent.com/Shim-sung-hyun/charum/main/images/semple.jpeg';
+const SAMPLE_URL = 'https://shim-sung-hyun.github.io/web_app/media/photos/demo/shape-demo.jpg';   /* 키 없을 때 예시(감·스피커·책), 차름 사진 모음 demo 폴더 */
 const NUM_WORD = ['하나','둘','셋','넷','다섯','여섯'];
 
 /* ================= 상태 ================= */
@@ -1923,7 +1923,7 @@ function backBtnHTML(){
   return '';
 }
 /* 예시 사진 묶음: 차름 사진 모음(media/photos/photos.json)에서 제작자가 도형 분석을 확인한 것(uses.shape.ok)만. 키·기다림 없이 바로.
-   id는 옛 001/samples와 같아 고른 사진·저장 칸이 그대로 이어짐. 목록을 못 받으면 옛 001/samples/samples.json으로 */
+   id는 옛 001/samples와 같아 고른 사진·저장 칸이 그대로 이어짐(옛 폴더는 2026-10-23 지움). 목록을 못 받으면 앱 안 예시 그림(startDemo)으로 */
 let SAMPLES=null;
 const PHOTOS='https://shim-sung-hyun.github.io/web_app/media/photos/';
 async function loadSamples(){
@@ -1933,10 +1933,7 @@ async function loadSamples(){
     SAMPLES=j.photos.map(p=>{ const u=(p.uses&&p.uses.shape)||{}, f=p.files||{};
       return {id:p.id,title:p.title,ok:!!u.ok,shapes:u.shapes||[],file:f.photo?base+f.photo:null,art:f.art?base+f.art:null,line:f.line?base+f.line:null}; })
       .filter(x=>x.file&&good(x)); }
-  catch(e){
-    try{ const r=await fetch(gh('samples/samples.json'),{cache:'no-cache'}); const j=await r.json();
-      SAMPLES=j.filter(good).map(x=>({...x,file:gh(x.file),art:typeof x.art==='string'?gh(x.art):null,line:typeof x.line==='string'?gh(x.line):null})); }catch(e2){ SAMPLES=[]; }
-  }
+  catch(e){ SAMPLES=[]; }
   return SAMPLES;
 }
 async function openGallery(){
@@ -2349,7 +2346,7 @@ function normShape(s){
 }
 
 /* ================= 예시 사진 ================= */
-/* GitHub 예시 사진(semple.jpeg)의 도형. 키가 없거나 Gemini가 답하지 못할 때 씀 */
+/* 예시 사진(media/photos/demo/shape-demo.jpg)의 도형. 키가 없거나 Gemini가 답하지 못할 때 씀 */
 const SAMPLE_SHAPES=[
   {type:'circle',obj:'감',box:{x0:71,y0:424,x1:276,y1:515},pts:null},
   {type:'circle',obj:'감',box:{x0:727,y0:403,x1:916,y1:490},pts:null},

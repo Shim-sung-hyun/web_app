@@ -434,7 +434,7 @@ function sha1Bytes(msg){
   const out=new Uint8Array(20); const ov=new DataView(out.buffer); H.forEach((h,i)=>ov.setUint32(i*4,h)); return out;
 }
 async function sha16(t){ const u=new TextEncoder().encode(t); const d=window.crypto&&crypto.subtle?new Uint8Array(await crypto.subtle.digest('SHA-1',u)):sha1Bytes(u); return [...d].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
-/* 말 목록 뽑기(만든 사람용): 콘솔에서 __voiceLines() → 003/voice-lines.json 과 같은 목록 */
+/* 말 목록 뽑기(제작자용): 콘솔에서 __voiceLines() → 003/voice-lines.json 과 같은 목록 */
 window.__voiceLines=()=>{ const parts=[]; allLines().forEach(t=>splitSay(t).forEach(x=>{ if(!parts.includes(x)) parts.push(x); })); return parts; };
 /* 한 수업은 한 목소리: 내장 소리가 이 앱의 말을 다 갖고 있을 때만 내장, 하나라도 없으면 그 수업 전체를 기기 목소리로(섞지 않음) */
 let BUILTIN_OK=false;

@@ -12,7 +12,7 @@
   rainbow-finder-promo.jpg     홍보 그림·썸네일
   rainbow-finder_manual.html   게시판 본문
   rainbow-finder_guide.html    자세한 설명
-  voice/leda/                  내장 목소리(Leda, 빠르기 0.92, mp3 + index.json, 이름 = 문장 조각 SHA-1 앞 16자리)
+  (내장 목소리는 차름 소리 모음 ../media/voice/leda-0.92/ — Leda 0.92, 001·005·006과 함께)
   voice-lines.json             앱이 하는 말 전체(앱 콘솔 __voiceLines()와 같음, 24마디)
 
 목소리 (2026-10-22)

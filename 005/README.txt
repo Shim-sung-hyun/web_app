@@ -18,7 +18,7 @@
   place-value_manual.html   게시판 본문용 설명서 (짧게: 안내 → 홍보 그림 → 바로 열기 → 세 단계 → 선생님 메뉴·학생 기록 → 자세한 설명)
   place-value_guide.html    자세한 설명 (수업 흐름, 자리 칩과 모양, 기록 읽는 법, 알아 둘 점)
   place-value-beta.html     정식판으로 넘겨 주는 주소 (2026-10-22 합침)
-  voice/leda/               목소리(미리 만든 Google Leda 조각, mp3 + index.json). 키 없이 씀
+  (목소리: 미리 만든 Google Leda 조각 → 차름 소리 모음 ../media/voice/leda-0.92/, 키 없이 씀)
                             수를 자리마다 조각(예: 삼만 / 이천·오백·칠)으로 이어 읽음
 
 [내 도메인에서 열기] (2026-10-21)

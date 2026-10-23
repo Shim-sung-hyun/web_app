@@ -17,9 +17,9 @@
   picture-puzzle-promo.jpg     홍보 그림·썸네일
   picture-puzzle_manual.html   게시판 본문용 설명서
   picture-puzzle_guide.html    자세한 설명
-  semple.jpeg                  예시 사진
+  (예시 사진은 차름 사진 모음 ../media/photos/demo/puzzle-demo.jpg)
   server-loader.html           내 도메인용 불러오기 파일
-  일상 그림은 001/samples/samples.json 의 끝 그림(art)을 GitHub 절대 주소로 불러옴.
+  일상 그림은 차름 사진 모음 media/photos/photos.json 의 끝 그림(uses.puzzle)을 GitHub 절대 주소로 불러옴.
   휴대폰 사진은 photo-send.html + photo-relay.php(001과 같음). 002에서 열면 안내 문장이 퍼즐용으로 바뀜(#app=puzzle).
   저장 칸: picturePuzzle.*(설정·list·log), webapp.students(명단), IndexedDB picturePuzzleMine(보관한 사진 60장).
 

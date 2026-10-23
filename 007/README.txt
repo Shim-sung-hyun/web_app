@@ -18,7 +18,7 @@
 - fonts/                   학교안심 바른바탕 B (woff2)
 - 기본 목소리(Google Leda, 빠르기 0.90, 3,339개)는 차름 소리 모음 ../media/voice/leda-0.90/ 에서 읽음(2026-10-22부터)
   (mp3 + index.json, 고쳐 만든 소리 기록 fixes.json 도 거기에)
-- voice/leda/ · voice/fixes.json  옛 자리. 소리 모음에서 잘 되는 것을 확인한 뒤 지움
+- 옛 voice/leda/ · voice/fixes.json 은 2026-10-23 지움(fixes.json 은 media/voice/leda-0.90/ 에)
 - words-*.txt, words-frequency.csv   예전 판 자료(버전 1에서는 쓰지 않음)
   (예전 판 word-learn-v0.html·word-games.html은 2026-10-22에 지움 — 미리 만든 소리를 쓰지 않던 판)
 
@@ -41,7 +41,7 @@
 [편 차례 공개]
 - 앱 파일은 하나. word-learn.html 안 OPEN_BOOKS = [1] → 공개한 편(1편판). 다음 판은 [1, 2] → 1_2편판 …
 - 준비 중인 편은 설정 화면에 흐리게 "준비 중"(누를 수 없음), 그 편 낱말은 보기·채우기에도 안 나옴
-- 만든 사람 미리 보기: word-learn.html?all=1 (모든 편)
+- 제작자 미리 보기: word-learn.html?all=1 (모든 편)
 - 공개된 편을 다 마치면 "다음 편은 준비 중이에요"만 알리고, 복습할 묶음은 선생님이 고름
 - 준비 중인 편의 기록·학생 수준·마친 묶음은 지우지 않음(다시 열리면 이어짐)
 
@@ -64,7 +64,7 @@
 
 [내 도메인에서 열기] (2026-10-21)
 - word-learn.html 하나만 내 서버(예: https://charum.org/<폴더>/word-learn.html)에 올리면 된다. 그림·목소리·놀이 그림·글꼴·안내 페이지는 GitHub Pages(https://shim-sung-hyun.github.io/web_app/007/)에서 읽는다(DBASE).
-- GitHub Pages나 만든 사람 시험 서버(localhost의 /web_app/007/)에서 열릴 때만 같은 폴더에서 읽는다.
+- GitHub Pages나 제작자 시험 서버(localhost의 /web_app/007/)에서 열릴 때만 같은 폴더에서 읽는다.
 - 서버 폴더 이름은 게시판 이름(mid, 예: webapp)과 같게 하지 않는다(라이믹스 403).
 - 기록·학생 명단은 주소(도메인)마다 따로 저장된다: 옮길 때 교사용 기록 → 내보내기(CSV) → 새 주소에서 불러오기.
 - 앱을 고치면 GitHub의 word-learn.html과 내 서버의 word-learn.html을 함께 바꾼다.

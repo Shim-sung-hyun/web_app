@@ -47,9 +47,13 @@
   2) Claude에게 보내면: 개인 정보 다시 확인 → 001 도형 분석(sample-maker) → 끝 그림·도안 → 목록에 추가
   3) 빼 달라는 요청이 오면 그 폴더와 목록 줄을 지움
 
+■ 키 없을 때 예시 그림 (demo/, 목록에 넣지 않음)
+  demo/shape-demo.jpg   001 예시(감·스피커·휴대폰·책, 도형 자리는 001 SAMPLE_SHAPES) — charum 저장소 semple.jpeg를 세워 1280으로 줄임
+  demo/puzzle-demo.jpg  002 예시(책상·노트북)
+
 ■ 옛 주소
-  001/samples/ 는 001·002가 새 목록으로 옮긴 뒤(2026-10-22) 목록을 못 받을 때의 대비로만 남겨 둠.
-  선생님 확인이 끝나면 지움. 그 뒤로 예시 사진을 고칠 때는 이 폴더와 photos.json만 고침.
+  001/samples/ 와 002/semple.jpeg, charum 저장소 images/semple.jpeg 를 읽던 곳은 2026-10-23에 모두 이리로 옮기고 지움.
+  예시 사진을 고칠 때는 이 폴더와 photos.json만 고침.
 
 ■ 제작자용 만들기 화면 (001 폴더, 2026-10-23부터 이 목록을 읽고 이 꼴로 내보냄)
   001/sample-maker.html  도형 분석·확인 — uses.shape 가 있고 ok=false 인 사진만 → "photos.json" 통째로 내려받기
