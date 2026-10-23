@@ -2,12 +2,13 @@
 
 파일
 - animal-home.html      : 내 도메인으로 여는 판(study/008/animal-home.html = server-loader.html)
-- animal-home-beta.html : 고쳐 볼 때 먼저 올리는 판(2026-10-23 현재 animal-home.html과 같음)
+- animal-home-beta.html : 정식판으로 넘겨 주는 페이지(2026-10-23 베타를 정식판에 합침). 큰 수정은 이 이름으로 다시 베타를 만들어 의견을 들은 뒤 합침
 - server-loader.html    : 서버 study/008/에 animal-home.html 이름으로 올리는 불러오기 파일
 - voice-lines.json      : 앱이 쓰는 말 목록(콘솔 __voiceLines()와 같음)
 (목소리 191마디는 2026-10-23 소리 모음에 넣고 만들기 화면은 지움)
 
 자료(앱 폴더가 아니라 media/)
+- 놀이: media/habitats/props(가림 소품 24, index.json 크기) · game(놀이용 장면 11) · seek(숨은 그림 숲·바다, index.json 동물 자리) · photos.json(보기 끝 실제 사진, 아직 없음)
 - 동물 그림: 007에 있는 동물은 007/pics, 새로 그린 24마리는 media/animals (index.json)
 - 장면 그림: media/habitats (동물 없이 장소만, 11장)
 - 목소리: media/voice/leda-0.92 (192마디 모두 내장)
