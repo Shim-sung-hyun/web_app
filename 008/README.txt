@@ -1,4 +1,4 @@
-008 동물이 사는 곳 (차름 동물) — 과학 영역(보라 #6A4C9C)
+008 차름 동물원 — 동물이 사는 곳 (주제 차름 동물원 · 부제 동물이 사는 곳) — 과학 영역(보라 #6A4C9C)
 
 파일
 - animal-home.html      : 내 도메인으로 여는 판(study/008/animal-home.html = server-loader.html)

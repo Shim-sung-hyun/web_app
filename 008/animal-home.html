@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>동물이 사는 곳</title>
+<title>차름 동물원 · 동물이 사는 곳</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
@@ -29,7 +29,9 @@ button{font-family:inherit}
 body:not(.setup) #setupView{display:none}
 .wrap{max-width:900px;margin:0 auto}
 .title{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 6px}
-.title h1{font-family:var(--f-display);font-weight:400;font-size:40px;margin:0;color:var(--sci-d)}
+.title h1{font-family:var(--f-display);font-weight:400;font-size:44px;margin:0;color:var(--sci-d);line-height:1.1}
+.title h1 small{display:block;font-size:24px;color:var(--sci);margin-top:4px;letter-spacing:.01em}
+.title .mark{width:40px;height:40px}
 .title .mark{display:flex;flex-direction:column;width:34px;height:34px;border-radius:9px;overflow:hidden;border:2px solid var(--sci-d)}
 .title .mark i{flex:1}
 .sub{text-align:center;color:var(--muted);margin:0 0 22px;font-size:15px}
@@ -193,13 +195,13 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
   box-shadow:inset 0 -4px 10px rgba(90,220,235,.45), inset 0 3px 6px rgba(0,0,0,.6), 0 4px 10px rgba(0,0,0,.4), 0 0 0 3px rgba(63,207,210,.35)}
 body.setup #adminBtn{display:none}
 @media print{body *{visibility:hidden}#recBox,#recBox *{visibility:visible}#recBox{position:absolute;left:0;top:0;box-shadow:none}#recView{position:static;background:none;padding:0}.noprint{display:none!important}}
-@media (max-width:600px){.dexGrid{grid-template-columns:repeat(2,1fr);gap:8px}.dexCard .cap{font-size:17px}.title h1{font-size:30px}#startBtn{min-width:200px;font-size:24px}}
+@media (max-width:600px){.dexGrid{grid-template-columns:repeat(2,1fr);gap:8px}.dexCard .cap{font-size:17px}.title h1{font-size:34px}.title h1 small{font-size:20px}#startBtn{min-width:200px;font-size:24px}}
 </style>
 </head>
 <body class="setup">
 
 <div id="setupView"><div class="wrap">
-  <div class="title"><span class="mark" aria-hidden="true"><i style="background:#BFE0F5"></i><i style="background:#9CC46B"></i><i style="background:#9A6A3E"></i></span><h1>동물이 사는 곳</h1></div>
+  <div class="title"><span class="mark" aria-hidden="true"><i style="background:#BFE0F5"></i><i style="background:#9CC46B"></i><i style="background:#9A6A3E"></i></span><h1>차름 동물원<small>동물이 사는 곳</small></h1></div>
   <p class="sub">동물과 그 동물이 사는 곳을 이어 봐요</p>
 
   <div class="card" id="c1"><h2><span class="num">1</span>누구와 할까요?</h2>
@@ -942,7 +944,7 @@ $('dexView').addEventListener('pointerdown',e=>{ if(e.target.id==='dexView') $('
 function sheetHTML(lv,b){
   const bd=BUN[lv][b], n=bd.places.length;
   const pw=n<=2?'130mm':'104mm';   /* 4곳이면 2×2가 한 쪽에 들어가게 */
-  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>동물이 사는 곳 활동지</title>'
+  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>차름 동물원 · 동물이 사는 곳 활동지</title>'
    +'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap">'
    +'<style>@page{size:A4 landscape;margin:10mm}*{box-sizing:border-box}body{margin:0;font-family:"Noto Sans KR",sans-serif;color:#222}'
    +'.pg{width:277mm;height:188mm;page-break-after:always;display:flex;flex-direction:column}.pg:last-child{page-break-after:auto}'
@@ -954,7 +956,7 @@ function sheetHTML(lv,b){
    +'.ac{border:.5mm dashed #888;border-radius:3mm;height:68mm;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3mm}'
    +'.ac img{width:48mm;height:48mm;object-fit:contain}.ac div{font-family:Jua,sans-serif;font-size:26px;margin-top:2mm}'
    +'.note{font-size:11px;color:#777;text-align:center;margin-top:3mm}</style></head><body>'
-   +'<div class="pg"><div class="hd"><b>동물이 사는 곳</b><span>'+LV[lv].name+' · 묶음 '+(b+1)+' · 이름 ________________</span></div><div class="places">'
+   +'<div class="pg"><div class="hd"><b>차름 동물원 · 동물이 사는 곳</b><span>'+LV[lv].name+' · 묶음 '+(b+1)+' · 이름 ________________</span></div><div class="places">'
    +bd.places.map(p=>'<div class="pl"><img src="'+HAB+PL[p].scene+'.jpg"><span>'+PL[p].label+'</span></div>').join('')+'</div></div>'
    +'<div class="pg"><div class="hd"><b>오려서 사는 곳에 붙여요</b><span>'+LV[lv].name+' · 묶음 '+(b+1)+'</span></div><div class="cut">'
    +shuffle(bd.items).map(it=>'<div class="ac"><img src="'+pic(it.a)+'"><div>'+esc(it.a)+'</div></div>').join('')+'</div><div class="note">점선을 따라 오려 앞 장의 사는 곳에 붙입니다. 이름 없이 하려면 이름 부분을 잘라 냅니다.</div></div>'
