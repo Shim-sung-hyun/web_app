@@ -20,8 +20,8 @@
   tags      장소·주제(교실·화장실·급식실·바깥 …), 앱이 고를 때 씀
   files     photo·art·line 파일(이 폴더 기준 주소)
   uses      앱별로 쓸 수 있는지
-            shape  : 001 일상 속 도형 찾기 — ok=true만 예시로, shapes = 도형 분석(0~1000 좌표)
-            puzzle : 002 그림 조각 맞추기 — true면 "일상 그림"으로(art 사용)
+            shape  : 001 차름 도형 1편 일상 속 도형 찾기 — ok=true만 예시로, shapes = 도형 분석(0~1000 좌표)
+            puzzle : 002 차름 놀이 1편 내 그림 퍼즐 — true면 "일상 그림"으로(art 사용)
 
 ■ 앱에서 쓰는 법
   목록: https://shim-sung-hyun.github.io/web_app/media/photos/photos.json

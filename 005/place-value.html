@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="description" content="발달장애 학생을 위한 수의 자릿값 읽기 웹앱">
-<title>숫자 익히기 — 자릿값 읽기</title>
+<title>차름 숫자 2편 큰 수 읽기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -146,7 +146,8 @@ body:not(.admin) #drawer{box-shadow:none;visibility:hidden;transition:transform 
 .seg-row .seg{flex:1}
 
 /* ---------- 수학 영역 꼴: 흰 카드 + 왼쪽 굵은 띠, 숫자는 한 색(색이 자리를 알려 주지 않게) ---------- */
-.hero h1{color:var(--base);display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.hero h1{color:var(--base);display:flex;align-items:center;justify-content:center;gap:4px 16px;flex-wrap:wrap}
+.hero h1 small{flex-basis:100%;text-align:center;font-size:.5em;opacity:.85;letter-spacing:.01em}
 .pv-mark{display:inline-flex;gap:5px}
 .pv-mark i{font-style:normal;font-family:'Jua',sans-serif;font-size:22px;width:34px;height:34px;line-height:31px;border-radius:7px;border:3px solid var(--base);color:var(--base);text-align:center;background:#fff}
 .pv-mark i+i{border-color:#9BB9C2;color:#7E9AA3}
@@ -204,7 +205,7 @@ body.admin #stage{pointer-events:none}
 <!-- ============== 첫 화면: 자리 고르기 ============== -->
 <section id="pickScreen" class="screen">
   <div class="hero">
-    <h1>숫자 익히기<span class="pv-mark" aria-hidden="true"><i>1</i><i>0</i><i>0</i></span></h1>
+    <h1>차름 숫자<span class="pv-mark" aria-hidden="true"><i>1</i><i>0</i><i>0</i></span><small>2편 큰 수 읽기</small></h1>
     <p>자리를 골라 수를 읽어 봐요</p>
   </div>
   <div class="pick-grid" id="pickGrid"></div>
@@ -746,7 +747,7 @@ $('importFile').addEventListener('change',async e=>{
 });
 $('wipeBtn').addEventListener('click',()=>{
   if(!log.length) return;
-  if(!confirm(`이 기기의 숫자 익히기 기록 ${log.length}개를 모두 지울까요?\n(학생 명단은 남아요. 먼저 내보내기로 저장해 두세요.)`)) return;
+  if(!confirm(`이 기기의 큰 수 읽기 기록 ${log.length}개를 모두 지울까요?\n(학생 명단은 남아요. 먼저 내보내기로 저장해 두세요.)`)) return;
   log=[]; saveLog(); updateRec(); renderDrawer();
 });
 

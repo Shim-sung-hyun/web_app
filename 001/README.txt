@@ -1,4 +1,4 @@
-001 · 일상 속 도형 찾기 (2026-10-22 정식판)
+001 · 차름 도형 1편 일상 속 도형 찾기 (2026-10-22 정식판, 이름 2026-10-23 — 파일 이름·주소·저장 칸은 그대로)
 
 앱 주소(학생·선생님):  https://www.charum.org/study/001/shape-finder.html
 GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-finder.html

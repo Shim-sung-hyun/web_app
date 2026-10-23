@@ -91,7 +91,7 @@ details.give summary .tag{margin-left:4px}
     <summary>이 사진 기증하기 <span class="tag">선택 · 다른 선생님과 나누기</span></summary>
     <ul>
       <li>기증한 사진은 <b>차름 사진 모음</b>에 올라가 <b>누구나 볼 수 있어요</b>(공개 주소).</li>
-      <li>여러 차름 앱(도형 찾기·그림 조각 맞추기 등)에서 수업 자료로 써요.</li>
+      <li>여러 차름 앱(차름 도형·차름 놀이 등)에서 수업 자료로 써요.</li>
       <li><b>사람·얼굴·이름·전화번호·차 번호판·학교 이름</b>이 보이지 않는 사진만 보내 주세요.</li>
       <li>제작자가 한 번 더 살펴본 뒤 올려요. 빼고 싶으면 차름 게시판에 댓글로 알려 주세요.</li>
     </ul>
@@ -144,7 +144,7 @@ details.give summary .tag{margin-left:4px}
 const RELAY='https://charum.org/photo-relay.php';
 const $=id=>document.getElementById(id);
 const m=/c=(\d{4})/.exec(location.hash||''); if(m) $('code').value=m[1];
-/* 그림 조각 맞추기(002)에서 열면 안내를 퍼즐에 맞게 */
+/* 차름 놀이 1편 내 그림 퍼즐(002)에서 열면 안내를 퍼즐에 맞게 */
 const APP=/app=puzzle/.test(location.hash||'')?'002':'001';   /* 기증함에 "어느 앱"으로 남김 */
 if(/app=puzzle/.test(location.hash||'')) $('warnTip').innerHTML='<b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 학생이 좋아하는 물건이나 장소를 화면 가득 찍으면 퍼즐이 재미있어요.';
 /* 전자칠판에 없는 키(k=gemini,cloud)만 칸을 보여 줌 */

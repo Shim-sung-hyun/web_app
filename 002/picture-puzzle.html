@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>그림 조각 맞추기</title>
+<title>차름 놀이 1편 내 그림 퍼즐</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
@@ -38,6 +38,7 @@ body.home #play{display:none}
 .sp-head{display:flex;gap:16px;align-items:center;margin:0 4px 18px}
 .sp-head svg{width:56px;height:56px;flex:none;color:var(--g)}
 .sp-head h1{font-family:var(--f-display);font-weight:400;font-size:38px;margin:0;line-height:1.1;color:var(--g2)}
+.sp-head h1 small{display:block;font-size:.6em;margin-top:4px;opacity:.85;letter-spacing:.01em}
 .sp-head p{margin:4px 0 0;color:#5A6B76;font-size:15px}
 .card{position:relative;background:#fff;border-radius:22px;padding:22px 26px 22px 30px;margin:0 0 16px;box-shadow:0 1px 0 var(--gline),0 8px 22px rgba(46,70,90,.08)}
 .card>h2{display:flex;align-items:center;gap:12px;margin:0 0 14px;font-size:20px;font-weight:700;color:var(--g2)}
@@ -1013,7 +1014,7 @@ function renderRecords(){
 }
 function printRecords(list,name){
   const t=new Date(), ds=`${t.getFullYear()}. ${t.getMonth()+1}. ${t.getDate()}.`;
-  $('printArea').innerHTML=`<div class="pa-rec"><div class="pa-head"><h1>그림 조각 맞추기 · 교사용 기록${RV.demo?' (예시)':''}</h1><div>${esc(name||'')} &nbsp; ${ds}</div></div>${recordHTML(list,name||'',true)}</div>`;
+  $('printArea').innerHTML=`<div class="pa-rec"><div class="pa-head"><h1>차름 놀이 1편 내 그림 퍼즐 · 교사용 기록${RV.demo?' (예시)':''}</h1><div>${esc(name||'')} &nbsp; ${ds}</div></div>${recordHTML(list,name||'',true)}</div>`;
   window.print();
 }
 $('recBox').addEventListener('pointerdown',e=>{ if(e.target===$('recBox')) closeRecords(); });
@@ -1053,7 +1054,7 @@ function showSetup(){
   const tile=(name,val,cur,inner)=>`<label class="tile"><input type="radio" name="${name}" value="${val}" ${String(cur)===String(val)?'checked':''}><span>${inner}</span></label>`;
   const lvTiles=()=>Object.keys(LEVELS).map(l=>tile('level',l,S.level,`<b>${l}</b><small>${pieceCount(+l)}조각</small>`)).join('');
   $('setup').innerHTML=`<div class="sp">
-    <div class="sp-head">${ICON.jig}<div><h1>그림 조각 맞추기</h1><p>그림을 퍼즐 조각으로 나누고, 학생이 조각을 끌어서 제자리에 놓아요. 이 화면은 선생님·보호자용입니다.</p></div></div>
+    <div class="sp-head">${ICON.jig}<div><h1>차름 놀이<small>1편 내 그림 퍼즐</small></h1><p>그림을 퍼즐 조각으로 나누고, 학생이 조각을 끌어서 제자리에 놓아요. 이 화면은 선생님·보호자용입니다.</p></div></div>
     <section class="card" id="whoCard"><h2>${NO(1)}누구와 하나요?</h2>
       <div class="who"><select id="stuSel" aria-label="기록할 학생"></select><button class="mini" type="button" id="stuAddBtn">+ 학생 넣기</button><button class="mini" type="button" id="recOpen">교사용 기록</button></div>
       <div class="who" id="addRow" hidden style="margin-top:10px"><input id="stuName" placeholder="학생 이름 (실명)" autocomplete="off"><button class="mini pri" type="button" id="stuAddOk">넣기</button></div>
@@ -1466,7 +1467,7 @@ async function printSheet(){
   g.beginPath(); guideChains(R,Q).forEach(ch=>chainPath(g,ch,f,f)); g.stroke();
   const t=new Date(), ds=`${t.getFullYear()}. ${t.getMonth()+1}. ${t.getDate()}.`;
   const rows=S.rounds.map((l,i)=>`<tr><td>${i+1}회</td><td>${l.level}단계 · ${SHAPES[l.shape]} · ${l.n}조각 · 밑그림 ${GH_SHORT[l.ghost]||''}</td><td>바로 맞힘 ${l.first}</td><td>도움 받아 맞힘 ${l.helped}</td><td>${fmtTime(l.ms)}</td></tr>`).join('');
-  $('printArea').innerHTML=`<div class="pa-head"><h1>그림 조각 맞추기</h1><div>이름: ${recId?esc(nameOf(recId)):'____________'} &nbsp; ${ds}</div></div>
+  $('printArea').innerHTML=`<div class="pa-head"><h1>차름 놀이 1편 내 그림 퍼즐</h1><div>이름: ${recId?esc(nameOf(recId)):'____________'} &nbsp; ${ds}</div></div>
     <img class="pa-img" id="paImg" src="${c.toDataURL('image/jpeg',0.92)}" alt="">
     <p class="pa-note">선을 따라 오려서 다시 맞춰 보아요.</p>${rows?`<table class="pa-log">${rows}</table>`:''}`;
   try{ await $('paImg').decode(); }catch(e){}
