@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>차름 동물원 · 동물이 사는 곳</title>
+<title>차름 동물원 1편 동물이 사는 곳</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
@@ -47,6 +47,26 @@ body:not(.setup) #setupView{display:none}
 .lv{flex:1 1 220px;text-align:left;padding:12px 14px;min-height:74px}
 .lv b{display:block;font-size:17px;margin-bottom:3px}
 .lv span{font-size:13.5px;opacity:.85}
+.mode{display:flex;gap:8px;margin:14px 0 4px;flex-wrap:wrap}
+.mode .chip{min-width:110px}
+.pickNote{font-size:13.5px;color:var(--muted);margin:8px 0 0}
+.pickWarn{font-size:14px;color:#9A3328;margin:8px 0 0;font-weight:700}
+.bd .ord{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--sci);color:#fff;font-size:14px;align-items:center;justify-content:center;margin-right:6px}
+.plc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.plc button{border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:6px;cursor:pointer;text-align:center;font-weight:700;font-size:16px}
+.plc button img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block;margin-bottom:4px}
+.plc button span{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.plc button.on{border-color:var(--sci);box-shadow:0 0 0 2px var(--sci) inset;background:#FBF9FE}
+.agrp{margin-top:12px}
+.agrp h4{margin:0 0 6px;font-size:15px;color:var(--sci-d);display:flex;align-items:center;gap:8px}
+.agrp h4 img{width:44px;height:33px;object-fit:cover;border-radius:6px}
+.agrp .row{gap:6px}
+.achip{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:3px 10px 3px 4px;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:15px;font-family:inherit}
+.achip img{width:36px;height:36px;object-fit:contain}
+.achip.on{border-color:var(--sci);background:var(--sci);color:#fff}
+.achip:disabled{opacity:.35;cursor:default}
+.today .plan{flex:1 1 100%}
+.today .plan h4{margin:0 0 6px;font-size:15px;color:var(--sci-d)}
 .bundles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:14px}
 .bd{display:flex;flex-direction:column;gap:6px;text-align:left;padding:10px 12px;border-radius:14px;border:1.5px solid var(--line);background:#fff;cursor:pointer}
 .bd.on{border-color:var(--sci);box-shadow:0 0 0 2px var(--sci) inset;background:#FBF9FE}
@@ -201,7 +221,7 @@ body.setup #adminBtn{display:none}
 <body class="setup">
 
 <div id="setupView"><div class="wrap">
-  <div class="title"><span class="mark" aria-hidden="true"><i style="background:#BFE0F5"></i><i style="background:#9CC46B"></i><i style="background:#9A6A3E"></i></span><h1>차름 동물원<small>동물이 사는 곳</small></h1></div>
+  <div class="title"><span class="mark" aria-hidden="true"><i style="background:#BFE0F5"></i><i style="background:#9CC46B"></i><i style="background:#9A6A3E"></i></span><h1>차름 동물원<small>1편 동물이 사는 곳</small></h1></div>
   <p class="sub">동물과 그 동물이 사는 곳을 이어 봐요</p>
 
   <div class="card" id="c1"><h2><span class="num">1</span>누구와 할까요?</h2>
@@ -213,7 +233,8 @@ body.setup #adminBtn{display:none}
 
   <div class="card" id="c2"><h2><span class="num">2</span>어디까지 배울까요?</h2>
     <div class="row" id="lvRow"></div>
-    <div class="bundles" id="bdList"></div>
+    <div class="mode" id="modeRow"></div>
+    <div id="pickArea"></div>
   </div>
 
   <div class="card" id="c3"><h2><span class="num">3</span>오늘 할 것</h2>
@@ -327,10 +348,12 @@ const S={
   stu:store.get('stu')||'', level:+(store.get('level')||1), bundle:+(store.get('bundle')||0),
   steps:JSON.parse(store.get('steps')||'{"show":1,"a2p":1,"p2a":1,"sort":1}'),
   endScene:store.get('endScene')!=='0', game:+(store.get('game')??1), gameLv:+(store.get('gameLv')||1), sound:store.get('sound')!=='0', engine:store.get('engine')||'builtin',
-  admin:false, run:null, engineNow:'', voiceNote:''
+  admin:false, run:null, engineNow:'', voiceNote:'',
+  mode:store.get('mode')||'bundle', bsel:JSON.parse(store.get('bsel')||'null'), psel:JSON.parse(store.get('psel')||'[]'), pn:+(store.get('pn')||6), ppick:JSON.parse(store.get('ppick')||'[]'), asel:JSON.parse(store.get('asel')||'[]')
 };
 if(!LV[S.level]) S.level=1; if(!BUN[S.level][S.bundle]) S.bundle=0;
-function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('endScene',S.endScene?'1':'0'); store.set('game',S.game); store.set('gameLv',S.gameLv); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
+if(!Array.isArray(S.bsel)||!S.bsel.length) S.bsel=[S.bundle];
+function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('mode',S.mode); store.set('bsel',JSON.stringify(S.bsel)); store.set('psel',JSON.stringify(S.psel)); store.set('pn',S.pn); store.set('ppick',JSON.stringify(S.ppick)); store.set('asel',JSON.stringify(S.asel)); store.set('endScene',S.endScene?'1':'0'); store.set('game',S.game); store.set('gameLv',S.gameLv); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
 
 /* ================= 학생 명단·기록 =================
    명단은 다른 차름 앱과 함께 씀(webapp.students). 기록은 이 기기 브라우저에만.
@@ -479,32 +502,27 @@ function renderSetup(){
   const add=document.createElement('button'); add.className='chip add'; add.textContent='+ 학생 넣기'; add.onclick=()=>{ $('newStu').classList.remove('hidden'); $('newName').focus(); }; sr.appendChild(add);
   const rb=$('resumeBox'); rb.innerHTML='';
   const rs=RESUME[S.stu||'_'];
-  if(rs&&BUN[rs.lv]&&BUN[rs.lv][rs.b]){
-    rb.innerHTML='<div class="resume">멈춘 곳: '+LV[rs.lv].name+' · 묶음 '+(rs.b+1)+' · '+(PHASES.find(p=>p[0]===rs.ph)||['',''])[1]
+  if(rs&&!rs.plan&&BUN[rs.lv]&&BUN[rs.lv][rs.b]){ rs.plan=[{places:BUN[rs.lv][rs.b].places,items:BUN[rs.lv][rs.b].items,label:'묶음 '+(rs.b+1),bi:rs.b}]; rs.idx=0; }   /* 예전 꼴 */
+  if(rs&&rs.plan&&LV[rs.lv]&&rs.plan[rs.idx]){
+    rb.innerHTML='<div class="resume">멈춘 곳: '+LV[rs.lv].name+' · '+esc(rs.plan[rs.idx].label)+(rs.plan.length>1?' ('+(rs.idx+1)+'/'+rs.plan.length+')':'')+' · '+(PHASES.find(p=>p[0]===rs.ph)||['',''])[1]
       +' <button class="chip sm on" id="rsGo">이어 하기</button><button class="chip sm" id="rsDel">멈춘 곳 지우기</button></div>';
-    $('rsGo').onclick=()=>{ S.level=rs.lv; S.bundle=rs.b; saveS(); startLesson(rs); };
+    $('rsGo').onclick=()=>{ S.level=rs.lv; saveS(); startLesson(rs); };
     $('rsDel').onclick=()=>{ delete RESUME[S.stu||'_']; saveResume(); renderSetup(); };
   }
-  /* ② 수준·묶음 */
+  /* ② 수준 · 고르는 방식 */
   const lr=$('lvRow'); lr.innerHTML='';
   Object.keys(LV).forEach(l=>{ const b=document.createElement('button'); b.className='chip lv'+(S.level==l?' on':'');
-    b.innerHTML='<b>'+LV[l].name+'</b><span>'+LV[l].desc+'</span>'; b.onclick=()=>{ if(S.level!=l){ S.level=+l; S.bundle=0; } saveS(); renderSetup(); flash('c3'); }; lr.appendChild(b); });
-  const bl=$('bdList'); bl.innerHTML='';
-  const done=(DONE[S.stu||'_']||{});
-  BUN[S.level].forEach((bd,i)=>{ const b=document.createElement('button'); b.className='bd'+(S.bundle===i?' on':'');
-    const key=S.level+'-'+(i+1);
-    b.innerHTML='<div class="bh">묶음 '+(i+1)+(HARD.has(key)?' <em>비슷한 곳 구별하기</em>':'')+'</div>'
-      +'<div class="pl">'+bd.places.map(p=>PL[p].label).join(' · ')+'</div>'
-      +'<div class="an">'+bd.items.map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div>'
-      +(done[key]?'<div class="done">✓ 마침 '+done[key]+'번</div>':'');
-    b.onclick=()=>{ S.bundle=i; saveS(); renderSetup(); flash('c3'); }; bl.appendChild(b); });
+    b.innerHTML='<b>'+LV[l].name+'</b><span>'+LV[l].desc+'</span>'; b.onclick=()=>{ if(S.level!=l){ S.level=+l; S.bundle=0; S.bsel=[0]; S.psel=PLACES[l].slice(0,2); S.ppick=[]; S.asel=[]; } saveS(); renderSetup(); flash('c3'); }; lr.appendChild(b); });
+  renderPick();
   /* ③ 오늘 할 것 */
-  const bd=BUN[S.level][S.bundle];
+  const plan=makePlan(), ok=planOk(plan);
   const steps=PHASES.filter(p=>S.steps[p[0]]).map(p=>p[1]);
-  $('today').innerHTML='<div class="places">'+bd.places.map(p=>'<div class="pl1"><img src="'+HAB+PL[p].scene+'.jpg" alt="">'+PL[p].label
-      +'<div class="ans">'+bd.items.filter(it=>it.p===p).map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div></div>').join('')+'</div>'
-    +'<div class="steps">'+LV[S.level].name+' · 묶음 '+(S.bundle+1)+' · 동물 '+bd.items.length+'마리<br>단계: '+(steps.join(' → ')||'(없음)')+(S.game?' → 숨은 동물 찾기('+GAMELV_NAME[S.gameLv]+(S.game===2?', 두 묶음마다':'')+')':'')+(S.endScene?' → 끝 장면':'')
-    +'<br>'+(S.stu?'기록: '+esc(nameOf(S.stu)):'연습 — 기록하지 않아요')+'</div>';
+  $('today').innerHTML=plan.map(bd=>'<div class="plan">'+(plan.length>1?'<h4>'+esc(bd.label)+'</h4>':'')+'<div class="places">'+bd.places.map(p=>'<div class="pl1"><img src="'+HAB+PL[p].scene+'.jpg" alt="">'+PL[p].label
+      +'<div class="ans">'+bd.items.filter(it=>it.p===p).map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div></div>').join('')+'</div></div>').join('')
+    +'<div class="steps">'+LV[S.level].name+' · '+(S.mode==='bundle'?plan.map(b=>b.label).join(', '):plan[0].label)+' · 동물 '+plan.reduce((n,b)=>n+b.items.length,0)+'마리<br>단계: '+(steps.join(' → ')||'(없음)')+(S.game?' → 숨은 동물 찾기('+GAMELV_NAME[S.gameLv]+(S.game===2?', 두 묶음마다':'')+')':'')+(S.endScene?' → 끝 장면':'')
+    +(plan.length>1?'<br>묶음 하나를 마치면 끝 장면을 5초 보여 주고 다음 묶음으로 넘어갑니다.':'')
+    +'<br>'+(S.stu?'기록: '+esc(nameOf(S.stu)):'연습 — 기록하지 않아요')+'</div>'
+    +(ok?'':'<div class="pickWarn">사는 곳이 두 곳 이상이고 동물이 두 마리 이상이어야 시작할 수 있어요(한 번에 '+MAXP+'곳까지).</div>');
   /* 더 정하기 */
   const st=$('stepRow'); st.innerHTML='';
   PHASES.forEach(([k,n])=>{ const b=document.createElement('button'); b.className='chip sm'+(S.steps[k]?' on':''); b.textContent=n;
@@ -519,6 +537,54 @@ function renderSetup(){
   [['켬',1],['끔',0]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+((S.sound?1:0)===v?' on':''); b.textContent=n; b.onclick=()=>{ S.sound=!!v; saveS(); renderSetup(); }; sn.appendChild(b); });
   renderVoiceRow();
 }
+function renderPick(){
+  const lv=S.level, mr=$('modeRow'); mr.innerHTML='';
+  [['bundle','묶음별'],['place','서식지별'],['animal','동물별']].forEach(([m,n])=>{ const b=document.createElement('button'); b.className='chip'+(S.mode===m?' on':''); b.textContent=n;
+    b.onclick=()=>{ S.mode=m; if(m==='place'&&S.psel.filter(p=>PLACES[lv].includes(p)).length<2){ S.psel=PLACES[lv].slice(0,2); S.ppick=[]; } saveS(); renderSetup(); }; mr.appendChild(b); });
+  const A=$('pickArea'); A.innerHTML='';
+  const note=(t,warn)=>{ const d=document.createElement('div'); d.className=warn?'pickWarn':'pickNote'; d.textContent=t; A.appendChild(d); return d; };
+  if(S.mode==='bundle'){
+    note('묶음을 '+MAXB+'개까지 고를 수 있어요. 고른 차례대로 합니다.');
+    const g=document.createElement('div'); g.className='bundles'; A.appendChild(g);
+    const done=(DONE[S.stu||'_']||{});
+    BUN[lv].forEach((bd,i)=>{ const k=S.bsel.indexOf(i), b=document.createElement('button'); b.className='bd'+(k>=0?' on':'');
+      const key=lv+'-'+(i+1);
+      b.innerHTML='<div class="bh"><span>'+(k>=0?'<span class="ord">'+(k+1)+'</span>':'')+'묶음 '+(i+1)+'</span>'+(HARD.has(key)?' <em>비슷한 곳 구별하기</em>':'')+'</div>'
+        +'<div class="pl">'+bd.places.map(p=>PL[p].label).join(' · ')+'</div>'
+        +'<div class="an">'+bd.items.map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div>'
+        +(done[key]?'<div class="done">✓ 마침 '+done[key]+'번</div>':'');
+      b.onclick=()=>{ if(k>=0){ if(S.bsel.length>1) S.bsel.splice(k,1); }
+        else if(S.bsel.length>=MAXB){ w.textContent='묶음은 '+MAXB+'개까지예요. 먼저 고른 것을 눌러 빼고 고르세요.'; return; }
+        else S.bsel.push(i);
+        S.bundle=S.bsel[0]; saveS(); renderSetup(); flash('c3'); };
+      g.appendChild(b); });
+    const w=note('',true);
+  } else if(S.mode==='place'){
+    note('사는 곳을 2~'+MAXP+'곳 고르고, 동물 수를 정하세요. 곳마다 고르게 뽑아요.');
+    const g=document.createElement('div'); g.className='plc'; A.appendChild(g);
+    PLACES[lv].forEach(p=>{ const on=S.psel.includes(p), n=POOL[lv].filter(x=>x.p===p).length, b=document.createElement('button'); b.className=on?'on':'';
+      b.innerHTML='<img src="'+HAB+PL[p].scene+'.jpg" alt="">'+PL[p].label+'<span>동물 '+n+'마리</span>';
+      b.onclick=()=>{ if(on){ S.psel=S.psel.filter(x=>x!==p); } else { if(S.psel.filter(x=>PLACES[lv].includes(x)).length>=MAXP){ w.textContent='한 번에 '+MAXP+'곳까지예요.'; return; } S.psel.push(p); }
+        S.ppick=[]; saveS(); renderSetup(); flash('c3'); };
+      g.appendChild(b); });
+    const r=document.createElement('div'); r.className='opt'; r.innerHTML='<span>동물 수</span>'; const rr=document.createElement('div'); rr.className='row'; r.appendChild(rr); A.appendChild(r);
+    [4,6,8,10,99].forEach(v=>{ const b=document.createElement('button'); b.className='chip sm'+(S.pn===v?' on':''); b.textContent=v===99?'모두':v+'마리'; b.onclick=()=>{ S.pn=v; S.ppick=[]; saveS(); renderSetup(); }; rr.appendChild(b); });
+    const sh=document.createElement('button'); sh.className='chip sm'; sh.textContent='🔀 다른 동물로'; sh.onclick=()=>{ pickByPlace(); saveS(); renderSetup(); flash('c3'); }; rr.appendChild(sh);
+    const w=note('',true);
+  } else {
+    note('동물을 눌러 넣고 빼요. 고른 동물이 사는 곳이 '+MAXP+'곳을 넘으면 더 넣을 수 없어요.');
+    const usedP=PLACES[lv].filter(p=>POOL[lv].some(x=>x.p===p&&S.asel.includes(x.a)));
+    PLACES[lv].forEach(p=>{ const d=document.createElement('div'); d.className='agrp'; d.innerHTML='<h4><img src="'+HAB+PL[p].scene+'.jpg" alt="">'+PL[p].label+'</h4>';
+      const row=document.createElement('div'); row.className='row'; d.appendChild(row);
+      POOL[lv].filter(x=>x.p===p).forEach(x=>{ const on=S.asel.includes(x.a), b=document.createElement('button'); b.className='achip'+(on?' on':'');
+        b.innerHTML='<img src="'+pic(x.a)+'" alt="">'+esc(x.a); if(!on&&!usedP.includes(p)&&usedP.length>=MAXP) b.disabled=true;
+        b.onclick=()=>{ S.asel=on?S.asel.filter(a=>a!==x.a):[...S.asel,x.a]; saveS(); renderSetup(); }; row.appendChild(b); });
+      A.appendChild(d); });
+    const r=document.createElement('div'); r.className='row'; r.style.marginTop='10px';
+    const all=document.createElement('button'); all.className='chip sm'; all.textContent='모두 빼기'; all.onclick=()=>{ S.asel=[]; saveS(); renderSetup(); }; r.appendChild(all);
+    const c=document.createElement('span'); c.className='pickNote'; c.style.margin='0 0 0 8px'; c.textContent=S.asel.length+'마리 · '+usedP.length+'곳'; r.appendChild(c); A.appendChild(r);
+  }
+}
 function renderVoiceRow(){
   const vr=$('voiceRow'); if(!vr) return; vr.innerHTML='';
   [['내장 목소리','builtin'],['기기 목소리','device']].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+(S.engine===v?' on':''); b.textContent=n; b.onclick=()=>{ S.engine=v; saveS(); renderVoiceRow(); }; vr.appendChild(b); });
@@ -528,22 +594,54 @@ function flash(id){ const c=$(id); if(!c) return; c.scrollIntoView({behavior:'sm
 $('newOk').onclick=()=>{ const n=$('newName').value.trim(); if(!n) return; const s={id:newSid(),name:n}; students.push(s); saveStudents(); S.stu=s.id; saveS(); $('newName').value=''; $('newStu').classList.add('hidden'); renderSetup(); };
 $('newNo').onclick=()=>{ $('newStu').classList.add('hidden'); };
 $('newName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('newOk').click(); });
-$('startBtn').onclick=()=>{ unlockAudio(); photosReady.then(()=>startLesson(null)); };
+$('startBtn').onclick=()=>{ unlockAudio(); const plan=makePlan(); if(!planOk(plan)){ flash('c2'); renderSetup(); return; } photosReady.then(()=>startLesson(null)); };
 $('recOpen').onclick=()=>openRecords(false);
 $('dexOpen').onclick=()=>openDex();
 $('seekSample').onclick=()=>startSeekSample();
-$('printOpen').onclick=()=>printSheet(S.level,S.bundle);
+$('printOpen').onclick=()=>printSheet(S.level,makePlan());
 $('exOpen').onclick=()=>openRecords(true);
+
+/* ================= 오늘 할 것(plan) =================
+   묶음별: 묶음을 3개까지 골라 차례로(묶음 하나를 마치면 끝 장면을 5초 보여 준 뒤 저절로 다음, 마지막은 그대로)
+   서식지별: 그 수준의 곳을 2~4곳 고르고 동물 수를 정하면, 곳마다 고르게 뽑음(🔀로 다시 뽑기)
+   동물별: 그 수준의 동물을 하나하나 고름(곳은 고른 동물에서, 4곳까지). 한 수준 안에서만(같은 동물도 수준마다 사는 곳 이름이 다름) */
+const POOL={}, PLACES={};
+Object.keys(BUN).forEach(l=>{ const m=new Map(), ps=[]; BUN[l].forEach(b=>{ b.places.forEach(p=>{ if(!ps.includes(p)) ps.push(p); }); b.items.forEach(x=>{ if(!m.has(x.a)) m.set(x.a,x); }); }); POOL[l]=[...m.values()]; PLACES[l]=ps; });
+const MAXB=3, MAXP=4;
+function pickByPlace(){
+  const lv=S.level, ps=S.psel.filter(p=>PLACES[lv].includes(p)); if(ps.length<2){ S.ppick=[]; return; }
+  const by={}; ps.forEach(p=>by[p]=shuffle(POOL[lv].filter(x=>x.p===p)));
+  const total=Object.values(by).reduce((n,l)=>n+l.length,0), N=S.pn===99?total:Math.min(S.pn,total), out=[];
+  for(let r=0;out.length<N;r++){ shuffle(ps).forEach(p=>{ if(out.length<N&&by[p][r]) out.push(by[p][r].a); }); if(r>40) break; }
+  S.ppick=out;
+}
+function makePlan(){
+  const lv=S.level;
+  if(S.mode==='place'){
+    const ps=S.psel.filter(p=>PLACES[lv].includes(p));
+    if(!S.ppick.length||S.ppick.some(a=>!POOL[lv].some(x=>x.a===a&&ps.includes(x.p)))) pickByPlace();
+    const items=S.ppick.map(a=>POOL[lv].find(x=>x.a===a)).filter(Boolean);
+    return [{places:PLACES[lv].filter(p=>items.some(x=>x.p===p)),items,label:'서식지 고르기',bi:null}];
+  }
+  if(S.mode==='animal'){
+    const items=POOL[lv].filter(x=>S.asel.includes(x.a));
+    return [{places:PLACES[lv].filter(p=>items.some(x=>x.p===p)),items,label:'동물 고르기',bi:null}];
+  }
+  const sel=(S.bsel||[]).filter(i=>BUN[lv][i]); if(!sel.length) sel.push(0);
+  return sel.map(i=>({places:BUN[lv][i].places,items:BUN[lv][i].items,label:'묶음 '+(i+1),bi:i}));
+}
+function planOk(plan){ return plan.every(b=>b.places.length>=2&&b.items.length>=2&&b.places.length<=MAXP); }
+const planTitle=()=>LV[RUN.lv].name+' · '+RUN.bd.label+(RUN.plan.length>1?' ('+(RUN.idx+1)+'/'+RUN.plan.length+')':'');
 
 /* ================= 수업 진행 =================
    한 묶음: 보기(동물마다 한 번) → 동물 보고 곳 고르기 → 곳 보고 동물 고르기 → 정리하기 → 끝 장면(학습 뒤 보상, 기록 안 함) */
 let RUN=null;
-function buildRun(lv,b){
-  const bd=BUN[lv][b], phases=[];
+function buildRun(lv,plan,idx){
+  const bd=plan[idx], phases=[];
   PHASES.forEach(([k])=>{ if(!S.steps[k]) return;
     const items=k==='show'?[...bd.items, ...bd.places.filter(p=>PHOTOS[PL[p].scene]).map(p=>({photo:true,p}))]:shuffleNoRepeat(bd.items);
     phases.push({k,items}); });
-  return {lv,b,bd,phases,pi:0,ii:0,g:Date.now(),placed:{},token:0};
+  return {lv,plan,idx,b:bd.bi==null?-1:bd.bi,bd,phases,pi:0,ii:0,g:Date.now(),placed:{},token:0};
 }
 function shuffleNoRepeat(items){ /* 같은 곳이 세 번 이어 나오지 않게 섞음 */
   for(let t=0;t<30;t++){ const s=shuffle(items); let ok=true; for(let i=2;i<s.length;i++) if(s[i].p===s[i-1].p&&s[i].p===s[i-2].p) ok=false; if(ok) return s; }
@@ -551,7 +649,8 @@ function shuffleNoRepeat(items){ /* 같은 곳이 세 번 이어 나오지 않�
 }
 function startLesson(rs){
   unlockAudio(); chooseEngine();
-  RUN=buildRun(S.level,S.bundle);
+  const plan=rs&&rs.plan?rs.plan:makePlan();
+  RUN=buildRun(rs?rs.lv:S.level,plan,rs&&rs.plan?Math.min(rs.idx||0,plan.length-1):0);
   if(rs){ const pi=RUN.phases.findIndex(p=>p.k===rs.ph); if(pi>=0){ RUN.pi=pi; RUN.ii=Math.min(rs.ii||0,RUN.phases[pi].items.length-1); } }
   document.body.classList.remove('setup'); goFull();
   setTimeout(()=>runStep(),350);   /* 전체 화면으로 다 커진 뒤 그림 */
@@ -564,7 +663,7 @@ function renderProg(){
   if(T>10){ pr.className='bar'; pr.innerHTML='<b style="width:'+Math.max(4,Math.round((D+1)/T*100))+'%"></b>'; return; }
   pr.className=''; for(let i=0;i<T;i++){ const c=document.createElement('i'); if(i<D) c.className='d'; else if(i===D) c.className='n'; pr.appendChild(c); }
 }
-function saveSpot(){ if(!RUN) return; const p=RUN.phases[RUN.pi]; if(!p) return; RESUME[S.stu||'_']={lv:RUN.lv,b:RUN.b,ph:p.k,ii:RUN.ii,t:Date.now()}; saveResume(); }
+function saveSpot(){ if(!RUN||RUN.sample||RUN.ending) return; const p=RUN.phases[RUN.pi]; if(!p) return; RESUME[S.stu||'_']={lv:RUN.lv,plan:RUN.plan,idx:RUN.idx,ph:p.k,ii:RUN.ii,t:Date.now()}; saveResume(); }
 window.addEventListener('pagehide',saveSpot);
 function clearStage(){ const st=$('stage'); st.innerHTML=''; document.querySelectorAll('.fly,.drag').forEach(x=>x.remove());
   if(S.stu&&!document.body.classList.contains('setup')){ const d=document.createElement('div'); d.className='recDot'; d.title='기록 중'; st.appendChild(d); } }
@@ -686,7 +785,7 @@ function choiceRound(tok,{say,cards,isRight,onRight,rec}){
 }
 function logRow(ph,it,wrongId,help){
   if(!S.stu) return;
-  LOG.push({s:S.stu,t:Date.now(),g:RUN.g,lv:RUN.lv,b:RUN.b+1,ph,a:it.a,p:it.p,res:help?'help':'first',w:wrongId||''}); saveLog();
+  LOG.push({s:S.stu,t:Date.now(),g:RUN.g,lv:RUN.lv,b:RUN.b>=0?RUN.b+1:RUN.bd.label,ph,a:it.a,p:it.p,res:help?'help':'first',w:wrongId||''}); saveLog();
 }
 
 /* ---- 2. 동물 보고 곳 고르기: 견본 = 동물(말풍선), 보기 = 곳 장면 2~4개 ---- */
@@ -772,8 +871,9 @@ function stepSort(it,tok){
 /* ---- 끝: 마친 묶음·도감 기록 → (숨은 동물 찾기 놀이) → 끝 장면. 놀이·끝 장면은 학습 뒤 보상이라 기록하지 않음 ---- */
 function finishBundle(){
   const key=RUN.lv+'-'+(RUN.b+1), who=S.stu||'_';
-  DONE[who]=DONE[who]||{}; DONE[who][key]=(DONE[who][key]||0)+1; store.set('done',JSON.stringify(DONE));
-  delete RESUME[who]; saveResume();
+  if(RUN.b>=0){ DONE[who]=DONE[who]||{}; DONE[who][key]=(DONE[who][key]||0)+1; store.set('done',JSON.stringify(DONE)); }
+  if(RUN.idx<RUN.plan.length-1){ RESUME[who]={lv:RUN.lv,plan:RUN.plan,idx:RUN.idx+1,ph:(RUN.phases[0]||{k:'show'}).k,ii:0,t:Date.now()}; } else delete RESUME[who];
+  saveResume();
   const dx=DEX[who]=DEX[who]||{}; let nw=0; const today=dayOf(Date.now());
   RUN.bd.items.forEach(({a,p})=>{ const k=p+'|'+a; if(!dx[k]){ dx[k]=today; nw++; } }); saveDex();
   BUNDLES_TODAY++;
@@ -793,13 +893,17 @@ function endGrid(){
   return [...g.children];
 }
 function drawEnd(tok){
-  if(!S.endScene){ if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); } return; }
+  if(!S.endScene){ if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); }
+    if(RUN.plan&&RUN.idx<RUN.plan.length-1&&!RUN.sample) later(()=>{ if(alive(tok)){ const lv=RUN.lv, plan=RUN.plan, i=RUN.idx+1; RUN=buildRun(lv,plan,i); saveSpot(); runStep(); } },2500);
+    return; }
   const cards=endGrid();
   requestAnimationFrame(()=>{ cards.forEach(c=>{ const p=c.dataset.p, sc=c.querySelector('.scene');
     layoutPlaced(sc,p,RUN.bd.items.filter(x=>x.p===p).map(x=>x.a),RUN.bd.items.map(x=>x.a));
     sc.querySelectorAll('.placed').forEach(im=>{ im.style.pointerEvents='auto'; im.style.cursor='pointer'; tapper(im,()=>{ if(alive(tok)) speak(liveLine(im.alt,p)); }); }); }); });
   if(RUN.newDex){ const t=document.createElement('div'); t.className='dexNew'; t.textContent='🐾 도감에 새로 '+RUN.newDex+'마리'; $('stage').appendChild(t); }
   if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); }
+  /* 고른 묶음이 더 있으면 끝 장면을 5초 보여 준 뒤 저절로 다음(관리 메뉴가 열려 있으면 기다림) */
+  if(RUN.plan&&RUN.idx<RUN.plan.length-1&&!RUN.sample) later(()=>{ if(alive(tok)){ const lv=RUN.lv, plan=RUN.plan, i=RUN.idx+1; RUN=buildRun(lv,plan,i); saveSpot(); runStep(); } },5000);
 }
 /* 숨은 동물 찾기(학습 뒤 보상, 기록 안 함, 진 것·시간 제한 없음). 사는 곳마다 한 장씩 크게.
    쉬움: 그 곳 장면 + 가림 소품(동물의 절반 넘게 보임) / 보통: 놀이용 장면 + 소품(머리·꼬리만) + 같은 곳 다른 동물 1~2 / 어려움: 더 많이 가림 + 다른 동물 3~4, 숨은 그림(숲·바다)이 있으면 그 그림.
@@ -941,10 +1045,21 @@ function renderDex(){
 $('dexView').addEventListener('pointerdown',e=>{ if(e.target.id==='dexView') $('dexView').classList.remove('on'); });
 
 /* ================= 활동지 (A4 가로 2쪽: 사는 곳 장면 + 오려 붙일 동물) ================= */
-function sheetHTML(lv,b){
-  const bd=BUN[lv][b], n=bd.places.length;
-  const pw=n<=2?'130mm':'104mm';   /* 4곳이면 2×2가 한 쪽에 들어가게 */
-  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>차름 동물원 · 동물이 사는 곳 활동지</title>'
+function sheetHTML(lv,plan){
+  let body=''; plan.forEach(bd=>{ body+=sheetPages(lv,bd); });
+  return sheetHead()+body+'<script>window.onload=function(){setTimeout(function(){window.print();},600);};<\/script></body></html>';
+}
+function sheetPages(lv,bd){
+  const n=bd.places.length, pw=n<=2?'130mm':'104mm', lab=LV[lv].name+' · '+esc(bd.label);
+  let h='<div class="pg"><div class="hd"><b>차름 동물원 1편 동물이 사는 곳</b><span>'+lab+' · 이름 ________________</span></div><div class="places" style="grid-template-columns:repeat(2,'+pw+')">'
+   +bd.places.map(p=>'<div class="pl"><img src="'+HAB+PL[p].scene+'.jpg"><span style="font-size:'+(n<=2?'30':'22')+'px">'+PL[p].label+'</span></div>').join('')+'</div></div>';
+  const it=shuffle(bd.items); for(let i=0;i<it.length;i+=8)
+    h+='<div class="pg"><div class="hd"><b>오려서 사는 곳에 붙여요</b><span>'+lab+'</span></div><div class="cut">'+it.slice(i,i+8).map(x=>'<div class="ac"><img src="'+pic(x.a)+'"><div>'+esc(x.a)+'</div></div>').join('')+'</div><div class="note">점선을 따라 오려 앞 장의 사는 곳에 붙입니다. 이름 없이 하려면 이름 부분을 잘라 냅니다.</div></div>';
+  return h;
+}
+function sheetHead(){
+  const n=4, pw='104mm';
+  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>차름 동물원 1편 동물이 사는 곳 활동지</title>'
    +'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap">'
    +'<style>@page{size:A4 landscape;margin:10mm}*{box-sizing:border-box}body{margin:0;font-family:"Noto Sans KR",sans-serif;color:#222}'
    +'.pg{width:277mm;height:188mm;page-break-after:always;display:flex;flex-direction:column}.pg:last-child{page-break-after:auto}'
@@ -955,16 +1070,11 @@ function sheetHTML(lv,b){
    +'.cut{flex:1;display:grid;grid-template-columns:repeat(4,58mm);justify-content:center;align-content:center;gap:4mm}'
    +'.ac{border:.5mm dashed #888;border-radius:3mm;height:68mm;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3mm}'
    +'.ac img{width:48mm;height:48mm;object-fit:contain}.ac div{font-family:Jua,sans-serif;font-size:26px;margin-top:2mm}'
-   +'.note{font-size:11px;color:#777;text-align:center;margin-top:3mm}</style></head><body>'
-   +'<div class="pg"><div class="hd"><b>차름 동물원 · 동물이 사는 곳</b><span>'+LV[lv].name+' · 묶음 '+(b+1)+' · 이름 ________________</span></div><div class="places">'
-   +bd.places.map(p=>'<div class="pl"><img src="'+HAB+PL[p].scene+'.jpg"><span>'+PL[p].label+'</span></div>').join('')+'</div></div>'
-   +'<div class="pg"><div class="hd"><b>오려서 사는 곳에 붙여요</b><span>'+LV[lv].name+' · 묶음 '+(b+1)+'</span></div><div class="cut">'
-   +shuffle(bd.items).map(it=>'<div class="ac"><img src="'+pic(it.a)+'"><div>'+esc(it.a)+'</div></div>').join('')+'</div><div class="note">점선을 따라 오려 앞 장의 사는 곳에 붙입니다. 이름 없이 하려면 이름 부분을 잘라 냅니다.</div></div>'
-   +'<script>window.onload=function(){setTimeout(function(){window.print();},600);};<\/script></body></html>';
+   +'.note{font-size:11px;color:#777;text-align:center;margin-top:3mm}</style></head><body>';
 }
-function printSheet(lv,b){
+function printSheet(lv,plan){
   const w=window.open('','_blank'); if(!w){ alert('새 창이 막혀 있어 활동지를 열지 못했습니다. 이 사이트의 팝업을 허용해 주십시오.'); return; }
-  w.document.open(); w.document.write(sheetHTML(lv,b)); w.document.close();
+  w.document.open(); w.document.write(sheetHTML(lv,plan)); w.document.close();
 }
 
 /* ================= 교사 모드 버튼 =================
@@ -1006,7 +1116,7 @@ function renderDock(){
   const btn=(g,t,fn,cls,id,dis)=>{ const b=document.createElement('button'); b.type='button'; b.textContent=t; if(cls) b.className=cls; if(id) b.id=id; if(dis) b.disabled=true; b.onclick=fn; g.appendChild(b); return b; };
   const cur=curStep(), want=PEND||cur;
   /* 위: 지금 상태(단계) */
-  if(RUN){ const g=grp(T,(RUN.sample?'숨은 그림 찾기':LV[RUN.lv].name+' · 묶음 '+(RUN.b+1))+' ·');
+  if(RUN){ const g=grp(T,(RUN.sample?'숨은 그림 찾기':planTitle())+' ·');
     stepKeys().forEach(k=>btn(g,STEP_NAME(k),()=>{ PEND=k===cur?null:k; renderDock(); },(want===k?'on':'')+(cur===k?' now':''),'dk_'+k)); }
   const lvNow=PEND_LV||S.gameLv;
   if(RUN&&(S.game||RUN.sample)){ const g=grp(T,'놀이'); [1,2,3].forEach(v=>btn(g,GAMELV_NAME[v],()=>{ PEND_LV=v===S.gameLv?null:v; renderDock(); },lvNow===v?'on':'','dkLv'+v)); }
@@ -1015,8 +1125,8 @@ function renderDock(){
     btn(g,'? 도움말',()=>startHelp(),'','dkHelp'); }
   /* 아래: 다시 하기 · 기록 · 도감 · 활동지 | 바꾼 설정으로 이어서 */
   { const g=grp(B,''); btn(g,'↺ 이 단계 처음부터',()=>{ PEND=null; applyLv(); closeAdmin(); },'','dkRedo',!RUN);
-    btn(g,'⟲ 묶음 처음부터',()=>{ PEND=null; applyLv(); const lv=RUN.lv,b=RUN.b; setAdmin(false); S.level=lv; S.bundle=b; startLesson(null); },'','dkAgain',!RUN||RUN.sample); }
-  { const g=grp(B,''); btn(g,'기록',()=>openRecords(false),'','dkRec'); btn(g,'🐾 도감',()=>openDex(),'','dkDex'); btn(g,'🖨 활동지',()=>printSheet(RUN&&!RUN.sample?RUN.lv:S.level,RUN&&!RUN.sample?RUN.b:S.bundle),'','dkPrint'); }
+    btn(g,'⟲ 묶음 처음부터',()=>{ PEND=null; applyLv(); const lv=RUN.lv,plan=RUN.plan,i=RUN.idx; setAdmin(false); RUN=buildRun(lv,plan,i); goFull(); runStep(); },'','dkAgain',!RUN||RUN.sample); }
+  { const g=grp(B,''); btn(g,'기록',()=>openRecords(false),'','dkRec'); btn(g,'🐾 도감',()=>openDex(),'','dkDex'); btn(g,'🖨 활동지',()=>printSheet(RUN&&!RUN.sample?RUN.lv:S.level,RUN&&!RUN.sample?RUN.plan:makePlan()),'','dkPrint'); }
   { const g=grp(B,''); btn(g,'바꾼 설정으로 이어서',()=>goPending(),'go','dkGo',!(PEND||PEND_LV)); }
   $('dockNote').textContent=S.voiceNote||'';
 }
