@@ -9,7 +9,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교통",
+    "자동차",
+    "바퀴"
+   ],
    "files": {
     "photo": "car-wheel/photo.jpg",
     "art": "car-wheel/art.jpg",
@@ -70,7 +74,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교통",
+    "버스",
+    "바퀴"
+   ],
    "files": {
     "photo": "bus-wheel/photo.jpg",
     "art": "bus-wheel/art.jpg",
@@ -183,7 +191,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "운동장·바깥",
+    "길"
+   ],
    "files": {
     "photo": "manhole/photo.jpg",
     "art": "manhole/art.jpg",
@@ -296,7 +307,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "운동장·바깥",
+    "표지판",
+    "안전"
+   ],
    "files": {
     "photo": "parking-sign/photo.jpg",
     "art": "parking-sign/art.jpg",
@@ -408,7 +423,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "생활용품"
+   ],
    "files": {
     "photo": "tissue/photo.jpg",
     "art": "tissue/art.jpg",
@@ -456,7 +474,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "시간"
+   ],
    "files": {
     "photo": "wall-clock/photo.jpg",
     "art": "wall-clock/art.jpg",
@@ -504,7 +525,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교통",
+    "학교",
+    "버스"
+   ],
    "files": {
     "photo": "school-bus/photo.jpg",
     "art": "school-bus/art.jpg",
@@ -719,7 +744,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "복도",
+    "정리"
+   ],
    "files": {
     "photo": "shoe-rack/photo.jpg",
     "art": "shoe-rack/art.jpg",
@@ -891,7 +919,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "운동장·바깥",
+    "학교"
+   ],
    "files": {
     "photo": "bell/photo.jpg",
     "art": "bell/art.jpg",
@@ -926,7 +957,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "시간"
+   ],
    "files": {
     "photo": "timetable/photo.jpg",
     "art": "timetable/art.jpg",
@@ -1077,7 +1111,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "물"
+   ],
    "files": {
     "photo": "sink-cabinet/photo.jpg",
     "art": "sink-cabinet/art.jpg",
@@ -1262,7 +1299,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "컴퓨터"
+   ],
    "files": {
     "photo": "computer-desk/photo.jpg",
     "art": "computer-desk/art.jpg",
@@ -1374,7 +1414,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "가구"
+   ],
    "files": {
     "photo": "desks/photo.jpg",
     "art": "desks/art.jpg",
@@ -1486,7 +1529,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "책",
+    "정리"
+   ],
    "files": {
     "photo": "bookshelf/photo.jpg",
     "art": "bookshelf/art.jpg",
@@ -1718,7 +1765,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "수업"
+   ],
    "files": {
     "photo": "board/photo.jpg",
     "art": "board/art.jpg",
@@ -1826,7 +1876,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "복도",
+    "학교"
+   ],
    "files": {
     "photo": "hallway/photo.jpg",
     "art": "hallway/art.jpg",
@@ -2041,7 +2094,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "문"
+   ],
    "files": {
     "photo": "door/photo.jpg",
     "art": "door/art.jpg",
@@ -2183,7 +2239,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "컵",
+    "컴퓨터"
+   ],
    "files": {
     "photo": "mug-monitor/photo.jpg",
     "art": "mug-monitor/art.jpg",
@@ -2304,7 +2364,10 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "복도",
+    "물"
+   ],
    "files": {
     "photo": "water-purifier/photo.jpg",
     "art": "water-purifier/art.jpg",
@@ -2442,7 +2505,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "환경",
+    "정리"
+   ],
    "files": {
     "photo": "recycle-bins/photo.jpg",
     "art": "recycle-bins/art.jpg",
@@ -2623,7 +2690,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "물",
+    "컵"
+   ],
    "files": {
     "photo": "bottles/photo.jpg",
     "art": "bottles/art.jpg",
@@ -2804,7 +2875,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "급식",
+    "우유"
+   ],
    "files": {
     "photo": "milk-basket/photo.jpg",
     "art": "milk-basket/art.jpg",
@@ -2946,7 +3021,11 @@
    "added": "2026-10-22",
    "privacy": "maker-checked",
    "check": "maker",
-   "tags": [],
+   "tags": [
+    "교실",
+    "미술",
+    "컵"
+   ],
    "files": {
     "photo": "cup-drawings/photo.jpg",
     "art": "cup-drawings/art.jpg",
