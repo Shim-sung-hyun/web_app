@@ -831,7 +831,13 @@ function gameCard(src){
   const h=Math.min(A.h*0.9,(A.w*0.94)*3/4), w=h*4/3;
   const card=document.createElement('div'); card.className='showCard'; card.style.width=w+'px'; card.style.height=h+'px'; card.style.touchAction='none';
   card.innerHTML='<img class="bg" src="'+src+'" alt="" draggable="false" style="object-fit:fill">';
+  card.style.opacity=0; card.style.transition='opacity .45s ease';   /* 동물·소품을 다 놓고 그림을 다 받은 뒤에 보여 줌 */
   st.appendChild(card); return {card,w,h};
+}
+/* 장면의 그림을 모두 받은 뒤(최대 5초) 한 번에 보여 줌 → 숨기기 전에 동물 자리가 보이지 않게 */
+function revealCard(card){
+  const ims=[...card.querySelectorAll('img')].map(im=>im.complete&&im.naturalWidth?Promise.resolve():new Promise(r=>{ im.addEventListener('load',r,{once:true}); im.addEventListener('error',r,{once:true}); }));
+  return Promise.race([Promise.all(ims),wait(5000)]).then(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>{ card.style.opacity=1; setTimeout(r,500); }))));
 }
 function playPlace(p,lvG,tok){
   const sk=SEEK[PL[p].scene], targets=RUN.bd.items.filter(x=>x.p===p).map(x=>x.a);
@@ -864,6 +870,7 @@ async function playProps(p,lvG,targets,tok){
     Object.assign(pr.style,{position:'absolute',left:left+'px',top:top+'px',width:sw+'px',height:sh+'px',pointerEvents:'none',zIndex:3,transition:'transform .8s ease-out, opacity .8s'});
     card.appendChild(pr); items.push({a,im,pr,sw,sh,side,m});
   });
+  await revealCard(card); if(!alive(tok)) return;
   for(const a of shuffle(targets)){ const t=items.find(x=>x.a===a); if(!t) continue;
     await findIt(tok,a,p,t.im,()=>{ const dx=t.m==='swim'?t.side*t.sw*0.5:0, dy=t.m==='swim'?0:t.sh*0.45; t.pr.style.transform='translate('+dx+'px,'+dy+'px)'; },
       ()=>{ const dx=t.m==='swim'?t.side*t.sw*1.1:0, dy=t.m==='swim'?0:t.sh*1.0; t.pr.style.transform='translate('+dx+'px,'+dy+'px)'; t.pr.style.opacity=.35; });
@@ -872,6 +879,7 @@ async function playProps(p,lvG,targets,tok){
 /* 숨은 그림(그림 속에 숨어 있는 동물) */
 async function playSeek(p,sk,say,tok){
   const {card,w:W,h:H}=gameCard(HAB+sk.file), sx=W/sk.w, sy=H/sk.h;
+  await revealCard(card); if(!alive(tok)) return;
   const box=a=>{ const [x0,y0,x1,y1]=sk.animals[a].box, px=(x1-x0)*.15, py=(y1-y0)*.15; return [(x0-px)*sx,(y0-py)*sy,(x1+px)*sx,(y1+py)*sy]; };
   const ring=(a,cls)=>{ const [x0,y0,x1,y1]=box(a), r=document.createElement('div');
     Object.assign(r.style,{position:'absolute',left:x0+'px',top:y0+'px',width:(x1-x0)+'px',height:(y1-y0)+'px',borderRadius:'50%',pointerEvents:'none',zIndex:3,transition:'opacity .8s',
