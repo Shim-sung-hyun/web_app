@@ -462,7 +462,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
 <div id="setup">
  <div class="setup-wrap one">
   <div class="setup-head"><h1>차름 한글</h1><span class="sub">그림이 붓이 되어 글자를 써요</span>
-   <span style="margin-left:auto;display:flex;gap:6px"><button class="btn mini" id="recBtn">교사용 기록</button><a class="btn mini" id="recGuideLink" href="https://shim-sung-hyun.github.io/web_app/007/record-guide.html" target="_blank" rel="noopener">기록 활용법</a><button class="btn mini" id="setupHelp">도움말</button></span></div>
+   <span style="margin-left:auto;display:flex;gap:6px"><button class="btn mini" id="recBtn">교사용 기록</button><a class="btn mini" id="recGuideLink" href="https://www.charum.org/study/doc.html?007/record-guide" target="_blank" rel="noopener">기록 활용법</a><button class="btn mini" id="setupHelp">도움말</button></span></div>
   <div id="pauseBar" class="hidden"><span id="pauseTxt"></span><button class="btn main" id="resumeBtn">이어 하기</button><button class="btn" id="quitBtn">멈춘 곳 지우기</button></div>
 
   <section class="step" id="stepWho">
@@ -536,7 +536,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
        <li><a href="https://console.cloud.google.com/apis/library/texttospeech.googleapis.com" target="_blank" rel="noopener">Cloud Text-to-Speech API</a> 화면에서 <b>사용</b>을 눌러요.</li>
        <li><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">사용자 인증 정보</a> → <b>사용자 인증 정보 만들기</b> → <b>API 키</b>를 눌러 키를 복사하고, 아래 칸에 붙여 넣어요.</li>
       </ol>
-      <a href="https://shim-sung-hyun.github.io/web_app/007/cloud-key.html" target="_blank" rel="noopener">Cloud 키 넣는 방법 (자세히)</a>
+      <a href="https://www.charum.org/study/doc.html?007/cloud-key" target="_blank" rel="noopener">Cloud 키 넣는 방법 (자세히)</a>
      </details>
      <div class="keyline" style="margin-top:6px">
       <input id="ttsKey" type="password" placeholder="Cloud 키를 넣어 주세요" autocomplete="off" spellcheck="false">
@@ -645,7 +645,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
     <button class="btn mini" id="importBtn">불러오기</button>
     <button class="btn mini" id="wipeBtn">기록 모두 지우기</button>
     <button class="btn mini" id="demoRec">예시 보기 (홍길동)</button>
-    <a class="btn mini" href="https://shim-sung-hyun.github.io/web_app/007/record-guide.html" target="_blank" rel="noopener">기록 활용법</a>
+    <a class="btn mini" href="https://www.charum.org/study/doc.html?007/record-guide" target="_blank" rel="noopener">기록 활용법</a>
     <span class="note">실명이 든 파일은 학교 개인정보 기준대로 보관해 주세요.</span>
    </div>
    <div id="recBody"></div>
@@ -4318,7 +4318,7 @@ window.AdminGate = (function () {
    ========================================================= */
 const IN_STEPS = [[2, '같은 글자 찾기', '모양 구별'], [3, '낱말 고르기', '그림 보고 글자'], [4, '그림 고르기', '글자 보고 뜻'], [5, '쓰기', '직접 쓰기'], [7, '묶음 끝 정리', '복습']];
 const IN_CHOICE = new Set([2, 3, 4, 7]);
-const REC_GUIDE = 'https://shim-sung-hyun.github.io/web_app/007/record-guide.html';
+const REC_GUIDE = 'https://www.charum.org/study/doc.html?007/record-guide';
 S.review = LS.get('review', 'on');
 const REVIEW = new Set();
 const ro = n => n === 3 ? '으로' : '로';   /* 1(일)로 · 2(이)로 · 3(삼)으로 */
