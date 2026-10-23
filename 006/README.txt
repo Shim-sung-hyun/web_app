@@ -1,4 +1,4 @@
-006 · 자리 세기 (차름 자리) — 숫자 익히기(005) 전 학습: 자리 이름 순서 외우기, 숫자 없음
+006 · 수의 자리 익히기 (차름 자리, 예전 이름 자리 세기 — 파일 이름·주소·저장 칸은 그대로) — 숫자 익히기(005) 전 학습: 자리 이름 순서 외우기, 숫자 없음
 
 앱 주소(학생·선생님): https://www.charum.org/study/006/place-count.html
 GitHub 주소:          https://shim-sung-hyun.github.io/web_app/006/place-count.html
@@ -6,7 +6,7 @@ GitHub 주소:          https://shim-sung-hyun.github.io/web_app/006/place-count
 
 파일
   place-count.html          웹앱 (교사 전용, 관리 버튼 한 번)
-  place-count01~05.jpg      화면 그림 1366×768 (01 만 단위 진행, 02 조 단위 끝까지, 03 이름 가리기·기록 중, 04 사용법 말풍선, 05 학생 기록)
+  place-count01~06.jpg      화면 그림 1366×768 (06 첫 화면, 01 만 단위 진행, 02 조 단위 끝까지, 03 이름 가리기·기록 중, 04 사용법 말풍선, 05 학생 기록)
   place-count-promo.jpg     홍보 그림·게시판 썸네일
   place-count_manual.html   게시판 본문 (소스 모드로 붙여 넣기)
   place-count_guide.html    자세한 설명
