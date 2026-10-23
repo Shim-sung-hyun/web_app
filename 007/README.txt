@@ -32,7 +32,7 @@
 그림: https://shim-sung-hyun.github.io/web_app/007/word-learn01.jpg ~ word-learn20.jpg
 
 [게시판]
-- 확장 변수 app_url: https://www.charum.org/study/007/word-learn.html
+- 확장 변수 app_url: https://www.charum.org/study/007/word-learn-1.html (1편 판, 2026-10-23부터. 통합본은 word-learn.html)
 - 본문: word-learn_manual.html 내용을 소스 모드에 붙여 넣기
 - 썸네일: word-learn-promo.jpg 한 장
 
