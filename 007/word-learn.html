@@ -388,6 +388,7 @@ details.more>summary .sum{font-weight:400;color:var(--soft);font-size:14px;margi
 /* 편 차례 공개 */
 #bookSeg button.closed{opacity:.45;cursor:default;background:#F1EEE8}
 #bookSeg button.closed .soon{font-size:.78em;color:#8A7F6E;margin-left:2px}
+.setup-head h1 .ed{display:block;font-size:19px;color:#3D6FB6;margin-top:2px;letter-spacing:0}
 .setup-head .edition{font-size:13px;font-weight:700;color:#fff;background:#2F7D5B;border-radius:999px;padding:2px 10px;align-self:center;white-space:nowrap}
 
 .spotlay{position:fixed;z-index:8;pointer-events:none;border-radius:11.7%}
@@ -1200,11 +1201,16 @@ const LEVELS = {
 };
 const OPEN_BOOKS = [1];   /* 공개한 편: 1편판 → [1], 1_2편판 → [1, 2] … */
 const ALL_OPEN = /[?&]all=1\b/.test(location.search);   /* 제작자 미리 보기 */
-const isOpenBook = p => p === 6 || ALL_OPEN || OPEN_BOOKS.includes(p);
+const ONLY_BOOK = 0;   /* 편마다 나눈 판이면 그 편 번호(word-learn-N.html), 통합본(word-learn.html)은 0 */
+const isReleased = p => p === 6 || ALL_OPEN || OPEN_BOOKS.includes(p);
+const isOpenBook = p => p === 6 || (ONLY_BOOK ? p === ONLY_BOOK : isReleased(p));
 const EDITION = (ALL_OPEN ? [1, 2, 3, 4, 5] : OPEN_BOOKS).join('_') + '편판';
 const BOOK_WORDS = BOOK.filter(x => isOpenBook(x.p)).flatMap(x => x.w);
 const OPEN_WORDS = new Set(BOOK_WORDS);
-const CLOSED_BOOKS = [1, 2, 3, 4, 5].filter(p => !isOpenBook(p));
+/* 어려운 낱말 다시 넣기에 쓸 수 있는 낱말: 공개한 편 가운데 이 판의 편까지(나눈 판은 앞 편 복습도) */
+const REVIEW_WORDS = new Set(BOOK.filter(x => x.p !== 6 && isReleased(x.p) && x.p <= (ONLY_BOOK || 5)).flatMap(x => x.w));
+const BOOK_OF = new Map(); BOOK.forEach(x => x.w.forEach(w => BOOK_OF.has(w) || BOOK_OF.set(w, x.p)));
+const CLOSED_BOOKS = ONLY_BOOK ? [] : [1, 2, 3, 4, 5].filter(p => !isOpenBook(p));
 const MADANG_OF = new Map(); BOOK.forEach((x, i) => x.w.forEach(w => MADANG_OF.set(w, i)));
 const isPair = (a, b) => PAIRS.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
 /* 묶음 나누기: 끝 묶음이 크기의 반보다 작으면 앞 묶음에 붙임 */
@@ -1230,7 +1236,7 @@ function bundlesOf(mi, lv) {
     const extra = TOPUP[mi] || [];
     for (const x of extra) {
       if (b.length >= size) break;
-      if (b.includes(x) || !PICS[x] || !OPEN_WORDS.has(x) || b.some(y => isPair(x, y) || PICS[y] === PICS[x])) continue;
+      if (b.includes(x) || !PICS[x] || !((BOOK_OF.get(x) || 9) <= m.p) || b.some(y => isPair(x, y) || PICS[y] === PICS[x])) continue;   /* 같은 편이나 앞 편 낱말만(열린 편과 상관없이 늘 같은 묶음) */
       b.push(x);
     }
     return b;
@@ -3971,7 +3977,7 @@ function paintBook() {
   $$('#bookSeg button').forEach(b => {
     const v = +b.dataset.v;
     b.classList.toggle('on', v === S.book);
-    b.classList.toggle('hidden', v === 6 && !S.mine.length);
+    b.classList.toggle('hidden', (v === 6 && !S.mine.length) || (ONLY_BOOK > 0 && v !== 6 && v !== ONLY_BOOK));   /* 나눈 판은 그 편만 */
     if (!b.dataset.label) b.dataset.label = b.innerHTML;
     const shut = v !== 6 && !isOpenBook(v); b.classList.toggle('closed', shut); b.disabled = shut;
     b.innerHTML = b.dataset.label + (shut ? ' <small class="soon">준비 중</small>' : ' <small style="opacity:.7">' + bookWords(v).length + '</small>');
@@ -4070,7 +4076,7 @@ function paintResume() {
   else if (S.mode === 'free') title = (S.book === 6 ? '내가 넣은 낱말' : S.book + '편 ' + PNAMES[S.book] + (S.mAll ? '' : ' · ' + madang(S.mi).mn)) + ' · 직접 고르기';
   else title = (S.book === 6 ? '내가 넣은 낱말' : S.book + '편' + (S.mAll ? '' : ' · ' + madang(S.mi).mn)) + ' · ' + (S.mode === 'cons' ? S.jcons + '(으)로 시작하는 낱말' : S.jvow + ' 모음이 든 낱말');
   $('#todayTitle').textContent = title;
-  $('#resumeTxt').textContent = (S.mode === 'bundle' && !Prog.next(lv)) ? `${OPEN_BOOKS.join('·')}편을 다 마쳤어요. 다음 편은 준비 중이에요. 복습할 묶음을 골라 주세요.` : last ? `지난번: ${BOOK[last.mi].mn} 묶음 ${last.bi + 1} · 수준 ${lv}에서 마친 묶음 ${n}개` : '아직 마친 묶음이 없어요';
+  $('#resumeTxt').textContent = (S.mode === 'bundle' && !Prog.next(lv)) ? (ONLY_BOOK ? `${ONLY_BOOK}편을 다 마쳤어요. 복습할 묶음을 골라 주세요.` : `${OPEN_BOOKS.join('·')}편을 다 마쳤어요. 다음 편은 준비 중이에요. 복습할 묶음을 골라 주세요.`) : last ? `지난번: ${BOOK[last.mi].mn} 묶음 ${last.bi + 1} · 수준 ${lv}에서 마친 묶음 ${n}개` : '아직 마친 묶음이 없어요';
   $('#resumeRow').classList.toggle('hidden', S.mode !== 'bundle');
   { const dn = S.mode === 'bundle' && Prog.isDone(S.mi, curLevel(), S.bi); $('#stepWhat .today').classList.toggle('done', dn); $('#todayTitle').dataset.done = dn ? '1' : ''; }   /* 이미 한 묶음은 흐리게(뒤로), 할 묶음은 도드라지게 */
 }
@@ -4344,7 +4350,7 @@ function reviewFor(pool) {
   for (const o of hardWords(Rec.log, Rec.recId)) {
     if (out.length >= n) break;
     const w = o.w;
-    if (pool.includes(w) || !PICS[w] || (typeof OPEN_WORDS !== 'undefined' && !OPEN_WORDS.has(w))) continue;
+    if (pool.includes(w) || !PICS[w] || !REVIEW_WORDS.has(w)) continue;
     if (pool.concat(out).some(y => isPair(w, y) || PICS[y] === PICS[w])) continue;
     out.push(w);
   }
