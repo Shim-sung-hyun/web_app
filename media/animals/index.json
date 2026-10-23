@@ -1,0 +1,29 @@
+{
+ "note": "차름 동물 그림(008에서 처음 씀). 007 그림체와 같게 Gemini로 그림, 512×512 투명 바탕 webp. 007에 있는 동물 그림은 007/pics에서 읽음.",
+ "pics": {
+  "고래": "gorae.webp",
+  "상어": "sangeo.webp",
+  "문어": "muneo.webp",
+  "오징어": "ojingeo.webp",
+  "해파리": "haepari.webp",
+  "불가사리": "bulgasari.webp",
+  "바다표범": "badapyobeom.webp",
+  "북극곰": "bukgeukgom.webp",
+  "두더지": "dudeoji.webp",
+  "지렁이": "jireongi.webp",
+  "땅강아지": "ttanggangaji.webp",
+  "비둘기": "bidulgi.webp",
+  "벌": "beol.webp",
+  "부엉이": "bueongi.webp",
+  "딱따구리": "ttakttaguri.webp",
+  "얼룩말": "eollukmal.webp",
+  "전갈": "jeongal.webp",
+  "사막여우": "sangmagyeou.webp",
+  "소금쟁이": "sogeumjaengi.webp",
+  "물방개": "mulbanggae.webp",
+  "수달": "sudal.webp",
+  "우렁이": "ureongi.webp",
+  "백로": "baengno.webp",
+  "미꾸라지": "mikkuraji.webp"
+ }
+}

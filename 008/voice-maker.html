@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>008 목소리 만들기</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{--sci:#6A4C9C;--bg:#F7F4FA;--ink:#2B2838;--muted:#6B6777;--line:#E2DCEB}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;padding:24px 16px}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-size:24px;margin:0 0 6px;color:#4E3478}
+p{line-height:1.7;color:var(--muted);margin:6px 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:14px 0}
+input{width:100%;height:44px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:15px;box-sizing:border-box}
+button{min-height:46px;padding:0 18px;border-radius:12px;border:0;background:var(--sci);color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin:8px 8px 0 0}
+button.w{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+button:disabled{opacity:.45;cursor:default}
+#log{font-size:13px;max-height:300px;overflow:auto;background:#FBFAFD;border-radius:10px;padding:8px 10px;line-height:1.6}
+.bar{height:10px;border-radius:5px;background:#EEE;overflow:hidden;margin-top:10px}.bar b{display:block;height:100%;width:0;background:var(--sci);transition:width .3s}
+</style>
+</head>
+<body><div class="wrap">
+<h1>008 동물이 사는 곳 — 목소리 만들기 (제작자용, 한 번 쓰고 지움)</h1>
+<p>앱이 쓰는 말 가운데 차름 소리 모음(<code>media/voice/leda-0.92</code>)에 아직 없는 말만 Google 음성 <b>Leda · 빠르기 0.92</b>로 만들어 zip으로 받습니다. 받은 zip을 채팅에 보내 주시면 들어 보고 mp3로 바꿔 소리 모음에 넣겠습니다.</p>
+<p>한 글자 이름(개·소·말·곰·벌)은 "글자. ○."로 만들어 마지막 마디만 잘라 씁니다(자르는 것은 받은 뒤에 합니다).</p>
+<div class="card">
+  <b>Google 음성(Cloud) 키</b>
+  <p>이 기기에 저장된 키가 있으면 저절로 들어갑니다. 키는 이 페이지에서만 쓰고 어디에도 보내지 않습니다(Google에만 보냄).</p>
+  <input id="key" type="password" autocomplete="off" placeholder="AIza…">
+</div>
+<div class="card">
+  <div id="sum">말 목록을 불러오는 중…</div>
+  <button id="go" disabled>만들기 시작</button><button id="dl" class="w" disabled>zip 받기</button>
+  <div class="bar"><b id="bar"></b></div>
+  <div id="log"></div>
+</div>
+</div>
+<script>
+const GH='https://shim-sung-hyun.github.io/web_app/';
+const $=id=>document.getElementById(id);
+try{ $('key').value=localStorage.getItem('webapp.cloudKey')||''; }catch(e){}
+async function sha16(t){ const d=new Uint8Array(await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t))); return [...d].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
+const one=t=>/^[가-힣]\.$/.test(t);
+let TODO=[], OUT={}, META={};
+(async()=>{
+  const [lines,idx]=await Promise.all([fetch(GH+'008/voice-lines.json',{cache:'no-cache'}).then(r=>r.json()),fetch(GH+'media/voice/leda-0.92/index.json',{cache:'no-cache'}).then(r=>r.json())]);
+  const have=new Set(idx.files||[]);
+  for(const t of lines){ const h=await sha16(t); if(!have.has(h)) TODO.push({t,h}); }
+  $('sum').textContent='앱이 쓰는 말 '+lines.length+'개 가운데 새로 만들 말 '+TODO.length+'개 (이미 있는 말 '+(lines.length-TODO.length)+'개는 함께 씀)';
+  $('go').disabled=!TODO.length;
+})().catch(e=>{ $('sum').textContent='목록을 불러오지 못했습니다: '+e.message; });
+function log(s){ const d=document.createElement('div'); d.textContent=s; $('log').prepend(d); }
+$('go').onclick=async()=>{
+  const key=$('key').value.trim(); if(!key){ alert('키를 넣어 주십시오.'); return; }
+  try{ localStorage.setItem('webapp.cloudKey',key); }catch(e){}
+  $('go').disabled=true; let n=0, fail=0;
+  for(const it of TODO){
+    if(OUT[it.h]){ n++; continue; }
+    const input=one(it.t)?'글자. '+it.t:it.t;
+    try{
+      const r=await fetch('https://texttospeech.googleapis.com/v1/text:synthesize?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({input:{text:input},voice:{languageCode:'ko-KR',name:'ko-KR-Chirp3-HD-Leda'},audioConfig:{audioEncoding:'LINEAR16',sampleRateHertz:24000,speakingRate:0.92}})});
+      const j=await r.json(); if(!r.ok||!j.audioContent) throw new Error((j.error&&j.error.message)||('HTTP '+r.status));
+      OUT[it.h]=j.audioContent; META[it.h]={text:it.t,input,cut:one(it.t)}; n++; log('✓ '+it.t);
+    }catch(e){ fail++; log('✗ '+it.t+' — '+e.message); if(/API key|PERMISSION|billing|quota/i.test(e.message)) break; }
+    $('bar').style.width=(n/TODO.length*100)+'%';
+  }
+  $('sum').textContent='만든 말 '+Object.keys(OUT).length+' / '+TODO.length+(fail?(' · 실패 '+fail+'개 (다시 누르면 실패한 것만 다시 만듭니다)'):' · 모두 만들었습니다. zip을 받아 채팅에 보내 주십시오.');
+  $('go').disabled=false; $('dl').disabled=!Object.keys(OUT).length;
+};
+$('dl').onclick=async()=>{
+  const z=new JSZip(); Object.entries(OUT).forEach(([h,b64])=>z.file(h+'.wav',b64,{base64:true}));
+  z.file('lines.json',JSON.stringify({voice:'ko-KR-Chirp3-HD-Leda',rate:0.92,made:new Date().toISOString().slice(0,10),lines:META},null,1));
+  const blob=await z.generateAsync({type:'blob'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='008-voice.zip'; a.click();
+};
+</script>
+</body>
+</html>
