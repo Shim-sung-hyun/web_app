@@ -18,10 +18,10 @@
                             따라 읽기, 둥근 글씨, 줄 첫 글자, 새 시 넣기)
   poem-recite-promo.jpg     게시판 맨 위 홍보 그림 (1366×768)
   cloud-key.html            Cloud 키 넣는 방법 안내 페이지 (앱의 관리 메뉴에서 연결)
-                            주소: https://shim-sung-hyun.github.io/web_app/004/cloud-key.html
+                            주소: https://www.charum.org/study/doc.html?004/cloud-key
   poem-recite_manual.html   게시판 본문용 짧은 소개
   poem-recite_guide.html    자세한 설명 페이지
-                            주소: https://shim-sung-hyun.github.io/web_app/004/poem-recite_guide.html
+                            주소: https://www.charum.org/study/doc.html?004/poem-recite_guide
   (목소리 키는 "더 정하기"에 접혀 있음. 새로 넣은 시는 기기 목소리, 키가 있으면 Leda)
   (기본 목소리: 들어 있는 시 다섯 편을 Leda로 통째로 낭송해 줄마다 나눈 mp3 → 차름 소리 모음 ../media/voice/poem/)
                             파일 이름 = SHA-1("시|줄 번호|줄 글") 앞 16자리 (되풀이되는 줄도 그 자리의 소리)

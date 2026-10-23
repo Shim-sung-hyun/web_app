@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>차름 설명</title>
+<style>body{margin:0;background:#FAF7F0;font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;color:#2C3E5C;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;line-height:1.7}</style>
+</head><body><p id="m">불러오고 있습니다…</p>
+<script>
+/* 차름 설명 페이지 불러오기 (2026-10-23)
+   이 파일 하나만 내 서버 study/doc.html 에 둔다. 주소 ?001/shape-finder_guide 처럼 받은 설명 페이지를
+   GitHub에서 가져와 이 주소에서 펼친다 → 주소창에는 www.charum.org 가 보인다.
+   설명·안내 페이지만 연다(이름이 _guide · record-guide · cloud-key · gemini-key 로 끝나는 것). 원본: 저장소 server/study/doc.html */
+(function () {
+  var GH = 'https://shim-sung-hyun.github.io/web_app/';
+  var OK = /^(\d{3}\/)?[a-z0-9-]*(_guide|record-guide|cloud-key|gemini-key)$/;
+  var p = decodeURIComponent(location.search.slice(1)).replace(/\.html$/, '');
+  var m = document.getElementById('m');
+  if (!OK.test(p)) { m.innerHTML = '열 수 없는 주소입니다.<br><a href="https://www.charum.org/webapp">차름 게시판으로</a>'; return; }
+  var SRC = GH + p + '.html';
+  fetch(SRC, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw 0; return r.text(); })
+    .then(function (h) {
+      /* 안의 다른 설명 페이지 링크도 이 주소로 */
+      h = h.replace(/https:\/\/shim-sung-hyun\.github\.io\/web_app\/((?:\d{3}\/)?[a-z0-9-]*(?:_guide|record-guide|cloud-key|gemini-key))\.html/g,
+        function (_, q) { return location.pathname + '?' + q; });
+      var hash = location.hash;
+      document.open(); document.write(h); document.close();
+      if (hash) setTimeout(function () { var t = document.getElementById(hash.slice(1)); if (t) t.scrollIntoView(); }, 300);
+    })
+    .catch(function () { m.innerHTML = '설명을 불러오지 못했습니다. 인터넷 연결을 확인하고 새로 고침해 주십시오.<br><a href="' + SRC + '">여기를 눌러 바로 열 수도 있습니다.</a>'; });
+})();
+</script>
+</body></html>

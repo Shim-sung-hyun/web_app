@@ -764,7 +764,7 @@ function renderDocks(){
     `<div class="row" id="gVoice"><span class="lbl">목소리</span>${b('engine:base','기본 목소리',S.engine==='base')}${b('engine:cloud','Google (키)',S.engine==='cloud')}${S.engine==='cloud'?[['Leda','밝은'],['Aoede','산뜻한'],['Kore','또렷한']].map(([k,l])=>b('timbre:'+k,l,S.timbre===k)).join(''):''}</div>`+
     `<p class="hint">들어 있는 시는 키 없이 기본 목소리로 읽어요. 새로 넣은 시는 기기 목소리로 읽고, Google 음성 키를 넣으면 기본 목소리와 같은 목소리로 읽어요. 키가 없어도 수업에는 지장이 없어요.</p>`+
     (needKey?`<div class="row"><input class="key" id="dockKey" type="password" autocomplete="off" placeholder="Google 음성(Cloud) 키" value="${esc(S.cloudKey)}" aria-label="Google 음성(Cloud) 키"><button type="button" class="kr-open" data-kr="1">📱 휴대폰으로 받기</button><label class="small"><input type="checkbox" id="dockSave" ${S.saveCloud?'checked':''}>이 기기에 키 저장</label></div>`+
-      `<div class="row"><a class="help" href="https://shim-sung-hyun.github.io/web_app/004/cloud-key.html" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a><a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키가 있으면: 키 목록</a></div>`:'')+
+      `<div class="row"><a class="help" href="https://www.charum.org/study/doc.html?004/cloud-key" target="_blank" rel="noopener">처음이면: 키 만드는 방법</a><a class="help" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">키가 있으면: 키 목록</a></div>`:'')+
     `${S.voiceNote?`<p class="note">${esc(S.voiceNote)}</p>`:''}`:'';
   const dk=$('dockKey');
   if(dk){
