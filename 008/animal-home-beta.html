@@ -211,6 +211,7 @@ body.setup #adminBtn{display:none}
     <div class="card">
       <div class="opt"><span>할 단계</span><div class="row" id="stepRow"></div></div>
       <div class="opt"><span>묶음 끝 놀이</span><div class="row" id="gameRow"></div></div>
+      <div class="opt"><span>놀이 어렵기</span><div class="row" id="gameLvRow"></div><button class="chip sm" id="seekSample">🔎 숨은 그림 찾기 해 보기 (숲·바다)</button></div>
       <div class="opt"><span>끝 장면</span><div class="row" id="endRow"></div></div>
       <div class="opt"><span>소리</span><div class="row" id="sndRow"></div></div>
       <div class="opt"><span>목소리</span><div class="row" id="voiceRow"></div></div>
@@ -310,11 +311,11 @@ const PHASES=[['show','보기'],['a2p','동물 보고 곳'],['p2a','곳 보고 �
 const S={
   stu:store.get('stu')||'', level:+(store.get('level')||1), bundle:+(store.get('bundle')||0),
   steps:JSON.parse(store.get('steps')||'{"show":1,"a2p":1,"p2a":1,"sort":1}'),
-  endScene:store.get('endScene')!=='0', game:+(store.get('game')??1), sound:store.get('sound')!=='0', engine:store.get('engine')||'builtin',
+  endScene:store.get('endScene')!=='0', game:+(store.get('game')??1), gameLv:+(store.get('gameLv')||1), sound:store.get('sound')!=='0', engine:store.get('engine')||'builtin',
   admin:false, run:null, engineNow:'', voiceNote:''
 };
 if(!LV[S.level]) S.level=1; if(!BUN[S.level][S.bundle]) S.bundle=0;
-function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('endScene',S.endScene?'1':'0'); store.set('game',S.game); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
+function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('endScene',S.endScene?'1':'0'); store.set('game',S.game); store.set('gameLv',S.gameLv); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
 
 /* ================= 학생 명단·기록 =================
    명단은 다른 차름 앱과 함께 씀(webapp.students). 기록은 이 기기 브라우저에만.
@@ -487,7 +488,7 @@ function renderSetup(){
   const steps=PHASES.filter(p=>S.steps[p[0]]).map(p=>p[1]);
   $('today').innerHTML='<div class="places">'+bd.places.map(p=>'<div class="pl1"><img src="'+HAB+PL[p].scene+'.jpg" alt="">'+PL[p].label
       +'<div class="ans">'+bd.items.filter(it=>it.p===p).map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div></div>').join('')+'</div>'
-    +'<div class="steps">'+LV[S.level].name+' · 묶음 '+(S.bundle+1)+' · 동물 '+bd.items.length+'마리<br>단계: '+(steps.join(' → ')||'(없음)')+(S.game?(S.game===2?' → 숨은 동물 찾기(두 묶음마다)':' → 숨은 동물 찾기'):'')+(S.endScene?' → 끝 장면':'')
+    +'<div class="steps">'+LV[S.level].name+' · 묶음 '+(S.bundle+1)+' · 동물 '+bd.items.length+'마리<br>단계: '+(steps.join(' → ')||'(없음)')+(S.game?' → 숨은 동물 찾기('+GAMELV_NAME[S.gameLv]+(S.game===2?', 두 묶음마다':'')+')':'')+(S.endScene?' → 끝 장면':'')
     +'<br>'+(S.stu?'기록: '+esc(nameOf(S.stu)):'연습 — 기록하지 않아요')+'</div>';
   /* 더 정하기 */
   const st=$('stepRow'); st.innerHTML='';
@@ -495,6 +496,8 @@ function renderSetup(){
     b.onclick=()=>{ S.steps[k]=S.steps[k]?0:1; if(!PHASES.some(p=>S.steps[p[0]])) S.steps[k]=1; saveS(); renderSetup(); }; st.appendChild(b); });
   const gr=$('gameRow'); gr.innerHTML='';
   [['끔',0],['묶음마다',1],['두 묶음마다',2]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+(S.game===v?' on':''); b.textContent=n; b.onclick=()=>{ S.game=v; saveS(); renderSetup(); }; gr.appendChild(b); });
+  const gl=$('gameLvRow'); gl.innerHTML='';
+  [1,2,3].forEach(v=>{ const b=document.createElement('button'); b.className='chip sm'+(S.gameLv===v?' on':''); b.textContent=GAMELV_NAME[v]; b.onclick=()=>{ S.gameLv=v; saveS(); renderSetup(); }; gl.appendChild(b); });
   const er=$('endRow'); er.innerHTML='';
   [['보여 주기',1],['보여 주지 않기',0]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+((S.endScene?1:0)===v?' on':''); b.textContent=n; b.onclick=()=>{ S.endScene=!!v; saveS(); renderSetup(); }; er.appendChild(b); });
   const sn=$('sndRow'); sn.innerHTML='';
@@ -513,6 +516,7 @@ $('newName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('newOk').clic
 $('startBtn').onclick=()=>{ unlockAudio(); photosReady.then(()=>startLesson(null)); };
 $('recOpen').onclick=()=>openRecords(false);
 $('dexOpen').onclick=()=>openDex();
+$('seekSample').onclick=()=>startSeekSample();
 $('printOpen').onclick=()=>printSheet(S.level,S.bundle);
 $('exOpen').onclick=()=>openRecords(true);
 
@@ -776,31 +780,100 @@ function drawEnd(tok){
   if(RUN.newDex){ const t=document.createElement('div'); t.className='dexNew'; t.textContent='🐾 도감에 새로 '+RUN.newDex+'마리'; $('stage').appendChild(t); }
   if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); }
 }
-/* 숨은 동물 찾기: 동물들이 장면 가장자리에 반쯤 숨어 있고(땅은 아래, 하늘은 위, 물은 옆), 이름을 부르면 찾아 누름. 틀리면 반응 없음, 진 것 없음 */
+/* 숨은 동물 찾기(학습 뒤 보상, 기록 안 함, 진 것·시간 제한 없음). 사는 곳마다 한 장씩 크게.
+   쉬움: 그 곳 장면 + 가림 소품(동물의 절반 넘게 보임) / 보통: 놀이용 장면 + 소품(머리·꼬리만) + 같은 곳 다른 동물 1~2 / 어려움: 더 많이 가림 + 다른 동물 3~4, 숨은 그림(숲·바다)이 있으면 그 그림.
+   이름을 부르면 찾아 누름. 틀리면 반응 없음. 16초 뒤 소품이 반쯤 비켜 줌(숨은 그림은 그 자리가 옅게 보임) */
+const PROPS={ground:['bush','boulder','grass','fern','log'],land:['bush','boulder','grass','fern','log'],underground:['clod','flatrock'],water:['seaweed','mossrock','stones','coral'],
+  sky:['cloud','cloud2'],forest:['bush','trunk','log','fern'],grassland:['goldgrass','acacia','boulder'],desert:['dune','cactus','boulder'],polar:['snow','ice'],
+  sea:['seaweed','coral','mossrock'],pond:['reeds','mossrock','marsh','stones'],wetland:['rice','reeds','marsh']};
+let PROPSZ={}, SEEK={};
+const gameReady=Promise.all([
+  fetch(HAB+'props/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{ PROPSZ=j||{}; }).catch(()=>{}),
+  fetch(HAB+'seek/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{ SEEK=j||{}; }).catch(()=>{})]);
+const GAMELV_NAME={1:'쉬움',2:'보통',3:'어려움'};
 async function playGame(tok){
-  const cards=endGrid(); await wait(60); if(!alive(tok)) return;
-  const list=[];
-  cards.forEach(c=>{ const p=c.dataset.p, sc=c.querySelector('.scene'); layoutPlaced(sc,p,RUN.bd.items.filter(x=>x.p===p).map(x=>x.a));
-    const W=sc.clientWidth, H=sc.clientHeight;
-    sc.querySelectorAll('.placed').forEach(im=>{ const fx=parseFloat(im.style.left), fy=parseFloat(im.style.top), z=parseFloat(im.style.width), m=MOVE[p]; let hx=fx, hy=fy;
-      if(m==='fly') hy=z*0.4-z/2; else if(m==='swim'||m==='slide') hx=fx<W/2?z*0.4-z/2:W-z*0.4+z/2; else hy=H-z*0.4+z/2;
-      Object.assign(im.dataset,{fx,fy,hx,hy}); im.classList.add('peek'); im.style.left=hx+'px'; im.style.top=hy+'px'; im.style.pointerEvents='auto'; im.style.cursor='pointer';
-      list.push({im,a:im.alt,p}); }); });
-  await wait(900); if(!alive(tok)) return;
-  for(const t of shuffle(list)){ await findOne(t,tok); if(!alive(tok)) return; await wait(500); if(!alive(tok)) return; }
+  await gameReady; if(!alive(tok)) return;
+  const lvG=RUN.forceMode||S.gameLv||1;
+  for(const p of RUN.bd.places){ await playPlace(p,lvG,tok); if(!alive(tok)) return; await wait(700); if(!alive(tok)) return; }
   await speak('다 찾았어요.'); if(!alive(tok)) return; await wait(800); if(!alive(tok)) return;
   RUN.gameDone=true; startEnd();
 }
-function findOne(t,tok){ return new Promise(res=>{
-  let over=false; const sayName=()=>speak(nameLine(t.a)); window.__gameTarget=t.a;
+function gameCard(src){
+  clearStage(); const st=$('stage'), A=area();
+  const h=Math.min(A.h*0.9,(A.w*0.94)*3/4), w=h*4/3;
+  const card=document.createElement('div'); card.className='showCard'; card.style.width=w+'px'; card.style.height=h+'px'; card.style.touchAction='none';
+  card.innerHTML='<img class="bg" src="'+src+'" alt="" draggable="false" style="object-fit:fill">';
+  st.appendChild(card); return {card,w,h};
+}
+function playPlace(p,lvG,tok){
+  const sk=SEEK[PL[p].scene], targets=RUN.bd.items.filter(x=>x.p===p).map(x=>x.a);
+  if(lvG===3&&sk&&sk.animals){ const say=targets.filter(a=>sk.animals[a]&&sk.animals[a].say!==false); if(say.length) return playSeek(p,sk,say,tok); }
+  return playProps(p,lvG,targets,tok);
+}
+/* 소품으로 가리기 */
+async function playProps(p,lvG,targets,tok){
+  const {card,w:W,h:H}=gameCard(HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg');
+  const g=DEXG(p), pool=[]; Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ if(DEXG(x.p)===g&&!targets.includes(x.a)&&!pool.includes(x.a)&&!PAIRS.some(pr=>pr.includes(x.a)&&targets.some(t=>pr.includes(t)))) pool.push(x.a); })));
+  const nd=lvG===1?0:lvG===2?1+Math.floor(Math.random()*2):3+Math.floor(Math.random()*2);
+  const all=shuffle([...targets,...shuffle(pool).slice(0,nd)]);
+  const base=H*[0,.25,.22,.18][lvG], cov=[0,.45,.65,.8][lvG], m=MOVE[p];
+  const yr=m==='fly'?[.14,.48]:m==='swim'?[.3,.82]:m==='dig'?[.38,.86]:[.42,.86];
+  const spots=[], items=[];
+  all.forEach(a=>{ const z=base*relSize(all,a); let best=null, bd=-1;
+    for(let t=0;t<40;t++){ const x=W*(.1+.8*Math.random()), y=H*(yr[0]+(yr[1]-yr[0])*Math.random());
+      const d=Math.min(9e9,...spots.map(s=>Math.hypot(s.x-x,s.y-y)-(s.z+z)*0.55)); if(d>bd){ bd=d; best={x,y,z}; } if(d>0&&t>8) break; }
+    spots.push(best);
+    const im=document.createElement('img'); im.className='placed'; im.src=pic(a); im.alt=a; im.draggable=false;
+    Object.assign(im.style,{width:best.z+'px',height:best.z+'px',left:best.x+'px',top:best.y+'px',pointerEvents:'auto',cursor:'pointer',zIndex:2}); card.appendChild(im);
+    /* 소품: 땅·하늘·땅속은 아래에서, 물은 옆에서 가림 */
+    const nm=PROPS[p][Math.floor(Math.random()*PROPS[p].length)], [pw,ph]=PROPSZ[nm]||[480,360], side=m==='swim'&&Math.random()<.5?-1:1;
+    const pr=document.createElement('img'); pr.src=HAB+'props/'+nm+'.webp'; pr.alt=''; pr.draggable=false; pr.className='peek';
+    let sw,sh,left,top;
+    if(m==='swim'){ const k=Math.max((cov*best.z+best.z*.12)/pw,(best.z*1.15)/ph); sw=pw*k; sh=ph*k;
+      left=side>0?best.x+best.z/2-cov*best.z-best.z*.06:best.x-best.z/2+cov*best.z+best.z*.06-sw; top=best.y-sh/2; }
+    else { const k=Math.max((best.z*1.2)/pw,(cov*best.z+best.z*.14)/ph); sw=pw*k; sh=ph*k;
+      left=best.x-sw/2+(Math.random()-.5)*best.z*.2; top=best.y+best.z/2-cov*best.z-best.z*.04; }
+    Object.assign(pr.style,{position:'absolute',left:left+'px',top:top+'px',width:sw+'px',height:sh+'px',pointerEvents:'none',zIndex:3,transition:'transform .8s ease-out, opacity .8s'});
+    card.appendChild(pr); items.push({a,im,pr,sw,sh,side,m});
+  });
+  for(const a of shuffle(targets)){ const t=items.find(x=>x.a===a); if(!t) continue;
+    await findIt(tok,a,p,t.im,()=>{ const dx=t.m==='swim'?t.side*t.sw*0.5:0, dy=t.m==='swim'?0:t.sh*0.45; t.pr.style.transform='translate('+dx+'px,'+dy+'px)'; },
+      ()=>{ const dx=t.m==='swim'?t.side*t.sw*1.1:0, dy=t.m==='swim'?0:t.sh*1.0; t.pr.style.transform='translate('+dx+'px,'+dy+'px)'; t.pr.style.opacity=.35; });
+    if(!alive(tok)) return; await wait(400); if(!alive(tok)) return; }
+}
+/* 숨은 그림(그림 속에 숨어 있는 동물) */
+async function playSeek(p,sk,say,tok){
+  const {card,w:W,h:H}=gameCard(HAB+sk.file), sx=W/sk.w, sy=H/sk.h;
+  const box=a=>{ const [x0,y0,x1,y1]=sk.animals[a].box, px=(x1-x0)*.15, py=(y1-y0)*.15; return [(x0-px)*sx,(y0-py)*sy,(x1+px)*sx,(y1+py)*sy]; };
+  const ring=(a,cls)=>{ const [x0,y0,x1,y1]=box(a), r=document.createElement('div');
+    Object.assign(r.style,{position:'absolute',left:x0+'px',top:y0+'px',width:(x1-x0)+'px',height:(y1-y0)+'px',borderRadius:'50%',pointerEvents:'none',zIndex:3,transition:'opacity .8s',
+      border:cls==='hint'?'3px dashed rgba(255,255,255,.75)':'4px solid #F3C450',boxShadow:cls==='hint'?'none':'0 0 0 3px rgba(243,196,80,.35)',opacity:0});
+    card.appendChild(r); requestAnimationFrame(()=>r.style.opacity=1); return r; };
+  for(const a of shuffle(say)){
+    const hit=document.createElement('div'); const [x0,y0,x1,y1]=box(a);
+    Object.assign(hit.style,{position:'absolute',left:x0+'px',top:y0+'px',width:(x1-x0)+'px',height:(y1-y0)+'px',zIndex:4,cursor:'pointer'}); card.appendChild(hit);
+    let hint=null;
+    await findIt(tok,a,p,hit,()=>{ hint=ring(a,'hint'); },()=>{ if(hint) hint.remove(); ring(a,'found'); hit.remove(); });
+    if(!alive(tok)) return; await wait(400); if(!alive(tok)) return; }
+}
+/* 하나 찾기: 이름 신호(말이 끝나고 3초마다, 손가락이 닿아 있으면 기다림), 16초 뒤 도움 */
+function findIt(tok,a,p,el,help,found){ return new Promise(res=>{
+  let over=false; window.__gameTarget=a; const sayName=()=>speak(nameLine(a));
   sayName().then(()=>{ if(!alive(tok)) return; const again=()=>later(()=>{ if(alive(tok)&&!over){ if(pdown) return again(); sayName().then(again); } },3000); again();
-    /* 16초가 지나면 조금 더 보이게(도움) */
-    later(()=>{ if(alive(tok)&&!over){ t.im.style.left=((+t.im.dataset.hx)*0.5+(+t.im.dataset.fx)*0.5)+'px'; t.im.style.top=((+t.im.dataset.hy)*0.5+(+t.im.dataset.fy)*0.5)+'px'; } },16000); });
-  const h=async()=>{ if(over||!alive(tok)) return; over=true; t.im.removeEventListener('pointerdown',h); clearTimers(); chime();
-    t.im.style.left=t.im.dataset.fx+'px'; t.im.style.top=t.im.dataset.fy+'px';
-    await wait(750); if(!alive(tok)) return; await speak(liveLine(t.a,t.p)); res(); };
-  t.im.addEventListener('pointerdown',h);
+    later(()=>{ if(alive(tok)&&!over) help(); },16000); });
+  const h=async e=>{ if(e) e.stopPropagation(); if(over||!alive(tok)) return; over=true; el.removeEventListener('pointerdown',h); clearTimers(); chime(); found();
+    await wait(800); if(!alive(tok)) return; await speak(liveLine(a,p)); res(); };
+  el.addEventListener('pointerdown',h);
 }); }
+/* 숨은 그림 찾기 샘플(숲·바다): 묶음 없이 바로, 기록 안 함 */
+async function startSeekSample(){
+  unlockAudio(); chooseEngine(); await gameReady;
+  const places=['forest','sea'].filter(p=>SEEK[PL[p].scene]);
+  if(!places.length){ alert('숨은 그림을 불러오지 못했습니다.'); return; }
+  const items=[]; places.forEach(p=>Object.entries(SEEK[PL[p].scene].animals).forEach(([a,v])=>{ if(v.say!==false) items.push({a,p}); }));
+  RUN={lv:3,b:-1,bd:{places,items},phases:[],pi:0,ii:0,g:Date.now(),placed:{},token:0,ending:true,gameDone:false,forceMode:3,sample:true,endSaid:true,newDex:0};
+  document.body.classList.remove('setup'); goFull(); setTimeout(()=>startEnd(),350);
+}
 
 /* ================= 동물 도감 ================= */
 let DEX_SEL='';
