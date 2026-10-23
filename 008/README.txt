@@ -5,12 +5,12 @@
 - animal-home-beta.html : 고쳐 볼 때 먼저 올리는 판(2026-10-23 현재 animal-home.html과 같음)
 - server-loader.html    : 서버 study/008/에 animal-home.html 이름으로 올리는 불러오기 파일
 - voice-lines.json      : 앱이 쓰는 말 목록(콘솔 __voiceLines()와 같음)
-- voice-maker.html      : 제작자용 일회용 목소리 만들기 화면(Leda 0.92). 소리를 소리 모음에 넣은 뒤 지움
+(목소리 191마디는 2026-10-23 소리 모음에 넣고 만들기 화면은 지움)
 
 자료(앱 폴더가 아니라 media/)
 - 동물 그림: 007에 있는 동물은 007/pics, 새로 그린 24마리는 media/animals (index.json)
 - 장면 그림: media/habitats (동물 없이 장소만, 11장)
-- 목소리: media/voice/leda-0.92 (아직 없는 말은 voice-maker로 만들어 넣음. 그 전에는 기기 목소리)
+- 목소리: media/voice/leda-0.92 (192마디 모두 내장)
 
 수준
 - 1: 땅 · 물
