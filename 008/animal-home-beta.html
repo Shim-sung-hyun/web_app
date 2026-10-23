@@ -112,6 +112,21 @@ body.admin #stage{pointer-events:none}
 .drag{position:fixed;z-index:70;pointer-events:none;transform:translate(-50%,-50%) scale(1.05);object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
 .endGrid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
 
+/* 도감 */
+#dexView{position:fixed;inset:0;z-index:90;background:rgba(30,24,44,.35);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
+#dexView.on{display:flex}
+#dexBox{background:#fff;border-radius:18px;max-width:1100px;width:100%;padding:18px 20px 24px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+#dexBox h2{margin:0 0 10px;font-size:22px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dexGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:10px}
+.dexCard{border:1.5px solid var(--line);border-radius:14px;padding:6px;background:#fff}
+.dexCard .scene{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden}
+.dexCard .scene>img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dexCard .scene img.d{position:absolute;transform:translate(-50%,-50%);object-fit:contain;cursor:pointer;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2))}
+.dexCard .cap{display:flex;justify-content:space-between;align-items:center;padding:6px 4px 0;font-family:var(--f-display);font-size:22px}
+.dexCard .cap span{font-family:var(--f-body);font-size:13px;color:var(--muted)}
+.dexNew{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-size:15px;color:var(--sci-d);background:rgba(255,255,255,.9);border:1px solid var(--sci-m);border-radius:999px;padding:5px 14px;z-index:3}
+.peek{transition:left .7s ease-out,top .7s ease-out}
+
 /* ===== 관리 메뉴 ===== */
 #dock{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:80;display:none;max-width:calc(100vw - 24px)}
 body.admin #dock{display:block}
@@ -166,7 +181,7 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
   box-shadow:inset 0 -4px 10px rgba(90,220,235,.45), inset 0 3px 6px rgba(0,0,0,.6), 0 4px 10px rgba(0,0,0,.4), 0 0 0 3px rgba(63,207,210,.35)}
 body.setup #adminBtn{display:none}
 @media print{body *{visibility:hidden}#recBox,#recBox *{visibility:visible}#recBox{position:absolute;left:0;top:0;box-shadow:none}#recView{position:static;background:none;padding:0}.noprint{display:none!important}}
-@media (max-width:600px){.title h1{font-size:30px}#startBtn{min-width:200px;font-size:24px}}
+@media (max-width:600px){.dexGrid{grid-template-columns:repeat(2,1fr);gap:8px}.dexCard .cap{font-size:17px}.title h1{font-size:30px}#startBtn{min-width:200px;font-size:24px}}
 </style>
 </head>
 <body class="setup">
@@ -179,6 +194,7 @@ body.setup #adminBtn{display:none}
     <div class="row" id="stuRow"></div>
     <div class="newStu hidden" id="newStu"><input id="newName" maxlength="20" placeholder="학생 이름"><button class="chip sm on" id="newOk">넣기</button><button class="chip sm" id="newNo">그만</button></div>
     <div id="resumeBox"></div>
+    <div class="row" style="margin-top:12px"><button class="chip sm" id="dexOpen">🐾 동물 도감</button></div>
   </div>
 
   <div class="card" id="c2"><h2><span class="num">2</span>어디까지 배울까요?</h2>
@@ -188,11 +204,13 @@ body.setup #adminBtn{display:none}
 
   <div class="card" id="c3"><h2><span class="num">3</span>오늘 할 것</h2>
     <div class="today" id="today"></div>
+    <div class="row" style="margin-top:12px"><button class="chip sm" id="printOpen">🖨️ 활동지 출력 (A4 · 장면 + 오려 붙일 동물)</button></div>
   </div>
 
   <details class="more" id="more"><summary>더 정하기 (단계 · 소리 · 목소리)</summary>
     <div class="card">
       <div class="opt"><span>할 단계</span><div class="row" id="stepRow"></div></div>
+      <div class="opt"><span>묶음 끝 놀이</span><div class="row" id="gameRow"></div></div>
       <div class="opt"><span>끝 장면</span><div class="row" id="endRow"></div></div>
       <div class="opt"><span>소리</span><div class="row" id="sndRow"></div></div>
       <div class="opt"><span>목소리</span><div class="row" id="voiceRow"></div></div>
@@ -210,6 +228,7 @@ body.setup #adminBtn{display:none}
 
 <div id="dock"><div id="dockRow"></div><div id="dockNote"></div></div>
 <div id="recView"><div id="recBox"></div></div>
+<div id="dexView"><div id="dexBox"></div></div>
 <div id="spot"></div><div id="spotTip"></div>
 <button id="adminBtn" type="button" aria-label="교사 모드: 3초 동안 누르기"><span class="ab-label" id="abLabel">charum</span></button>
 
@@ -258,7 +277,12 @@ const LV={
   'desert:사막여우,낙타|pond:하마,수달|forest:호랑이,사슴','sea:불가사리,조개|pond:물방개,하마|wetland:악어,우렁이',
   'forest:곰,다람쥐|grassland:사자,얼룩말|desert:전갈,사막여우']}
 };
-const HARD=new Set(['3-6','3-7']);   /* 비슷한 곳 구별하기 묶음 */
+const HARD=new Set(['3-6','3-7']);
+/* 실제 사진(일반화): 보기 끝에 그 곳의 사진을 한 장(그림 → 사진). 사진은 media/habitats/photos.json 에 적힌 곳만 */
+let PHOTOS={}; const photosReady=fetch(HAB+'photos.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{ PHOTOS=(j&&j.photos)||{}; }).catch(()=>{});
+/* 사는 곳에 들어가는 몸짓: 걷기·헤엄·날기·굴에서 올라오기·미끄러지기 */
+const MOVE={land:'walk',ground:'walk',forest:'walk',grassland:'walk',desert:'walk',wetland:'walk',polar:'slide',water:'swim',sea:'swim',pond:'swim',sky:'fly',underground:'dig'};
+const DEXG=p=>p==='land'?'ground':p;   /* 도감에서는 수준 1 "땅"을 "땅 위"와 한 장면에 */   /* 비슷한 곳 구별하기 묶음 */
 const PAIRS=[['여우','사막여우'],['곰','북극곰'],['물고기','붕어']];
 function parseB(s){ const places=[], items=[]; s.split('|').forEach(g=>{ const [p,as]=g.split(':'); places.push(p); as.split(',').forEach(a=>items.push({a,p})); }); return {places,items}; }
 const BUN={}; Object.keys(LV).forEach(l=>{ BUN[l]=LV[l].bundles.map(parseB); });
@@ -272,7 +296,7 @@ const askPlace=a=>iga(a)+' 사는 곳을 찾아 눌러요.';
 const askAnimal=p=>PL[p].find+' 찾아 눌러요.';
 const nameLine=a=>a+'.';
 const END_LINE='다 했어요.';
-function allLines(){ const L=new Set(); Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>{ b.items.forEach(({a,p})=>{ L.add(liveLine(a,p)); L.add(askPlace(a)); L.add(nameLine(a)); }); b.places.forEach(p=>L.add(askAnimal(p))); })); L.add(END_LINE); return [...L]; }
+function allLines(){ const L=new Set(); Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>{ b.items.forEach(({a,p})=>{ L.add(liveLine(a,p)); L.add(askPlace(a)); L.add(nameLine(a)); }); b.places.forEach(p=>L.add(askAnimal(p))); })); L.add(END_LINE); L.add('다 찾았어요.'); return [...L]; }
 
 /* ================= 저장 ================= */
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
@@ -286,11 +310,11 @@ const PHASES=[['show','보기'],['a2p','동물 보고 곳'],['p2a','곳 보고 �
 const S={
   stu:store.get('stu')||'', level:+(store.get('level')||1), bundle:+(store.get('bundle')||0),
   steps:JSON.parse(store.get('steps')||'{"show":1,"a2p":1,"p2a":1,"sort":1}'),
-  endScene:store.get('endScene')!=='0', sound:store.get('sound')!=='0', engine:store.get('engine')||'builtin',
+  endScene:store.get('endScene')!=='0', game:+(store.get('game')??1), sound:store.get('sound')!=='0', engine:store.get('engine')||'builtin',
   admin:false, run:null, engineNow:'', voiceNote:''
 };
 if(!LV[S.level]) S.level=1; if(!BUN[S.level][S.bundle]) S.bundle=0;
-function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('endScene',S.endScene?'1':'0'); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
+function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('endScene',S.endScene?'1':'0'); store.set('game',S.game); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
 
 /* ================= 학생 명단·기록 =================
    명단은 다른 차름 앱과 함께 씀(webapp.students). 기록은 이 기기 브라우저에만.
@@ -304,6 +328,10 @@ const nameOf=id=>(students.find(s=>s.id===id)||{}).name||'';
 const newSid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 let RESUME={}; try{ RESUME=JSON.parse(store.get('resume')||'{}')||{}; }catch(e){ RESUME={}; }
 const saveResume=()=>store.set('resume',JSON.stringify(RESUME));
+/* 도감: 학생마다 집을 찾아 준 동물(곳|동물 → 처음 날짜) */
+let DEX={}; try{ DEX=JSON.parse(store.get('dex')||'{}')||{}; }catch(e){ DEX={}; }
+const saveDex=()=>store.set('dex',JSON.stringify(DEX));
+let BUNDLES_TODAY=0;
 let DONE={}; try{ DONE=JSON.parse(store.get('done')||'{}')||{}; }catch(e){ DONE={}; }   /* 학생별로 마친 묶음 */
 
 /* ================= 소리: 한 수업은 한 목소리 ================= */
@@ -459,12 +487,14 @@ function renderSetup(){
   const steps=PHASES.filter(p=>S.steps[p[0]]).map(p=>p[1]);
   $('today').innerHTML='<div class="places">'+bd.places.map(p=>'<div class="pl1"><img src="'+HAB+PL[p].scene+'.jpg" alt="">'+PL[p].label
       +'<div class="ans">'+bd.items.filter(it=>it.p===p).map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div></div>').join('')+'</div>'
-    +'<div class="steps">'+LV[S.level].name+' · 묶음 '+(S.bundle+1)+' · 동물 '+bd.items.length+'마리<br>단계: '+(steps.join(' → ')||'(없음)')+(S.steps.sort&&S.endScene?' → 끝 장면':'')
+    +'<div class="steps">'+LV[S.level].name+' · 묶음 '+(S.bundle+1)+' · 동물 '+bd.items.length+'마리<br>단계: '+(steps.join(' → ')||'(없음)')+(S.game?(S.game===2?' → 숨은 동물 찾기(두 묶음마다)':' → 숨은 동물 찾기'):'')+(S.endScene?' → 끝 장면':'')
     +'<br>'+(S.stu?'기록: '+esc(nameOf(S.stu)):'연습 — 기록하지 않아요')+'</div>';
   /* 더 정하기 */
   const st=$('stepRow'); st.innerHTML='';
   PHASES.forEach(([k,n])=>{ const b=document.createElement('button'); b.className='chip sm'+(S.steps[k]?' on':''); b.textContent=n;
     b.onclick=()=>{ S.steps[k]=S.steps[k]?0:1; if(!PHASES.some(p=>S.steps[p[0]])) S.steps[k]=1; saveS(); renderSetup(); }; st.appendChild(b); });
+  const gr=$('gameRow'); gr.innerHTML='';
+  [['끔',0],['묶음마다',1],['두 묶음마다',2]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+(S.game===v?' on':''); b.textContent=n; b.onclick=()=>{ S.game=v; saveS(); renderSetup(); }; gr.appendChild(b); });
   const er=$('endRow'); er.innerHTML='';
   [['보여 주기',1],['보여 주지 않기',0]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+((S.endScene?1:0)===v?' on':''); b.textContent=n; b.onclick=()=>{ S.endScene=!!v; saveS(); renderSetup(); }; er.appendChild(b); });
   const sn=$('sndRow'); sn.innerHTML='';
@@ -480,8 +510,10 @@ function flash(id){ const c=$(id); if(!c) return; c.scrollIntoView({behavior:'sm
 $('newOk').onclick=()=>{ const n=$('newName').value.trim(); if(!n) return; const s={id:newSid(),name:n}; students.push(s); saveStudents(); S.stu=s.id; saveS(); $('newName').value=''; $('newStu').classList.add('hidden'); renderSetup(); };
 $('newNo').onclick=()=>{ $('newStu').classList.add('hidden'); };
 $('newName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('newOk').click(); });
-$('startBtn').onclick=()=>startLesson(null);
+$('startBtn').onclick=()=>{ unlockAudio(); photosReady.then(()=>startLesson(null)); };
 $('recOpen').onclick=()=>openRecords(false);
+$('dexOpen').onclick=()=>openDex();
+$('printOpen').onclick=()=>printSheet(S.level,S.bundle);
 $('exOpen').onclick=()=>openRecords(true);
 
 /* ================= 수업 진행 =================
@@ -489,7 +521,9 @@ $('exOpen').onclick=()=>openRecords(true);
 let RUN=null;
 function buildRun(lv,b){
   const bd=BUN[lv][b], phases=[];
-  PHASES.forEach(([k])=>{ if(!S.steps[k]) return; phases.push({k,items:k==='show'?[...bd.items]:shuffleNoRepeat(bd.items)}); });
+  PHASES.forEach(([k])=>{ if(!S.steps[k]) return;
+    const items=k==='show'?[...bd.items, ...bd.places.filter(p=>PHOTOS[PL[p].scene]).map(p=>({photo:true,p}))]:shuffleNoRepeat(bd.items);
+    phases.push({k,items}); });
   return {lv,b,bd,phases,pi:0,ii:0,g:Date.now(),placed:{},token:0};
 }
 function shuffleNoRepeat(items){ /* 같은 곳이 세 번 이어 나오지 않게 섞음 */
@@ -557,16 +591,24 @@ function layoutPlaced(sceneEl,p,list){
     const x=W*(col+1)/(per+1), y=H*(rows===1?(y0+y1)/2:(y0+(y1-y0)*(row?0.85:0.25)));
     const im=document.createElement('img'); im.className='placed'; im.src=pic(a); im.alt=a; im.style.width=im.style.height=size+'px'; im.style.left=x+'px'; im.style.top=y+'px'; sceneEl.appendChild(im); });
 }
-/* 동물이 한 번 천천히 날아가 들어감 */
-function flyTo(fromEl,toEl,a,size){ return new Promise(res=>{
-  const f=fromEl.getBoundingClientRect(), t=toEl.getBoundingClientRect();
-  const im=document.createElement('img'); im.className='fly'; im.src=pic(a);
-  Object.assign(im.style,{left:f.left+'px',top:f.top+'px',width:f.width+'px',height:f.height+'px'}); document.body.appendChild(im);
-  fromEl.style.visibility='hidden';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{ Object.assign(im.style,{left:(t.left+t.width/2-size/2)+'px',top:(t.top+t.height/2-size/2)+'px',width:size+'px',height:size+'px'}); }));
-  setTimeout(()=>{ im.remove(); res(); },850);
+/* 맞히면: 누른 동물은 바로 사라지고, 장면 안에서 멀리서 작게 → 앞으로 크게, 사는 곳에 맞는 몸짓으로 한 번(약 1초) */
+const REDUCE=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function enter(im,p){ return new Promise(res=>{
+  if(!im||!im.animate){ res(); return; }
+  const sc=im.parentElement, W=sc.clientWidth, H=sc.clientHeight, x=parseFloat(im.style.left), y=parseFloat(im.style.top), s=parseFloat(im.style.width);
+  const side=x<W/2?-1:1, T=(dx,dy,k)=>'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) scale('+k+')';
+  let kf;
+  if(REDUCE) kf=[{opacity:0,transform:T(0,0,1)},{opacity:1,transform:T(0,0,1)}];
+  else switch(MOVE[p]){
+    case 'swim': { const dx=side*(W*0.55); kf=[{opacity:0,transform:T(dx,0,.6)},{opacity:1,offset:.2,transform:T(dx*.75,-H*.03,.7)},{transform:T(dx*.45,H*.03,.8)},{transform:T(dx*.18,-H*.02,.92)},{opacity:1,transform:T(0,0,1)}]; break; }
+    case 'fly': { const dx=side*(W*0.4), dy=-(y+s*0.2); kf=[{opacity:0,transform:T(dx,dy,.5)},{opacity:1,offset:.25,transform:T(dx*.7,dy*.65,.65)},{transform:T(dx*.3,dy*.25,.85)},{opacity:1,transform:T(0,0,1)}]; break; }
+    case 'dig': kf=[{opacity:0,transform:T(0,H*.28,.85)},{opacity:1,offset:.35,transform:T(0,H*.16,.92)},{transform:T(0,-H*.02,1.02)},{opacity:1,transform:T(0,0,1)}]; break;
+    case 'slide': { const dx=side*(W*0.5); kf=[{opacity:0,transform:T(dx,0,.75)},{opacity:1,offset:.3,transform:T(dx*.6,0,.85)},{opacity:1,transform:T(0,0,1)}]; break; }
+    default: { const dy=-(y-H*0.36); kf=[{opacity:0,transform:T(0,dy,.35)},{opacity:1,offset:.25,transform:T(0,dy*.7,.5)},{transform:T(0,dy*.45-H*.015,.68)},{transform:T(0,dy*.22,.84)},{transform:T(0,-H*.01,.97)},{opacity:1,transform:T(0,0,1)}]; }   /* 걷기: 뒤(먼 곳)에서 앞으로 */
+  }
+  const an=im.animate(kf,{duration:REDUCE?400:1050,easing:'ease-out'}); an.onfinish=an.oncancel=()=>res();
 }); }
-
+const lastPlaced=sc=>{ const l=sc.querySelectorAll('.placed'); return l[l.length-1]; };
 /* ---- 1. 보기: 곳 장면 + 동물이 들어가며 "○○는 ○○에 살아요." ---- */
 async function stepShow(it,tok){
   const st=$('stage'), A=area();
@@ -575,15 +617,15 @@ async function stepShow(it,tok){
   card.innerHTML='<img class="bg" src="'+HAB+PL[it.p].scene+'.jpg" alt=""><div class="lab">'+PL[it.p].label+'</div>';
   const tag=document.createElement('div'); tag.className='nameTag'; tag.textContent=it.a; tag.style.opacity=0; tag.style.transition='opacity .6s';
   st.appendChild(card); st.appendChild(tag);
-  const sz=h*0.42;
-  const src=document.createElement('img'); src.src=pic(it.a); src.className='fly';
-  const r=card.getBoundingClientRect(); const [y0,y1]=PL[it.p].y;
-  Object.assign(src.style,{left:(r.right-sz*0.2)+'px',top:(r.top+h*(y0+y1)/2-sz/2)+'px',width:sz+'px',height:sz+'px',opacity:0,transition:'left 1.4s ease,opacity .6s'});
-  document.body.appendChild(src);
-  await wait(500); if(!alive(tok)) return src.remove();
-  src.style.opacity=1; src.style.left=(r.left+w/2-sz/2)+'px';
-  await wait(1450); if(!alive(tok)) return src.remove();
-  src.remove(); layoutPlaced(card,it.p,[it.a]); tag.style.opacity=1;
+  if(it.photo){ /* 실제 사진으로 한 번 더(그림 → 사진, 말 없이) */
+    tag.textContent=PL[it.p].label;
+    const ph=document.createElement('img'); ph.className='bg'; ph.src=HAB+PHOTOS[PL[it.p].scene]; ph.alt=''; ph.style.cssText='opacity:0;transition:opacity 2.4s ease;z-index:1';
+    card.insertBefore(ph,card.querySelector('.lab')); card.querySelector('.lab').style.zIndex=2;
+    await wait(700); if(!alive(tok)) return; ph.style.opacity=1; tag.style.opacity=1;
+    await wait(4200); if(alive(tok)) nextItem(); return;
+  }
+  await wait(500); if(!alive(tok)) return;
+  layoutPlaced(card,it.p,[it.a]); const im=lastPlaced(card); await enter(im,it.p); if(!alive(tok)) return; tag.style.opacity=1;
   await speak(liveLine(it.a,it.p)); if(!alive(tok)) return;
   await wait(1300); if(!alive(tok)) return;
   nextItem();
@@ -623,8 +665,8 @@ function stepA2P(it,tok){
   const cards=[...row.children], img=bub.querySelector('img');
   choiceRound(tok,{say:askPlace(it.a),cards,isRight:c=>c.dataset.p===it.p,
     rec:(w,h)=>logRow('a2p',it,w&&w.dataset.p,h),
-    onRight:async c=>{ const sc=c.querySelector('.scene'); await flyTo(img,sc,it.a,sc.clientHeight*0.5); if(!alive(tok)) return;
-      layoutPlaced(sc,it.p,[it.a]); await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(900); if(alive(tok)) nextItem(); }});
+    onRight:async c=>{ const sc=c.querySelector('.scene'); img.style.visibility='hidden';
+      layoutPlaced(sc,it.p,[it.a]); await enter(lastPlaced(sc),it.p); if(!alive(tok)) return; await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(900); if(alive(tok)) nextItem(); }});
 }
 
 /* ---- 3. 곳 보고 동물 고르기: 견본 = 곳 장면(말풍선), 보기 = 동물 2~3마리(정답은 하나) ---- */
@@ -647,8 +689,8 @@ function stepP2A(it,tok){
   const cards=[...row.children], scene=bub.querySelector('.showCard');
   choiceRound(tok,{say:askAnimal(it.p),cards,isRight:c=>c.dataset.a===it.a,
     rec:(w,h)=>logRow('p2a',it,w&&w.dataset.a,h),
-    onRight:async c=>{ cards.forEach(x=>{ if(x!==c) x.style.opacity=.25; }); await flyTo(c.querySelector('img'),scene,it.a,bh*0.5); if(!alive(tok)) return;
-      layoutPlaced(scene,it.p,[it.a]); await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(900); if(alive(tok)) nextItem(); }});
+    onRight:async c=>{ cards.forEach(x=>{ if(x!==c) x.style.opacity=.25; }); c.querySelector('img').style.visibility='hidden';
+      layoutPlaced(scene,it.p,[it.a]); await enter(lastPlaced(scene),it.p); if(!alive(tok)) return; await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(900); if(alive(tok)) nextItem(); }});
 }
 
 /* ---- 4. 정리하기: 곳 카드를 모두 펼치고, 동물을 하나씩 사는 곳에 넣음(끌거나, 곳을 누름). 틀리면 반응 없음 ---- */
@@ -673,8 +715,8 @@ function stepSort(it,tok){
     if(over||!alive(tok)) return;
     if(c.dataset.p!==it.p){ if(!wrong) wrong=c.dataset.p; return; }   /* 놀이: 틀리면 반응 없음(먼저 누른 곳만 기록) */
     over=true; clearTimers(); c.classList.remove('glow'); chime(); logRow('sort',it,wrong,helped||!!wrong);
-    const sc=c.querySelector('.scene'); await flyTo(ac.querySelector('img'),sc,it.a,sc.clientHeight*0.4); if(!alive(tok)) return;
-    (RUN.placed[it.p]=RUN.placed[it.p]||[]).push(it.a); layoutPlaced(sc,it.p,RUN.placed[it.p]);
+    const sc=c.querySelector('.scene'); ac.style.visibility='hidden';
+    (RUN.placed[it.p]=RUN.placed[it.p]||[]).push(it.a); layoutPlaced(sc,it.p,RUN.placed[it.p]); await enter(lastPlaced(sc),it.p); if(!alive(tok)) return;
     await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(700); if(alive(tok)) nextItem();
   };
   cards.forEach(c=>c.addEventListener('pointerdown',e=>{ if(!drag) tryPlace(c); }));
@@ -690,22 +732,115 @@ function stepSort(it,tok){
   ac.addEventListener('pointerup',endDrag); ac.addEventListener('pointercancel',endDrag);
 }
 
-/* ---- 끝: 마친 묶음 기록, 끝 장면(사는 곳마다 동물이 모두 들어간 그림, 동물을 누르면 그 문장을 들려줌, 기록 안 함) ---- */
-async function finishBundle(){
+/* ---- 끝: 마친 묶음·도감 기록 → (숨은 동물 찾기 놀이) → 끝 장면. 놀이·끝 장면은 학습 뒤 보상이라 기록하지 않음 ---- */
+function finishBundle(){
   const key=RUN.lv+'-'+(RUN.b+1), who=S.stu||'_';
   DONE[who]=DONE[who]||{}; DONE[who][key]=(DONE[who][key]||0)+1; store.set('done',JSON.stringify(DONE));
   delete RESUME[who]; saveResume();
-  RUN.ending=true; RUN.token++; const tok=RUN.token; clearTimers(); clearStage(); renderProg();
-  if(!S.endScene){ await speak(END_LINE); return; }
+  const dx=DEX[who]=DEX[who]||{}; let nw=0; const today=dayOf(Date.now());
+  RUN.bd.items.forEach(({a,p})=>{ const k=p+'|'+a; if(!dx[k]){ dx[k]=today; nw++; } }); saveDex();
+  BUNDLES_TODAY++;
+  RUN.ending=true; RUN.newDex=nw; RUN.gameDone=!(S.game===1||(S.game===2&&BUNDLES_TODAY%2===0));
+  startEnd();
+}
+function startEnd(){
+  RUN.token++; const tok=RUN.token; clearTimers(); stopVoice(); clearStage(); renderProg();
+  if(!RUN.gameDone) playGame(tok); else drawEnd(tok);
+}
+function endGrid(){
   const st=$('stage'), A=area(), places=RUN.bd.places, n=places.length;
   const cols=n<=2?n:2, rows=Math.ceil(n/cols), gap=16;
   const cw=Math.min((A.w-gap*(cols-1))/cols, ((A.h-gap*(rows-1))/rows-48)*4/3, 620);
   const g=document.createElement('div'); g.className='endGrid'; g.style.maxWidth=(cw*cols+gap*cols)+'px';
   places.forEach(p=>{ const c=placeCard(p,cw); c.style.cursor='default'; g.appendChild(c); }); st.appendChild(g);
-  requestAnimationFrame(()=>{ [...g.children].forEach(c=>{ const p=c.dataset.p, sc=c.querySelector('.scene');
+  return [...g.children];
+}
+function drawEnd(tok){
+  if(!S.endScene){ if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); } return; }
+  const cards=endGrid();
+  requestAnimationFrame(()=>{ cards.forEach(c=>{ const p=c.dataset.p, sc=c.querySelector('.scene');
     layoutPlaced(sc,p,RUN.bd.items.filter(x=>x.p===p).map(x=>x.a));
     sc.querySelectorAll('.placed').forEach(im=>{ im.style.pointerEvents='auto'; im.style.cursor='pointer'; tapper(im,()=>{ if(alive(tok)) speak(liveLine(im.alt,p)); }); }); }); });
-  speak(END_LINE);
+  if(RUN.newDex){ const t=document.createElement('div'); t.className='dexNew'; t.textContent='🐾 도감에 새로 '+RUN.newDex+'마리'; $('stage').appendChild(t); }
+  if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); }
+}
+/* 숨은 동물 찾기: 동물들이 장면 가장자리에 반쯤 숨어 있고(땅은 아래, 하늘은 위, 물은 옆), 이름을 부르면 찾아 누름. 틀리면 반응 없음, 진 것 없음 */
+async function playGame(tok){
+  const cards=endGrid(); await wait(60); if(!alive(tok)) return;
+  const list=[];
+  cards.forEach(c=>{ const p=c.dataset.p, sc=c.querySelector('.scene'); layoutPlaced(sc,p,RUN.bd.items.filter(x=>x.p===p).map(x=>x.a));
+    const W=sc.clientWidth, H=sc.clientHeight;
+    sc.querySelectorAll('.placed').forEach(im=>{ const fx=parseFloat(im.style.left), fy=parseFloat(im.style.top), z=parseFloat(im.style.width), m=MOVE[p]; let hx=fx, hy=fy;
+      if(m==='fly') hy=z*0.4-z/2; else if(m==='swim'||m==='slide') hx=fx<W/2?z*0.4-z/2:W-z*0.4+z/2; else hy=H-z*0.4+z/2;
+      Object.assign(im.dataset,{fx,fy,hx,hy}); im.classList.add('peek'); im.style.left=hx+'px'; im.style.top=hy+'px'; im.style.pointerEvents='auto'; im.style.cursor='pointer';
+      list.push({im,a:im.alt,p}); }); });
+  await wait(900); if(!alive(tok)) return;
+  for(const t of shuffle(list)){ await findOne(t,tok); if(!alive(tok)) return; await wait(500); if(!alive(tok)) return; }
+  await speak('다 찾았어요.'); if(!alive(tok)) return; await wait(800); if(!alive(tok)) return;
+  RUN.gameDone=true; startEnd();
+}
+function findOne(t,tok){ return new Promise(res=>{
+  let over=false; const sayName=()=>speak(nameLine(t.a)); window.__gameTarget=t.a;
+  sayName().then(()=>{ if(!alive(tok)) return; const again=()=>later(()=>{ if(alive(tok)&&!over){ if(pdown) return again(); sayName().then(again); } },3000); again();
+    /* 16초가 지나면 조금 더 보이게(도움) */
+    later(()=>{ if(alive(tok)&&!over){ t.im.style.left=((+t.im.dataset.hx)*0.5+(+t.im.dataset.fx)*0.5)+'px'; t.im.style.top=((+t.im.dataset.hy)*0.5+(+t.im.dataset.fy)*0.5)+'px'; } },16000); });
+  const h=async()=>{ if(over||!alive(tok)) return; over=true; t.im.removeEventListener('pointerdown',h); clearTimers(); chime();
+    t.im.style.left=t.im.dataset.fx+'px'; t.im.style.top=t.im.dataset.fy+'px';
+    await wait(750); if(!alive(tok)) return; await speak(liveLine(t.a,t.p)); res(); };
+  t.im.addEventListener('pointerdown',h);
+}); }
+
+/* ================= 동물 도감 ================= */
+let DEX_SEL='';
+function dexGroups(){ const G={}; Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(({a,p})=>{ const g=DEXG(p); (G[g]=G[g]||new Set()).add(a); }))); return G; }
+function openDex(){ DEX_SEL=S.stu||'_'; $('dexView').classList.add('on'); renderDex(); }
+function renderDex(){
+  const who=DEX_SEL, dx=DEX[who]||{}, G=dexGroups(), have={};
+  Object.keys(dx).forEach(k=>{ const [p,a]=k.split('|'); const g=DEXG(p); have[g]=have[g]||[]; if(!have[g].some(x=>x.a===a)) have[g].push({a,p}); });
+  const total=new Set(Object.keys(dx).map(k=>k.split('|')[1])).size;
+  let h='<h2><span>🐾 동물 도감 — '+(who==='_'?'연습':esc(nameOf(who)))+' <small style="font-size:14px;color:var(--muted);font-weight:500">'+total+'마리</small></span><button class="chip sm" id="dexX">닫기</button></h2>'
+    +'<div class="row">'+[['_','연습']].concat(students.map(s=>[s.id,s.name])).map(([id,n])=>'<button class="chip sm'+(DEX_SEL===id?' on':'')+'" data-w="'+id+'">'+esc(n)+'</button>').join('')+'</div>'
+    +'<p class="tip" style="margin-top:10px">묶음을 마칠 때마다 그 묶음의 동물이 사는 곳에 들어옵니다. 동물을 누르면 그 문장을 들려줍니다. 이 기기에만 저장됩니다.</p><div class="dexGrid">';
+  Object.keys(PL).filter(p=>G[p]).forEach(p=>{ h+='<div class="dexCard" data-p="'+p+'"><div class="scene"><img class="bg" src="'+HAB+PL[p].scene+'.jpg" alt=""></div><div class="cap">'+PL[p].label+'<span>'+((have[p]||[]).length)+' / '+G[p].size+'</span></div></div>'; });
+  h+='</div>';
+  $('dexBox').innerHTML=h;
+  $('dexX').onclick=()=>$('dexView').classList.remove('on');
+  $('dexBox').querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{ DEX_SEL=b.dataset.w; renderDex(); });
+  requestAnimationFrame(()=>$('dexBox').querySelectorAll('.dexCard').forEach(c=>{ const p=c.dataset.p, sc=c.querySelector('.scene'), L=have[p]||[]; if(!L.length) return;
+    const W=sc.clientWidth, H=sc.clientHeight, n=L.length, cols=Math.min(n,Math.ceil(Math.sqrt(n*1.8))), rows=Math.ceil(n/cols);
+    const z=Math.min(W/(cols+0.3), H*0.62/rows); const [y0,y1]=PL[p].y;
+    L.forEach((it,i)=>{ const r=Math.floor(i/cols), k=i%cols, inRow=Math.min(cols,n-r*cols);
+      const im=document.createElement('img'); im.className='d'; im.src=pic(it.a); im.alt=it.a; im.style.width=im.style.height=z+'px';
+      im.style.left=(W*(k+1)/(inRow+1))+'px'; im.style.top=(H*(rows===1?(y0+y1)/2:(Math.min(y0,.32)+(Math.max(y1,.82)-Math.min(y0,.32))*(r+.5)/rows)))+'px';
+      tapper(im,()=>{ unlockAudio(); speak(liveLine(it.a,it.p)); }); sc.appendChild(im); }); }));
+}
+$('dexView').addEventListener('pointerdown',e=>{ if(e.target.id==='dexView') $('dexView').classList.remove('on'); });
+
+/* ================= 활동지 (A4 가로 2쪽: 사는 곳 장면 + 오려 붙일 동물) ================= */
+function sheetHTML(lv,b){
+  const bd=BUN[lv][b], n=bd.places.length;
+  const pw=n<=2?'130mm':'104mm';   /* 4곳이면 2×2가 한 쪽에 들어가게 */
+  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>동물이 사는 곳 활동지</title>'
+   +'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap">'
+   +'<style>@page{size:A4 landscape;margin:10mm}*{box-sizing:border-box}body{margin:0;font-family:"Noto Sans KR",sans-serif;color:#222}'
+   +'.pg{width:277mm;height:188mm;page-break-after:always;display:flex;flex-direction:column}.pg:last-child{page-break-after:auto}'
+   +'.hd{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:#666;margin-bottom:4mm}.hd b{font-family:Jua,sans-serif;font-weight:400;font-size:20px;color:#4E3478}'
+   +'.places{flex:1;display:grid;grid-template-columns:repeat(2,'+pw+');justify-content:center;align-content:center;gap:6mm}'
+   +'.pl{border:1.2mm solid #555;border-radius:4mm;overflow:hidden;position:relative}.pl img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}'
+   +'.pl span{position:absolute;left:3mm;top:3mm;background:#fff;border-radius:3mm;padding:1mm 4mm;font-family:Jua,sans-serif;font-size:'+(n<=2?'30':'22')+'px}'
+   +'.cut{flex:1;display:grid;grid-template-columns:repeat(4,58mm);justify-content:center;align-content:center;gap:4mm}'
+   +'.ac{border:.5mm dashed #888;border-radius:3mm;height:68mm;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3mm}'
+   +'.ac img{width:48mm;height:48mm;object-fit:contain}.ac div{font-family:Jua,sans-serif;font-size:26px;margin-top:2mm}'
+   +'.note{font-size:11px;color:#777;text-align:center;margin-top:3mm}</style></head><body>'
+   +'<div class="pg"><div class="hd"><b>동물이 사는 곳</b><span>'+LV[lv].name+' · 묶음 '+(b+1)+' · 이름 ________________</span></div><div class="places">'
+   +bd.places.map(p=>'<div class="pl"><img src="'+HAB+PL[p].scene+'.jpg"><span>'+PL[p].label+'</span></div>').join('')+'</div></div>'
+   +'<div class="pg"><div class="hd"><b>오려서 사는 곳에 붙여요</b><span>'+LV[lv].name+' · 묶음 '+(b+1)+'</span></div><div class="cut">'
+   +shuffle(bd.items).map(it=>'<div class="ac"><img src="'+pic(it.a)+'"><div>'+esc(it.a)+'</div></div>').join('')+'</div><div class="note">점선을 따라 오려 앞 장의 사는 곳에 붙입니다. 이름 없이 하려면 이름 부분을 잘라 냅니다.</div></div>'
+   +'<script>window.onload=function(){setTimeout(function(){window.print();},600);};<\/script></body></html>';
+}
+function printSheet(lv,b){
+  const w=window.open('','_blank'); if(!w){ alert('새 창이 막혀 있어 활동지를 열지 못했습니다. 이 사이트의 팝업을 허용해 주십시오.'); return; }
+  w.document.open(); w.document.write(sheetHTML(lv,b)); w.document.close();
 }
 
 /* ================= 교사 모드 버튼 =================
@@ -729,11 +864,11 @@ function setAdmin(on){
   $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 한 번 누르기':'교사 모드: 3초 동안 누르기');
   $('abLabel').textContent=on?'심':'charum';
   if(on){ stopVoice(); speakSeq++; clearTimers(); PEND=null; renderDock(); }
-  else { $('recView').classList.remove('on'); hideSpot(); }
+  else { $('recView').classList.remove('on'); $('dexView').classList.remove('on'); hideSpot(); }
 }
 function closeAdmin(){ setAdmin(false); goFull();
   if(!RUN) return;
-  if(RUN.ending){ RUN.token++; return; }   /* 끝 장면은 그대로 */
+  if(RUN.ending){ startEnd(); return; }   /* 놀이는 처음부터, 끝 장면은 그대로 다시 그림 */
   runStep();   /* 멈춘 단계 처음부터 */
 }
 function renderDock(){
@@ -747,6 +882,8 @@ function renderDock(){
   sep();
   add(S.sound?'소리 켬':'소리 끔',()=>{ S.sound=!S.sound; saveS(); renderDock(); },S.sound?'':'on','dkSnd');
   add('학생 기록',()=>openRecords(false),'','dkRec');
+  add('동물 도감',()=>openDex(),'','dkDex');
+  add('활동지',()=>printSheet(RUN?RUN.lv:S.level,RUN?RUN.b:S.bundle),'','dkPrint');
   add('처음 화면으로',()=>{ saveSpot(); RUN=null; clearTimers(); stopVoice(); setAdmin(false); clearStage(); document.body.classList.add('setup'); renderSetup(); window.scrollTo(0,0); },'','dkHome');
   add('도움말',()=>startHelp(),'','dkHelp');
   $('dockNote').textContent=S.voiceNote||'';
@@ -757,6 +894,8 @@ const HELP=[
   ['[id^=dk_]','단계','지금 하는 단계를 바꿔요. 고른 뒤 "바꾼 설정으로 이어서"를 누르면 그 단계 처음부터 해요.'],
   ['#dkSnd','소리','목소리와 맞힐 때 나는 소리를 켜고 꺼요.'],
   ['#dkRec','학생 기록','학생마다 바로 맞힌 비율, 도움이 더 필요한 동물, 자주 헷갈린 곳을 봐요.'],
+  ['#dkDex','동물 도감','학생마다 집을 찾아 준 동물이 사는 곳별로 쌓여요. 동물을 누르면 그 문장을 들려줘요.'],
+  ['#dkPrint','활동지','지금 묶음의 A4 활동지(사는 곳 장면 + 오려 붙일 동물)를 출력해요.'],
   ['#dkHome','처음 화면으로','설정 화면으로 돌아가요. 하던 곳은 저장되어 다음에 이어 할 수 있어요.'],
   ['#adminBtn','관리 버튼','3초 누른 뒤 왼쪽 위 작은 점을 누르면 이 메뉴가 열려요. 메뉴가 열린 동안 한 번 누르면 멈춘 화면을 처음부터 다시 해요.'],
   ['#endBtn','수업 끝내기','두 번 누르면 앱을 끝내요. 전체 화면에서 나가고 탭을 닫아요.']
@@ -854,9 +993,7 @@ function renderRecords(){
 $('recView').addEventListener('pointerdown',e=>{ if(e.target.id==='recView') $('recView').classList.remove('on'); });
 document.addEventListener('pointerdown',e=>{ if(helpI>=0&&!e.target.closest('#spotTip')){ hideSpot(); helpI=-1; } },true);
 
-window.addEventListener('resize',()=>{ if(RUN&&!document.body.classList.contains('setup')&&!S.admin){ clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(RUN.ending) finishRedraw(); else runStep(); },300); } });
-function finishRedraw(){ RUN.pi=RUN.phases.length; RUN.ending=false; /* 끝 장면 다시 그림(기록은 다시 하지 않음) */
-  const who=S.stu||'_', key=RUN.lv+'-'+(RUN.b+1); DONE[who][key]--; finishBundle(); }
+window.addEventListener('resize',()=>{ if(RUN&&!document.body.classList.contains('setup')&&!S.admin){ clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(RUN.ending) startEnd(); else runStep(); },300); } });
 renderSetup();
 </script>
 <script id="holdBubble">
