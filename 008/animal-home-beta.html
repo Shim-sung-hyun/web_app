@@ -112,6 +112,11 @@ body.admin #stage{pointer-events:none}
 .drag{position:fixed;z-index:70;pointer-events:none;transform:translate(-50%,-50%) scale(1.05);object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
 .endGrid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
 
+/* 놀이 첫 화면 */
+.gTitle{font-family:var(--f-display);font-size:clamp(40px,8vw,96px);color:var(--sci-d);text-align:center;line-height:1.1;cursor:pointer;touch-action:none}
+.gPics{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.gPics img{width:clamp(90px,14vw,180px);aspect-ratio:4/3;object-fit:cover;border-radius:14px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.gGo{min-width:220px;height:80px;border:0;border-radius:22px;background:var(--sci);color:#fff;font-family:var(--f-display);font-size:38px;cursor:pointer;touch-action:none;box-shadow:0 4px 12px rgba(78,52,120,.25)}
 /* 도감 */
 #dexView{position:fixed;inset:0;z-index:90;background:rgba(30,24,44,.35);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
 #dexView.on{display:flex}
@@ -128,15 +133,22 @@ body.admin #stage{pointer-events:none}
 .peek{transition:left .7s ease-out,top .7s ease-out}
 
 /* ===== 관리 메뉴 ===== */
-#dock{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:80;display:none;max-width:calc(100vw - 24px)}
-body.admin #dock{display:block}
-#dockRow{display:flex;gap:8px;overflow-x:auto;padding:8px 10px;background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 18px rgba(40,30,70,.15);scrollbar-width:none}
-#dockRow::-webkit-scrollbar{display:none}
-#dockRow button{flex:0 0 auto;min-height:44px;padding:6px 12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-weight:500;color:var(--ink);cursor:pointer;touch-action:pan-x;white-space:nowrap}
-#dockRow button.on{background:var(--sci);border-color:var(--sci);color:#fff}
-#dockRow button.go{background:var(--sci-d);border-color:var(--sci-d);color:#fff}
-#dockRow .sep{flex:0 0 1px;background:var(--line);margin:4px 2px}
-#dockNote{margin-top:6px;text-align:center;font-size:13px;color:#8A5A12;background:#FFF6E0;border-radius:10px;padding:4px 10px}
+.dock{position:fixed;left:50%;transform:translateX(-50%);z-index:80;display:none;max-width:calc(100vw - 24px);
+  background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 18px rgba(40,30,70,.15)}
+body.admin .dock{display:block}
+#dockTop{top:10px} #dockBot{bottom:12px;max-width:calc(100vw - 2*200px)}
+@media (max-width:900px){ #dockBot{bottom:104px;max-width:calc(100vw - 24px)} }
+.dock .rowx{display:flex;gap:6px;align-items:center;overflow-x:auto;padding:7px 10px;scrollbar-width:none}
+.dock .rowx::-webkit-scrollbar{display:none}
+.dock .g{display:flex;gap:6px;align-items:center;flex:0 0 auto;padding:0 8px;border-left:1px solid var(--line)}
+.dock .g:first-child{border-left:0;padding-left:0}
+.dock .lbl{font-size:12px;color:var(--muted);margin-right:2px;white-space:nowrap}
+.dock button{flex:0 0 auto;min-height:42px;padding:5px 11px;border-radius:11px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-weight:500;color:var(--ink);cursor:pointer;touch-action:pan-x;white-space:nowrap}
+.dock button.on{background:var(--sci);border-color:var(--sci);color:#fff}
+.dock button.now{box-shadow:inset 0 -3px 0 var(--sci)}
+.dock button.go{background:var(--sci-d);border-color:var(--sci-d);color:#fff;font-weight:700}
+.dock button:disabled{opacity:.35;cursor:default}
+#dockNote{margin:0 10px 7px;text-align:center;font-size:13px;color:#8A5A12;background:#FFF6E0;border-radius:10px;padding:4px 10px}
 #dockNote:empty{display:none}
 
 /* 기록 */
@@ -227,7 +239,8 @@ body.setup #adminBtn{display:none}
   <div id="stage"></div>
 </div>
 
-<div id="dock"><div id="dockRow"></div><div id="dockNote"></div></div>
+<div class="dock" id="dockTop"><div class="rowx" id="dockTopRow"></div><div id="dockNote"></div></div>
+<div class="dock" id="dockBot"><div class="rowx" id="dockBotRow"></div></div>
 <div id="recView"><div id="recBox"></div></div>
 <div id="dexView"><div id="dexBox"></div></div>
 <div id="spot"></div><div id="spotTip"></div>
@@ -452,7 +465,7 @@ function tapper(el,fn){
   el.addEventListener('pointercancel',e=>{ if(!on) return; on=false; lastTapAt=performance.now(); fn(e); });
 }
 /* 화면이 바뀐 뒤 따라오는 click이 새 화면을 한 번 더 누르지 않게 */
-document.addEventListener('click',e=>{ if(!document.body.classList.contains('setup')&&performance.now()-lastTapAt<450&&!e.target.closest('#dock,#recView,#adminBtn,#endBtn,#reportBtn')){ e.stopPropagation(); e.preventDefault(); } },true);
+document.addEventListener('click',e=>{ if(!document.body.classList.contains('setup')&&performance.now()-lastTapAt<450&&!e.target.closest('.dock,#recView,#dexView,#adminBtn,#endBtn,#reportBtn')){ e.stopPropagation(); e.preventDefault(); } },true);
 
 /* ================= 설정 화면 ================= */
 function renderSetup(){
@@ -588,23 +601,24 @@ function placeCard(p,w,cls){
 }
 /* 실제 크기 5단계(순서만 맞춤): 장면 안에서만 씀. 고르기 카드는 모두 같은 크기(크기가 답의 단서가 되지 않게) */
 const SZ={};
-[[0.42,'지렁이 나비 잠자리 벌 소금쟁이 물방개 땅강아지 새우 달팽이 거미 우렁이 전갈 불가사리 조개 개미'],
- [0.56,'참새 까치 비둘기 물고기 붕어 미꾸라지 다람쥐 두더지 개구리 딱따구리 부엉이 해파리 오징어 문어 사막여우 쥐'],
- [0.72,'개 고양이 토끼 여우 원숭이 펭귄 수달 백로 독수리 돼지 오리 거북이'],
+[[0.3,'지렁이 나비 잠자리 벌 소금쟁이 물방개 땅강아지 새우 달팽이 거미 우렁이 전갈 불가사리 조개 개미'],
+ [0.45,'참새 까치 비둘기 물고기 붕어 미꾸라지 다람쥐 두더지 개구리 딱따구리 부엉이 해파리 오징어 문어 사막여우 쥐'],
+ [0.62,'개 고양이 토끼 여우 원숭이 펭귄 수달 백로 독수리 돼지 오리 거북이'],
  [0.86,'소 말 사자 호랑이 곰 사슴 악어 낙타 얼룩말 북극곰 바다표범 상어'],
  [1,'코끼리 기린 고래 하마']].forEach(([k,l])=>l.split(' ').forEach(a=>SZ[a]=k));
-const szOf=a=>SZ[a]||0.72;
+const szOf=a=>SZ[a]||0.62;
 /* 한 장면 안에서 가장 큰 동물을 1로 놓고 나머지를 줄임(혼자면 늘 1). 땅에 서는 동물은 발이 같은 높이에 오게 */
-function relSize(list,a){ const m=Math.max(...list.map(szOf)); return Math.max(0.4,szOf(a)/m); }
+function relSize(list,a){ const m=Math.max(...list.map(szOf)); return Math.max(0.3,szOf(a)/m); }
 const standsOn=p=>['walk','slide','dig'].includes(MOVE[p]);
 /* 장면 안에 동물 놓기(자리는 곳마다 정한 높이 안에서 고르게) */
-function layoutPlaced(sceneEl,p,list){
+/* ref: 크기를 견줄 동물들(한 화면에 함께 나오는 동물 전체). 없으면 이 장면의 동물끼리 */
+function layoutPlaced(sceneEl,p,list,ref){
   sceneEl.querySelectorAll('.placed').forEach(x=>x.remove());
   const n=list.length; if(!n) return; const W=sceneEl.clientWidth, H=sceneEl.clientHeight; const [y0,y1]=PL[p].y;
   const size=Math.min(H*(n>2?0.36:0.44),W/(Math.min(n,3)+0.6));
   list.forEach((a,i)=>{ const col=n<=3?i:i%3, rows=n<=3?1:2, row=n<=3?0:Math.floor(i/3), per=n<=3?n:3;
     const x=W*(col+1)/(per+1), y=H*(rows===1?(y0+y1)/2:(y0+(y1-y0)*(row?0.85:0.25)));
-    const k=relSize(list,a), z=size*k, yy=standsOn(p)?y+(size-z)/2:y;
+    const k=relSize(ref&&ref.length?ref:list,a), z=size*k, yy=standsOn(p)?y+(size-z)/2:y;
     const im=document.createElement('img'); im.className='placed'; im.src=pic(a); im.alt=a; im.style.width=im.style.height=z+'px'; im.style.left=x+'px'; im.style.top=yy+'px'; sceneEl.appendChild(im); });
 }
 /* 맞히면: 누른 동물은 바로 사라지고, 장면 안에서 멀리서 작게 → 앞으로 크게, 사는 곳에 맞는 몸짓으로 한 번(약 1초) */
@@ -720,7 +734,8 @@ function stepSort(it,tok){
   const ac=document.createElement('div'); ac.className='ac'; ac.style.width=ac.style.height=animalSz+'px'; ac.innerHTML='<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" draggable="false">';
   tray.appendChild(ac); st.appendChild(row); st.appendChild(tray);
   const cards=[...row.children];
-  requestAnimationFrame(()=>cards.forEach(c=>layoutPlaced(c.querySelector('.scene'),c.dataset.p,RUN.placed[c.dataset.p]||[])));
+  const REF=RUN.bd.items.map(x=>x.a);
+  requestAnimationFrame(()=>cards.forEach(c=>layoutPlaced(c.querySelector('.scene'),c.dataset.p,RUN.placed[c.dataset.p]||[],REF)));
   let wrong=null, helped=false, over=false;
   const sayName=()=>speak(nameLine(it.a));
   sayName().then(()=>{ if(!alive(tok)) return;
@@ -732,7 +747,7 @@ function stepSort(it,tok){
     if(c.dataset.p!==it.p){ if(!wrong) wrong=c.dataset.p; return; }   /* 놀이: 틀리면 반응 없음(먼저 누른 곳만 기록) */
     over=true; clearTimers(); c.classList.remove('glow'); chime(); logRow('sort',it,wrong,helped||!!wrong);
     const sc=c.querySelector('.scene'); ac.style.visibility='hidden';
-    (RUN.placed[it.p]=RUN.placed[it.p]||[]).push(it.a); layoutPlaced(sc,it.p,RUN.placed[it.p]); await enter(lastPlaced(sc),it.p); if(!alive(tok)) return;
+    (RUN.placed[it.p]=RUN.placed[it.p]||[]).push(it.a); layoutPlaced(sc,it.p,RUN.placed[it.p],REF); await enter(lastPlaced(sc),it.p); if(!alive(tok)) return;
     await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(700); if(alive(tok)) nextItem();
   };
   cards.forEach(c=>c.addEventListener('pointerdown',e=>{ if(!drag) tryPlace(c); }));
@@ -761,7 +776,7 @@ function finishBundle(){
 }
 function startEnd(){
   RUN.token++; const tok=RUN.token; clearTimers(); stopVoice(); clearStage(); renderProg();
-  if(!RUN.gameDone) playGame(tok); else drawEnd(tok);
+  if(!RUN.gameDone) gameIntro(tok); else drawEnd(tok);
 }
 function endGrid(){
   const st=$('stage'), A=area(), places=RUN.bd.places, n=places.length;
@@ -775,7 +790,7 @@ function drawEnd(tok){
   if(!S.endScene){ if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); } return; }
   const cards=endGrid();
   requestAnimationFrame(()=>{ cards.forEach(c=>{ const p=c.dataset.p, sc=c.querySelector('.scene');
-    layoutPlaced(sc,p,RUN.bd.items.filter(x=>x.p===p).map(x=>x.a));
+    layoutPlaced(sc,p,RUN.bd.items.filter(x=>x.p===p).map(x=>x.a),RUN.bd.items.map(x=>x.a));
     sc.querySelectorAll('.placed').forEach(im=>{ im.style.pointerEvents='auto'; im.style.cursor='pointer'; tapper(im,()=>{ if(alive(tok)) speak(liveLine(im.alt,p)); }); }); }); });
   if(RUN.newDex){ const t=document.createElement('div'); t.className='dexNew'; t.textContent='🐾 도감에 새로 '+RUN.newDex+'마리'; $('stage').appendChild(t); }
   if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); }
@@ -791,6 +806,15 @@ const gameReady=Promise.all([
   fetch(HAB+'props/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{ PROPSZ=j||{}; }).catch(()=>{}),
   fetch(HAB+'seek/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{ SEEK=j||{}; }).catch(()=>{})]);
 const GAMELV_NAME={1:'쉬움',2:'보통',3:'어려움'};
+/* 놀이 첫 화면: 큰 제목 + 아래 "시작"(학생이 누름). 제목을 눌러도 시작 */
+function gameIntro(tok){
+  const st=$('stage'), A=area();
+  const box=document.createElement('div'); box.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5vh;height:100%;width:100%';
+  box.innerHTML='<div class="gTitle">동물을 찾아보자!</div><div class="gPics">'+RUN.bd.places.map(p=>'<img src="'+HAB+PL[p].scene+'.jpg" alt="">').join('')+'</div><button type="button" class="gGo">시작</button>';
+  st.appendChild(box);
+  let went=false; const go=()=>{ if(went||!alive(tok)) return; went=true; unlockAudio(); playGame(tok); };
+  tapper(box.querySelector('.gGo'),go); tapper(box.querySelector('.gTitle'),go);
+}
 async function playGame(tok){
   await gameReady; if(!alive(tok)) return;
   const lvG=RUN.forceMode||S.gameLv||1;
@@ -949,7 +973,7 @@ function setAdmin(on){
   S.admin=on; document.body.classList.toggle('admin',on);
   $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 한 번 누르기':'교사 모드: 3초 동안 누르기');
   $('abLabel').textContent=on?'심':'charum';
-  if(on){ stopVoice(); speakSeq++; clearTimers(); PEND=null; renderDock(); }
+  if(on){ stopVoice(); speakSeq++; clearTimers(); PEND=null; PEND_LV=null; renderDock(); }
   else { $('recView').classList.remove('on'); $('dexView').classList.remove('on'); hideSpot(); }
 }
 function closeAdmin(){ setAdmin(false); goFull();
@@ -957,32 +981,54 @@ function closeAdmin(){ setAdmin(false); goFull();
   if(RUN.ending){ startEnd(); return; }   /* 놀이는 처음부터, 끝 장면은 그대로 다시 그림 */
   runStep();   /* 멈춘 단계 처음부터 */
 }
+/* 지금 단계: 보기·고르기·정리하기는 phases, 그 뒤 놀이·끝 장면 */
+function stepKeys(){ if(!RUN) return []; const k=RUN.phases.map(p=>p.k); if(!RUN.sample&&S.game) k.push('game'); k.push('end'); if(RUN.sample) return ['game','end']; return k; }
+const STEP_NAME=k=>k==='game'?'숨은 동물 찾기':k==='end'?'끝 장면':(PHASES.find(x=>x[0]===k)||['',''])[1];
+function curStep(){ if(!RUN) return ''; if(!RUN.ending) return RUN.phases[RUN.pi].k; return RUN.gameDone?'end':'game'; }
+let PEND_LV=null;
 function renderDock(){
-  const r=$('dockRow'); if(!r) return; r.innerHTML='';
-  const add=(t,fn,cls,id)=>{ const b=document.createElement('button'); b.type='button'; b.textContent=t; if(cls) b.className=cls; if(id) b.id=id; b.onclick=fn; r.appendChild(b); return b; };
-  const sep=()=>{ const s=document.createElement('span'); s.className='sep'; r.appendChild(s); };
-  const cur=RUN&&!RUN.ending?RUN.phases[RUN.pi].k:'';
-  const want=PEND||cur;
-  if(RUN&&!RUN.ending) RUN.phases.forEach(p=>add((PHASES.find(x=>x[0]===p.k)||['',''])[1],()=>{ PEND=p.k; renderDock(); },want===p.k?'on':'','dk_'+p.k));
-  if(RUN&&!RUN.ending&&PEND&&PEND!==cur) add('바꾼 설정으로 이어서',()=>{ const pi=RUN.phases.findIndex(p=>p.k===PEND); RUN.pi=pi; RUN.ii=0; PEND=null; closeAdmin(); },'go','dkGo');
-  sep();
-  add(S.sound?'소리 켬':'소리 끔',()=>{ S.sound=!S.sound; saveS(); renderDock(); },S.sound?'':'on','dkSnd');
-  add('학생 기록',()=>openRecords(false),'','dkRec');
-  add('동물 도감',()=>openDex(),'','dkDex');
-  add('활동지',()=>printSheet(RUN?RUN.lv:S.level,RUN?RUN.b:S.bundle),'','dkPrint');
-  add('처음 화면으로',()=>{ saveSpot(); RUN=null; clearTimers(); stopVoice(); setAdmin(false); clearStage(); document.body.classList.add('setup'); renderSetup(); window.scrollTo(0,0); },'','dkHome');
-  add('도움말',()=>startHelp(),'','dkHelp');
+  const T=$('dockTopRow'), B=$('dockBotRow'); if(!T) return; T.innerHTML=''; B.innerHTML='';
+  const grp=(row,lbl)=>{ const g=document.createElement('div'); g.className='g'; if(lbl){ const l=document.createElement('span'); l.className='lbl'; l.textContent=lbl; g.appendChild(l); } row.appendChild(g); return g; };
+  const btn=(g,t,fn,cls,id,dis)=>{ const b=document.createElement('button'); b.type='button'; b.textContent=t; if(cls) b.className=cls; if(id) b.id=id; if(dis) b.disabled=true; b.onclick=fn; g.appendChild(b); return b; };
+  const cur=curStep(), want=PEND||cur;
+  /* 위: 지금 상태(단계) */
+  if(RUN){ const g=grp(T,(RUN.sample?'숨은 그림 찾기':LV[RUN.lv].name+' · 묶음 '+(RUN.b+1))+' ·');
+    stepKeys().forEach(k=>btn(g,STEP_NAME(k),()=>{ PEND=k===cur?null:k; renderDock(); },(want===k?'on':'')+(cur===k?' now':''),'dk_'+k)); }
+  const lvNow=PEND_LV||S.gameLv;
+  if(RUN&&(S.game||RUN.sample)){ const g=grp(T,'놀이'); [1,2,3].forEach(v=>btn(g,GAMELV_NAME[v],()=>{ PEND_LV=v===S.gameLv?null:v; renderDock(); },lvNow===v?'on':'','dkLv'+v)); }
+  { const g=grp(T,''); btn(g,S.sound?'🔊 소리':'🔇 소리 끔',()=>{ S.sound=!S.sound; saveS(); if(!S.sound) stopVoice(); renderDock(); },S.sound?'':'on','dkSnd');
+    btn(g,'⚙ 설정',()=>{ saveSpot(); RUN=null; PEND=null; PEND_LV=null; clearTimers(); stopVoice(); setAdmin(false); clearStage(); document.body.classList.add('setup'); renderSetup(); window.scrollTo(0,0); },'','dkHome');
+    btn(g,'? 도움말',()=>startHelp(),'','dkHelp'); }
+  /* 아래: 다시 하기 · 기록 · 도감 · 활동지 | 바꾼 설정으로 이어서 */
+  { const g=grp(B,''); btn(g,'↺ 이 단계 처음부터',()=>{ PEND=null; applyLv(); closeAdmin(); },'','dkRedo',!RUN);
+    btn(g,'⟲ 묶음 처음부터',()=>{ PEND=null; applyLv(); const lv=RUN.lv,b=RUN.b; setAdmin(false); S.level=lv; S.bundle=b; startLesson(null); },'','dkAgain',!RUN||RUN.sample); }
+  { const g=grp(B,''); btn(g,'기록',()=>openRecords(false),'','dkRec'); btn(g,'🐾 도감',()=>openDex(),'','dkDex'); btn(g,'🖨 활동지',()=>printSheet(RUN&&!RUN.sample?RUN.lv:S.level,RUN&&!RUN.sample?RUN.b:S.bundle),'','dkPrint'); }
+  { const g=grp(B,''); btn(g,'바꾼 설정으로 이어서',()=>goPending(),'go','dkGo',!(PEND||PEND_LV)); }
   $('dockNote').textContent=S.voiceNote||'';
 }
-
+function applyLv(){ if(PEND_LV){ S.gameLv=PEND_LV; saveS(); PEND_LV=null; } }
+/* 바꾼 설정 반영: 고른 단계 처음부터(놀이를 고르면 놀이 첫 화면, 끝 장면이면 끝 장면) */
+function goPending(){
+  const k=PEND, lvChanged=!!PEND_LV; applyLv(); PEND=null;
+  if(!RUN){ closeAdmin(); return; }
+  if(k==='game'){ RUN.ending=true; RUN.gameDone=false; }
+  else if(k==='end'){ RUN.ending=true; RUN.gameDone=true; }
+  else if(k){ RUN.ending=false; RUN.pi=RUN.phases.findIndex(p=>p.k===k); RUN.ii=0; }
+  else if(lvChanged&&RUN.ending&&!RUN.gameDone){ /* 놀이 중 어렵기만 바꾸면 놀이를 처음부터 */ }
+  closeAdmin();
+}
 /* ================= 도움말: 단추마다 말풍선 "3 / 9" ================= */
 const HELP=[
-  ['[id^=dk_]','단계','지금 하는 단계를 바꿔요. 고른 뒤 "바꾼 설정으로 이어서"를 누르면 그 단계 처음부터 해요.'],
+  ['[id^=dk_]','지금 단계','지금 하는 곳에 밑줄이 있어요. 다른 단계(보기·고르기·정리하기·숨은 동물 찾기·끝 장면)를 고르고 아래 "바꾼 설정으로 이어서"를 누르면 그 단계 처음부터 해요.'],
+  ['[id^=dkLv]','놀이 어렵기','숨은 동물 찾기의 쉬움·보통·어려움이에요. 고른 뒤 "바꾼 설정으로 이어서"를 누르면 다음 놀이부터 바뀌어요(놀이 중이면 처음부터).'],
   ['#dkSnd','소리','목소리와 맞힐 때 나는 소리를 켜고 꺼요.'],
-  ['#dkRec','학생 기록','학생마다 바로 맞힌 비율, 도움이 더 필요한 동물, 자주 헷갈린 곳을 봐요.'],
-  ['#dkDex','동물 도감','학생마다 집을 찾아 준 동물이 사는 곳별로 쌓여요. 동물을 누르면 그 문장을 들려줘요.'],
+  ['#dkHome','설정','처음 설정 화면으로 가요. 하던 곳은 저장되어 다음에 이어 할 수 있어요.'],
+  ['#dkRedo','이 단계 처음부터','지금 단계를 처음부터 다시 해요. 관리 버튼을 한 번 눌러 닫아도 같아요.'],
+  ['#dkAgain','묶음 처음부터','지금 묶음을 보기부터 다시 해요.'],
+  ['#dkRec','기록','학생마다 바로 맞힌 비율, 도움이 더 필요한 동물, 자주 헷갈린 곳을 봐요.'],
+  ['#dkDex','도감','학생마다 집을 찾아 준 동물이 사는 곳별로 쌓여요. 동물을 누르면 그 문장을 들려줘요.'],
   ['#dkPrint','활동지','지금 묶음의 A4 활동지(사는 곳 장면 + 오려 붙일 동물)를 출력해요.'],
-  ['#dkHome','처음 화면으로','설정 화면으로 돌아가요. 하던 곳은 저장되어 다음에 이어 할 수 있어요.'],
+  ['#dkGo','바꾼 설정으로 이어서','위에서 고른 단계·놀이 어렵기를 반영하고 학생 화면으로 돌아가요. 메뉴가 열려 있는 동안에는 화면이 바뀌지 않아요.'],
   ['#adminBtn','관리 버튼','3초 누른 뒤 왼쪽 위 작은 점을 누르면 이 메뉴가 열려요. 메뉴가 열린 동안 한 번 누르면 멈춘 화면을 처음부터 다시 해요.'],
   ['#endBtn','수업 끝내기','두 번 누르면 앱을 끝내요. 전체 화면에서 나가고 탭을 닫아요.']
 ];
