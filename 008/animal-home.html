@@ -83,7 +83,7 @@ body.admin #stage{pointer-events:none}
 #prog i.d{background:#C9BCE0}#prog i.n{background:var(--sci)}
 #prog.bar{width:min(520px,70vw);height:8px;border-radius:4px;background:#E6E1EC;overflow:hidden;gap:0}
 #prog.bar b{display:block;height:100%;background:linear-gradient(90deg,#C9BCE0 0 calc(100% - 10px),var(--sci) 0);border-radius:4px;transition:width .4s}
-#stage{position:absolute;inset:36px 0 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.5vh;padding:0 16px 70px}
+#stage{position:absolute;inset:36px 0 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.5vh;padding:20px 16px 8px}   /* 그림·글은 빈 곳의 위아래 가운데(조금 아래로, 뜬 느낌 없게) */
 .recDot{position:absolute;left:10px;top:10px;width:10px;height:10px;border-radius:50%;background:#D24B3E;opacity:.75;z-index:4}
 
 /* 견본 말풍선 */
@@ -1137,7 +1137,17 @@ function renderRecords(){
 $('recView').addEventListener('pointerdown',e=>{ if(e.target.id==='recView') $('recView').classList.remove('on'); });
 document.addEventListener('pointerdown',e=>{ if(helpI>=0&&!e.target.closest('#spotTip')){ hideSpot(); helpI=-1; } },true);
 
-window.addEventListener('resize',()=>{ if(RUN&&!document.body.classList.contains('setup')&&!S.admin){ clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(RUN.ending) startEnd(); else runStep(); },300); } });
+/* Esc 등으로 전체 화면에서 나왔으면, 학생이 다음에 화면을 누를 때 다시 전체 화면으로(나올 때마다 한 번만 시도 — 기기가 막아도 멈추지 않게).
+   그 누름은 평소처럼 쓰고, 커져도 화면을 다시 그리지 않음(하던 것 그대로) */
+let fullTapAt=0, wantFull=false;
+const isFull=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{ if(!isFull()&&!S.admin&&!document.body.classList.contains('setup')) wantFull=true; }));
+document.addEventListener('pointerdown',e=>{
+  if(!wantFull||document.body.classList.contains('setup')||S.admin||!RUN||isFull()) return;
+  if(e.target.closest('.dock,#adminBtn,#agDot,#endBtn,#reportBtn,#endCover,#recView,#dexView,#spotTip')) return;
+  wantFull=false; fullTapAt=performance.now(); goFull();
+},true);
+window.addEventListener('resize',()=>{ if(performance.now()-fullTapAt<1500) return; if(RUN&&!document.body.classList.contains('setup')&&!S.admin){ clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(RUN.ending) startEnd(); else runStep(); },300); } });
 renderSetup();
 </script>
 <script id="holdBubble">
