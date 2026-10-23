@@ -1,7 +1,9 @@
 008 동물이 사는 곳 (차름 동물) — 과학 영역(보라 #6A4C9C)
 
 파일
-- animal-home-beta.html : 베타(2026-10-23). 의견을 들은 뒤 animal-home.html로 합침
+- animal-home.html      : 내 도메인으로 여는 판(study/008/animal-home.html = server-loader.html)
+- animal-home-beta.html : 고쳐 볼 때 먼저 올리는 판(2026-10-23 현재 animal-home.html과 같음)
+- server-loader.html    : 서버 study/008/에 animal-home.html 이름으로 올리는 불러오기 파일
 - voice-lines.json      : 앱이 쓰는 말 목록(콘솔 __voiceLines()와 같음)
 - voice-maker.html      : 제작자용 일회용 목소리 만들기 화면(Leda 0.92). 소리를 소리 모음에 넣은 뒤 지움
 
