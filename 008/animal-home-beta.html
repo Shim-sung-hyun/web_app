@@ -307,7 +307,9 @@ const saveResume=()=>store.set('resume',JSON.stringify(RESUME));
 let DONE={}; try{ DONE=JSON.parse(store.get('done')||'{}')||{}; }catch(e){ DONE={}; }   /* 학생별로 마친 묶음 */
 
 /* ================= 소리: 한 수업은 한 목소리 ================= */
-let lastSay='', speakSeq=0, actx=null, curSrc=null;
+let lastSay='', speakSeq=0, actx=null, curSrc=null, pdown=false;
+document.addEventListener('pointerdown',()=>{pdown=true;},true);
+['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,()=>{pdown=false;},true));
 function getCtx(){ if(!actx){ const C=window.AudioContext||window.webkitAudioContext; if(C) actx=new C(); } return actx; }
 function unlockAudio(){ try{ const c=getCtx(); if(!c) return; if(c.state==='suspended') c.resume();
   const b=c.createBuffer(1,240,24000), x=c.createBufferSource(); x.buffer=b; x.connect(c.destination); x.start(); }catch(e){} }
@@ -664,7 +666,7 @@ function stepSort(it,tok){
   let wrong=null, helped=false, over=false;
   const sayName=()=>speak(nameLine(it.a));
   sayName().then(()=>{ if(!alive(tok)) return;
-    const again=()=>{ later(()=>{ if(alive(tok)&&!over){ if(drag) return again(); sayName().then(again); } },6000); }; again();
+    const again=()=>{ later(()=>{ if(alive(tok)&&!over){ if(drag||pdown) return again(); sayName().then(again); } },3000); }; again();   /* 놀이 신호: 맞힐 때까지 말이 끝나고 3초마다(손가락이 닿아 있으면 기다림) */
     later(()=>{ if(alive(tok)&&!over){ helped=true; cards.filter(c=>c.dataset.p===it.p).forEach(c=>c.classList.add('glow')); } },16000);
   });
   const tryPlace=async c=>{
