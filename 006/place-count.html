@@ -46,7 +46,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 body.recording .rec{display:inline-flex}
 
 /* ---------- 가운데: 자리 이름만 (숫자와 짝짓기 전, 순서를 말로 외우는 단계) ---------- */
-.stage{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:0;overflow:hidden}
+.stage{flex:1;display:flex;align-items:center;justify-content:flex-end;padding-right:clamp(8px,3vw,48px);cursor:pointer;min-height:0;overflow:hidden}
 .numline{display:flex;align-items:flex-start;justify-content:flex-end;flex-wrap:nowrap;font-size:var(--fs,80px)}
 .col{display:flex;flex-direction:column;align-items:center;visibility:hidden}
 .col.shown{visibility:visible}
