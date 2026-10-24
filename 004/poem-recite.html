@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>차름 시 시 암송하기</title>
+<title>차름 말하기 시 암송하기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
@@ -189,7 +189,7 @@ body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
 </head>
 <body class="cover">
 
-<section id="cover"><h1 id="coverTitle" role="button" tabindex="0">차름 시<small>시 암송하기</small></h1>
+<section id="cover"><h1 id="coverTitle" role="button" tabindex="0">차름 말하기<small>시 암송하기</small></h1>
   <button type="button" id="coverStart"><svg class="ic" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span id="coverStartLbl">시작</span></button>
   <p id="coverHint">다른 시는 위에서 골라요</p></section>
 
@@ -744,12 +744,12 @@ function setAdmin(on){
 /* ================= 교사 메뉴 ================= */
 /* 첫 화면 제목: 메뉴가 열리면 지금 고른 시를 '지은이의 “제목”'으로 */
 function coverTitleText(){
-  if(!S.admin) return null; /* 첫 화면: '차름 시' + 작게 '시 암송하기'(HTML 그대로) */
+  if(!S.admin) return null; /* 첫 화면: '차름 말하기' + 작게 '시 암송하기'(HTML 그대로) */
   const d=poemData(S.active), au=String(d.author||'').trim(), t=String(d.title||'').trim()||'제목 없음';
   return (au&&!/^\(?작가 미상\)?$/.test(au)?au+'의 ':'')+'\u201C'+t+'\u201D';
 }
 function renderDocks(){
-  { const ct=$('coverTitle'), tx=coverTitleText(); if(tx===null){ if(!ct.querySelector('small')) ct.innerHTML='차름 시<small>시 암송하기</small>'; } else if(ct.textContent!==tx) ct.textContent=tx; ct.classList.toggle('poemname',S.admin); }
+  { const ct=$('coverTitle'), tx=coverTitleText(); if(tx===null){ if(!ct.querySelector('small')) ct.innerHTML='차름 말하기<small>시 암송하기</small>'; } else if(ct.textContent!==tx) ct.textContent=tx; ct.classList.toggle('poemname',S.admin); }
   const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
   const keepL=[...document.querySelectorAll('.dock .sc')].map(x=>x.scrollLeft);
   $('dockTop').innerHTML='<div class="sc">'+
@@ -1047,7 +1047,7 @@ function printSheet(){
   const saved=layout, n=entry.lines.length-2;
   layout={cols:n>18?2:1,fontSize:20}; render();
   const t=new Date(), ds=`${t.getFullYear()}. ${t.getMonth()+1}. ${t.getDate()}.`;
-  $('printArea').innerHTML=`<div class="pa-head"><span>차름 시 · ${esc(STAGES.find(s=>s.k===S.stage)?.label||'')}</span><span>이름: ____________ &nbsp; ${ds}</span></div>`+$('poemsContainer').innerHTML;
+  $('printArea').innerHTML=`<div class="pa-head"><span>차름 말하기 · ${esc(STAGES.find(s=>s.k===S.stage)?.label||'')}</span><span>이름: ____________ &nbsp; ${ds}</span></div>`+$('poemsContainer').innerHTML;
   layout=saved; render();
   window.print();
 }
