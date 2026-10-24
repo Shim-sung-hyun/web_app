@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>차름 동물원 1편 동물이 사는 곳</title>
+<title>[차름 과학] 동물원 1편 · 동물이 사는 곳</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
@@ -31,6 +31,7 @@ body:not(.setup) #setupView{display:none}
 .title{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 6px}
 .title h1{font-family:var(--f-display);font-weight:400;font-size:44px;margin:0;color:var(--sci-d);line-height:1.1}
 .title h1 small{display:block;font-size:24px;color:var(--sci);margin-top:4px;letter-spacing:.01em}
+.title h1 small.kick{font-size:20px;margin:0 0 4px}
 .title .mark{width:40px;height:40px}
 .title .mark{display:flex;flex-direction:column;width:34px;height:34px;border-radius:9px;overflow:hidden;border:2px solid var(--sci-d)}
 .title .mark i{flex:1}
@@ -221,7 +222,7 @@ body.setup #adminBtn{display:none}
 <body class="setup">
 
 <div id="setupView"><div class="wrap">
-  <div class="title"><span class="mark" aria-hidden="true"><i style="background:#BFE0F5"></i><i style="background:#9CC46B"></i><i style="background:#9A6A3E"></i></span><h1>차름 동물원<small>1편 동물이 사는 곳</small></h1></div>
+  <div class="title"><span class="mark" aria-hidden="true"><i style="background:#BFE0F5"></i><i style="background:#9CC46B"></i><i style="background:#9A6A3E"></i></span><h1><small class="kick">차름 과학</small>동물원<small>1편 · 동물이 사는 곳</small></h1></div>
   <p class="sub">동물과 그 동물이 사는 곳을 이어 봐요</p>
 
   <div class="card" id="c1"><h2><span class="num">1</span>누구와 할까요?</h2>
@@ -1051,7 +1052,7 @@ function sheetHTML(lv,plan){
 }
 function sheetPages(lv,bd){
   const n=bd.places.length, pw=n<=2?'130mm':'104mm', lab=LV[lv].name+' · '+esc(bd.label);
-  let h='<div class="pg"><div class="hd"><b>차름 동물원 1편 동물이 사는 곳</b><span>'+lab+' · 이름 ________________</span></div><div class="places" style="grid-template-columns:repeat(2,'+pw+')">'
+  let h='<div class="pg"><div class="hd"><b>[차름 과학] 동물원 1편 · 동물이 사는 곳</b><span>'+lab+' · 이름 ________________</span></div><div class="places" style="grid-template-columns:repeat(2,'+pw+')">'
    +bd.places.map(p=>'<div class="pl"><img src="'+HAB+PL[p].scene+'.jpg"><span style="font-size:'+(n<=2?'30':'22')+'px">'+PL[p].label+'</span></div>').join('')+'</div></div>';
   const it=shuffle(bd.items); for(let i=0;i<it.length;i+=8)
     h+='<div class="pg"><div class="hd"><b>오려서 사는 곳에 붙여요</b><span>'+lab+'</span></div><div class="cut">'+it.slice(i,i+8).map(x=>'<div class="ac"><img src="'+pic(x.a)+'"><div>'+esc(x.a)+'</div></div>').join('')+'</div><div class="note">점선을 따라 오려 앞 장의 사는 곳에 붙입니다. 이름 없이 하려면 이름 부분을 잘라 냅니다.</div></div>';
@@ -1059,7 +1060,7 @@ function sheetPages(lv,bd){
 }
 function sheetHead(){
   const n=4, pw='104mm';
-  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>차름 동물원 1편 동물이 사는 곳 활동지</title>'
+  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>[차름 과학] 동물원 1편 · 동물이 사는 곳 활동지</title>'
    +'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap">'
    +'<style>@page{size:A4 landscape;margin:10mm}*{box-sizing:border-box}body{margin:0;font-family:"Noto Sans KR",sans-serif;color:#222}'
    +'.pg{width:277mm;height:188mm;page-break-after:always;display:flex;flex-direction:column}.pg:last-child{page-break-after:auto}'

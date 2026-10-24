@@ -1,4 +1,4 @@
-003 · 차름 인지 무지개 찾기 (예전 이름 무지개 색 찾기 — 파일 이름·주소·저장 칸은 그대로)
+003 · [차름 미술] 무지개 찾기 (예전 이름 무지개 색 찾기 — 파일 이름·주소·저장 칸은 그대로)
 
 주소
   앱:      https://www.charum.org/study/003/rainbow-finder.html  (서버 study/003/에는 server-loader.html을 이 이름으로 한 번만)

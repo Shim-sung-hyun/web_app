@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>차름 인지 무지개 찾기</title>
+<title>[차름 미술] 무지개 찾기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
@@ -36,7 +36,7 @@ body.setup #game, body.setup #adminBtn{display:none}
 .sp{max-width:860px;margin:0 auto;padding:26px 16px 0}
 .sp-head{display:flex;gap:16px;align-items:center;margin:0 4px 18px}
 .sp-head h1{font-family:var(--f-display);font-weight:400;font-size:38px;margin:0;line-height:1.1;color:var(--g2)}
-.sp-head h1 small{display:block;font-size:.6em;margin-top:4px;opacity:.85;letter-spacing:.01em}
+.sp-head h1 small{display:block;font-size:.5em;margin-bottom:4px;opacity:.85;letter-spacing:.01em}
 .sp-head p{margin:4px 0 0;color:#6E6250;font-size:15px}
 .dots7{display:flex;gap:5px;flex:none}
 .dots7 i{width:14px;height:14px;border-radius:50%;display:block}
@@ -835,7 +835,7 @@ $('recBox').addEventListener('pointerdown',e=>{ if(e.target===$('recBox')) close
 function printRecord(){
   const list=RV.demo?demoLog():LOG.filter(r=>r.s===RV.student), name=RV.demo?'홍길동':nameOf(RV.student);
   const t=new Date(), ds=`${t.getFullYear()}. ${t.getMonth()+1}. ${t.getDate()}.`;
-  $('printArea').innerHTML=`<div class="pa-head"><h1>차름 인지 무지개 찾기 · 교사용 기록</h1><div>학생: ${esc(name||'____________')} &nbsp; ${ds}</div></div><div class="pa-rec">${recordHTML(list,name,true)}</div>`;
+  $('printArea').innerHTML=`<div class="pa-head"><h1>[차름 미술] 무지개 찾기 · 교사용 기록</h1><div>학생: ${esc(name||'____________')} &nbsp; ${ds}</div></div><div class="pa-rec">${recordHTML(list,name,true)}</div>`;
   window.print();
 }
 
@@ -875,7 +875,7 @@ function showSetup(){
   document.body.className='setup'+(recId?' recording':''); setAdmin(false);
   const tile=(name,val,cur,inner)=>`<label class="tile"><input type="radio" name="${name}" value="${val}" ${String(cur)===String(val)?'checked':''}><span>${inner}</span></label>`;
   $('setup').innerHTML=`<div class="sp">
-    <div class="sp-head"><div class="dots7">${RAINBOW.map(c=>`<i style="background:${c.hex}"></i>`).join('')}</div><div><h1>차름 인지<small>무지개 찾기</small></h1><p>떠다니는 동그라미 가운데 말한 색을 찾아 눌러요. 맞히면 "뽁" 터지고, 다른 색을 누르면 아무 반응이 없어요. 이 화면은 선생님·보호자용입니다.</p></div></div>
+    <div class="sp-head"><div class="dots7">${RAINBOW.map(c=>`<i style="background:${c.hex}"></i>`).join('')}</div><div><h1><small>차름 미술</small>무지개 찾기</h1><p>떠다니는 동그라미 가운데 말한 색을 찾아 눌러요. 맞히면 "뽁" 터지고, 다른 색을 누르면 아무 반응이 없어요. 이 화면은 선생님·보호자용입니다.</p></div></div>
     <section class="card" id="whoCard"><h2>${NO(1)}누구와 하나요?</h2>
       <div class="who"><select id="stuSel" aria-label="기록할 학생"></select><button class="mini" type="button" id="stuAddBtn">+ 학생 넣기</button><button class="mini" type="button" id="recOpen">교사용 기록</button></div>
       <div class="who" id="addRow" hidden style="margin-top:10px"><input id="stuName" placeholder="학생 이름 (실명)" autocomplete="off"><button class="mini pri" type="button" id="stuAddOk">넣기</button></div>
@@ -1261,7 +1261,7 @@ function printSheet(kind){
     const by={}; L.forEach(l=>{ const o=by[l.name]||(by[l.name]={hex:l.hex,n:0,first:0,help:0,wrong:{}}); o.n++; if(l.result==='바로 맞힘') o.first++; if(l.result==='도움 받아 맞힘') o.help++; l.wrong.forEach(w=>o.wrong[w]=(o.wrong[w]||0)+1); });
     const colorRows=Object.entries(by).map(([k,o])=>`<tr><td>${esc(k)}</td><td>${o.n}</td><td>${o.first}</td><td>${o.n-o.first-o.help}</td><td>${o.help}</td><td>${Object.entries(o.wrong).sort((a,b)=>b[1]-a[1]).map(([w,c])=>esc(w)+(c>1?' ×'+c:'')).join(', ')||'-'}</td></tr>`).join('');
     const qRows=L.map((l,i)=>`<tr><td>${i+1}</td><td>${esc(l.name)}</td><td>${l.result}</td><td>${l.wrong.length?esc(l.wrong.join(', ')):'-'}</td></tr>`).join('');
-    $('printArea').innerHTML=`<div class="pa-head"><h1>차름 인지 무지개 찾기 · 이번 판 기록</h1><div>학생: ${recId?esc(nameOf(recId)):'____________'} &nbsp; ${ds}</div></div>
+    $('printArea').innerHTML=`<div class="pa-head"><h1>[차름 미술] 무지개 찾기 · 이번 판 기록</h1><div>학생: ${recId?esc(nameOf(recId)):'____________'} &nbsp; ${ds}</div></div>
       <p class="pa-note">${esc(OPT.way[S.way])} · ${esc(OPT.look[S.look])} ${S.choices}개 · ${S.colors}색 · ${esc(OPT.speed[S.speed])} · 도와주기 ${esc(OPT.help[S.help])} · 문제 ${S.rounds}번</p>
       <p class="pa-note"><b>바로 맞힘 ${first} / ${n}${n?` (${Math.round(first/n*100)}%)`:''}</b> · 다시 해서 맞힘 ${n-first-help} · 도움 받아 맞힘 ${help} · 다른 색을 누른 횟수 ${taps} · 우연히 맞힐 확률 ${Math.round(100/S.choices)}%</p>
       ${n?`<table class="pa-log" style="margin-bottom:4mm"><thead><tr><th>찾을 색</th><th>나온 횟수</th><th>바로 맞힘</th><th>다시 해서 맞힘</th><th>도움 받아 맞힘</th><th>대신 누른 색</th></tr></thead><tbody>${colorRows}</tbody></table>

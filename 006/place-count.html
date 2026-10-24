@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="description" content="발달장애 학생을 위한 자리 이름(일·십·백·천·만…) 순서 외우기 사전학습 웹앱">
-<title>차름 숫자 1편 자리 이름 익히기</title>
+<title>[차름 수학] 자리 이름 익히기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@ body.recording .rec{display:inline-flex}
 /* ---------- 첫 화면: 가운데 제목, 바로 밑 시작 (위 줄에서 단위·목표·소리, 오른쪽 아래 유리알은 관리 메뉴) ---------- */
 .startbox{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(20px,4vh,40px);cursor:default}
 .startbox h1{font-family:'Jua',sans-serif;font-weight:400;color:var(--base);font-size:clamp(40px,7.2vw,92px);line-height:1.15;margin:0;display:flex;align-items:center;gap:.25em;flex-wrap:wrap;justify-content:center;text-align:center}
-.startbox h1 small{flex-basis:100%;text-align:center;font-size:.4em;opacity:.85;letter-spacing:.01em;margin-top:-.1em}
+.startbox h1 small{flex-basis:100%;text-align:center;font-size:.34em;opacity:.85;letter-spacing:.01em;margin-bottom:-.1em}
 .startbox .mk{display:inline-flex;gap:.12em}
 .startbox .mk i{font-style:normal;font-size:.36em;width:1.6em;height:1.6em;line-height:1.38em;text-align:center;border:.12em solid var(--base);border-radius:.25em;background:#fff;color:var(--dark)}
 .startbox .mk i+i{border-color:#9CC9BD;color:#7FA79C}
@@ -193,7 +193,7 @@ body.admin #stage{pointer-events:none}
   </div>
   <div class="prog" id="prog" aria-label="통과한 횟수"></div>
   <div class="stage" id="stage"><div class="numline" id="numline"></div>
-    <div class="startbox" id="startBox"><h1>차름 숫자<span class="mk" aria-hidden="true"><i>십</i><i>일</i></span><small>1편 자리 이름 익히기</small></h1><button type="button" id="startBtn">시작</button></div></div>
+    <div class="startbox" id="startBox"><h1><small>차름 수학</small>자리 이름 익히기<span class="mk" aria-hidden="true"><i>십</i><i>일</i></span></h1><button type="button" id="startBtn">시작</button></div></div>
   <div class="bottom">
     <div class="voice-warn" id="voiceWarn"></div>
     <div class="btn-row">

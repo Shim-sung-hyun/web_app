@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>차름 도형 1편 일상 속 도형 찾기</title>
+<title>[차름 수학] 도형 찾기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
@@ -303,7 +303,7 @@ body.setup{background-color:var(--bg)}
 .m-head{display:flex;flex-direction:column;gap:2px;padding:4px 2px}
 .m-title{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .m-title h1{color:var(--accent);line-height:1.1}
-.m-title h1 small{display:block;font-size:.55em;margin-top:4px;opacity:.85;letter-spacing:.01em}
+.m-title h1 small{display:block;font-size:.5em;margin-bottom:4px;opacity:.85;letter-spacing:.01em}
 .m-mark{display:inline-flex;gap:7px;align-items:center}
 .m-mark i{display:block;width:20px;height:20px;border:3px solid var(--accent)}
 .m-mark .o{border-radius:50%} .m-mark .s{border-radius:3px;border-color:#5C9E3C}
@@ -1645,7 +1645,7 @@ function showSetup(o={}){
   const sum=()=>[S.showSec+'초', S.paint?'칠하기 켬':'칠하기 끔', S.cartoonOn?'끝: 그림':'끝: 색칠', S.errorMode==='show'?'바로 정답':'한 번 더 기회', voiceName(S.engine)].join(' · ');
   const lv=[[1,'1단계 · 도형 이름','동그라미·세모·네모의 이름을 배우고 찾아요.'],[2,'2단계 · 변과 꼭짓점','원·삼각형·사각형의 변과 꼭짓점을 세어요.'],[3,'3단계 · 각','각을 세고 직각을 찾아요.']];
   main.innerHTML=`<section class="setup-page math">
-    <header class="m-head"><div class="m-title"><h1>차름 도형<small>1편 일상 속 도형 찾기</small></h1><span class="m-mark" aria-hidden="true"><i class="o"></i><i class="t"></i><i class="s"></i></span></div>
+    <header class="m-head"><div class="m-title"><h1><small>차름 수학</small>도형 찾기</h1><span class="m-mark" aria-hidden="true"><i class="o"></i><i class="t"></i><i class="s"></i></span></div>
       <p class="lead">사진 속 물건에서 도형을 찾아 배우고, 칠하고, 직접 찾아요.</p></header>
 
     <div class="card" id="levelCard"><h2><span class="n">1</span>누구와, 어떤 단계로 할까요?</h2>
