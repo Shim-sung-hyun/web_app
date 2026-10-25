@@ -11,3 +11,6 @@
 서버: server/charum-api/relay.php · relay-lib.php · relay-admin.php (관리자 화면에서 연수 코드를 켜고 끔)
 잠금: ECDH P-256 → HKDF(salt "charum-relay|번호", info "v1") → AES-GCM. 내용 "CRL1"+머리 길이 4바이트+머리 JSON+사진.
 차름 앱(001·002)의 photo-relay.php와는 따로 둔다.
+  relay_manual.html 차름 게시판 본문(소스 모드로) · 썸네일 relay-promo.jpg · 캡처 relay01~05.jpg
+  relay-handout.html 연수용 A4 안내지(?code=연수코드&until=2026-11-30 으로 채워 인쇄, 비우면 손으로 쓰는 칸)
+연수 코드는 연수마다 새로 만들고 끝나는 날을 정한다(2026-10-25 선생님 결정). 쓰임새가 쌓이면 늘 쓰는 코드를 따로 연다.
