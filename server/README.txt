@@ -8,6 +8,11 @@ charum.org 서버(라이믹스와 같은 맨 위 폴더)에 올리는 파일의 
 donate-admin.php  기증 사진 관리자 화면(2026-10-25). donate.php와 같은 곳(맨 위 폴더)에 올림.
               charum.org에 "관리자"로 로그인한 사람만 열림(확인 글자 필요 없음). 기증 사진 보기 · 골라 zip · 서버에서 지우기.
               주소: https://www.charum.org/donate-admin.php  (로그인 안 했으면 "로그인" 단추가 나옴)
+              "고른 것 보내기" → 비공개 저장소 Shim-sung-hyun/charum-inbox 의 inbox/ 로. Claude가 검토해 걸리는 것만
+              "다시 볼 사진"으로 돌려보냄(저장/고친 것으로 저장/빼기). 절차는 media/photos/REVIEW.md.
+
+donate-config.php  (저장소에는 donate-config.sample.php만) GitHub 토큰을 넣는 파일. 서버 맨 위 폴더에
+              donate-config.php 이름으로 두고 $GITHUB_TOKEN 에 토큰(charum-inbox 하나만, Contents 읽기·쓰기).
 
 addons/charum_donate/  애드온 "차름 기증 사진 탭"(2026-10-25). 폴더째 서버의 addons/ 안에 올림
               → 관리자 화면 > 고급 > 애드온 > "차름 기증 사진 탭"을 PC·모바일 모두 사용으로.
