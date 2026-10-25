@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon version="0.2">
     <title xml:lang="ko">차름 기증 사진 탭</title>
-    <description xml:lang="ko">관리자로 로그인하면 회원 메뉴(회원정보 보기 · 스크랩 보기 · 저장함 보기 …)에 "기증 사진" 탭을 붙이고, 기다리는 사진 수를 빨간 숫자로 보여 줍니다. 탭을 누르면 donate-admin.php가 열립니다.</description>
+    <description xml:lang="ko">관리자로 로그인하면 회원 메뉴(회원정보 보기 · 스크랩 보기 · 저장함 보기 …)에 "기증 사진"·"사진 다리" 탭을 붙입니다. 기증 사진은 기다리는 수를, 사진 다리는 이달 전송량이 안전판의 80%를 넘으면 %를 빨갛게 보여 줍니다.</description>
     <version>1.0</version>
     <date>2026-10-25</date>
     <author email_address="" link="https://www.charum.org">

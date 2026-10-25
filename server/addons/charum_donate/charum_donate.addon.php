@@ -2,7 +2,8 @@
 /* 차름 기증 사진 탭 (2026-10-25)
    관리자로 로그인했을 때만, 회원 메뉴 목록(회원정보 보기 · 스크랩 보기 · 저장함 보기 …)이 있는 곳에
    "기증 사진 N" 탭을 붙인다. 누르면 서버 루트의 donate-admin.php(관리자만 열림)로 간다.
-   기다리는 장 수는 donate.php가 쌓는 donate-data/ 의 파일 수. */
+   기다리는 장 수는 donate.php가 쌓는 donate-data/ 의 파일 수.
+   (2026-10-25 더함) 그 옆에 "사진 다리" 탭 → charum-api/relay-admin.php. 이달 전송량이 안전판의 80%를 넘으면 빨간 %를 붙임. */
 if (!defined('__XE__') && !defined('RX_VERSION')) exit();
 if ($called_position !== 'before_display_content') return;
 if (Context::getResponseMethod() !== 'HTML' || !is_string($output)) return;
@@ -32,10 +33,18 @@ elseif (is_file(RX_BASEDIR . 'charum-api/donate-config.php') && function_exists(
   }
 }
 $charum_n += $charum_f;
+/* 사진 다리 이달 사용량(%) — relay-data/ 의 settings.json·usage-YYYY-MM.json 을 읽기만 함 */
+$charum_rp = 0;
+$charum_rs = json_decode((string)@file_get_contents(RX_BASEDIR . 'charum-api/relay-data/settings.json'), true);
+$charum_ru = json_decode((string)@file_get_contents(RX_BASEDIR . 'charum-api/relay-data/usage-' . gmdate('Y-m', time() + 32400) . '.json'), true);
+$charum_cap = (float)(is_array($charum_rs) && !empty($charum_rs['monthGB']) ? $charum_rs['monthGB'] : 60) * 1e9;
+if (is_array($charum_ru) && $charum_cap > 0) $charum_rp = (int)floor(100 * (float)($charum_ru['bytes'] ?? 0) / $charum_cap);
 $charum_js = <<<'JS'
 <script>
 (function(){
-  var N=__N__, URL='/charum-api/donate-admin.php';
+  var N=__N__, RP=__RP__;
+  var TABS=[{url:'/charum-api/donate-admin.php',label:'기증 사진',badge:N>0?String(N):''},
+            {url:'/charum-api/relay-admin.php',label:'사진 다리',badge:RP>=80?RP+'%':''}];
   function run(){
     var seen=[];
     var links=document.querySelectorAll('a[href*="dispMemberSavedDocument"],a[href*="dispMemberScrappedDocument"],a[href*="dispMemberInfo"],a[href*="dispMemberOwnDocument"]');
@@ -46,20 +55,22 @@ $charum_js = <<<'JS'
       var base=null, kids=ul.children;
       for(var k=0;k<kids.length;k++){ var c=kids[k]; if(c.tagName==='LI'&&c.querySelector('a')&&!/\b(active|on|selected|current|cur)\b/.test(c.className+' '+c.querySelector('a').className)){ base=c; break; } }
       base=base||li;
-      var nli=document.createElement('li'); nli.className=(base.className||'').replace(/\b(active|on|selected|current|cur)\b/g,'').trim();
-      var a=document.createElement('a'); var ba=base.querySelector('a');
-      a.className=((ba&&ba.className)||'').replace(/\b(active|on|selected|current|cur)\b/g,'').trim();
-      a.href=URL; a.setAttribute('data-charum-donate','1'); a.textContent='기증 사진';
-      if(N>0){ var b=document.createElement('span'); b.textContent=N;
-        b.style.cssText='display:inline-block;min-width:18px;margin-left:6px;padding:0 6px;border-radius:9px;background:#c62828;color:#fff;font-size:12px;line-height:18px;text-align:center;font-weight:700;vertical-align:1px';
-        a.appendChild(b); }
-      nli.appendChild(a); ul.appendChild(nli);
+      for(var t=0;t<TABS.length;t++){ var T=TABS[t];
+        var nli=document.createElement('li'); nli.className=(base.className||'').replace(/\b(active|on|selected|current|cur)\b/g,'').trim();
+        var a=document.createElement('a'); var ba=base.querySelector('a');
+        a.className=((ba&&ba.className)||'').replace(/\b(active|on|selected|current|cur)\b/g,'').trim();
+        a.href=T.url; a.setAttribute('data-charum-donate','1'); a.textContent=T.label;
+        if(T.badge){ var b=document.createElement('span'); b.textContent=T.badge;
+          b.style.cssText='display:inline-block;min-width:18px;margin-left:6px;padding:0 6px;border-radius:9px;background:#c62828;color:#fff;font-size:12px;line-height:18px;text-align:center;font-weight:700;vertical-align:1px';
+          a.appendChild(b); }
+        nli.appendChild(a); ul.appendChild(nli);
+      }
     }
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run); else run();
 })();
 </script>
 JS;
-$charum_js = str_replace('__N__', (string)$charum_n, $charum_js);
+$charum_js = str_replace(['__N__', '__RP__'], [(string)$charum_n, (string)$charum_rp], $charum_js);
 $charum_p = strripos($output, '</body>');
 $output = ($charum_p !== false) ? substr_replace($output, $charum_js, $charum_p, 0) : $output . $charum_js;
