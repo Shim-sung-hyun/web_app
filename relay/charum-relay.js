@@ -162,11 +162,10 @@ async function receive(opts) {
   ensureCss(); close(true);
   var box = document.createElement('div'); box.id = 'crBox'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true');
   if (opts.color) box.style.setProperty('--cr', opts.color);
-  var shortUrl = SEND_PAGE.replace(/^https?:\/\/(www\.)?/, '');
   box.innerHTML = '<div class="cr-card"><h2>' + esc(opts.title || '휴대폰에서 사진 받기') + '</h2>' +
     '<p class="cr-sub">휴대폰 사진을 이 화면으로 보내요.' + (many ? ' 한 번 찍으면 여러 장을 차례로 보낼 수 있어요.' : '') + '</p>' +
     '<div class="cr-main"><div class="cr-qr" id="crQr"></div><div class="cr-right"><div class="cr-code" id="crCode" aria-label="번호">······</div>' +
-    '<ol class="cr-steps"><li>휴대폰 카메라로 QR을 찍어요.<br><small>또는 <span class="cr-url">' + esc(shortUrl) + '</span>에서 번호를 넣어요.</small></li><li>사진을 찍거나 골라요.</li><li><b>보내기</b>를 눌러요.</li></ol></div></div>' +
+    '<ol class="cr-steps"><li>휴대폰 카메라로 QR을 찍어요.</li><li>사진을 찍거나 골라요.</li><li><b>보내기</b>를 눌러요.</li></ol></div></div>' +
     '<p class="cr-state" id="crState">번호를 만들고 있어요…</p><div class="cr-got" id="crGot"></div>' +
     '<div class="cr-btns" id="crBtns"><button type="button" id="crClose">닫기</button></div>' +
     '<p class="cr-foot">사진은 잠가서 보내고 받는 순간 지워져요. 중계 서버는 사진을 볼 수 없어요. · 차름 사진 다리</p></div>';
