@@ -1051,9 +1051,10 @@ function sheetHTML(lv,plan){
   return sheetHead()+body+'<script>window.onload=function(){setTimeout(function(){window.print();},600);};<\/script></body></html>';
 }
 function sheetPages(lv,bd){
-  const n=bd.places.length, pw=n<=2?'134mm':'110mm', lab=LV[lv].name+' · '+esc(bd.label);
-  let h='<div class="pg"><div class="hd"><b>[차름 과학] 동물원 1편 · 동물이 사는 곳</b><span>'+lab+' · 이름 ________________</span></div><div class="places" style="grid-template-columns:repeat(2,'+pw+')">'
-   +bd.places.map(p=>'<div class="pl"><img src="'+HAB+PL[p].scene+'.jpg"><span style="font-size:'+(n<=2?'30':'22')+'px">'+PL[p].label+'</span></div>').join('')+'</div></div>';
+  const lab=LV[lv].name+' · '+esc(bd.label);
+  /* 사는 곳마다 A4 한 장을 꽉 채운 장면(동물을 오려 붙일 수 있게) */
+  let h=bd.places.map(p=>'<div class="pg"><div class="hd"><b>[차름 과학] 동물원 1편 · 동물이 사는 곳</b><span>'+lab+' · 이름 ________________</span></div>'
+   +'<div class="one"><div class="pl"><img src="'+HAB+PL[p].scene+'.jpg"><span>'+PL[p].label+'</span></div></div></div>').join('');
   const it=shuffle(bd.items); for(let i=0;i<it.length;i+=8)
     h+='<div class="pg"><div class="hd"><b>오려서 사는 곳에 붙여요</b><span>'+lab+'</span></div><div class="cut">'+it.slice(i,i+8).map(x=>'<div class="ac"><img src="'+pic(x.a)+'"><div>'+esc(x.a)+'</div></div>').join('')+'</div><div class="note">점선을 따라 오려 앞 장의 사는 곳에 붙입니다. 이름 없이 하려면 이름 부분을 잘라 냅니다.</div></div>';
   return h;
@@ -1067,7 +1068,8 @@ function sheetHead(){
    +'.hd{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:#666;margin-bottom:4mm}.hd b{font-family:Jua,sans-serif;font-weight:400;font-size:20px;color:#4E3478}'
    +'.places{flex:1;display:grid;grid-template-columns:repeat(2,'+pw+');justify-content:center;align-content:center;gap:6mm}'
    +'.pl{border:1.2mm solid #555;border-radius:4mm;overflow:hidden;position:relative}.pl img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}'
-   +'.pl span{position:absolute;left:3mm;top:3mm;background:#fff;border-radius:3mm;padding:1mm 4mm;font-family:Jua,sans-serif;font-size:'+(n<=2?'30':'22')+'px}'
+   +'.one{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}.one .pl{height:100%;aspect-ratio:4/3;max-width:100%}.one .pl img{width:100%;height:100%;aspect-ratio:auto;object-fit:cover}'
+   +'.pl span{position:absolute;left:5mm;top:5mm;background:#fff;border-radius:4mm;padding:1.5mm 6mm;font-family:Jua,sans-serif;font-size:40px;box-shadow:0 0 0 .4mm #999}'
    +'.cut{flex:1;display:grid;grid-template-columns:repeat(4,58mm);justify-content:center;align-content:center;gap:4mm}'
    +'.ac{border:.5mm dashed #888;border-radius:3mm;height:68mm;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3mm}'
    +'.ac img{width:48mm;height:48mm;object-fit:contain}.ac div{font-family:Jua,sans-serif;font-size:26px;margin-top:2mm}'
