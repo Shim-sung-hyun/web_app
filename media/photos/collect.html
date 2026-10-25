@@ -53,7 +53,7 @@ input.f,select.f{width:100%;font:inherit;font-size:16px;padding:10px 12px;border
 
   <div class="card">
     <label class="t" for="key">Gemini 키 <span style="font-weight:400;color:var(--sub);font-size:13px">한 번 넣으면 이 휴대폰에 남아요</span></label>
-    <div class="krow"><input class="f" id="key" type="password" autocomplete="off" placeholder="AIza 로 시작하는 키"><button class="sm" type="button" id="keyShow">보기</button></div>
+    <div class="krow"><input class="f" id="key" type="password" autocomplete="off" placeholder="AQ. 또는 AIza 로 시작하는 키"><button class="sm" type="button" id="keyShow">보기</button></div>
     <p class="hint">키가 없어도 보낼 수 있어요. 그때는 이름을 직접 쓰고, 확인 화면에 "검사 안 함"이 붙어요. <a href="https://www.charum.org/study/doc.html?gemini-key" target="_blank" rel="noopener">키 받는 법 →</a></p>
   </div>
 
@@ -83,7 +83,7 @@ const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const say=(t,c)=>{ $('state').textContent=t||''; $('state').className=c||''; };
 $('key').value=ls.get('webapp.geminiKey')||'';
-$('key').oninput=()=>{ const k=$('key').value.trim(); if(/^AIza[\w-]{20,}$/.test(k)) ls.set('webapp.geminiKey',k); MODEL=''; };
+$('key').oninput=()=>{ const k=$('key').value.trim(); if(/^(AIza[\w-]{20,}|AQ\.[\w.\-]{20,})$/.test(k)) ls.set('webapp.geminiKey',k); MODEL=''; };
 $('keyShow').onclick=()=>{ const i=$('key'), t=i.type==='password'; i.type=t?'text':'password'; $('keyShow').textContent=t?'숨기기':'보기'; };
 
 /* 사진: 긴 쪽 1280으로 다시 그려 JPEG(위치 정보 등 EXIF가 빠짐) */
@@ -147,7 +147,7 @@ async function add(file){
   try{ it.img=await to1280(file); }catch(e){ say('열 수 없는 사진이 있어요.','err'); return; }
   ITEMS.push(it); render(it); upd();
   const key=$('key').value.trim();
-  if(/^AIza[\w-]{20,}$/.test(key)){
+  if(/^(AIza[\w-]{20,}|AQ\.[\w.\-]{20,})$/.test(key)){
     try{ const o=await classify(it.img.split(',')[1],key);
       it.title=it.title||String(o.title||'').trim().slice(0,40); it.place=PLACES.includes(o.place)?o.place:''; it.tags=(Array.isArray(o.tags)?o.tags:[]).map(s=>String(s).trim()).filter(Boolean).slice(0,4);
       it.shape=!!o.shape_ok; it.puzzle=!!o.puzzle_ok; it.note=String(o.note||'').slice(0,80);
