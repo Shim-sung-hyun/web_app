@@ -1286,6 +1286,7 @@ function openPanel(){
   ap.classList.remove('folded');
   ap.innerHTML=`<div class="ap-head"><h2>수업 설정</h2><button class="ap-fold" id="apFold" type="button">접기</button></div>
   <div class="ap-body">
+    ${printItems().length?'<div class="ap-group" id="ap-print"><h3>출력</h3><button class="btn" id="apPrint" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>색칠용 선 그림 출력</button></div>':''}
     <div class="ap-group" id="ap-level"><h3>단계</h3><div class="opts">
       ${optHTML('level',1,S.level,'1단계','도형 이름')}${optHTML('level',2,S.level,'2단계','변과 꼭짓점')}${optHTML('level',3,S.level,'3단계','각')}
     </div></div>
@@ -1316,6 +1317,7 @@ function openPanel(){
   $('apFold').onclick=()=>{ const f=ap.classList.toggle('folded'); $('apFold').textContent=f?'펴기':'접기'; };
   if(S.stage==='end'){ ap.classList.add('folded'); $('apFold').textContent='펴기'; }  /* 끝 화면은 교사용 버튼이 가리지 않게 접어서 */
   $('apHelp').onclick=startCoach;
+  const pb=$('apPrint'); if(pb) pb.onclick=()=>printSheet(pb);
   $('apStart').onclick=restartWithPanel;
   $('apGo').onclick=applyPick;
 }
@@ -1365,6 +1367,7 @@ const COACH=[
   ['.schedule','단계 메뉴','갈 단계(사진·배우기·찾기·끝)를 골라요. 아래 "바꾼 설정으로 이어서"를 누르면 그 단계로 가요. 지금 하는 단계에 "지금"이 붙어 있어요.'],
   ['#soundBtn','소리','목소리를 켜고 꺼요.'],
   ['#setupBtn','설정','처음 설정 화면으로 가요. 단계·목소리·끝 그림 같은 수업 설정을 바꿀 때 써요. 수업은 처음부터 다시 해요.'],
+  ['#ap-print','출력','색칠할 선 그림을 A4로 출력해요. 수업 중에도 돼요. 여러 장으로 했으면 "이 그림만 / 고른 그림 / 모두" 가운데 골라요. 마친 사진과 지금 하는 사진이 나와요.'],
   ['#ap-level','단계','1단계는 도형 이름, 2단계는 변과 꼭짓점, 3단계는 각과 직각을 배워요.'],
   ['#ap-showSec','보여 주는 시간','배우기에서 도형 하나를 보여 주는 시간이에요. 집중 시간이 짧으면 4초, 천천히 보면 8초.'],
   ['#ap-paint','붓으로 칠하기','켜면 도형을 배운 뒤 붓으로 직접 칠해요. 끄면 보기만 하고 넘어가요.'],
@@ -3312,22 +3315,87 @@ function askPrintKind(p){
     document.body.appendChild(w);
   });
 }
-async function printSheet(){
-  const C=S.colored&&S.colored.img===S.img&&S.colored.taps()>0?S.colored:null;
-  let kind='line';
-  if(C){ kind=await askPrintKind(C.progress()); if(!kind) return; }
-  const b=$('printBtn'); const label=b?b.innerHTML:''; if(b){ b.disabled=true; b.textContent='준비하고 있어요…'; }
+/* 출력할 수 있는 그림: 여러 장 수업이면 마친 사진 + 지금 하고 있는 사진(도형을 다 받았으면), 한 장이면 지금 사진.
+   관리 메뉴에서 언제든 출력할 수 있게(끝까지 가지 않아도) */
+function printItems(){
+  const out=[], snap=()=>({key:S.itemKey,title:S.inList?((S.list[S.idx]||{}).title||'').replace(/^내 사진 · /,''):'',img:S.img,cartoon:S.cartoon,demo:S.demo,sampleId:S.sampleId,sampleArt:S.sampleArt,sampleLine:S.sampleLine,mineId:S.mineId,mineArt:S.mineArt,shapes:S.shapes,types:S.types});
+  const live=S.img&&S.shapes&&S.shapes.length&&S.types&&S.types.length;
+  if(S.inList){
+    S.list.forEach((it,i)=>{ const r=S.results&&S.results[i]; if(r) out.push(r); else if(live&&i===S.idx&&it.key===S.itemKey) out.push(snap()); });
+  } else if(live) out.push(snap());
+  out.forEach(r=>r.cur=!!(S.img&&r.img===S.img));
+  return out;
+}
+/* 그 그림의 자료로 잠깐 바꿔서 fn을 하고 원래대로(관리 메뉴가 열려 수업이 멈춘 동안에만 씀) */
+async function withItem(r,fn){
+  const K=['img','cartoon','demo','sampleId','sampleArt','sampleLine','mineId','mineArt','shapes','types','lineCache'], keep={}; K.forEach(k=>keep[k]=S[k]);
+  let cartoon=r.cartoon&&r.cartoon.status==='done'?r.cartoon:null;
+  if(!cartoon){ const u=r.demo?r.sampleArt:r.mineArt||(r.mineId?((await mineGet(r.mineId))||{}).art:null); if(u) cartoon={status:'done',url:u}; }   /* 끝 그림이 있으면 그 선으로 */
+  Object.assign(S,{img:r.img,cartoon,demo:r.demo,sampleId:r.sampleId,sampleArt:r.sampleArt,sampleLine:r.sampleLine,mineId:r.mineId,mineArt:r.mineArt,shapes:r.shapes,types:r.types,lineCache:r.img===keep.img?keep.lineCache:null});
+  try{ return await fn(); } finally { Object.assign(S,keep); }
+}
+/* 여러 장이면: 이 그림만 / 골라서 / 모두 */
+function askPrintPick(items){
+  return new Promise(res=>{
+    const cur=items.findIndex(r=>r.cur), sel=new Set(cur>=0?[cur]:[]);
+    const w=document.createElement('div'); w.id='printAsk';
+    w.style.cssText='position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,30,30,.45);pointer-events:auto';
+    const thumb=r=>r.cartoon&&r.cartoon.status==='done'?r.cartoon.url:r.img.url;
+    w.innerHTML=`<div style="background:#fff;border-radius:18px;padding:22px 22px 16px;width:min(560px,calc(100% - 32px));max-height:calc(100% - 32px);overflow:auto;box-shadow:0 16px 40px rgba(0,0,0,.3);font-family:var(--f-body);color:#1F2A2A">
+      <h3 style="margin:0 0 4px;font-family:var(--f-display);font-weight:400;font-size:24px;color:#17766F">어떤 그림을 출력할까요?</h3>
+      <p style="margin:0 0 12px;font-size:14px;color:#55615F">그림을 눌러 고르세요. 한 장에 그림 하나씩, 그림 방향대로 나와요.</p>
+      <div id="ppGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin:0 0 14px">${items.map((r,i)=>`<button type="button" data-i="${i}" style="position:relative;padding:6px;border-radius:12px;border:3px solid #D5DAD9;background:#fff;font:inherit;cursor:pointer;text-align:center">
+        <img src="${thumb(r)}" alt="" style="display:block;width:100%;height:84px;object-fit:contain;border-radius:6px;background:#F4F6F5">
+        <span style="display:block;margin-top:4px;font-size:13px;line-height:1.3">${esc(r.title||'그림 '+(i+1))}${r.cur?' <b style="color:#17766F">· 지금</b>':''}</span>
+        <i style="position:absolute;top:4px;right:6px;font-style:normal;font-weight:700;color:#17766F;font-size:18px"></i></button>`).join('')}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end">
+        ${cur>=0?'<button type="button" data-k="cur" style="padding:10px 14px;border-radius:10px;border:2px solid #17766F;background:#fff;font:inherit;cursor:pointer">이 그림만</button>':''}
+        <button type="button" data-k="sel" style="padding:10px 14px;border-radius:10px;border:2px solid #17766F;background:#17766F;color:#fff;font:inherit;cursor:pointer"></button>
+        <button type="button" data-k="all" style="padding:10px 14px;border-radius:10px;border:2px solid #17766F;background:#fff;font:inherit;cursor:pointer">모두 (${items.length}장)</button>
+        <button type="button" data-k="" style="padding:10px 14px;border-radius:10px;border:1px solid #B9C2C0;background:#fff;font:inherit;cursor:pointer">닫기</button></div></div>`;
+    const draw=()=>{ w.querySelectorAll('#ppGrid button').forEach(b=>{ const on=sel.has(+b.dataset.i); b.style.borderColor=on?'#17766F':'#D5DAD9'; b.querySelector('i').textContent=on?'✓':''; });
+      const sb=w.querySelector('[data-k=sel]'); sb.textContent=`고른 그림 (${sel.size}장)`; sb.disabled=!sel.size; sb.style.opacity=sel.size?1:.5; sb.style.cursor=sel.size?'pointer':'not-allowed'; };
+    const end=v=>{ w.remove(); res(v); };
+    w.addEventListener('click',e=>{
+      const t=e.target.closest('#ppGrid button'); if(t){ const i=+t.dataset.i; sel.has(i)?sel.delete(i):sel.add(i); draw(); return; }
+      const b=e.target.closest('button[data-k]');
+      if(b){ if(b.disabled) return; const k=b.dataset.k; end(k==='cur'?[items[cur]]:k==='sel'?items.filter((_,i)=>sel.has(i)):k==='all'?items:null); }
+      else if(e.target===w) end(null);
+    });
+    document.body.appendChild(w); draw();
+  });
+}
+async function printSheet(btn){
+  const items=printItems(); if(!items.length) return;
+  const pick=items.length>1?await askPrintPick(items):items; if(!pick||!pick.length) return;
+  let kind='line', C=null;
+  if(pick.length===1){ C=S.colored&&S.colored.img===pick[0].img&&S.colored.taps()>0?S.colored:null; if(C){ kind=await askPrintKind(C.progress()); if(!kind) return; } }
+  const b=btn||$('printBtn'); const label=b?b.innerHTML:''; if(b){ b.disabled=true; b.textContent='준비하고 있어요…'; }
   try{
-    const url=kind==='color'?C.cv.toDataURL('image/png'):await lineArtURL();
-    const legend=kind==='color'?'':`<div class="pa-legend">${S.types.map(t=>`<span>${shapeIcon(t,'#111','',false)}${esc(nm(t))}, ${esc(objList(ofType(t),5))}</span>`).join('')}</div>`;
-    $('printArea').innerHTML=`<div class="pa-head"><h1>${kind==='color'?'내가 색칠한 그림':'도형에 색칠해요'}</h1><div>이름: ____________</div></div>
-      <img class="pa-img" id="paImg" src="${url}" alt="">${legend}`;
-    const im=$('paImg'); try{ await im.decode(); }catch(e){}
-    const o=PrintFit.orient(im.naturalWidth||4,im.naturalHeight||3), m=8, I=PrintFit.inner(o,m);
-    PrintFit.page(o,m,`#printArea{display:flex!important;flex-direction:column;height:${I.h-2}mm;max-height:none}
+    const pages=[];
+    for(const r of pick) pages.push(await withItem(r,async()=>{
+      const url=kind==='color'?C.cv.toDataURL('image/png'):await lineArtURL();
+      const legend=kind==='color'?'':`<div class="pa-legend">${S.types.map(t=>`<span>${shapeIcon(t,'#111','',false)}${esc(nm(t))}, ${esc(objList(ofType(t),5))}</span>`).join('')}</div>`;
+      return `<section class="pa-page"><div class="pa-head"><h1>${kind==='color'?'내가 색칠한 그림':'도형에 색칠해요'}</h1><div>이름: ____________</div></div>
+        <img class="pa-img" src="${url}" alt="">${legend}</section>`;
+    }));
+    $('printArea').innerHTML=pages.join('');
+    const ims=[...$('printArea').querySelectorAll('.pa-img')]; await Promise.all(ims.map(im=>im.decode().catch(()=>{})));
+    const m=8, os=ims.map(im=>PrintFit.orient(im.naturalWidth||4,im.naturalHeight||3));
+    const land=os.filter(o=>o==='landscape').length, def=land*2>=os.length?'landscape':'portrait';
+    /* 쪽마다 방향을 달리하는 기능(named page)이 없는 브라우저는 모두 같은 방향으로 */
+    const named=os.some(o=>o!==def)&&window.CSS&&CSS.supports&&CSS.supports('page','pL');
+    const secs=[...$('printArea').querySelectorAll('.pa-page')];
+    secs.forEach((sec,i)=>sec.classList.add(named?(os[i]==='landscape'?'pL':'pP'):(def==='landscape'?'pL':'pP')));
+    const hL=PrintFit.inner('landscape',m).h-2, hP=PrintFit.inner('portrait',m).h-2;
+    PrintFit.page(def,m,`#printArea{max-height:none;overflow:visible;break-inside:auto;page-break-inside:auto}
+      .pa-page{display:flex;flex-direction:column;overflow:hidden;break-inside:avoid;page-break-inside:avoid;break-after:page;page-break-after:always}
+      .pa-page:last-child{break-after:auto;page-break-after:auto}
+      .pa-page.pL{height:${hL}mm} .pa-page.pP{height:${hP}mm}
+      ${named?`.pa-page.pL{page:pL} .pa-page.pP{page:pP} @page pL{size:A4 landscape;margin:${m}mm} @page pP{size:A4 portrait;margin:${m}mm}`:''}
       .pa-img{flex:1 1 0;min-height:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;border:0}`);
     window.print();
-  }catch(e){ if(b){ b.textContent='출력하지 못했어요'; await new Promise(r=>setTimeout(r,1500)); } }
+  }catch(e){ console.error(e); if(b){ b.textContent='출력하지 못했어요'; await new Promise(r=>setTimeout(r,1500)); } }
   if(b){ b.disabled=false; b.innerHTML=label; }
 }
 
