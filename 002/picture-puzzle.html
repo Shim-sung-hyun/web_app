@@ -385,7 +385,9 @@ body.admin #play{pointer-events:none}
 <script id="photoRelay">
 /* ===== 휴대폰으로 사진 받기 (전자칠판 쪽) — key-relay와 같은 방식 =====
    전자칠판이 번호 4자리 + 공개 열쇠를 맡기면, 휴대폰(photo-send.html)이 사진을 잠가서 보내고,
-   전자칠판이 받는 순간 서버에서 지워짐. 서버는 사진을 볼 수 없음. */
+   전자칠판이 받는 순간 서버에서 지워짐. 서버는 사진을 볼 수 없음.
+   2026-10-26: opts.max(1~12)로 번호 하나에 여러 장 — QR은 한 번만 찍고, 한 장씩 onPhoto(blob, n). 휴대폰이 "다 보냈습니다"를 누르거나
+   max장을 받으면 저절로 닫힘, 한 장이라도 받으면 "다 받았습니다" 단추. */
 (function(){
 const RELAY='https://charum.org/charum-api/photo-relay.php';
 const SEND_PAGE='https://shim-sung-hyun.github.io/web_app/photo-send.html';
@@ -491,12 +493,13 @@ function ensureCss(){ if(document.getElementById('prCss')) return; const s=docum
 let active=null;
 async function receive(opts){
   opts=opts||{}; ensureCss(); close();
+  const MAX=Math.max(1,Math.min(12,opts.max||1));   /* 번호 하나로 받을 장 수(2026-10-26 여러 장) */
   const box=document.createElement('div'); box.id='prBox'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true');
   box.innerHTML=`<div class="pr-card"><h2>휴대폰에서 사진 받기</h2>
     <p class="pr-sub">휴대폰으로 찍은 사진을 이 화면으로 보냅니다. 사진은 잠가서 보내고, 중계 서버도 사진을 볼 수 없습니다.</p>${opts.note?'<p class="pr-note">'+opts.note+'</p>':''}
     <div class="pr-main"><div class="pr-qr" id="prQr"></div>
       <div class="pr-codebox"><div class="pr-code" id="prCode">····</div>
-        <ol class="pr-steps"><li>휴대폰 카메라로 QR을 찍어요.</li><li>사진을 찍거나 골라요.<br><small>잘 나온 사진은 <b>기증(선택)</b>에도 체크해 주세요.</small></li>${(opts.want||[]).includes('gemini')?'<li>처음 한 번은 <b>Gemini 키</b>도 넣어요.<br><small>키가 없으면 그 화면의 "키 받는 법"(1~2분)</small></li>':''}<li><b>보내기</b>를 눌러요.</li></ol></div></div>
+        <ol class="pr-steps"><li>휴대폰 카메라로 QR을 찍어요.</li><li>사진을 찍거나 골라요.<br><small>잘 나온 사진은 <b>기증(선택)</b>에도 체크해 주세요.</small></li>${(opts.want||[]).includes('gemini')?'<li>처음 한 번은 <b>Gemini 키</b>도 넣어요.<br><small>키가 없으면 그 화면의 "키 받는 법"(1~2분)</small></li>':''}<li><b>보내기</b>를 눌러요.${MAX>1?"<br><small>"+MAX+"장까지 한 번에 보낼 수 있어요.</small>":""}</li></ol></div></div>
     <p class="pr-state" id="prState">번호를 만들고 있어요…</p>
     <div class="pr-btns"><button type="button" id="prCancel">닫기</button></div></div>`;
   document.body.appendChild(box);
@@ -512,25 +515,33 @@ async function receive(opts){
     if(!window.crypto||!crypto.subtle) throw Object.assign(new Error('insecure'),{code:'insecure'});
     const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},false,['deriveBits']);
     const pubRaw=await crypto.subtle.exportKey('raw',kp.publicKey);
-    const o=await call({a:'open',pub:b64u.enc(pubRaw)});
+    const o=await call({a:'open',pub:b64u.enc(pubRaw),max:MAX});
     if(me.dead) return;
     me.code=o.code; me.sid=o.sid;
     box.querySelector('#prCode').textContent=o.code;
     const want=(opts.want||[]).filter(x=>x==='gemini'||x==='cloud');
     box.querySelector('#prQr').innerHTML=QR.svg(SEND_PAGE+'#c='+o.code+(want.length?'&k='+want.join(','):'')+(opts.app?'&app='+opts.app:''),196);
-    const end=Date.now()+(o.ttl||180)*1000;
+    let end=Date.now()+(o.ttl||180)*1000, got=0;
     const left=()=>{ const s=Math.max(0,Math.round((end-Date.now())/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
-    say('휴대폰에서 보내기를 기다리고 있어요 · 남은 시간 '+left());
-    me.tick=setInterval(()=>{ if(Date.now()>end){ clearInterval(me.tick); clearTimeout(me.timer); me.dead=true; say('시간이 지났어요. 새 번호를 받아 주세요.','err'); retry(); return; }
-      if(!me.got) say('휴대폰에서 보내기를 기다리고 있어요 · 남은 시간 '+left()); },1000);
+    const waitMsg=()=>got?`${got}장 받았습니다. 더 보내도 됩니다`+(MAX>1?` (${MAX}장까지)`:'')+` · 남은 시간 ${left()}`:'휴대폰에서 보내기를 기다리고 있어요 · 남은 시간 '+left();
+    const finishBtn=()=>{ const b=box.querySelector('.pr-btns'); if(b.querySelector('#prDone')) return;
+      b.innerHTML='<button type="button" class="pr-pri" id="prDone">다 받았습니다</button>'; b.querySelector('#prDone').onclick=stop; };
+    const finish=()=>{ clearInterval(me.tick); clearTimeout(me.timer); me.dead=true;
+      say(got?`${got}장 받았습니다.`:'휴대폰에서 다 보냈어요.'); setTimeout(()=>{ if(active===me) close(); },got?1200:600); };
+    say(waitMsg());
+    me.tick=setInterval(()=>{ if(Date.now()>end){ clearInterval(me.tick); clearTimeout(me.timer); me.dead=true;
+        if(got){ say(`${got}장 받았습니다. 시간이 다 되어 받기를 마쳤습니다.`); setTimeout(()=>{ if(active===me) close(); },1500); }
+        else { say('시간이 지났어요. 새 번호를 받아 주세요.','err'); retry(); } return; }
+      if(!me.busy) say(waitMsg()); },1000);
     const poll=async()=>{
       if(me.dead) return;
       let r; try{ r=await call({a:'poll',code:me.code,sid:me.sid}); }catch(e){ me.timer=setTimeout(poll,3000); return; }
       if(me.dead) return;
+      if(r.ttl) end=Date.now()+r.ttl*1000;
       if(r.status==='wait'){ me.timer=setTimeout(poll,1500); return; }
-      clearInterval(me.tick); me.dead=true;
-      if(r.status!=='done'){ say('번호가 끝났어요. 새 번호를 받아 주세요.','err'); retry(); return; }
-      me.got=true; say('사진을 받았어요. 여는 중이에요…');
+      if(r.status==='end'){ finish(); return; }
+      if(r.status!=='done'){ clearInterval(me.tick); me.dead=true; if(got){ finish(); return; } say('번호가 끝났어요. 새 번호를 받아 주세요.','err'); retry(); return; }
+      me.busy=true; say(`사진을 받았어요. 여는 중이에요… (${got+1}장째)`);
       try{
         const key=await aesFrom(kp.privateKey,b64u.dec(r.epub),me.code);
         const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(r.iv)},key,b64u.dec(r.ct));
@@ -542,10 +553,15 @@ async function receive(opts){
           u=u.slice(9+n);
         }
         const blob=new Blob([u],{type:'image/jpeg'});
-        me.sid=''; close();
+        got++;
         try{ if(keys&&opts.onKeys) opts.onKeys(keys); }catch(e){ console.error(e); }
-        try{ opts.onPhoto&&opts.onPhoto(blob); }catch(e){ console.error(e); }
-      }catch(e){ say('사진을 열지 못했어요. 새 번호로 다시 보내 주세요.','err'); retry(); }
+        try{ if(opts.onPhoto) await opts.onPhoto(blob,got); }catch(e){ console.error(e); }
+      }catch(e){ console.error(e); }
+      me.busy=false;
+      if(me.dead) return;
+      if(MAX===1||r.end||got>=MAX){ finish(); return; }
+      finishBtn(); say(waitMsg());
+      me.timer=setTimeout(poll,r.more?50:1500);
     };
     me.timer=setTimeout(poll,1500);
   }catch(e){
@@ -838,13 +854,12 @@ async function renderList(){
     el.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{ const i=S.list.findIndex(x=>itemKey(x)===k), j=i+(+b.dataset.mv); if(j<0||j>=S.list.length) return; [S.list[i],S.list[j]]=[S.list[j],S.list[i]]; saveList(); renderList(); });
     el.querySelector('[data-rm]').onclick=()=>removeFromList(k); });
 }
-/* 휴대폰: 한 장을 받으면 새 번호가 바로 나와 이어서 보냄(그만 보내려면 닫기) */
+/* 휴대폰: QR 한 번으로 남은 자리만큼 여러 장(2026-10-26). 휴대폰에서 "다 보냈습니다"나 "다 받았습니다"로 끝 */
 function phoneLoop(n,onAdd){
-  PhotoRelay.receive({want:[],app:'puzzle',note:n?`지금까지 <b>${n}장</b> 받았어요. 더 보낼 사진이 있으면 새 번호로 보내고, 다 보냈으면 <b>닫기</b>를 누르세요.`:'',onPhoto:async blob=>{
-    const u=URL.createObjectURL(blob); let ok=false;
-    try{ const t=new Date(); ok=onAdd(await addMine(u,'휴대폰 사진 '+t.getHours()+':'+String(t.getMinutes()).padStart(2,'0'),'phone')); }catch(e){}
+  PhotoRelay.receive({want:[],app:'puzzle',max:Math.max(1,MAXP-S.list.length),onPhoto:async blob=>{
+    const u=URL.createObjectURL(blob);
+    try{ const t=new Date(); onAdd(await addMine(u,'휴대폰 사진 '+t.getHours()+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0'),'phone')); }catch(e){}
     URL.revokeObjectURL(u);
-    if(ok!==false&&S.list.length<MAXP) phoneLoop(n+1,onAdd);
   }});
 }
 

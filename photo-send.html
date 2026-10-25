@@ -65,7 +65,10 @@ input.f{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid var
 .res-card p{margin:0;color:var(--sub);font-size:16px;line-height:1.6}
 #giveMsg{margin:12px 0 0!important;font-size:15px}
 #giveMsg.ok{color:var(--ok)!important} #giveMsg.err{color:#8A4B00!important}
-#again{width:100%;font:inherit;font-size:18px;font-weight:700;padding:14px;border:1px solid var(--line);border-radius:16px;background:#fff;color:var(--ink)}
+.after{display:flex;gap:10px}
+.after button{flex:1;font:inherit;font-size:18px;font-weight:700;padding:14px 8px;border:1px solid var(--line);border-radius:16px;background:#fff;color:var(--ink)}
+.after button.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.after button[hidden]{display:none}
 .safe{font-size:13px;color:var(--sub);line-height:1.65;margin:18px 4px 0;text-align:justify}
 .safe b{color:var(--ink)}
 .keys{border-color:#B8DCD4}
@@ -105,7 +108,7 @@ details.how .go{display:block;text-align:center;background:var(--pri);color:#fff
     <input type="file" id="fileIn" accept="image/*" multiple hidden>
     <p class="warn" id="warnTip"><b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 물건이 화면 안에 통째로 들어오면 도형을 잘 찾습니다.</p>
     <div id="rows"></div>
-    <p class="one" id="oneTip" hidden>전자칠판에는 <b>사용</b>에 체크한 한 장이 갑니다. 나머지 사진은 기증만 할 수 있습니다.</p>
+    <p class="one" id="oneTip" hidden></p>
     <div class="give-box" id="giveBox" hidden>
       <p class="lead"><b>기증(선택)</b>에 체크된 사진은 다른 학교 선생님들과 학생들의 공부에 쓰입니다.</p>
       <button type="button" class="linkb" id="giveAll">모두 기증 체크</button>
@@ -150,9 +153,9 @@ details.how .go{display:block;text-align:center;background:var(--pri);color:#fff
     <p id="resMsg">전자칠판이 받기를 기다리고 있습니다.</p>
     <p id="giveMsg" hidden></p>
   </div>
-  <button id="again" type="button">다른 사진 보내기</button>
+  <div class="after"><button id="again" type="button">더 보내기</button><button id="finish" type="button" class="pri">다 보냈습니다</button></div>
 </div>
-<p class="safe"><b>안전하게 보냅니다.</b> 사진(과 키)은 이 휴대폰에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있습니다. 중계 서버도 열어 볼 수 없고, 전자칠판이 받는 순간(늦어도 3분 뒤) 지워집니다. 단, 기증된 사진은 따로 보관되어 관리자의 사용 가능 여부 확인을 거쳐 여러 선생님의 학습에 활용됩니다.</p>
+<p class="safe"><b>안전하게 보냅니다.</b> 사진(과 키)은 이 휴대폰에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있습니다. 중계 서버도 열어 볼 수 없고, 전자칠판이 받는 순간 지워집니다(받지 않은 사진도 받기가 끝나면 지워집니다). 단, 기증된 사진은 따로 보관되어 관리자의 사용 가능 여부 확인을 거쳐 여러 선생님의 학습에 활용됩니다.</p>
 </main>
 <script>
 (function(){
@@ -180,6 +183,7 @@ if(WANT.length){
 }
 if(H) history.replaceState(null,'',location.pathname+location.search);
 /* 번호는 QR(#c=)로만 */
+let LEFT=CODE?1:0;   /* 이 번호로 전자칠판에 더 보낼 수 있는 장 수(서버가 알려 줌) */
 if(CODE){ $('codeCard').hidden=false; $('codeShow').textContent=CODE; } else $('noCode').hidden=false;
 /* 한 번 동의하면 이 휴대폰에서는 다음부터 미리 표시(기증 체크는 늘 빈 채로 — 학생이 찍혔을 수 있어서) */
 if(ls.get('charum.giveOk')==='1') $('giveOk').checked=true;
@@ -220,7 +224,7 @@ async function got(input){
     catch(e){ say('열 수 없는 사진이 있어 뺐습니다.','err'); }
   }
   /* 새로 찍은(고른) 사진이 전자칠판으로 갈 사진 — 마지막 것을 "사용"으로 */
-  if(items.length&&CODE) items.forEach((it,i)=>it.use=i===items.length-1);
+  fitUse(true);
   if($('state').className!=='err') say('');
   draw();
   $('send').scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -230,50 +234,73 @@ $('album').onclick=()=>$('fileIn').click();
 $('camIn').onchange=e=>got(e.target);
 $('fileIn').onchange=e=>got(e.target);
 
+/* 사용 체크 맞추기: 새로 넣은 사진은 남은 자리만큼 사용으로(한 장이면 가장 새것) */
+function fitUse(fresh){
+  if(!LEFT){ items.forEach(i=>i.use=false); return; }
+  if(LEFT===1){ if(fresh||!items.some(i=>i.use)) items.forEach((it,i)=>it.use=i===items.length-1); return; }
+  let n=items.filter(i=>i.use).length;
+  for(const it of items){ if(n>=LEFT) break; if(!it.use&&(fresh?!it.seen:true)){ it.use=true; n++; } }
+  items.forEach(i=>i.seen=true);
+}
+async function loadLeft(){
+  if(!CODE) return;
+  try{ const r=await call({a:'pub',code:CODE}); LEFT=Math.max(1,r.left||1); $('codeShow').nextElementSibling.textContent=LEFT>1?`전자칠판과 연결되었습니다 · ${LEFT}장까지 보낼 수 있습니다`:'전자칠판과 연결되었습니다'; }
+  catch(e){ LEFT=0; $('codeCard').hidden=true; $('noCode').hidden=false;
+    $('noCode').querySelector('b').textContent='이 번호는 시간이 지났거나 이미 끝났습니다. 전자칠판에서 다시 눌러 새 QR을 찍어 주세요.'; }
+  fitUse(false); draw();
+}
 function draw(){
   $('rows').innerHTML=items.map((g,i)=>`<div class="row${g.use?'':' off'}${g.give?' give':''}" data-i="${i}">
-    ${CODE?`<label class="ck"><small>사용</small><input type="radio" name="use" data-use ${g.use?'checked':''} aria-label="${i+1}번째 사진을 전자칠판으로"></label>`:''}
+    ${LEFT?`<label class="ck"><small>사용</small><input type="${LEFT===1?'radio':'checkbox'}" name="use" data-use ${g.use?'checked':''} aria-label="${i+1}번째 사진을 전자칠판으로"></label>`:''}
     <img src="${g.url}" alt="${i+1}번째 사진">
     <div style="flex:1;min-width:0"><input type="text" maxlength="40" placeholder="찍은 것" value="${esc(g.what)}" aria-label="${i+1}번째 사진에 찍은 것">${g.gstate?`<small class="err">${esc(g.gstate)}</small>`:''}</div>
     <label class="ck"><small>기증(선택)</small><input type="checkbox" data-give ${g.give?'checked':''} aria-label="${i+1}번째 사진 기증"></label>
     <button type="button" class="rm" data-rm aria-label="이 사진 빼기">×</button></div>`).join('');
   $('rows').querySelectorAll('.row').forEach(el=>{ const g=items[+el.dataset.i];
-    const u=el.querySelector('[data-use]'); if(u) u.onchange=()=>{ items.forEach(x=>x.use=x===g); draw(); };
+    const u=el.querySelector('[data-use]'); if(u) u.onchange=()=>{
+      if(LEFT===1){ items.forEach(x=>x.use=x===g); draw(); return; }
+      if(u.checked&&items.filter(x=>x.use).length>=LEFT){ u.checked=false; say(`전자칠판으로는 ${LEFT}장까지 보낼 수 있습니다. 다른 사진의 사용 체크를 먼저 빼 주세요.`,'err'); return; }
+      g.use=u.checked; if($('state').className==='err') say(''); draw(); };
     el.querySelector('[data-give]').onchange=e=>{ g.give=e.target.checked; g.gstate=''; el.classList.toggle('give',g.give); if($('state').className==='err') say(''); update(); };
     el.querySelector('input[type=text]').oninput=e=>{ g.what=e.target.value; };
     el.querySelector('[data-rm]').onclick=()=>{ const it=items.splice(+el.dataset.i,1)[0]; URL.revokeObjectURL(it.url);
-      if(it.use&&items.length) items[items.length-1].use=true; draw(); }; });
+      fitUse(false); draw(); }; });
   $('giveBox').hidden=!items.length;
-  $('oneTip').hidden=!(CODE&&items.length>1);
+  const over=LEFT&&items.length>LEFT;
+  $('oneTip').hidden=!over;
+  if(over) $('oneTip').innerHTML=`전자칠판에는 <b>사용</b>에 체크한 사진이 갑니다(${LEFT}장까지). 나머지 사진은 기증만 할 수 있습니다.`;
   update();
 }
 $('giveAll').onclick=()=>{ items.forEach(g=>{ g.give=true; g.gstate=''; }); draw(); };
 $('giveOk').onchange=()=>{ if($('state').className==='err') say(''); };
 function update(){
-  const use=items.find(i=>i.use), g=items.filter(i=>i.give).length;
-  $('send').disabled=!(use||g);
-  $('send').textContent=use?('전자칠판으로 보내기'+(g?` · ${g}장 기증`:'')):(g?`${g}장 기증하기`:'전자칠판으로 보내기');
+  const u=items.filter(i=>i.use).length, g=items.filter(i=>i.give).length;
+  $('send').disabled=!(u||g);
+  $('send').textContent=u?('전자칠판으로 '+(u>1?u+'장 ':'')+'보내기'+(g?` · ${g}장 기증`:'')):(g?`${g}장 기증하기`:'전자칠판으로 보내기');
 }
 
 /* ---------- 결과: 전자칠판이 받았는지 2초마다 확인 ---------- */
 let watch=null;
 function setRes(state,title,msg){ const i=$('resIcon'); i.className='res-big'+(state?' '+state:''); i.textContent=state==='ok'?'✓':state==='err'?'!':'…';
   $('resTitle').textContent=title; $('resMsg').textContent=msg; }
-function showResult(code,tk){
+let SENT=0;
+function showResult(code,tk,n){
   $('form').hidden=true; $('result').hidden=false; scrollTo(0,0);
-  if(!code){ setRes('ok','기증했습니다','고맙습니다. 관리자가 살펴본 뒤 차름 사진 모음에 넣습니다.'); return; }
-  setRes('','보냈습니다','전자칠판이 받기를 기다리고 있습니다.');
+  if(!code){ $('again').hidden=false; $('finish').hidden=true; setRes('ok','기증했습니다','고맙습니다. 관리자가 살펴본 뒤 차름 사진 모음에 넣습니다.'); return; }
+  SENT+=n||1; $('again').hidden=!(LEFT>0); $('finish').hidden=!(LEFT>0);
+  setRes('',`${SENT}장 보냈습니다`,'전자칠판이 받기를 기다리고 있습니다.');
   clearTimeout(watch); const end=Date.now()+200*1000;
   const tick=async()=>{
     let r=null; try{ r=await call({a:'check',code,tk}); }catch(e){}
-    if(r&&r.status==='done'){ setRes('ok','전자칠판이 받았습니다','전자칠판에서 수업을 이어 가세요.'); try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){} return; }
+    if(r&&r.status==='done'){ setRes('ok',`전자칠판이 받았습니다 (${r.n||SENT}장)`,LEFT>0?`더 보낼 사진이 있으면 "더 보내기"(${LEFT}장 더), 끝났으면 "다 보냈습니다"를 눌러 주세요.`:'전자칠판에서 수업을 이어 가세요.'); try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){} return; }
     if((r&&r.status==='gone')||Date.now()>end){ setRes('err','전자칠판이 받지 못했습니다','전자칠판에서 창을 닫았거나 3분이 지났습니다. 전자칠판에서 다시 눌러 새 QR로 보내 주세요.'); return; }
     watch=setTimeout(tick,2000);
   };
   watch=setTimeout(tick,1200);
 }
-$('again').onclick=()=>{ clearTimeout(watch); items.forEach(i=>URL.revokeObjectURL(i.url)); items=[]; $('giveMsg').hidden=true; $('result').hidden=true; $('form').hidden=false; draw();
-  say(CODE?'다른 사진은 전자칠판에 새로 나온 QR을 찍어 보내 주세요. 기증만 하실 사진은 여기서 바로 고르셔도 됩니다.':''); };
+$('again').onclick=()=>{ clearTimeout(watch); items=items.filter(i=>!i.give&&!i.sentOk); $('giveMsg').hidden=true; $('result').hidden=true; $('form').hidden=false; draw(); say(''); scrollTo(0,0); };
+$('finish').onclick=async()=>{ clearTimeout(watch); try{ await call({a:'done',code:CODE}); }catch(e){} LEFT=0; $('again').hidden=true; $('finish').hidden=true;
+  setRes('ok','다 보냈습니다',`${SENT}장을 보냈습니다. 이 창은 닫아도 됩니다.`); };
 
 /* ---------- 기증: 고른 사진만 차름 기증함(charum-api/donate.php)으로. 긴 쪽 1280으로 다시 그림(위치 정보가 빠짐).
    이 휴대폰에 Gemini 키가 있으면 사람·얼굴·이름·번호를 먼저 살펴 막고, 없으면 check=none(관리자가 더 꼼꼼히).
@@ -329,46 +356,61 @@ async function donateAll(list,key){
 
 /* ---------- 보내기: "사용" 한 장은 전자칠판으로(잠가서), 기증(선택)은 그다음 기증함으로 ---------- */
 $('send').onclick=async()=>{
-  const use=items.find(i=>i.use), gv=items.filter(i=>i.give);
-  if(!use&&!gv.length){ say('먼저 사진을 찍거나 골라 주세요.','err'); return; }
+  const uses=items.filter(i=>i.use), gv=items.filter(i=>i.give);
+  if(!uses.length&&!gv.length){ say('먼저 사진을 찍거나 골라 주세요.','err'); return; }
   if(gv.length&&!$('giveOk').checked){ say('기증하시려면 동의 칸에 체크해 주세요. 기증하지 않으시려면 기증(선택) 체크를 빼 주세요.','err'); $('giveOk').closest('label').scrollIntoView({block:'center'}); return; }
   const keys={}; const g=$('gemini').value.trim(), cl=$('cloud').value.trim();
-  if(use){
+  if(uses.length){
     if(WANT.includes('gemini')){ if(!g){ say('Gemini 키를 넣어 주세요. 키가 없으면 "키 받는 법"을 따라 해 주세요.','err'); $('gemHow').open=true; $('gemini').scrollIntoView({block:'center'}); $('gemini').focus(); return; }
       if(!/^(AIza[\w-]{20,}|AQ\.[\w.\-]{20,})$/.test(g)){ say('Gemini 키 모양이 맞지 않습니다. AQ. 또는 AIza 로 시작하는 키를 통째로 붙여 넣어 주세요.','err'); $('gemini').focus(); return; } keys.gemini=g; }
     if(WANT.includes('cloud')&&cl){ if(!/^AIza[\w-]{20,}$/.test(cl)){ say('Google 음성 키 모양이 맞지 않습니다. 없으면 비워 두세요.','err'); $('cloud').focus(); return; } keys.cloud=cl; }
     if(!window.crypto||!crypto.subtle){ say('이 브라우저에서는 잠가 보낼 수 없습니다. 크롬이나 사파리로 열어 주세요.','err'); return; }
   }
   if(gv.length) ls.set('charum.giveOk','1');
-  $('send').disabled=true; say(use?'보내는 중입니다…':'');
+  $('send').disabled=true; say('');
   const gkey=g||ls.get('keySend.gemini')||ls.get('webapp.geminiKey')||'';
-  if(!use){ showResult('',''); donateAll(gv,gkey); return; }
+  if(!uses.length){ showResult('','',0); donateAll(gv,gkey); return; }
+  let ok=0, lastTk='', stop='';
   try{
     const code=CODE;
     const {pub}=await call({a:'pub',code});
     const wb=await crypto.subtle.importKey('raw',b64u.dec(pub),{name:'ECDH',namedCurve:'P-256'},false,[]);
-    const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
-    const bits=await crypto.subtle.deriveBits({name:'ECDH',public:wb},kp.privateKey,256);
-    const hk=await crypto.subtle.importKey('raw',bits,'HKDF',false,['deriveKey']);
-    const key=await crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:new TextEncoder().encode('webapp-photo-relay|'+code),info:new TextEncoder().encode('v1')},hk,{name:'AES-GCM',length:256},false,['encrypt']);
-    const iv=crypto.getRandomValues(new Uint8Array(12));
-    /* 키가 있으면 "CHRM" + 판(1) + JSON 길이(4바이트) + JSON + 사진 으로 함께 잠금 */
-    let body=new Uint8Array(await use.blob.arrayBuffer());
-    if(Object.keys(keys).length){ const j=new TextEncoder().encode(JSON.stringify(keys)), n=j.length, h=new Uint8Array(9+n+body.length);
-      h.set([67,72,82,77,1,(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255]); h.set(j,9); h.set(body,9+n); body=h; }
-    const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,body);
-    const sent=await call({a:'send',code,epub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),iv:b64u.enc(iv),ct:b64u.enc(ct)});
-    say(''); showResult(code,sent.tk);
+    for(const it of uses){
+      say(uses.length>1?`보내는 중입니다… ${ok+1} / ${uses.length}`:'보내는 중입니다…');
+      const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+      const bits=await crypto.subtle.deriveBits({name:'ECDH',public:wb},kp.privateKey,256);
+      const hk=await crypto.subtle.importKey('raw',bits,'HKDF',false,['deriveKey']);
+      const key=await crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:new TextEncoder().encode('webapp-photo-relay|'+code),info:new TextEncoder().encode('v1')},hk,{name:'AES-GCM',length:256},false,['encrypt']);
+      const iv=crypto.getRandomValues(new Uint8Array(12));
+      /* 키는 첫 장에만: "CHRM" + 판(1) + JSON 길이(4바이트) + JSON + 사진 */
+      let body=new Uint8Array(await it.blob.arrayBuffer());
+      if(!ok&&Object.keys(keys).length){ const j=new TextEncoder().encode(JSON.stringify(keys)), n=j.length, h=new Uint8Array(9+n+body.length);
+        h.set([67,72,82,77,1,(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255]); h.set(j,9); h.set(body,9+n); body=h; }
+      const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,body);
+      const sent=await call({a:'send',code,epub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),iv:b64u.enc(iv),ct:b64u.enc(ct)});
+      ok++; lastTk=sent.tk; LEFT=sent.left; it.sentOk=true;
+    }
+  }catch(e){ stop=(e&&e.code)||(e&&e.name)||'network'; }
+  if(ok){
+    say('');
+    showResult(CODE,lastTk,ok);
     if(gv.length) donateAll(gv,gkey);
-  }catch(e){
-    const c=e&&e.code;
-    if(c==='nocode') say('번호를 찾을 수 없습니다. 3분이 지났거나 이미 보낸 번호라면 전자칠판에서 다시 눌러 새 QR을 찍어 주세요.','err');
+    /* 보낸 사진·기증한 사진은 목록에서 빼고, 못 보낸 사진은 "더 보내기"에 남김 */
+    items=items.filter(i=>!i.sentOk&&!i.give); update();
+    if(stop) setTimeout(()=>{ $('resMsg').textContent+=` ${uses.length-ok}장은 보내지 못했습니다. "더 보내기"로 다시 보내 주세요.`; },2600);
+    return;
+  }
+  {
+    const c=stop;
+    if(c==='nocode') say('번호를 찾을 수 없습니다. 시간이 지났거나 이미 끝난 번호라면 전자칠판에서 다시 눌러 새 QR을 찍어 주세요.','err');
+    else if(c==='full') say('이 번호로는 더 보낼 수 없습니다. 전자칠판에서 다시 눌러 새 QR을 찍어 주세요.','err');
     else if(c==='busy'||c===429) say('잠시 뒤에 다시 보내 주세요.','err');
     else if(c==='toolarge') say('사진이 너무 큽니다. 다른 사진을 골라 주세요.','err');
-    else say('중계 서버에 연결할 수 없습니다. 인터넷 연결을 확인해 주세요. ('+(c||(e&&e.name)||'network')+')','err');
-  }finally{ update(); }
+    else say('중계 서버에 연결할 수 없습니다. 인터넷 연결을 확인해 주세요. ('+c+')','err');
+  }
+  update();
 };
-draw();
+loadLeft(); draw();
 })();
 </script>
 </body>

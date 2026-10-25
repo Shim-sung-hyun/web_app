@@ -16,8 +16,9 @@ charum.org 서버에 올리는 파일의 원본입니다. GitHub Pages에서는 
   donate-config.php (저장소에는 donate-config.sample.php만) GitHub 토큰(charum-inbox 하나만, Contents 읽기·쓰기). 채팅·저장소에 넣지 않음.
   puzzle-rank.php   내 그림 퍼즐(002) S·S+ 모든 학교 순위표. 기록: charum-api/puzzle-rank-data/. 점검: ?ping → "ok": true
                     잘못된 별명을 지우려면 맨 위 $ADMIN_TOKEN 에 20자 이상 글자를 서버에서만 넣고 act:"del".
-  key-relay.php · photo-relay.php  휴대폰에서 키·사진 받기(잠가서 3분, 받는 순간 지움). 기록: charum-api/key-relay-data/.
-                    원본은 아직 서버에만 있음(내용을 받으면 여기에 넣음).
+  photo-relay.php   차름 앱(001·002) 휴대폰에서 사진 받기 — 2026-10-26 판(새로 씀): QR 한 번에 여러 장(max 12), 받는 순간 지움.
+                    기록: charum-api/photo-relay-data/. 점검: ?ping → "version": "2026-10-26", "multi": 12
+  key-relay.php     휴대폰에서 키 받기(잠가서 3분, 받는 순간 지움). 기록: charum-api/key-relay-data/. 원본은 아직 서버에만 있음.
   relay.php · relay-lib.php  차름 사진 다리(2026-10-25). 선생님들이 연수에서 만든 앱이 휴대폰 사진을 받게 중계.
                     photo-relay.php와 따로(차름 앱에 영향 없게). 연수 코드가 켜져 있어야 번호를 만듦. 한 번 찍고 여러 장(30장).
                     한도: 한 달 전송량 안전판 60GB · 한 장 4MB · IP 하루 번호 300·사진 600. 기록: charum-api/relay-data/.
