@@ -48,6 +48,26 @@ label.t{display:block;font-weight:700;margin:0 0 8px;font-size:16px}
 .done .big{width:88px;height:88px;margin:0 auto 14px;border-radius:50%;background:#e7f5ec;color:var(--ok);font-size:54px;line-height:88px;font-weight:700}
 .done h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:30px;margin:0 0 8px}
 .done p{margin:0;color:var(--sub);font-size:16px;line-height:1.6}
+.give{border-color:#C9D9E4}
+.give h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:23px;margin:0 0 6px;color:var(--pri2)}
+.give h2 .tag{font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--sub);margin-left:4px}
+.give .lead{margin:0 0 10px;font-size:15px;color:var(--ink)}
+.give ul{margin:10px 0;padding-left:20px;font-size:14px;line-height:1.7;color:var(--sub)}
+.give ul b{color:var(--ink)}
+.grow{display:flex;gap:10px;align-items:center;padding:8px;border:2px solid var(--line);border-radius:14px;margin-top:8px;background:#fff}
+.grow.on{border-color:var(--pri);background:#F3F7FA}
+.grow img{width:64px;height:64px;object-fit:cover;border-radius:10px;flex:none}
+.grow .pk{flex:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;font-weight:700;color:#fff}
+.grow.on .pk{background:var(--pri);border-color:var(--pri)}
+.grow input{display:block;width:100%;min-width:0;font:inherit;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:10px}
+.grow.done{opacity:.6} .grow small{display:block;font-size:13px;color:var(--sub)}
+.grow small.err{color:#8A4B00} .grow small.ok{color:var(--ok)}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:15px;font-weight:700;margin-top:12px;line-height:1.5}
+.chk input{width:20px;height:20px;flex:none;margin-top:2px}
+#giveBtn{width:100%;font:inherit;font-size:18px;font-weight:700;padding:14px;border-radius:14px;border:0;background:var(--pri);color:#fff;margin-top:12px}
+#giveBtn:disabled{opacity:.45}
+#giveMsg{margin:10px 0 0;font-size:15px;line-height:1.6;color:var(--sub);text-align:center}
+#giveMsg.ok{color:var(--ok);font-weight:700} #giveMsg.err{color:#8A4B00}
 </style>
 </head>
 <body>
@@ -81,7 +101,21 @@ label.t{display:block;font-weight:700;margin:0 0 8px;font-size:16px}
   <div id="after"><button type="button" id="more">더 보내기</button><button type="button" class="pri" id="finish">다 보냈어요</button></div>
 </div>
 <div id="fin" class="card done" hidden><div class="big" aria-hidden="true">✓</div><h2>다 보냈어요</h2><p id="finMsg">큰 화면을 봐 주세요. 이 창은 닫아도 돼요.</p></div>
-<p class="safe"><b>안전하게 보내요.</b> 사진은 이 휴대폰에서 긴 쪽 1600px로 줄이고(위치 정보가 빠져요) 잠가서 보내요. 그 번호의 화면만 열 수 있고, 중간의 중계 서버(charum.org)는 열어 볼 수 없어요. 화면이 받는 순간 서버에서 지워지고, 받지 않아도 몇 분 뒤 지워져요.</p>
+<div class="card give" id="give" hidden>
+  <h2>이 사진, 나눠 주실래요?<span class="tag">선택</span></h2>
+  <p class="lead">잘 나온 사진은 <b>차름 사진 모음</b>에 기증해 주세요. 제작자가 살펴본 뒤 올리면 다른 학교 선생님과 학생들도 낱말·도형·퍼즐 공부에 함께 써요. 선생님들이 함께 모으는 공동 자료예요.</p>
+  <p class="lead" style="color:var(--sub);font-size:14px;margin:0">나눌 사진을 누르고, 무엇의 사진인지 써 주세요.</p>
+  <div id="giveList"></div>
+  <ul>
+    <li>교실·급식실·운동장의 물건처럼 모양이 또렷한 사진이면 더 좋아요.</li>
+    <li><b>사람·얼굴·이름·전화번호·차 번호판·학교 이름</b>이 보이면 기증할 수 없어요.</li>
+    <li>공개 사진 모음에 올라가 여러 차름 학습 자료에 계속 쓰여요(그림·색칠 도안으로 바꾸거나 일부를 가릴 수 있어요). 빼고 싶으면 차름 게시판 댓글로 알려 주세요.</li>
+  </ul>
+  <label class="chk"><input type="checkbox" id="giveOk"> 제가 찍은 사진이에요. 위 내용에 동의하고, 차름 학습 자료로 자유롭게 쓰도록 기증해요.</label>
+  <button type="button" id="giveBtn" disabled>고른 사진 기증하기</button>
+  <p id="giveMsg" aria-live="polite"></p>
+</div>
+<p class="safe"><b>안전하게 보내요.</b> 사진은 이 휴대폰에서 긴 쪽 1600px로 줄이고(위치 정보가 빠져요) 잠가서 보내요. 그 번호의 화면만 열 수 있고, 중간의 중계 서버(charum.org)는 열어 볼 수 없어요. 화면이 받는 순간 서버에서 지워지고, 받지 않아도 몇 분 뒤 지워져요. <b>기증</b>을 고른 사진만 따로 차름 기증함으로 가요.</p>
 </main>
 <script>
 (function(){
@@ -185,17 +219,17 @@ $('send').onclick=async()=>{
   let ok=0, stop='';
   for(const it of todo){
     say(todo.length>1?`보내는 중이에요… ${ok+1} / ${todo.length}`:'보내는 중이에요…');
-    try{ const p=await seal(it); const r=await call({a:'send',code,...p}); it.sent=true; it.fail=false; ok++; if(srv) srv.left=r.left; }
+    try{ const p=await seal(it); const r=await call({a:'send',code,...p}); it.sent=true; it.fail=false; ok++; if(srv) srv.left=r.left; SENT.push({blob:it.blob,url:it.url,name:'',pick:false,state:''}); }
     catch(e){ it.fail=true; stop=e.code||'network'; draw(); break; }
     draw();
   }
-  sending=false; update();
+  sending=false; update(); drawGive();
   if(stop){ say((ok?`${ok}장은 보냈어요. `:'')+(ERR[stop]||'보내지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'),'err'); if(stop==='nocode'||stop==='full') showCodeIn(); return; }
   if(ONE){ finish(); return; }
   say(`${ok}장 보냈어요. 큰 화면을 봐 주세요.`,'ok');
   $('after').style.display='flex';
 };
-$('more').onclick=()=>{ items.filter(i=>i.sent).forEach(i=>URL.revokeObjectURL(i.url)); items=items.filter(i=>!i.sent); draw(); update(); $('after').style.display='none'; say(''); $('shoot').scrollIntoView({behavior:'smooth',block:'center'}); };
+$('more').onclick=()=>{ items=items.filter(i=>!i.sent); draw(); update(); $('after').style.display='none'; say(''); $('shoot').scrollIntoView({behavior:'smooth',block:'center'}); };
 $('finish').onclick=()=>finish(true);
 async function finish(tell){
   if(tell&&code){ try{ await call({a:'done',code}); }catch(e){} }
@@ -203,6 +237,84 @@ async function finish(tell){
   $('form').hidden=true; $('fin').hidden=false;
   $('finMsg').textContent=(n?`${n}장을 보냈어요. `:'')+'큰 화면을 봐 주세요. 이 창은 닫아도 돼요.';
 }
+
+/* ---------- 기증(선택): 보낸 사진 가운데 고른 것만 차름 기증함(charum-api/donate.php)으로 ----------
+   기증함은 제작자가 charum.org에 관리자로 로그인해 살펴봄 → 비공개 저장소 → 권리 검토 → 공개 사진 모음.
+   사진은 긴 쪽 1280으로 다시 그려 위치 정보가 빠짐. 이 휴대폰에 차름 Gemini 키가 있으면 사람·얼굴·이름·번호를 먼저 살펴 막고,
+   없으면 check=none("검사 안 함" — 제작자가 더 꼼꼼히). app 900 = 사진 다리(다른 선생님 앱에서 보낸 사진). */
+const SENT=[];
+const DONATE='https://charum.org/charum-api/donate.php';
+const FROM=(H.get('o')||'').slice(0,40);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function drawGive(){
+  if(!SENT.length) return;
+  $('give').hidden=false;
+  $('giveList').innerHTML=SENT.map((g,i)=>`<div class="grow${g.pick?' on':''}${g.state==='ok'?' done':''}" data-i="${i}"><span class="pk" aria-hidden="true">${g.pick||g.state==='ok'?'✓':''}</span><img src="${g.url}" alt="${i+1}번째 사진">
+    <div style="flex:1;min-width:0">${g.state==='ok'?`<b>${esc(g.name)}</b><small class="ok">기증했어요. 고마워요!</small>`:`<input type="text" maxlength="40" placeholder="무엇의 사진? 예: 신발장" value="${esc(g.name)}" aria-label="${i+1}번째 사진 이름">${g.state?`<small class="err">${esc(g.state)}</small>`:''}`}</div></div>`).join('');
+  $('giveList').querySelectorAll('.grow').forEach(el=>{ const g=SENT[+el.dataset.i]; if(g.state==='ok') return;
+    const inp=el.querySelector('input');
+    el.addEventListener('click',e=>{ if(e.target===inp){ if(!g.pick){ g.pick=true; el.classList.add('on'); el.querySelector('.pk').textContent='✓'; giveState(); } return; }
+      g.pick=!g.pick; el.classList.toggle('on',g.pick); el.querySelector('.pk').textContent=g.pick?'✓':''; if(g.pick&&!inp.value) inp.focus(); giveState(); });
+    inp.addEventListener('input',()=>{ g.name=inp.value; giveState(); }); });
+  giveState();
+}
+function giveState(){
+  const pk=SENT.filter(g=>g.pick&&g.state!=='ok');
+  $('giveBtn').disabled=giving||!pk.length||!$('giveOk').checked;
+  $('giveBtn').textContent=pk.length>1?`고른 사진 ${pk.length}장 기증하기`:'고른 사진 기증하기';
+}
+$('giveOk').onchange=giveState;
+function to1280(blob){
+  return new Promise((res,rej)=>{ const u=URL.createObjectURL(blob), im=new Image();
+    im.onload=()=>{ const k=Math.min(1,1280/Math.max(im.naturalWidth,im.naturalHeight)), c=document.createElement('canvas');
+      c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(u);
+      res(c.toDataURL('image/jpeg',0.88).split(',')[1]); };
+    im.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('load')); }; im.src=u; });
+}
+/* '' = 깨끗함, '사람이나 얼굴, …' = 막을 까닭, null = 살피지 못함(키 없음·한도·연결) — photo-send.html과 같은 검사 */
+async function privacy(b64,key){
+  if(!/^(AIza[\w-]{20,}|AQ\.[\w.\-]{20,})$/.test(key||'')) return null;
+  try{
+    const lr=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':key}}); if(!lr.ok) return null;
+    const names=((await lr.json()).models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace(/^models\//,''))
+      .filter(n=>/^gemini.*flash/.test(n)&&!/(tts|image|audio|live|embedding|thinking)/.test(n));
+    const ver=n=>parseFloat((/gemini-(\d+(\.\d+)?)/.exec(n)||[])[1]||0);
+    names.sort((a,b)=>(/preview|exp/.test(a)-/preview|exp/.test(b))||(/lite/.test(a)-/lite/.test(b))||ver(b)-ver(a));
+    if(!names.length) return null;
+    const body={contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data:b64}},{text:'Look at this photo for privacy problems before it is shared publicly. Return JSON only: {"person":bool,"face":bool,"name_text":bool,"phone_or_id_number":bool,"license_plate":bool,"school_name":bool}. person = any human or human body part visible (including in posters or screens). name_text = a personal name written anywhere.'}]}],
+      generationConfig:{responseMimeType:'application/json',temperature:0}};
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(names[0])+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(body)});
+    if(!r.ok) return null;
+    const j=await r.json(); const o=JSON.parse(((j.candidates||[])[0].content.parts||[]).map(p=>p.text||'').join('').replace(/^```(json)?|```$/g,''));
+    const why=[]; if(o.person||o.face) why.push('사람이나 얼굴'); if(o.name_text) why.push('이름'); if(o.phone_or_id_number) why.push('번호'); if(o.license_plate) why.push('차 번호판'); if(o.school_name) why.push('학교 이름');
+    return why.join(', ');
+  }catch(e){ return null; }
+}
+let giving=false;
+$('giveBtn').onclick=async()=>{
+  const pk=SENT.filter(g=>g.pick&&g.state!=='ok'); if(!pk.length) return;
+  const noName=pk.find(g=>!g.name.trim()); if(noName){ noName.state='무엇의 사진인지 써 주세요.'; drawGive(); const i=SENT.indexOf(noName); const el=$('giveList').querySelector(`[data-i="${i}"] input`); if(el){ el.focus(); el.scrollIntoView({block:'center'}); } return; }
+  giving=true; giveState();
+  let key=''; try{ key=localStorage.getItem('webapp.geminiKey')||''; }catch(e){}
+  const msg=(t,c)=>{ $('giveMsg').textContent=t; $('giveMsg').className=c||''; };
+  let ok=0, stop='';
+  for(const g of pk){
+    msg(pk.length>1?`기증하는 중이에요… ${ok+1} / ${pk.length}`:'기증하는 중이에요…');
+    try{
+      const img=await to1280(g.blob);
+      const bad=key?await privacy(img,key):null;
+      if(bad){ g.state='기증하지 않았어요: 사진에 '+bad+'이(가) 보여요.'; g.pick=false; continue; }
+      const r=await fetch(DONATE,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({a:'give',app:'900',check:bad===''?'gemini':'none',agree:true,title:g.name.trim(),img,meta:{note:'사진 다리'+(FROM?' · '+FROM:'')}})});
+      let j={}; try{ j=await r.json(); }catch(e){}
+      if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
+      g.state='ok'; ok++;
+    }catch(e){ stop=e.message||'network'; break; }
+  }
+  giving=false; drawGive();
+  if(stop) msg(stop==='busy'?'오늘은 기증을 더 받을 수 없어요. 내일 다시 해 주세요.':stop==='full'?'기증함이 가득 찼어요. 며칠 뒤 다시 해 주세요.':(ok?ok+'장은 기증했어요. ':'')+'나머지는 보내지 못했어요. 잠시 뒤 다시 눌러 주세요.','err');
+  else if(ok) msg(`고마워요! ${ok}장을 기증했어요. 제작자가 살펴본 뒤 차름 사진 모음에 넣을게요.`,'ok');
+  else msg('');
+};
 
 const c0=(H.get('c')||'').replace(/\D/g,'');
 if(c0.length===6){ $('code').value=c0; useCode(c0); } else say('');

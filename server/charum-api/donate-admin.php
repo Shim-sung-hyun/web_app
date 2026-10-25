@@ -10,6 +10,7 @@
      공개 사진 모음(web_app/media/photos)에 넣음. 걸리는 것만 flagged/ 로 → 여기 "다시 볼 사진"에 뜸 →
      저장/빼기를 고르면 decisions/ 에 적힘 → Claude가 다음 정리 때 반영.
    - GitHub 열쇠는 같은 폴더의 donate-config.php 에만 넣는다(저장소·채팅에 넣지 않음).
+   - app 900 = 사진 다리(relay/send.html, 연수에서 만든 다른 선생님 앱으로 보낸 사진을 휴대폰에서 기증).
    - 주소: https://www.charum.org/charum-api/donate-admin.php
    ===================================================================== */
 
@@ -204,7 +205,7 @@ async function load(){ say('불러오는 중…'); $('grid').innerHTML=''; ITEMS
     for(const m of list){ const d=await call({a:'get',id:m.id}); ITEMS[d.id]=d;
       const mt=d.meta||{}, sg=mt.suggest||{};
       const el=document.createElement('div'); el.className='it'; el.innerHTML=`<div class="pair"><div class="pv"><img src="data:image/jpeg;base64,${d.img}" alt="">${overlay(d)}</div>${d.art?`<div class="pv"><img src="data:image/jpeg;base64,${d.art}" alt=""></div>`:'<div class="ph">그림 없음</div>'}</div>
-        <div class="bar"><span><b>${esc(d.title||'(이름 없음)')}</b><br><small><span class="tag">${d.app==='000'?'제작자 모으기':esc(d.app||'001')+' 앱에서'}</span>${mt.place?`<span class="tag">${esc(mt.place)}</span>`:''}${sg.shape?'<span class="tag">도형 찾기</span>':''}${sg.puzzle?'<span class="tag">그림 조각</span>':''}${d.check==='none'?'<span class="tag none">검사 안 함</span>':''}${mt.tags&&mt.tags.length?esc(mt.tags.join(' · '))+' · ':''}${new Date(d.t*1000).toLocaleString('ko-KR')}${mt.note?'<br>'+esc(mt.note):''}${(d.shapes||[]).length?` · 도형 ${d.shapes.length}개 · ${esc([...new Set(d.shapes.map(s=>s.obj))].join(', '))}`:''}</small></span>
+        <div class="bar"><span><b>${esc(d.title||'(이름 없음)')}</b><br><small><span class="tag">${d.app==='000'?'제작자 모으기':d.app==='900'?'사진 다리(다른 선생님 앱)':esc(d.app||'001')+' 앱에서'}</span>${mt.place?`<span class="tag">${esc(mt.place)}</span>`:''}${sg.shape?'<span class="tag">도형 찾기</span>':''}${sg.puzzle?'<span class="tag">그림 조각</span>':''}${d.check==='none'?'<span class="tag none">검사 안 함</span>':''}${mt.tags&&mt.tags.length?esc(mt.tags.join(' · '))+' · ':''}${new Date(d.t*1000).toLocaleString('ko-KR')}${mt.note?'<br>'+esc(mt.note):''}${(d.shapes||[]).length?` · 도형 ${d.shapes.length}개 · ${esc([...new Set(d.shapes.map(s=>s.obj))].join(', '))}`:''}</small></span>
         <span class="row"><label><input type="checkbox" data-a="sel"> 고르기</label><button type="button" data-a="del">지우기</button></span></div>`;
       el.querySelector('[data-a=sel]').onchange=e=>{ e.target.checked?SEL.add(d.id):SEL.delete(d.id); el.classList.toggle('sel',e.target.checked); count(); };
       el.querySelector('[data-a=del]').onclick=async()=>{ if(!confirm('이 사진을 서버에서 지울까요?')) return; await call({a:'del',id:d.id}); delete ITEMS[d.id]; SEL.delete(d.id); el.remove(); count(); };

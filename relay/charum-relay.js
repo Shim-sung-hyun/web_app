@@ -16,6 +16,7 @@
 
    - 사진은 휴대폰에서 긴 쪽 1600px로 줄이고(위치 정보가 빠짐) 잠가서 보냅니다. 중계 서버(charum.org)는 사진을 열어 볼 수 없고,
      이 화면이 받는 순간 서버에서 지워집니다.
+   - 휴대폰에서는 보낸 사진을 차름 사진 모음에 기증할 수도 있습니다(선택, 제작자가 살펴본 뒤 공개).
    - https 주소(GitHub Pages 등)나 컴퓨터에서 바로 연 파일에서 됩니다(잠그는 기능이 http 주소에서는 막힘).
    ===================================================================== */
 (function () {
@@ -195,7 +196,7 @@ async function receive(opts) {
     if (me.dead) return;
     me.code = o.code; me.sid = o.sid; me.end = Date.now() + (o.ttl || 180) * 1000;
     q('crCode').textContent = o.code.slice(0, 3) + ' ' + o.code.slice(3);
-    q('crQr').innerHTML = QR.svg(SEND_PAGE + '#c=' + o.code + (many ? '' : '&one=1'), 208);
+    q('crQr').innerHTML = QR.svg(SEND_PAGE + '#c=' + o.code + (many ? '' : '&one=1') + '&o=' + encodeURIComponent((location.host || 'file').slice(0, 40)), 208);
     waiting();
     me.tick = setInterval(function () {
       if (me.dead) return;
