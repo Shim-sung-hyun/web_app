@@ -493,10 +493,10 @@ async function receive(opts){
   opts=opts||{}; ensureCss(); close();
   const box=document.createElement('div'); box.id='prBox'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true');
   box.innerHTML=`<div class="pr-card"><h2>휴대폰에서 사진 받기</h2>
-    <p class="pr-sub">휴대폰으로 찍은 사진을 이 화면으로 보내요. 사진은 잠가서 보내고, 중계 서버는 사진을 볼 수 없어요.</p>${opts.note?'<p class="pr-note">'+opts.note+'</p>':''}
+    <p class="pr-sub">휴대폰으로 찍은 사진을 이 화면으로 보냅니다. 사진은 잠가서 보내고, 중계 서버도 사진을 볼 수 없습니다.</p>${opts.note?'<p class="pr-note">'+opts.note+'</p>':''}
     <div class="pr-main"><div class="pr-qr" id="prQr"></div>
       <div class="pr-codebox"><div class="pr-code" id="prCode">····</div>
-        <ol class="pr-steps"><li>휴대폰 카메라로 QR을 찍거나<br><span class="pr-url">${SEND_PAGE.replace('https://','')}</span> 를 열어요.</li><li>사진을 찍거나 골라요.</li>${(opts.want||[]).includes('gemini')?'<li>처음 한 번은 <b>Gemini 키</b>도 넣어요.<br><small>키가 없으면 그 화면의 "키 받는 법"(1~2분)</small></li>':''}<li><b>보내기</b>를 눌러요.</li></ol></div></div>
+        <ol class="pr-steps"><li>휴대폰 카메라로 QR을 찍어요.</li><li>사진을 찍거나 골라요.<br><small>잘 나온 사진은 <b>기증(선택)</b>에도 체크해 주세요.</small></li>${(opts.want||[]).includes('gemini')?'<li>처음 한 번은 <b>Gemini 키</b>도 넣어요.<br><small>키가 없으면 그 화면의 "키 받는 법"(1~2분)</small></li>':''}<li><b>보내기</b>를 눌러요.</li></ol></div></div>
     <p class="pr-state" id="prState">번호를 만들고 있어요…</p>
     <div class="pr-btns"><button type="button" id="prCancel">닫기</button></div></div>`;
   document.body.appendChild(box);

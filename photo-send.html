@@ -4,39 +4,69 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<title>전자칠판으로 사진 보내기</title>
+<title>전자칠판으로 사진 보내기 · 차름</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1d2133;--sub:#5b6077;--line:#d9dcea;--pri:#1F6C75;--pri2:#16525A;--bg:#f1f6f6;--ok:#1b7f3a;--err:#c62828}
+/* 차름 앱(001 도형 찾기 · 002 내 그림 퍼즐)의 휴대폰 화면. 앱마다 영역 색(001 수학 청록 / 002 놀이 회청)과 바탕 무늬를 따로 씀.
+   선생님 연수용 "사진 다리"(relay/send.html)와 방향·문구는 같고(사용 + 기증(선택)을 한 번에), 색·꼴은 차름 것. */
+:root{--ink:#1d2133;--sub:#5b6077;--line:#d9dcea;--pri:#17766F;--pri2:#0F4F4A;--tint:#E6F2F0;--bg:#F1F6F5;--ok:#1b7f3a;--err:#c62828}
+body.app002{--pri:#4E6A80;--pri2:#2F4556;--tint:#E9EFF3;--bg:#EFF3F6}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%}
-main{max-width:520px;margin:0 auto;padding:22px 16px 40px}
-h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:28px;margin:6px 0 6px;color:var(--pri2)}
-.lead{margin:0 0 18px;color:var(--sub);font-size:15px;line-height:1.6}
-.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 16px;margin-bottom:14px}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%;word-break:keep-all}
+/* 바탕: 001 연한 모눈 / 002 옅은 퍼즐 선 */
+body.app001{background-image:linear-gradient(rgba(23,118,111,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(23,118,111,.06) 1px,transparent 1px);background-size:22px 22px}
+body.app002{background-image:radial-gradient(circle at 50% 0,transparent 7px,rgba(78,106,128,.07) 7.5px,transparent 8.5px);background-size:34px 34px}
+main{max-width:520px;margin:0 auto;padding:20px 16px calc(40px + env(safe-area-inset-bottom))}
+.brand{display:inline-block;font-family:'Jua','Noto Sans KR',sans-serif;font-size:15px;color:#fff;background:var(--pri);border-radius:8px;padding:3px 10px;margin:4px 0 0}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:28px;margin:8px 0 6px;color:var(--pri2)}
+.lead{margin:0 0 16px;color:var(--sub);font-size:15px;line-height:1.65;text-align:justify}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+body.app001 .card{border-left:6px solid var(--pri)}
 label.t{display:block;font-weight:700;margin:0 0 8px;font-size:16px}
 input.f{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
-#code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:44px;letter-spacing:.3em;text-align:center;padding:8px 0 8px .3em}
+#codeOk{display:flex;align-items:center;gap:12px}
+#codeOk b{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:32px;letter-spacing:.12em;color:var(--pri2)}
+#codeOk small{color:var(--ok);font-size:14px;font-weight:700}
 .pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pick button{font:inherit;font-size:18px;font-weight:700;padding:18px 8px;border-radius:16px;border:1px solid var(--line);background:#fff;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:6px}
+.pick button{font:inherit;font-size:18px;font-weight:700;padding:18px 8px;border-radius:16px;border:1px solid var(--line);background:#fff;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:6px;touch-action:manipulation}
 .pick button.pri{background:var(--pri);border-color:var(--pri);color:#fff}
 .pick svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.warn{margin:12px 2px 0;padding:10px 12px;border-radius:12px;background:#FFF4E5;color:#7A4A00;font-size:15px;line-height:1.5}
-#preview{display:none;margin:14px 0 0;text-align:center}
-#preview img{max-width:100%;max-height:44vh;border-radius:14px;border:1px solid var(--line)}
-#send{width:100%;font:inherit;font-size:20px;font-weight:700;padding:16px;border:0;border-radius:16px;background:var(--pri);color:#fff;margin-top:12px}
-#send:disabled{opacity:.6}
-#state{min-height:1.6em;margin:14px 2px 0;font-size:16px;line-height:1.55;text-align:center}
+.warn{margin:12px 2px 0;padding:10px 12px;border-radius:12px;background:#FFF4E5;color:#7A4A00;font-size:15px;line-height:1.55}
+/* 사진 한 줄: 사용(보낼 사진, 한 장) · 사진 · 찍은 것 · 기증(선택) · × */
+#rows{margin-top:6px}
+.row{display:flex;gap:8px;align-items:center;padding:8px 6px;border:2px solid var(--line);border-radius:14px;margin-top:8px;background:#fff}
+.row.give{border-color:var(--pri);background:var(--tint)}
+.row img{width:56px;height:56px;object-fit:cover;border-radius:10px;flex:none}
+.row .ck{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.row .ck small{font-size:12px;color:var(--sub);white-space:nowrap;line-height:1}
+.row .ck input{width:24px;height:24px;margin:0;accent-color:var(--pri)}
+.row.off img,.row.off input[type=text]{opacity:.45}
+.row input[type=text]{display:block;width:100%;min-width:0;font:inherit;font-size:15px;padding:9px 8px;border:1px solid var(--line);border-radius:10px}
+.row small.err{display:block;font-size:13px;color:#8A4B00;margin-top:3px}
+.row .rm{flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--sub);font-size:17px;line-height:1;padding:0}
+.one{font-size:13px;color:var(--sub);margin:8px 2px 0;line-height:1.5}
+.give-box{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.give-box .lead{margin:0;color:var(--ink)}
+.linkb{font:inherit;font-size:14px;font-weight:700;color:var(--pri2);background:none;border:0;text-decoration:underline;padding:6px 0}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:15px;font-weight:700;margin-top:10px;line-height:1.5}
+.chk input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--pri)}
+.chk .lic{font-weight:400;color:var(--sub);font-size:13px}
+.chk .lic a{color:var(--sub)}
+#send{width:100%;font:inherit;font-size:20px;font-weight:700;padding:16px;border:0;border-radius:16px;background:var(--pri);color:#fff;margin-top:4px;touch-action:manipulation}
+#send:disabled{opacity:.5}
+#state{min-height:1.6em;margin:12px 2px 0;font-size:16px;line-height:1.55;text-align:center}
 #state.err{color:var(--err);font-weight:700}
 .res-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px 18px 22px;text-align:center;margin-bottom:14px}
-.res-big{width:88px;height:88px;margin:0 auto 14px;border-radius:50%;background:#e6f2f3;color:var(--pri2);font-size:44px;line-height:88px;font-weight:700}
+.res-big{width:88px;height:88px;margin:0 auto 14px;border-radius:50%;background:var(--tint);color:var(--pri2);font-size:44px;line-height:88px;font-weight:700}
 .res-big.ok{background:#e7f5ec;color:var(--ok);font-size:54px}
 .res-big.err{background:#fdecec;color:var(--err)}
 .res-card h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:30px;margin:0 0 8px}
 .res-card p{margin:0;color:var(--sub);font-size:16px;line-height:1.6}
+#giveMsg{margin:12px 0 0!important;font-size:15px}
+#giveMsg.ok{color:var(--ok)!important} #giveMsg.err{color:#8A4B00!important}
 #again{width:100%;font:inherit;font-size:18px;font-weight:700;padding:14px;border:1px solid var(--line);border-radius:16px;background:#fff;color:var(--ink)}
-.safe{font-size:13px;color:var(--sub);line-height:1.6;margin:18px 4px 0}
+.safe{font-size:13px;color:var(--sub);line-height:1.65;margin:18px 4px 0;text-align:justify}
 .safe b{color:var(--ink)}
 .keys{border-color:#B8DCD4}
 .keys h2{font-size:18px;margin:0 0 4px}
@@ -47,35 +77,23 @@ input.f{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid var
 .hint{font-size:13px;color:var(--sub);margin:6px 0 0;line-height:1.55}
 .hint a{color:var(--pri2)}
 .tag{font-weight:400;color:var(--sub);font-size:13px}
-details.how{margin:8px 0 0;background:#EEF6F4;border-radius:12px;padding:8px 12px}
+details.how{margin:8px 0 0;background:var(--tint);border-radius:12px;padding:8px 12px}
 details.how summary{cursor:pointer;font-weight:700;color:var(--pri2);font-size:15px}
 details.how ol{margin:8px 0 4px;padding-left:20px;font-size:14px;line-height:1.7}
 details.how .go{display:block;text-align:center;background:var(--pri);color:#fff;text-decoration:none;font-weight:700;padding:11px;border-radius:12px;margin:6px 0 4px}
-.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--sub);margin-top:12px;line-height:1.5}
+.keys .chk{font-size:14px;font-weight:400;color:var(--sub)}
 .gap{height:14px}
-details.give{word-break:keep-all;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:14px}
-details.give summary{cursor:pointer;font-weight:700;font-size:16px;color:var(--ink)}
-details.give summary .tag{margin-left:4px}
-.give .lead{margin:10px 0 0;font-size:15px;line-height:1.65;color:var(--ink)}
-.give ul{margin:8px 0 10px;padding-left:20px;font-size:14px;line-height:1.7;color:var(--sub)}
-.give ul b{color:var(--ink)}
-.give .chk{color:var(--ink);font-size:15px;font-weight:700}
-.give .chk input{width:20px;height:20px;flex:none;margin-top:1px}
-#giveName{margin-top:4px}
-#giveMsg{margin:12px 0 0;font-size:15px;line-height:1.6;color:var(--sub)}
-#giveMsg.ok{color:var(--ok)} #giveMsg.err{color:#8A4B00}
 </style>
 </head>
-<body>
+<body class="app001">
 <main>
 <div id="form">
+  <span class="brand" id="brand">차름 수학 · 도형 찾기</span>
   <h1>전자칠판으로 사진 보내기</h1>
-  <p class="lead">전자칠판에서 <b>📱 휴대폰에서 받기</b>를 누르면 QR과 번호 4자리가 나와요.</p>
+  <p class="lead">사진을 찍거나 골라서 보내 주세요. 잘 나온 사진은 <b>기증(선택)</b>에 체크하면 보내기와 함께 기증됩니다.</p>
 
-  <div class="card">
-    <label class="t" for="code">전자칠판의 번호</label>
-    <input class="f" id="code" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="0000" aria-label="번호 4자리">
-  </div>
+  <div class="card" id="noCode" hidden><b>전자칠판에 나온 QR을 휴대폰 카메라로 찍어 주세요.</b><p class="lead" style="margin:6px 0 0">전자칠판에서 <b>📱 휴대폰에서 받기</b>를 누르면 QR이 나옵니다. QR을 찍으면 이 화면이 번호와 함께 열립니다.</p></div>
+  <div class="card" id="codeCard" hidden><div id="codeOk"><b id="codeShow"></b><small>전자칠판과 연결되었습니다</small></div></div>
 
   <div class="card">
     <label class="t">사진</label>
@@ -84,44 +102,40 @@ details.give summary .tag{margin-left:4px}
       <button type="button" id="album"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M20.5 16l-5-5-8 8"/></svg>앨범에서 고르기</button>
     </div>
     <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
-    <input type="file" id="fileIn" accept="image/*" hidden>
-    <p class="warn" id="warnTip"><b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 물건이 화면 안에 통째로 들어오면 도형을 잘 찾아요.</p>
-    <div id="preview"><img id="pv" alt="보낼 사진"></div>
+    <input type="file" id="fileIn" accept="image/*" multiple hidden>
+    <p class="warn" id="warnTip"><b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 물건이 화면 안에 통째로 들어오면 도형을 잘 찾습니다.</p>
+    <div id="rows"></div>
+    <p class="one" id="oneTip" hidden>전자칠판에는 <b>사용</b>에 체크한 한 장이 갑니다. 나머지 사진은 기증만 할 수 있습니다.</p>
+    <div class="give-box" id="giveBox" hidden>
+      <p class="lead"><b>기증(선택)</b>에 체크된 사진은 다른 학교 선생님들과 학생들의 공부에 쓰입니다.</p>
+      <button type="button" class="linkb" id="giveAll">모두 기증 체크</button>
+      <p class="warn" style="margin-top:6px"><b>사람·얼굴·이름·전화번호·차 번호판·학교 이름</b>이 보이면 기증할 수 없습니다.</p>
+      <label class="chk"><input type="checkbox" id="giveOk"> <span>제가 찍은 사진을 여러 선생님이 사용하실 수 있게 기증합니다. <span class="lic">(출처 표시·비영리 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC 4.0</a>)</span></span></label>
+    </div>
   </div>
-  <details class="give" id="giveCard">
-    <summary>이 사진 기증하기 <span class="tag">선택 · 다른 학교 수업에도 쓰여요</span></summary>
-    <p class="lead">잘 나온 사진을 나눠 주세요. 제작자가 살펴본 뒤 예시 사진으로 올리면, 다른 학교 학생들도 이 사진으로 낱말·도형·퍼즐 같은 여러 공부를 해요.</p>
-    <ul>
-      <li>교실·급식실·운동장의 물건처럼 모양이 또렷한 사진이면 더 좋아요.</li>
-      <li><b>사람·얼굴·이름·전화번호·차 번호판·학교 이름</b>이 보이는 사진은 기증할 수 없어요.</li>
-      <li>공개 사진 모음에 올라가 누구나 볼 수 있고, 여러 차름 학습 자료에 계속 쓰여요(그림·색칠 도안으로 바꾸거나 일부를 가릴 수 있어요). 빼고 싶으면 차름 게시판 댓글로 알려 주세요.</li>
-    </ul>
-    <label class="t" for="giveName">무엇의 사진인가요? <span class="tag">예: 신발장, 교실 문</span></label>
-    <input class="f" id="giveName" maxlength="40" autocomplete="off" placeholder="물건 이름">
-    <label class="chk"><input type="checkbox" id="giveOk"> 제가 찍은 사진이에요. 위 내용에 동의하고, 차름 웹앱에서 자유롭게 쓰도록 기증해요. <span class="tag">(출처 표시·비영리 CC BY-NC 4.0)</span></label>
-  </details>
+
   <div class="card keys" id="keyCard" hidden>
     <h2>선생님 키 <span class="tag">처음 한 번만</span></h2>
-    <p class="sub">전자칠판에 아직 키가 없어요. 사진과 함께 보내면 그 전자칠판에 저장되고, 다음부터는 묻지 않아요.</p>
+    <p class="sub">전자칠판에 아직 키가 없습니다. 사진과 함께 보내면 그 전자칠판에 저장되고, 다음부터는 묻지 않습니다.</p>
     <div id="gemBox" hidden>
       <label class="t" for="gemini">Gemini 키 <span class="tag">도형 찾기 · 꼭 필요</span></label>
       <div class="krow"><input class="f" id="gemini" type="password" autocomplete="off" placeholder="AQ. 또는 AIza 로 시작하는 키"><button class="sm" type="button" data-show="gemini">보기</button></div>
-      <details class="how" id="gemHow"><summary>키가 없나요? 키 받는 법 (1~2분, 결제 없음)</summary>
+      <details class="how" id="gemHow"><summary>키가 없나요? 키 받는 법 (1~2분)</summary>
         <a class="go" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">① Google AI Studio 열기 →</a>
         <ol start="2">
-          <li>구글 계정으로 로그인해요. 처음이면 약관에 동의하고 <b>계속</b>.</li>
-          <li><b>API 키 만들기</b>(Create API key)를 눌러요. 프로젝트는 <b>새 프로젝트</b>로 만들어요.</li>
-          <li><b>AQ.</b>(또는 예전 키는 <b>AIza</b>)로 시작하는 키 옆의 복사 단추를 눌러요.</li>
+          <li>구글 계정으로 로그인합니다. 처음이면 약관에 동의하고 <b>계속</b>.</li>
+          <li><b>API 키 만들기</b>(Create API key)를 누릅니다. 프로젝트는 <b>새 프로젝트</b>로 만듭니다.</li>
+          <li><b>AQ.</b>(예전 키는 <b>AIza</b>)로 시작하는 키 옆의 복사 단추를 누릅니다.</li>
           <li>이 화면으로 돌아와 위 칸을 길게 눌러 <b>붙여넣기</b>.</li>
         </ol>
-        <p class="hint">학교 계정이 막혀 있으면 개인 계정으로 해요. 결제를 연결한 프로젝트(예: Google 음성 키를 만든 곳)에서 만든 키는 요금이 나갈 수 있어요. <a href="https://www.charum.org/study/doc.html?gemini-key" target="_blank" rel="noopener">자세히 →</a></p>
+        <p class="hint">학교 계정이 막혀 있으면 개인 계정으로 합니다. 결제를 연결한 프로젝트(예: Google 음성 키를 만든 곳)에서 만든 키는 요금이 나갈 수 있습니다. <a href="https://www.charum.org/study/doc.html?gemini-key" target="_blank" rel="noopener">자세히 →</a></p>
       </details>
     </div>
     <div class="gap" id="keyGap" hidden></div>
     <div id="cloudBox" hidden>
       <label class="t" for="cloud">Google 음성 키 <span class="tag">목소리 · 없으면 비워 두세요</span></label>
       <div class="krow"><input class="f" id="cloud" type="password" autocomplete="off" placeholder="없으면 비워 두세요"><button class="sm" type="button" data-show="cloud">보기</button></div>
-      <p class="hint">없으면 내 사진 수업은 기기 목소리로 해요. 이 키는 결제 등록이 필요해요. <a href="https://www.charum.org/study/doc.html?003/cloud-key" target="_blank" rel="noopener">만드는 방법 →</a></p>
+      <p class="hint">없으면 내 사진 수업은 기기 목소리로 합니다. 이 키는 결제 등록이 필요합니다. <a href="https://www.charum.org/study/doc.html?003/cloud-key" target="_blank" rel="noopener">만드는 방법 →</a></p>
     </div>
     <label class="chk"><input type="checkbox" id="save"> 이 휴대폰에 키 저장 (여러 사람이 쓰는 휴대폰이라면 끄세요)</label>
   </div>
@@ -132,24 +146,27 @@ details.give summary .tag{margin-left:4px}
 <div id="result" hidden>
   <div class="res-card">
     <div class="res-big" id="resIcon" aria-hidden="true">…</div>
-    <h2 id="resTitle">보냈어요</h2>
-    <p id="resMsg">전자칠판이 받기를 기다리는 중이에요.</p>
+    <h2 id="resTitle">보냈습니다</h2>
+    <p id="resMsg">전자칠판이 받기를 기다리고 있습니다.</p>
     <p id="giveMsg" hidden></p>
   </div>
   <button id="again" type="button">다른 사진 보내기</button>
 </div>
-<p class="safe"><b>안전하게 보내요.</b> 사진(과 키)은 이 휴대폰에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있어요. 중간의 중계 서버는 열어 볼 수 없고, 전자칠판이 받는 순간 지워져요. 3분이 지나도 지워져요. <b>기증</b>을 고른 사진만 따로 차름 기증함으로 가서 제작자가 살펴봐요.</p>
+<p class="safe"><b>안전하게 보냅니다.</b> 사진(과 키)은 이 휴대폰에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있습니다. 중계 서버도 열어 볼 수 없고, 전자칠판이 받는 순간(늦어도 3분 뒤) 지워집니다. 단, 기증된 사진은 따로 보관되어 관리자의 사용 가능 여부 확인을 거쳐 여러 선생님의 학습에 활용됩니다.</p>
 </main>
 <script>
 (function(){
 const RELAY='https://charum.org/charum-api/photo-relay.php';
+const DONATE='https://charum.org/charum-api/donate.php';
 const $=id=>document.getElementById(id);
-const m=/c=(\d{4})/.exec(location.hash||''); if(m) $('code').value=m[1];
-/* [차름 놀이] 내 그림 퍼즐(002)에서 열면 안내를 퍼즐에 맞게 */
-const APP=/app=puzzle/.test(location.hash||'')?'002':'001';   /* 기증함에 "어느 앱"으로 남김 */
-if(/app=puzzle/.test(location.hash||'')) $('warnTip').innerHTML='<b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 학생이 좋아하는 물건이나 장소를 화면 가득 찍으면 퍼즐이 재미있어요.';
-/* 전자칠판에 없는 키(k=gemini,cloud)만 칸을 보여 줌 */
-const km=/k=([a-z,]+)/.exec(location.hash||''); const WANT=km?km[1].split(',').filter(x=>x==='gemini'||x==='cloud'):[];
+const H=location.hash||'';
+const m=/c=(\d{4})/.exec(H); const CODE=m?m[1]:'';
+/* 어느 앱에서 열었나: 002 내 그림 퍼즐(app=puzzle)이면 퍼즐 색·안내, 기증함에 "002"로 */
+const APP=/app=puzzle/.test(H)?'002':'001';
+if(APP==='002'){ document.body.className='app002'; $('brand').textContent='차름 놀이 · 내 그림 퍼즐';
+  $('warnTip').innerHTML='<b>학생 얼굴이나 이름이 나오지 않게</b> 찍어 주세요. 학생이 좋아하는 물건이나 장소를 화면 가득 찍으면 퍼즐이 재미있습니다.'; }
+/* 전자칠판에 없는 키(k=gemini,cloud)만 칸을 보여 줌 (001) */
+const km=/k=([a-z,]+)/.exec(H); const WANT=km?km[1].split(',').filter(x=>x==='gemini'||x==='cloud'):[];
 const ls={ get:k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set:(k,v)=>{ try{ v?localStorage.setItem(k,v):localStorage.removeItem(k); }catch(e){} } };
 if(WANT.length){
   $('keyCard').hidden=false; $('gemBox').hidden=!WANT.includes('gemini'); $('cloudBox').hidden=!WANT.includes('cloud'); $('keyGap').hidden=WANT.length<2;
@@ -161,10 +178,15 @@ if(WANT.length){
   $('save').onchange=store; $('gemini').oninput=()=>{ if($('save').checked) store(); }; $('cloud').oninput=()=>{ if($('save').checked) store(); };
   document.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{ const i=$(b.dataset.show), t=i.type==='password'; i.type=t?'text':'password'; b.textContent=t?'숨기기':'보기'; });
 }
-if(location.hash) history.replaceState(null,'',location.pathname+location.search);
+if(H) history.replaceState(null,'',location.pathname+location.search);
+/* 번호는 QR(#c=)로만 */
+if(CODE){ $('codeCard').hidden=false; $('codeShow').textContent=CODE; } else $('noCode').hidden=false;
+/* 한 번 동의하면 이 휴대폰에서는 다음부터 미리 표시(기증 체크는 늘 빈 채로 — 학생이 찍혔을 수 있어서) */
+if(ls.get('charum.giveOk')==='1') $('giveOk').checked=true;
 
 const b64u={ enc:b=>{ const u=new Uint8Array(b); let s=''; for(let i=0;i<u.length;i+=0x8000) s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
   dec:s=>{ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return Uint8Array.from(atob(s),c=>c.charCodeAt(0)); } };
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function call(body){
   const r=await fetch(RELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
   let j={}; try{ j=await r.json(); }catch(e){}
@@ -173,8 +195,9 @@ async function call(body){
 }
 const say=(t,cls)=>{ const s=$('state'); s.textContent=t; s.className=cls||''; };
 
-/* 사진을 긴 쪽 1600px로 줄여 JPEG로 (전자칠판은 다시 1280으로 줄임) */
-let jpeg=null;
+/* ---------- 사진: 긴 쪽 1600px JPEG로 다시 그림(위치 정보가 빠짐). 여러 장을 넣을 수 있고, 전자칠판에는 "사용" 한 장 ---------- */
+const MAXN=12;
+let items=[];
 function shrink(file){
   return new Promise((res,rej)=>{
     const u=URL.createObjectURL(file), im=new Image();
@@ -189,11 +212,17 @@ function shrink(file){
   });
 }
 async function got(input){
-  const f=input.files&&input.files[0]; input.value=''; if(!f) return;
-  say('사진을 준비하고 있어요…');
-  try{ jpeg=await shrink(f); }catch(e){ jpeg=null; say('이 사진을 열 수 없어요. 다른 사진을 골라 주세요.','err'); return; }
-  $('pv').src=URL.createObjectURL(jpeg); $('preview').style.display='block';
-  $('send').disabled=false; say('');
+  const files=Array.from(input.files||[]); input.value=''; if(!files.length) return;
+  const room=MAXN-items.length;
+  say(files.length>room?`한 번에 ${MAXN}장까지 넣을 수 있어 앞의 ${Math.max(0,room)}장만 넣었습니다.`:'사진을 준비하고 있습니다…', files.length>room?'err':'');
+  for(const f of files.slice(0,Math.max(0,room))){
+    try{ const blob=await shrink(f); items.push({blob,url:URL.createObjectURL(blob),what:'',give:false,gstate:''}); }
+    catch(e){ say('열 수 없는 사진이 있어 뺐습니다.','err'); }
+  }
+  /* 새로 찍은(고른) 사진이 전자칠판으로 갈 사진 — 마지막 것을 "사용"으로 */
+  if(items.length&&CODE) items.forEach((it,i)=>it.use=i===items.length-1);
+  if($('state').className!=='err') say('');
+  draw();
   $('send').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 $('shoot').onclick=()=>$('camIn').click();
@@ -201,26 +230,54 @@ $('album').onclick=()=>$('fileIn').click();
 $('camIn').onchange=e=>got(e.target);
 $('fileIn').onchange=e=>got(e.target);
 
+function draw(){
+  $('rows').innerHTML=items.map((g,i)=>`<div class="row${g.use?'':' off'}${g.give?' give':''}" data-i="${i}">
+    ${CODE?`<label class="ck"><small>사용</small><input type="radio" name="use" data-use ${g.use?'checked':''} aria-label="${i+1}번째 사진을 전자칠판으로"></label>`:''}
+    <img src="${g.url}" alt="${i+1}번째 사진">
+    <div style="flex:1;min-width:0"><input type="text" maxlength="40" placeholder="찍은 것" value="${esc(g.what)}" aria-label="${i+1}번째 사진에 찍은 것">${g.gstate?`<small class="err">${esc(g.gstate)}</small>`:''}</div>
+    <label class="ck"><small>기증(선택)</small><input type="checkbox" data-give ${g.give?'checked':''} aria-label="${i+1}번째 사진 기증"></label>
+    <button type="button" class="rm" data-rm aria-label="이 사진 빼기">×</button></div>`).join('');
+  $('rows').querySelectorAll('.row').forEach(el=>{ const g=items[+el.dataset.i];
+    const u=el.querySelector('[data-use]'); if(u) u.onchange=()=>{ items.forEach(x=>x.use=x===g); draw(); };
+    el.querySelector('[data-give]').onchange=e=>{ g.give=e.target.checked; g.gstate=''; el.classList.toggle('give',g.give); if($('state').className==='err') say(''); update(); };
+    el.querySelector('input[type=text]').oninput=e=>{ g.what=e.target.value; };
+    el.querySelector('[data-rm]').onclick=()=>{ const it=items.splice(+el.dataset.i,1)[0]; URL.revokeObjectURL(it.url);
+      if(it.use&&items.length) items[items.length-1].use=true; draw(); }; });
+  $('giveBox').hidden=!items.length;
+  $('oneTip').hidden=!(CODE&&items.length>1);
+  update();
+}
+$('giveAll').onclick=()=>{ items.forEach(g=>{ g.give=true; g.gstate=''; }); draw(); };
+$('giveOk').onchange=()=>{ if($('state').className==='err') say(''); };
+function update(){
+  const use=items.find(i=>i.use), g=items.filter(i=>i.give).length;
+  $('send').disabled=!(use||g);
+  $('send').textContent=use?('전자칠판으로 보내기'+(g?` · ${g}장 기증`:'')):(g?`${g}장 기증하기`:'전자칠판으로 보내기');
+}
+
+/* ---------- 결과: 전자칠판이 받았는지 2초마다 확인 ---------- */
 let watch=null;
 function setRes(state,title,msg){ const i=$('resIcon'); i.className='res-big'+(state?' '+state:''); i.textContent=state==='ok'?'✓':state==='err'?'!':'…';
   $('resTitle').textContent=title; $('resMsg').textContent=msg; }
 function showResult(code,tk){
   $('form').hidden=true; $('result').hidden=false; scrollTo(0,0);
-  setRes('','보냈어요','전자칠판이 받기를 기다리는 중이에요.');
+  if(!code){ setRes('ok','기증했습니다','고맙습니다. 관리자가 살펴본 뒤 차름 사진 모음에 넣습니다.'); return; }
+  setRes('','보냈습니다','전자칠판이 받기를 기다리고 있습니다.');
   clearTimeout(watch); const end=Date.now()+200*1000;
   const tick=async()=>{
     let r=null; try{ r=await call({a:'check',code,tk}); }catch(e){}
-    if(r&&r.status==='done'){ setRes('ok','전자칠판이 받았어요','전자칠판에서 수업을 이어 가세요.'); try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){} return; }
-    if((r&&r.status==='gone')||Date.now()>end){ setRes('err','전자칠판이 받지 못했어요','전자칠판에서 창을 닫았거나 3분이 지났어요. 전자칠판에서 다시 눌러 새 번호로 보내 주세요.'); return; }
+    if(r&&r.status==='done'){ setRes('ok','전자칠판이 받았습니다','전자칠판에서 수업을 이어 가세요.'); try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){} return; }
+    if((r&&r.status==='gone')||Date.now()>end){ setRes('err','전자칠판이 받지 못했습니다','전자칠판에서 창을 닫았거나 3분이 지났습니다. 전자칠판에서 다시 눌러 새 QR로 보내 주세요.'); return; }
     watch=setTimeout(tick,2000);
   };
   watch=setTimeout(tick,1200);
 }
-$('again').onclick=()=>{ clearTimeout(watch); $('giveOk').checked=false; $('giveName').value=''; $('giveCard').open=false; $('giveMsg').hidden=true; $('result').hidden=true; $('form').hidden=false; jpeg=null; $('preview').style.display='none'; $('send').disabled=true; say('다른 사진은 전자칠판에서 다시 눌러 나온 새 번호로 보내요.'); $('code').value=''; $('code').focus(); };
+$('again').onclick=()=>{ clearTimeout(watch); items.forEach(i=>URL.revokeObjectURL(i.url)); items=[]; $('giveMsg').hidden=true; $('result').hidden=true; $('form').hidden=false; draw();
+  say(CODE?'다른 사진은 전자칠판에 새로 나온 QR을 찍어 보내 주세요. 기증만 하실 사진은 여기서 바로 고르셔도 됩니다.':''); };
 
-/* ===== 기증: 전자칠판으로 보낸 뒤 따로 차름 기증함(charum.org/donate.php)으로. 사진은 긴 쪽 1280으로 다시 그려 위치 정보(EXIF)가 빠짐.
-   이 휴대폰에 Gemini 키가 있으면 사람·얼굴·이름·번호를 먼저 살펴 막고, 없으면 check=none(제작자 확인 화면에 "검사 안 함") ===== */
-const DONATE='https://charum.org/charum-api/donate.php';
+/* ---------- 기증: 고른 사진만 차름 기증함(charum-api/donate.php)으로. 긴 쪽 1280으로 다시 그림(위치 정보가 빠짐).
+   이 휴대폰에 Gemini 키가 있으면 사람·얼굴·이름·번호를 먼저 살펴 막고, 없으면 check=none(관리자가 더 꼼꼼히).
+   관리자가 charum.org에 로그인해 살펴본 뒤 → 비공개 저장소 → 권리 검토 → 공개 사진 모음(CC BY-NC 4.0). ---------- */
 function to1280(blob){
   return new Promise((res,rej)=>{ const u=URL.createObjectURL(blob), im=new Image();
     im.onload=()=>{ const k=Math.min(1,1280/Math.max(im.naturalWidth,im.naturalHeight)), c=document.createElement('canvas');
@@ -247,38 +304,47 @@ async function privacy(b64,key){
     return why.join(', ');
   }catch(e){ return null; }
 }
-async function donate(title,key){
+async function donateAll(list,key){
   const m=$('giveMsg'), show=(t,c)=>{ m.hidden=false; m.textContent=t; m.className=c||''; };
-  show('기증할 사진을 준비하고 있어요…');
-  try{
-    const img=await to1280(jpeg);
-    if(key) show('사람·얼굴·이름이 있는지 살펴보고 있어요…');
-    const bad=await privacy(img,key);
-    if(bad){ show('기증은 하지 않았어요: 사진에 '+bad+'이(가) 보여요. 그런 것이 나오지 않게 다시 찍어 주세요. (전자칠판에는 보냈어요)','err'); return; }
-    show('기증함으로 보내고 있어요…');
-    const r=await fetch(DONATE,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({a:'give',app:APP,check:bad===''?'gemini':'none',agree:true,title,img})});
-    let j={}; try{ j=await r.json(); }catch(e){}
-    if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
-    show('고마워요! 기증했어요. 제작자가 살펴본 뒤 차름 사진 모음에 넣을게요.','ok');
-  }catch(e){
-    const c=e&&e.message;
-    show(c==='busy'?'오늘은 기증을 더 받을 수 없어요. 내일 다시 해 주세요.':c==='full'?'기증함이 가득 찼어요. 며칠 뒤 다시 해 주세요.':'기증은 보내지 못했어요. 잠시 뒤 다시 해 주세요. ('+(c||'network')+')','err');
+  let ok=0, blocked=0, err='';
+  for(const g of list){
+    show(list.length>1?`기증하는 중입니다… ${ok+blocked+1} / ${list.length}`:'기증하는 중입니다…');
+    try{
+      const img=await to1280(g.blob);
+      const bad=await privacy(img,key);
+      if(bad){ blocked++; continue; }
+      const r=await fetch(DONATE,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({a:'give',app:APP,check:bad===''?'gemini':'none',agree:true,title:g.what.trim(),img,meta:{note:'휴대폰 받기 · CC BY-NC'}})});
+      let j={}; try{ j=await r.json(); }catch(e){}
+      if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
+      ok++;
+    }catch(e){ err=(e&&e.message)||'network'; break; }
   }
+  const parts=[];
+  if(ok) parts.push(`고맙습니다! ${ok}장을 기증했습니다. 관리자가 살펴본 뒤 차름 사진 모음에 넣습니다.`);
+  if(blocked) parts.push(`${blocked}장은 사람·얼굴·이름 같은 것이 보여 기증하지 않았습니다.`);
+  if(err) parts.push(err==='busy'?'오늘은 기증을 더 받을 수 없습니다. 내일 다시 해 주세요.':err==='full'?'기증함이 가득 찼습니다. 며칠 뒤 다시 해 주세요.':'나머지 기증은 보내지 못했습니다. 잠시 뒤 다시 해 주세요.');
+  show(parts.join(' '),(blocked||err)?'err':'ok');
+  if(!CODE&&!ok) setRes('err','기증하지 못했습니다','');
 }
 
+/* ---------- 보내기: "사용" 한 장은 전자칠판으로(잠가서), 기증(선택)은 그다음 기증함으로 ---------- */
 $('send').onclick=async()=>{
-  const code=$('code').value.trim();
-  if(!/^\d{4}$/.test(code)){ say('전자칠판에 나온 번호 4자리를 넣어 주세요.','err'); $('code').focus(); return; }
-  if(!jpeg){ say('먼저 사진을 찍거나 골라 주세요.','err'); return; }
+  const use=items.find(i=>i.use), gv=items.filter(i=>i.give);
+  if(!use&&!gv.length){ say('먼저 사진을 찍거나 골라 주세요.','err'); return; }
+  if(gv.length&&!$('giveOk').checked){ say('기증하시려면 동의 칸에 체크해 주세요. 기증하지 않으시려면 기증(선택) 체크를 빼 주세요.','err'); $('giveOk').closest('label').scrollIntoView({block:'center'}); return; }
   const keys={}; const g=$('gemini').value.trim(), cl=$('cloud').value.trim();
-  if(WANT.includes('gemini')){ if(!g){ say('Gemini 키를 넣어 주세요. 키가 없으면 "키 받는 법"을 따라 해 주세요.','err'); $('gemHow').open=true; $('gemini').scrollIntoView({block:'center'}); $('gemini').focus(); return; }
-    if(!/^(AIza[\w-]{20,}|AQ\.[\w.\-]{20,})$/.test(g)){ say('Gemini 키 모양이 맞지 않아요. AQ. 또는 AIza 로 시작하는 키를 통째로 붙여 넣어 주세요.','err'); $('gemini').focus(); return; } keys.gemini=g; }
-  if(WANT.includes('cloud')&&cl){ if(!/^AIza[\w-]{20,}$/.test(cl)){ say('Google 음성 키 모양이 맞지 않아요. 없으면 비워 두세요.','err'); $('cloud').focus(); return; } keys.cloud=cl; }
-  const give=$('giveOk').checked, giveName=$('giveName').value.trim();
-  if(give&&!giveName){ say('기증할 사진이 무엇의 사진인지 적어 주세요. 기증하지 않으려면 동의 칸을 끄세요.','err'); $('giveCard').open=true; $('giveName').focus(); return; }
-  if(!window.crypto||!crypto.subtle){ say('이 브라우저에서는 보낼 수 없어요. 다른 브라우저로 열어 주세요.','err'); return; }
-  $('send').disabled=true; say('보내는 중이에요…');
+  if(use){
+    if(WANT.includes('gemini')){ if(!g){ say('Gemini 키를 넣어 주세요. 키가 없으면 "키 받는 법"을 따라 해 주세요.','err'); $('gemHow').open=true; $('gemini').scrollIntoView({block:'center'}); $('gemini').focus(); return; }
+      if(!/^(AIza[\w-]{20,}|AQ\.[\w.\-]{20,})$/.test(g)){ say('Gemini 키 모양이 맞지 않습니다. AQ. 또는 AIza 로 시작하는 키를 통째로 붙여 넣어 주세요.','err'); $('gemini').focus(); return; } keys.gemini=g; }
+    if(WANT.includes('cloud')&&cl){ if(!/^AIza[\w-]{20,}$/.test(cl)){ say('Google 음성 키 모양이 맞지 않습니다. 없으면 비워 두세요.','err'); $('cloud').focus(); return; } keys.cloud=cl; }
+    if(!window.crypto||!crypto.subtle){ say('이 브라우저에서는 잠가 보낼 수 없습니다. 크롬이나 사파리로 열어 주세요.','err'); return; }
+  }
+  if(gv.length) ls.set('charum.giveOk','1');
+  $('send').disabled=true; say(use?'보내는 중입니다…':'');
+  const gkey=g||ls.get('keySend.gemini')||ls.get('webapp.geminiKey')||'';
+  if(!use){ showResult('',''); donateAll(gv,gkey); return; }
   try{
+    const code=CODE;
     const {pub}=await call({a:'pub',code});
     const wb=await crypto.subtle.importKey('raw',b64u.dec(pub),{name:'ECDH',namedCurve:'P-256'},false,[]);
     const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
@@ -287,21 +353,22 @@ $('send').onclick=async()=>{
     const key=await crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:new TextEncoder().encode('webapp-photo-relay|'+code),info:new TextEncoder().encode('v1')},hk,{name:'AES-GCM',length:256},false,['encrypt']);
     const iv=crypto.getRandomValues(new Uint8Array(12));
     /* 키가 있으면 "CHRM" + 판(1) + JSON 길이(4바이트) + JSON + 사진 으로 함께 잠금 */
-    let body=new Uint8Array(await jpeg.arrayBuffer());
+    let body=new Uint8Array(await use.blob.arrayBuffer());
     if(Object.keys(keys).length){ const j=new TextEncoder().encode(JSON.stringify(keys)), n=j.length, h=new Uint8Array(9+n+body.length);
       h.set([67,72,82,77,1,(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255]); h.set(j,9); h.set(body,9+n); body=h; }
     const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,body);
     const sent=await call({a:'send',code,epub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),iv:b64u.enc(iv),ct:b64u.enc(ct)});
     say(''); showResult(code,sent.tk);
-    if(give) donate(giveName, g||ls.get('keySend.gemini')||ls.get('webapp.geminiKey')||'');
+    if(gv.length) donateAll(gv,gkey);
   }catch(e){
     const c=e&&e.code;
-    if(c==='nocode') say('번호를 찾을 수 없어요. 3분이 지났거나 이미 보낸 번호라면 전자칠판에서 다시 눌러 주세요.','err');
+    if(c==='nocode') say('번호를 찾을 수 없습니다. 3분이 지났거나 이미 보낸 번호라면 전자칠판에서 다시 눌러 새 QR을 찍어 주세요.','err');
     else if(c==='busy'||c===429) say('잠시 뒤에 다시 보내 주세요.','err');
-    else if(c==='toolarge') say('사진이 너무 커요. 다른 사진을 골라 주세요.','err');
-    else say('중계 서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요. ('+(c||(e&&e.name)||'network')+')','err');
-  }finally{ $('send').disabled=!jpeg; }
+    else if(c==='toolarge') say('사진이 너무 큽니다. 다른 사진을 골라 주세요.','err');
+    else say('중계 서버에 연결할 수 없습니다. 인터넷 연결을 확인해 주세요. ('+(c||(e&&e.name)||'network')+')','err');
+  }finally{ update(); }
 };
+draw();
 })();
 </script>
 </body>
