@@ -588,6 +588,11 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
       <div class="note">보기·쓰기에서 붓이 쓰는 글자와 따라 쓰는 흐린 글자예요. 바른바탕은 학교안심 바른바탕 B 글꼴이에요.</div>
      </div>
      <div class="row">
+      <label class="t">연습지 획순 번호</label>
+      <div class="seg" id="wsNumSeg"><button data-v="off">넣지 않음</button><button data-v="on">넣기</button></div>
+      <div class="note">쓰기 연습지 맨 위 본보기 글자에 획 순서 번호를 넣을지 정해요. 획순은 앱의 보기에서 붓이 써 보여 줘요.</div>
+     </div>
+     <div class="row">
       <label class="t">글꼴</label>
       <div class="seg" id="fontSeg"><button data-v="easy">쉬운 글꼴만</button><button data-v="all">다양하게</button></div>
       <div class="note">처음에는 쉬운 글꼴(고딕·둥근 글씨)로 시작하고, 익숙해지면 다양하게 바꿔요.</div>
@@ -1303,6 +1308,7 @@ const S = {
   bubble: LS.get('bubble', 'on'),
   ceil: LS.get('ceil', 'auto'),
   vol: LS.get('vol', 2),
+  wsNum: LS.get('wsNum', 'off'),   /* 쓰기 연습지 본보기의 획순 번호: off(기본)·on */
   glyph: LS.get('glyph', 'bareon'),   /* 쓰기 글자 모양: bareon 바른바탕 · stroke 획 글자 */
   level: LS.get('level', 1)
 };
@@ -3762,6 +3768,7 @@ segInit('#bubbleSeg', 'bubble', () => setTimeout(paintMoreSum, 0));
 segInit('#ceilSeg', 'ceil');
 segInit('#volSeg', 'vol', () => setTimeout(paintMoreSum, 0));
 segInit('#glyphSeg', 'glyph', () => { GlyphFont.load(); paintMoreSum(); });
+segInit('#wsNumSeg', 'wsNum');
 function paintWriteNote() {
   setTimeout(paintMoreSum, 0);
   $('#writeNote').textContent = (S.writeMode === 'guide' ? '그림(장면 그림은 크레파스)을 끌면 획 길을 따라 그어져요. 가만히 있으면 반짝이고, 더 기다리면 대신 그어 줘요.'
@@ -3863,7 +3870,8 @@ function wsWordSvg(w, kind, cellMM) {
     if (font) ws.glyphs.forEach(o => g += `<text x="${o.x}" y="${o.y}" text-anchor="middle" font-size="${GF}" font-family="${GLYPH_FONT}" fill="${col}">${o.ch}</text>`);
     else ws.strokes.forEach(st => g += `<path d="${d(st)}" fill="none" stroke="${kind === 'model' && isFocus(st) ? '#D9663B' : col}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`);
   }
-  if (kind === 'model') {
+  const nums = kind === 'model' && S.wsNum === 'on';
+  if (nums) {
     /* 획 순서 번호: 글자마다 1부터. 획이 시작하는 곳 바로 뒤쪽(긋는 방향의 반대)에 둠 */
     const used = []; let syl = -1, num = 0;
     ws.strokes.forEach(st => {
@@ -3878,7 +3886,7 @@ function wsWordSvg(w, kind, cellMM) {
       g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#2F5D8A"/><text x="${x.toFixed(1)}" y="${(y + 2.6).toFixed(1)}" font-size="7.5" font-family="Noto Sans KR,sans-serif" font-weight="700" fill="#fff" text-anchor="middle">${num}</text>`;
     });
   }
-  const top = kind === 'model' ? -9 : 3, hh = kind === 'model' ? 132 : 114;   /* 본보기: 번호가 칸 밖에 놓여도 보이게 */
+  const top = nums ? -9 : 3, hh = nums ? 132 : 114;   /* 본보기: 번호가 칸 밖에 놓여도 보이게 */
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="3 ${top} ${U + 4} ${hh}" width="${((U + 4) * mm).toFixed(1)}mm" height="${(hh * mm).toFixed(1)}mm" overflow="visible">${g}</svg>`;
 }
 async function worksheetHTML(words) {
@@ -3888,15 +3896,15 @@ async function worksheetHTML(words) {
     const picMM = 42, modelCell = Math.min(52, (184 - picMM - 6 - 4) / n);   /* 그림 + 간격 + 글자 칸이 종이 안(184mm)에 */
     const practiceH = 271 - 22 - Math.max(modelCell, picMM) - 8;
     /* 종이를 꽉 채우게: 칸 크기와 줄·칸 수를 함께 골라 연습 칸 넓이가 가장 큰 배치를 씀(칸은 6개 이상).
-       칸이 남으면 뒤쪽 단계(혼자 → 시작점 → 점선 → 흐리게)부터 하나씩 더 줌 */
+       6칸 넘게 되면 뒤쪽 단계(혼자 → 아주 흐리게 → 더 흐리게 → 흐리게 → 진하게)부터 하나씩 더 줌 */
     let best = null;
-    for (let c = 62; c >= 18; c--) {
+    for (let c = 62; c >= 16; c--) {   /* 연습 12~15번: 그 안에서 칸이 가장 큰 배치(줄 수를 줄여 15번을 넘지 않게, 칸이 남지 않게) */
       const per = Math.floor((180 + 8) / (n * c * 1.04 + 8)); if (per < 1) continue;
-      const rows = Math.floor((practiceH + 8) / (c * 1.04 + 8)), T = per * rows; if (T < 6) continue;
+      const rows = Math.min(Math.floor((practiceH + 8) / (c * 1.04 + 8)), Math.floor(15 / per)), T = per * rows; if (T < 12) continue;
       const cover = T * c * c;
-      if (!best || cover > best.cover * 1.02) best = { cell: c, per, rows, T: Math.min(T, 18), cover };
+      if (!best || cover > best.cover * 1.02) best = { cell: c, per, rows, T, cover };
     }
-    if (!best) best = { cell: 18, T: 6 };
+    if (!best) best = { cell: 16, per: 1, T: 12 };
     const cell = best.cell, cnt = { dark: 1, light: 2, pale: 1, faint: 1, blank: 1 }, more = ['blank', 'faint', 'pale', 'light', 'dark'];
     for (let i = 0; i < best.T - 6; i++) cnt[more[i % more.length]]++;
     const order = ['dark', 'light', 'pale', 'faint', 'blank'].flatMap(k => Array(cnt[k]).fill(k));
