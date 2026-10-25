@@ -24,4 +24,10 @@ study/doc.html  설명 페이지 불러오기(2026-10-23). 서버 study 폴더�
               가져와 내 도메인 주소로 보여 줌. 여는 것: 이름이 _guide · record-guide · cloud-key · gemini-key 로 끝나는 페이지.
               설명 페이지는 그림·링크를 GitHub 절대 주소로 쓴다(상대 주소 금지). 새 설명 페이지도 이 주소로 링크.
 
+puzzle-rank.php  내 그림 퍼즐(002) S·S+ 모든 학교 순위표(2026-10-25). 맨 위 폴더에 올림
+              (기록은 같은 곳 puzzle-rank-data/ 를 스스로 만들고 웹에서 막음).
+              받는 것: 별명(한글·영문·숫자 8자)·단계·시간·무작위 기기 번호뿐. 이름·학교·사진은 받지 않음.
+              점검: https://www.charum.org/puzzle-rank.php?ping → "ok": true · "version": "2026-10-25"
+              잘못된 별명을 지우려면 맨 위 $ADMIN_TOKEN 에 20자 이상 글자를 서버에서만 넣고 act:"del"(저장소에는 넣지 않음).
+
 key-relay.php · photo-relay.php 원본은 아직 여기 없습니다(서버에만 있음).

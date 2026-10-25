@@ -130,6 +130,34 @@ body.solo #soloBtns{display:flex}
 #soloBtns button svg{width:1.1em;height:1.1em}
 #againBtn{background:var(--cream);color:var(--ocean)}
 #otherBtn{background:transparent;color:var(--cream);box-shadow:inset 0 0 0 3px var(--cream)}
+/* ---------- S·S+ 초시계와 기록 ---------- */
+#clock{position:absolute;left:16px;bottom:14px;z-index:4;display:none;align-items:center;gap:8px;font-family:var(--f-display);font-size:26px;color:var(--cream);
+  background:rgba(15,36,48,.62);border-radius:16px;padding:4px 16px 4px 12px;font-variant-numeric:tabular-nums;pointer-events:none}
+#clock svg{width:24px;height:24px;stroke-width:2.2}
+body.super:not(.admin):not(.setup):not(.home) #clock{display:flex}
+#superInfo{display:none;width:100%;justify-content:center;align-items:center;gap:14px 18px;flex-wrap:wrap;font-size:clamp(22px,2.4vw,32px);pointer-events:auto}
+body.super #superInfo{display:flex}
+#doneLabel:not(.on) #superInfo{pointer-events:none}
+#superInfo .best{color:#FFD58A}
+#superInfo button{border:0;border-radius:999px;background:var(--cream);color:var(--ocean);font-family:var(--f-display);font-size:clamp(20px,2.2vw,28px);padding:8px 22px;min-height:56px;display:inline-flex;align-items:center;gap:8px}
+#superInfo button svg{width:1.1em;height:1.1em}
+#superHint .mini{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;margin-left:6px}
+#superHint .mini svg{width:18px;height:18px;stroke-width:2}
+.rk-tabs{display:flex;gap:6px}
+.rk-tabs button{border:2px solid var(--gline);background:#fff;color:var(--ink);border-radius:12px;min-height:42px;padding:4px 16px;font-weight:700;font-size:16px}
+.rk-tabs button[aria-pressed="true"]{background:var(--g);border-color:var(--g);color:#fff}
+.rk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.rk-col h3{margin:0 0 8px;font-size:17px;color:var(--g2)}
+.rk-col table{width:100%;border-collapse:collapse;font-size:15.5px}
+.rk-col td{padding:6px 6px;border-bottom:1px solid var(--gline)}
+.rk-col td.r{width:2.6em;font-weight:700;color:var(--g2);text-align:center}
+.rk-col td.t{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.rk-col td.d{width:5.5em;color:#7A858A;font-size:13px;text-align:right;white-space:nowrap}
+.rk-col tr.me td{background:#EEF3F6}
+.rk-col .note{margin-top:8px}
+.rk-nick{margin-top:16px;padding:12px 14px;border-radius:14px;background:#F3F6F8;border:1px solid var(--gline)}
+.rk-nick .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.rk-nick input{font:inherit;font-size:16px;min-height:42px;border-radius:10px;border:2px solid var(--gline);padding:4px 10px;width:12em;color:var(--ink);background:#fff}
 /* 기록 중: 녹화처럼 작은 빨간 점(깜빡이지 않음, 이름 없음) */
 #recMark{position:fixed;left:14px;top:12px;z-index:20;display:none;align-items:center;gap:6px;font-size:13px;font-weight:700;color:rgba(251,235,214,.7);pointer-events:none}
 #recMark::before{content:"";width:10px;height:10px;border-radius:50%;background:#E5484D;opacity:.85}
@@ -335,13 +363,15 @@ body.admin #play{pointer-events:none}
 <div id="recMark">기록 중 <span id="recCount"></span></div>
 <div class="ov" id="galBox" role="dialog" aria-modal="true"></div>
 <div class="ov" id="recBox" role="dialog" aria-modal="true"></div>
+<div class="ov" id="rankBox" role="dialog" aria-modal="true"></div>
 
 <div id="play">
   <div id="prog"></div>
   <div class="pbox" id="pbox"><div class="veil"></div></div>
   <div class="pboard" id="pboard"><div class="ghost" id="ghost"></div><div class="full" id="full"></div><svg id="guide"></svg></div>
   <div id="endShow"></div>
-  <div id="doneLabel"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>다 맞췄어요<div id="soloBtns"><button type="button" id="againBtn"></button><button type="button" id="otherBtn"></button></div></div>
+  <div id="clock" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2.5h4"/></svg><span id="clockT">0:00</span></div>
+  <div id="doneLabel"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>다 맞췄어요<div id="superInfo"></div><div id="soloBtns"><button type="button" id="againBtn"></button><button type="button" id="otherBtn"></button></div></div>
 </div>
 <div class="dock" id="dockTop"></div>
 <div class="dock" id="dockBot"></div>
@@ -539,6 +569,7 @@ window.PhotoRelay={receive,close};
 
 /* ================= 기본 데이터 ================= */
 const ICON={
+  cup:'<svg class="ic" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4.5a2.5 2.5 0 0 0 2.6 3.6M17 6h2.5a2.5 2.5 0 0 1-2.6 3.6M12 14v3.5M8.5 20.5h7M10 17.5h4"/></svg>',
   jig:'<svg class="ic" viewBox="0 0 48 48"><path d="M8 8h11a4 4 0 1 1 8 0h13v12a4 4 0 1 0 0 8v12H27a4 4 0 1 0-8 0H8V28a4 4 0 1 1 0-8z"/></svg>',
   rect:'<svg class="ic" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="2"/><path d="M24 8v32M8 24h32" stroke-dasharray="3 3"/></svg>',
   pair:'<svg class="ic" viewBox="0 0 48 48"><circle cx="17" cy="15" r="6"/><circle cx="33" cy="19" r="4.5"/><path d="M6 40c0-7 5-12 11-12s11 5 11 12M27 40c0-5 3-9 7-9s7 4 7 9"/></svg>',
@@ -561,9 +592,12 @@ const ICON={
   q:'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.4 9.4a2.7 2.7 0 1 1 3.7 2.5c-.7.3-1.1.9-1.1 1.7v.5M12 17.2h.01"/></svg>'
 };
 /* 단계: 가로 5칸 고정, 줄 수 = 단계 */
-const LEVELS={1:{cols:5,rows:1},2:{cols:5,rows:2},3:{cols:5,rows:3},4:{cols:5,rows:4},5:{cols:5,rows:5},6:{cols:10,rows:5}};
-/* 마지막 단계 "S" = 50조각(가로 10 × 세로 5). 큰 퍼즐을 좋아하는 학생을 위해. 안에서는 6단계로 셈 */
-const MAXLV=6, LVN=lv=>+lv===6?'S':String(lv);
+const LEVELS={1:{cols:5,rows:1},2:{cols:5,rows:2},3:{cols:5,rows:3},4:{cols:5,rows:4},5:{cols:5,rows:5},6:{cols:10,rows:5},7:{cols:10,rows:5,rot:true,heap:true}};
+/* 수퍼 단계(큰 퍼즐을 좋아하는 학생을 위해, 초시계로 시간을 잼). 안에서는 6·7단계로 셈
+   "S"  = 50조각(가로 10 × 세로 5)
+   "S+" = 50조각 + 조각이 아무 방향으로 돌아가 있고(살짝 누르면 90도씩 돌림), 판 밖에 고르지 않게 몰려 뿌려짐 */
+const MAXLV=7, LVN=lv=>+lv===6?'S':+lv===7?'S+':String(lv), isSuper=lv=>+lv>=6;
+const LV_OF=v=>v==='S'?6:v==='S+'?7:+v;
 const SHAPES={jig:'퍼즐 모양',rect:'사각형'};
 const GHOSTS={1:'진하게',2:'흐리게',3:'더 흐리게',4:'안 보이게'};
 const pieceCount=lv=>LEVELS[lv].cols*LEVELS[lv].rows;
@@ -658,8 +692,8 @@ function renderDocks(){
     `<div class="grp">${b('sfx',(S.sfx?ICON.sndOn:ICON.sndOff)+(S.sfx?'효과음':'효과음 끔'),S.sfx)}${b('setup',ICON.gear+'설정')}</div>`;
   $('helpTop').innerHTML=b('tour',ICON.q+'도움말');
   $('dockBot').innerHTML = !R ? '' : done
-    ? `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${S.mode==='teacher'&&S.idx<S.list.length-1?b('nextpic',ICON.next+'다음 그림'):''}${S.mode==='teacher'&&S.list.length>1?b('first',ICON.redo+'첫 그림부터'):''}${S.level<MAXLV?b('nextlv',ICON.next+'다음 단계'):''}${b('setup',ICON.photo+'다른 그림으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
-    : `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${b('mix',ICON.mix+'다시 섞기',null,R&&R.active?'':'disabled')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`;
+    ? `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${S.mode==='teacher'&&S.idx<S.list.length-1?b('nextpic',ICON.next+'다음 그림'):''}${S.mode==='teacher'&&S.list.length>1?b('first',ICON.redo+'첫 그림부터'):''}${S.level<MAXLV?b('nextlv',ICON.next+'다음 단계'):''}${b('setup',ICON.photo+'다른 그림으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}${isSuper(R.level)?b('rank',ICON.cup+'S·S+ 기록'):''}</div>`
+    : `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${b('mix',ICON.mix+'다시 섞기',null,R&&R.active?'':'disabled')}${b('log',ICON.log+'기록',!$('logPop').hidden)}${isSuper(R.level)?b('rank',ICON.cup+'S·S+ 기록'):''}</div>`;
 }
 function onDock(e){
   const btn=e.target.closest('button[data-a]'); if(!btn) return;
@@ -680,6 +714,7 @@ function onDock(e){
   if(a==='again') startRound();
   if(a==='nextlv'){ S.level=Math.min(MAXLV,S.level+1); store.set('level',S.level); startRound(); }
   if(a==='print') printSheet();
+  if(a==='rank'){ openRank(S.R?S.R.level:S.level); return; }
   if(a==='log'){ $('logPop').hidden=!$('logPop').hidden; renderLog(); renderDocks(); }
 }
 $('dockTop').addEventListener('click',onDock); $('dockBot').addEventListener('click',onDock); $('helpTop').addEventListener('click',onDock);
@@ -934,7 +969,7 @@ function importCSV(text){
     let st=students.find(x=>x.name===name); if(!st){ st={id:newSid(),name}; students.push(st); }
     const t=new Date(c[ix('날짜')]+'T'+(c[ix('시각')]||'00:00:00')).getTime(); if(!t) return;
     const key=st.id+'|'+Math.round(t/1000); if(have.has(key)){ skipped++; return; }
-    const lv=c[ix('단계')]==='S'?6:+c[ix('단계')], n=+c[ix('조각 수')];
+    const lv=LV_OF(c[ix('단계')]), n=+c[ix('조각 수')];
     LOG.push({s:st.id,t,pic:c[ix('그림')]||'',src:back(SRC_NAME,c[ix('출처')])||'',lv,n,sh:back(SHAPES,c[ix('모양')])||'jig',gh:+back(GH_SHORT,c[ix('밑그림')])||1,em:back(EM_NAME,c[ix('다른 자리')])||'show',first:+c[ix('바로 맞힘')]||0,helped:+c[ix('도움 받아 맞힘')]||0,ms:(+c[ix('걸린 시간(초)')]||0)*1000,mode:c[ix('방식')]==='학생 혼자'?'solo':'teacher'});
     have.add(key); added++;
   });
@@ -947,7 +982,7 @@ function openRecords(sid){ if(sid) RV.student=sid; RV.demo=false; renderRecords(
 function closeRecords(){ $('recBox').classList.remove('on'); }
 function ladderHTML(sm){
   const head=`<tr><th>조각 수 \\ 밑그림</th>${[1,2,3,4].map(g=>`<th>${GH_SHORT[g]}</th>`).join('')}</tr>`;
-  const body=[1,2,3,4,5,6].map(lv=>`<tr><th>${LVN(lv)}단계 <small>${pieceCount(lv)}조각</small></th>${[1,2,3,4].map(g=>{ const k=rungOf(lv,g), c=sm.cells[k];
+  const body=Object.keys(LEVELS).map(Number).map(lv=>`<tr><th>${LVN(lv)}단계 <small>${pieceCount(lv)}조각</small></th>${[1,2,3,4].map(g=>{ const k=rungOf(lv,g), c=sm.cells[k];
     const cls=!c?'':c.solo?'solo':'try'; const mark=k===sm.best?' best':'';
     return `<td class="${cls}${mark}">${c?`${c.n}번<small>혼자 ${c.solo}</small>`:''}</td>`; }).join('')}</tr>`).join('');
   return `<table class="ladder">${head}${body}</table>`;
@@ -1054,7 +1089,7 @@ function showSetup(){
   document.body.classList.remove('home'); document.body.classList.add('setup'); setAdmin(false);
   document.querySelectorAll('.pc').forEach(e=>e.remove());
   const tile=(name,val,cur,inner)=>`<label class="tile"><input type="radio" name="${name}" value="${val}" ${String(cur)===String(val)?'checked':''}><span>${inner}</span></label>`;
-  const lvTiles=()=>Object.keys(LEVELS).map(l=>tile('level',l,S.level,`<b>${LVN(l)}</b><small>${pieceCount(+l)}조각</small>`)).join('');
+  const lvTiles=()=>Object.keys(LEVELS).map(l=>tile('level',l,S.level,`<b>${LVN(l)}</b><small>${pieceCount(+l)}조각${LEVELS[l].rot?' · 돌림':''}</small>`)).join('');
   $('setup').innerHTML=`<div class="sp">
     <div class="sp-head">${ICON.jig}<div><h1><small>차름 놀이</small>내 그림 퍼즐</h1><p>그림을 퍼즐 조각으로 나누고, 학생이 조각을 끌어서 제자리에 놓아요. 이 화면은 선생님·보호자용입니다.</p></div></div>
     <section class="card" id="whoCard"><h2>${NO(1)}누구와 하나요?</h2>
@@ -1081,6 +1116,7 @@ function showSetup(){
     <section class="card" id="lvCard"><h2>${NO(3)}오늘 할 단계</h2>
       <div class="advice" id="advice"></div>
       <h3>조각 수</h3><div class="tiles lv" id="lvTiles">${lvTiles()}</div>
+      <p class="hint" id="superHint"></p>
       <h3>판에 보이는 밑그림</h3><div class="tiles">
         ${tile('ghost',1,S.ghost,'진하게<small>처음 하는 학생</small>')}
         ${tile('ghost',2,S.ghost,'흐리게<small>조금 익숙한 학생</small>')}
@@ -1107,7 +1143,7 @@ function showSetup(){
     </div></details>
     <div class="startbar"><span class="msg" id="startMsg" aria-live="polite"></span><button class="go" id="startBtn" type="button">시작</button></div>
   </div>`;
-  refreshWho(); renderList(); modeUI();
+  refreshWho(); renderList(); modeUI(); superHint();
   /* 예시 사진 작은 그림 */
   const th=$('thSample'); th.style.backgroundImage=`url("${SAMPLE_SRC[0]}")`;
   loadArts().then(a=>{ const t=$('thArt'); if(t&&a.length){ t.innerHTML=''; t.style.backgroundImage=`url("${(a[7]||a[0]).url}")`; } });
@@ -1138,7 +1174,7 @@ function showSetup(){
   };
   $('setup').querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
     if(r.name==='mode'){S.mode=r.value; store.set('mode',S.mode); modeUI();}
-    if(r.name==='level'){S.level=+r.value; store.set('level',S.level);}
+    if(r.name==='level'){S.level=+r.value; store.set('level',S.level); superHint();}
     if(r.name==='shape'){S.shape=r.value; store.set('shape',S.shape);}
     if(r.name==='ghost'){S.ghost=+r.value; store.set('ghost2',S.ghost);}
     if(r.name==='errorMode'){S.errorMode=r.value; store.set('errorMode',S.errorMode);}
@@ -1153,6 +1189,9 @@ function showSetup(){
   /* 지난번 목록은 다시 열어도 그대로(보관한 사진이 지워졌으면 빠짐) */
   restoreList().then(renderList);
 }
+function superHint(){ const h=$('superHint'); if(!h) return;
+  h.innerHTML=isSuper(S.level)?`<b>${LVN(S.level)}단계</b>: 화면 왼쪽 아래 초시계로 걸린 시간을 재요${S.level===7?'. 조각이 아무 방향으로 돌아가 있고 판 밖에 몰려 있어요. 조각을 <b>살짝 누르면 90도씩</b> 돌아가고, 바른 방향일 때만 제자리에 붙어요':''}. <button class="mini" type="button" id="rankOpen">${ICON.cup}S·S+ 기록 보기</button>`:'';
+  const b=$('rankOpen'); if(b) b.onclick=()=>openRank(S.level); }
 function modeUI(){
   const h=$('picHint'); if(!h) return;
   const ph=$('plistHead'); if(ph) ph.innerHTML=S.mode==='solo'?'학생 화면 맨 앞에 둘 그림 <small>학생 혼자: 첫 화면에 이 그림들, 예시 사진, 일상 그림이 모두 나와요</small>':'오늘 할 그림 <small>순서대로 하고, 다 맞추면 다음 그림으로 저절로 넘어가요</small>';
@@ -1174,7 +1213,7 @@ let nextT=null;
 function scheduleNext(){
   clearTimeout(nextT);
   if(S.mode==='solo'||!S.list.length) return;
-  const go=()=>{ if(S.admin){ nextT=setTimeout(go,600); return; } if(!S.R||!S.R.done) return;
+  const go=()=>{ if(S.admin||$('rankBox').classList.contains('on')){ nextT=setTimeout(go,600); return; } if(!S.R||!S.R.done) return;
     if(S.idx<S.list.length-1) playItem(S.idx+1); else showEnd(); };
   nextT=setTimeout(go,4450);
 }
@@ -1273,18 +1312,21 @@ function startRound(){
   const R={level:S.level, shape:S.shape, ghost:S.ghost, cols:L.cols, rows:L.rows, seed:(Math.random()*1e9)|0, pieces:[], active:false, done:false, start:0, cue:null};
   makeEdges(R);
   for(let r=0;r<R.rows;r++) for(let c=0;c<R.cols;c++){
-    R.pieces.push({r,c,placed:false,miss:0,help:false,x:0,y:0,s:1});
+    R.pieces.push({r,c,placed:false,miss:0,help:false,x:0,y:0,s:1,rot:0});
   }
   R.pieces.forEach((p,i)=>p.order=i);
   const play=$('play');
   R.pieces.forEach(p=>{ const el=document.createElement('canvas'); el.className='pc'; play.appendChild(el); p.el=el; attachDrag(p); });
-  S.R=R;
+  S.R=R; R.paused=0; R.pauseAt=0; document.body.classList.toggle('super',isSuper(R.level)); $('superInfo').innerHTML=''; $('clockT').textContent='0:00';
   $('full').classList.remove('on'); $('doneLabel').classList.remove('on'); $('guide').style.visibility=''; $('pbox').classList.remove('clear');
   G=null; layout();
   /* 시작: 완성된 그림 모양으로 놓였다가 → 판 둘레로 흩어짐 */
   R.pieces.forEach(p=>{ p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1; setPos(p); });
   updateProgress(); renderDocks();
   timer=setTimeout(()=>{
+    /* S+: 흩어지면서 아무 방향으로 돌아감(0·90·180·270도), 겹쳐 쌓이는 차례도 섞음 */
+    if(LEVELS[R.level].rot) R.pieces.forEach(p=>{ p.rot=90*Math.floor(Math.random()*4); });
+    if(LEVELS[R.level].heap) shuffleArr(R.pieces.slice()).forEach(p=>play.appendChild(p.el));
     R.pieces.forEach(p=>{ p.el.classList.add('scatter'); p.x=p.slot.x; p.y=p.slot.y; p.s=p.slot.s; setPos(p); });
     timer=setTimeout(()=>{ R.pieces.forEach(p=>p.el.classList.remove('scatter')); R.active=true; R.start=Date.now(); renderDocks(); },950);
   },650);
@@ -1299,12 +1341,12 @@ function layout(){
   const n=R.pieces.filter(p=>!p.placed).length;
   let best=null;
   for(const fac of [1,.9,.8,.7,.6]){
-    const g=geom(W,H,top,bottom,land,fac,R), sl=fitSlots(g,n,W,H,top,bottom,gap);
+    const g=geom(W,H,top,bottom,land,fac,R), sl=fitSlots(g,n,W,H,top,bottom,gap,isSuper(R.level));
     const cand={...g,...sl};
     if(!best || sl.s>best.s) best=cand;
     if(sl.s>=0.6){ best=cand; break; }
   }
-  const old=G; G=best;
+  const old=G; G=best; G.top=top; G.bottom=bottom;
   /* 판 */
   const bg=`url(${S.img.url})`;
   Object.assign($('pbox').style,{left:G.bx+'px',top:G.by+'px',width:G.bw+'px',height:G.bh+'px',borderRadius:Math.round(G.f*0.8)+'px',backgroundImage:bg,backgroundSize:`${G.bw}px ${G.bh}px`});
@@ -1318,12 +1360,33 @@ function layout(){
   G.R=R;
   /* 자리 */
   const list=R.pieces.filter(p=>!p.placed);
-  const slots=shuffleArr(G.slots.slice()).slice(0,list.length);
-  slots.sort((a,b)=>a.k-b.k);
+  const slots=slotsFor(list.length);
   shuffleArr(list).forEach((p,i)=>{ p.slot={x:slots[i].x,y:slots[i].y,s:G.s}; if(!p.dragging&&(R.active||R.done)){ if(p.free) clampPiece(p); else { p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; } } });
   R.pieces.forEach(p=>{ if(p.placed){ p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1; } if(!p.dragging) setPos(p); });
   if(R.cue) showTarget(R.cue);
   placeDoneLabel();
+}
+/* 남은 조각 자리: 보통은 판 둘레에 고르게, S+는 판 밖 몇 곳에 몰리게(겹쳐도 됨) */
+function slotsFor(n){
+  const R=S.R;
+  if(!R||!LEVELS[R.level].heap){ const s=shuffleArr(G.slots.slice()).slice(0,n); s.sort((a,b)=>a.k-b.k); return s; }
+  const pl=$('play'), W=pl.clientWidth, H=pl.clientHeight, fw=G.EW*G.s, fh=G.EH*G.s, top=G.top, bottom=G.bottom;
+  const ok=(x,y)=>x>=4&&y>=top&&x+fw<=W-4&&y+fh<=H-bottom
+    && !(x+fw>G.bx-4&&x<G.bx+G.bw+4&&y+fh>G.by-4&&y<G.by+G.bh+4)
+    && !(x+fw>W-78&&y+fh>H-78) && !(x<190&&y+fh>H-64);
+  const any=()=>{ for(let i=0;i<400;i++){ const x=Math.random()*(W-fw), y=top+Math.random()*(H-top-bottom-fh); if(ok(x,y)) return {x,y}; } return null; };
+  const centers=[]; const nc=3+Math.floor(Math.random()*3); for(let i=0;i<nc;i++){ const c=any(); if(c) centers.push(c); }
+  const gauss=()=>(Math.random()+Math.random()+Math.random()-1.5)/1.5;
+  const out=[];
+  for(let k=0;k<n;k++){
+    let q=null;
+    if(centers.length&&Math.random()<0.78){ const c=centers[Math.floor(Math.random()*centers.length)];
+      for(let i=0;i<40&&!q;i++){ const x=c.x+gauss()*fw*1.6, y=c.y+gauss()*fh*1.4; if(ok(x,y)) q={x,y}; } }
+    if(!q) q=any();
+    if(!q){ const s=G.slots[k%G.slots.length]; q={x:s.x,y:s.y}; }
+    out.push({x:q.x,y:q.y,k});
+  }
+  return out;
 }
 function geom(W,H,top,bottom,land,fac,R){
   const aw=W, ah=H-top-bottom;
@@ -1337,7 +1400,7 @@ function geom(W,H,top,bottom,land,fac,R){
   return {bx,by,bw,bh,f,ix,iy,iw,ih,pw,ph,S:Sz,m,EW:pw+2*m,EH:ph+2*m,dpr:Math.min(2,window.devicePixelRatio||1)};
 }
 /* 판 둘레 네 곳(왼쪽·오른쪽·위·아래)에 고르게 자리 만들기 */
-function fitSlots(g,n,W,H,top,bottom,gap){
+function fitSlots(g,n,W,H,top,bottom,gap,clock){
   const regions=[
     {x:gap,y:top,w:g.bx-2*gap,h:H-top-bottom},
     {x:g.bx+g.bw+gap,y:top,w:W-(g.bx+g.bw)-2*gap,h:H-top-bottom},
@@ -1353,6 +1416,7 @@ function fitSlots(g,n,W,H,top,bottom,gap){
       for(let j=0;j<rows;j++) for(let i=0;i<cols;i++){
         const x=rg.x+sx*(i+1)+fw*i+(Math.random()-.5)*sx*0.6, y=rg.y+sy*(j+1)+fh*j+(Math.random()-.5)*sy*0.6;
         if(x+fw>W-78 && y+fh>H-78) continue; /* 교사 버튼 자리 피함 */
+        if(clock && x<190 && y+fh>H-64) continue; /* 초시계 자리 피함 */
         out.push({x,y,k:out.length});
       }
     });
@@ -1376,9 +1440,10 @@ function drawPiece(p){
   ctx.beginPath(); chainPath(ctx,ch,ox,oy); ctx.closePath();
   ctx.lineJoin='round'; ctx.lineWidth=1.4; ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.stroke();
 }
-function setPos(p){ p.el.style.transform=`translate(${p.x}px,${p.y}px) scale(${p.s})`; }
+function setPos(p){ const r=p.rot||0; p.el.style.transform=r&&G?`translate(${p.x}px,${p.y}px) scale(${p.s}) translate(${G.EW/2}px,${G.EH/2}px) rotate(${r}deg) translate(${-G.EW/2}px,${-G.EH/2}px)`:`translate(${p.x}px,${p.y}px) scale(${p.s})`; }
 function clampPiece(p){ const pl=$('play'), W=pl.clientWidth, H=pl.clientHeight, w=G.EW*p.s, h=G.EH*p.s; p.x=Math.min(Math.max(0,p.x),W-w); p.y=Math.min(Math.max(0,p.y),H-h);
-  if(p.x+w>W-74&&p.y+h>H-74) p.x=Math.max(0,W-74-w); /* 관리 버튼은 가리지 않게 */ }
+  if(p.x+w>W-74&&p.y+h>H-74) p.x=Math.max(0,W-74-w); /* 관리 버튼은 가리지 않게 */
+  if(S.R&&isSuper(S.R.level)&&p.x<190&&p.y+h>H-64) p.y=Math.max(0,H-64-h); /* 초시계도 */ }
 function updateProgress(){ const R=S.R; if(!R) return; const pr=$('prog');
   /* 그림이 여러 장이면 진행 막대는 그림 차례(그림 하나에 한 칸). 조각은 판에서 보임 */
   if(S.mode==='teacher'&&S.list.length>1){ const n=S.list.length, k=S.idx+(R.done?1:0);
@@ -1397,39 +1462,52 @@ function placeDoneLabel(){
 
 /* ================= 끌어서 놓기 ================= */
 function attachDrag(p){
-  const el=p.el; let pid=null, fx=0, fy=0;
+  const el=p.el; let pid=null, fx=0, fy=0, t0=0, x0=0, y0=0, moved=false;
   const rel=e=>{ const P=$('play').getBoundingClientRect(); return {x:e.clientX-P.left,y:e.clientY-P.top}; };
   el.addEventListener('pointerdown',e=>{
     const R=S.R; if(p.placed||!R||!R.active||pid!==null) return;
     e.preventDefault(); pid=e.pointerId; try{el.setPointerCapture(pid);}catch(_){}
-    const pt=rel(e); fx=(pt.x-p.x)/(G.EW*p.s); fy=(pt.y-p.y)/(G.EH*p.s);
-    p.dragging=true; p.s=1; p.x=pt.x-fx*G.EW; p.y=pt.y-fy*G.EH;
+    /* 잡은 곳이 조각 가운데에서 얼마나 떨어졌는지(돌아간 조각도 손가락 아래 그 자리 그대로) */
+    const pt=rel(e); fx=(pt.x-(p.x+G.EW/2*p.s))/p.s; fy=(pt.y-(p.y+G.EH/2*p.s))/p.s;
+    t0=performance.now(); x0=e.clientX; y0=e.clientY; moved=false;
+    p.dragging=true; p.s=1; p.x=pt.x-fx-G.EW/2; p.y=pt.y-fy-G.EH/2;
     el.classList.remove('anim'); el.classList.add('drag'); setPos(p);
     if(R.cue===p) showTarget(p); else if(R.cue){ R.cue.el.classList.remove('cue'); R.cue=null; hideTarget(); }
   });
-  el.addEventListener('pointermove',e=>{ if(e.pointerId!==pid) return; const pt=rel(e); p.x=pt.x-fx*G.EW; p.y=pt.y-fy*G.EH; setPos(p); });
-  const up=e=>{ if(e.pointerId!==pid) return; pid=null; p.dragging=false; el.classList.remove('drag'); drop(p); };
+  el.addEventListener('pointermove',e=>{ if(e.pointerId!==pid) return; if(Math.hypot(e.clientX-x0,e.clientY-y0)>10) moved=true; const pt=rel(e); p.x=pt.x-fx-G.EW/2; p.y=pt.y-fy-G.EH/2; setPos(p); });
+  const up=e=>{ if(e.pointerId!==pid) return; pid=null; p.dragging=false; el.classList.remove('drag');
+    /* S+: 끌지 않고 살짝 누르면 시계 방향으로 90도 */
+    if(S.R&&LEVELS[S.R.level].rot&&!moved&&performance.now()-t0<450){ turn(p); return; }
+    drop(p); };
   el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up);
   el.addEventListener('lostpointercapture',e=>{ if(pid!==null) up(e); });
+}
+function turn(p){
+  p.rot=(p.rot||0)+90; p.free=true; p.el.classList.add('anim'); clampPiece(p); setPos(p); $('play').appendChild(p.el);
+  setTimeout(()=>p.el.classList.remove('anim'),340);
+  const R=S.R, cx=G.ix+p.c*G.pw-G.m, cy=G.iy+p.r*G.ph-G.m;
+  if(p.rot%360===0&&Math.hypot(p.x-cx,p.y-cy)<Math.min(Math.max(30,0.2*Math.max(G.pw,G.ph)),0.45*Math.min(G.pw,G.ph))) setTimeout(()=>{ if(R===S.R&&R.active&&!p.placed) place(p,false); },330);
 }
 function drop(p){
   const R=S.R; if(!R||!R.active) return;
   const cx=G.ix+p.c*G.pw-G.m, cy=G.iy+p.r*G.ph-G.m;
+  const upright=(p.rot||0)%360===0;
   /* 넉넉하게: 30px 또는 조각 크기의 20%, 단 옆 칸과 헷갈리지 않게 칸의 45%까지 */
   const thr=Math.min(Math.max(30,0.2*Math.max(G.pw,G.ph)),0.45*Math.min(G.pw,G.ph));
-  if(Math.hypot(p.x-cx,p.y-cy)<thr){ place(p,false); return; }
+  const near=Math.hypot(p.x-cx,p.y-cy)<thr;
+  if(upright&&near){ place(p,false); return; }
   const mx=p.x+G.EW/2, my=p.y+G.EH/2;
   const over=mx>G.ix-10&&mx<G.ix+G.iw+10&&my>G.iy-10&&my<G.iy+G.ih+10;
   /* 맞추지 못하면 원래 자리로 돌아가지 않고 놓은 곳에 그대로 (화면 밖으로는 안 나가게) */
   p.free=true; clampPiece(p); setPos(p); $('play').appendChild(p.el);
-  if(over){ p.miss++; if(S.errorMode==='show'||(S.errorMode==='retry'&&p.miss>=2)) cue(p); }
+  if(over&&!near){ p.miss++; if(S.errorMode==='show'||(S.errorMode==='retry'&&p.miss>=2)) cue(p); }
 }
 /* 조각과 제자리를 같은 색으로 표시 */
 function cue(p){ const R=S.R; if(R.cue&&R.cue!==p) R.cue.el.classList.remove('cue'); R.cue=p; p.el.classList.add('cue'); showTarget(p); }
 function place(p,byHelp){
   const R=S.R;
   p.placed=true; p.free=false; if(byHelp) p.help=true;
-  p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1;
+  p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1; p.rot=Math.round((p.rot||0)/360)*360;
   p.el.classList.toggle('anim',byHelp); p.el.classList.remove('cue'); p.el.classList.add('placed','snap'); setPos(p);
   setTimeout(()=>p.el.classList.remove('snap'),byHelp?380:60);
   if(R.cue===p){ R.cue=null; hideTarget(); }
@@ -1440,13 +1518,14 @@ function place(p,byHelp){
 function remix(){
   const R=S.R; if(!R||!R.active) return;
   if(R.cue){ R.cue.el.classList.remove('cue'); R.cue=null; hideTarget(); }
-  const list=R.pieces.filter(p=>!p.placed), slots=shuffleArr(G.slots.slice()).slice(0,list.length);
+  const list=R.pieces.filter(p=>!p.placed), slots=shuffleArr(slotsFor(list.length));
   list.forEach((p,i)=>{ p.free=false; p.slot={x:slots[i].x,y:slots[i].y,s:G.s}; p.el.classList.add('anim'); p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; setPos(p); });
 }
 function complete(){
   const R=S.R; R.active=false; R.done=true;
   const first=R.pieces.filter(p=>!p.help&&!p.miss).length;
-  const ms=Date.now()-R.start;
+  const ms=isSuper(R.level)?clockMs(R):Date.now()-R.start;
+  if(isSuper(R.level)){ $('clockT').textContent=clockText(ms); superDone(R,ms); }
   S.rounds.push({level:R.level, shape:R.shape, ghost:R.ghost, n:R.pieces.length, first, helped:R.pieces.length-first, ms});
   logRound(R,ms,first);
   renderDocks(); renderLog();
@@ -1456,6 +1535,92 @@ function complete(){
   },450);
   if(S.img&&S.img.key) S.doneKeys.add(S.img.key);
   scheduleNext(); updateProgress();
+}
+
+
+/* ================= S·S+ 초시계와 기록 =================
+   초시계: 판이 시작되면(조각이 흩어진 뒤) 0부터, 선생님 메뉴가 열린 동안은 멈춤. 다 맞추면 멈추고 그 시간을 기록.
+   이 기기 기록: picturePuzzle.super (학생마다·단계마다, 연습도 '연습'으로).
+   모든 학교 순위표: 선생님이 정한 별명(실명 말고)이 있을 때만 charum.org/puzzle-rank.php로 별명·단계·시간만 보냄.
+   학생 이름·학교·사진은 보내지 않음. 못 보내면 다음에 기록 창을 열 때 다시 보냄. */
+const RANK_URL='https://www.charum.org/puzzle-rank.php';
+const clockMs=R=>!R||!R.start?0:(R.pauseAt||Date.now())-R.start-R.paused;
+const clockText=ms=>{ const s=Math.floor(ms/1000); return s>=3600?`${Math.floor(s/3600)}:${String(Math.floor(s/60)%60).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`:`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; };
+const fmtRank=ms=>{ const s=ms/1000; return s<60?`${s.toFixed(1)}초`:s<3600?`${Math.floor(s/60)}분 ${String(Math.floor(s%60)).padStart(2,'0')}초`:`${Math.floor(s/3600)}시간 ${Math.floor(s/60)%60}분`; };
+setInterval(()=>{ const R=S.R; if(!R||!isSuper(R.level)||!R.active) return;
+  if(S.admin&&!R.pauseAt) R.pauseAt=Date.now();
+  if(!S.admin&&R.pauseAt){ R.paused+=Date.now()-R.pauseAt; R.pauseAt=0; }
+  $('clockT').textContent=clockText(clockMs(R)); },250);
+let SUP=[]; try{ SUP=JSON.parse(store.get('super')||'[]')||[]; }catch(e){ SUP=[]; }
+const saveSup=()=>store.set('super',JSON.stringify(SUP.slice(-1000)));
+let NICK={}; try{ NICK=JSON.parse(store.get('nicks')||'{}')||{}; }catch(e){ NICK={}; }
+const saveNick=()=>store.set('nicks',JSON.stringify(NICK));
+const DEV=(()=>{ let d=store.get('dev'); if(!/^[a-z0-9]{12}$/.test(d||'')){ d=Array.from({length:12},()=>'abcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random()*36)]).join(''); store.set('dev',d); } return d; })();
+const pkey=()=>recId||'_';
+const pname=k=>k==='_'?'연습':(nameOf(k)||'(지운 학생)');
+const NICK_OK=/^[가-힣a-zA-Z0-9 ]{1,8}$/;
+const NICK_BAD=['시발','씨발','ㅅㅂ','ㅆㅂ','병신','ㅂㅅ','개새','새끼','좆','존나','지랄','미친','fuck','shit','bitch','sex','섹스','장애','애자','등신','찐따']; /* 서버(puzzle-rank.php)와 같은 목록 */
+function superDone(R,ms){
+  const k=pkey(), mine=SUP.filter(r=>r.k===k&&r.lv===R.level);
+  const prev=mine.length?Math.min(...mine.map(r=>r.ms)):Infinity;
+  const rec={k,lv:R.level,ms,t:Date.now(),pic:S.img?S.img.name:'',nick:NICK[k]||'',up:0};
+  SUP.push(rec); saveSup();
+  const best=ms<prev;
+  $('superInfo').innerHTML=`<span>${clockText(ms)}</span>${best?(mine.length?'<span class="best">최고 기록!</span>':''):`<span style="opacity:.8">최고 ${clockText(prev)}</span>`}<button type="button" id="rankBtn">${ICON.cup}기록 보기</button>`;
+  $('rankBtn').onclick=()=>openRank(R.level);
+  pushRanks();
+}
+/* 별명이 있는 기록 중 아직 못 보낸 것을 보냄 */
+let pushing=false;
+async function pushRanks(){
+  if(pushing) return; pushing=true;
+  try{ for(const r of SUP.filter(x=>!x.up&&x.nick)){
+    const res=await fetch(RANK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'add',lv:LVN(r.lv),ms:Math.round(r.ms),nick:r.nick,dev:DEV})}).then(x=>x.json()).catch(()=>null);
+    if(!res) break; r.up=res.ok?1:2; saveSup(); } }finally{ pushing=false; }
+}
+const RK={lv:6};
+function openRank(lv){ RK.lv=isSuper(lv)?+lv:6; renderRank(); $('rankBox').classList.add('on'); pushRanks().then(()=>{ if($('rankBox').classList.contains('on')) loadWorld(); }); }
+$('rankBox').addEventListener('pointerdown',e=>{ if(e.target===$('rankBox')) $('rankBox').classList.remove('on'); });
+function renderRank(){
+  const lv=RK.lv, k=pkey(), teacher=S.admin||document.body.classList.contains('setup');
+  /* 이 기기: 사람마다 가장 빠른 기록 */
+  const bestOf={}; SUP.filter(r=>r.lv===lv).forEach(r=>{ if(!bestOf[r.k]||r.ms<bestOf[r.k].ms) bestOf[r.k]=r; });
+  const dev=Object.values(bestOf).sort((a,b)=>a.ms-b.ms).slice(0,15);
+  const mine=SUP.filter(r=>r.k===k&&r.lv===lv).slice(-8).reverse();
+  const md=t=>{ const d=new Date(t); return `${d.getMonth()+1}.${d.getDate()}.`; };
+  $('rankBox').innerHTML=`<div class="ov-card"><div class="ov-head"><h2>수퍼 단계 기록</h2>
+    <div class="rk-tabs">${[6,7].map(l=>`<button type="button" data-lv="${l}" aria-pressed="${l===lv}">${LVN(l)}단계</button>`).join('')}</div>
+    <button class="mini pri" type="button" id="rkX">닫기</button></div>
+    <div class="ov-body"><div class="rk-grid">
+      <div class="rk-col"><h3>모든 학교</h3><div id="rkWorld"><p class="note">불러오는 중이에요…</p></div></div>
+      <div class="rk-col"><h3>이 기기</h3><table>${dev.map((r,i)=>`<tr class="${r.k===k?'me':''}"><td class="r">${i+1}</td><td>${esc(pname(r.k))}${r.nick?` <small style="color:#7A858A">(${esc(r.nick)})</small>`:''}</td><td class="t">${fmtRank(r.ms)}</td><td class="d">${md(r.t)}</td></tr>`).join('')||'<tr><td>아직 기록이 없어요.</td></tr>'}</table>
+        <h3 style="margin-top:16px">${esc(pname(k))} · 최근</h3><table>${mine.map(r=>`<tr><td>${md(r.t)}</td><td>${esc(r.pic||'')}</td><td class="t">${fmtRank(r.ms)}</td></tr>`).join('')||'<tr><td>아직 기록이 없어요.</td></tr>'}</table></div>
+    </div>
+    ${teacher?`<div class="rk-nick"><b>순위표 별명</b> <small>— ${esc(pname(k))}</small>
+      <div class="row"><input id="rkNick" maxlength="8" placeholder="예: 번개손" value="${esc(NICK[k]||'')}" autocomplete="off"><button class="mini pri" type="button" id="rkNickOk">저장</button><button class="mini" type="button" id="rkNickDel">별명 지우기</button><span class="hint" id="rkNickMsg" style="margin:0"></span></div>
+      <p class="note" style="margin-top:6px">별명을 정하면 S·S+ 기록이 <b>모든 학교 순위표</b>에 올라가요. 보내는 것은 별명·단계·시간뿐이고, 학생 이름·학교·사진은 보내지 않아요. 실명이나 학교를 알 수 있는 별명은 쓰지 마세요(한글·영문·숫자 8자까지). 별명이 없으면 이 기기에만 남아요.</p></div>`:''}
+    </div></div>`;
+  $('rkX').onclick=()=>$('rankBox').classList.remove('on');
+  $('rankBox').querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{ RK.lv=+b.dataset.lv; renderRank(); loadWorld(); });
+  if(teacher){
+    $('rkNickOk').onclick=()=>{ const v=$('rkNick').value.trim().replace(/\s+/g,' ');
+      if(!NICK_OK.test(v)){ $('rkNickMsg').textContent='한글·영문·숫자로 8자까지 써 주세요.'; return; }
+      const low=v.replace(/ /g,'').toLowerCase();
+      if(NICK_BAD.some(w=>low.includes(w))){ $('rkNickMsg').textContent='다른 별명을 써 주세요.'; return; }
+      if(students.some(s=>s.name&&s.name.length>=2&&low.includes(s.name.replace(/ /g,'').toLowerCase()))){ $('rkNickMsg').textContent='실명이 들어 있어요. 별명으로 써 주세요.'; return; }
+      NICK[k]=v; saveNick(); $('rkNickMsg').textContent='저장했어요.'; };
+    $('rkNickDel').onclick=()=>{ delete NICK[k]; saveNick(); $('rkNick').value=''; $('rkNickMsg').textContent='지웠어요. 앞으로는 이 기기에만 남아요.'; };
+  }
+}
+async function loadWorld(){
+  const lv=RK.lv, box=$('rkWorld'); if(!box) return;
+  const res=await fetch(`${RANK_URL}?lv=${encodeURIComponent(LVN(lv))}&dev=${DEV}`).then(x=>x.json()).catch(()=>null);
+  if(RK.lv!==lv||!$('rkWorld')) return;
+  if(!res||!Array.isArray(res.top)){ $('rkWorld').innerHTML='<p class="note">지금은 순위표를 불러오지 못했어요. 인터넷 연결을 확인해 주세요. 기록은 이 기기에 남아 있다가 다음에 보내져요.</p>'; return; }
+  const md=d=>{ const m=String(d||'').match(/^\d{4}-(\d\d)-(\d\d)/); return m?`${+m[1]}.${+m[2]}.`:''; };
+  const rows=res.top.map(r=>`<tr class="${r.me?'me':''}"><td class="r">${r.r}</td><td>${esc(r.n)}</td><td class="t">${fmtRank(r.ms)}</td><td class="d">${md(r.d)}</td></tr>`).join('');
+  const meOut=(res.mine||[]).filter(m=>m.r>res.top.length).map(m=>`<tr class="me"><td class="r">${m.r}</td><td>${esc(m.n)}</td><td class="t">${fmtRank(m.ms)}</td><td class="d">${md(m.d)}</td></tr>`).join('');
+  $('rkWorld').innerHTML=rows?`<table>${rows}${meOut?'<tr><td colspan="4" style="text-align:center;color:#7A858A">…</td></tr>'+meOut:''}</table><p class="note">별명마다 가장 빠른 기록 · 모두 ${res.total}명</p>`:'<p class="note">아직 올라온 기록이 없어요. 첫 기록의 주인공이 되어 보세요.</p>';
 }
 
 /* ================= 출력: 오려서 맞추는 종이 퍼즐 (A4 한 장) ================= */
@@ -1483,7 +1648,7 @@ async function printSheet(){
 
 /* ================= 도움말: 교사 메뉴를 말풍선으로 하나씩 ================= */
 const TOUR_STEPS=[
-  {el:'#gLv', t:'단계', x:'조각 수를 정해요. 1단계 5조각부터 5단계 25조각, 마지막 S단계는 50조각이에요. 고른 뒤 아래 "이 그림으로 다시 시작"을 누르면 새 판이 시작돼요.'},
+  {el:'#gLv', t:'단계', x:'조각 수를 정해요. 1단계 5조각부터 5단계 25조각, S단계는 50조각, S+단계는 50조각이 돌아가 있고 몰려 있어요(살짝 누르면 90도 돌림). S·S+는 초시계로 시간을 재요. 고른 뒤 아래 "이 그림으로 다시 시작"을 누르면 새 판이 시작돼요.'},
   {el:'#gSh', t:'모양', x:'둥근 꼭지가 있는 퍼즐 모양과 곧은 선의 사각형 가운데 골라요. "이 그림으로 다시 시작"을 누르면 반영돼요.'},
   {el:'#gGh', t:'밑그림', x:'판에 보이는 그림의 진하기예요. 익숙해질수록 흐리게, 없음으로 바꿔요.'},
   {el:'#dockTop [data-a="sfx"]', t:'효과음', x:'조각을 맞출 때 나는 작은 소리를 켜고 꺼요.'},

@@ -4,7 +4,7 @@
   → 이 002 폴더를 통째로 끌어다 놓기 → Commit changes
 
   앱 주소:   https://shim-sung-hyun.github.io/web_app/002/picture-puzzle.html
-  그림 주소: https://shim-sung-hyun.github.io/web_app/002/picture-puzzle01.jpg (02~09 같은 방식)
+  그림 주소: https://shim-sung-hyun.github.io/web_app/002/picture-puzzle01.jpg (02~11 같은 방식)
 
 [게시판 글]  차름 갤러리 · webapp 게시판
   - 웹앱주소(app_url): 위 앱 주소
@@ -12,7 +12,7 @@
   - 썸네일: picture-puzzle-promo.jpg 한 장만 첨부 (갤러리 카드파일 (2026-10-22 정식판: 설정 ①누구와 ②어떤 그림 ③오늘 할 단계, 오늘 할 그림 10장, 학생 기록)
   picture-puzzle.html          웹앱
   picture-puzzle-beta.html     예전 베타 주소 → 정식판으로 넘겨 줌
-  picture-puzzle01~09.jpg      화면 그림 (01 설정, 02 오늘 할 그림, 03 그림 고르기 창, 04 조각 맞추기, 05 다 맞춤,
+  picture-puzzle01~11.jpg      화면 그림 (10 S+단계, 11 S·S+ 다 맞춤 · 초시계, 01 설정, 02 오늘 할 그림, 03 그림 고르기 창, 04 조각 맞추기, 05 다 맞춤,
                                06 선생님 메뉴·이번 수업, 07 교사용 기록(예시 홍길동), 08 다 했어요, 09 학생 혼자)
   picture-puzzle-promo.jpg     홍보 그림·썸네일
   picture-puzzle_manual.html   게시판 본문용 설명서
@@ -31,3 +31,5 @@
 - 앱이 읽는 자료(목소리·예시 사진·cloud-key.html 등)는 GitHub 절대 주소로 읽는다. 상대 주소를 새로 쓰지 말 것.
 - 기록·키는 그 기기 브라우저에 주소(도메인)별로 저장된다. 서버에는 아무것도 저장되지 않는다.
 - 휴대폰으로 키 받기(key-relay.php)·사진 보내기·AI 중계는 받는 주소 목록에 https://www.charum.org 가 있어야 한다.
+
+2026-10-25  수퍼 단계 S(50조각)·S+(50조각, 조각이 돌아가 있고 몰려 있음, 살짝 누르면 90도). 초시계, S·S+ 기록 보기(이 기기 + 모든 학교 순위표 — 별명만, 서버 puzzle-rank.php).
