@@ -103,10 +103,11 @@ label.t{display:block;font-weight:700;margin:0 0 8px;font-size:16px}
 <div id="fin" class="card done" hidden><div class="big" aria-hidden="true">✓</div><h2>다 보냈어요</h2><p id="finMsg">큰 화면을 봐 주세요. 이 창은 닫아도 돼요.</p></div>
 <div class="card give" id="give" hidden>
   <h2>이 사진, 나눠 주실래요?<span class="tag">선택</span></h2>
-  <p class="lead">다른 학교 선생님과 학생들의 공부에 함께 쓰여요. 나눌 사진을 누르고 이름을 써 주세요.</p>
+  <p class="lead">다른 학교 선생님과 학생들의 공부에 함께 쓰여요. 나눌 사진을 눌러 주세요. 이름은 쓰면 더 좋아요.</p>
+  <button type="button" id="giveAll" class="link" style="padding:4px 0;font-weight:700;color:var(--pri2)">보낸 사진 모두 고르기</button>
   <div id="giveList"></div>
   <p class="warn" style="margin:10px 0 0"><b>사람·얼굴·이름·전화번호·차 번호판·학교 이름</b>이 보이면 기증할 수 없어요.</p>
-  <label class="chk"><input type="checkbox" id="giveOk"> 제가 찍은 사진을 차름 공개 학습 자료로 나눠요.</label>
+  <label class="chk"><input type="checkbox" id="giveOk"> <span>제가 찍은 사진을 차름 공개 학습 자료로 나눠요. <span style="font-weight:400;color:var(--sub);font-size:13px">(출처 표시·비영리 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.ko" target="_blank" rel="noopener" style="color:var(--sub)">CC BY-NC 4.0</a>)</span></span></label>
   <button type="button" id="giveBtn" disabled>고른 사진 기증하기</button>
   <p id="giveMsg" aria-live="polite"></p>
 </div>
@@ -245,7 +246,7 @@ function drawGive(){
   if(!SENT.length) return;
   $('give').hidden=false;
   $('giveList').innerHTML=SENT.map((g,i)=>`<div class="grow${g.pick?' on':''}${g.state==='ok'?' done':''}" data-i="${i}"><span class="pk" aria-hidden="true">${g.pick||g.state==='ok'?'✓':''}</span><img src="${g.url}" alt="${i+1}번째 사진">
-    <div style="flex:1;min-width:0">${g.state==='ok'?`<b>${esc(g.name)}</b><small class="ok">기증했어요. 고마워요!</small>`:`<input type="text" maxlength="40" placeholder="무엇의 사진? 예: 신발장" value="${esc(g.name)}" aria-label="${i+1}번째 사진 이름">${g.state?`<small class="err">${esc(g.state)}</small>`:''}`}</div></div>`).join('');
+    <div style="flex:1;min-width:0">${g.state==='ok'?`<b>${esc(g.name||'이름 없음')}</b><small class="ok">기증했어요. 고마워요!</small>`:`<input type="text" maxlength="40" placeholder="무엇의 사진? (선택) 예: 신발장" value="${esc(g.name)}" aria-label="${i+1}번째 사진 이름">${g.state?`<small class="err">${esc(g.state)}</small>`:''}`}</div></div>`).join('');
   $('giveList').querySelectorAll('.grow').forEach(el=>{ const g=SENT[+el.dataset.i]; if(g.state==='ok') return;
     const inp=el.querySelector('input');
     el.addEventListener('click',e=>{ if(e.target===inp){ if(!g.pick){ g.pick=true; el.classList.add('on'); el.querySelector('.pk').textContent='✓'; giveState(); } return; }
@@ -259,6 +260,9 @@ function giveState(){
   $('giveBtn').textContent=pk.length>1?`고른 사진 ${pk.length}장 기증하기`:'고른 사진 기증하기';
 }
 $('giveOk').onchange=giveState;
+/* 한 번 동의하면 이 휴대폰에서는 다음부터 미리 표시(사진 고르기는 늘 빈 채로 — 학생이 찍혔을 수 있어서) */
+try{ if(localStorage.getItem('charum.giveOk')==='1') $('giveOk').checked=true; }catch(e){}
+$('giveAll').onclick=()=>{ SENT.forEach(g=>{ if(g.state!=='ok') g.pick=true; }); drawGive(); };
 function to1280(blob){
   return new Promise((res,rej)=>{ const u=URL.createObjectURL(blob), im=new Image();
     im.onload=()=>{ const k=Math.min(1,1280/Math.max(im.naturalWidth,im.naturalHeight)), c=document.createElement('canvas');
@@ -288,7 +292,7 @@ async function privacy(b64,key){
 let giving=false;
 $('giveBtn').onclick=async()=>{
   const pk=SENT.filter(g=>g.pick&&g.state!=='ok'); if(!pk.length) return;
-  const noName=pk.find(g=>!g.name.trim()); if(noName){ noName.state='무엇의 사진인지 써 주세요.'; drawGive(); const i=SENT.indexOf(noName); const el=$('giveList').querySelector(`[data-i="${i}"] input`); if(el){ el.focus(); el.scrollIntoView({block:'center'}); } return; }
+  try{ localStorage.setItem('charum.giveOk','1'); }catch(e){}
   giving=true; giveState();
   let key=''; try{ key=localStorage.getItem('webapp.geminiKey')||''; }catch(e){}
   const msg=(t,c)=>{ $('giveMsg').textContent=t; $('giveMsg').className=c||''; };
@@ -299,7 +303,7 @@ $('giveBtn').onclick=async()=>{
       const img=await to1280(g.blob);
       const bad=key?await privacy(img,key):null;
       if(bad){ g.state='기증하지 않았어요: 사진에 '+bad+'이(가) 보여요.'; g.pick=false; continue; }
-      const r=await fetch(DONATE,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({a:'give',app:'900',check:bad===''?'gemini':'none',agree:true,title:g.name.trim(),img,meta:{note:'사진 다리'+(FROM?' · '+FROM:'')}})});
+      const r=await fetch(DONATE,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({a:'give',app:'900',check:bad===''?'gemini':'none',agree:true,title:g.name.trim(),img,meta:{note:'사진 다리'+(FROM?' · '+FROM:'')+' · CC BY-NC'}})});
       let j={}; try{ j=await r.json(); }catch(e){}
       if(!r.ok||j.error) throw new Error(j.error||('http '+r.status));
       g.state='ok'; ok++;

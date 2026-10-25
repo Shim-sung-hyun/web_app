@@ -20,8 +20,9 @@ $ALLOW_ORIGINS = ['https://shim-sung-hyun.github.io', 'https://www.charum.org', 
 $MAX_IMG       = 3 * 1024 * 1024;   // 사진·그림 하나의 base64 최대 길이(약 2MB)
 $MAX_BODY      = 7 * 1024 * 1024;
 $PER_IP_DAY    = 20;                // 한 곳(IP)에서 하루 기증 최대
+$PER_IP_DAY_RELAY = 200;            // 사진 다리(app 900)는 하루 최대 — 연수장은 여러 선생님이 IP 하나를 함께 씀(따로 셈)
 $PER_IP_DAY_COLLECT = 60;           // 제작자 "사진 모으기"(app 000)는 하루 최대
-$MAX_PENDING   = 300;               // 대기함 최대 개수
+$MAX_PENDING   = 1000;              // 대기함 최대 개수
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -73,9 +74,9 @@ if ($a === 'give') {
   if (isset($in['agree']) && $in['agree'] !== true) out(['error' => 'agree']);
   /* 하루 횟수(IP는 해시만) */
   $ip = $_SERVER['REMOTE_ADDR'] ?? '0'; $day = gmdate('Y-m-d', time() + 9 * 3600);
-  $rf = $DIR . '/r_' . substr(hash('sha256', $ip . '|' . $day . '|charum'), 0, 24);
+  $rf = $DIR . '/r_' . substr(hash('sha256', $ip . '|' . $day . '|charum' . ($app === '900' ? '|relay' : '')), 0, 24);
   $n = is_file($rf) ? (int)@file_get_contents($rf) : 0;
-  if ($n >= ($app === '000' ? $PER_IP_DAY_COLLECT : $PER_IP_DAY)) out(['error' => 'busy']);
+  if ($n >= ($app === '000' ? $PER_IP_DAY_COLLECT : ($app === '900' ? $PER_IP_DAY_RELAY : $PER_IP_DAY))) out(['error' => 'busy']);
   if (!isJpeg($in['img'] ?? '', $MAX_IMG)) out(['error' => 'img']);
   $art = $in['art'] ?? '';
   if ($art !== '' && !isJpeg($art, $MAX_IMG)) $art = '';

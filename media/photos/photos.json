@@ -2,6 +2,13 @@
  "version": "2026-10-25",
  "about": "차름 사진 모음 — 한 앱만을 위한 것이 아니라 여러 학습(낱말·도형·색·장소·퍼즐·분류 …)에 계속 쓰는 자료. 분류: category·objects·place·colors·shapes·tags, 권리: rights, 앱별 쓰임: uses.",
  "base": "https://shim-sung-hyun.github.io/web_app/media/photos/",
+ "license": {
+  "name": "CC BY-NC 4.0",
+  "url": "https://creativecommons.org/licenses/by-nc/4.0/deed.ko",
+  "credit": "차름(charum.org) 사진 모음",
+  "since": "2026-10-25",
+  "note": "출처 표시·비영리. 기증 동의 문구(사진 다리·휴대폰 받기·모으기)와 같은 조건"
+ },
  "photos": [
   {
    "id": "car-wheel",
