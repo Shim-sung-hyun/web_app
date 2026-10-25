@@ -8,15 +8,15 @@ if ($called_position !== 'before_display_content') return;
 if (Context::getResponseMethod() !== 'HTML' || !is_string($output)) return;
 if (!Rhymix\Framework\Session::isAdmin()) return;
 
-$charum_n = count(glob(RX_BASEDIR . 'donate-data/d_*.json') ?: []);
+$charum_n = count(glob(RX_BASEDIR . 'charum-api/donate-data/d_*.json') ?: []);
 /* Claude가 "다시 볼 사진"으로 돌려보낸 것(비공개 저장소 flagged/ 가운데 아직 정하지 않은 것)도 더함 — 10분마다 한 번만 GitHub에 물어봄 */
-$charum_cache = RX_BASEDIR . 'donate-data/flagged-cache.json';
+$charum_cache = RX_BASEDIR . 'charum-api/donate-data/flagged-cache.json';
 $charum_f = 0;
 $charum_c = is_file($charum_cache) ? json_decode((string)@file_get_contents($charum_cache), true) : null;
 if (is_array($charum_c) && time() - (int)($charum_c['t'] ?? 0) < 600) { $charum_f = (int)($charum_c['n'] ?? 0); }
-elseif (is_file(RX_BASEDIR . 'donate-config.php') && function_exists('curl_init')) {
+elseif (is_file(RX_BASEDIR . 'charum-api/donate-config.php') && function_exists('curl_init')) {
   $GITHUB_TOKEN = ''; $INBOX_REPO = 'Shim-sung-hyun/charum-inbox';
-  include RX_BASEDIR . 'donate-config.php';
+  include RX_BASEDIR . 'charum-api/donate-config.php';
   $charum_get = function ($p) use ($GITHUB_TOKEN, $INBOX_REPO) {
     $ch = curl_init('https://api.github.com/repos/' . $INBOX_REPO . '/contents/' . $p);
     curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 4, CURLOPT_CONNECTTIMEOUT => 3,
@@ -35,7 +35,7 @@ $charum_n += $charum_f;
 $charum_js = <<<'JS'
 <script>
 (function(){
-  var N=__N__, URL='/donate-admin.php';
+  var N=__N__, URL='/charum-api/donate-admin.php';
   function run(){
     var seen=[];
     var links=document.querySelectorAll('a[href*="dispMemberSavedDocument"],a[href*="dispMemberScrappedDocument"],a[href*="dispMemberInfo"],a[href*="dispMemberOwnDocument"]');

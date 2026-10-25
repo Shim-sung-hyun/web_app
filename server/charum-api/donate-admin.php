@@ -2,7 +2,7 @@
 /* =====================================================================
    차름 기증 사진 — 관리자 화면 (donate-admin.php) — 2026-10-25 판
    charum.org에 "관리자"로 로그인한 사람만 열린다(확인 글자 필요 없음).
-   - donate.php와 같은 곳(서버 루트)에 올린다. 기증 사진은 donate.php가 쌓은 donate-data/ 를 그대로 읽는다.
+   - 서버 맨 위의 charum-api/ 폴더에 donate.php와 함께 둔다(2026-10-25 옮김). 기증 사진은 donate.php가 쌓은 donate-data/ 를 그대로 읽는다.
    - 회원 메뉴의 "기증 사진" 탭은 애드온 addons/charum_donate 가 붙인다(관리자에게만, 기다리는 장 수 표시).
    - 할 수 있는 것: 기증 사진 보기 · 고른 것을 비공개 저장소(charum-inbox)로 보내기 · Claude가 다시 봐 달라고 한
      사진을 보고 "저장 / 빼기" 정하기 · (예비) zip 받기 · 서버에서 지우기.
@@ -10,10 +10,10 @@
      공개 사진 모음(web_app/media/photos)에 넣음. 걸리는 것만 flagged/ 로 → 여기 "다시 볼 사진"에 뜸 →
      저장/빼기를 고르면 decisions/ 에 적힘 → Claude가 다음 정리 때 반영.
    - GitHub 열쇠는 같은 폴더의 donate-config.php 에만 넣는다(저장소·채팅에 넣지 않음).
-   - 주소: https://www.charum.org/donate-admin.php
+   - 주소: https://www.charum.org/charum-api/donate-admin.php
    ===================================================================== */
 
-require __DIR__ . '/common/autoload.php';   /* 라이믹스를 불러 로그인 상태를 봄 */
+require dirname(__DIR__) . '/common/autoload.php';   /* 라이믹스는 한 칸 위(서버 맨 위 폴더)   /* 라이믹스를 불러 로그인 상태를 봄 */
 Context::init();
 $isAdmin = Rhymix\Framework\Session::isAdmin();
 $DIR = __DIR__ . '/donate-data';
@@ -124,7 +124,7 @@ header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex');
 if (!$isAdmin) {
-  $login = '/index.php?act=dispMemberLoginForm&success_return_url=' . rawurlencode('/donate-admin.php');
+  $login = '/index.php?act=dispMemberLoginForm&success_return_url=' . rawurlencode('/charum-api/donate-admin.php');
   echo '<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>기증 사진</title>'
      . '<body style="font-family:\'Noto Sans KR\',sans-serif;background:#EEF4F2;color:#1A2B2E;display:grid;place-items:center;min-height:90vh;margin:0">'
      . '<div style="background:#fff;border:1px solid #CBDAD7;border-radius:16px;padding:28px 30px;text-align:center;max-width:420px">'
@@ -189,7 +189,7 @@ button:disabled{opacity:.5}
 <div class="grid" id="grid"></div>
 </main>
 <script>
-const API='/donate-admin.php';
+const API='/charum-api/donate-admin.php';
 const $=id=>document.getElementById(id);
 const say=(t,c)=>{ $('state').textContent=t; $('state').className=c||''; };
 let ITEMS={}, SEL=new Set();

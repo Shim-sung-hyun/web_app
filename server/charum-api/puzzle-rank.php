@@ -1,6 +1,6 @@
 <?php
 /* 차름 놀이 · 내 그림 퍼즐 — S·S+ 단계 모든 학교 순위표 (2026-10-25)
-   서버 루트(charum.org/puzzle-rank.php)에 올림. 기록은 같은 곳 puzzle-rank-data/ (웹에서 막음).
+   서버 맨 위 charum-api/ 폴더(charum.org/charum-api/puzzle-rank.php)에 올림(루트의 puzzle-rank.php는 다리). 기록은 같은 곳 puzzle-rank-data/ (웹에서 막음).
    받는 것: 별명(한글·영문·숫자 8자까지)·단계(S, S+)·시간(ms)·기기 번호(무작위, 같은 기기·같은 별명은 가장 빠른 기록 하나).
    학생 이름·학교·사진은 받지 않음. IP는 하루 보낸 수를 세는 데만(sha1로, 날마다 지움).
    GET  ?ping                      → 상태
