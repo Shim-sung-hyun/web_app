@@ -4,7 +4,12 @@
    charum.org에 "관리자"로 로그인한 사람만 열린다(확인 글자 필요 없음).
    - donate.php와 같은 곳(서버 루트)에 올린다. 기증 사진은 donate.php가 쌓은 donate-data/ 를 그대로 읽는다.
    - 회원 메뉴의 "기증 사진" 탭은 애드온 addons/charum_donate 가 붙인다(관리자에게만, 기다리는 장 수 표시).
-   - 할 수 있는 것: 기증 사진 보기 · 골라 zip 받기(차름 사진 모음 꼴) · 서버에서 지우기.
+   - 할 수 있는 것: 기증 사진 보기 · 고른 것을 비공개 저장소(charum-inbox)로 보내기 · Claude가 다시 봐 달라고 한
+     사진을 보고 "저장 / 빼기" 정하기 · (예비) zip 받기 · 서버에서 지우기.
+   - 흐름: 여기서 고름 → 비공개 저장소 inbox/ → Claude가 저작권·초상권·개인 정보를 다시 보고 분류해
+     공개 사진 모음(web_app/media/photos)에 넣음. 걸리는 것만 flagged/ 로 → 여기 "다시 볼 사진"에 뜸 →
+     저장/빼기를 고르면 decisions/ 에 적힘 → Claude가 다음 정리 때 반영.
+   - GitHub 열쇠는 같은 폴더의 donate-config.php 에만 넣는다(저장소·채팅에 넣지 않음).
    - 주소: https://www.charum.org/donate-admin.php
    ===================================================================== */
 
@@ -16,6 +21,29 @@ $DIR = __DIR__ . '/donate-data';
 function jout($a) { header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store'); echo json_encode($a, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); exit; }
 function idok($id) { return is_string($id) && preg_match('/^[a-z0-9]{8,40}$/', $id); }
 function pending($DIR) { return count(glob($DIR . '/d_*.json') ?: []); }
+function sidok($s) { return is_string($s) && preg_match('/^[a-z0-9-]{3,48}$/', $s); }
+
+/* ---------- 비공개 저장소(GitHub) ---------- */
+$GITHUB_TOKEN = ''; $INBOX_REPO = 'Shim-sung-hyun/charum-inbox'; $GH_API = 'https://api.github.com';
+if (is_file(__DIR__ . '/donate-config.php')) include __DIR__ . '/donate-config.php';
+function gh($method, $path, $body = null, $raw = false) {
+  global $GITHUB_TOKEN, $INBOX_REPO, $GH_API;
+  $url = $GH_API . '/repos/' . $INBOX_REPO . '/contents/' . $path;
+  $h = ['Authorization: Bearer ' . $GITHUB_TOKEN, 'Accept: ' . ($raw ? 'application/vnd.github.raw' : 'application/vnd.github+json'),
+        'User-Agent: charum-donate', 'X-GitHub-Api-Version: 2022-11-28', 'Content-Type: application/json'];
+  $ch = curl_init($url);
+  curl_setopt_array($ch, [CURLOPT_CUSTOMREQUEST => $method, CURLOPT_RETURNTRANSFER => true, CURLOPT_HTTPHEADER => $h, CURLOPT_TIMEOUT => 60, CURLOPT_CONNECTTIMEOUT => 10]);
+  if ($body !== null) curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body, JSON_UNESCAPED_UNICODE));
+  $r = curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+  return [$code, $raw ? $r : json_decode((string)$r, true)];
+}
+/* 파일 하나 올리기(있으면 덮어씀) */
+function ghPut($path, $b64, $msg) {
+  [$c, $j] = gh('PUT', $path, ['message' => $msg, 'content' => $b64]);
+  if ($c === 422 || $c === 409) { [$c2, $old] = gh('GET', $path); if ($c2 === 200 && !empty($old['sha'])) [$c, $j] = gh('PUT', $path, ['message' => $msg, 'content' => $b64, 'sha' => $old['sha']]); }
+  return $c === 200 || $c === 201;
+}
+function ghReady() { global $GITHUB_TOKEN; return strlen($GITHUB_TOKEN) > 20 && function_exists('curl_init'); }
 
 /* 기다리는 장 수(관리자만) */
 if (isset($_GET['count'])) jout(['n' => $isAdmin ? pending($DIR) : null]);
@@ -40,6 +68,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $d['app'] = $d['app'] ?? '001'; $d['check'] = $d['check'] ?? 'gemini'; $d['shapes'] = $d['shapes'] ?? [];
     jout($d); }
   if ($a === 'del') { $id = $in['id'] ?? ''; if (idok($id)) @unlink($DIR . '/d_' . $id . '.json'); jout(['ok' => true]); }
+
+  /* 고른 기증 사진을 비공개 저장소 inbox/로 보내고, 잘 가면 서버에서 지움 */
+  if ($a === 'send') {
+    if (!ghReady()) jout(['error' => 'nogh']);
+    $id = $in['id'] ?? ''; if (!idok($id) || !is_file($DIR . '/d_' . $id . '.json')) jout(['error' => 'nofile']);
+    $d = json_decode((string)file_get_contents($DIR . '/d_' . $id . '.json'), true);
+    $sid = 'd' . $id; $msg = '기증 사진 ' . $sid . ' (' . ($d['title'] ?? '') . ')';
+    $meta = $d; unset($meta['img'], $meta['art']);
+    $meta['app'] = $meta['app'] ?? '001'; $meta['check'] = $meta['check'] ?? 'gemini';
+    $meta['sent'] = gmdate('Y-m-d\TH:i:s\Z'); $meta['sid'] = $sid;
+    $ok = ghPut('inbox/' . $sid . '/photo.jpg', $d['img'], $msg);
+    if ($ok && !empty($d['art'])) $ok = ghPut('inbox/' . $sid . '/art.jpg', $d['art'], $msg);
+    if ($ok) $ok = ghPut('inbox/' . $sid . '/meta.json', base64_encode(json_encode($meta, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)), $msg);
+    if (!$ok) jout(['error' => 'github']);
+    @unlink($DIR . '/d_' . $id . '.json');
+    jout(['ok' => true, 'sid' => $sid]);
+  }
+  /* Claude가 다시 봐 달라고 한 사진(flagged/) 목록 + 이미 정한 것(decisions/) */
+  if ($a === 'flagged') {
+    if (!ghReady()) jout(['list' => [], 'gh' => false]);
+    [$c, $dirs] = gh('GET', 'flagged');
+    $list = [];
+    if ($c === 200 && is_array($dirs)) foreach ($dirs as $e) { if (($e['type'] ?? '') !== 'dir' || !sidok($e['name'])) continue;
+      [$c2, $rv] = gh('GET', 'flagged/' . $e['name'] . '/review.json', null, true);
+      $list[] = ['sid' => $e['name'], 'review' => $c2 === 200 ? json_decode((string)$rv, true) : null]; }
+    $dec = [];
+    [$c3, $ds] = gh('GET', 'decisions');
+    if ($c3 === 200 && is_array($ds)) foreach ($ds as $e) if (preg_match('/^([a-z0-9-]+)\.json$/', $e['name'] ?? '', $m)) $dec[$m[1]] = true;
+    foreach ($list as &$x) $x['decided'] = !empty($dec[$x['sid']]);
+    @file_put_contents($DIR . '/flagged-cache.json', json_encode(['t' => time(), 'n' => count(array_filter($list, function ($x) { return !$x['decided']; }))]));   /* 회원 메뉴 탭의 숫자 */
+    jout(['list' => $list, 'gh' => true]);
+  }
+  /* 다시 볼 사진의 그림 한 장(사진·고친 사진) */
+  if ($a === 'fimg') {
+    $sid = $in['sid'] ?? ''; $fn = $in['f'] ?? 'photo.jpg';
+    if (!ghReady() || !sidok($sid) || !in_array($fn, ['photo.jpg', 'fixed.jpg', 'art.jpg'], true)) jout(['error' => 'bad']);
+    [$c, $bin] = gh('GET', 'flagged/' . $sid . '/' . $fn, null, true);
+    if ($c !== 200) jout(['error' => 'nofile']);
+    jout(['b64' => base64_encode($bin)]);
+  }
+  /* 저장(keep) / 고친 것으로 저장(fixed) / 빼기(drop) — decisions/에 적어 두면 Claude가 다음 정리 때 반영 */
+  if ($a === 'decide') {
+    $sid = $in['sid'] ?? ''; $v = $in['d'] ?? '';
+    if (!ghReady() || !sidok($sid) || !in_array($v, ['keep', 'fixed', 'drop'], true)) jout(['error' => 'bad']);
+    $body = json_encode(['sid' => $sid, 'decision' => $v, 'at' => gmdate('Y-m-d\TH:i:s\Z')], JSON_UNESCAPED_UNICODE);
+    if (!ghPut('decisions/' . $sid . '.json', base64_encode($body), '결정 ' . $sid . ' ' . $v)) jout(['error' => 'github']);
+    @unlink($DIR . '/flagged-cache.json');
+    jout(['ok' => true]);
+  }
   jout(['error' => 'bad']);
 }
 
@@ -97,10 +174,16 @@ button:disabled{opacity:.5}
 <body>
 <main>
 <div class="top"><h1>기증 사진 <span style="font-size:20px;color:var(--sub)"><?= $n ?>장 기다림</span></h1><a href="/index.php?act=dispMemberInfo">← 회원 정보로</a></div>
-<p class="lead">선생님들이 기증한 사진이 여기 모여요. 쓸 사진을 골라 zip으로 받아 Claude에게 보내면 <b>차름 사진 모음</b>에 들어가요. 받은 뒤에는 "고른 것 서버에서 지우기"로 비워 주세요.</p>
+<p class="lead">쓸 사진을 골라 <b>"고른 것 보내기"</b>를 누르면 비공개 저장소로 가요. Claude가 저작권·초상권·개인 정보를 한 번 더 보고, 괜찮은 것은 분류해서 <b>차름 사진 모음</b>에 넣어요. 걸리는 것만 아래 <b>"다시 볼 사진"</b>에 이유와 함께 돌아오니, 저장할지 뺄지 골라 주세요.</p>
+<section id="flagBox" class="card" hidden>
+  <h2 style="margin:0 0 4px;font-size:18px">다시 볼 사진 <span id="flagN" class="note"></span></h2>
+  <p class="note" style="margin:0 0 10px">Claude가 걸린다고 본 사진이에요. 이유를 읽고 고르면 Claude가 다음 정리 때 반영해요. "고친 것으로 저장"은 Claude가 가린(흐리게 한) 사진으로 저장해요.</p>
+  <div class="grid" id="fgrid"></div>
+</section>
+<h2 style="margin:18px 0 8px;font-size:18px">새로 온 기증 사진</h2>
 <div class="card">
   <p class="note" style="margin-top:0">사람·얼굴·이름·번호·차 번호판·학교 이름이 보이면 <b>지우기</b>. <span class="tag none">검사 안 함</span>이 붙은 사진은 앱 검사 없이 온 것이니 더 꼼꼼히 봐 주세요. 빨간 선은 앱이 찾은 도형이에요.</p>
-  <div class="row"><button id="zip" type="button" disabled>고른 것 zip 받기</button><button id="delSel" type="button" disabled>고른 것 서버에서 지우기</button><button id="all" type="button">모두 고르기</button><span id="cnt" class="note"></span></div>
+  <div class="row"><button id="send" type="button" disabled style="background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700">고른 것 보내기</button><button id="zip" type="button" disabled>zip 받기</button><button id="delSel" type="button" disabled>고른 것 서버에서 지우기</button><button id="all" type="button">모두 고르기</button><span id="cnt" class="note"></span></div>
   <p id="state"></p>
 </div>
 <div class="grid" id="grid"></div>
@@ -115,7 +198,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 function overlay(d){ if(!(d.shapes&&d.shapes.length)) return ''; return `<svg viewBox="0 0 1000 1000" preserveAspectRatio="none">${d.shapes.map(s=>{ const b=s.box;
   if(s.pts&&s.pts.length>2) return `<polygon points="${s.pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#e53935" stroke-width="5" vector-effect="non-scaling-stroke"/>`;
   return `<ellipse cx="${(b.x0+b.x1)/2}" cy="${(b.y0+b.y1)/2}" rx="${(b.x1-b.x0)/2}" ry="${(b.y1-b.y0)/2}" fill="none" stroke="#e53935" stroke-width="5" vector-effect="non-scaling-stroke"/>`; }).join('')}</svg>`; }
-function count(){ $('cnt').textContent=`고름 ${SEL.size} / ${Object.keys(ITEMS).length}`; $('zip').disabled=$('delSel').disabled=!SEL.size; }
+function count(){ $('cnt').textContent=`고름 ${SEL.size} / ${Object.keys(ITEMS).length}`; $('send').disabled=$('zip').disabled=$('delSel').disabled=!SEL.size; }
 async function load(){ say('불러오는 중…'); $('grid').innerHTML=''; ITEMS={}; SEL.clear(); count();
   try{ const {list}=await call({a:'list'}); if(!list.length){ say('기다리는 사진이 없어요.','ok'); return; }
     for(const m of list){ const d=await call({a:'get',id:m.id}); ITEMS[d.id]=d;
@@ -142,6 +225,32 @@ $('zip').onclick=async()=>{ if(typeof JSZip==='undefined'){ say('zip 도구를 �
   const b=await z.generateAsync({type:'blob'}); const l=document.createElement('a'); l.href=URL.createObjectURL(b); l.download='donations-'+day+'.zip'; l.click();
   say(SEL.size+'장을 받았어요. Claude에게 보내 주세요. 그다음 "고른 것 서버에서 지우기".','ok'); };
 $('delSel').onclick=async()=>{ if(!confirm(`고른 ${SEL.size}장을 서버에서 지울까요?`)) return; for(const id of [...SEL]){ await call({a:'del',id}); } load(); };
+/* 고른 것을 비공개 저장소로 보내기(잘 가면 서버 대기함에서 빠짐) */
+$('send').onclick=async()=>{ const ids=[...SEL]; let ok=0;
+  for(const id of ids){ say(`보내는 중… ${ok+1} / ${ids.length}`);
+    try{ await call({a:'send',id}); ok++; }catch(e){ say(e.message==='nogh'?'서버에 GitHub 열쇠(donate-config.php)가 아직 없어요.':'보내지 못했어요: '+e.message,'err'); return; } }
+  await load(); say(`${ok}장을 보냈어요. Claude가 살펴본 뒤 사진 모음에 넣어요.`,'ok'); };
+/* Claude가 다시 봐 달라고 한 사진 */
+const DEC={keep:'저장',fixed:'고친 것으로 저장',drop:'빼기'};
+async function loadFlagged(){
+  let r; try{ r=await call({a:'flagged'}); }catch(e){ return; }
+  const box=$('flagBox'), g=$('fgrid'); g.innerHTML='';
+  if(!r.list.length){ box.hidden=true; return; } box.hidden=false;
+  $('flagN').textContent=`${r.list.filter(x=>!x.decided).length}장 기다림`;
+  for(const x of r.list){ const rv=x.review||{};
+    const el=document.createElement('div'); el.className='it';
+    el.innerHTML=`<div class="pair"><div class="pv"><div class="ph">불러오는 중…</div></div>${rv.fixed?'<div class="pv"><div class="ph">고친 사진…</div></div>':''}</div>
+      <div style="margin-top:6px"><b>${esc(rv.title||x.sid)}</b> <small class="note">${esc(x.sid)}</small>
+      <p class="note" style="margin:4px 0;color:#8A2B12">${esc((rv.reasons||[]).join(' · ')||'이유 없음')}</p>${rv.suggest?`<p class="note" style="margin:0 0 6px">Claude 의견: ${esc(rv.suggest)}</p>`:''}
+      <div class="row">${x.decided?'<span class="tag">정함 — 다음 정리 때 반영</span>':`<button data-d="keep" type="button">그대로 저장</button>${rv.fixed?'<button data-d="fixed" type="button">고친 것으로 저장</button>':''}<button data-d="drop" type="button">빼기</button>`}</div></div>`;
+    el.querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{ if(b.dataset.d==='drop'&&!confirm('이 사진을 빼서 지울까요?')) return;
+      try{ await call({a:'decide',sid:x.sid,d:b.dataset.d}); b.parentNode.innerHTML=`<span class="tag">정함(${DEC[b.dataset.d]}) — 다음 정리 때 반영</span>`; }catch(e){ alert('저장하지 못했어요: '+e.message); } });
+    g.appendChild(el);
+    const pv=el.querySelectorAll('.pv');
+    call({a:'fimg',sid:x.sid,f:'photo.jpg'}).then(j=>{ pv[0].innerHTML=`<img src="data:image/jpeg;base64,${j.b64}" alt="">`; }).catch(()=>{ pv[0].innerHTML='<div class="ph">그림 없음</div>'; });
+    if(rv.fixed) call({a:'fimg',sid:x.sid,f:'fixed.jpg'}).then(j=>{ pv[1].innerHTML=`<img src="data:image/jpeg;base64,${j.b64}" alt=""><small class="note">고친 사진</small>`; }).catch(()=>{});
+  } }
+loadFlagged();
 load();
 </script>
 </body>

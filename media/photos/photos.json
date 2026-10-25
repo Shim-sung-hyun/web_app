@@ -1,19 +1,41 @@
 {
- "version": 1,
+ "version": "2026-10-25",
+ "about": "차름 사진 모음 — 한 앱만을 위한 것이 아니라 여러 학습(낱말·도형·색·장소·퍼즐·분류 …)에 계속 쓰는 자료. 분류: category·objects·place·colors·shapes·tags, 권리: rights, 앱별 쓰임: uses.",
  "base": "https://shim-sung-hyun.github.io/web_app/media/photos/",
  "photos": [
   {
    "id": "car-wheel",
    "title": "자동차 바퀴",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "탈것",
+   "objects": [
+    "자동차",
+    "바퀴"
+   ],
+   "place": "바깥",
+   "colors": [
+    "흰색",
+    "검정",
+    "회색"
+   ],
+   "shapes": [
+    "원"
+   ],
    "tags": [
     "교통",
     "자동차",
     "바퀴"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "car-wheel/photo.jpg",
     "art": "car-wheel/art.jpg",
@@ -70,15 +92,36 @@
   {
    "id": "bus-wheel",
    "title": "버스 바퀴",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "탈것",
+   "objects": [
+    "버스",
+    "바퀴"
+   ],
+   "place": "바깥",
+   "colors": [
+    "노랑",
+    "검정",
+    "회색"
+   ],
+   "shapes": [
+    "원"
+   ],
    "tags": [
     "교통",
     "버스",
     "바퀴"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "bus-wheel/photo.jpg",
     "art": "bus-wheel/art.jpg",
@@ -187,14 +230,34 @@
   {
    "id": "manhole",
    "title": "맨홀 뚜껑",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "길·시설",
+   "objects": [
+    "맨홀 뚜껑",
+    "길"
+   ],
+   "place": "바깥",
+   "colors": [
+    "갈색",
+    "회색"
+   ],
+   "shapes": [
+    "원"
+   ],
    "tags": [
     "운동장·바깥",
     "길"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "manhole/photo.jpg",
     "art": "manhole/art.jpg",
@@ -303,15 +366,36 @@
   {
    "id": "parking-sign",
    "title": "주차 금지 표지판",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "길·시설",
+   "objects": [
+    "표지판",
+    "주차 금지"
+   ],
+   "place": "바깥",
+   "colors": [
+    "주황",
+    "흰색"
+   ],
+   "shapes": [
+    "네모",
+    "원뿔"
+   ],
    "tags": [
     "운동장·바깥",
     "표지판",
     "안전"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "학교 이름 흐림"
+   },
    "files": {
     "photo": "parking-sign/photo.jpg",
     "art": "parking-sign/art.jpg",
@@ -419,14 +503,35 @@
   {
    "id": "tissue",
    "title": "두루마리 휴지",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "생활용품",
+   "objects": [
+    "두루마리 휴지",
+    "책상"
+   ],
+   "place": "교실",
+   "colors": [
+    "흰색",
+    "갈색"
+   ],
+   "shapes": [
+    "원",
+    "원기둥"
+   ],
    "tags": [
     "교실",
     "생활용품"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "tissue/photo.jpg",
     "art": "tissue/art.jpg",
@@ -470,14 +575,33 @@
   {
    "id": "wall-clock",
    "title": "벽시계",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "생활용품",
+   "objects": [
+    "벽시계"
+   ],
+   "place": "교실",
+   "colors": [
+    "분홍",
+    "흰색"
+   ],
+   "shapes": [
+    "원"
+   ],
    "tags": [
     "교실",
     "시간"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "wall-clock/photo.jpg",
     "art": "wall-clock/art.jpg",
@@ -521,15 +645,36 @@
   {
    "id": "school-bus",
    "title": "통학 버스",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "탈것",
+   "objects": [
+    "통학 버스",
+    "버스"
+   ],
+   "place": "바깥",
+   "colors": [
+    "노랑",
+    "검정"
+   ],
+   "shapes": [
+    "네모",
+    "원"
+   ],
    "tags": [
     "교통",
     "학교",
     "버스"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "번호판 흐림, 옆면 표시는 '공무수행'(학교 이름 아님)"
+   },
    "files": {
     "photo": "school-bus/photo.jpg",
     "art": "school-bus/art.jpg",
@@ -740,14 +885,34 @@
   {
    "id": "shoe-rack",
    "title": "신발장",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "가구",
+   "objects": [
+    "신발장",
+    "신발"
+   ],
+   "place": "복도",
+   "colors": [
+    "갈색",
+    "검정"
+   ],
+   "shapes": [
+    "네모"
+   ],
    "tags": [
     "복도",
     "정리"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "벽의 액자 속 사진(사람)을 흐리게 함(2026-10-25)"
+   },
    "files": {
     "photo": "shoe-rack/photo.jpg",
     "art": "shoe-rack/art.jpg",
@@ -915,14 +1080,33 @@
   {
    "id": "bell",
    "title": "종",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "학교 시설",
+   "objects": [
+    "종"
+   ],
+   "place": "바깥",
+   "colors": [
+    "초록",
+    "회색"
+   ],
+   "shapes": [
+    "원"
+   ],
    "tags": [
     "운동장·바깥",
     "학교"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "bell/photo.jpg",
     "art": "bell/art.jpg",
@@ -953,14 +1137,36 @@
   {
    "id": "timetable",
    "title": "시간표 칠판",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "학교 시설",
+   "objects": [
+    "시간표",
+    "칠판",
+    "자석"
+   ],
+   "place": "교실",
+   "colors": [
+    "흰색",
+    "검정"
+   ],
+   "shapes": [
+    "네모",
+    "원"
+   ],
    "tags": [
     "교실",
     "시간"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "check",
+    "notes": "오른쪽에 인쇄된 그림 카드(상업 그림일 수 있음)가 작게 보임"
+   },
    "files": {
     "photo": "timetable/photo.jpg",
     "art": "timetable/art.jpg",
@@ -1107,14 +1313,34 @@
   {
    "id": "sink-cabinet",
    "title": "싱크대",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "가구",
+   "objects": [
+    "싱크대",
+    "서랍"
+   ],
+   "place": "교실",
+   "colors": [
+    "흰색",
+    "회색"
+   ],
+   "shapes": [
+    "네모"
+   ],
    "tags": [
     "교실",
     "물"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "sink-cabinet/photo.jpg",
     "art": "sink-cabinet/art.jpg",
@@ -1295,14 +1521,38 @@
   {
    "id": "computer-desk",
    "title": "컴퓨터 책상",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "전자기기",
+   "objects": [
+    "컴퓨터",
+    "모니터",
+    "키보드",
+    "책상",
+    "화분"
+   ],
+   "place": "교실",
+   "colors": [
+    "검정",
+    "회색",
+    "갈색"
+   ],
+   "shapes": [
+    "네모"
+   ],
    "tags": [
     "교실",
     "컴퓨터"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "computer-desk/photo.jpg",
     "art": "computer-desk/art.jpg",
@@ -1410,14 +1660,36 @@
   {
    "id": "desks",
    "title": "책상",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "가구",
+   "objects": [
+    "책상",
+    "의자",
+    "방석"
+   ],
+   "place": "교실",
+   "colors": [
+    "초록",
+    "파랑",
+    "회색"
+   ],
+   "shapes": [
+    "네모"
+   ],
    "tags": [
     "교실",
     "가구"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "desks/photo.jpg",
     "art": "desks/art.jpg",
@@ -1525,15 +1797,37 @@
   {
    "id": "bookshelf",
    "title": "책장",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "가구",
+   "objects": [
+    "책장",
+    "책",
+    "상자"
+   ],
+   "place": "교실",
+   "colors": [
+    "갈색",
+    "노랑",
+    "파랑"
+   ],
+   "shapes": [
+    "네모"
+   ],
    "tags": [
     "교실",
     "책",
     "정리"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "책등·상자 그림이 작게 보임(부수적)"
+   },
    "files": {
     "photo": "bookshelf/photo.jpg",
     "art": "bookshelf/art.jpg",
@@ -1761,14 +2055,36 @@
   {
    "id": "board",
    "title": "전자칠판",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "전자기기",
+   "objects": [
+    "전자칠판",
+    "시계",
+    "화이트보드"
+   ],
+   "place": "교실",
+   "colors": [
+    "검정",
+    "흰색"
+   ],
+   "shapes": [
+    "네모",
+    "원"
+   ],
    "tags": [
     "교실",
     "수업"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "왼쪽에 학생 비즈 작품이 작게 보임"
+   },
    "files": {
     "photo": "board/photo.jpg",
     "art": "board/art.jpg",
@@ -1872,14 +2188,34 @@
   {
    "id": "hallway",
    "title": "복도",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "학교 시설",
+   "objects": [
+    "복도",
+    "전등"
+   ],
+   "place": "복도",
+   "colors": [
+    "흰색",
+    "회색"
+   ],
+   "shapes": [
+    "네모"
+   ],
    "tags": [
     "복도",
     "학교"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "hallway/photo.jpg",
     "art": "hallway/art.jpg",
@@ -2090,14 +2426,34 @@
   {
    "id": "door",
    "title": "교실 문",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "학교 시설",
+   "objects": [
+    "문",
+    "창문"
+   ],
+   "place": "교실",
+   "colors": [
+    "갈색",
+    "흰색"
+   ],
+   "shapes": [
+    "네모"
+   ],
    "tags": [
     "교실",
     "문"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "door/photo.jpg",
     "art": "door/art.jpg",
@@ -2235,15 +2591,37 @@
   {
    "id": "mug-monitor",
    "title": "머그컵과 모니터",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "생활용품",
+   "objects": [
+    "머그컵",
+    "유리컵",
+    "모니터"
+   ],
+   "place": "교실",
+   "colors": [
+    "파랑",
+    "검정"
+   ],
+   "shapes": [
+    "원기둥",
+    "네모"
+   ],
    "tags": [
     "교실",
     "컵",
     "컴퓨터"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "mug-monitor/photo.jpg",
     "art": "mug-monitor/art.jpg",
@@ -2360,14 +2738,35 @@
   {
    "id": "water-purifier",
    "title": "정수기",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "생활용품",
+   "objects": [
+    "정수기",
+    "소화기"
+   ],
+   "place": "복도",
+   "colors": [
+    "흰색",
+    "빨강"
+   ],
+   "shapes": [
+    "네모",
+    "원"
+   ],
    "tags": [
     "복도",
     "물"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "water-purifier/photo.jpg",
     "art": "water-purifier/art.jpg",
@@ -2501,15 +2900,34 @@
   {
    "id": "recycle-bins",
    "title": "분리수거함",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "학교 시설",
+   "objects": [
+    "분리수거함"
+   ],
+   "place": "교실",
+   "colors": [
+    "남색",
+    "흰색"
+   ],
+   "shapes": [
+    "네모"
+   ],
    "tags": [
     "교실",
     "환경",
     "정리"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "recycle-bins/photo.jpg",
     "art": "recycle-bins/art.jpg",
@@ -2686,15 +3104,37 @@
   {
    "id": "bottles",
    "title": "물병과 컵",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "생활용품",
+   "objects": [
+    "물병",
+    "컵"
+   ],
+   "place": "교실",
+   "colors": [
+    "흰색",
+    "분홍",
+    "은색"
+   ],
+   "shapes": [
+    "원기둥",
+    "원"
+   ],
    "tags": [
     "교실",
     "물",
     "컵"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "bottles/photo.jpg",
     "art": "bottles/art.jpg",
@@ -2871,15 +3311,36 @@
   {
    "id": "milk-basket",
    "title": "우유 바구니",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "음식",
+   "objects": [
+    "우유",
+    "바구니"
+   ],
+   "place": "교실",
+   "colors": [
+    "남색",
+    "흰색",
+    "베이지"
+   ],
+   "shapes": [
+    "네모"
+   ],
    "tags": [
     "교실",
     "급식",
     "우유"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "ok",
+    "notes": "사람·이름·번호·작품·상표 문제 없음"
+   },
    "files": {
     "photo": "milk-basket/photo.jpg",
     "art": "milk-basket/art.jpg",
@@ -3017,15 +3478,37 @@
   {
    "id": "cup-drawings",
    "title": "컵과 그림",
-   "source": "maker",
-   "added": "2026-10-22",
-   "privacy": "maker-checked",
-   "check": "maker",
+   "category": "작품",
+   "objects": [
+    "컵",
+    "그림"
+   ],
+   "place": "교실",
+   "colors": [
+    "초록",
+    "노랑",
+    "빨강"
+   ],
+   "shapes": [
+    "원",
+    "네모"
+   ],
    "tags": [
     "교실",
     "미술",
     "컵"
    ],
+   "source": "maker",
+   "added": "2026-10-22",
+   "privacy": "maker-checked",
+   "check": "maker",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 다시 봄",
+    "status": "check",
+    "notes": "학생 그림 두 점이 보임 — 학생 작품(저작권). 그린 학생·보호자 동의 확인 필요"
+   },
    "files": {
     "photo": "cup-drawings/photo.jpg",
     "art": "cup-drawings/art.jpg",

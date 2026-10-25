@@ -1,18 +1,28 @@
 차름 사진 모음 (media/photos)
 
 차름 웹앱이 쓰는 모든 실제 사진을 여기 한곳에 모읍니다.
-앱은 photos.json 목록을 읽고, 자기에게 맞는 사진만 골라 씁니다.
+한 앱(도형 찾기 같은)만을 위한 것이 아니라, 낱말·도형·색·장소·분류·퍼즐 등 앞으로 만들 여러 학습에
+계속 쓰는 공용 자료입니다. 그래서 사진마다 무엇이 보이는지(category·objects·place·colors·shapes)와
+권리 검토(rights)를 함께 적어 둡니다. 앱은 photos.json 목록을 읽고, 자기에게 맞는 사진만 골라 씁니다.
+기증 사진을 넣는 절차와 권리 검토 기준은 REVIEW.md.
 
 ■ 폴더
   media/photos/<id>/photo.jpg   사진(긴 쪽 1280, 위치 정보 지움)
   media/photos/<id>/art.jpg     끝 그림(사진을 옮긴 깔끔한 그림, 있으면)
   media/photos/<id>/line.png    색칠 도안(있으면)
   media/photos/photos.json      목록
-  media/photos/review.html      기증 사진 확인 화면(제작자용)
+  media/photos/review.html      기증 사진 확인 화면(예전 방식, 확인 글자) — 지금은 charum.org/donate-admin.php(관리자 로그인)
+  media/photos/REVIEW.md        기증 사진 정리 절차·권리 검토 기준(Claude가 따름)
 
 ■ photos.json 한 줄
   id        영문 이름(폴더 이름과 같음). 기증 사진은 d + 대기함 번호
   title     물건 이름(학생이 아는 말, "이것" 금지)
+  category  가전·전자기기 / 가구 / 생활용품 / 학용품 / 음식 / 동물 / 식물 / 탈것 / 길·시설 / 학교 시설 / 건물 / 자연 / 작품 / 놀이 / 옷 / 기타
+  objects   사진에 또렷이 보이는 것들(주인공 먼저)
+  place     교실·복도·화장실·급식실·운동장·바깥·집·가게·교통·기타
+  colors    주된 색 2~3개
+  shapes    또렷한 모양(원·세모·네모·원기둥 …)
+  rights    권리 검토: owner(제작자/기증) · consent · review(검토한 날) · status(ok / check = 쓰기 전에 한 번 더 볼 것) · notes
   source    maker(제작자가 찍음) / donated(선생님 기증, 기증자 이름은 남기지 않음)
   added     목록에 넣은 날
   privacy   maker-checked = 제작자가 눈으로 사람·얼굴·이름·번호·번호판·학교 이름 없음을 확인
