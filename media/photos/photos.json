@@ -3595,6 +3595,100 @@
     },
     "puzzle": true
    }
+  },
+  {
+   "id": "street-cat",
+   "title": "고양이",
+   "category": "동물",
+   "objects": [
+    "고양이",
+    "울타리",
+    "낙엽"
+   ],
+   "place": "바깥",
+   "colors": [
+    "주황",
+    "초록",
+    "회색"
+   ],
+   "shapes": [
+    "원"
+   ],
+   "tags": [
+    "바깥",
+    "동물",
+    "가을"
+   ],
+   "source": "maker",
+   "added": "2026-10-25",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진 모으기(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 검토",
+    "status": "ok",
+    "notes": "길고양이·울타리. 사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "street-cat/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   },
+   "from": "d2610222348409b44b647"
+  },
+  {
+   "id": "potted-tree",
+   "title": "화분",
+   "category": "식물",
+   "objects": [
+    "화분",
+    "나무",
+    "창문",
+    "울타리"
+   ],
+   "place": "바깥",
+   "colors": [
+    "초록",
+    "갈색",
+    "흰색"
+   ],
+   "shapes": [
+    "원",
+    "반원"
+   ],
+   "tags": [
+    "바깥",
+    "식물",
+    "가을"
+   ],
+   "source": "maker",
+   "added": "2026-10-25",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 사진 모으기(차름 학습 자료로 계속 씀)",
+    "review": "2026-10-25 Claude 검토",
+    "status": "ok",
+    "notes": "뒤 건물 벽·창은 누구 집인지 알 수 없을 만큼만 보임. 사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "potted-tree/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   },
+   "from": "d261022234840fad3abc9"
   }
  ]
 }
