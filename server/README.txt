@@ -18,6 +18,12 @@ charum.org 서버에 올리는 파일의 원본입니다. GitHub Pages에서는 
                     잘못된 별명을 지우려면 맨 위 $ADMIN_TOKEN 에 20자 이상 글자를 서버에서만 넣고 act:"del".
   key-relay.php · photo-relay.php  휴대폰에서 키·사진 받기(잠가서 3분, 받는 순간 지움). 기록: charum-api/key-relay-data/.
                     원본은 아직 서버에만 있음(내용을 받으면 여기에 넣음).
+  relay.php · relay-lib.php  차름 사진 다리(2026-10-25). 선생님들이 연수에서 만든 앱이 휴대폰 사진을 받게 중계.
+                    photo-relay.php와 따로(차름 앱에 영향 없게). 연수 코드가 켜져 있어야 번호를 만듦. 한 번 찍고 여러 장(30장).
+                    한도: 한 달 전송량 안전판 60GB · 한 장 4MB · IP 하루 번호 300·사진 600. 기록: charum-api/relay-data/.
+                    점검: /charum-api/relay.php?ping → "ok": true
+  relay-admin.php   사진 다리 관리자 화면(관리자 로그인). 연수 코드 만들기·켜고 끄기·끝나는 날·하루 한도, 이달 사용량, 부른 주소.
+                    주소: https://www.charum.org/charum-api/relay-admin.php
 
 ■ addons/charum_donate/  애드온 "차름 기증 사진 탭". 관리자로 로그인하면 회원 메뉴 끝에 "기증 사진 N".
   charum-api/donate-data/ 와 charum-api/donate-config.php 를 읽음. 관리자 > 고급 > 애드온에서 PC·모바일 사용.
@@ -26,4 +32,7 @@ charum.org 서버에 올리는 파일의 원본입니다. GitHub Pages에서는 
   https://www.charum.org/study/doc.html?001/shape-finder_guide 처럼 열면 GitHub의 설명 페이지를 내 도메인 주소로 보여 줌.
   여는 것: 이름이 _guide · record-guide · cloud-key · gemini-key 로 끝나는 페이지.
 
-■ 받는 주소(CORS): https://shim-sung-hyun.github.io · https://www.charum.org · https://charum.org. 오류도 200 + {"error":…}.
+■ study/send.html · study/get.html  사진 다리의 휴대폰 보내기·큰 화면 받기 불러오기(본문은 GitHub relay/). 서버 study 폴더에 한 번만.
+  doc.html은 relay/relay_guide 도 열도록 고침(2026-10-25) — 다시 올려야 함.
+
+■ 받는 주소(CORS): https://shim-sung-hyun.github.io · https://www.charum.org · https://charum.org (relay.php만 누구나 — 연수 코드로 막음). 오류도 200 + {"error":…}.

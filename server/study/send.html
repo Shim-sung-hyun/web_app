@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>사진 보내기 · 차름 사진 다리</title>
+<style>body{margin:0;background:#EEF2F5;font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;color:#1C2A31;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;padding:0 16px}</style>
+</head><body><p id="m">불러오고 있습니다…</p>
+<script>
+/* 차름 사진 다리 — send 불러오기: 이 파일만 내 서버(study/send.html)에 둔다. 본문은 GitHub(relay/send.html)에서 가져와 이 주소에서 펼친다(주소창에 charum.org, #번호도 그대로). 원본: 저장소 server/study/send.html */
+(function () {
+  var APP = 'https://shim-sung-hyun.github.io/web_app/relay/send.html';
+  fetch(APP, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw 0; return r.text(); })
+    .then(function (h) { document.open(); document.write(h); document.close(); })
+    .catch(function () { document.getElementById('m').innerHTML = '불러오지 못했습니다. 인터넷 연결을 확인하고 새로 고침해 주십시오.<br><a href="' + APP + location.hash + '">여기를 눌러 바로 열 수도 있습니다.</a>'; });
+})();
+</script>
+</body></html>

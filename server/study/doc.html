@@ -10,7 +10,7 @@
    설명·안내 페이지만 연다(이름이 _guide · record-guide · cloud-key · gemini-key 로 끝나는 것). 원본: 저장소 server/study/doc.html */
 (function () {
   var GH = 'https://shim-sung-hyun.github.io/web_app/';
-  var OK = /^(\d{3}\/)?[a-z0-9-]*(_guide|record-guide|cloud-key|gemini-key)$/;
+  var OK = /^(\d{3}\/|relay\/)?[a-z0-9-]*(_guide|record-guide|cloud-key|gemini-key)$/;
   var p = decodeURIComponent(location.search.slice(1)).replace(/\.html$/, '');
   var m = document.getElementById('m');
   if (!OK.test(p)) { m.innerHTML = '열 수 없는 주소입니다.<br><a href="https://www.charum.org/webapp">차름 게시판으로</a>'; return; }
@@ -18,7 +18,7 @@
   fetch(SRC, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw 0; return r.text(); })
     .then(function (h) {
       /* 안의 다른 설명 페이지 링크도 이 주소로 */
-      h = h.replace(/https:\/\/shim-sung-hyun\.github\.io\/web_app\/((?:\d{3}\/)?[a-z0-9-]*(?:_guide|record-guide|cloud-key|gemini-key))\.html/g,
+      h = h.replace(/https:\/\/shim-sung-hyun\.github\.io\/web_app\/((?:\d{3}\/|relay\/)?[a-z0-9-]*(?:_guide|record-guide|cloud-key|gemini-key))\.html/g,
         function (_, q) { return location.pathname + '?' + q; });
       var hash = location.hash;
       document.open(); document.write(h); document.close();

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>사진 다리 예시 · 우리 반 사진 카드</title>
+<style>
+  body{margin:0;font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F6F8;color:#1C2A31}
+  header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap}
+  h1{margin:0;font-size:26px}
+  button{font:inherit;font-size:18px;padding:12px 22px;border-radius:14px;border:0;background:#3F6A86;color:#fff;font-weight:700;cursor:pointer}
+  #cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;padding:0 20px 30px}
+  .card{background:#fff;border-radius:16px;padding:10px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+  .card img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
+  .card input{width:100%;box-sizing:border-box;margin-top:8px;font:inherit;font-size:22px;text-align:center;border:1px solid #D3DCE2;border-radius:10px;padding:8px}
+  .hint{padding:0 20px;color:#56666E}
+</style>
+</head>
+<body>
+<header>
+  <h1>우리 반 사진 카드</h1>
+  <button type="button" id="phone">📱 휴대폰에서 사진 받기</button>
+</header>
+<p class="hint">휴대폰 사진이 카드로 들어와요. 카드 아래에 낱말을 써 보세요. (차름 사진 다리 예시 — 연수에서 쓸 때는 아래 코드의 'demo'를 받은 연수 코드로 바꿔요.)</p>
+<div id="cards"></div>
+
+<!-- ① 이 한 줄을 넣습니다 -->
+<script src="https://shim-sung-hyun.github.io/web_app/relay/charum-relay.js"></script>
+<script>
+  // ② 단추를 누르면 받기 창(QR)이 뜨고, 사진이 올 때마다 onPhoto가 불립니다.
+  document.getElementById('phone').onclick = function () {
+    CharumRelay.receive({
+      code: 'demo',                       // ← 연수 코드
+      onPhoto: function (blob) {           // blob = 받은 사진(JPEG)
+        var card = document.createElement('div');
+        card.className = 'card';
+        var img = document.createElement('img');
+        img.src = URL.createObjectURL(blob);   // 사진을 바로 화면에
+        var word = document.createElement('input');
+        word.placeholder = '낱말 쓰기';
+        card.appendChild(img); card.appendChild(word);
+        document.getElementById('cards').appendChild(card);
+      }
+    });
+  };
+  // 사진을 저장해 두려면(새로 고쳐도 남게) CharumRelay.toDataURL(blob)로 글자로 바꿔 localStorage·IndexedDB에 넣습니다.
+</script>
+</body>
+</html>

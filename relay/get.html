@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>휴대폰 사진 받기 · 차름 사진 다리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1C2A31;--sub:#56666E;--line:#D3DCE2;--pri:#3F6A86;--pri2:#2C4E66;--bg:#EEF2F5}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif}
+body{display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;flex-wrap:wrap}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:28px;margin:0;color:var(--pri2)}
+h1 small{font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--sub);margin-left:8px}
+button{font:inherit;font-size:16px;padding:10px 18px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;min-height:48px;touch-action:manipulation}
+button.pri{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700}
+button:disabled{opacity:.45}
+.bar{display:flex;gap:8px;flex-wrap:wrap}
+#stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:0 20px}
+#stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;box-shadow:0 6px 30px rgba(0,0,0,.12);background:#fff}
+.empty{text-align:center;color:var(--sub);line-height:1.7;font-size:17px}
+.empty button{font-size:22px;padding:18px 30px;margin-top:14px}
+#strip{display:flex;gap:10px;padding:12px 20px 16px;overflow-x:auto;min-height:0}
+#strip:empty{display:none}
+#strip button{padding:0;min-height:0;width:84px;height:84px;flex:none;border-radius:12px;overflow:hidden;border:3px solid transparent;background:#fff}
+#strip button.on{border-color:var(--pri)}
+#strip img{width:100%;height:100%;object-fit:cover;display:block}
+#tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:10px 20px 0}
+#tools:empty{display:none}
+#msg{min-height:1.4em;text-align:center;color:var(--sub);font-size:14px;margin:6px 0 0}
+.full #stage{padding:0;background:#000} .full #stage img{border-radius:0;box-shadow:none}
+.full header,.full #strip,.full #msg{display:none}
+.full #tools{position:fixed;right:16px;bottom:16px;padding:0}
+footer{font-size:12px;color:#7a8a91;text-align:center;padding:0 20px 10px}
+</style>
+</head>
+<body>
+<header>
+  <h1>휴대폰 사진 받기<small>받은 사진은 이 화면에만 있고, 창을 닫으면 사라져요</small></h1>
+  <div class="bar"><button class="pri" type="button" id="recv">📱 휴대폰에서 받기</button></div>
+</header>
+<div id="stage"><div class="empty" id="empty">휴대폰으로 찍은 사진을 이 화면에 크게 띄우거나,<br>내려받아 PPT·한글·학습지에 넣을 수 있어요.<br><button class="pri" type="button" id="recv2">📱 휴대폰에서 받기</button></div></div>
+<div id="tools"></div>
+<p id="msg" aria-live="polite"></p>
+<div id="strip"></div>
+<footer>차름 사진 다리 · 사진은 휴대폰에서 잠가 오고, 중계 서버는 열어 볼 수 없어요.</footer>
+<script src="https://shim-sung-hyun.github.io/web_app/relay/charum-relay.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const pics=[]; let cur=-1;
+const say=t=>{ $('msg').textContent=t||''; };
+function open(){ CharumRelay.receive({code:'get',onPhoto:(blob,info)=>{ pics.push({blob,url:URL.createObjectURL(blob),name:info.name||('사진 '+(pics.length+1)),w:info.width,h:info.height}); show(pics.length-1); }}); }
+$('recv').onclick=open; $('recv2').onclick=open;
+function show(i){
+  cur=i; const p=pics[i];
+  $('stage').innerHTML=p?`<img src="${p.url}" alt="받은 사진 ${i+1}">`:'';
+  $('strip').innerHTML=pics.map((q,k)=>`<button type="button" data-i="${k}" class="${k===i?'on':''}" aria-label="${k+1}번째 사진"><img src="${q.url}" alt=""></button>`).join('');
+  $('strip').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>show(+b.dataset.i));
+  const on=$('strip').querySelector('.on'); if(on) on.scrollIntoView({inline:'nearest',block:'nearest'});
+  $('tools').innerHTML=p?`<button type="button" id="tFull">크게 보기</button><button type="button" id="tCopy">복사</button><button type="button" id="tSave">내려받기</button>${pics.length>1?'<button type="button" id="tAll">모두 내려받기</button>':''}<button type="button" id="tDel">이 사진 빼기</button>`:'';
+  if(!p) return;
+  $('tFull').onclick=full; $('tSave').onclick=()=>save(p,i); $('tDel').onclick=del; $('tCopy').onclick=()=>copy(p);
+  if($('tAll')) $('tAll').onclick=async()=>{ for(let k=0;k<pics.length;k++){ save(pics[k],k); await new Promise(r=>setTimeout(r,400)); } };
+  say(`${i+1} / ${pics.length}`);
+}
+function fname(p,i){ const d=new Date(), z=n=>String(n).padStart(2,'0'); return `사진_${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}_${z(i+1)}.jpg`; }
+function save(p,i){ const a=document.createElement('a'); a.href=p.url; a.download=fname(p,i); document.body.appendChild(a); a.click(); a.remove(); }
+async function copy(p){
+  try{
+    /* 클립보드는 PNG만 받는 곳이 많아 PNG로 바꿔 넣음(PPT·한글에 붙여넣기) */
+    const im=new Image(); im.src=p.url; await im.decode();
+    const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0);
+    const png=await new Promise(r=>c.toBlob(r,'image/png'));
+    await navigator.clipboard.write([new ClipboardItem({'image/png':png})]);
+    say('복사했어요. PPT·한글 등에서 붙여넣기(Ctrl+V) 하세요.');
+  }catch(e){ say('이 브라우저에서는 복사할 수 없어요. "내려받기"를 써 주세요.'); }
+}
+function del(){ const p=pics.splice(cur,1)[0]; URL.revokeObjectURL(p.url); if(!pics.length){ cur=-1; $('stage').innerHTML=''; $('stage').appendChild(emptyEl); $('tools').innerHTML=''; $('strip').innerHTML=''; say(''); return; } show(Math.min(cur,pics.length-1)); }
+const emptyEl=$('empty');
+function full(){
+  const el=document.documentElement;
+  if(document.fullscreenElement){ document.exitFullscreen(); return; }
+  (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);
+}
+document.addEventListener('fullscreenchange',()=>{ document.body.classList.toggle('full',!!document.fullscreenElement); const b=$('tFull'); if(b) b.textContent=document.fullscreenElement?'작게 보기':'크게 보기'; });
+document.addEventListener('keydown',e=>{ if(!pics.length) return; if(e.key==='ArrowRight') show(Math.min(pics.length-1,cur+1)); if(e.key==='ArrowLeft') show(Math.max(0,cur-1)); });
+})();
+</script>
+</body>
+</html>
