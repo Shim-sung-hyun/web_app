@@ -5,7 +5,7 @@
 
 ## 흐름
 
-1. 제작자가 `https://www.charum.org/donate-admin.php`(관리자 로그인)에서 쓸 사진을 골라 "고른 것 보내기"
+1. 제작자가 `https://www.charum.org/charum-api/donate-admin.php`(관리자 로그인)에서 쓸 사진을 골라 "고른 것 보내기"
    → 비공개 저장소 `Shim-sung-hyun/charum-inbox`의 `inbox/<sid>/`(photo.jpg · art.jpg(있으면) · meta.json).
 2. Claude가 정리(제작자가 "기증 사진 정리해 줘"라고 하거나 예약 작업):
    - `inbox/`의 사진마다 **직접 보고** 아래 "권리 검토"를 한다.

@@ -497,7 +497,7 @@ body.admin #main{pointer-events:none}
 <script id="keyRelay">
 /* ===== 휴대폰으로 키 받기 (전자칠판 쪽) — 공통 모듈 ===== */
 (function(){
-const RELAY='https://charum.org/key-relay.php';
+const RELAY='https://charum.org/charum-api/key-relay.php';
 /* 중계 서버 주소를 넣기 전에는 "휴대폰으로 받기" 단추를 감춤 */
 const READY=/^https?:\/\//.test(RELAY);
 const SEND_PAGE='https://shim-sung-hyun.github.io/web_app/key-send.html';
@@ -709,7 +709,7 @@ if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스�
    전자칠판이 번호 4자리 + 공개 열쇠를 맡기면, 휴대폰(photo-send.html)이 사진을 잠가서 보내고,
    전자칠판이 받는 순간 서버에서 지워짐. 서버는 사진을 볼 수 없음. */
 (function(){
-const RELAY='https://charum.org/photo-relay.php';
+const RELAY='https://charum.org/charum-api/photo-relay.php';
 const SEND_PAGE='https://shim-sung-hyun.github.io/web_app/photo-send.html';
 const QR=(function(){
   const EXP=new Array(512), LOG=new Array(256); let x=1;
@@ -2138,7 +2138,7 @@ async function useMine(x){
 }
 /* ===== 기증: 선생님이 고른 내 사진을 다른 선생님도 쓰는 예시 사진으로 =====
    보내기 전에 이 앱이 Gemini로 사람·얼굴·이름·번호를 살펴 있으면 막음 → charum.org 대기함 → 제작자가 보고 골라 GitHub에 */
-const DONATE='https://charum.org/donate.php';
+const DONATE='https://charum.org/charum-api/donate.php';
 function giveMine(x){
   const old=$('giveBox'); if(old) old.remove();
   const box=document.createElement('div'); box.id='giveBox'; box.className='key-box';

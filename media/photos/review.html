@@ -49,7 +49,7 @@ button:disabled{opacity:.5}
 <div class="grid" id="grid"></div>
 </main>
 <script>
-const API='https://charum.org/donate.php';
+const API='https://charum.org/charum-api/donate.php';
 const $=id=>document.getElementById(id);
 const say=(t,c)=>{ $('state').textContent=t; $('state').className=c||''; };
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};

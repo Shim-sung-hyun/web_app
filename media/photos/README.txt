@@ -11,7 +11,7 @@
   media/photos/<id>/art.jpg     끝 그림(사진을 옮긴 깔끔한 그림, 있으면)
   media/photos/<id>/line.png    색칠 도안(있으면)
   media/photos/photos.json      목록
-  media/photos/review.html      기증 사진 확인 화면(예전 방식, 확인 글자) — 지금은 charum.org/donate-admin.php(관리자 로그인)
+  media/photos/review.html      기증 사진 확인 화면(예전 방식, 확인 글자) — 지금은 charum.org/charum-api/donate-admin.php(관리자 로그인)
   media/photos/REVIEW.md        기증 사진 정리 절차·권리 검토 기준(Claude가 따름)
 
 ■ photos.json 한 줄

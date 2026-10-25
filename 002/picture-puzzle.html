@@ -387,7 +387,7 @@ body.admin #play{pointer-events:none}
    전자칠판이 번호 4자리 + 공개 열쇠를 맡기면, 휴대폰(photo-send.html)이 사진을 잠가서 보내고,
    전자칠판이 받는 순간 서버에서 지워짐. 서버는 사진을 볼 수 없음. */
 (function(){
-const RELAY='https://charum.org/photo-relay.php';
+const RELAY='https://charum.org/charum-api/photo-relay.php';
 const SEND_PAGE='https://shim-sung-hyun.github.io/web_app/photo-send.html';
 const QR=(function(){
   const EXP=new Array(512), LOG=new Array(256); let x=1;
@@ -1543,7 +1543,7 @@ function complete(){
    이 기기 기록: picturePuzzle.super (학생마다·단계마다, 연습도 '연습'으로).
    모든 학교 순위표: 선생님이 정한 별명(실명 말고)이 있을 때만 charum.org/puzzle-rank.php로 별명·단계·시간만 보냄.
    학생 이름·학교·사진은 보내지 않음. 못 보내면 다음에 기록 창을 열 때 다시 보냄. */
-const RANK_URL='https://www.charum.org/puzzle-rank.php';
+const RANK_URL='https://www.charum.org/charum-api/puzzle-rank.php';
 const clockMs=R=>!R||!R.start?0:(R.pauseAt||Date.now())-R.start-R.paused;
 const clockText=ms=>{ const s=Math.floor(ms/1000); return s>=3600?`${Math.floor(s/3600)}:${String(Math.floor(s/60)%60).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`:`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; };
 const fmtRank=ms=>{ const s=ms/1000; return s<60?`${s.toFixed(1)}초`:s<3600?`${Math.floor(s/60)}분 ${String(Math.floor(s%60)).padStart(2,'0')}초`:`${Math.floor(s/3600)}시간 ${Math.floor(s/60)%60}분`; };

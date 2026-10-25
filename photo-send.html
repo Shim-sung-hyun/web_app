@@ -142,7 +142,7 @@ details.give summary .tag{margin-left:4px}
 </main>
 <script>
 (function(){
-const RELAY='https://charum.org/photo-relay.php';
+const RELAY='https://charum.org/charum-api/photo-relay.php';
 const $=id=>document.getElementById(id);
 const m=/c=(\d{4})/.exec(location.hash||''); if(m) $('code').value=m[1];
 /* [차름 놀이] 내 그림 퍼즐(002)에서 열면 안내를 퍼즐에 맞게 */
@@ -220,7 +220,7 @@ $('again').onclick=()=>{ clearTimeout(watch); $('giveOk').checked=false; $('give
 
 /* ===== 기증: 전자칠판으로 보낸 뒤 따로 차름 기증함(charum.org/donate.php)으로. 사진은 긴 쪽 1280으로 다시 그려 위치 정보(EXIF)가 빠짐.
    이 휴대폰에 Gemini 키가 있으면 사람·얼굴·이름·번호를 먼저 살펴 막고, 없으면 check=none(제작자 확인 화면에 "검사 안 함") ===== */
-const DONATE='https://charum.org/donate.php';
+const DONATE='https://charum.org/charum-api/donate.php';
 function to1280(blob){
   return new Promise((res,rej)=>{ const u=URL.createObjectURL(blob), im=new Image();
     im.onload=()=>{ const k=Math.min(1,1280/Math.max(im.naturalWidth,im.naturalHeight)), c=document.createElement('canvas');

@@ -76,7 +76,7 @@ input.f,select.f{width:100%;font:inherit;font-size:16px;padding:10px 12px;border
 <div class="bar"><div class="in"><button id="send" type="button" disabled>보내기</button><p id="state" aria-live="polite"></p></div></div>
 <script>
 (function(){
-const DONATE='https://charum.org/donate.php';
+const DONATE='https://charum.org/charum-api/donate.php';
 const PLACES=['교실','복도','화장실','급식실','운동장·바깥','집','가게','교통','기타'];
 const $=id=>document.getElementById(id);
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}}};
