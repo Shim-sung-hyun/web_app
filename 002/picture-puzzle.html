@@ -561,7 +561,9 @@ const ICON={
   q:'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.4 9.4a2.7 2.7 0 1 1 3.7 2.5c-.7.3-1.1.9-1.1 1.7v.5M12 17.2h.01"/></svg>'
 };
 /* 단계: 가로 5칸 고정, 줄 수 = 단계 */
-const LEVELS={1:{cols:5,rows:1},2:{cols:5,rows:2},3:{cols:5,rows:3},4:{cols:5,rows:4},5:{cols:5,rows:5}};
+const LEVELS={1:{cols:5,rows:1},2:{cols:5,rows:2},3:{cols:5,rows:3},4:{cols:5,rows:4},5:{cols:5,rows:5},6:{cols:10,rows:5}};
+/* 마지막 단계 "S" = 50조각(가로 10 × 세로 5). 큰 퍼즐을 좋아하는 학생을 위해. 안에서는 6단계로 셈 */
+const MAXLV=6, LVN=lv=>+lv===6?'S':String(lv);
 const SHAPES={jig:'퍼즐 모양',rect:'사각형'};
 const GHOSTS={1:'진하게',2:'흐리게',3:'더 흐리게',4:'안 보이게'};
 const pieceCount=lv=>LEVELS[lv].cols*LEVELS[lv].rows;
@@ -650,13 +652,13 @@ function renderDocks(){
   const R=S.R, done=!!(R&&R.done);
   const b=(act,label,pressed,extra='')=>`<button type="button" data-a="${act}" ${pressed!=null?`aria-pressed="${pressed}"`:''} ${extra}>${label}</button>`;
   $('dockTop').innerHTML=
-    `<div class="grp" id="gLv"><span class="lbl">단계</span>${Object.keys(LEVELS).map(l=>b('lv:'+l,l,+l===S.level,`title="${pieceCount(+l)}조각"`)).join('')}</div>`+
+    `<div class="grp" id="gLv"><span class="lbl">단계</span>${Object.keys(LEVELS).map(l=>b('lv:'+l,LVN(l),+l===S.level,`title="${pieceCount(+l)}조각"`)).join('')}</div>`+
     `<div class="grp" id="gSh"><span class="lbl">모양</span>${Object.keys(SHAPES).map(k=>b('sh:'+k,SHAPES[k].replace(' 모양',''),k===S.shape)).join('')}</div>`+
     `<div class="grp" id="gGh"><span class="lbl">밑그림</span>${Object.keys(GHOSTS).map(k=>b('gh:'+k,GHOSTS[k].replace('안 보이게','없음'),+k===S.ghost)).join('')}</div>`+
     `<div class="grp">${b('sfx',(S.sfx?ICON.sndOn:ICON.sndOff)+(S.sfx?'효과음':'효과음 끔'),S.sfx)}${b('setup',ICON.gear+'설정')}</div>`;
   $('helpTop').innerHTML=b('tour',ICON.q+'도움말');
   $('dockBot').innerHTML = !R ? '' : done
-    ? `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${S.mode==='teacher'&&S.idx<S.list.length-1?b('nextpic',ICON.next+'다음 그림'):''}${S.mode==='teacher'&&S.list.length>1?b('first',ICON.redo+'첫 그림부터'):''}${S.level<5?b('nextlv',ICON.next+'다음 단계'):''}${b('setup',ICON.photo+'다른 그림으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
+    ? `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${S.mode==='teacher'&&S.idx<S.list.length-1?b('nextpic',ICON.next+'다음 그림'):''}${S.mode==='teacher'&&S.list.length>1?b('first',ICON.redo+'첫 그림부터'):''}${S.level<MAXLV?b('nextlv',ICON.next+'다음 단계'):''}${b('setup',ICON.photo+'다른 그림으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`
     : `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${b('mix',ICON.mix+'다시 섞기',null,R&&R.active?'':'disabled')}${b('log',ICON.log+'기록',!$('logPop').hidden)}</div>`;
 }
 function onDock(e){
@@ -676,14 +678,14 @@ function onDock(e){
   if(a==='tour'){ startTour(); return; }
   if(a==='mix') remix();
   if(a==='again') startRound();
-  if(a==='nextlv'){ S.level=Math.min(5,S.level+1); store.set('level',S.level); startRound(); }
+  if(a==='nextlv'){ S.level=Math.min(MAXLV,S.level+1); store.set('level',S.level); startRound(); }
   if(a==='print') printSheet();
   if(a==='log'){ $('logPop').hidden=!$('logPop').hidden; renderLog(); renderDocks(); }
 }
 $('dockTop').addEventListener('click',onDock); $('dockBot').addEventListener('click',onDock); $('helpTop').addEventListener('click',onDock);
 function fmtTime(ms){ const s=Math.round(ms/1000); return s<60?`${s}초`:`${Math.floor(s/60)}분 ${s%60}초`; }
 function renderLog(){
-  const rows=S.rounds.map((l,i)=>`<tr><td>${i+1}</td><td>${l.level}단계 · ${SHAPES[l.shape]} · 밑그림 ${GH_SHORT[l.ghost]||''}</td><td>${l.n}</td><td>${l.first}</td><td>${l.helped}</td><td>${fmtTime(l.ms)}</td></tr>`).join('');
+  const rows=S.rounds.map((l,i)=>`<tr><td>${i+1}</td><td>${LVN(l.level)}단계 · ${SHAPES[l.shape]} · 밑그림 ${GH_SHORT[l.ghost]||''}</td><td>${l.n}</td><td>${l.first}</td><td>${l.helped}</td><td>${fmtTime(l.ms)}</td></tr>`).join('');
   const opts=students.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
   $('logPop').innerHTML=`<h3>이번 수업${S.img&&S.img.demo?' (예시 사진)':''}</h3>
     <div class="lp-who"><select id="lpStu" aria-label="기록할 학생"><option value="">연습 (기록 안 함)</option>${opts}</select>${recId?`<span class="recnote">${esc(nameOf(recId))} 기록 중</span>`:''}<button class="mini" type="button" id="lpRec">교사용 기록</button></div>
@@ -850,7 +852,7 @@ const dayOf=t=>{ const d=new Date(t); return d.getFullYear()+'-'+String(d.getMon
 const SOLO=0.8; /* 바로 맞힘이 80% 이상이면 "혼자 맞춤" */
 const isSolo=r=>r.n>0&&r.first/r.n>=SOLO;
 const GH_SHORT={1:'진하게',2:'흐리게',3:'더 흐리게',4:'없음'};
-const rungName=(lv,gh)=>`${lv}단계(${pieceCount(lv)}조각) · 밑그림 ${GH_SHORT[gh]}`;
+const rungName=(lv,gh)=>`${LVN(lv)}단계(${pieceCount(lv)}조각) · 밑그림 ${GH_SHORT[gh]}`;
 /* 어려운 정도: 조각 수가 먼저, 같은 조각 수에서는 밑그림이 흐릴수록 어려움 */
 const rungOf=(lv,gh)=>(lv-1)*4+(gh-1);
 const rungAt=k=>({lv:Math.floor(k/4)+1, gh:k%4+1});
@@ -882,7 +884,7 @@ function summarize(list){
   if(last){
     const k=rungOf(last.lv,last.gh||1), same=L.filter(r=>rungOf(r.lv,r.gh||1)===k), r3=same.slice(-3);
     const r3rate=r3.length?r3.reduce((s,r)=>s+r.first/r.n,0)/r3.length:0;
-    if(same.length>=5&&r3.length===3&&r3.every(isSolo)&&k<19) advice={dir:'up',from:k,to:k+1,msg:`같은 칸을 ${same.length}번 했고, 최근 3번 모두 혼자 맞췄어요.`};
+    if(same.length>=5&&r3.length===3&&r3.every(isSolo)&&k<rungOf(MAXLV,4)) advice={dir:'up',from:k,to:k+1,msg:`같은 칸을 ${same.length}번 했고, 최근 3번 모두 혼자 맞췄어요.`};
     else if(r3.length===3&&r3rate<=0.45&&k>0) advice={dir:'down',from:k,to:k-1,msg:`최근 3번 바로 맞힘이 평균 ${Math.round(r3rate*100)}%예요.`};
     else advice={dir:'stay',from:k,to:k,msg:same.length<5?`이 칸은 ${same.length}번 했어요. 5번쯤 더 해 보고 정해요.`:`최근 3번 바로 맞힘 평균 ${Math.round(r3rate*100)}%예요.`};
   }
@@ -910,7 +912,7 @@ const CSV_HEAD=['학생','날짜','시각','그림','출처','단계','조각 �
 const EM_NAME={show:'바로 자리 보여 주기',retry:'한 번 더 기회',free:'성공할 때까지'};
 function toCSV(list){
   const q=v=>{ v=String(v==null?'':v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
-  const rows=list.map(r=>{ const d=new Date(r.t); return [nameOf(r.s)||'(지운 학생)',dayOf(r.t),String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0'),r.pic,SRC_NAME[r.src]||'',r.lv,r.n,SHAPES[r.sh]||r.sh,GH_SHORT[r.gh]||'',EM_NAME[r.em]||'',r.first,r.helped,Math.round(r.ms/1000),r.mode==='solo'?'학생 혼자':'교사와 함께'].map(q).join(','); });
+  const rows=list.map(r=>{ const d=new Date(r.t); return [nameOf(r.s)||'(지운 학생)',dayOf(r.t),String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0'),r.pic,SRC_NAME[r.src]||'',LVN(r.lv),r.n,SHAPES[r.sh]||r.sh,GH_SHORT[r.gh]||'',EM_NAME[r.em]||'',r.first,r.helped,Math.round(r.ms/1000),r.mode==='solo'?'학생 혼자':'교사와 함께'].map(q).join(','); });
   return '﻿'+CSV_HEAD.join(',')+'\n'+rows.join('\n');
 }
 function parseCSV(text){
@@ -932,7 +934,7 @@ function importCSV(text){
     let st=students.find(x=>x.name===name); if(!st){ st={id:newSid(),name}; students.push(st); }
     const t=new Date(c[ix('날짜')]+'T'+(c[ix('시각')]||'00:00:00')).getTime(); if(!t) return;
     const key=st.id+'|'+Math.round(t/1000); if(have.has(key)){ skipped++; return; }
-    const lv=+c[ix('단계')], n=+c[ix('조각 수')];
+    const lv=c[ix('단계')]==='S'?6:+c[ix('단계')], n=+c[ix('조각 수')];
     LOG.push({s:st.id,t,pic:c[ix('그림')]||'',src:back(SRC_NAME,c[ix('출처')])||'',lv,n,sh:back(SHAPES,c[ix('모양')])||'jig',gh:+back(GH_SHORT,c[ix('밑그림')])||1,em:back(EM_NAME,c[ix('다른 자리')])||'show',first:+c[ix('바로 맞힘')]||0,helped:+c[ix('도움 받아 맞힘')]||0,ms:(+c[ix('걸린 시간(초)')]||0)*1000,mode:c[ix('방식')]==='학생 혼자'?'solo':'teacher'});
     have.add(key); added++;
   });
@@ -945,7 +947,7 @@ function openRecords(sid){ if(sid) RV.student=sid; RV.demo=false; renderRecords(
 function closeRecords(){ $('recBox').classList.remove('on'); }
 function ladderHTML(sm){
   const head=`<tr><th>조각 수 \\ 밑그림</th>${[1,2,3,4].map(g=>`<th>${GH_SHORT[g]}</th>`).join('')}</tr>`;
-  const body=[1,2,3,4,5].map(lv=>`<tr><th>${lv}단계 <small>${pieceCount(lv)}조각</small></th>${[1,2,3,4].map(g=>{ const k=rungOf(lv,g), c=sm.cells[k];
+  const body=[1,2,3,4,5,6].map(lv=>`<tr><th>${LVN(lv)}단계 <small>${pieceCount(lv)}조각</small></th>${[1,2,3,4].map(g=>{ const k=rungOf(lv,g), c=sm.cells[k];
     const cls=!c?'':c.solo?'solo':'try'; const mark=k===sm.best?' best':'';
     return `<td class="${cls}${mark}">${c?`${c.n}번<small>혼자 ${c.solo}</small>`:''}</td>`; }).join('')}</tr>`).join('');
   return `<table class="ladder">${head}${body}</table>`;
@@ -956,7 +958,7 @@ function recordHTML(list,name,forPrint){
   const best=sm.best>=0?rungAt(sm.best):null, top=rungAt(sm.top);
   const adv=sm.advice, advTxt=!adv?'':adv.dir==='up'?`<b>올려 볼 때예요</b> → ${rungName(rungAt(adv.to).lv,rungAt(adv.to).gh)}. ${adv.msg}`:adv.dir==='down'?`<b>한 칸 쉽게 해 볼까요</b> → ${rungName(rungAt(adv.to).lv,rungAt(adv.to).gh)}. ${adv.msg}`:`<b>지금 칸을 이어 가요</b> (${rungName(rungAt(adv.from).lv,rungAt(adv.from).gh)}). ${adv.msg}`;
   const wk=sm.weeks.map(w=>`<tr><td>${fmtD(w.w)} 주</td><td>${w.n}판</td><td>${rungName(rungAt(w.top).lv,rungAt(w.top).gh)}</td><td>${w.solo>=0?rungName(rungAt(w.solo).lv,rungAt(w.solo).gh):'-'}</td><td>${Math.round(w.first/w.pieces*100)}%</td></tr>`).join('');
-  const detail=sm.L.slice().reverse().map(r=>`<tr><td>${dayOf(r.t)}</td><td>${esc(r.pic)}</td><td>${r.lv}단계 · ${r.n}조각 · ${SHAPES[r.sh]||''}</td><td>${GH_SHORT[r.gh]||''}</td><td>${r.first} / ${r.n}</td><td>${fmtTime(r.ms)}</td><td>${isSolo(r)?'혼자':'도움'}</td></tr>`).join('');
+  const detail=sm.L.slice().reverse().map(r=>`<tr><td>${dayOf(r.t)}</td><td>${esc(r.pic)}</td><td>${LVN(r.lv)}단계 · ${r.n}조각 · ${SHAPES[r.sh]||''}</td><td>${GH_SHORT[r.gh]||''}</td><td>${r.first} / ${r.n}</td><td>${fmtTime(r.ms)}</td><td>${isSolo(r)?'혼자':'도움'}</td></tr>`).join('');
   return `<div class="rsum">
     <div class="big">
       <div><span>혼자 맞춘 가장 어려운 판</span><b>${best?rungName(best.lv,best.gh):'아직 없음'}</b></div>
@@ -1052,7 +1054,7 @@ function showSetup(){
   document.body.classList.remove('home'); document.body.classList.add('setup'); setAdmin(false);
   document.querySelectorAll('.pc').forEach(e=>e.remove());
   const tile=(name,val,cur,inner)=>`<label class="tile"><input type="radio" name="${name}" value="${val}" ${String(cur)===String(val)?'checked':''}><span>${inner}</span></label>`;
-  const lvTiles=()=>Object.keys(LEVELS).map(l=>tile('level',l,S.level,`<b>${l}</b><small>${pieceCount(+l)}조각</small>`)).join('');
+  const lvTiles=()=>Object.keys(LEVELS).map(l=>tile('level',l,S.level,`<b>${LVN(l)}</b><small>${pieceCount(+l)}조각</small>`)).join('');
   $('setup').innerHTML=`<div class="sp">
     <div class="sp-head">${ICON.jig}<div><h1><small>차름 놀이</small>내 그림 퍼즐</h1><p>그림을 퍼즐 조각으로 나누고, 학생이 조각을 끌어서 제자리에 놓아요. 이 화면은 선생님·보호자용입니다.</p></div></div>
     <section class="card" id="whoCard"><h2>${NO(1)}누구와 하나요?</h2>
@@ -1466,7 +1468,7 @@ async function printSheet(){
   g.strokeRect(f,f,iw,ih);
   g.beginPath(); guideChains(R,Q).forEach(ch=>chainPath(g,ch,f,f)); g.stroke();
   const t=new Date(), ds=`${t.getFullYear()}. ${t.getMonth()+1}. ${t.getDate()}.`;
-  const rows=S.rounds.map((l,i)=>`<tr><td>${i+1}회</td><td>${l.level}단계 · ${SHAPES[l.shape]} · ${l.n}조각 · 밑그림 ${GH_SHORT[l.ghost]||''}</td><td>바로 맞힘 ${l.first}</td><td>도움 받아 맞힘 ${l.helped}</td><td>${fmtTime(l.ms)}</td></tr>`).join('');
+  const rows=S.rounds.map((l,i)=>`<tr><td>${i+1}회</td><td>${LVN(l.level)}단계 · ${SHAPES[l.shape]} · ${l.n}조각 · 밑그림 ${GH_SHORT[l.ghost]||''}</td><td>바로 맞힘 ${l.first}</td><td>도움 받아 맞힘 ${l.helped}</td><td>${fmtTime(l.ms)}</td></tr>`).join('');
   $('printArea').innerHTML=`<div class="pa-head"><h1>[차름 놀이] 내 그림 퍼즐</h1><div>이름: ${recId?esc(nameOf(recId)):'____________'} &nbsp; ${ds}</div></div>
     <img class="pa-img" id="paImg" src="${c.toDataURL('image/jpeg',0.92)}" alt="">
     <p class="pa-note">선을 따라 오려서 다시 맞춰 보아요.</p>${rows?`<table class="pa-log">${rows}</table>`:''}`;
@@ -1481,7 +1483,7 @@ async function printSheet(){
 
 /* ================= 도움말: 교사 메뉴를 말풍선으로 하나씩 ================= */
 const TOUR_STEPS=[
-  {el:'#gLv', t:'단계', x:'줄 수를 정해요. 1단계 5조각부터 5단계 25조각까지. 고른 뒤 아래 "이 그림으로 다시 시작"을 누르면 새 판이 시작돼요.'},
+  {el:'#gLv', t:'단계', x:'조각 수를 정해요. 1단계 5조각부터 5단계 25조각, 마지막 S단계는 50조각이에요. 고른 뒤 아래 "이 그림으로 다시 시작"을 누르면 새 판이 시작돼요.'},
   {el:'#gSh', t:'모양', x:'둥근 꼭지가 있는 퍼즐 모양과 곧은 선의 사각형 가운데 골라요. "이 그림으로 다시 시작"을 누르면 반영돼요.'},
   {el:'#gGh', t:'밑그림', x:'판에 보이는 그림의 진하기예요. 익숙해질수록 흐리게, 없음으로 바꿔요.'},
   {el:'#dockTop [data-a="sfx"]', t:'효과음', x:'조각을 맞출 때 나는 작은 소리를 켜고 꺼요.'},
