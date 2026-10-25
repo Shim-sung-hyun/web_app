@@ -1471,6 +1471,11 @@ async function printSheet(){
     <img class="pa-img" id="paImg" src="${c.toDataURL('image/jpeg',0.92)}" alt="">
     <p class="pa-note">선을 따라 오려서 다시 맞춰 보아요.</p>${rows?`<table class="pa-log">${rows}</table>`:''}`;
   try{ await $('paImg').decode(); }catch(e){}
+  /* 그림 방향에 맞춰 종이 방향, 그림은 종이에 꽉 차게(아래 안내·기록 줄을 뺀 나머지) */
+  const o=PrintFit.orient(W,H), m=10, I=PrintFit.inner(o,m);
+  PrintFit.page(o,m,`#printArea{display:flex!important;flex-direction:column;height:${I.h-2}mm;max-height:none}
+    .pa-img{flex:1 1 0;min-height:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain}
+    .pa-log{flex:none}`);
   window.print();
 }
 
@@ -1671,6 +1676,30 @@ window.AdminGate = (function () {
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tick); else tick();
   setInterval(tick,400);
+})();
+</script>
+<script id="printFit">
+/* 차름 공통: 출력 — 전체 화면이면 먼저 나간 뒤 인쇄(전체 화면에서 바로 인쇄하면 미리보기가 왼쪽 위에 작게 붙음),
+   PrintFit.page(방향, 여백mm, 덧붙일 인쇄 CSS) 로 이번 한 번의 종이 방향을 정함(인쇄가 끝나면 원래대로) */
+(function(){
+  var P=window.print.bind(window);
+  function fsEl(){ return document.fullscreenElement||document.webkitFullscreenElement; }
+  window.print=function(){
+    if(!fsEl()){ P(); return; }
+    var done=false; function go(){ if(done) return; done=true; setTimeout(P,300); }
+    document.addEventListener('fullscreenchange',go,{once:true});
+    document.addEventListener('webkitfullscreenchange',go,{once:true});
+    try{ var ex=document.exitFullscreen||document.webkitExitFullscreen; var r=ex&&ex.call(document); if(r&&r.catch) r.catch(go); }catch(e){ go(); }
+    setTimeout(go,1200);
+  };
+  function st(){ var s=document.getElementById('printPage'); if(!s){ s=document.createElement('style'); s.id='printPage'; document.head.appendChild(s); } return s; }
+  window.PrintFit={
+    orient:function(w,h){ return w>h*1.02?'landscape':'portrait'; },
+    /* 종이 안쪽 크기(mm): 이 높이에 맞춰 그림을 꽉 채움 */
+    inner:function(o,m){ return o==='landscape'?{w:297-2*m,h:210-2*m}:{w:210-2*m,h:297-2*m}; },
+    page:function(o,m,css){ st().textContent='@media print{@page{size:A4 '+o+';margin:'+m+'mm}'+(css||'')+'}'; }
+  };
+  window.addEventListener('afterprint',function(){ var s=document.getElementById('printPage'); if(s) s.textContent=''; });
 })();
 </script>
 </body>

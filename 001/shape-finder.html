@@ -3181,6 +3181,7 @@ async function showColor(){
       const r=f?f>>16&255:255, gg=f?f>>8&255:255, b=f?f&255:255;
       o[k]=r*v; o[k+1]=gg*v; o[k+2]=b*v; o[k+3]=255; } g.putImageData(out,0,0); };
   paint();
+  S.colored={img:S.img,cv,taps:()=>taps,progress};   /* 출력에서 '화면에서 칠한 그림'을 고를 수 있게 */
   cv.style.touchAction='none';
   cv.addEventListener('pointerdown',e=>{ e.preventDefault();
     const r=cv.getBoundingClientRect(), x=Math.floor((e.clientX-r.left)/r.width*L.W), y=Math.floor((e.clientY-r.top)/r.height*L.H);
@@ -3292,17 +3293,42 @@ async function makeLineArt(forColor){
   }
   return c.toDataURL('image/png');
 }
+/* 출력: 학생이 화면에서 칠한 것이 있으면 무엇을 출력할지 고름(칠한 그림은 절반 넘게 칠했을 때만), 없으면 바로 선 그림.
+   그림 방향(가로/세로)에 맞춰 종이 방향을 정하고 종이에 꽉 차게 */
+function askPrintKind(p){
+  return new Promise(res=>{
+    const ok=p>=0.5, pct=Math.round(p*100);
+    const w=document.createElement('div'); w.id='printAsk';
+    w.style.cssText='position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,30,30,.45);pointer-events:auto';
+    w.innerHTML=`<div style="background:#fff;border-radius:18px;padding:22px 22px 16px;width:min(440px,calc(100% - 32px));box-shadow:0 16px 40px rgba(0,0,0,.3);font-family:var(--f-body);color:#1F2A2A">
+      <h3 style="margin:0 0 14px;font-family:var(--f-display);font-weight:400;font-size:24px;color:#17766F">무엇을 출력할까요?</h3>
+      <button type="button" data-k="line" style="display:block;width:100%;text-align:left;padding:14px 16px;margin:0 0 10px;border-radius:12px;border:2px solid #17766F;background:#fff;font:inherit;cursor:pointer">
+        <b style="font-size:18px">선 그림</b><br><span style="font-size:14px;color:#55615F">크레파스·색연필로 칠할 수 있게 선만</span></button>
+      <button type="button" data-k="color" ${ok?'':'disabled'} style="display:block;width:100%;text-align:left;padding:14px 16px;margin:0 0 12px;border-radius:12px;border:2px solid ${ok?'#17766F':'#D5DAD9'};background:#fff;font:inherit;cursor:${ok?'pointer':'not-allowed'};opacity:${ok?1:.55}">
+        <b style="font-size:18px">화면에서 칠한 그림</b><br><span style="font-size:14px;color:#55615F">${ok?'학생이 화면에서 칠한 그대로':`절반 넘게 칠하면 고를 수 있어요 (지금 ${pct}%)`}</span></button>
+      <div style="text-align:right"><button type="button" data-k="" style="padding:8px 16px;border-radius:10px;border:1px solid #B9C2C0;background:#fff;font:inherit;cursor:pointer">닫기</button></div></div>`;
+    const end=k=>{ w.remove(); res(k); };
+    w.addEventListener('click',e=>{ const b=e.target.closest('button[data-k]'); if(b&&!b.disabled) end(b.dataset.k); else if(e.target===w) end(''); });
+    document.body.appendChild(w);
+  });
+}
 async function printSheet(){
-  const b=$('printBtn'); const label=b.innerHTML; b.disabled=true; b.textContent='준비하고 있어요…';
+  const C=S.colored&&S.colored.img===S.img&&S.colored.taps()>0?S.colored:null;
+  let kind='line';
+  if(C){ kind=await askPrintKind(C.progress()); if(!kind) return; }
+  const b=$('printBtn'); const label=b?b.innerHTML:''; if(b){ b.disabled=true; b.textContent='준비하고 있어요…'; }
   try{
-    const url=await lineArtURL();
-    const legend=S.types.map(t=>`<span>${shapeIcon(t,'#111','',false)}${esc(nm(t))}, ${esc(objList(ofType(t),5))}</span>`).join('');
-    $('printArea').innerHTML=`<div class="pa-head"><h1>도형에 색칠해요</h1><div>이름: ____________</div></div>
-      <img class="pa-img" id="paImg" src="${url}" alt=""><div class="pa-legend">${legend}</div>`;
-    try{ await $('paImg').decode(); }catch(e){}
+    const url=kind==='color'?C.cv.toDataURL('image/png'):await lineArtURL();
+    const legend=kind==='color'?'':`<div class="pa-legend">${S.types.map(t=>`<span>${shapeIcon(t,'#111','',false)}${esc(nm(t))}, ${esc(objList(ofType(t),5))}</span>`).join('')}</div>`;
+    $('printArea').innerHTML=`<div class="pa-head"><h1>${kind==='color'?'내가 색칠한 그림':'도형에 색칠해요'}</h1><div>이름: ____________</div></div>
+      <img class="pa-img" id="paImg" src="${url}" alt="">${legend}`;
+    const im=$('paImg'); try{ await im.decode(); }catch(e){}
+    const o=PrintFit.orient(im.naturalWidth||4,im.naturalHeight||3), m=8, I=PrintFit.inner(o,m);
+    PrintFit.page(o,m,`#printArea{display:flex!important;flex-direction:column;height:${I.h-2}mm;max-height:none}
+      .pa-img{flex:1 1 0;min-height:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;border:0}`);
     window.print();
-  }catch(e){ b.textContent='출력하지 못했어요'; await new Promise(r=>setTimeout(r,1500)); }
-  b.disabled=false; b.innerHTML=label;
+  }catch(e){ if(b){ b.textContent='출력하지 못했어요'; await new Promise(r=>setTimeout(r,1500)); } }
+  if(b){ b.disabled=false; b.innerHTML=label; }
 }
 
 /* ================= 시작 ================= */
@@ -3451,6 +3477,30 @@ window.AdminGate = (function () {
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tick); else tick();
   setInterval(tick,400);
+})();
+</script>
+<script id="printFit">
+/* 차름 공통: 출력 — 전체 화면이면 먼저 나간 뒤 인쇄(전체 화면에서 바로 인쇄하면 미리보기가 왼쪽 위에 작게 붙음),
+   PrintFit.page(방향, 여백mm, 덧붙일 인쇄 CSS) 로 이번 한 번의 종이 방향을 정함(인쇄가 끝나면 원래대로) */
+(function(){
+  var P=window.print.bind(window);
+  function fsEl(){ return document.fullscreenElement||document.webkitFullscreenElement; }
+  window.print=function(){
+    if(!fsEl()){ P(); return; }
+    var done=false; function go(){ if(done) return; done=true; setTimeout(P,300); }
+    document.addEventListener('fullscreenchange',go,{once:true});
+    document.addEventListener('webkitfullscreenchange',go,{once:true});
+    try{ var ex=document.exitFullscreen||document.webkitExitFullscreen; var r=ex&&ex.call(document); if(r&&r.catch) r.catch(go); }catch(e){ go(); }
+    setTimeout(go,1200);
+  };
+  function st(){ var s=document.getElementById('printPage'); if(!s){ s=document.createElement('style'); s.id='printPage'; document.head.appendChild(s); } return s; }
+  window.PrintFit={
+    orient:function(w,h){ return w>h*1.02?'landscape':'portrait'; },
+    /* 종이 안쪽 크기(mm): 이 높이에 맞춰 그림을 꽉 채움 */
+    inner:function(o,m){ return o==='landscape'?{w:297-2*m,h:210-2*m}:{w:210-2*m,h:297-2*m}; },
+    page:function(o,m,css){ st().textContent='@media print{@page{size:A4 '+o+';margin:'+m+'mm}'+(css||'')+'}'; }
+  };
+  window.addEventListener('afterprint',function(){ var s=document.getElementById('printPage'); if(s) s.textContent=''; });
 })();
 </script>
 </body>
