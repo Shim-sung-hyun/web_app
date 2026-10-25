@@ -5,7 +5,7 @@ charum.org 서버에 올리는 파일의 원본입니다. GitHub Pages에서는 
   /charum-api/          웹앱 서버 파일과 그 기록 폴더(아래). 폴더 이름은 게시판 이름(mid)과 겹치면 안 됨(라이믹스 403).
   /study/               앱 불러오기 파일(NNN/server-loader.html)과 설명 페이지 불러오기 doc.html — 게시판 주소가 걸려 있어 그대로.
   /addons/charum_donate/  애드온(라이믹스는 애드온을 addons 폴더에서만 찾음).
-  / (맨 위)             다리 파일만(root-stubs/): 예전 주소로 오는 앱을 charum-api/의 같은 파일로 넘김.
+  / (맨 위)             웹앱 파일을 두지 않음(2026-10-25에 다리 파일까지 지움 — 예전 주소 /donate.php 등은 404가 정상).
 
 ■ charum-api/ (이 저장소 server/charum-api/)
   donate.php        사진 기증함(2026-10-23 판). 맨 위 $REVIEW_TOKEN 에 제작자만 아는 20자 이상 글자를 서버에서만 넣음(저장소에는 넣지 않음).
@@ -18,11 +18,6 @@ charum.org 서버에 올리는 파일의 원본입니다. GitHub Pages에서는 
                     잘못된 별명을 지우려면 맨 위 $ADMIN_TOKEN 에 20자 이상 글자를 서버에서만 넣고 act:"del".
   key-relay.php · photo-relay.php  휴대폰에서 키·사진 받기(잠가서 3분, 받는 순간 지움). 기록: charum-api/key-relay-data/.
                     원본은 아직 서버에만 있음(내용을 받으면 여기에 넣음).
-
-■ root-stubs/ → 서버 맨 위에 그대로 올림
-  donate.php · key-relay.php · photo-relay.php · puzzle-rank.php  charum-api/로 옮겨 가 같은 파일을 부르는 다리(기록 폴더도 그쪽).
-  donate-admin.php  새 주소로 넘겨 줌(301).
-  앱이 모두 새 주소(/charum-api/…)를 쓰고, 예전 화면을 열어 둔 곳도 없어지면 지워도 됨.
 
 ■ addons/charum_donate/  애드온 "차름 기증 사진 탭". 관리자로 로그인하면 회원 메뉴 끝에 "기증 사진 N".
   charum-api/donate-data/ 와 charum-api/donate-config.php 를 읽음. 관리자 > 고급 > 애드온에서 PC·모바일 사용.
