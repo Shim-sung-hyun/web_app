@@ -408,7 +408,9 @@ function playClip(clip){
     if(b.copyToChannel) b.copyToChannel(clip.data,0); else b.getChannelData(0).set(clip.data);
     const x=c.createBufferSource(), g=c.createGain(); g.gain.value=0.75;
     x.buffer=b; x.connect(g); g.connect(c.destination);
-    x.onended=()=>{ if(curSrc&&curSrc.src===x) curSrc=null; res(); };
+    /* 우리가 멈춘 것이 아닌데 소리가 일찍 끝나면(전체 화면 전환·소리 장치가 잠깐 끊김) 끊긴 것으로 알림 */
+    const t0=performance.now(), dur=clip.data.length/clip.rate;
+    x.onended=()=>{ if(curSrc&&curSrc.src===x) curSrc=null; res((performance.now()-t0)/1000<dur-0.15?'cut':''); };
     curSrc={src:x,g,res}; x.start();
   });
 }
@@ -477,23 +479,31 @@ function deviceSay(text,id,done){
     try{
       if(!koVoice) koVoice=pickKoVoice();
       const u=new SpeechSynthesisUtterance(text); u.lang='ko-KR'; u.rate=0.78; u.volume=0.7; if(koVoice) u.voice=koVoice;
-      u.onend=u.onerror=()=>{ if(id===speakSeq) done(); };
+      window.__utt=u;   /* 크롬은 잡아 두지 않은 말을 도중에 버리기도 함 */
+      u.onend=()=>{ if(id===speakSeq) done(); };
+      u.onerror=e=>{ if(id!==speakSeq) return; if(e&&/interrupted|canceled|audio-busy/.test(e.error||'')) done('cut'); else done(); };
       speechSynthesis.speak(u);
     }catch(e){ done(); }
   },300);
 }
-/* 보이지 않는 탭에서는 말하지 않고, 돌아오면 이어서 말함 */
-let hiddenSay=null;
+/* 보이지 않는 탭에서는 말하지 않고, 돌아오면 그 말을 처음부터 다시 함.
+   전체 화면으로 바뀔 때 잠깐 "안 보임"이 되는 기기가 있어, 말하던 중이면 그 말과 뒤의 할 일(3초마다 다시 말하기)을 잃지 않게 맡아 둠 */
+let hiddenSay=null, curSay=null;
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){ stopVoice(); speakSeq++; }
-  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; speak(h[0],h[1]); }
+  if(document.hidden){ if(curSay&&!hiddenSay) hiddenSay=[curSay.text,curSay.onEnd]; curSay=null; stopVoice(); speakSeq++; }
+  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; setTimeout(()=>{ if(!document.hidden) speak(h[0],h[1]); else hiddenSay=h; },350); }
 });
 function speak(text,onEnd){
   if(document.hidden){ hiddenSay=[text||lastSay,onEnd]; return; }
   if(text) lastSay=text;
   if(softTimer){ clearTimeout(softTimer); softTimer=null; }
   stopVoice();
-  const id=++speakSeq; let fired=false; const done=()=>{ if(fired) return; fired=true; if(onEnd) onEnd(); };
+  const id=++speakSeq, say=lastSay, tries=(speak.retry&&speak.retry.text===say)?speak.retry.n:0; speak.retry=null;
+  curSay={text:say,onEnd};
+  let fired=false; const done=why=>{ if(fired) return; fired=true; if(id!==speakSeq) return; curSay=null;
+    /* 도중에 끊겼으면 잠깐 뒤 그 말을 처음부터 다시(두 번까지) */
+    if(why==='cut'&&tries<2){ setTimeout(()=>{ if(id!==speakSeq||document.hidden) return; speak.retry={text:say,n:tries+1}; speak(say,onEnd); },400); return; }
+    if(onEnd) onEnd(); };
   if(!S.engineNow) chooseEngine();
   if(!S.sound||!lastSay){ if(onEnd) setTimeout(done,Math.max(1200,(lastSay||'').length*150)); return; }
   if(S.engineNow==='device'){ deviceSay(lastSay,id,done); return; }
@@ -505,7 +515,7 @@ function speak(text,onEnd){
       if(id!==speakSeq) return;
       /* 내장 소리를 받지 못하면(인터넷 끊김 등) 남은 수업 전체를 기기 목소리로 바꾸고 교사 메뉴에 알림 */
       if(!clip){ S.engineNow='device'; S.voiceNote='내장 목소리를 받지 못해, 이번 수업은 기기 목소리로 바꿨어요.'; renderDocks(); deviceSay(parts.slice(i).join(' '),id,done); return; }
-      await playClip(clip);
+      if(await playClip(clip)==='cut'){ if(id===speakSeq) done('cut'); return; }
       if(id!==speakSeq) return;
       if(i<parts.length-1) await new Promise(r=>setTimeout(r,/,$/.test(parts[i])?220:320));
       if(id!==speakSeq) return;
@@ -521,7 +531,18 @@ function speakSoon(text,onEnd,wait=650){
   softTimer=setTimeout(go,wait);
 }
 /* ================= 전체 화면 ================= */
+/* 전체 화면으로 바뀌는 동안에는 말을 시작하지 않음(바뀌는 중에 소리가 끊기는 기기가 있음) */
+let fsAskAt=0, fsChangeAt=0;
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{ fsChangeAt=performance.now(); }));
+function afterFull(fn){
+  const t0=performance.now();
+  const chk=()=>{ const now=performance.now();
+    const asking=fsAskAt>fsChangeAt&&now-fsAskAt<1500;   /* 전체 화면을 청했는데 아직 바뀌지 않음 */
+    if(now-t0>2000||(!asking&&now-fsChangeAt>=600)) fn(); else setTimeout(chk,100); };
+  chk();
+}
 function goFull(){ try{ const d=document.documentElement; if(document.fullscreenElement||document.webkitFullscreenElement) return;
+  fsAskAt=performance.now();
   if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen(); }catch(e){} }
 function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(document.webkitFullscreenElement) document.webkitExitFullscreen(); }catch(e){} }
 document.addEventListener('contextmenu',e=>{ if(!document.body.classList.contains('setup')) e.preventDefault(); });
@@ -950,10 +971,16 @@ function showSetup(){
   $('startBtn').onclick=()=>beginLesson(()=>{ if(S.mode==='solo') showHome(); else startGame(); });
 }
 /* 시작: 내장 목소리 목록을 잠깐(2.5초까지) 기다린 뒤 이 수업의 목소리를 정함 */
+/* 시작 단추를 기다리는 동안 한 번 더 눌러도 판이 두 번 시작되지 않게 */
+let starting=false;
 async function beginLesson(go){
-  unlockAudio(); if(S.mode!=='solo') goFull();
-  await Promise.race([builtinCheck,new Promise(r=>setTimeout(r,2500))]);
-  chooseEngine(); prefetchVoice(); go();
+  if(starting) return; starting=true;
+  const sb=$('startBtn'); if(sb){ sb.disabled=true; sb.style.opacity='.6'; }
+  try{
+    unlockAudio(); if(S.mode!=='solo') goFull();
+    await Promise.race([builtinCheck,new Promise(r=>setTimeout(r,2500))]);
+    chooseEngine(); prefetchVoice(); go();
+  } finally { starting=false; }
 }
 
 /* ================= 학생 혼자: 시작 화면 ================= */
@@ -1007,7 +1034,7 @@ function startGame(){
   BD=bounds(); const g=S.game;
   g.target=null; buildSet();
   setTarget(pickOnScreen(g));
-  sayTarget();
+  afterFull(()=>{ if(S.game===g&&!g.sayTok) sayTarget(); });
   lastT=performance.now(); cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);
 }
 const radius=()=>{ const {W,H,top,bottom}=BD; const k={2:0.15,4:0.125,8:0.1,10:0.09,15:0.075}[S.choices]||0.1; return Math.round(Math.min(W,(H-top-bottom)*1.25)*k); };
