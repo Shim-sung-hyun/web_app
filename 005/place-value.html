@@ -346,7 +346,8 @@ function playClip(clip){
     if(b.copyToChannel) b.copyToChannel(clip.data,0); else b.getChannelData(0).set(clip.data);
     const x=c.createBufferSource(), g=c.createGain(); g.gain.value=0.75;
     x.buffer=b; x.connect(g); g.connect(c.destination);
-    x.onended=()=>{ if(curSrc&&curSrc.src===x) curSrc=null; res(); };
+    const t0=performance.now(), dur=clip.data.length/clip.rate;   /* 우리가 멈추지 않았는데 일찍 끝나면 끊긴 것('cut') */
+    x.onended=()=>{ if(curSrc&&curSrc.src===x) curSrc=null; res((performance.now()-t0)/1000<dur-0.15?'cut':''); };
     curSrc={src:x,g,res}; x.start();
   });
 }
@@ -412,20 +413,30 @@ function pickKoVoice(){
   return vs.sort((a,b)=>score(b)-score(a))[0];
 }
 if('speechSynthesis' in window){ koVoice=pickKoVoice(); speechSynthesis.addEventListener?.('voiceschanged',()=>{ koVoice=pickKoVoice(); }); }
-function deviceSay(text,id){
+function deviceSay(text,id,done){
   if(!('speechSynthesis' in window)) return;
   try{ speechSynthesis.cancel(); }catch(e){}
   setTimeout(()=>{
     if(id!==speakSeq) return;
     try{ if(!koVoice) koVoice=pickKoVoice();
       const u=new SpeechSynthesisUtterance(text); u.lang='ko-KR'; u.rate=0.78; u.volume=0.7; if(koVoice) u.voice=koVoice;
+      window.__utt=u;   /* 크롬은 잡아 두지 않은 말을 도중에 버리기도 함 */
+      u.onend=()=>{ if(id===speakSeq&&done) done(); };
+      u.onerror=e=>{ if(id===speakSeq&&done) done(/interrupted|canceled|audio-busy/.test((e&&e.error)||'')?'cut':''); };
       speechSynthesis.speak(u); }catch(e){}
   },300);
 }
-let hiddenSay=null;
+/* 말 끊김 막기(2026-10-25, 003에서 옮김): 전체 화면으로 바뀌는 동안(기기에 따라 소리가 끊기거나 잠깐 "안 보임"이 됨)에는
+   말을 시작하지 않고 끝난 뒤 0.6초(늦어도 2초) 기다렸다 말함. 안 보임·소리 끊김으로 멈춘 말은 돌아온 뒤 처음부터 다시 */
+let fsAskAt=0, fsChangeAt=0;
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{ fsChangeAt=performance.now(); }));
+function fsBusy(){ const now=performance.now(); return (fsAskAt>fsChangeAt&&now-fsAskAt<1500)||(fsChangeAt>0&&now-fsChangeAt<600); }
+function afterFull(fn){ const t0=performance.now(); const chk=()=>{ if(performance.now()-t0>2000||!fsBusy()) fn(); else setTimeout(chk,100); }; chk(); }
+/* 보이지 않는 동안은 말하지 않고, 말하던 중이었으면 돌아온 뒤 그 말을 처음부터 다시 */
+let hiddenSay=null, curSay=null;
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){ stopVoice(); speakSeq++; }
-  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; speak(h); }
+  if(document.hidden){ if(curSay&&curSay.id===speakSeq&&!hiddenSay) hiddenSay=curSay.v; curSay=null; stopVoice(); speakSeq++; }
+  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; setTimeout(()=>{ if(!document.hidden) speak(h); else hiddenSay=h; },350); }
 });
 /* 한 수업은 한 목소리: 조각을 하나라도 못 받으면 그 수업(처음 화면으로 돌아갈 때까지)은 모두 기기 목소리 */
 const VOICE={device:false};
@@ -436,17 +447,21 @@ function voiceToDevice(){
 function voiceReset(){ VOICE.device=false; $('voiceWarn').textContent=''; voiceNote(''); }
 function speak(n){
   if(document.hidden){ hiddenSay=n||lastN; return; }
+  if(fsBusy()){ const s0=speakSeq; afterFull(()=>{ if(speakSeq===s0) speak(n); }); return; }
   if(n){ lastN=n; lastSay=readKo(n); }
   stopVoice();
-  const id=++speakSeq;
+  const id=++speakSeq, v=lastN, tries=(speak.retry&&speak.retry.v===v)?speak.retry.n:0; speak.retry=null;
+  curSay={id,v};
+  /* 도중에 끊겼으면 잠깐 뒤 처음부터 다시(두 번까지) */
+  const done=why=>{ if(id!==speakSeq) return; if(why==='cut'&&tries<2){ setTimeout(()=>{ if(id!==speakSeq||document.hidden) return; speak.retry={v,n:tries+1}; speak(v); },400); return; } curSay=null; };
   if(!S.sound||!lastN) return;
-  if(VOICE.device){ deviceSay(lastSay,id); return; }
+  if(VOICE.device){ deviceSay(lastSay,id,done); return; }
   (async()=>{
     let clip=null;
     try{ clip=await Promise.race([numClip(lastN),new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),15000))]); }catch(e){}
     if(id!==speakSeq) return;
-    if(!clip){ voiceToDevice(); deviceSay(lastSay,id); return; }
-    await playClip(clip);
+    if(!clip){ voiceToDevice(); deviceSay(lastSay,id,done); return; }
+    done(await playClip(clip));
   })();
 }
 /* 계속 누르는 동안은 기다렸다가 마지막으로 누른 뒤에 읽음. "3초 뒤"면 학생이 먼저 읽어 볼 시간을 줌 */
@@ -456,6 +471,7 @@ function hush(){ clearTimeout(sayTimer); stopVoice(); speakSeq++; }
 
 /* ================= 전체 화면 ================= */
 function goFull(){ try{ const d=document.documentElement; if(document.fullscreenElement||document.webkitFullscreenElement) return;
+  fsAskAt=performance.now();
   if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen(); }catch(e){} }
 function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(document.webkitFullscreenElement) document.webkitExitFullscreen(); }catch(e){} }
 

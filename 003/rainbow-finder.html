@@ -490,7 +490,7 @@ function deviceSay(text,id,done){
    전체 화면으로 바뀔 때 잠깐 "안 보임"이 되는 기기가 있어, 말하던 중이면 그 말과 뒤의 할 일(3초마다 다시 말하기)을 잃지 않게 맡아 둠 */
 let hiddenSay=null, curSay=null;
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){ if(curSay&&!hiddenSay) hiddenSay=[curSay.text,curSay.onEnd]; curSay=null; stopVoice(); speakSeq++; }
+  if(document.hidden){ if(curSay&&curSay.id===speakSeq&&!hiddenSay) hiddenSay=[curSay.text,curSay.onEnd]; curSay=null; stopVoice(); speakSeq++; }
   else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; setTimeout(()=>{ if(!document.hidden) speak(h[0],h[1]); else hiddenSay=h; },350); }
 });
 function speak(text,onEnd){
@@ -499,7 +499,7 @@ function speak(text,onEnd){
   if(softTimer){ clearTimeout(softTimer); softTimer=null; }
   stopVoice();
   const id=++speakSeq, say=lastSay, tries=(speak.retry&&speak.retry.text===say)?speak.retry.n:0; speak.retry=null;
-  curSay={text:say,onEnd};
+  curSay={text:say,onEnd,id};   /* id: 그사이 다른 곳에서 말을 멈췄으면(speakSeq가 바뀜) 되살리지 않음 */
   let fired=false; const done=why=>{ if(fired) return; fired=true; if(id!==speakSeq) return; curSay=null;
     /* 도중에 끊겼으면 잠깐 뒤 그 말을 처음부터 다시(두 번까지) */
     if(why==='cut'&&tries<2){ setTimeout(()=>{ if(id!==speakSeq||document.hidden) return; speak.retry={text:say,n:tries+1}; speak(say,onEnd); },400); return; }

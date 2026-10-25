@@ -542,7 +542,8 @@ function playClip(clip){
     if(b.copyToChannel) b.copyToChannel(clip.data,0); else b.getChannelData(0).set(clip.data);
     const x=c.createBufferSource(), g=c.createGain(); g.gain.value=0.75;
     x.buffer=b; x.connect(g); g.connect(c.destination);
-    x.onended=()=>{ if(curSrc&&curSrc.src===x) curSrc=null; res(); };
+    const t0=performance.now(), dur=clip.data.length/clip.rate;   /* 우리가 멈추지 않았는데 일찍 끝나면 끊긴 것('cut') */
+    x.onended=()=>{ if(curSrc&&curSrc.src===x) curSrc=null; res((performance.now()-t0)/1000<dur-0.15?'cut':''); };
     curSrc={src:x,g,res}; x.start();
   });
 }
@@ -670,22 +671,36 @@ function deviceSay(text,id,done){
     try{
       if(!koVoice) koVoice=pickKoVoice();
       const u=new SpeechSynthesisUtterance(text); u.lang='ko-KR'; u.rate=0.78; u.volume=0.7; if(koVoice) u.voice=koVoice;
-      u.onend=u.onerror=()=>{ if(id===speakSeq) done(); };
+      window.__utt=u;   /* 크롬은 잡아 두지 않은 말을 도중에 버리기도 함 */
+      u.onend=()=>{ if(id===speakSeq) done(); };
+      u.onerror=e=>{ if(id!==speakSeq) return; done(/interrupted|canceled|audio-busy/.test((e&&e.error)||'')?'cut':''); };
       speechSynthesis.speak(u);
     }catch(e){ done(); }
   },300);
 }
-/* 보이지 않는 탭에서는 말하지 않고, 돌아오면 이어서 말함 */
-let hiddenSay=null;
+/* 말 끊김 막기(2026-10-25, 003에서 옮김): 전체 화면으로 바뀌는 동안(기기에 따라 소리가 끊기거나 잠깐 "안 보임"이 됨)에는
+   말을 시작하지 않고 끝난 뒤 0.6초(늦어도 2초) 기다렸다 말함. 안 보임·소리 끊김으로 멈춘 말은 돌아온 뒤 처음부터 다시 */
+let fsAskAt=0, fsChangeAt=0;
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{ fsChangeAt=performance.now(); }));
+function fsBusy(){ const now=performance.now(); return (fsAskAt>fsChangeAt&&now-fsAskAt<1500)||(fsChangeAt>0&&now-fsChangeAt<600); }
+function afterFull(fn){ const t0=performance.now(); const chk=()=>{ if(performance.now()-t0>2000||!fsBusy()) fn(); else setTimeout(chk,100); }; chk(); }
+/* 보이지 않는 탭에서는 말하지 않고, 돌아오면 그 말을 처음부터 다시(하던 말과 뒤의 할 일을 맡아 둠) */
+let hiddenSay=null, curSay=null;
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){ stopVoice(); speakSeq++; }
-  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; speak(h[0],h[1],h[2]); }
+  if(document.hidden){ if(curSay&&curSay.id===speakSeq&&!hiddenSay) hiddenSay=curSay; curSay=null; stopVoice(); speakSeq++; }
+  else if(hiddenSay){ const h=hiddenSay; hiddenSay=null; setTimeout(()=>{ if(!document.hidden) speak(h[0],h[1],h[2]); else hiddenSay=h; },350); }
 });
 function speak(text,onEnd,ctx){
   if(document.hidden){ hiddenSay=[text||lastSay,onEnd,ctx]; return; }
+  if(fsBusy()){ const s0=speakSeq; afterFull(()=>{ if(speakSeq===s0) speak(text,onEnd,ctx); }); return; }
   if(text) lastSay=text;
   stopVoice();
-  const id=++speakSeq; let fired=false; const done=()=>{ if(fired) return; fired=true; if(onEnd) onEnd(); };
+  const id=++speakSeq, say=lastSay, tries=(speak.retry&&speak.retry.text===say)?speak.retry.n:0; speak.retry=null;
+  curSay=[say,onEnd,ctx]; curSay.id=id;
+  let fired=false; const done=why=>{ if(fired) return; fired=true;
+    /* 도중에 끊겼으면 잠깐 뒤 그 말을 처음부터 다시(두 번까지) */
+    if(why==='cut'&&tries<2&&id===speakSeq){ setTimeout(()=>{ if(id!==speakSeq||document.hidden) return; speak.retry={text:say,n:tries+1}; speak(say,onEnd,ctx); },400); return; }
+    if(id===speakSeq) curSay=null; if(onEnd) onEnd(); };
   if(!S.engineNow) chooseEngine();
   if(!S.sound||!lastSay){ if(onEnd) setTimeout(done,Math.max(1200,(lastSay||'').length*180)); return; }
   if(S.engineNow==='device'){ deviceSay(lastSay,id,done); return; }
@@ -697,7 +712,7 @@ function speak(text,onEnd,ctx){
       try{ clip=await Promise.race([ps[i],new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),20000))]); }catch(e){}
       if(id!==speakSeq) return;
       if(!clip){ if(S.engineNow==='device'||S.engineNow==='pre'){ deviceSay(parts.slice(i).join(' '),id,done); return; } continue; }
-      await playClip(clip);
+      if(await playClip(clip)==='cut'){ if(id===speakSeq) done('cut'); return; }
       if(id!==speakSeq) return;
       if(i<parts.length-1) await new Promise(r=>setTimeout(r,/,$/.test(parts[i])?220:320));
       if(id!==speakSeq) return;
@@ -709,6 +724,7 @@ function speak(text,onEnd,ctx){
 /* ================= 전체 화면 ================= */
 /* 파일 고르기 창이 전체 화면을 풀어 버리므로, 처음 화면·입력 창에서는 쓰지 않음 */
 function goFull(){ try{ const d=document.documentElement; if(document.fullscreenElement||document.webkitFullscreenElement) return;
+  fsAskAt=performance.now();
   if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen(); }catch(e){} }
 function leaveFull(){ try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(document.webkitFullscreenElement) document.webkitExitFullscreen(); }catch(e){} }
 $('app').addEventListener('pointerdown',()=>{ if(!S.admin&&!$('modalBack').classList.contains('show')) goFull(); },true);
