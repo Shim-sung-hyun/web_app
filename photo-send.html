@@ -53,10 +53,11 @@ details.how ol{margin:8px 0 4px;padding-left:20px;font-size:14px;line-height:1.7
 details.how .go{display:block;text-align:center;background:var(--pri);color:#fff;text-decoration:none;font-weight:700;padding:11px;border-radius:12px;margin:6px 0 4px}
 .chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--sub);margin-top:12px;line-height:1.5}
 .gap{height:14px}
-details.give{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:14px}
+details.give{word-break:keep-all;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:14px}
 details.give summary{cursor:pointer;font-weight:700;font-size:16px;color:var(--ink)}
 details.give summary .tag{margin-left:4px}
-.give ul{margin:10px 0 10px;padding-left:20px;font-size:14px;line-height:1.7;color:var(--sub)}
+.give .lead{margin:10px 0 0;font-size:15px;line-height:1.65;color:var(--ink)}
+.give ul{margin:8px 0 10px;padding-left:20px;font-size:14px;line-height:1.7;color:var(--sub)}
 .give ul b{color:var(--ink)}
 .give .chk{color:var(--ink);font-size:15px;font-weight:700}
 .give .chk input{width:20px;height:20px;flex:none;margin-top:1px}
@@ -88,12 +89,12 @@ details.give summary .tag{margin-left:4px}
     <div id="preview"><img id="pv" alt="보낼 사진"></div>
   </div>
   <details class="give" id="giveCard">
-    <summary>이 사진 기증하기 <span class="tag">선택 · 다른 선생님과 나누기</span></summary>
+    <summary>이 사진 기증하기 <span class="tag">선택 · 다른 학교 수업에도 쓰여요</span></summary>
+    <p class="lead">잘 나온 사진을 나눠 주세요. 제작자가 살펴본 뒤 예시 사진으로 올리면, 다른 학교 학생들도 이 사진으로 도형을 배우고 퍼즐을 맞춰요.</p>
     <ul>
-      <li>기증한 사진은 <b>차름 사진 모음</b>에 올라가 <b>누구나 볼 수 있어요</b>(공개 주소).</li>
-      <li>여러 차름 앱(도형 찾기·내 그림 퍼즐 등)에서 수업 자료로 써요.</li>
-      <li><b>사람·얼굴·이름·전화번호·차 번호판·학교 이름</b>이 보이지 않는 사진만 보내 주세요.</li>
-      <li>제작자가 한 번 더 살펴본 뒤 올려요. 빼고 싶으면 차름 게시판에 댓글로 알려 주세요.</li>
+      <li>교실·급식실·운동장의 물건처럼 모양이 또렷한 사진이면 더 좋아요.</li>
+      <li><b>사람·얼굴·이름·전화번호·차 번호판·학교 이름</b>이 보이는 사진은 기증할 수 없어요.</li>
+      <li>공개 사진 모음에 올라가 누구나 볼 수 있어요. 빼고 싶으면 차름 게시판 댓글로 알려 주세요.</li>
     </ul>
     <label class="t" for="giveName">무엇의 사진인가요? <span class="tag">예: 신발장, 교실 문</span></label>
     <input class="f" id="giveName" maxlength="40" autocomplete="off" placeholder="물건 이름">
