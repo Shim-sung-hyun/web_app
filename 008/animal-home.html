@@ -992,15 +992,23 @@ async function playProps(p,lvG,targets,tok){
       left=side>0?best.x+best.z/2-cov*best.z-best.z*.06:best.x-best.z/2+cov*best.z+best.z*.06-sw; top=best.y-sh/2; }
     else { const k=Math.max((best.z*1.2)/pw,(cov*best.z+best.z*.14)/ph); sw=pw*k; sh=ph*k;
       left=best.x-sw/2+(Math.random()-.5)*best.z*.2; top=best.y+best.z/2-cov*best.z-best.z*.04; }
-    Object.assign(pr.style,{position:'absolute',left:left+'px',top:top+'px',width:sw+'px',height:sh+'px',pointerEvents:'none',zIndex:3,transition:'transform .8s ease-out, opacity .8s'});
+    Object.assign(pr.style,{position:'absolute',left:left+'px',top:top+'px',width:sw+'px',height:sh+'px',pointerEvents:'none',zIndex:4,transition:'transform .8s ease-out, opacity .8s'});
     card.appendChild(pr); items.push({a,im,pr,sw,sh,side,m});
+    /* 땅에 닿는 그림자(2026-10-26): 땅 위 장면에서만 동물 발밑·소품 밑에 옅은 타원 — 오려 붙인 티가 나지 않게. 소품 그림자는 소품과 함께 비켜 감 */
+    if(m==='walk'||m==='slide'){ const bh=(BB[a]||[.9,.9])[1]; groundShadow(card,best.x,best.y+best.z*bh/2,best.z*.72,1);
+      const ps=groundShadow(card,left+sw/2,top+sh*.97,sw*.86,3); ps.style.transition='transform .8s ease-out, opacity .8s'; items[items.length-1].ps=ps; }
   });
   await revealCard(card); if(!alive(tok)) return;
   for(const a of shuffle(targets)){ const t=items.find(x=>x.a===a); if(!t) continue;
-    await findIt(tok,a,p,t.im,()=>{ const dx=t.m==='swim'?t.side*t.sw*0.5:0, dy=t.m==='swim'?0:t.sh*0.45; t.pr.style.transform='translate('+dx+'px,'+dy+'px)'; },
-      ()=>{ const dx=t.m==='swim'?t.side*t.sw*1.1:0, dy=t.m==='swim'?0:t.sh*1.0; t.pr.style.transform='translate('+dx+'px,'+dy+'px)'; t.pr.style.opacity=.35; });
+    await findIt(tok,a,p,t.im,()=>{ const dx=t.m==='swim'?t.side*t.sw*0.5:0, dy=t.m==='swim'?0:t.sh*0.45; t.pr.style.transform='translate('+dx+'px,'+dy+'px)'; if(t.ps) t.ps.style.transform='translate(-50%,-50%) translate('+dx+'px,'+dy+'px)'; },
+      ()=>{ const dx=t.m==='swim'?t.side*t.sw*1.1:0, dy=t.m==='swim'?0:t.sh*1.0; t.pr.style.transform='translate('+dx+'px,'+dy+'px)'; t.pr.style.opacity=.35; if(t.ps){ t.ps.style.transform='translate(-50%,-50%) translate('+dx+'px,'+dy+'px)'; t.ps.style.opacity=0; } });
     if(!alive(tok)) return; await wait(400); if(!alive(tok)) return; }
 }
+/* 땅에 닿는 옅은 그림자(가운데가 조금 짙고 가장자리는 흐려짐) */
+function groundShadow(card,x,y,w,z){ const s=document.createElement('div');
+  Object.assign(s.style,{position:'absolute',left:x+'px',top:y+'px',width:w+'px',height:(w*.16)+'px',transform:'translate(-50%,-50%)',borderRadius:'50%',pointerEvents:'none',zIndex:z,
+    background:'radial-gradient(closest-side,rgba(48,36,20,.30),rgba(48,36,20,.14) 60%,rgba(48,36,20,0))'});
+  card.appendChild(s); return s; }
 /* 숨은 그림(그림 속에 숨어 있는 동물) */
 async function playSeek(p,sk,say,tok){
   const {card,w:W,h:H}=gameCard(HAB+sk.file), sx=W/sk.w, sy=H/sk.h;
