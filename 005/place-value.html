@@ -900,7 +900,7 @@ document.addEventListener('scroll',()=>{ if(SPOT.el) placeSpot(); },true);
     cv.innerHTML='<div class="c"><h1>수업을 마쳤어요</h1><p>이 창(탭)을 닫아도 됩니다. 하던 것은 이 기기에 저장되어 있습니다.</p><div class="r"><button type="button" class="p" id="endAgain">다시 시작</button><a href="'+BOARD+'">차름 게시판으로</a></div></div>';
     document.body.appendChild(cv);
     cv.querySelector('#endAgain').onclick=function(){ location.reload(); };
-    ['pointerdown','click','touchstart','keydown'].forEach(function(t){ cv.addEventListener(t,function(e){ e.stopPropagation(); },true); });
+    ['pointerdown','click','touchstart','keydown'].forEach(function(t){ cv.addEventListener(t,function(e){ e.stopPropagation(); });   /* 단추가 받은 뒤 막음(잡는 단계에서 막으면 "다시 시작"까지 막힘, 2026-10-26) */ });
     setTimeout(function(){ try{ window.close(); }catch(e){} },150);
     setInterval(hush,1000);   /* 늦게 시작한 소리도 멈춤 */
   }
