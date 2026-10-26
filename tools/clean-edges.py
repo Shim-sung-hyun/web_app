@@ -6,8 +6,9 @@
 
 어두운 배경(숲·바다) 위에 놓으면 이 테두리가 흰 점선처럼 드러나 "오려 붙인 티"가 난다.
 하는 일(그림 안쪽의 불투명한 곳은 건드리지 않음):
-  1. 가장자리 반투명 점의 색을 바로 안쪽(불투명한 곳) 색으로 바꿈 — 흰 기운이 사라짐
-  2. 그중 안쪽 색보다 훨씬 밝았던 점(흰 테두리)은 더 투명하게
+  1. 가장자리(투명한 곳에서 4점 안)에서 깊은 안쪽 색보다 훨씬 밝은 점 = 흰 테두리 → 지움
+     (반투명한 흰 기운과, 그림에 그려 넣은 불투명한 흰 선 모두)
+  2. 남은 반투명 가장자리는 색을 안쪽 색으로, 새로 드러난 가장자리는 살짝 부드럽게
   구름·눈처럼 원래 가장자리가 흰 그림은 안쪽도 희므로 그대로 남는다.
 같은 그림에 두 번 돌려도 거의 바뀌지 않는다.
 """
@@ -16,7 +17,8 @@ import numpy as np
 from PIL import Image
 
 LIGHTER = 35      # 안쪽보다 이만큼(0~255) 밝으면 테두리로 봄
-KEEP = 0.3        # 테두리 점은 투명도를 이만큼만 남김
+NEAR = 4          # 투명한 곳에서 이만큼(점) 안까지를 가장자리로 봄
+CORE = 5          # 이만큼 둘레가 모두 불투명해야 '깊은 안쪽'
 
 
 def box(x, r):
@@ -44,16 +46,24 @@ def clean(path, check=False):
     im = Image.open(path).convert('RGBA')
     a = np.array(im).astype(float); rgb, A = a[..., :3], a[..., 3]
     solid = A >= 250
-    edge = (A > 0) & ~solid
-    fill, have = inner_color(rgb, solid)
+    near = box((A < 8).astype(float), NEAR) > 0                     # 투명한 곳에서 NEAR점 안
+    core = box(solid.astype(float), CORE) >= (2 * CORE + 1) ** 2 - .5  # 둘레가 모두 불투명한 깊은 안쪽
+    fill, have = inner_color(rgb, core)
     lum = rgb.mean(-1); flum = fill.mean(-1)
-    fringe = edge & have & (lum - flum > LIGHTER)
+    fringe = (A > 0) & near & ~core & have & (lum - flum > LIGHTER)  # 안쪽보다 훨씬 밝은 가장자리 = 흰 테두리(반투명이든 불투명이든)
     if check:
         return int(fringe.sum())
     out = a.copy()
-    m = edge & have
-    out[m, :3] = fill[m]
-    out[fringe, 3] = A[fringe] * KEEP
+    A2 = A.copy(); A2[fringe] = 0
+    # 남은 반투명 가장자리는 색을 안쪽 색으로(흰 기운 없앰)
+    soft = (A2 > 0) & (A2 < 250) & near & have
+    out[soft, :3] = fill[soft]
+    # 테두리를 지워 새로 드러난 가장자리는 살짝 부드럽게(계단 없이)
+    touched = box(fringe.astype(float), 1) > 0
+    edge = (A2 > 0) & touched
+    avg = box(A2, 1) / 9
+    A2[edge] = np.minimum(A2[edge], (A2[edge] + avg[edge]) / 2 + 40)
+    out[..., 3] = A2
     Image.fromarray(np.clip(out + .5, 0, 255).astype('uint8'), 'RGBA').save(path, 'WEBP', quality=95, alpha_quality=100, method=6)
     return int(fringe.sum())
 
