@@ -9,7 +9,7 @@
 - 사용량이 넉넉하지 않다. 큰 파일은 필요한 부분만 읽고(Grep으로 자리를 찾은 뒤 offset/limit), 확인도 고친 부분만.
 
 ## 저장소 지도
-- `NNN/` 앱 하나씩(001~008). `앱.html`이 앱, `앱_manual.html`이 게시판 본문, `앱_guide.html`이 자세한 설명, `앱01.jpg~`가 캡처, `README.txt`가 그 앱의 세부.
+- `NNN/` 앱 하나씩(001~009). `앱.html`이 앱, `앱_manual.html`이 게시판 본문, `앱_guide.html`이 자세한 설명, `앱01.jpg~`가 캡처, `README.txt`가 그 앱의 세부.
 - `media/` 여러 앱이 함께 쓰는 자료(사진 `photos/`, 목소리 `voice/`, 동물·장면). 앱 안에서는 늘 GitHub 절대 주소로 부른다.
 - `server/` charum.org 서버에 올리는 파일의 원본(토큰 칸은 비움). `relay/` 사진 다리.
 - `docs/` 지침. `guidelines.md`가 기준, `guidelines-full.md`는 앱마다의 자세한 사정·저장 칸·기록 꼴(필요한 절만 찾아 읽음).
