@@ -1,0 +1,10 @@
+# 비밀이 들어가는 파일 — 저장소에 올리지 않음
+server/charum-api/donate-config.php
+*.key
+.env
+.env.*
+
+# 작업 중 생기는 것
+.DS_Store
+__pycache__/
+zz-*.html

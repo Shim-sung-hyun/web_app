@@ -8,7 +8,7 @@
 - word-learn-1.html        편마다 나눈 판: 1편 나와 우리 집만 보임(2026-10-23). 2편부터는 공개할 때 word-learn-2.html …
                            통합본(word-learn.html)과 저장 칸이 같아(wl007b_*) 기록·멈춘 곳·마친 묶음이 이어짐.
                            묶음은 통합본과 똑같음(채우는 낱말은 같은 편·앞 편에서만). 어려운 낱말 다시 넣기는 앞 편 낱말도 섞음.
-                           만들기: /home/claude/beta 에서 build.py → word-learn.html로 복사 → split.py (OPEN_BOOKS 편마다 만듦)
+                           만들기: word-learn.html(통합본)을 고친 뒤 python3 007/tools/split.py (OPEN_BOOKS 편마다 만듦)
 - server-loader-1.html     내 도메인 study/007/word-learn-1.html 로 올릴 불러오기 파일(편마다 하나)
 - word-learn-beta.html     베타 주소로 들어오면 word-learn.html로 넘겨 줌 (2026-10-21 진행 막대·견본 테두리를 정식판에 합침)
 - word-learn01~20.jpg      화면 캡처 1366×768 (설명서 그림)
