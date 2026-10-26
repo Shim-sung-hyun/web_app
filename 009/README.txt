@@ -5,8 +5,7 @@
 파일
 - animal-riddle.html : 앱. 동물 자료(AD·SCENE·ALIAS·PARTS·RID)도 이 안에 있음 — 고칠 때는 여기를
 - server-loader.html : 서버 study/009/에 animal-riddle.html 이름으로 올리는 불러오기 파일
-- voice-lines.json   : 앱이 쓰는 말 목록(콘솔 __voiceLines()와 같음) 392마디
-- voice-maker.html   : 목소리 만들기 화면(일회용 — 없는 322마디. 소리를 넣으면 지움)
+- voice-lines.json   : 앱이 쓰는 말 목록(콘솔 __voiceLines()와 같음) 392마디 — 모두 소리 모음 leda-0.92에 있음(2026-10-26 322마디를 만들어 넣고 만들기 화면은 지움)
 
 수준(설정 ②) — 모두 학습 → 퀴즈 → 정리하기 → 같은 동물 찾기
 - 하 · 다섯 고개: 오늘의 동물 4마리. 학습(이름 → 고개 다섯) → 퀴즈(동물마다 고개 다섯 번, 고개 하나에 카드 2장: 그 동물 + 그 고개에 확실히 맞지 않는 동물, 매번 다른 동물)
@@ -32,5 +31,4 @@
 
 다음 할 일
 1. 선생님이 써 보고 의견(중의 말 알아듣기, 상의 부위 보이기, 같은 동물 찾기 규칙)
-2. 목소리 322마디: voice-maker.html(제작자 Cloud 키) → zip을 받아 leda-0.92에 넣고 이 화면 지움
-3. 캡처 animal-riddle01.jpg~, 설명서 _manual·_guide, 홍보 그림(첫 판 것은 버림), 게시판 글 → 글 번호 넣기
+2. 캡처 animal-riddle01.jpg~, 설명서 _manual·_guide, 홍보 그림(첫 판 것은 버림), 게시판 글 → 글 번호 넣기
