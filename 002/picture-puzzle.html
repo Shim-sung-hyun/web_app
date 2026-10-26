@@ -1714,7 +1714,8 @@ window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ l
 $('againBtn').innerHTML=ICON.redo+'다시 하기'; $('otherBtn').innerHTML=ICON.photo+'다른 그림';
 $('againBtn').onclick=()=>startRound();
 $('otherBtn').onclick=()=>{ leaveFull(); showHome(); };
-if(S.mode==='solo') showHome(); else showSetup();
+/* 늘 설정 화면부터 엽니다. "학생 혼자"는 설정에 골라진 채로 남고, 시작을 눌러야 학생 화면으로 넘어갑니다. */
+showSetup();
 /* ================= 빠뜨린 곳 알려 주기 =================
    필요한 것을 안 하고 넘어가려 할 때, 그곳을 빨간 테두리로 비추고 말풍선으로 할 일을 알려 줌.
    비춘 곳은 바로 누를 수 있고, 아무 데나 누르면 사라짐 */
