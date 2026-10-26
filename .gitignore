@@ -8,3 +8,5 @@ server/charum-api/donate-config.php
 .DS_Store
 __pycache__/
 zz-*.html
+shots/
+node_modules/
