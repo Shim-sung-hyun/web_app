@@ -4563,15 +4563,15 @@ paintAdvice();
 
 </script>
 <script id="reportLink">
-/* 오류·의견 알리기(2026-10-22): 선생님 화면(설정·관리 메뉴)에서만 왼쪽 아래에 작게. 누르면 차름 게시판 이 앱 글의 댓글 칸이 새 탭으로 열림(로그인 없이 댓글 가능) */
+/* 오류·의견 알리기(2026-10-22, 10-26 휴대폰처럼 좁으면 💬 동그라미만): 선생님 화면(설정·관리 메뉴)에서만 왼쪽 아래에 작게. 누르면 차름 게시판 이 앱 글의 댓글 칸이 새 탭으로 열림(로그인 없이 댓글 가능) */
 (function(){
   var URL='https://www.charum.org/webapp/59806#write';
   var css=document.createElement('style');
-  css.textContent='#reportBtn{position:fixed;left:12px;bottom:12px;z-index:2147480000;display:none;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid #2F5D8A55;color:#2F5D8A;font:600 13px/1.2 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer}#reportBtn:hover{background:#fff;border-color:#2F5D8A}#reportBtn.on{display:inline-flex}@media print{#reportBtn{display:none!important}}';
+  css.textContent='#reportBtn{position:fixed;left:12px;bottom:12px;z-index:2147480000;display:none;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid #2F5D8A55;color:#2F5D8A;font:600 13px/1.2 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer}#reportBtn:hover{background:#fff;border-color:#2F5D8A}#reportBtn.on{display:inline-flex}@media (max-width:600px){#reportBtn{width:40px;height:40px;padding:0;justify-content:center;font-size:18px}#reportBtn .rbTxt{display:none}}@media print{#reportBtn{display:none!important}}';
   document.head.appendChild(css);
   function make(){ if(document.getElementById('reportBtn')) return;
     var a=document.createElement('a'); a.id='reportBtn'; a.href=URL; a.target='_blank'; a.rel='noopener'; a.title='이 앱의 오류나 의견을 게시판 댓글로 남겨요';
-    a.innerHTML='<span aria-hidden="true">💬</span>오류·의견 알리기'; document.body.appendChild(a); }
+    a.setAttribute('aria-label','오류·의견 알리기'); a.innerHTML='<span aria-hidden="true">💬</span><span class="rbTxt">오류·의견 알리기</span>'; document.body.appendChild(a); }
   function show(){ try{ return (function(){var s=document.getElementById('setup');return (s&&getComputedStyle(s).display!=='none'&&!s.classList.contains('hidden'))||document.body.classList.contains('tmode');})(); }catch(e){ return false; } }
   function tick(){ make(); var a=document.getElementById('reportBtn'); if(a) a.classList.toggle('on',!!show()); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tick); else tick();
