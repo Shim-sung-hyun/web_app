@@ -1,6 +1,6 @@
 # 프로젝트 지침(요약) — 차름 웹앱 (발달장애 학생용)
 
-> 정리: 2026-10-26. Claude Code는 저장소 맨 위 `CLAUDE.md`를 먼저 읽는다. 이 글은 GitHub `Shim-sung-hyun/web_app` 저장소의 `docs/guidelines.md`와 프로젝트 문서 `claude/프로젝트-지침-요약.md`에 같은 내용으로 있다. 더 자세한 옛 지침은 프로젝트 문서 `claude/프로젝트-지침-개정판.md`, 사진 검토 절차는 저장소 `media/photos/REVIEW.md`, 각 앱의 세부는 저장소 `NNN/README.txt`에 있다. 고칠 때는 해당 줄을 고쳐 쓰고 날짜를 바꾼 뒤 두 곳 모두 올린다.
+> 정리: 2026-10-26. Claude Code는 저장소 맨 위 `CLAUDE.md`를 먼저 읽는다. 이 글은 GitHub `Shim-sung-hyun/web_app` 저장소의 `docs/guidelines.md`와 프로젝트 문서 `claude/프로젝트-지침-요약.md`에 같은 내용으로 있다. 더 자세한 옛 지침은 저장소 `docs/guidelines-full.md`(프로젝트 문서 `claude/프로젝트-지침-개정판.md`와 같은 내용), 사진 검토 절차는 저장소 `media/photos/REVIEW.md`, 각 앱의 세부는 저장소 `NNN/README.txt`에 있다. 고칠 때는 해당 줄을 고쳐 쓰고 날짜를 바꾼 뒤 두 곳 모두 올린다.
 
 **대상**: 특수학교 초등 고학년~고등 발달장애 학생(말하기 약 0.5~2세, 듣기 약 1.5~6세 수준).
 **배포**: GitHub Pages `Shim-sung-hyun/web_app` → 학생·교사는 내 도메인 `https://www.charum.org/study/NNN/앱.html`로 열고, 차름 게시판(라이믹스 webapp)에 소개. 시리즈 이름 **차름**('처음'의 우리말).

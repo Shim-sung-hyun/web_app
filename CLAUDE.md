@@ -12,7 +12,7 @@
 - `NNN/` 앱 하나씩(001~008). `앱.html`이 앱, `앱_manual.html`이 게시판 본문, `앱_guide.html`이 자세한 설명, `앱01.jpg~`가 캡처, `README.txt`가 그 앱의 세부.
 - `media/` 여러 앱이 함께 쓰는 자료(사진 `photos/`, 목소리 `voice/`, 동물·장면). 앱 안에서는 늘 GitHub 절대 주소로 부른다.
 - `server/` charum.org 서버에 올리는 파일의 원본(토큰 칸은 비움). `relay/` 사진 다리.
-- `docs/` 지침.
+- `docs/` 지침. `guidelines.md`가 기준, `guidelines-full.md`는 앱마다의 자세한 사정·저장 칸·기록 꼴(필요한 절만 찾아 읽음).
 
 ## 007 낱말 익히기 만드는 법
 통합본 `007/word-learn.html`이 원본이다. 고친 뒤 `python3 007/tools/split.py`를 돌리면 공개한 편(`OPEN_BOOKS`)마다 `word-learn-N.html`과 `server-loader-N.html`이 다시 만들어진다. 편 판은 손으로 고치지 않는다.
