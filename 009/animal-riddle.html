@@ -317,33 +317,34 @@ const NEW={'고래':'gorae','상어':'sangeo','문어':'muneo','오징어':'ojin
  '전갈':'jeongal','사막여우':'sangmagyeou','소금쟁이':'sogeumjaengi','물방개':'mulbanggae','수달':'sudal','우렁이':'ureongi','백로':'baengno','미꾸라지':'mikkuraji'};
 /* 009 동물 다섯 고개 자료 — 이 앱 안의 자료(고칠 때는 여기를 고침)
 
-   AD 구조 단서(하 수준 퀴즈·정리하기): 사는 곳|다리|겉|움직임|생김새|그럴 수도 있는 생김새|먹이(앞이 고개)|소리
-     ? = 애매해서 고개로 쓰지도, 흐리게 하지도 않음. 무오류: 다른 동물을 고를 때는 "확실히 아닌" 것만.
+   AD 구조 단서(하 수준 퀴즈·정리하기): 사는 곳|다리|겉|움직임(할 수 있는 것 모두, 앞이 고개)|생김새|그럴 수도 있는 생김새|먹이(앞이 고개)|소리
+     ? = 애매해서 고개로 쓰지도, 보기로 내지도 않음. 무오류: 보기 동물은 사실도 다르고 "그림에서 보기에도" 확실히 달라야 함
+     (2026-10-26 선생님 의견: 나비는 그림에 다리가 안 보여 '다리가 없어요'의 보기가 되면 안 됨 → 다리 ?, 비슷해 보이는 생김새는 '그럴 수도'에)
    RID 스무고개 단서(상 20개, 그중 * 표시 10개가 중): 넓은 것 → 좁은 것, 끝은 알 수밖에 없는 단서.
      #h = 사는 곳 배경이 나타남 / #p:부위 = 그 부위가 드러남(PARTS) / #f:먹이그림 = 먹이 그림이 구석에
    PARTS 부위 자리(512칸 그림 기준, e=타원 r=네모: x0,y0,x1,y1) — 2026-10-26 그림을 보고 잡음
    SCENE 사는 곳 배경(media/habitats) · ALIAS 말로·글로 맞힐 때 받아 주는 이름 */
 const AD={
- '코끼리':'ground|4|?|walk|trunk+bigear+tusk|whisker|grass+leaf+fruit|',
- '기린':'ground|4|fur|walk|neck+spots|whisker|leaf+grass|',
- '얼룩말':'ground|4|fur|walk|stripe+mane|whisker|grass|',
- '토끼':'ground|4|fur|walk|ear|whisker|grass+leaf+carrot|',
- '소':'ground|4|fur|walk|horn+spots|whisker|grass|음매',
- '사자':'ground|4|fur|walk|mane|whisker|meat|어흥',
- '호랑이':'ground|4|fur|walk|stripe|whisker|meat|어흥',
- '곰':'ground|4|fur|walk||whisker|honey+fish+fruit+bug+meat|',
- '원숭이':'ground|?|fur|?|hands+curltail|whisker|banana+fruit+leaf+bug|',
- '개':'ground|4|fur|walk|floppy|whisker+spots||멍멍',
- '고양이':'ground|4|fur|walk|whisker|stripe||야옹',
- '독수리':'sky|2|feather|fly|whitehead+beak+wing||meat+fish|',
- '부엉이':'sky|2|feather|fly|bigeye+beak+wing||meat+bug|부엉부엉',
- '나비':'sky|6|?|fly|pattern+wing+antenna||nectar|',
- '벌':'sky|6|?|fly|stripe+wing+antenna||nectar+honey|윙윙',
- '상어':'water|0|?|swim|fin||fish+meat|',
- '고래':'water|0|smooth|swim|fin||fish+shrimp|',
- '문어':'water|8|smooth|swim|sucker|||',
- '펭귄':'?|2|feather|?|beak+tuxedo|wing|fish|',
- '두더지':'underground|4|fur|dig|shovel|whisker|bug|'
+ '코끼리':'ground|4|?|walk+swim|trunk+bigear+tusk|whisker+ear+floppy+hands|grass+leaf+fruit|',
+ '기린':'ground|4|fur|walk|neck+spots|whisker+horn+mane|leaf+grass|',
+ '얼룩말':'ground|4|fur|walk|stripe+mane|whisker+spots|grass+leaf|',
+ '토끼':'ground|4|fur|walk+dig|ear|whisker+bigear+whitehead+bigeye|grass+leaf+carrot|',
+ '소':'ground|4|fur|walk|horn+spots|whisker+whitehead+tuxedo|grass+leaf|음매',
+ '사자':'ground|4|fur|walk|mane|whisker+curltail|meat|어흥',
+ '호랑이':'ground|4|fur|walk+swim|stripe|whisker+spots+mane+curltail+whitehead|meat|어흥',
+ '곰':'ground|4|fur|walk+swim+dig||whisker+hands+shovel+bigeye|honey+nectar+fish+fruit+bug+meat+grass+leaf|',
+ '원숭이':'ground|?|fur|walk|hands+curltail|whisker+bigear+bigeye|banana+fruit+leaf+bug+grass|',
+ '개':'ground|4|fur|walk+swim+dig|floppy|whisker+spots+curltail+ear+bigear+tuxedo+whitehead+bigeye||멍멍',
+ '고양이':'ground|4|fur|walk|whisker|stripe+spots+curltail+tuxedo+whitehead+bigeye||야옹',
+ '독수리':'sky|2|feather|fly+walk|whitehead+beak+wing|hands+pattern|meat+fish|',
+ '부엉이':'sky|2|feather|fly+walk|bigeye+beak+wing|hands+pattern|meat+bug|부엉부엉',
+ '나비':'sky|?|?|fly|pattern+wing+antenna|spots+stripe|nectar+honey|',
+ '벌':'sky|6|?|fly+walk|stripe+wing+antenna|spots|nectar+honey|윙윙',
+ '상어':'water|0|?|swim|fin|tuxedo|fish+meat|',
+ '고래':'water|0|smooth|swim|fin|tuxedo|fish+shrimp+meat|',
+ '문어':'water|8|smooth|swim|sucker|hands+bigeye||',
+ '펭귄':'?|2|feather|swim+walk|beak+tuxedo|wing+fin+spots+bigeye|fish+meat|',
+ '두더지':'underground|4|fur|dig+walk|shovel|whisker+hands+trunk|bug|'
 };
 const SCENE={'코끼리':'grassland','기린':'grassland','얼룩말':'grassland','사자':'grassland','토끼':'ground','소':'ground','개':'ground','고양이':'ground','나비':'ground','벌':'ground',
  '호랑이':'forest','곰':'forest','원숭이':'forest','부엉이':'forest','독수리':'sky','상어':'sea','고래':'sea','문어':'sea','펭귄':'polar','두더지':'underground'};
@@ -408,7 +409,7 @@ const FEAT={trunk:'코가 아주 길어요.',bigear:'귀가 아주 커요.',tusk
 const FOOD={grass:['풀을 먹어요.','grass'],leaf:['나뭇잎을 먹어요.','leafy_branch'],meat:['고기를 먹어요.','meat_slab'],fish:['물고기를 먹어요.','fish'],bug:['벌레를 먹어요.','cricket'],
   nectar:['꽃의 꿀을 먹어요.','pink_flower'],honey:['꿀을 좋아해요.','honey_pot'],banana:['바나나를 좋아해요.','bananas'],fruit:['열매를 먹어요.','red_berries'],carrot:['당근을 좋아해요.','carrot'],shrimp:['새우를 먹어요.','shrimp']};
 const AN={}; Object.keys(AD).forEach(n=>{ const [home,legs,cover,move,f,m,fo,snd]=AD[n].split('|');
-  AN[n]={home:home==='?'?null:home,legs:legs==='?'?null:+legs,cover:cover==='?'?null:cover,move:move==='?'?null:move,feats:f?f.split('+'):[],maybe:m?m.split('+'):[],foods:fo?fo.split('+'):[],sound:snd||null}; });
+  AN[n]={home:home==='?'?null:home,legs:legs==='?'?null:+legs,cover:cover==='?'?null:cover,move:move==='?'?null:move.split('+')[0],moves:move==='?'?null:move.split('+'),feats:f?f.split('+'):[],maybe:m?m.split('+'):[],foods:fo?fo.split('+'):[],sound:snd||null}; });
 const ALL=Object.keys(AD);
 const pic=a=>OLD[a]?P007+OLD[a]+'.webp':PNEW+NEW[a]+'.webp';
 /* 스무고개 단서: {t 글, star 중에도 씀, h 배경, p 부위, f 먹이그림} */
@@ -430,8 +431,10 @@ const factText=h=>h.k==='home'?HOME[h.v]:h.k==='legs'?LEGS[h.v]:h.k==='cover'?CO
 const factImg=h=>h.k==='home'?HAB+HOMEIMG[h.v]+'.jpg':h.k==='food'?FOODP+FOOD[h.v][1]+'.webp':'';
 /* 동물 d가 단서 h에 확실히 맞지 않으면 true(모르면 false — 무오류) */
 function fails(d,h){ const a=AN[d];
-  switch(h.k){ case 'home': return a.home!=null&&a.home!==h.v; case 'legs': return a.legs!=null&&a.legs!==h.v;
-    case 'cover': return a.cover!=null&&a.cover!==h.v; case 'move': return a.move!=null&&a.move!==h.v;
+  switch(h.k){ case 'home': return a.home!=null&&a.home!==h.v&&!(h.v==='ground'&&a.home==='underground');   /* 땅속 동물도 땅 위에 나오므로 '땅 위'의 보기로 내지 않음 */
+    case 'legs': return a.legs!=null&&a.legs!==h.v;
+    case 'cover': return a.cover!=null&&a.cover!==h.v&&![a.cover,h.v].every(x=>x==='fur'||x==='feather')&&![a.cover,h.v].every(x=>x==='smooth'||x==='feather');   /* 깃털은 털처럼도, 미끈해 보이기도 함 */
+    case 'move': return a.moves!=null&&!a.moves.includes(h.v);   /* 할 수 있는 움직임이 여럿(호랑이도 헤엄침) */
     case 'feat': return !a.feats.includes(h.v)&&!a.maybe.includes(h.v);
     case 'food': return a.foods.length>0&&!a.foods.includes(h.v); case 'sound': return a.sound!==h.v; }
   return false; }
@@ -836,7 +839,8 @@ function quizPick(it,tok){
   cards.forEach(c=>{ c._tap=()=>{ if(!armed||over||!alive(tok)) return;
     if(c===target){ over=true; clearTimers(); c.classList.remove('glow'); c.classList.add('right'); cards.forEach(x=>{ if(x!==c) x.classList.add('out'); }); chime();
       logRow('quiz',t,wrong,helped||!!wrong,it.i+1,h.k); setBubble(F,t,'','name');
-      speak(nameLine(t)).then(async()=>{ if(!alive(tok)) return; await wait(700); if(alive(tok)) nextItem(); }); }
+      speak(nameLine(t)).then(async()=>{ if(!alive(tok)) return; await wait(700); if(!alive(tok)) return;
+        if(it.i===easyHints(t).length-1) await recap(t,easyHints(t).map(x=>({t:factText(x),img:factImg(x)})),tok); if(alive(tok)) nextItem(); }); }
     else if(!wrong){ wrong=c.dataset.a; glow(); } }; });
 }
 
@@ -883,7 +887,8 @@ async function riddle(it,tok){
     bg.classList.add('on'); requestAnimationFrame(()=>{ full.classList.add('on'); sc.querySelectorAll('canvas:not(.full)').forEach(c=>c.style.opacity=0); });
     chime(); logRow('quiz',t,wrong,who==='reveal',heard); setBubble(F,t,'','name');
     const inp=$('sIn'); if(inp){ inp.value=t; inp.disabled=true; inp.blur(); }
-    later(()=>{ if(alive(tok)) speak(nameLine(t)).then(async()=>{ if(!alive(tok)) return; await wait(1600); if(alive(tok)) nextItem(); }); },500); };
+    later(()=>{ if(alive(tok)) speak(nameLine(t)).then(async()=>{ if(!alive(tok)) return; await wait(1600); if(!alive(tok)) return;
+      if(lv===2) await recap(t,list.filter(x=>!/^이름은|^'/.test(x.t)).map(x=>({t:x.t,img:''})),tok); if(alive(tok)) nextItem(); }); },500); };
   const check=(texts,who)=>{ if(over) return false; if(isName(t,texts)){ win(who); return true; } const s=[].concat(texts)[0]; if(s&&!wrong) wrong=String(s).slice(0,20); return false; };
   /* 답하는 길: 상은 입력칸, 중은 마이크 + 선생님 "알았어요" */
   if(lv===3){ const inp=$('sIn'), ok=()=>{ if(inp.value.trim()) check(inp.value,'type'); };
@@ -913,6 +918,19 @@ async function riddle(it,tok){
 /* 선생님 "알았어요": 입력칸을 열고 닫음 */
 $('tGot').addEventListener('click',e=>{ e.stopPropagation(); const b=$('tBox'); b.classList.toggle('on'); if(b.classList.contains('on')){ $('tIn').value=''; $('tIn').focus(); } });
 
+/* ---- 되짚기(하·중, 2026-10-26 선생님 의견): 한 동물의 퀴즈가 끝나면 그 동물을 크게 보여 주고
+   "○○예요." → 살펴본 특징을 하나씩 모두(글과 함께) → 잠깐 멈춤 → 한 번 더 → 다음 동물 ---- */
+async function recap(t,list,tok){
+  clearStage(); renderProg();
+  const F=frame(1,true), c=animalCard(t,F.cs); c.style.cursor='default'; F.row.appendChild(c);
+  for(let round=0;round<2;round++){
+    F.chips.innerHTML=''; setBubble(F,t,'','name');
+    await speak(nameLine(t)); if(!alive(tok)) return; await wait(300);
+    for(const h of list){ if(!alive(tok)) return; setBubble(F,h.t,h.img); addChip(F,h.t,true); await speak(h.t); if(!alive(tok)) return; await wait(350); }
+    F.chips.querySelectorAll('.now').forEach(x=>x.classList.remove('now'));
+    await wait(round?1200:2200); if(!alive(tok)) return;   /* 첫 번째 뒤에는 조금 더 길게 멈춤 */
+  }
+}
 /* ---- 정리하기: 오늘의 동물을 늘 같은 자리에 펼쳐 놓고, 그 동물만 남는 고개를 한꺼번에. 찾은 동물은 ✓.
    놀이처럼: 틀리면 반응 없음(먼저 누른 것만 기록), 말이 끝나고 3초마다 다시, 16초 뒤 정답이 빛남 ---- */
 function stepSort(it,tok){
