@@ -123,13 +123,14 @@ body.home #home{display:flex}
 .big-tile svg{width:34%;height:auto;stroke-width:1.8}
 .big-tile img{width:100%;flex:1;min-height:0;object-fit:cover;border-radius:18px}
 #soloBtns{display:none;gap:12px;pointer-events:auto}
-body.solo #soloBtns{display:flex}
+#doneLabel.btns #soloBtns{display:flex}
+#endShow .eb{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 #doneLabel:not(.on){visibility:hidden}
 #doneLabel:not(.on) #soloBtns{pointer-events:none}
-#soloBtns button{border:0;border-radius:999px;font-family:var(--f-display);font-size:clamp(24px,2.6vw,34px);padding:10px 28px;min-height:64px;display:inline-flex;align-items:center;gap:10px}
-#soloBtns button svg{width:1.1em;height:1.1em}
-#againBtn{background:var(--cream);color:var(--ocean)}
-#otherBtn{background:transparent;color:var(--cream);box-shadow:inset 0 0 0 3px var(--cream)}
+#soloBtns button,#endShow .eb button{border:0;border-radius:999px;font-family:var(--f-display);font-size:clamp(24px,2.6vw,34px);padding:10px 28px;min-height:64px;display:inline-flex;align-items:center;gap:10px}
+#soloBtns button svg,#endShow .eb button svg{width:1.1em;height:1.1em}
+#againBtn,#endShow .eb .again{background:var(--cream);color:var(--ocean)}
+#otherBtn,#endShow .eb .other{background:transparent;color:var(--cream);box-shadow:inset 0 0 0 3px var(--cream)}
 /* ---------- S·S+ 초시계와 기록 ---------- */
 #clock{position:absolute;left:16px;bottom:14px;z-index:4;display:none;align-items:center;gap:8px;font-family:var(--f-display);font-size:26px;color:var(--cream);
   background:rgba(15,36,48,.62);border-radius:16px;padding:4px 16px 4px 12px;font-variant-numeric:tabular-nums;pointer-events:none}
@@ -137,7 +138,7 @@ body.solo #soloBtns{display:flex}
 body.super:not(.admin):not(.setup):not(.home) #clock{display:flex}
 #superInfo{display:none;width:100%;justify-content:center;align-items:center;gap:14px 18px;flex-wrap:wrap;font-size:clamp(22px,2.4vw,32px);pointer-events:auto}
 body.super #superInfo{display:flex}
-body.solo #superInfo{width:auto} /* 학생 혼자: "다 맞췄어요"와 시간을 한 줄에 두어 아래 버튼 줄까지 두 줄로 */
+#doneLabel.btns #superInfo{width:auto} /* 버튼이 있을 때: "다 맞췄어요"와 시간을 한 줄에 두어 아래 버튼 줄까지 두 줄로 */
 #doneLabel:not(.on) #superInfo{pointer-events:none}
 #superInfo .best{color:#FFD58A}
 #superInfo button{border:0;border-radius:999px;background:var(--cream);color:var(--ocean);font-family:var(--f-display);font-size:clamp(20px,2.2vw,28px);padding:8px 22px;min-height:56px;display:inline-flex;align-items:center;gap:8px}
@@ -710,7 +711,7 @@ function renderDocks(){
     `<div class="grp">${b('sfx',(S.sfx?ICON.sndOn:ICON.sndOff)+(S.sfx?'효과음':'효과음 끔'),S.sfx)}${b('setup',ICON.gear+'설정')}</div>`;
   $('helpTop').innerHTML=b('tour',ICON.q+'도움말');
   $('dockBot').innerHTML = !R ? '' : done
-    ? `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${S.mode==='teacher'&&S.idx<S.list.length-1?b('nextpic',ICON.next+'다음 그림'):''}${S.mode==='teacher'&&S.list.length>1?b('first',ICON.redo+'첫 그림부터'):''}${S.level<MAXLV?b('nextlv',ICON.next+'다음 단계'):''}${b('setup',ICON.photo+'다른 그림으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}${isSuper(R.level)?b('rank',ICON.cup+'S·S+ 기록'):''}</div>`
+    ? `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${S.idx<S.list.length-1?b('nextpic',ICON.next+'다음 그림'):''}${S.list.length>1?b('first',ICON.redo+'첫 그림부터'):''}${S.level<MAXLV?b('nextlv',ICON.next+'다음 단계'):''}${b('pick',ICON.photo+'다른 그림으로')}${b('print',ICON.print+'출력')}${b('log',ICON.log+'기록',!$('logPop').hidden)}${isSuper(R.level)?b('rank',ICON.cup+'S·S+ 기록'):''}</div>`
     : `<div class="grp">${b('restart',ICON.redo+'이 그림으로 다시 시작',null,'class="big"')}</div><div class="grp">${b('mix',ICON.mix+'다시 섞기',null,R&&R.active?'':'disabled')}${b('log',ICON.log+'기록',!$('logPop').hidden)}${isSuper(R.level)?b('rank',ICON.cup+'S·S+ 기록'):''}</div>`;
 }
 function onDock(e){
@@ -722,6 +723,7 @@ function onDock(e){
   if(a==='gh'){ S.ghost=+v; store.set('ghost2',S.ghost); applyGhost(); renderDocks(); }
   if(a==='sfx'){ S.sfx=!S.sfx; store.set('sfx',S.sfx?'on':'off'); renderDocks(); }
   if(a==='setup'){ leaveFull(); showSetup(); }
+  if(a==='pick'){ pickAnother(); return; }
   /* 이 그림으로 다시 시작: 바꾼 설정(단계·모양·밑그림…)을 적용해 같은 사진으로 처음부터, 메뉴는 닫고 전체 화면.
      하던 판으로 그냥 돌아가려면 관리 버튼을 한 번 누름 */
   if(a==='restart'){ startRound(); setAdmin(false); goFull(); return; }
@@ -866,11 +868,12 @@ function phoneLoop(n,onAdd){
 }
 
 /* ================= 그림 고르기 창: 이 기기에 보관한 사진 + 일상 그림(차름 사진 모음). 누르면 바로 넣고 빼기 ================= */
-async function openGallery(){
-  const box=$('galBox');
-  box.innerHTML=`<div class="ov-card"><div class="ov-head"><h2>그림 고르기</h2><span class="hint" style="margin:0" id="galCount"></span><button class="mini pri" type="button" id="galX">다 골랐어요</button></div>
+/* play=true: 다 맞춘 뒤 "다른 그림"으로 연 창. 새로 고른 그림으로 바로 시작(설정 화면으로 돌아가지 않음) */
+async function openGallery(play){
+  const box=$('galBox'); box.dataset.play=play?'1':'';
+  box.innerHTML=`<div class="ov-card"><div class="ov-head"><h2>그림 고르기</h2><span class="hint" style="margin:0" id="galCount"></span><button class="mini pri" type="button" id="galX">${play?'다 골랐어요 · 시작':'다 골랐어요'}</button></div>
     <div class="ov-body"><div id="galMine"></div><h3 class="gh">일상 그림 <small>학교 안팎 사진을 옮긴 그림</small></h3><div class="gal" id="galList"><p class="note">그림을 불러오는 중이에요…</p></div></div></div>`;
-  box.classList.add('on'); box.querySelector('#galX').onclick=()=>box.classList.remove('on');
+  box.classList.add('on'); box.querySelector('#galX').onclick=()=>closeGallery(true);
   const count=()=>{ box.querySelector('#galCount').textContent=`오늘 할 그림 ${S.list.length} / ${MAXP} · 누르면 넣고, 다시 누르면 빼요`; };
   const toggle=(b,it)=>{ const k=itemKey(it); if(S.list.some(x=>itemKey(x)===k)){ removeFromList(k); b.classList.remove('on'); }
     else if(S.list.length<MAXP){ addToList(it); b.classList.add('on'); } else { b.classList.remove('on'); box.querySelector('#galCount').textContent=`${MAXP}장까지 넣을 수 있어요. 먼저 하나를 빼 주세요.`; return; } count(); };
@@ -878,13 +881,33 @@ async function openGallery(){
   const mine=await mineAll(), M=box.querySelector('#galMine');
   M.innerHTML=mine.length?`<h3 class="gh">이 기기에 보관한 사진 <small>휴대폰·이 기기에서 넣은 사진(이 기기 밖으로 보내지 않음, ${MINE_MAX}장까지)</small></h3><div class="gal">${mine.map(r=>`<div class="gwrap"><button type="button" data-mine="${esc(r.id)}" class="${has('mine:'+r.id)?'on':''}"><img src="${r.thumb}" alt="">${esc(r.name)}</button><button type="button" class="gdel" data-del="${esc(r.id)}" aria-label="이 사진 지우기">×</button></div>`).join('')}</div>`:'';
   M.querySelectorAll('[data-mine]').forEach(b=>b.onclick=()=>{ const r=mine.find(x=>x.id===b.dataset.mine); toggle(b,{src:'mine',id:r.id,name:r.name}); });
-  M.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{ if(!confirm('이 사진을 이 기기에서 지울까요?')) return; await mineDel(b.dataset.del); removeFromList('mine:'+b.dataset.del); openGallery(); });
+  M.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{ if(!confirm('이 사진을 이 기기에서 지울까요?')) return; await mineDel(b.dataset.del); removeFromList('mine:'+b.dataset.del); openGallery(!!box.dataset.play); });
   const arts=await loadArts(); const L=box.querySelector('#galList'); count();
   if(!arts.length){ L.innerHTML='<p class="note">그림을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.</p>'; return; }
   L.innerHTML=arts.map(a=>`<button type="button" data-id="${esc(a.id)}" class="${has('art:'+a.id)?'on':''}"><img loading="lazy" src="${a.url}" alt="">${esc(a.title)}</button>`).join('');
   L.querySelectorAll('button').forEach(b=>b.onclick=()=>{ const a=arts.find(x=>x.id===b.dataset.id); toggle(b,{src:'art',id:a.id,name:a.title}); });
 }
-$('galBox').addEventListener('pointerdown',e=>{ if(e.target===$('galBox')) $('galBox').classList.remove('on'); });
+$('galBox').addEventListener('pointerdown',e=>{ if(e.target===$('galBox')) closeGallery(false); });
+/* ok: "다 골랐어요"를 누름 / 아니면 바깥을 눌러 닫음 */
+function closeGallery(ok){
+  const box=$('galBox');
+  if(box.dataset.play){
+    if(ok&&!S.list.length){ spotlight('#galX','먼저 그림을 골라 주세요. 그림을 누르면 들어가요.'); return; }
+    box.dataset.play=''; box.classList.remove('on');
+    if(ok){ galPrev=null; begin(); return; }
+    /* 고르지 않고 닫으면 하던 목록 그대로 (다 맞춘 화면에 머묾) */
+    if(galPrev){ S.list=galPrev; galPrev=null; saveList(); renderList(); }
+    return;
+  }
+  box.classList.remove('on');
+}
+/* 다 맞춘 뒤 다른 그림: 처음 설정에서 고를 때와 같은 그림 고르기 창을 판 위에 열고, 새로 고름 */
+let galPrev=null;
+function pickAnother(){
+  clearTimeout(nextT); setAdmin(false);
+  galPrev=S.list.slice(); S.list=[]; saveList(); renderList();
+  openGallery(true);
+}
 
 /* ================= 학생 기록 =================
    명단은 같은 사이트의 다른 앱과 함께 씀(webapp.students). 기록은 이 기기 브라우저에만.
@@ -1213,7 +1236,7 @@ function modeUI(){
   const h=$('picHint'); if(!h) return;
   const ph=$('plistHead'); if(ph) ph.innerHTML=S.mode==='solo'?'학생이 고른 그림 <small>학생 혼자: 학생이 위에서 골라 넣고 시작을 눌러요</small>':'오늘 할 그림 <small>순서대로 하고, 다 맞추면 다음 그림으로 저절로 넘어가요</small>';
   h.innerHTML=S.mode==='solo'
-    ? '학생 혼자: 학생이 이 화면에서 그림을 골라 넣고 <b>시작</b>을 누르면 그 그림으로 바로 시작해요. 다 맞추면 <b>다시 하기</b>(같은 그림)나 <b>다른 그림</b>(이 화면으로 돌아와 새로 고르기)을 눌러 계속해요.'
+    ? '학생 혼자: 학생이 이 화면에서 그림을 골라 넣고 <b>시작</b>을 누르면 그 그림으로 바로 시작해요. 다 맞추면 <b>다시 하기</b>(같은 그림)나 <b>다른 그림</b>(그림 고르기 창이 열려 새로 고르면 바로 시작)을 눌러 계속해요. 선생님과 함께 할 때도 같아요.'
     : '휴대폰·이 기기 사진은 이 기기 안에만 보관하고 바깥으로 보내지 않아요(휴대폰 사진은 잠가서 보내고, 중계 서버는 받는 순간 지워요). 학생 얼굴이나 이름이 나오지 않는 사진, 학생이 좋아하는 물건·장소가 좋아요.';
 }
 /* 설정 화면의 시작: 목록의 첫 그림부터(학생 혼자도 같음). ready=true면 이미 열어 둔 S.img로 바로 */
@@ -1227,16 +1250,20 @@ async function playItem(i){
 }
 /* 다 맞추면: 완성 그림을 4초쯤 보여 준 뒤 다음 그림(관리 메뉴가 열려 있으면 닫힐 때까지 기다림). 마지막이면 맞춘 그림을 모아 보여 주고 멈춤 */
 let nextT=null;
+/* 선생님과 함께·학생 혼자 모두 같음. 그림이 한 장이면 다 맞춘 화면에 다시 하기·다른 그림 */
 function scheduleNext(){
   clearTimeout(nextT);
-  if(S.mode==='solo'||!S.list.length) return;
-  const go=()=>{ if(S.admin||$('rankBox').classList.contains('on')){ nextT=setTimeout(go,600); return; } if(!S.R||!S.R.done) return;
+  if(S.list.length<=1) return;
+  const go=()=>{ if(S.admin||$('rankBox').classList.contains('on')||$('galBox').classList.contains('on')){ nextT=setTimeout(go,600); return; } if(!S.R||!S.R.done) return;
     if(S.idx<S.list.length-1) playItem(S.idx+1); else showEnd(); };
   nextT=setTimeout(go,4450);
 }
 async function showEnd(){
   const thumbs=await Promise.all(S.list.map(thumbOf));
-  $('endShow').innerHTML=`<h2>${ICON.check}다 했어요</h2><div class="eg">${thumbs.map(u=>`<img src="${u}" alt="">`).join('')}</div>`;
+  $('endShow').innerHTML=`<h2>${ICON.check}다 했어요</h2><div class="eg">${thumbs.map(u=>`<img src="${u}" alt="">`).join('')}</div>
+    <div class="eb"><button type="button" class="again" id="endRedo">${ICON.redo}다시 하기</button><button type="button" class="other" id="endOther">${ICON.photo}다른 그림</button></div>`;
+  $('endRedo').onclick=()=>{ goFull(); playItem(0); }; /* 오늘 그림을 첫 그림부터 다시 */
+  $('endOther').onclick=()=>pickAnother();
   $('endShow').classList.add('on'); $('doneLabel').classList.remove('on'); renderDocks();
 }
 
@@ -1463,7 +1490,7 @@ function clampPiece(p){ const pl=$('play'), W=pl.clientWidth, H=pl.clientHeight,
   if(S.R&&isSuper(S.R.level)&&p.x<190&&p.y+h>H-64) p.y=Math.max(0,H-64-h); /* 초시계도 */ }
 function updateProgress(){ const R=S.R; if(!R) return; const pr=$('prog');
   /* 그림이 여러 장이면 진행 막대는 그림 차례(그림 하나에 한 칸). 조각은 판에서 보임 */
-  if(S.mode==='teacher'&&S.list.length>1){ const n=S.list.length, k=S.idx+(R.done?1:0);
+  if(S.list.length>1){ const n=S.list.length, k=S.idx+(R.done?1:0);
     pr.innerHTML=Array.from({length:n},(_,i)=>`<b class="${i<k?'done':i===k?'now':''}"></b>`).join(''); return; }
   const n=R.pieces.length, k=R.pieces.filter(p=>p.placed).length;
   if(n<=10){ pr.innerHTML=Array.from({length:n},(_,i)=>`<b class="${i<k?'done':i===k?'now':''}"></b>`).join(''); }
@@ -1552,6 +1579,7 @@ function complete(){
   S.rounds.push({level:R.level, shape:R.shape, ghost:R.ghost, n:R.pieces.length, first, helped:R.pieces.length-first, ms});
   logRound(R,ms,first);
   renderDocks(); renderLog();
+  $('doneLabel').classList.toggle('btns',S.list.length<=1); /* 여러 장이면 다음 그림으로 넘어가고, 마지막에 "다 했어요" 화면에서 버튼 */
   timer=setTimeout(()=>{
     $('full').classList.add('on'); R.pieces.forEach(p=>p.el.classList.add('gone'));
     $('guide').style.visibility='hidden'; $('pbox').classList.add('clear'); placeDoneLabel(); $('doneLabel').classList.add('on'); sfx('done');
@@ -1681,7 +1709,7 @@ const TOUR_STEPS=[
   {el:'#dockBot [data-a="nextpic"]', t:'다음 그림', x:'기다리지 않고 오늘 할 그림의 다음 그림으로 넘어가요. 그냥 두면 완성 그림을 4초쯤 보여 준 뒤 저절로 넘어가요.'},
   {el:'#dockBot [data-a="first"]', t:'첫 그림부터', x:'오늘 할 그림을 첫 그림부터 다시 해요.'},
   {el:'#dockBot [data-a="nextlv"]', t:'다음 단계', x:'조각을 한 줄 늘려 다시 해요.'},
-  {el:'#dockBot [data-a="setup"]', t:'다른 그림으로', x:'설정 화면에서 오늘 할 그림을 다시 골라요.'},
+  {el:'#dockBot [data-a="pick"]', t:'다른 그림으로', x:'그림 고르기 창을 열어 새 그림을 고르면 바로 시작해요.'},
   {el:'#dockBot [data-a="print"]', t:'출력', x:'오려서 맞추는 종이 퍼즐과 기록을 A4 한 장으로 인쇄해요.'},
   {el:'#dockBot [data-a="log"]', t:'기록', x:'이번 수업의 판마다 바로 맞힘·도움 받아 맞힘·걸린 시간을 보여 줘요. 여기서 기록할 학생을 바꾸고, "교사용 기록"에서 얼마나 어려운 판까지 했는지 봐요.'},
   {el:'#adminBtn', t:'관리 버튼', x:'이 동그라미를 3초 누르면 교사 메뉴가 열려요(학생이 실수로 열지 않게). 메뉴가 열려 있을 때 한 번 누르면 하던 판 그대로 학생 화면으로 돌아가요.'}
@@ -1721,7 +1749,7 @@ window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ l
 /* ================= 시작 ================= */
 $('againBtn').innerHTML=ICON.redo+'다시 하기'; $('otherBtn').innerHTML=ICON.photo+'다른 그림';
 $('againBtn').onclick=()=>startRound();
-$('otherBtn').onclick=()=>{ leaveFull(); showSetup(); };
+$('otherBtn').onclick=()=>pickAnother();
 /* 늘 설정 화면부터 엽니다. "학생 혼자"는 설정에 골라진 채로 남고, 시작을 눌러야 학생 화면으로 넘어갑니다. */
 showSetup();
 /* ================= 빠뜨린 곳 알려 주기 =================
