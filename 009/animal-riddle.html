@@ -149,6 +149,7 @@ body.admin #stage{pointer-events:none}
 .answer{display:flex;gap:10px;align-items:center;justify-content:center}
 .answer input{font-family:var(--f-display);font-size:clamp(24px,3vw,36px);width:min(360px,60vw);height:62px;border-radius:16px;border:2px solid var(--sci-m);padding:0 18px;text-align:center;color:var(--ink);background:#fff;outline:none}
 .answer input:focus{border-color:var(--sci)}
+.answer .pass{background:#fff;color:var(--sci-d);border:2px solid var(--sci-m);min-width:90px}
 .answer button{height:62px;min-width:100px;border:0;border-radius:16px;background:var(--sci);color:#fff;font-family:var(--f-display);font-size:28px;cursor:pointer}
 .mic{display:inline-flex;align-items:center;gap:8px;font-size:15px;color:var(--muted)}
 .mic i{width:12px;height:12px;border-radius:50%;background:#C9C3D3}
@@ -862,7 +863,7 @@ function quizPick(it,tok){
 
 /* ---- 고개 장면(중·상) ----
    중: 첫 고개에 사는 곳 배경이 깔리고, 고개를 넘을 때마다 동물의 그림자가 조금씩 차오름(마지막 고개에 다 참). 학생이 이름을 말하면 쫙.
-   상: 배경 위에 그 고개가 말하는 부위만 드러나고(갈기면 갈기만), 먹이 고개는 먹이 그림이 구석에. 학생이 이름을 쓰면 쫙.
+   상: 처음 서식지 배경만 보여 주고 고개는 말과 글로만(그림 단서 없음). 학생이 이름을 쓰면 동물이 쫙. 중·상 모두 '패스'로 다음 고개.
    고개는 말이 끝나고 중 7초·상 9초 뒤 저절로 다음(쓰는 중·말하는 중이면 기다림). 다 들어도 못 맞히면 12초 뒤 정답을 보여 줌(도움). 틀려도 반응 없음 */
 function imgLoad(src){ return new Promise(r=>{ const im=new Image(); im.crossOrigin='anonymous'; im.onload=()=>r(im); im.onerror=()=>r(null); im.src=src; }); }
 async function riddle(it,tok){
@@ -876,6 +877,7 @@ async function riddle(it,tok){
   const ans=document.createElement('div'); ans.className='answer';
   if(lv===3) ans.innerHTML='<input id="sIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="이름을 써요" enterkeyhint="done"><button type="button" id="sOk">확인</button>';
   else ans.innerHTML='<span class="mic"><i></i><span></span></span>';
+  { const b=document.createElement('button'); b.type='button'; b.className='pass'; b.textContent='패스'; ans.appendChild(b); b.onclick=()=>{ skip=true; b.blur(); }; }   /* 모르면 다음 고개로(2026-10-27) */
   st.append(F.bub,sc,F.chips,ans);
   setBubble(F,WHO,'');
   /* 그림 준비: 동물을 배경 아래쪽 가운데에(장면 높이의 72%) */
@@ -897,7 +899,7 @@ async function riddle(it,tok){
     x.clip(); x.drawImage(img,AX,AY,AS,AS); x.globalCompositeOperation='source-in'; x.fillStyle='rgba(58,48,72,.82)'; x.fillRect(0,0,CW,CH); x.restore();
     shadowDone=want; requestAnimationFrame(()=>c.classList.add('on')); };
   const bg=sc.querySelector('.bg');
-  let over=false, wrong='', heard=0, lastType=0;
+  let over=false, wrong='', heard=0, lastType=0, skip=false;
   const win=(who)=>{ if(over||!alive(tok)) return; over=true; clearTimers(); Ear.stop(); document.body.classList.remove('listen'); $('tBox').classList.remove('on');
     const full=layer(); full.classList.add('full'); const fx=full.getContext('2d'); if(img) fx.drawImage(img,AX,AY,AS,AS);
     bg.classList.add('on'); requestAnimationFrame(()=>{ full.classList.add('on'); sc.querySelectorAll('canvas:not(.full)').forEach(c=>c.style.opacity=0); });
@@ -913,7 +915,7 @@ async function riddle(it,tok){
     $('tOk').onclick=()=>{ const v=$('tIn').value.trim(); if(!v) return; if(check(v,'teacher')){ $('tIn').value=''; } else { $('tIn').select(); } };
     $('tIn').onkeydown=e=>{ if(e.key==='Enter') $('tOk').click(); }; }
   /* 고개를 차례로 */
-  const wait2=ms=>new Promise(r=>{ const t0=performance.now(); const chk=()=>{ if(!alive(tok)||over) return r(false);
+  const wait2=ms=>new Promise(r=>{ const t0=performance.now(); const chk=()=>{ if(!alive(tok)||over) return r(false); if(skip){ skip=false; return r(true); }
     const busy=(lv===3&&performance.now()-lastType<3500)||(lv===2&&performance.now()-Ear.heardAt<2500)||$('tBox').classList.contains('on')||pdown;
     if(performance.now()-t0>=ms&&!busy) return r(true); setTimeout(chk,250); }; chk(); });
   await wait(700); if(!alive(tok)) return;
@@ -921,11 +923,10 @@ async function riddle(it,tok){
     const h=list[i]; heard=i+1;
     if(h.h||i===0) bg.classList.add('on');
     if(lv===2) growShadow((i+1)/list.length);
-    if(lv===3&&h.p&&PART[t][h.p]) drawPart(PART[t][h.p]);
-    if(lv===3&&h.f){ const f=document.createElement('img'); f.className='food'; f.src=FOODP+h.f+'.webp'; f.alt=''; sc.appendChild(f); requestAnimationFrame(()=>f.classList.add('on')); }
+    /* 상: 그림 단서 없이 말과 글로만(처음 서식지 배경만, 2026-10-27 선생님 의견) */
     setBubble(F,h.t,''); addChip(F,h.t,true);
     await speak(h.t); if(!alive(tok)||over) return;
-    if(i===list.length-1) break;
+    if(i===list.length-1){ skip=false; break; }
     if(!await wait2(lv===2?7000:9000)) return;
   }
   setBubble(F,lv===2?SAY:TYPE,''); await speak(lv===2?SAY:TYPE); if(!alive(tok)||over) return;

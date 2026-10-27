@@ -8,6 +8,7 @@
 하는 일(그림 안쪽의 불투명한 곳은 건드리지 않음):
   1. 가장자리(투명한 곳에서 4점 안)에서 깊은 안쪽 색보다 훨씬 밝은 점 = 흰 테두리 → 지움
      (반투명한 흰 기운과, 그림에 그려 넣은 불투명한 흰 선 모두)
+     + 검은 윤곽선 바깥에 붙은 밝은 점도 지움(2026-10-27: 소·북극곰처럼 몸이 흰 그림은 위 방법으로 걸리지 않았음)
   2. 남은 반투명 가장자리는 색을 안쪽 색으로, 새로 드러난 가장자리는 살짝 부드럽게
   구름·눈처럼 원래 가장자리가 흰 그림은 안쪽도 희므로 그대로 남는다.
 같은 그림에 두 번 돌려도 거의 바뀌지 않는다.
@@ -42,6 +43,32 @@ def inner_color(rgb, solid):
     return out, have
 
 
+def shift(m, dx, dy):
+    """m을 (dx,dy)만큼 민 것(밖은 False)"""
+    out = np.zeros_like(m); H, W = m.shape
+    ys, yd = (slice(0, H - dy), slice(dy, H)) if dy >= 0 else (slice(-dy, H), slice(0, H + dy))
+    xs, xd = (slice(0, W - dx), slice(dx, W)) if dx >= 0 else (slice(-dx, W), slice(0, W + dx))
+    out[yd, xd] = m[ys, xs]; return out
+
+
+def outside_rim(lum, A, steps=3):
+    """밝은 점 P에서 한쪽으로 가면(어두운 선을 넘지 않고) 곧 투명한 곳, 반대쪽으로 가면 곧 어두운 윤곽선
+    → P는 윤곽선 바깥의 흰 테두리. 윤곽선 안쪽의 흰 털·흰 몸은 투명한 곳으로 가려면 윤곽선을 넘어야 하므로 남음"""
+    light = (A > 0) & (lum > 195)
+    dark = (A > 200) & (lum < 120)
+    trans = A < 40
+    rim = np.zeros_like(light)
+    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)):
+        reach = np.zeros_like(light); blocked = np.zeros_like(light); back = np.zeros_like(light)
+        for k in range(1, steps + 1):
+            # P에서 (dx,dy)로 k걸음 간 자리의 값을 P 자리로 가져옴 → shift(m, -k*dx, -k*dy)
+            reach |= shift(trans, -k * dx, -k * dy) & ~blocked
+            blocked |= shift(dark, -k * dx, -k * dy)
+            back |= shift(dark, k * dx, k * dy)
+        rim |= reach & back
+    return light & rim
+
+
 def clean(path, check=False):
     im = Image.open(path).convert('RGBA')
     a = np.array(im).astype(float); rgb, A = a[..., :3], a[..., 3]
@@ -51,6 +78,7 @@ def clean(path, check=False):
     fill, have = inner_color(rgb, core)
     lum = rgb.mean(-1); flum = fill.mean(-1)
     fringe = (A > 0) & near & ~core & have & (lum - flum > LIGHTER)  # 안쪽보다 훨씬 밝은 가장자리 = 흰 테두리(반투명이든 불투명이든)
+    fringe |= outside_rim(lum, A)   # 검은 윤곽선 바깥에 붙은 밝은 점(소·북극곰처럼 몸이 흰 그림도)
     if check:
         return int(fringe.sum())
     out = a.copy()
