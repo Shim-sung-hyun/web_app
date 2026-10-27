@@ -137,6 +137,7 @@ body.solo #soloBtns{display:flex}
 body.super:not(.admin):not(.setup):not(.home) #clock{display:flex}
 #superInfo{display:none;width:100%;justify-content:center;align-items:center;gap:14px 18px;flex-wrap:wrap;font-size:clamp(22px,2.4vw,32px);pointer-events:auto}
 body.super #superInfo{display:flex}
+body.solo #superInfo{width:auto} /* 학생 혼자: "다 맞췄어요"와 시간을 한 줄에 두어 아래 버튼 줄까지 두 줄로 */
 #doneLabel:not(.on) #superInfo{pointer-events:none}
 #superInfo .best{color:#FFD58A}
 #superInfo button{border:0;border-radius:999px;background:var(--cream);color:var(--ocean);font-family:var(--f-display);font-size:clamp(20px,2.2vw,28px);padding:8px 22px;min-height:56px;display:inline-flex;align-items:center;gap:8px}
@@ -186,6 +187,7 @@ body.recording:not(.setup) #recMark{display:inline-flex}
 #doneLabel{position:absolute;z-index:6;display:flex;align-items:center;gap:12px 22px;flex-wrap:wrap;justify-content:center;font-family:var(--f-display);font-size:clamp(30px,3.4vw,44px);color:var(--cream);
   opacity:0;transition:opacity .8s ease;pointer-events:none;white-space:nowrap}
 #doneLabel.on{opacity:1}
+#doneLabel.over{background:rgba(15,36,48,.82);border-radius:28px;padding:14px 28px}
 #doneLabel svg{width:1.2em;height:1.2em;stroke-width:2.6}
 .pc{position:absolute;left:0;top:0;transform-origin:0 0;z-index:5;touch-action:none;cursor:grab;
   filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
@@ -843,11 +845,11 @@ function addToList(it){
 function removeFromList(key){ S.list=S.list.filter(x=>itemKey(x)!==key); saveList(); renderList(); }
 async function renderList(){
   const box=$('plist'); if(!box) return;
+  const tok=renderList.tok=(renderList.tok||0)+1, L=S.list.slice(); /* 그사이 목록이 바뀌었으면 나중 것만 그림(빈 목록도) */
   $('pcount').textContent=`${S.list.length} / ${MAXP}`;
   $('setup').querySelectorAll('.src').forEach(b=>b.classList.toggle('on',S.list.some(x=>(b.dataset.src==='sample'&&x.src==='sample')||(b.dataset.src==='art'&&x.src==='art'))));
-  if(!S.list.length){ box.innerHTML=`<p class="note">아직 넣은 그림이 없어요. 위에서 골라 넣으세요(${MAXP}장까지). 학생이 한 그림을 다 맞추면 다음 그림으로 저절로 넘어가요.</p>`; return; }
-  const tok=renderList.tok=(renderList.tok||0)+1, L=S.list.slice();
-  const thumbs=await Promise.all(L.map(thumbOf)); if(tok!==renderList.tok) return; /* 그사이 목록이 바뀌었으면 나중 것만 그림 */
+  if(!S.list.length){ box.innerHTML=S.mode==='solo'?`<p class="note">아직 고른 그림이 없어요. 위에서 하고 싶은 그림을 골라 넣으세요.</p>`:`<p class="note">아직 넣은 그림이 없어요. 위에서 골라 넣으세요(${MAXP}장까지). 학생이 한 그림을 다 맞추면 다음 그림으로 저절로 넘어가요.</p>`; return; }
+  const thumbs=await Promise.all(L.map(thumbOf)); if(tok!==renderList.tok) return;
   box.innerHTML=L.map((it,i)=>`<div class="pi" data-k="${esc(itemKey(it))}"><span class="pn">${i+1}</span><img src="${thumbs[i]}" alt=""><b>${esc(it.name||SRC_NAME[it.src]||'')}</b>
     <div class="pa"><button type="button" data-mv="-1" aria-label="앞으로" ${i===0?'disabled':''}>‹</button><button type="button" data-mv="1" aria-label="뒤로" ${i===L.length-1?'disabled':''}>›</button><button type="button" data-rm="1" aria-label="빼기">×</button></div></div>`).join('');
   box.querySelectorAll('.pi').forEach(el=>{ const k=el.dataset.k;
@@ -1188,7 +1190,7 @@ function showSetup(){
     $('startMsg').textContent=bad?`${bad}장은 열지 못했어요.`:''; hl();
   };
   $('setup').querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
-    if(r.name==='mode'){S.mode=r.value; store.set('mode',S.mode); modeUI();}
+    if(r.name==='mode'){S.mode=r.value; store.set('mode',S.mode); if(S.mode==='solo'){ S.list=[]; saveList(); renderList(); } modeUI();}
     if(r.name==='level'){S.level=+r.value; store.set('level',S.level); superHint();}
     if(r.name==='shape'){S.shape=r.value; store.set('shape',S.shape);}
     if(r.name==='ghost'){S.ghost=+r.value; store.set('ghost2',S.ghost);}
@@ -1197,26 +1199,26 @@ function showSetup(){
     $('moreSum').textContent=moreSum();
   });
   $('startBtn').onclick=()=>{
-    if(S.mode==='solo'){ unlockAudio(); showHome(); return; }
-    if(!S.list.length){ spotlight('#srcs','먼저 그림을 넣어 주세요. 바로 하려면 "예시 사진"을 누르세요.'); return; }
+    if(!S.list.length){ spotlight('#srcs',S.mode==='solo'?'먼저 그림을 골라 주세요. 바로 하려면 "예시 사진"을 누르세요.':'먼저 그림을 넣어 주세요. 바로 하려면 "예시 사진"을 누르세요.'); return; }
     begin();
   };
-  /* 지난번 목록은 다시 열어도 그대로(보관한 사진이 지워졌으면 빠짐) */
-  restoreList().then(renderList);
+  /* 선생님과 함께: 지난번 목록은 다시 열어도 그대로(보관한 사진이 지워졌으면 빠짐). 학생 혼자: 학생이 이 화면에서 새로 고름 */
+  if(S.mode==='solo'){ S.list=[]; saveList(); renderList(); }
+  else restoreList().then(renderList);
 }
 function superHint(){ const h=$('superHint'); if(!h) return;
   h.innerHTML=isSuper(S.level)?`<b>${LVN(S.level)}단계</b>: 화면 왼쪽 아래 초시계로 걸린 시간을 재요${S.level===7?'. 조각이 아무 방향으로 돌아가 있고 판 밖에 몰려 있어요. 조각을 <b>살짝 누르면 90도씩</b> 돌아가고, 바른 방향일 때만 제자리에 붙어요':''}. <button class="mini" type="button" id="rankOpen">${ICON.cup}S·S+ 기록 보기</button>`:'';
   const b=$('rankOpen'); if(b) b.onclick=()=>openRank(S.level); }
 function modeUI(){
   const h=$('picHint'); if(!h) return;
-  const ph=$('plistHead'); if(ph) ph.innerHTML=S.mode==='solo'?'학생 화면 맨 앞에 둘 그림 <small>학생 혼자: 첫 화면에 이 그림들, 예시 사진, 일상 그림이 모두 나와요</small>':'오늘 할 그림 <small>순서대로 하고, 다 맞추면 다음 그림으로 저절로 넘어가요</small>';
+  const ph=$('plistHead'); if(ph) ph.innerHTML=S.mode==='solo'?'학생이 고른 그림 <small>학생 혼자: 학생이 위에서 골라 넣고 시작을 눌러요</small>':'오늘 할 그림 <small>순서대로 하고, 다 맞추면 다음 그림으로 저절로 넘어가요</small>';
   h.innerHTML=S.mode==='solo'
-    ? '학생 혼자: 시작을 누르면 학생 화면에 <b>넣은 그림 · 예시 사진 · 일상 그림 모두 · 사진 고르기</b>가 펼쳐져요. 학생이 골라서 하고, 다 맞추면 <b>다시 하기</b>나 <b>다른 그림</b>을 눌러 계속해요. 그 수업에서 맞춘 그림에는 작은 ✓가 붙어요.'
+    ? '학생 혼자: 학생이 이 화면에서 그림을 골라 넣고 <b>시작</b>을 누르면 그 그림으로 바로 시작해요. 다 맞추면 <b>다시 하기</b>(같은 그림)나 <b>다른 그림</b>(이 화면으로 돌아와 새로 고르기)을 눌러 계속해요.'
     : '휴대폰·이 기기 사진은 이 기기 안에만 보관하고 바깥으로 보내지 않아요(휴대폰 사진은 잠가서 보내고, 중계 서버는 받는 순간 지워요). 학생 얼굴이나 이름이 나오지 않는 사진, 학생이 좋아하는 물건·장소가 좋아요.';
 }
-/* 선생님과 함께: 목록의 첫 그림부터. 학생 혼자: 고른 그림 하나 */
-async function begin(){ goFull(); unlockAudio(); S.rounds=[]; document.body.classList.remove('setup','home'); updateRec();
-  if(S.mode==='solo'){ startRound(); return; }
+/* 설정 화면의 시작: 목록의 첫 그림부터(학생 혼자도 같음). ready=true면 이미 열어 둔 S.img로 바로 */
+async function begin(ready){ goFull(); unlockAudio(); S.rounds=[]; document.body.classList.remove('setup','home'); updateRec();
+  if(ready===true){ startRound(); return; }
   await playItem(0); }
 async function playItem(i){
   clearTimeout(nextT); S.idx=i; $('endShow').classList.remove('on');
@@ -1262,12 +1264,12 @@ async function showHome(){
   $('home').querySelectorAll('button.big-tile').forEach(b=>{ let x0=0,y0=0,down=false;
     b.addEventListener('pointerdown',e=>{ down=true; x0=e.clientX; y0=e.clientY; });
     const go=async e=>{ if(!down) return; down=false; if(Math.hypot(e.clientX-x0,e.clientY-y0)>30) return; unlockAudio();
-      try{ S.img=await loadItem(items[+b.dataset.i]); begin(); }catch(err){} };
+      try{ S.img=await loadItem(items[+b.dataset.i]); begin(true); }catch(err){} };
     b.addEventListener('pointerup',go); b.addEventListener('pointercancel',e=>{ if(Math.hypot(e.clientX-x0,e.clientY-y0)<=30) go(e); else down=false; }); });
   $('homeFile').onchange=async e=>{
     const f=e.target.files&&e.target.files[0]; if(!f) return;
     const url=URL.createObjectURL(f);
-    try{ S.img=await preparePhoto(url,f.name.replace(/\.[^.]+$/,''),'device'); S.img.key='device:'+f.name; URL.revokeObjectURL(url); begin(); }catch(err){ URL.revokeObjectURL(url); }
+    try{ S.img=await preparePhoto(url,f.name.replace(/\.[^.]+$/,''),'device'); S.img.key='device:'+f.name; URL.revokeObjectURL(url); begin(true); }catch(err){ URL.revokeObjectURL(url); }
   };
   renderDocks();
 }
@@ -1470,9 +1472,15 @@ function showTarget(p){ hideTarget(); const t=document.createElementNS('http://w
 function hideTarget(){ const t=$('target'); if(t) t.remove(); }
 function placeDoneLabel(){
   const d=$('doneLabel'); if(!G) return;
-  const below=G.by+G.bh+16, h=56, play=$('play').clientHeight;
+  /* 실제 높이로 잼(S·S+의 시간 줄, 학생 혼자의 다시 하기·다른 그림 줄까지 있으면 세 줄). 위아래 모두 자리가 없으면 그림 아래쪽에 겹쳐 놓음 */
+  d.classList.remove('over');
+  const below=G.by+G.bh+16, play=$('play').clientHeight; let h=d.offsetHeight||56;
   d.style.left=(G.bx+G.bw/2)+'px'; d.style.transform='translateX(-50%)';
-  d.style.top=(below+h<play-10?below:Math.max(40,G.by-h-6))+'px';
+  let top;
+  if(below+h<play-10) top=below;
+  else if(G.by-h-6>=40) top=G.by-h-6;
+  else { d.classList.add('over'); h=d.offsetHeight||h; top=Math.max(10,Math.min(G.by+G.bh-h-10,play-h-10)); }
+  d.style.top=top+'px';
 }
 
 /* ================= 끌어서 놓기 ================= */
@@ -1546,7 +1554,7 @@ function complete(){
   renderDocks(); renderLog();
   timer=setTimeout(()=>{
     $('full').classList.add('on'); R.pieces.forEach(p=>p.el.classList.add('gone'));
-    $('guide').style.visibility='hidden'; $('pbox').classList.add('clear'); $('doneLabel').classList.add('on'); sfx('done');
+    $('guide').style.visibility='hidden'; $('pbox').classList.add('clear'); placeDoneLabel(); $('doneLabel').classList.add('on'); sfx('done');
   },450);
   if(S.img&&S.img.key) S.doneKeys.add(S.img.key);
   scheduleNext(); updateProgress();
@@ -1713,7 +1721,7 @@ window.addEventListener('resize',()=>{ clearTimeout(rzT); rzT=setTimeout(()=>{ l
 /* ================= 시작 ================= */
 $('againBtn').innerHTML=ICON.redo+'다시 하기'; $('otherBtn').innerHTML=ICON.photo+'다른 그림';
 $('againBtn').onclick=()=>startRound();
-$('otherBtn').onclick=()=>{ leaveFull(); showHome(); };
+$('otherBtn').onclick=()=>{ leaveFull(); showSetup(); };
 /* 늘 설정 화면부터 엽니다. "학생 혼자"는 설정에 골라진 채로 남고, 시작을 눌러야 학생 화면으로 넘어갑니다. */
 showSetup();
 /* ================= 빠뜨린 곳 알려 주기 =================
