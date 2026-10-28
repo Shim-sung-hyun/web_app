@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>[차름 과학] 무엇으로 만들었을까</title>
+<style>body{margin:0;background:#F7F4FA;font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;color:#2B2838;display:flex;align-items:center;justify-content:center;height:100vh}</style>
+</head><body><p id="m">불러오고 있습니다…</p>
+<script>
+/* [차름 과학] 무엇으로 만들었을까 불러오기: 이 파일만 내 서버(study/010/material-sort.html)에 둔다. 앱 본문은 GitHub에서 가져와 이 주소에서 펼친다(기록은 이 기기·이 주소에). */
+(function () {
+  var APP = 'https://shim-sung-hyun.github.io/web_app/010/material-sort.html';
+  fetch(APP, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw 0; return r.text(); })
+    .then(function (h) { document.open(); document.write(h); document.close(); })
+    .catch(function () { document.getElementById('m').innerHTML = '앱을 불러오지 못했습니다. 인터넷 연결을 확인하고 새로 고침해 주십시오.<br><a href="' + APP + '">여기를 눌러 바로 열 수도 있습니다.</a>'; });
+})();
+</script>
+</body></html>

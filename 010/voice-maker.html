@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>010 목소리 만들기 (제작자용·일회용)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;max-width:760px;margin:30px auto;padding:0 16px;color:#2B2838;line-height:1.6}
+h1{font-size:24px;color:#4E3478}
+input{width:100%;height:44px;font-size:16px;padding:0 10px;border:1.5px solid #ccc;border-radius:10px;box-sizing:border-box}
+button{min-height:44px;padding:6px 18px;font-size:16px;border-radius:10px;border:0;background:#6A4C9C;color:#fff;cursor:pointer;margin:10px 8px 0 0}
+button:disabled{opacity:.4}
+#log{white-space:pre-wrap;background:#F7F4FA;border-radius:10px;padding:10px 12px;font-size:13px;max-height:340px;overflow:auto}
+.note{font-size:14px;color:#6B6777}
+audio{width:100%;margin-top:6px}
+</style>
+</head>
+<body>
+<h1>010 무엇으로 만들었을까 — 목소리 만들기</h1>
+<p class="note">제작자만 한 번 씁니다. 010이 쓰는 말 가운데 소리 모음(leda-0.92)에 아직 없는 말만, 같은 목소리(Leda)·같은 빠르기(0.92)로 만들어 zip 하나로 내려받습니다.
+키는 이 화면에서 요청에만 쓰고 어디에도 저장하지 않습니다. 받은 zip을 Claude 세션에 올리면 <b>media/voice/leda-0.92/</b>에 넣고 이 화면은 지웁니다.</p>
+<p><input id="key" type="password" placeholder="Google Cloud 음성 키 (AIza…)" autocomplete="off"></p>
+<button id="go">없는 말 만들기</button><button id="dl" disabled>zip 내려받기</button>
+<p id="sum" class="note"></p>
+<div id="log"></div>
+<p class="note">받침·연음이 이상한 말은 아래에서 들어 보고 Claude에게 알려 주세요.</p>
+<div id="listen"></div>
+<script>
+const GH='https://shim-sung-hyun.github.io/web_app/';
+const $=id=>document.getElementById(id);
+const log=t=>{ $('log').textContent+=t+'\n'; $('log').scrollTop=1e9; };
+async function sha16(t){ const d=new Uint8Array(await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t))); return [...d].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
+let ZIP=null;
+$('go').onclick=async()=>{
+  const key=$('key').value.trim(); if(!key){ alert('키를 넣어 주세요.'); return; }
+  $('go').disabled=true; $('log').textContent=''; $('listen').innerHTML='';
+  const lines=await (await fetch(GH+'010/voice-lines.json',{cache:'no-cache'})).json();
+  const idx=await (await fetch(GH+'media/voice/leda-0.92/index.json',{cache:'no-cache'})).json();
+  const have=new Set((idx.files||[]).map(f=>String(f).replace(/\.mp3$/,'')));
+  idx.used_by=idx.used_by||{};
+  const zip=new JSZip(), dir=zip.folder('leda-0.92'); let made=0, fail=0, todo=[];
+  for(const t of lines){ const h=await sha16(t); (idx.used_by[h]=idx.used_by[h]||[]); if(!idx.used_by[h].includes('010')) idx.used_by[h].push('010'); if(!have.has(h)) todo.push([t,h]); }
+  $('sum').textContent='말 '+lines.length+'마디 가운데 새로 만들 것 '+todo.length+'마디';
+  for(const [t,h] of todo){
+    try{
+      const r=await fetch('https://texttospeech.googleapis.com/v1/text:synthesize',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},
+        body:JSON.stringify({input:{text:t},voice:{languageCode:'ko-KR',name:'ko-KR-Chirp3-HD-Leda'},audioConfig:{audioEncoding:'MP3',speakingRate:0.92}})});
+      const j=await r.json(); if(!j.audioContent) throw new Error((j.error&&j.error.message)||r.status);
+      dir.file(h+'.mp3',j.audioContent,{base64:true}); idx.files.push(h); made++; log('✓ '+t);
+      const a=document.createElement('div'); a.innerHTML='<div>'+t+'</div><audio controls src="data:audio/mpeg;base64,'+j.audioContent+'"></audio>'; $('listen').appendChild(a);
+    }catch(e){ fail++; log('✗ '+t+' — '+e.message); if(fail>=3&&!made){ log('키나 권한을 확인해 주세요. 멈춥니다.'); break; } }
+  }
+  idx.files.sort(); dir.file('index.json',JSON.stringify(idx,null,1));
+  ZIP=zip; $('dl').disabled=!made; $('go').disabled=false;
+  log('끝: 만든 것 '+made+', 못 만든 것 '+fail);
+};
+$('dl').onclick=async()=>{ const b=await ZIP.generateAsync({type:'blob'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='voice-010-leda-0.92.zip'; a.click(); };
+</script>
+</body>
+</html>
