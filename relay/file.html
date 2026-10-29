@@ -23,8 +23,19 @@ h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:34px;ma
 .board{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap}
 .qr{border:1px solid var(--line);border-radius:14px;padding:6px;line-height:0;background:#fff}
 .code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:76px;letter-spacing:.12em;color:var(--pri2);line-height:1;text-align:center}
-.steps{margin:14px 0 0;padding-left:22px;font-size:17px;line-height:1.75}
-.steps small{color:var(--sub);font-size:14px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.codeLbl{text-align:center;margin:0 0 2px;color:var(--sub);font-size:15px}
+.ways{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.way{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--tint)}
+.way h3{margin:0 0 10px;font-size:18px;color:var(--pri2)}
+.way .qr{display:inline-block}
+.way:first-child{text-align:center}
+.way p{margin:10px 0 0;font-size:16px;line-height:1.6}
+.way ol{margin:0;padding-left:22px;font-size:16px;line-height:1.75}
+.way code{font-size:14px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.drop{border:2px dashed var(--line);border-radius:16px;padding:16px;text-align:center;color:var(--sub);font-size:15px;margin-top:12px}
+.drop.on{border-color:var(--pri);background:var(--tint);color:var(--pri2)}
+@media (max-width:760px){ .ways{grid-template-columns:1fr} }
 #rState{text-align:center;margin:16px 0 0;font-size:16px;color:var(--sub);min-height:1.6em}
 #rState.err{color:var(--err);font-weight:700}
 .btns{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
@@ -73,20 +84,26 @@ h2{font-size:19px;margin:0 0 10px}
 <body>
 <main>
   <span class="chip">차름 도구</span>
-  <h1>파일 보내기</h1>
+  <div class="top"><h1>파일 보내기</h1><button class="b" type="button" id="toSend" hidden>💻 이 컴퓨터에서 보내기</button></div>
 
   <!-- ===== 받는 쪽(전자칠판·태블릿·컴퓨터) ===== -->
   <section id="recv" hidden>
-    <p class="lead">휴대폰이나 다른 컴퓨터의 PPT·PDF·한글·사진 파일을 이 화면으로 보냅니다. 휴대폰 카메라로 아래 QR을 찍어 주세요.</p>
+    <p class="lead">휴대폰이나 다른 컴퓨터의 PPT·PDF·한글·사진 파일을 이 화면으로 보냅니다. 아래 두 길 가운데 하나로 보내 주세요.</p>
     <div class="card">
-      <div class="board">
-        <div class="qr" id="qr"><svg width="220" height="220"></svg></div>
-        <div>
-          <div class="code" id="code">······</div>
-          <ol class="steps">
-            <li>휴대폰 카메라로 QR을 찍습니다.<br><small>다른 컴퓨터에서는 이 페이지를 열고 "이 기기에서 보내기"에 번호 6자리를 넣습니다.</small></li>
-            <li>보낼 파일을 고릅니다. <small>(여러 개도 됩니다)</small></li>
-            <li><b>보내기</b>를 누릅니다.</li>
+      <p class="codeLbl">번호</p>
+      <div class="code" id="code">······</div>
+      <div class="ways">
+        <div class="way">
+          <h3>📱 휴대폰으로 보내기</h3>
+          <div class="qr" id="qr"><svg width="200" height="200"></svg></div>
+          <p>휴대폰 카메라로 QR을 찍고, 파일을 골라 <b>보내기</b>를 누릅니다.</p>
+        </div>
+        <div class="way">
+          <h3>💻 다른 컴퓨터로 보내기</h3>
+          <ol>
+            <li>그 컴퓨터에서 <b>같은 주소</b>를 엽니다.<br><code>www.charum.org/study/file.html</code></li>
+            <li>위쪽의 <b>이 컴퓨터에서 보내기</b>를 누릅니다.</li>
+            <li>위의 <b>번호 6자리</b>를 넣고, 파일을 골라(끌어다 놓아도 됩니다) <b>보내기</b>를 누릅니다.</li>
           </ol>
         </div>
       </div>
@@ -99,8 +116,7 @@ h2{font-size:19px;margin:0 0 10px}
       <p class="note" style="margin-top:10px">PDF·사진은 <b>열기</b>로 바로 봅니다. PPT·한글 같은 파일은 <b>내려받기</b> 뒤 이 기기의 프로그램으로 엽니다. 받은 파일은 이 화면을 닫으면 사라지니, 필요하면 내려받아 두세요.</p>
     </div>
     <p class="limit"><b>보낼 수 있는 파일</b>: 파일 하나 <b>10MB까지</b>, 한 기기에서 <b>하루 20개까지</b>. 영상은 보낼 수 없습니다. 차름 서버의 한 달 전송량이 정해져 있어 불가피하게 정한 한도입니다. 양해 부탁드립니다.</p>
-    <p class="note" style="margin-top:12px"><b>안전하게 보냅니다.</b> 파일은 보내는 기기에서 잠가서 보내고, 이 화면만 열 수 있습니다. 중계 서버도 열어 볼 수 없고, 이 화면이 받는 순간 서버에서 지워집니다(받지 않은 파일도 번호가 끝나면 지워집니다). 학생 개인 정보가 담긴 파일은 보내지 않는 것이 좋습니다.</p>
-    <p style="text-align:center;margin:10px 0 0"><button class="linkb" type="button" id="toSend">이 기기에서 보내기 (번호 넣기)</button></p>
+    <p class="note" style="margin-top:12px"><b>안전하게 보냅니다.</b> 파일은 보내는 기기에서 잠가서 보내고, 이 화면만 열 수 있습니다. 중계 서버도 열어 볼 수 없고, 이 화면이 받는 순간 서버에서 지워집니다. 번호는 5분 동안 열려 있고 파일이 올 때마다 다시 5분이 늘어납니다(받지 않은 파일은 번호가 끝나면 지워집니다). 학생 개인 정보가 담긴 파일은 보내지 않는 것이 좋습니다.</p>
   </section>
 
   <!-- ===== 보내는 쪽(휴대폰·컴퓨터) ===== -->
@@ -117,6 +133,7 @@ h2{font-size:19px;margin:0 0 10px}
           <button class="pri" type="button" id="pickF"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>파일 고르기</button>
           <button type="button" id="pickC"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg>사진 찍기</button>
         </div>
+        <div class="drop" id="drop" hidden>여기에 파일을 끌어다 놓아도 됩니다</div>
         <input type="file" id="fIn" multiple hidden>
         <input type="file" id="cIn" accept="image/*" capture="environment" hidden>
         <div class="files" id="sList" style="margin-top:12px"></div>
@@ -240,7 +257,7 @@ const H=new URLSearchParams(location.hash.slice(1));
 const C0=(H.get('c')||'').replace(/\D/g,'');
 if(C0.length===6||H.has('send')){ document.body.classList.add('send'); $('send').hidden=false; startSend(C0); }
 else { $('recv').hidden=false; startRecv(); }
-$('toSend').onclick=()=>{ location.hash='send'; location.reload(); };
+$('toSend').hidden=$('recv').hidden; $('toSend').onclick=()=>{ location.hash='send'; location.reload(); };
 
 /* ================= 받는 쪽 ================= */
 function startRecv(){
@@ -250,7 +267,7 @@ function startRecv(){
   async function open(){
     if(me){ me.dead=true; clearTimeout(me.t); clearInterval(me.tick); }
     const m=me={dead:false,t:null,tick:null}; btns('');
-    $('code').textContent='······'; $('qr').innerHTML='<svg width="220" height="220"></svg>';
+    $('code').textContent='······'; $('qr').innerHTML='<svg width="200" height="200"></svg>';
     say('번호를 만들고 있습니다…');
     try{
       if(!window.crypto||!crypto.subtle) throw Object.assign(new Error('insecure'),{code:'insecure'});
@@ -259,7 +276,7 @@ function startRecv(){
       if(m.dead) return;
       m.code=o.code; m.sid=o.sid; m.end=Date.now()+o.ttl*1000;
       $('code').textContent=o.code.slice(0,3)+' '+o.code.slice(3);
-      $('qr').innerHTML=QR.svg(PAGE+'#c='+o.code,220);
+      $('qr').innerHTML=QR.svg(PAGE+'#c='+o.code,200);
       const left=()=>{ const s=Math.max(0,Math.round((m.end-Date.now())/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
       m.wait=()=>say((got.length?`${got.length}개 받았습니다. 더 보내도 됩니다`:'파일을 기다리고 있습니다')+(m.up?` · ${m.up}개 올라오는 중`:'')+' · 남은 시간 '+left());
       m.tick=setInterval(()=>{ if(Date.now()>m.end){ end('번호 시간이 끝났습니다.'); return; } if(!m.busy) m.wait(); },1000);
@@ -273,7 +290,7 @@ function startRecv(){
   }
   function end(msg){
     if(!me||me.dead) return; me.dead=true; clearTimeout(me.t); clearInterval(me.tick);
-    say(msg+' 더 받으려면 새 번호를 받아 주세요.'); $('code').textContent='끝'; $('qr').innerHTML='<svg width="220" height="220"></svg>';
+    say(msg+' 더 받으려면 새 번호를 받아 주세요.'); $('code').textContent='끝'; $('qr').innerHTML='<svg width="200" height="200"></svg>';
     btns('<button class="b pri" type="button" id="again">새 번호 받기</button>'); $('again').onclick=open;
     call({a:'close',code:me.code,sid:me.sid}).catch(()=>{});
   }
@@ -347,6 +364,11 @@ function startSend(c0){
     draw(); update();
   }
   $('pickF').onclick=()=>$('fIn').click(); $('pickC').onclick=()=>$('cIn').click();
+  /* 컴퓨터(마우스)에서는 끌어다 놓기 칸, 휴대폰에서는 사진 찍기 */
+  if(matchMedia('(pointer:fine)').matches){ const d=$('drop'); d.hidden=false; $('pickC').hidden=true; $('pickF').parentNode.style.gridTemplateColumns='1fr';
+    ['dragenter','dragover'].forEach(t=>document.addEventListener(t,e=>{ e.preventDefault(); d.classList.add('on'); }));
+    ['dragleave','drop'].forEach(t=>document.addEventListener(t,e=>{ e.preventDefault(); if(t==='drop'||e.target===document.documentElement) d.classList.remove('on'); }));
+    document.addEventListener('drop',e=>{ if(e.dataTransfer&&e.dataTransfer.files.length) add([...e.dataTransfer.files]); }); }
   $('fIn').onchange=e=>{ add([...e.target.files]); e.target.value=''; };
   $('cIn').onchange=e=>{ add([...e.target.files]); e.target.value=''; };
   function draw(){

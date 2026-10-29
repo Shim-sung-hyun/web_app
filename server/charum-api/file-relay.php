@@ -8,7 +8,7 @@
    - 1MB씩 나눠 올림(호스팅의 한 번 올리기 한도 때문). 전자칠판이 파일을 다 받아 풀면(ack) 그 순간 서버에서 지운다.
    - 한도(서버 전송량 때문에 불가피): 파일 하나 10MB, 한 곳(IP)에서 하루 FILES_PER_IP_DAY 개(보내는 화면은 기기마다 하루 20개로 안내·막음),
      이달 전송량 MONTH_GB 가 되면 새 전송을 멈춤.
-   - 번호: 만든 뒤 15분, 파일이 오면 마지막 파일 뒤 10분까지, 길어도 1시간.
+   - 번호: 만든 뒤 5분, 파일 조각이 올 때마다 다시 5분(올리는 도중에 끊기지 않게), 길어도 30분. 받지 않은 파일은 번호가 끝나면 지움.
    - 데이터베이스 없음. 같은 폴더의 file-relay-data/ 에 저장(웹에서 직접 열리지 않게 막음).
    - 사진 다리(relay.php)·차름 앱 사진 받기(photo-relay.php)와는 따로 둔다.
    - 점검: 주소창에서 ?ping → "ok": true
@@ -23,7 +23,7 @@ $OPEN_PER_IP_DAY = 300;               // 한 곳(IP) 하루 번호
 $MONTH_GB        = 30;                // 이달 전송량(올리기+받기) 안전판
 $MAX_SLOTS       = 300;               // 한꺼번에 열린 번호
 $MAX_STORE_MB    = 600;               // 서버에 잠깐 쌓여 있을 수 있는 조각 전체
-$TTL_IDLE = 900; $TTL_ACTIVE = 600; $TTL_MAX = 3600;
+$TTL_IDLE = 300; $TTL_ACTIVE = 300; $TTL_MAX = 1800;   // 처음 5분, 파일(조각)이 올 때마다 다시 5분, 길어도 30분
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
