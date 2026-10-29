@@ -26,6 +26,9 @@ charum.org 서버에 올리는 파일의 원본입니다. GitHub Pages에서는 
   relay-admin.php   사진 다리 관리자 화면(관리자 로그인). 연수 코드 만들기·켜고 끄기·끝나는 날·하루 한도, 이달 사용량, 부른 주소.
                     주소: https://www.charum.org/charum-api/relay-admin.php
 
+■ charum-api/file-relay.php  파일 보내기(누구나, 2026-10-29). 기록 charum-api/file-relay-data/. 점검 ?ping → "version": "2026-10-29", 이달 사용량.
+  study/file.html 불러오기(본문 relay/file.html).
+
 ■ addons/charum_donate/  애드온 "차름 기증 사진 탭". 관리자로 로그인하면 회원 메뉴 끝에 "기증 사진 N" · "사진 다리"(이달 전송량이 안전판 80%를 넘으면 빨간 %).
   charum-api/donate-data/ 와 charum-api/donate-config.php 를 읽음. 관리자 > 고급 > 애드온에서 PC·모바일 사용.
 

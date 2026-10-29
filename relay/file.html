@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>[차름 도구] 파일 보내기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 차름 파일 보내기 — 전자칠판(받는 쪽)에서 열면 QR·번호, 휴대폰(보내는 쪽)은 QR로 열려 파일을 고름.
+   서버 charum-api/file-relay.php. 사진 다리와 같은 잠금 방식, 색·꼴은 따로(먹빛 남보라 #4A5A8C, 옅은 종이 접힌 모서리 무늬). */
+:root{--ink:#1E2433;--sub:#5A6275;--line:#D6DAE6;--pri:#4A5A8C;--pri2:#33406A;--tint:#ECEFF7;--bg:#F2F3F8;--ok:#1b7f3a;--err:#c62828}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%;word-break:keep-all}
+body{background-image:linear-gradient(135deg,transparent 46%,rgba(74,90,140,.05) 46%,rgba(74,90,140,.05) 54%,transparent 54%);background-size:30px 30px}
+main{max-width:980px;margin:0 auto;padding:22px 18px calc(40px + env(safe-area-inset-bottom))}
+.chip{display:inline-block;font-family:'Jua','Noto Sans KR',sans-serif;font-size:15px;color:#fff;background:var(--pri);border-radius:8px;padding:3px 10px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:34px;margin:8px 0 4px;color:var(--pri2)}
+.lead{margin:0 0 16px;color:var(--sub);font-size:16px;line-height:1.65}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:16px}
+.board{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap}
+.qr{border:1px solid var(--line);border-radius:14px;padding:6px;line-height:0;background:#fff}
+.code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:76px;letter-spacing:.12em;color:var(--pri2);line-height:1;text-align:center}
+.steps{margin:14px 0 0;padding-left:22px;font-size:17px;line-height:1.75}
+.steps small{color:var(--sub);font-size:14px}
+#rState{text-align:center;margin:16px 0 0;font-size:16px;color:var(--sub);min-height:1.6em}
+#rState.err{color:var(--err);font-weight:700}
+.btns{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;touch-action:manipulation}
+.b{font-size:17px;font-weight:700;padding:12px 22px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--ink);min-height:48px}
+.b.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.b:disabled{opacity:.5}
+h2{font-size:19px;margin:0 0 10px}
+.files{display:grid;gap:10px}
+.file{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:#fff}
+.ic{flex:none;width:48px;height:56px;border-radius:8px;display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;background:var(--pri);position:relative}
+.ic:after{content:'';position:absolute;right:0;top:0;border:7px solid transparent;border-top-color:var(--bg);border-right-color:var(--bg)}
+.ic.pdf{background:#B4413A}.ic.ppt{background:#C2622D}.ic.hwp{background:#2F6FB0}.ic.doc{background:#2B579A}.ic.xls{background:#21744A}.ic.img{background:#6A4C9C}.ic.zip{background:#6B6B6B}
+.fn{flex:1;min-width:0}
+.fn b{display:block;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fn small{color:var(--sub);font-size:13px}
+.fn .bar{height:6px;border-radius:3px;background:var(--tint);margin-top:6px;overflow:hidden}
+.fn .bar i{display:block;height:100%;width:0;background:var(--pri)}
+.file .b{padding:9px 14px;min-height:42px;font-size:15px}
+.file .rm{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--sub);font-size:17px;padding:0}
+.file.bad{border-color:#E8B86A;background:#FFF8EC}
+.file.bad small{color:#8A4B00;font-weight:700}
+.note{font-size:14px;color:var(--sub);line-height:1.7;margin:0}
+.note b{color:var(--ink)}
+.limit{background:#FFF6E6;border:1px solid #F0D3A0;color:#6E4500;border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.65}
+.linkb{background:none;border:0;color:var(--pri2);text-decoration:underline;font-size:15px;padding:6px}
+/* 보내는 화면(휴대폰) */
+.send main{max-width:540px}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick button{font-size:18px;font-weight:700;padding:18px 8px;border-radius:16px;border:1px solid var(--line);background:#fff;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:6px}
+.pick button.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.pick svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#codeIn{width:100%;font-family:'Jua','Noto Sans KR',sans-serif;font-size:40px;letter-spacing:.2em;text-align:center;padding:8px 0 8px .2em;border:1px solid var(--line);border-radius:12px}
+#sendBtn{width:100%;font-size:20px;font-weight:700;padding:16px;border:0;border-radius:16px;background:var(--pri);color:#fff;margin-top:4px}
+#sendBtn:disabled{opacity:.5}
+#sState{min-height:1.6em;margin:12px 2px 0;font-size:16px;line-height:1.55;text-align:center}
+#sState.err{color:var(--err);font-weight:700} #sState.ok{color:var(--ok);font-weight:700}
+.done{text-align:center;padding:28px 16px}
+.done .big{width:84px;height:84px;margin:0 auto 12px;border-radius:50%;background:#e7f5ec;color:var(--ok);font-size:50px;line-height:84px;font-weight:700}
+.done h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:28px;margin:0 0 6px}
+.lead,.note,.limit{text-align:justify}
+[hidden]{display:none!important}
+@media (max-width:640px){ h1{font-size:28px} .code{font-size:56px} .board{gap:16px} }
+</style>
+</head>
+<body>
+<main>
+  <span class="chip">차름 도구</span>
+  <h1>파일 보내기</h1>
+
+  <!-- ===== 받는 쪽(전자칠판·태블릿·컴퓨터) ===== -->
+  <section id="recv" hidden>
+    <p class="lead">휴대폰이나 다른 컴퓨터의 PPT·PDF·한글·사진 파일을 이 화면으로 보냅니다. 휴대폰 카메라로 아래 QR을 찍어 주세요.</p>
+    <div class="card">
+      <div class="board">
+        <div class="qr" id="qr"><svg width="220" height="220"></svg></div>
+        <div>
+          <div class="code" id="code">······</div>
+          <ol class="steps">
+            <li>휴대폰 카메라로 QR을 찍습니다.<br><small>다른 컴퓨터에서는 이 페이지를 열고 "이 기기에서 보내기"에 번호 6자리를 넣습니다.</small></li>
+            <li>보낼 파일을 고릅니다. <small>(여러 개도 됩니다)</small></li>
+            <li><b>보내기</b>를 누릅니다.</li>
+          </ol>
+        </div>
+      </div>
+      <p id="rState">번호를 만들고 있습니다…</p>
+      <div class="btns" id="rBtns"></div>
+    </div>
+    <div class="card" id="gotCard" hidden>
+      <h2>받은 파일 <small id="gotN" style="color:var(--sub);font-weight:400"></small></h2>
+      <div class="files" id="gotList"></div>
+      <p class="note" style="margin-top:10px">PDF·사진은 <b>열기</b>로 바로 봅니다. PPT·한글 같은 파일은 <b>내려받기</b> 뒤 이 기기의 프로그램으로 엽니다. 받은 파일은 이 화면을 닫으면 사라지니, 필요하면 내려받아 두세요.</p>
+    </div>
+    <p class="limit"><b>보낼 수 있는 파일</b>: 파일 하나 <b>10MB까지</b>, 한 기기에서 <b>하루 20개까지</b>. 영상은 보낼 수 없습니다. 차름 서버의 한 달 전송량이 정해져 있어 불가피하게 정한 한도입니다. 양해 부탁드립니다.</p>
+    <p class="note" style="margin-top:12px"><b>안전하게 보냅니다.</b> 파일은 보내는 기기에서 잠가서 보내고, 이 화면만 열 수 있습니다. 중계 서버도 열어 볼 수 없고, 이 화면이 받는 순간 서버에서 지워집니다(받지 않은 파일도 번호가 끝나면 지워집니다). 학생 개인 정보가 담긴 파일은 보내지 않는 것이 좋습니다.</p>
+    <p style="text-align:center;margin:10px 0 0"><button class="linkb" type="button" id="toSend">이 기기에서 보내기 (번호 넣기)</button></p>
+  </section>
+
+  <!-- ===== 보내는 쪽(휴대폰·컴퓨터) ===== -->
+  <section id="send" hidden>
+    <div id="sForm">
+      <p class="lead">고른 파일을 번호의 전자칠판으로 보냅니다. 파일 하나 10MB까지, 영상은 보낼 수 없습니다.</p>
+      <div class="card" id="codeCard">
+        <div id="codeAsk"><label for="codeIn" style="display:block;font-weight:700;margin:0 0 8px">전자칠판에 나온 번호 6자리</label>
+          <input id="codeIn" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="000000"></div>
+        <div id="codeOk" hidden style="display:flex;align-items:center;gap:12px"><b id="codeShow" style="font-family:Jua,sans-serif;font-weight:400;font-size:32px;letter-spacing:.1em;color:var(--pri2)"></b><small style="color:var(--ok);font-weight:700">전자칠판과 연결되었습니다</small></div>
+      </div>
+      <div class="card">
+        <div class="pick">
+          <button class="pri" type="button" id="pickF"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>파일 고르기</button>
+          <button type="button" id="pickC"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg>사진 찍기</button>
+        </div>
+        <input type="file" id="fIn" multiple hidden>
+        <input type="file" id="cIn" accept="image/*" capture="environment" hidden>
+        <div class="files" id="sList" style="margin-top:12px"></div>
+        <p class="note" id="dayInfo" style="margin-top:10px"></p>
+      </div>
+      <button id="sendBtn" type="button" disabled>보내기</button>
+      <p id="sState" aria-live="polite"></p>
+    </div>
+    <div id="sDone" class="card done" hidden>
+      <div class="big" aria-hidden="true">✓</div><h2 id="sDoneT">보냈습니다</h2><p class="note" id="sDoneM" style="text-align:center"></p>
+      <div class="btns"><button class="b" type="button" id="more">더 보내기</button><button class="b pri" type="button" id="fin">다 보냈습니다</button></div>
+    </div>
+    <p class="limit" style="margin-top:14px">파일 하나 <b>10MB까지</b>, 이 기기에서 <b>하루 20개까지</b> 보낼 수 있습니다. 영상은 보낼 수 없습니다. 차름 서버의 한 달 전송량이 정해져 있어 불가피하게 정한 한도입니다.</p>
+    <p class="note" style="margin-top:12px"><b>안전하게 보냅니다.</b> 파일은 이 기기에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있습니다. 중계 서버도 열어 볼 수 없고, 전자칠판이 받는 순간 지워집니다.</p>
+  </section>
+</main>
+<script>
+(function(){
+'use strict';
+const RELAY='https://charum.org/charum-api/file-relay.php';
+const PAGE='https://www.charum.org/study/file.html';
+const MAX=10*1024*1024, CHUNK=1024*1024, DAY_MAX=20;
+const $=id=>document.getElementById(id);
+/* QR 만들기(차름 공통, 바깥 라이브러리 없이) */
+const QR=(function(){
+  const EXP=new Array(512), LOG=new Array(256); let x=1;
+  for(let i=0;i<255;i++){ EXP[i]=x; LOG[x]=i; x<<=1; if(x&256) x^=0x11d; }
+  for(let i=255;i<512;i++) EXP[i]=EXP[i-255];
+  const mul=(a,b)=>a&&b?EXP[LOG[a]+LOG[b]]:0;
+  function rsGen(n){ let g=[1]; for(let i=0;i<n;i++){ const ng=new Array(g.length+1).fill(0); for(let j=0;j<g.length;j++){ ng[j]^=g[j]; ng[j+1]^=mul(g[j],EXP[i]); } g=ng; } return g; }
+  function rsRem(data,n){ const g=rsGen(n), r=new Array(n).fill(0); for(const d of data){ const f=d^r.shift(); r.push(0); for(let i=0;i<n;i++) r[i]^=mul(g[i+1],f); } return r; }
+  /* 판마다 [블록당 오류정정 수, 블록 수 그룹1, 그룹1 데이터 수, 블록 수 그룹2, 그룹2 데이터 수] (M) */
+  const T=[null,[10,1,16,0,0],[16,1,28,0,0],[26,1,44,0,0],[18,2,32,0,0],[24,2,43,0,0],[16,4,27,0,0],[18,4,31,0,0],[22,2,38,2,39],[22,3,36,2,37],[26,4,43,1,44]];
+  const ALIGN=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50]];
+  function make(text){
+    const bytes=Array.from(new TextEncoder().encode(text));
+    let v=1; for(;v<=9;v++){ const t=T[v], cap=t[1]*t[2]+t[3]*t[4]; if(4+(v<10?8:16)+bytes.length*8<=cap*8) break; }
+    if(v>9) throw new Error('too long');
+    const t=T[v], cap=t[1]*t[2]+t[3]*t[4];
+    const bits=[]; const put=(val,n)=>{ for(let i=n-1;i>=0;i--) bits.push((val>>>i)&1); };
+    put(4,4); put(bytes.length,v<10?8:16); bytes.forEach(b=>put(b,8));
+    put(0,Math.min(4,cap*8-bits.length)); while(bits.length%8) bits.push(0);
+    const data=[]; for(let i=0;i<bits.length;i+=8){ let b=0; for(let j=0;j<8;j++) b=(b<<1)|bits[i+j]; data.push(b); }
+    for(let p=0;data.length<cap;p++) data.push(p%2?0x11:0xEC);
+    const blocks=[], ecs=[]; let k=0;
+    for(let g=0;g<2;g++) for(let b=0;b<t[1+g*2];b++){ const d=data.slice(k,k+t[2+g*2]); k+=d.length; blocks.push(d); ecs.push(rsRem(d,t[0])); }
+    const all=[]; const maxD=Math.max(...blocks.map(b=>b.length));
+    for(let i=0;i<maxD;i++) for(const b of blocks) if(i<b.length) all.push(b[i]);
+    for(let i=0;i<t[0];i++) for(const e of ecs) all.push(e[i]);
+    const N=17+v*4, M=[], F=[]; for(let i=0;i<N;i++){ M.push(new Array(N).fill(0)); F.push(new Array(N).fill(false)); }
+    const set=(r,c,val)=>{ M[r][c]=val?1:0; F[r][c]=true; };
+    const finder=(r,c)=>{ for(let i=-1;i<=7;i++) for(let j=-1;j<=7;j++){ const rr=r+i, cc=c+j; if(rr<0||cc<0||rr>=N||cc>=N) continue;
+      const on=(i>=0&&i<=6&&(j===0||j===6))||(j>=0&&j<=6&&(i===0||i===6))||(i>=2&&i<=4&&j>=2&&j<=4); set(rr,cc,on); } };
+    finder(0,0); finder(0,N-7); finder(N-7,0);
+    for(let i=8;i<N-8;i++){ set(6,i,i%2===0); set(i,6,i%2===0); }
+    const al=ALIGN[v], L=al[al.length-1]; for(const r of al) for(const c of al){ if((r===6&&c===6)||(r===6&&c===L)||(r===L&&c===6)) continue; for(let i=-2;i<=2;i++) for(let j=-2;j<=2;j++) set(r+i,c+j,Math.max(Math.abs(i),Math.abs(j))!==1); }
+    set(N-8,8,1);
+    for(let i=0;i<9;i++){ if(!F[8][i]) F[8][i]=true; if(!F[i][8]) F[i][8]=true; }
+    for(let i=0;i<8;i++){ F[8][N-1-i]=true; F[N-1-i][8]=true; }
+    if(v>=7){ for(let i=0;i<6;i++) for(let j=0;j<3;j++){ F[i][N-11+j]=true; F[N-11+j][i]=true; } }
+    const dbits=[]; all.forEach(b=>{ for(let i=7;i>=0;i--) dbits.push((b>>>i)&1); });
+    let bi=0, up=true;
+    for(let c=N-1;c>0;c-=2){ if(c===6) c=5;
+      for(let n=0;n<N;n++){ const r=up?N-1-n:n; for(let d=0;d<2;d++){ const cc=c-d; if(F[r][cc]) continue; M[r][cc]=bi<dbits.length?dbits[bi++]:0; } }
+      up=!up; }
+    const masks=[(r,c)=>(r+c)%2===0,(r)=>r%2===0,(r,c)=>c%3===0,(r,c)=>(r+c)%3===0,(r,c)=>(Math.floor(r/2)+Math.floor(c/3))%2===0,(r,c)=>(r*c)%2+(r*c)%3===0,(r,c)=>((r*c)%2+(r*c)%3)%2===0,(r,c)=>((r+c)%2+(r*c)%3)%2===0];
+    function fmt(Mx,mask){ let d=(0<<3)|mask; /* M = 00 */ let rem=d; for(let i=0;i<10;i++) rem=(rem<<1)^((rem>>>9)*0x537); const f=((d<<10)|rem)^0x5412;
+      const b=i=>(f>>>i)&1;
+      for(let i=0;i<=5;i++) Mx[i][8]=b(i); Mx[7][8]=b(6); Mx[8][8]=b(7); Mx[8][7]=b(8); for(let i=9;i<15;i++) Mx[8][14-i]=b(i);
+      for(let i=0;i<8;i++) Mx[8][N-1-i]=b(i); for(let i=8;i<15;i++) Mx[N-15+i][8]=b(i);
+      Mx[N-8][8]=1;
+      if(v>=7){ let rv=v; for(let i=0;i<12;i++) rv=(rv<<1)^((rv>>>11)*0x1f25); const vb=(v<<12)|rv;
+        for(let i=0;i<18;i++){ const bit=(vb>>>i)&1, a=N-11+(i%3), bb=Math.floor(i/3); Mx[bb][a]=bit; Mx[a][bb]=bit; } } }
+    function penalty(Mx){ let p=0;
+      for(let r=0;r<N;r++){ let run=1; for(let c=1;c<N;c++){ if(Mx[r][c]===Mx[r][c-1]){ run++; if(run===5) p+=3; else if(run>5) p++; } else run=1; } }
+      for(let c=0;c<N;c++){ let run=1; for(let r=1;r<N;r++){ if(Mx[r][c]===Mx[r-1][c]){ run++; if(run===5) p+=3; else if(run>5) p++; } else run=1; } }
+      for(let r=0;r<N-1;r++) for(let c=0;c<N-1;c++){ const s=Mx[r][c]+Mx[r+1][c]+Mx[r][c+1]+Mx[r+1][c+1]; if(s===0||s===4) p+=3; }
+      const pat=[1,0,1,1,1,0,1,0,0,0,0], pat2=[0,0,0,0,1,0,1,1,1,0,1];
+      for(let r=0;r<N;r++) for(let c=0;c+11<=N;c++){ let a=true,b=true,a2=true,b2=true; for(let k=0;k<11;k++){ if(Mx[r][c+k]!==pat[k]) a=false; if(Mx[r][c+k]!==pat2[k]) b=false; if(Mx[c+k][r]!==pat[k]) a2=false; if(Mx[c+k][r]!==pat2[k]) b2=false; } p+=40*(a+b+a2+b2); }
+      let dark=0; for(let r=0;r<N;r++) for(let c=0;c<N;c++) dark+=Mx[r][c]; p+=Math.floor(Math.abs(dark*20-N*N*10)/(N*N))*10; return p; }
+    let best=null, bp=1e9;
+    for(let m=0;m<8;m++){ const Mx=M.map(r=>r.slice()); for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(!F[r][c]&&masks[m](r,c)) Mx[r][c]^=1; fmt(Mx,m); const p=penalty(Mx); if(p<bp){ bp=p; best=Mx; } }
+    return best;
+  }
+  function svg(text,px){ const m=make(text), N=m.length, q=4, S=N+q*2; let d='';
+    for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(m[r][c]) d+=`M${c+q} ${r+q}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}" width="${px}" height="${px}" shape-rendering="crispEdges" role="img" aria-label="QR 코드"><rect width="${S}" height="${S}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`; }
+  return {make,svg};
+})();
+const b64u={ enc:b=>{ const u=new Uint8Array(b); let s=''; for(let i=0;i<u.length;i+=0x8000) s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
+  dec:s=>{ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const bin=atob(s), u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return u; } };
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mb=n=>n<1048576?Math.max(1,Math.round(n/1024))+'KB':(n/1048576).toFixed(1)+'MB';
+async function call(body){
+  const r=await fetch(RELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
+  let j={}; try{ j=await r.json(); }catch(e){}
+  if(!r.ok||j.error) throw Object.assign(new Error(j.error||('http '+r.status)),{code:j.error||('http '+r.status)});
+  return j;
+}
+async function aesKey(priv,pubRaw,code,use){
+  const pub=await crypto.subtle.importKey('raw',pubRaw,{name:'ECDH',namedCurve:'P-256'},false,[]);
+  const bits=await crypto.subtle.deriveBits({name:'ECDH',public:pub},priv,256);
+  const hk=await crypto.subtle.importKey('raw',bits,'HKDF',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:new TextEncoder().encode('charum-file|'+code),info:new TextEncoder().encode('v1')},hk,{name:'AES-GCM',length:256},false,[use]);
+}
+const VIDEO=/\.(mp4|m4v|mov|avi|wmv|mkv|webm|flv|mpg|mpeg|3gp|3g2|ts|mts|m2ts|ogv|vob|asf|rm|rmvb|f4v|hevc)$/i;
+function kind(name,type){
+  const e=(name.split('.').pop()||'').toLowerCase();
+  if(e==='pdf') return ['pdf','PDF'];
+  if(/^pptx?$|^key$|^odp$/.test(e)) return ['ppt',e.toUpperCase()];
+  if(/^hwpx?$/.test(e)) return ['hwp','한글'];
+  if(/^docx?$|^odt$|^rtf$/.test(e)) return ['doc',e.toUpperCase()];
+  if(/^xlsx?$|^csv$|^ods$/.test(e)) return ['xls',e.toUpperCase()];
+  if(/^image\//.test(type)||/^(jpe?g|png|gif|webp|heic|bmp|svg)$/.test(e)) return ['img',e.toUpperCase()||'그림'];
+  if(/^(zip|7z|rar)$/.test(e)) return ['zip',e.toUpperCase()];
+  return ['',(e||'파일').toUpperCase().slice(0,4)];
+}
+const canOpen=(name,type)=>/^application\/pdf$|^image\/(jpeg|png|gif|webp|svg\+xml|bmp)$|^text\/plain$/.test(type)||/\.(pdf|jpe?g|png|gif|webp|txt)$/i.test(name);
+
+const H=new URLSearchParams(location.hash.slice(1));
+const C0=(H.get('c')||'').replace(/\D/g,'');
+if(C0.length===6||H.has('send')){ document.body.classList.add('send'); $('send').hidden=false; startSend(C0); }
+else { $('recv').hidden=false; startRecv(); }
+$('toSend').onclick=()=>{ location.hash='send'; location.reload(); };
+
+/* ================= 받는 쪽 ================= */
+function startRecv(){
+  let me=null, got=[];
+  const say=(t,c)=>{ $('rState').textContent=t; $('rState').className=c||''; };
+  const btns=h=>{ $('rBtns').innerHTML=h; };
+  async function open(){
+    if(me){ me.dead=true; clearTimeout(me.t); clearInterval(me.tick); }
+    const m=me={dead:false,t:null,tick:null}; btns('');
+    $('code').textContent='······'; $('qr').innerHTML='<svg width="220" height="220"></svg>';
+    say('번호를 만들고 있습니다…');
+    try{
+      if(!window.crypto||!crypto.subtle) throw Object.assign(new Error('insecure'),{code:'insecure'});
+      m.kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},false,['deriveBits']);
+      const o=await call({a:'open',pub:b64u.enc(await crypto.subtle.exportKey('raw',m.kp.publicKey))});
+      if(m.dead) return;
+      m.code=o.code; m.sid=o.sid; m.end=Date.now()+o.ttl*1000;
+      $('code').textContent=o.code.slice(0,3)+' '+o.code.slice(3);
+      $('qr').innerHTML=QR.svg(PAGE+'#c='+o.code,220);
+      const left=()=>{ const s=Math.max(0,Math.round((m.end-Date.now())/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+      m.wait=()=>say((got.length?`${got.length}개 받았습니다. 더 보내도 됩니다`:'파일을 기다리고 있습니다')+(m.up?` · ${m.up}개 올라오는 중`:'')+' · 남은 시간 '+left());
+      m.tick=setInterval(()=>{ if(Date.now()>m.end){ end('번호 시간이 끝났습니다.'); return; } if(!m.busy) m.wait(); },1000);
+      btns('<button class="b" type="button" id="newCode">새 번호</button>'); $('newCode').onclick=open;
+      poll(m);
+    }catch(e){
+      const c=e.code;
+      say(c==='month'?'이번 달 서버 전송량이 다 찼습니다. 다음 달에 다시 쓸 수 있습니다.':c==='busy'?'지금은 번호를 만들 수 없습니다. 잠시 뒤에 다시 해 주세요.':c==='insecure'?'이 화면은 https 주소에서만 파일을 받을 수 있습니다.':'중계 서버에 연결할 수 없습니다. 인터넷 연결을 확인해 주세요. ('+(c||'network')+')','err');
+      btns('<button class="b pri" type="button" id="again">다시 해 보기</button>'); $('again').onclick=open;
+    }
+  }
+  function end(msg){
+    if(!me||me.dead) return; me.dead=true; clearTimeout(me.t); clearInterval(me.tick);
+    say(msg+' 더 받으려면 새 번호를 받아 주세요.'); $('code').textContent='끝'; $('qr').innerHTML='<svg width="220" height="220"></svg>';
+    btns('<button class="b pri" type="button" id="again">새 번호 받기</button>'); $('again').onclick=open;
+    call({a:'close',code:me.code,sid:me.sid}).catch(()=>{});
+  }
+  async function poll(m){
+    if(m.dead) return;
+    let r; try{ r=await call({a:'poll',code:m.code,sid:m.sid}); }catch(e){ m.t=setTimeout(()=>poll(m),3000); return; }
+    if(m.dead) return;
+    if(r.ttl) m.end=Date.now()+r.ttl*1000;
+    m.up=r.up||0;
+    if(r.status==='gone'){ end('번호 시간이 끝났습니다.'); return; }
+    if(r.status==='end'){ end(`보내는 쪽에서 다 보냈습니다(${got.length}개).`); return; }
+    if(r.status!=='file'){ m.wait(); m.t=setTimeout(()=>poll(m),1500); return; }
+    m.busy=true;
+    try{
+      const key=await aesKey(m.kp.privateKey,b64u.dec(r.epub),m.code,'decrypt');
+      const head=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(r.hiv)},key,b64u.dec(r.hct))));
+      const parts=[];
+      for(let i=0;i<r.n;i++){
+        say(`"${head.name}" 받는 중입니다… ${Math.round(i/r.n*100)}%`);
+        let p, tries=0;
+        for(;;){ try{ p=await call({a:'get',code:m.code,sid:m.sid,fid:r.fid,i}); break; }catch(e){ if(++tries>3||e.code==='nofile') throw e; await new Promise(z=>setTimeout(z,1500)); } }
+        parts.push(new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(p.iv)},key,b64u.dec(p.ct))));
+      }
+      await call({a:'ack',code:m.code,sid:m.sid,fid:r.fid}).catch(()=>{});
+      const blob=new Blob(parts,{type:head.type||'application/octet-stream'});
+      got.push({name:head.name||'파일',type:head.type||'',size:blob.size,url:URL.createObjectURL(blob)});
+      drawGot();
+    }catch(e){ say('파일 하나를 열지 못했습니다. 보내는 쪽에서 다시 보내 주세요.','err'); await call({a:'ack',code:m.code,sid:m.sid,fid:r.fid}).catch(()=>{}); await new Promise(z=>setTimeout(z,2500)); }
+    m.busy=false;
+    if(!m.dead){ m.wait(); m.t=setTimeout(()=>poll(m),300); }
+  }
+  function drawGot(){
+    $('gotCard').hidden=!got.length; $('gotN').textContent=got.length+'개';
+    $('gotList').innerHTML=got.slice().reverse().map((f,ri)=>{ const i=got.length-1-ri, k=kind(f.name,f.type);
+      return `<div class="file"><div class="ic ${k[0]}">${esc(k[1])}</div><div class="fn"><b>${esc(f.name)}</b><small>${mb(f.size)}</small></div>
+        ${canOpen(f.name,f.type)?`<a class="b pri" href="${f.url}" target="_blank" rel="noopener" style="text-decoration:none">열기</a>`:''}
+        <a class="b${canOpen(f.name,f.type)?'':' pri'}" href="${f.url}" download="${esc(f.name)}" style="text-decoration:none">내려받기</a></div>`; }).join('');
+  }
+  window.addEventListener('pagehide',()=>{ if(me&&!me.dead&&me.code) navigator.sendBeacon&&navigator.sendBeacon(RELAY,new Blob([JSON.stringify({a:'close',code:me.code,sid:me.sid})],{type:'text/plain'})); });
+  open();
+}
+
+/* ================= 보내는 쪽 ================= */
+function startSend(c0){
+  let code='', pub=null, items=[], sending=false, sentTotal=0;
+  const say=(t,c)=>{ $('sState').textContent=t; $('sState').className=c||''; };
+  const today=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  const dayGet=()=>{ try{ const d=JSON.parse(localStorage.getItem('charumFile.day')||'{}'); return d.d===today()?d.n|0:0; }catch(e){ return 0; } };
+  const dayAdd=()=>{ try{ localStorage.setItem('charumFile.day',JSON.stringify({d:today(),n:dayGet()+1})); }catch(e){} };
+  const dayLeft=()=>Math.max(0,DAY_MAX-dayGet());
+  async function connect(c){
+    say('연결하고 있습니다…');
+    try{ const r=await call({a:'pub',code:c});
+      if(r.month==='full'){ say('이번 달 서버 전송량이 다 찼습니다. 다음 달에 다시 쓸 수 있습니다.','err'); return; }
+      code=c; pub=b64u.dec(r.pub); $('codeAsk').hidden=true; $('codeOk').hidden=false; $('codeShow').textContent=c.slice(0,3)+' '+c.slice(3); say('');
+    }catch(e){ code=''; $('codeAsk').hidden=false; $('codeOk').hidden=true; say(e.code==='nocode'?'번호를 찾을 수 없습니다. 시간이 지났으면 전자칠판에서 "새 번호"를 눌러 주세요.':'중계 서버에 연결할 수 없습니다. 인터넷 연결을 확인해 주세요.','err'); }
+    update();
+  }
+  $('codeIn').oninput=()=>{ const v=$('codeIn').value.replace(/\D/g,'').slice(0,6); $('codeIn').value=v; if(v.length===6) connect(v); };
+  if(c0.length===6) connect(c0); else setTimeout(()=>$('codeIn').focus(),200);
+  if(location.hash) history.replaceState(null,'',location.pathname+location.search);
+  function add(fs){
+    for(const f of fs){
+      if(items.length>=30) break;
+      let bad='';
+      if(/^video\//.test(f.type)||VIDEO.test(f.name)) bad='영상은 보낼 수 없습니다.';
+      else if(f.size>MAX) bad=`${mb(f.size)} — 10MB가 넘어 보낼 수 없습니다.`;
+      else if(!f.size) bad='빈 파일입니다.';
+      items.push({f,bad,pct:0,state:''});
+    }
+    draw(); update();
+  }
+  $('pickF').onclick=()=>$('fIn').click(); $('pickC').onclick=()=>$('cIn').click();
+  $('fIn').onchange=e=>{ add([...e.target.files]); e.target.value=''; };
+  $('cIn').onchange=e=>{ add([...e.target.files]); e.target.value=''; };
+  function draw(){
+    $('sList').innerHTML=items.map((it,i)=>{ const k=kind(it.f.name,it.f.type);
+      return `<div class="file${it.bad?' bad':''}"><div class="ic ${k[0]}">${esc(k[1])}</div><div class="fn"><b>${esc(it.f.name)}</b><small>${it.bad?esc(it.bad):it.state?esc(it.state):mb(it.f.size)}</small>${it.pct?`<div class="bar"><i style="width:${it.pct}%"></i></div>`:''}</div>
+        <button class="rm" type="button" data-rm="${i}" aria-label="빼기">×</button></div>`; }).join('');
+    $('sList').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ if(sending) return; items.splice(+b.dataset.rm,1); draw(); update(); });
+    $('dayInfo').textContent=`오늘 이 기기에서 ${dayGet()}개 보냈습니다 · ${dayLeft()}개 더 보낼 수 있습니다.`;
+  }
+  function update(){
+    const ok=items.filter(i=>!i.bad).length;
+    $('sendBtn').disabled=sending||!code||!ok;
+    $('sendBtn').textContent=ok>1?`${ok}개 보내기`:'보내기';
+  }
+  async function sendOne(it){
+    const f=it.f, n=Math.ceil(f.size/CHUNK);
+    const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+    const key=await aesKey(kp.privateKey,pub,code,'encrypt');
+    const hiv=crypto.getRandomValues(new Uint8Array(12));
+    const hct=await crypto.subtle.encrypt({name:'AES-GCM',iv:hiv},key,new TextEncoder().encode(JSON.stringify({name:f.name.slice(0,120),type:f.type||'',size:f.size})));
+    const b=await call({a:'begin',code,n,size:f.size,epub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),hiv:b64u.enc(hiv),hct:b64u.enc(hct)});
+    dayAdd();
+    for(let i=0;i<n;i++){
+      const buf=await f.slice(i*CHUNK,Math.min(f.size,(i+1)*CHUNK)).arrayBuffer();
+      const iv=crypto.getRandomValues(new Uint8Array(12));
+      const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,buf);
+      let tries=0;
+      for(;;){ try{ await call({a:'part',code,fid:b.fid,i,iv:b64u.enc(iv),ct:b64u.enc(ct)}); break; }catch(e){ if(++tries>3||/nocode|nofile|bad|toolarge/.test(e.code)) throw e; await new Promise(z=>setTimeout(z,1500)); } }
+      it.pct=Math.round((i+1)/n*100); it.state=`보내는 중 ${it.pct}%`; draw();
+    }
+  }
+  $('sendBtn').onclick=async()=>{
+    const todo=items.filter(i=>!i.bad);
+    if(!todo.length||!code) return;
+    if(todo.length>dayLeft()){ say(dayLeft()?`오늘은 이 기기에서 ${dayLeft()}개만 더 보낼 수 있습니다. 파일을 줄여 주세요.`:'오늘은 이 기기에서 20개를 다 보냈습니다. 내일 다시 보내 주세요.','err'); return; }
+    if(!window.crypto||!crypto.subtle){ say('이 브라우저에서는 잠가 보낼 수 없습니다. 크롬이나 사파리로 열어 주세요.','err'); return; }
+    sending=true; update(); let ok=0, stop='';
+    for(const it of todo){
+      say(todo.length>1?`보내는 중입니다… ${ok+1} / ${todo.length}`:'보내는 중입니다…');
+      try{ await sendOne(it); it.done=true; ok++; it.state='보냈습니다'; draw(); }
+      catch(e){ stop=e.code||'network'; it.state='보내지 못했습니다'; draw(); break; }
+    }
+    sending=false; sentTotal+=ok; items=items.filter(i=>!i.done); draw(); update();
+    if(stop){ say((ok?`${ok}개는 보냈습니다. `:'')+({day:'오늘 보낼 수 있는 횟수를 다 썼습니다. 내일 다시 보내 주세요.',month:'이번 달 서버 전송량이 다 찼습니다. 다음 달에 다시 쓸 수 있습니다.',nocode:'번호 시간이 끝났습니다. 전자칠판에서 "새 번호"를 눌러 다시 연결해 주세요.',toolarge:'파일이 너무 큽니다(10MB까지).',busy:'지금은 서버가 바쁩니다. 잠시 뒤에 다시 보내 주세요.'}[stop]||'보내지 못했습니다. 인터넷 연결을 확인하고 다시 눌러 주세요.'),'err'); return; }
+    say(''); $('sForm').hidden=true; $('sDone').hidden=false;
+    $('sDoneT').textContent=`${sentTotal}개 보냈습니다`; $('sDoneM').textContent='전자칠판 화면에서 파일을 열거나 내려받습니다. 더 보낼 파일이 있으면 "더 보내기", 끝났으면 "다 보냈습니다".';
+  };
+  $('more').onclick=()=>{ $('sDone').hidden=true; $('sForm').hidden=false; draw(); };
+  $('fin').onclick=async()=>{ try{ await call({a:'done',code}); }catch(e){} $('sDoneT').textContent='다 보냈습니다'; $('sDoneM').textContent=`${sentTotal}개를 보냈습니다. 이 창은 닫아도 됩니다.`; $('more').hidden=true; $('fin').hidden=true; };
+  draw(); update();
+}
+})();
+</script>
+</body>
+</html>
