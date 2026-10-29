@@ -40,7 +40,7 @@ footer{font-size:12px;color:#7a8a91;text-align:center;padding:0 20px 10px}
 <body>
 <header>
   <h1>휴대폰 사진 받기<small>받은 사진은 이 화면에만 있고, 창을 닫으면 사라져요</small></h1>
-  <div class="bar"><button class="pri" type="button" id="recv">📱 휴대폰에서 받기</button></div>
+  <div class="bar"><button class="pri" type="button" id="recv" hidden>📱 휴대폰에서 받기</button></div>
 </header>
 <div id="stage"><div class="empty" id="empty">휴대폰으로 찍은 사진을 이 화면에 크게 띄우거나,<br>내려받아 PPT·한글·학습지에 넣을 수 있어요.<br><button class="pri" type="button" id="recv2">📱 휴대폰에서 받기</button></div></div>
 <div id="tools"></div>
@@ -56,7 +56,7 @@ const say=t=>{ $('msg').textContent=t||''; };
 function open(){ CharumRelay.receive({code:'get',onPhoto:(blob,info)=>{ pics.push({blob,url:URL.createObjectURL(blob),name:info.name||('사진 '+(pics.length+1)),w:info.width,h:info.height}); show(pics.length-1); }}); }
 $('recv').onclick=open; $('recv2').onclick=open;
 function show(i){
-  cur=i; const p=pics[i];
+  cur=i; const p=pics[i]; $('recv').hidden=!pics.length;   /* 받은 사진이 생기면 가운데 단추 대신 위쪽 단추로 더 받기 */
   $('stage').innerHTML=p?`<img src="${p.url}" alt="받은 사진 ${i+1}">`:'';
   $('strip').innerHTML=pics.map((q,k)=>`<button type="button" data-i="${k}" class="${k===i?'on':''}" aria-label="${k+1}번째 사진"><img src="${q.url}" alt=""></button>`).join('');
   $('strip').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>show(+b.dataset.i));
@@ -79,7 +79,7 @@ async function copy(p){
     say('복사했어요. PPT·한글 등에서 붙여넣기(Ctrl+V) 하세요.');
   }catch(e){ say('이 브라우저에서는 복사할 수 없어요. "내려받기"를 써 주세요.'); }
 }
-function del(){ const p=pics.splice(cur,1)[0]; URL.revokeObjectURL(p.url); if(!pics.length){ cur=-1; $('stage').innerHTML=''; $('stage').appendChild(emptyEl); $('tools').innerHTML=''; $('strip').innerHTML=''; say(''); return; } show(Math.min(cur,pics.length-1)); }
+function del(){ const p=pics.splice(cur,1)[0]; URL.revokeObjectURL(p.url); if(!pics.length){ cur=-1; $('recv').hidden=true; $('stage').innerHTML=''; $('stage').appendChild(emptyEl); $('tools').innerHTML=''; $('strip').innerHTML=''; say(''); return; } show(Math.min(cur,pics.length-1)); }
 const emptyEl=$('empty');
 function full(){
   const el=document.documentElement;

@@ -130,7 +130,7 @@ var ERR = {
 };
 
 var CSS = '\
-#crBox{position:fixed;inset:0;z-index:2147483000;background:rgba(18,26,32,.55);display:flex;align-items:center;justify-content:center;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#1C2A31;-webkit-text-size-adjust:100%}\
+#crBox{position:fixed;inset:0;z-index:2147483000;background:rgba(18,26,32,.55);display:flex;align-items:center;justify-content:center;font-family:var(--crFont,inherit);color:#1C2A31;-webkit-text-size-adjust:100%}\
 #crBox *{box-sizing:border-box}#crBox{word-break:keep-all}\
 #crBox .cr-card{background:#fff;border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:24px 28px 20px;width:min(680px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;text-align:left}\
 #crBox h2{margin:0 0 4px;font-size:22px;font-weight:700;color:#1C2A31}\
