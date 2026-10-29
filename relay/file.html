@@ -23,6 +23,8 @@ h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:34px;ma
 .board{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap}
 .qr{border:1px solid var(--line);border-radius:14px;padding:6px;line-height:0;background:#fff}
 .code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:76px;letter-spacing:.12em;color:var(--pri2);line-height:1;text-align:center}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#swap{font-size:14px;padding:8px 14px;min-height:40px;color:var(--sub)}
 .choose{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:760px;margin:10px auto 0}
 .choose button{display:flex;flex-direction:column;align-items:center;gap:8px;padding:34px 16px;border-radius:22px;border:2px solid var(--line);background:#fff;color:var(--ink)}
 .choose button:hover{border-color:var(--pri)}
@@ -90,7 +92,7 @@ h2{font-size:19px;margin:0 0 10px}
 <body>
 <main>
   <span class="chip">차름 도구</span>
-  <h1>파일 보내기</h1>
+  <div class="top"><h1>파일 보내기</h1><button class="b" type="button" id="swap" hidden>↩ 받기·보내기 다시 고르기</button></div>
 
   <!-- ===== 처음 한 번: 이 기기에서 무엇을 할까요? (고른 것은 이 기기에 기억) ===== -->
   <section id="choose" hidden>
@@ -163,7 +165,6 @@ h2{font-size:19px;margin:0 0 10px}
     <p class="limit" style="margin-top:14px">파일 하나 <b>10MB까지</b>, 이 기기에서 <b>하루 20개까지</b> 보낼 수 있습니다. 영상은 보낼 수 없습니다. 차름 서버의 한 달 전송량이 정해져 있어 불가피하게 정한 한도입니다.</p>
     <p class="note" style="margin-top:12px"><b>안전하게 보냅니다.</b> 파일은 이 기기에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있습니다. 중계 서버도 열어 볼 수 없고, 전자칠판이 받는 순간 지워집니다.</p>
   </section>
-  <p style="text-align:center;margin:14px 0 0"><button class="linkb" type="button" id="swap" hidden></button></p>
 </main>
 <script>
 (function(){
@@ -277,7 +278,8 @@ const setRole=r=>{ try{ localStorage.setItem(ROLE_KEY,r); }catch(e){} location.h
 function go(mode,remembered){
   if(mode==='send'){ document.body.classList.add('send'); $('send').hidden=false; startSend(C0); }
   else { $('recv').hidden=false; startRecv(); }
-  if(remembered){ const w=$('swap'); w.hidden=false; w.textContent=mode==='send'?'이 기기를 받는 화면으로 바꾸기':'이 기기를 보내는 쪽으로 바꾸기'; w.onclick=()=>setRole(mode==='send'?'recv':'send'); }
+  /* 기억한 기기는 위쪽 "다시 고르기"로 처음 화면(큰 단추 두 개)으로 */
+  if(remembered){ const w=$('swap'); w.hidden=false; w.onclick=()=>{ try{ localStorage.removeItem(ROLE_KEY); }catch(e){} location.hash=''; location.reload(); }; }
 }
 if(C0.length===6) go('send',false);
 else if(H.has('send')) go('send',false);
