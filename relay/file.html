@@ -23,7 +23,13 @@ h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:34px;ma
 .board{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap}
 .qr{border:1px solid var(--line);border-radius:14px;padding:6px;line-height:0;background:#fff}
 .code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:76px;letter-spacing:.12em;color:var(--pri2);line-height:1;text-align:center}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.choose{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:760px;margin:10px auto 0}
+.choose button{display:flex;flex-direction:column;align-items:center;gap:8px;padding:34px 16px;border-radius:22px;border:2px solid var(--line);background:#fff;color:var(--ink)}
+.choose button:hover{border-color:var(--pri)}
+.choose .em{font-size:52px;line-height:1}
+.choose b{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:28px;color:var(--pri2)}
+.choose small{font-size:15px;color:var(--sub)}
+@media (max-width:640px){ .choose{grid-template-columns:1fr} }
 .codeLbl{text-align:center;margin:0 0 2px;color:var(--sub);font-size:15px}
 .ways{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
 .way{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--tint)}
@@ -84,11 +90,21 @@ h2{font-size:19px;margin:0 0 10px}
 <body>
 <main>
   <span class="chip">차름 도구</span>
-  <div class="top"><h1>파일 보내기</h1><button class="b" type="button" id="toSend" hidden>💻 이 컴퓨터에서 보내기</button></div>
+  <h1>파일 보내기</h1>
+
+  <!-- ===== 처음 한 번: 이 기기에서 무엇을 할까요? (고른 것은 이 기기에 기억) ===== -->
+  <section id="choose" hidden>
+    <p class="lead">전자칠판과 내 컴퓨터에서 각각 한 번만 고르면, 다음부터는 이 주소를 열기만 하면 됩니다.</p>
+    <div class="choose">
+      <button type="button" id="cRecv"><span class="em">📺</span><b>이 화면으로 받기</b><small>전자칠판·태블릿에서</small></button>
+      <button type="button" id="cSend"><span class="em">💻</span><b>이 컴퓨터에서 보내기</b><small>내 컴퓨터에서</small></button>
+    </div>
+    <p class="note" style="text-align:center;margin-top:14px">휴대폰은 고를 필요 없이, 전자칠판에 나온 QR을 찍으면 됩니다.</p>
+  </section>
 
   <!-- ===== 받는 쪽(전자칠판·태블릿·컴퓨터) ===== -->
   <section id="recv" hidden>
-    <p class="lead">휴대폰이나 다른 컴퓨터의 PPT·PDF·한글·사진 파일을 이 화면으로 보냅니다. 아래 두 길 가운데 하나로 보내 주세요.</p>
+    <p class="lead">휴대폰이나 내 컴퓨터의 PPT·PDF·한글·사진 파일을 이 화면으로 보냅니다.</p>
     <div class="card">
       <p class="codeLbl">번호</p>
       <div class="code" id="code">······</div>
@@ -99,12 +115,10 @@ h2{font-size:19px;margin:0 0 10px}
           <p>휴대폰 카메라로 QR을 찍고, 파일을 골라 <b>보내기</b>를 누릅니다.</p>
         </div>
         <div class="way">
-          <h3>💻 다른 컴퓨터로 보내기</h3>
-          <ol>
-            <li>그 컴퓨터에서 <b>같은 주소</b>를 엽니다.<br><code>www.charum.org/study/file.html</code></li>
-            <li>위쪽의 <b>이 컴퓨터에서 보내기</b>를 누릅니다.</li>
-            <li>위의 <b>번호 6자리</b>를 넣고, 파일을 골라(끌어다 놓아도 됩니다) <b>보내기</b>를 누릅니다.</li>
-          </ol>
+          <h3>💻 내 컴퓨터에서 보내기</h3>
+          <p style="margin-top:0">내 컴퓨터에서 이 주소를 열고, 위의 <b>번호 6자리</b>를 넣습니다.</p>
+          <p><code>www.charum.org/study/file.html</code></p>
+          <p class="note" style="margin-top:8px">처음 한 번은 "이 컴퓨터에서 보내기"를 고릅니다. 파일은 끌어다 놓아도 됩니다.</p>
         </div>
       </div>
       <p id="rState">번호를 만들고 있습니다…</p>
@@ -149,6 +163,7 @@ h2{font-size:19px;margin:0 0 10px}
     <p class="limit" style="margin-top:14px">파일 하나 <b>10MB까지</b>, 이 기기에서 <b>하루 20개까지</b> 보낼 수 있습니다. 영상은 보낼 수 없습니다. 차름 서버의 한 달 전송량이 정해져 있어 불가피하게 정한 한도입니다.</p>
     <p class="note" style="margin-top:12px"><b>안전하게 보냅니다.</b> 파일은 이 기기에서 잠가서 보내고, 그 번호의 전자칠판만 열 수 있습니다. 중계 서버도 열어 볼 수 없고, 전자칠판이 받는 순간 지워집니다.</p>
   </section>
+  <p style="text-align:center;margin:14px 0 0"><button class="linkb" type="button" id="swap" hidden></button></p>
 </main>
 <script>
 (function(){
@@ -255,9 +270,19 @@ const canOpen=(name,type)=>/^application\/pdf$|^image\/(jpeg|png|gif|webp|svg\+x
 
 const H=new URLSearchParams(location.hash.slice(1));
 const C0=(H.get('c')||'').replace(/\D/g,'');
-if(C0.length===6||H.has('send')){ document.body.classList.add('send'); $('send').hidden=false; startSend(C0); }
-else { $('recv').hidden=false; startRecv(); }
-$('toSend').hidden=$('recv').hidden; $('toSend').onclick=()=>{ location.hash='send'; location.reload(); };
+/* 역할: QR(#c=번호)로 열면 보내기(휴대폰, 기억하지 않음). 아니면 이 기기에 기억한 것(charumFile.role), 없으면 처음 한 번 묻기 */
+const ROLE_KEY='charumFile.role';
+const role=(()=>{ try{ return localStorage.getItem(ROLE_KEY)||''; }catch(e){ return ''; } })();
+const setRole=r=>{ try{ localStorage.setItem(ROLE_KEY,r); }catch(e){} location.hash=''; location.reload(); };
+function go(mode,remembered){
+  if(mode==='send'){ document.body.classList.add('send'); $('send').hidden=false; startSend(C0); }
+  else { $('recv').hidden=false; startRecv(); }
+  if(remembered){ const w=$('swap'); w.hidden=false; w.textContent=mode==='send'?'이 기기를 받는 화면으로 바꾸기':'이 기기를 보내는 쪽으로 바꾸기'; w.onclick=()=>setRole(mode==='send'?'recv':'send'); }
+}
+if(C0.length===6) go('send',false);
+else if(H.has('send')) go('send',false);
+else if(role==='send'||role==='recv') go(role,true);
+else { $('choose').hidden=false; $('cRecv').onclick=()=>setRole('recv'); $('cSend').onclick=()=>setRole('send'); }
 
 /* ================= 받는 쪽 ================= */
 function startRecv(){
