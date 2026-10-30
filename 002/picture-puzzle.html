@@ -1512,11 +1512,21 @@ function placeDoneLabel(){
 
 /* ================= 끌어서 놓기 ================= */
 function attachDrag(p){
-  const el=p.el; let pid=null, fx=0, fy=0, t0=0, x0=0, y0=0, moved=false;
+  const el=p.el; let pid=null, fx=0, fy=0, t0=0, x0=0, y0=0, moved=false, before=null;
   const rel=e=>{ const P=$('play').getBoundingClientRect(); return {x:e.clientX-P.left,y:e.clientY-P.top}; };
+  const cancel=()=>{
+    if(pid===null) return;
+    pid=null; p.dragging=false; el.classList.remove('drag');
+    /* 브라우저 제스처나 화면 가장자리 등으로 포인터가 취소되면 정상적인 놓기로 처리하지 않는다. */
+    if(before){ p.x=before.x; p.y=before.y; p.s=before.s; p.rot=before.rot; p.free=before.free; }
+    if(S.R&&S.R.active){ clampPiece(p); setPos(p); }
+    before=null;
+  };
   el.addEventListener('pointerdown',e=>{
     const R=S.R; if(p.placed||!R||!R.active||pid!==null) return;
-    e.preventDefault(); pid=e.pointerId; try{el.setPointerCapture(pid);}catch(_){}
+    e.preventDefault(); pid=e.pointerId;
+    before={x:p.x,y:p.y,s:p.s,rot:p.rot,free:p.free};
+    try{el.setPointerCapture(pid);}catch(_){}
     /* 잡은 곳이 조각 가운데에서 얼마나 떨어졌는지(돌아간 조각도 손가락 아래 그 자리 그대로) */
     const pt=rel(e); fx=(pt.x-(p.x+G.EW/2*p.s))/p.s; fy=(pt.y-(p.y+G.EH/2*p.s))/p.s;
     t0=performance.now(); x0=e.clientX; y0=e.clientY; moved=false;
@@ -1525,12 +1535,13 @@ function attachDrag(p){
     if(R.cue===p) showTarget(p); else if(R.cue){ R.cue.el.classList.remove('cue'); R.cue=null; hideTarget(); }
   });
   el.addEventListener('pointermove',e=>{ if(e.pointerId!==pid) return; if(Math.hypot(e.clientX-x0,e.clientY-y0)>10) moved=true; const pt=rel(e); p.x=pt.x-fx-G.EW/2; p.y=pt.y-fy-G.EH/2; setPos(p); });
-  const up=e=>{ if(e.pointerId!==pid) return; pid=null; p.dragging=false; el.classList.remove('drag');
-    /* S+: 끌지 않고 살짝 누르면 시계 방향으로 90도 */
+  const up=e=>{ if(e.pointerId!==pid) return; pid=null; p.dragging=false; el.classList.remove('drag'); before=null;
+    /* S+: 끌지 않고 살짝 눌렀을 때만 시계 방향으로 90도 */
     if(S.R&&LEVELS[S.R.level].rot&&!moved&&performance.now()-t0<450){ turn(p); return; }
     drop(p); };
-  el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up);
-  el.addEventListener('lostpointercapture',e=>{ if(pid!==null) up(e); });
+  el.addEventListener('pointerup',up);
+  el.addEventListener('pointercancel',cancel);
+  el.addEventListener('lostpointercapture',cancel);
 }
 function turn(p){
   p.rot=(p.rot||0)+90; p.free=true; p.el.classList.add('anim'); clampPiece(p); setPos(p); $('play').appendChild(p.el);
@@ -1550,7 +1561,9 @@ function drop(p){
   const over=mx>G.ix-10&&mx<G.ix+G.iw+10&&my>G.iy-10&&my<G.iy+G.ih+10;
   /* 맞추지 못하면 원래 자리로 돌아가지 않고 놓은 곳에 그대로 (화면 밖으로는 안 나가게) */
   p.free=true; clampPiece(p); setPos(p); $('play').appendChild(p.el);
-  if(over&&!near){ p.miss++; if(S.errorMode==='show'||(S.errorMode==='retry'&&p.miss>=2)) cue(p); }
+  /* 힌트는 정답 위치에서 가로·세로 각각 한 조각 이내에 왔을 때만 제공 */
+  const withinHintRange=Math.abs(p.x-cx)<=G.pw+G.m && Math.abs(p.y-cy)<=G.ph+G.m;
+  if(withinHintRange&&!near){ p.miss++; if(S.errorMode==='show'||(S.errorMode==='retry'&&p.miss>=2)) cue(p); }
 }
 /* 조각과 제자리를 같은 색으로 표시 */
 function cue(p){ const R=S.R; if(R.cue&&R.cue!==p) R.cue.el.classList.remove('cue'); R.cue=p; p.el.classList.add('cue'); showTarget(p); }
