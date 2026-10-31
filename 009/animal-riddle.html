@@ -147,6 +147,8 @@ body.admin #stage{pointer-events:none}
 .rscene .food+.food{right:20%}
 .rscene .food+.food+.food{right:37%}
 .answer{display:flex;gap:10px;align-items:center;justify-content:center}
+.answer .pick2{margin:0 1.5vw;display:flex;flex-direction:column;align-items:center}
+.answer .pick2 figcaption{font-family:var(--f-display);font-size:clamp(20px,2.4vw,28px);color:var(--ink);margin-top:4px}
 .answer input{font-family:var(--f-display);font-size:clamp(24px,3vw,36px);width:min(360px,60vw);height:62px;border-radius:16px;border:2px solid var(--sci-m);padding:0 18px;text-align:center;color:var(--ink);background:#fff;outline:none}
 .answer input:focus{border-color:var(--sci)}
 .answer .pass{background:#fff;color:var(--sci-d);border:2px solid var(--sci-m);min-width:90px}
@@ -464,8 +466,8 @@ const homeOf=n=>AN[n].home||'mix';
 
 /* 수준 */
 const LV={
- 1:{name:'하 · 다섯 고개',desc:'동물 4마리 · 고개를 듣고 카드 2장 중에 골라요',n:4},
- 2:{name:'중 · 열 고개',desc:'동물 5마리 · 그림자가 차오르면 말로 맞혀요',n:5},
+ 1:{name:'하 · 다섯 고개',desc:'동물 4마리 · 한 마리씩 배우고 카드 2장 중에 골라요',n:4},
+ 2:{name:'중 · 열 고개',desc:'동물 5마리 · 세 마리·두 마리씩 배우고, 그중 한 마리를 말로 맞혀요',n:5},
  3:{name:'상 · 스무고개',desc:'동물 10마리 · 부위가 하나씩 드러나면 이름을 써서 맞혀요',n:10}};
 /* 오늘의 동물 고르기: 사는 곳·먹이(고기·풀·이것저것)가 고루 섞이게, 정리하기에서 서로 가려낼 수 있게 */
 function pickLesson(n){ let best=null, bs=-1;
@@ -730,8 +732,11 @@ let RUN=null;
 function quizItems(lv,animals){ return lv===1?animals.flatMap(a=>easyHints(a).map((h,i)=>({a,i}))):animals.map(a=>({a})); }
 function buildRun(lv,animals){
   const phases=[];
-  /* 하·중: 동물 하나가 한 묶음(특징 학습 → 고개 → 특징 정리 → 정지: 한 번 더 / 다음 동물) */
-  if(lv<3&&(S.steps.learn||S.steps.quiz)) phases.push({k:'unit',items:animals.map(a=>({a}))});
+  /* 하: 동물 하나가 한 묶음(특징 학습 → 카드 2장 퀴즈 → 다섯 고개 → 특징 정리 → 정지: 한 번 더 / 다음 동물)
+     중(2026-10-31 선생님): 세 마리·두 마리가 한 묶음(그 동물들 특징 학습 → 그중 무작위 한 마리 열 고개 → 그 동물 특징 정리).
+       방금 본 동물이 답이 되지 않게(고개를 끝까지 듣고 떠올리게). it.a = 열 고개로 물을 동물, it.g = 묶음 */
+  if(lv===1&&(S.steps.learn||S.steps.quiz)) phases.push({k:'unit',items:animals.map(a=>({a}))});
+  if(lv===2&&(S.steps.learn||S.steps.quiz)) phases.push({k:'unit',items:[animals.slice(0,3),animals.slice(3)].filter(g=>g.length).map(g=>({g,a:shuffle(g)[0]}))});
   PHASES.forEach(([k])=>{ if(!S.steps[k]||(lv<3&&k!=='sort')) return;
     const items=k==='learn'?[{grid:1}]:k==='quiz'?quizItems(lv,animals):shuffle(animals).map(a=>({a}));
     phases.push({k,items}); });
@@ -774,7 +779,10 @@ function runStep(){
   RUN.token++; clearTimers(); stopVoice(); clearStage(); renderProg(); saveSpot();
   const ph=RUN.phases[RUN.pi], it=ph.items[RUN.ii], lv=RUN.lv;
   if(ph.k==='unit'){ if(!RUN.sub) RUN.sub={st:S.steps.learn?'learn':'quiz',qi:0};
-    const sb=RUN.sub; if(sb.st==='learn') stepShow(it,RUN.token); else if(sb.st==='quiz') (lv===1?quizPick:riddle)(lv===1?{a:it.a,i:sb.qi}:it,RUN.token); else summary(it,RUN.token); }
+    const sb=RUN.sub; if(sb.st==='learn') stepShow(it.g?{a:it.g[Math.min(sb.li||0,it.g.length-1)]}:it,RUN.token);
+    else if(sb.st==='quiz') (lv===1?quizPick:riddle)(lv===1?{a:it.a,i:sb.qi}:it,RUN.token);
+    else if(sb.st==='five') riddle(it,RUN.token);
+    else summary(it,RUN.token); }
   else if(ph.k==='learn') (lv===3?learnGrid:stepShow)(it,RUN.token);
   else if(ph.k==='quiz') (lv===1?quizPick:riddle)(it,RUN.token);
   else stepSort(it,RUN.token);
@@ -784,8 +792,10 @@ function advance(){
   if(!RUN) return; const ph=RUN.phases[RUN.pi];
   if(!ph||ph.k!=='unit'){ nextItem(); return; }
   const sb=RUN.sub, a=ph.items[RUN.ii].a;
-  if(sb.st==='learn') RUN.sub=S.steps.quiz?{st:'quiz',qi:0}:{st:'sum'};
-  else if(sb.st==='quiz'){ if(RUN.lv===1&&sb.qi<easyHints(a).length-1) RUN.sub={st:'quiz',qi:sb.qi+1}; else RUN.sub={st:'sum'}; }
+  const g=ph.items[RUN.ii].g;
+  if(sb.st==='learn'){ if(g&&(sb.li||0)<g.length-1) RUN.sub={st:'learn',qi:0,li:(sb.li||0)+1}; else RUN.sub=S.steps.quiz?{st:'quiz',qi:0}:{st:'sum'}; }
+  else if(sb.st==='quiz'){ if(RUN.lv===1&&sb.qi<easyHints(a).length-1) RUN.sub={st:'quiz',qi:sb.qi+1}; else RUN.sub=RUN.lv===1?{st:'five'}:{st:'sum'}; }
+  else if(sb.st==='five') RUN.sub={st:'sum'};
   saveSpot(); runStep();
 }
 let TIMERS=[]; function later(fn,ms){ TIMERS.push(setTimeout(fn,ms)); } function clearTimers(){ TIMERS.forEach(clearTimeout); TIMERS=[]; }
@@ -816,13 +826,15 @@ function logRow(ph,a,w,help,n,h){
   LOG.push({s:S.stu,t:Date.now(),g:RUN.g,lv:RUN.lv,ph,a,res:help?'help':'first',w:w||'',n:n||0,h:h||''}); saveLog();
 }
 
+/* 특징을 하나씩 말할 때 문장 사이에 한 템포 쉼(2026-10-31 선생님: 빠르다) */
+const PAUSE=1100;
 /* ---- 학습(하·중): 동물 한 마리를 크게, 이름 → 그 수준의 고개를 하나씩(무오류 시범) ---- */
 async function stepShow(it,tok){
   const t=it.a, F=frame(1,true), c=animalCard(t,F.cs); c.style.cursor='default'; F.row.appendChild(c);
   await wait(500); if(!alive(tok)) return;
   setBubble(F,t,'','name'); await speak(nameLine(t)); if(!alive(tok)) return; await wait(400);
   const list=RUN.lv===1?easyHints(t).map(h=>({t:factText(h),img:factImg(h)})):learnFacts(t).concat(RIDDLE[t].filter(h=>h.star&&!learnFacts(t).includes(h.t)&&!/^이름은|^'/.test(h.t)).slice(0,1).map(h=>h.t)).map(x=>({t:x,img:''}));
-  for(const h of list){ if(!alive(tok)) return; setBubble(F,h.t,h.img); addChip(F,h.t,true); await speak(h.t); if(!alive(tok)) return; await wait(450); }
+  for(const h of list){ if(!alive(tok)) return; setBubble(F,h.t,h.img); addChip(F,h.t,true); await speak(h.t); if(!alive(tok)) return; await wait(PAUSE); }
   await wait(900); if(alive(tok)) advance();
 }
 /* ---- 학습(상): 열 마리 카드를 펼쳐 놓고, 누르면 크게 + 특징을 글과 함께 들려줌. 다 보면 다음으로 ---- */
@@ -848,7 +860,7 @@ async function showFacts(a,tok){
   f.innerHTML='<h3>'+esc(a)+'</h3>'+facts.map(x=>'<p>'+esc(x)+'</p>').join(''); p.appendChild(f); st.appendChild(p);
   await speak(THIS(a)); if(!alive(tok)) return;
   const ps=[...f.querySelectorAll('p')];
-  for(let i=0;i<facts.length;i++){ ps[i].classList.add('on'); await speak(facts[i]); if(!alive(tok)) return; await wait(300); }
+  for(let i=0;i<facts.length;i++){ ps[i].classList.add('on'); await speak(facts[i]); if(!alive(tok)) return; await wait(PAUSE); }
   await wait(1200);
 }
 
@@ -865,8 +877,10 @@ function quizPick(it,tok){
   let wrong='', helped=false, over=false, armed=false;
   const target=cards.find(c=>c.dataset.a===t), glow=()=>{ helped=true; target.classList.add('glow'); };
   later(()=>{ if(alive(tok)&&!over){ cards.forEach(c=>{ c.style.opacity=1; }); armed=true; } },1000);
-  speak(factText(h)+' '+ASK).then(()=>{ if(!alive(tok)||over) return;
-    later(()=>{ if(alive(tok)&&!over) speak(factText(h)+' '+ASK); },8000);
+  /* 2026-10-31 선생님: 답을 바로 알려 줌(무오류) — '지느러미가 있어요. 상어예요. 찾아 눌러요.' */
+  const line=factText(h)+' '+nameLine(t)+' 찾아 눌러요.';
+  speak(line).then(()=>{ if(!alive(tok)||over) return;
+    later(()=>{ if(alive(tok)&&!over) speak(line); },8000);
     later(()=>{ if(alive(tok)&&!over) glow(); },16000); });
   cards.forEach(c=>{ c._tap=()=>{ if(!armed||over||!alive(tok)) return;
     if(c===target){ over=true; clearTimers(); c.classList.remove('glow'); c.classList.add('right'); cards.forEach(x=>{ if(x!==c) x.classList.add('out'); }); chime();
@@ -882,20 +896,28 @@ function quizPick(it,tok){
    고개는 말이 끝나고 중 7초·상 9초 뒤 저절로 다음(쓰는 중·말하는 중이면 기다림). 다 들어도 못 맞히면 12초 뒤 정답을 보여 줌(도움). 틀려도 반응 없음 */
 function imgLoad(src){ return new Promise(r=>{ const im=new Image(); im.crossOrigin='anonymous'; im.onload=()=>r(im); im.onerror=()=>r(null); im.src=src; }); }
 async function riddle(it,tok){
-  const t=it.a, lv=RUN.lv, list=lv===2?RIDDLE[t].filter(h=>h.star):RIDDLE[t];
+  /* 하(2026-10-31 선생님): 특징 학습·카드 퀴즈 뒤 '다섯 고개' — 그 동물의 쉬운 고개 다섯, 진한 원래 그림이 물결로 차오름,
+     아래 보기 카드 2장(그림+이름, 하나는 정답)을 누름. 틀려도 반응 없음, 8초 뒤 다시 묻고 16초 뒤 정답이 빛남 */
+  const t=it.a, lv=RUN.lv, list=lv===1?easyHints(t).map(h=>({t:factText(h)})):lv===2?RIDDLE[t].filter(h=>h.star):RIDDLE[t];
   const st=$('stage'), A=area(), por=portrait();
+  const pcs=Math.round(Math.min(150,A.h*.19,A.w*.22));
   const F={bub:document.createElement('div'),chips:document.createElement('div')};
   F.bub.className='bubble hint'; F.bub.innerHTML='<img class="hi" alt=""><span class="ht"></span>'; F.chips.className='chips';
-  const ansH=104, sh=Math.min(A.h-150-ansH, (A.w*(por?.96:.62))*3/4), sw=sh*4/3;
+  const ansH=lv===1?pcs+60:104, sh=Math.min(A.h-150-ansH, (A.w*(por?.96:.62))*3/4), sw=sh*4/3;
   const sc=document.createElement('div'); sc.className='rscene'; sc.style.width=sw+'px'; sc.style.height=sh+'px';
   sc.innerHTML='<img class="bg" alt="" draggable="false" src="'+HAB+SCENE[t]+'.jpg">';
   const ans=document.createElement('div'); ans.className='answer';
   /* 답하는 칸(2026-10-31): 앞에 "정답"(마이크) 단추 — 누르면 듣고, 맞으면 넘어감.
      중: 그 뒤에 선생님이 들은 이름을 쓰는 칸(마이크가 안 되거나 기기가 못 알아들을 때) / 상: 학생이 이름을 쓰는 칸 */
   const micB='<button type="button" class="micBtn">'+MIC_SVG+'<span>정답</span></button>';
-  if(lv===3) ans.innerHTML=micB+'<input id="sIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="이름을 써요" enterkeyhint="done"><button type="button" id="sOk">확인</button>';
+  let picks=[];
+  if(lv===1){ const used=RUN.used[t]||[], cand=ALL.filter(d=>d!==t&&easyHints(t).some(h=>fails(d,h))), pref=cand.filter(d=>RUN.animals.includes(d)&&!used.includes(d));
+    const d=shuffle(pref.length?pref:cand)[0];
+    shuffle([t,d]).forEach(a=>{ const f=document.createElement('figure'); f.className='pick2'; const c=animalCard(a,pcs); f.appendChild(c);
+      const cap=document.createElement('figcaption'); cap.textContent=a; f.appendChild(cap); ans.appendChild(f); picks.push(c); }); }
+  else if(lv===3) ans.innerHTML=micB+'<input id="sIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="이름을 써요" enterkeyhint="done"><button type="button" id="sOk">확인</button>';
   else ans.innerHTML=micB+'<input id="tIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="선생님이 넣어 주세요" enterkeyhint="done"><button type="button" class="tOk" id="tOk">확인</button>';
-  { const b=document.createElement('button'); b.type='button'; b.className='pass'; b.textContent='패스'; ans.appendChild(b); b.onclick=()=>{ skip=true; b.blur(); }; }   /* 모르면 다음 고개로(2026-10-27) */
+  if(lv>1){ const b=document.createElement('button'); b.type='button'; b.className='pass'; b.textContent='패스'; ans.appendChild(b); b.onclick=()=>{ skip=true; b.blur(); }; }   /* 모르면 다음 고개로(2026-10-27) */
   const note=document.createElement('div'); note.className='micNote';
   st.append(F.bub,sc,F.chips,ans,note);
   setBubble(F,WHO,'');
@@ -908,7 +930,7 @@ async function riddle(it,tok){
   const drawPart=p=>{ if(!img) return; const c=layer(), x=c.getContext('2d'); x.save(); shape(x,p); x.clip(); x.drawImage(img,AX,AY,AS,AS); x.restore(); requestAnimationFrame(()=>c.classList.add('on')); };
   /* 차오르는 그림(2026-10-31 선생님 의견): 물이 차오르듯 발부터 위로, 윗선은 일렁이는 물결.
      그림자 대신 원래 동물 그림을 아주 흐리게(GHOST — 살짝 신경 써서 보면 보일 만큼). 고개마다 정해진 높이까지 천천히 오르고(마지막 고개에 다 참) */
-  const GHOST=.03;
+  const GHOST=lv===1?1:.05;   /* 중 5%(선생님: 3%는 안 보임), 하는 진한 그림 그대로 */
   const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   let shd=null, lvNow=0, lvTo=0;
   const shadowInit=()=>{ const c=layer(); c.classList.add('on');
@@ -929,16 +951,19 @@ async function riddle(it,tok){
   const win=(who)=>{ if(over||!alive(tok)) return; over=true; clearTimers(); Ear.stop(); micNote('');
     const full=layer(); full.classList.add('full'); const fx=full.getContext('2d'); if(img) fx.drawImage(img,AX,AY,AS,AS);
     bg.classList.add('on'); requestAnimationFrame(()=>{ full.classList.add('on'); sc.querySelectorAll('canvas:not(.full)').forEach(c=>c.style.opacity=0); });
-    chime(); logRow('quiz',t,wrong,who==='reveal',heard); setBubble(F,t,'','name');
+    chime(); logRow(lv===1?'five':'quiz',t,wrong,who==='reveal'||!!(lv===1&&wrong),heard); setBubble(F,t,'','name');
+    picks.forEach(c=>{ c.classList.remove('glow'); c.classList.add(c.dataset.a===t?'right':'out'); });
     const inp=$('sIn')||$('tIn'); if(inp){ inp.value=t; inp.disabled=true; inp.blur(); }
     later(()=>{ if(alive(tok)) speak(nameLine(t)).then(async()=>{ if(!alive(tok)) return; await wait(1600); if(!alive(tok)) return;
       advance(); }); },500); };
   const check=(texts,who)=>{ if(over) return false; if(isName(t,texts)){ win(who); return true; } const s=[].concat(texts)[0]; if(s&&!wrong) wrong=String(s).slice(0,20); return false; };
-  /* 답하는 길: 쓰는 칸(상 학생·중 선생님) + "정답" 마이크 */
-  { const inp=$(lv===3?'sIn':'tIn'), who=lv===3?'type':'teacher', ok=()=>{ const v=inp.value.trim(); if(!v) return; if(!check(v,who)) inp.select(); };
+  /* 답하는 길: 하는 보기 카드, 쓰는 칸(상 학생·중 선생님) + "정답" 마이크 */
+  let helped=false;
+  picks.forEach(c=>{ c._tap=()=>{ if(over||!alive(tok)) return; if(c.dataset.a===t) win(helped?'reveal':'pick'); else if(!wrong) wrong=c.dataset.a; }; });
+  if(lv>1){ const inp=$(lv===3?'sIn':'tIn'), who=lv===3?'type':'teacher', ok=()=>{ const v=inp.value.trim(); if(!v) return; if(!check(v,who)) inp.select(); };
     $(lv===3?'sOk':'tOk').onclick=ok;
     inp.addEventListener('keydown',e=>{ lastType=performance.now(); if(e.key==='Enter'){ e.preventDefault(); ok(); } }); inp.addEventListener('input',()=>{ lastType=performance.now(); }); }
-  ans.querySelector('.micBtn').onclick=e=>{ e.currentTarget.blur(); if(over) return;
+  if(lv>1) ans.querySelector('.micBtn').onclick=e=>{ e.currentTarget.blur(); if(over) return;
     if(Ear.on){ Ear.stop(); return; }
     if(!Ear.ok()){ micNote(Ear.denied?S.voiceNote:'이 브라우저는 말을 알아듣지 못해요. 크롬에서 열거나, 들은 이름을 칸에 넣어 주세요.'); return; }
     speakSeq++; stopVoice();   /* 읽던 고개를 멈추고 들음 */
@@ -952,13 +977,19 @@ async function riddle(it,tok){
   for(let i=0;i<list.length;i++){
     const h=list[i]; heard=i+1;
     if(h.h||i===0) bg.classList.add('on');
-    if(lv===2) growShadow((i+1)/list.length);
+    if(lv<3) growShadow((i+1)/list.length);
     /* 상: 그림 단서 없이 말과 글로만(처음 서식지 배경만, 2026-10-27 선생님 의견) */
     setBubble(F,h.t,''); addChip(F,h.t,true);
     await speak(h.t); if(!alive(tok)||over) return;
     if(i===list.length-1){ skip=false; break; }
+    if(lv===1){ await wait(PAUSE+300); if(!alive(tok)||over) return; continue; }
     if(!await wait2(lv===2?7000:9000)) return;
   }
+  if(lv===1){ setBubble(F,WHO,''); const ask=()=>speak(ASK);
+    await ask(); if(!alive(tok)||over) return;
+    later(()=>{ if(alive(tok)&&!over) ask(); },8000);
+    later(()=>{ if(alive(tok)&&!over){ helped=true; const c=picks.find(x=>x.dataset.a===t); if(c) c.classList.add('glow'); } },16000);
+    return; }
   setBubble(F,lv===2?SAY:TYPE,''); await speak(lv===2?SAY:TYPE); if(!alive(tok)||over) return;
   if(await wait2(12000)) win('reveal');
 }
@@ -976,12 +1007,12 @@ async function summary(it,tok){
   const bar=document.createElement('div'); bar.className='sumBar'; st.appendChild(bar);
   const last=RUN.ii>=RUN.phases[RUN.pi].items.length-1, nx=RUN.phases[RUN.pi+1];
   await speak(nameLine(t)); if(!alive(tok)) return;
-  for(const x of list){ await speak(x); if(!alive(tok)) return; await wait(250); }
+  for(const x of list){ await speak(x); if(!alive(tok)) return; await wait(PAUSE); }
   if(!alive(tok)) return;
-  const b1=document.createElement('button'); b1.type='button'; b1.className='sumBtn'; b1.textContent=t+' 한 번 더';
-  const b2=document.createElement('button'); b2.type='button'; b2.className='sumBtn go'; b2.textContent=last?(nx?STEP_NAME(nx.k)+'(으)로':S.steps.game?'같은 동물 찾기로':'마치기'):'다음 동물';
+  const b1=document.createElement('button'); b1.type='button'; b1.className='sumBtn'; b1.textContent=RUN.phases[RUN.pi].items[RUN.ii].g?'한 번 더':t+' 한 번 더';
+  const b2=document.createElement('button'); b2.type='button'; b2.className='sumBtn go'; b2.textContent=last?(nx?STEP_NAME(nx.k)+'(으)로':S.steps.game?'같은 동물 찾기로':'마치기'):RUN.phases[RUN.pi].items[RUN.ii].g?'다음 동물들':'다음 동물';
   bar.append(b1,b2);
-  tapper(b1,()=>{ if(!alive(tok)) return; RUN.used[t]=[]; RUN.sub={st:S.steps.learn?'learn':'quiz',qi:0}; saveSpot(); runStep(); });
+  tapper(b1,()=>{ if(!alive(tok)) return; RUN.used[t]=[]; RUN.sub={st:S.steps.learn?'learn':'quiz',qi:0,li:0}; saveSpot(); runStep(); });
   tapper(b2,()=>{ if(!alive(tok)) return; nextItem(); });
 }
 /* ---- 정리하기: 오늘의 동물을 늘 같은 자리에 펼쳐 놓고, 그 동물만 남는 고개를 한꺼번에. 찾은 동물은 ✓.
@@ -1075,7 +1106,7 @@ function closeAdmin(){ setAdmin(false); goFull();
 }
 /* 지금 단계: 학습·퀴즈·정리하기, 그 뒤 같은 동물 찾기 */
 function stepKeys(){ if(!RUN) return []; const k=RUN.phases.map(p=>p.k); if(S.steps.game) k.push('game'); return k; }
-const STEP_NAME=k=>k==='game'?'같은 동물 찾기':k==='unit'?'동물 하나씩':(PHASES.find(x=>x[0]===k)||['',''])[1];
+const STEP_NAME=k=>k==='game'?'같은 동물 찾기':k==='unit'?'동물 배우기':(PHASES.find(x=>x[0]===k)||['',''])[1];
 function curStep(){ if(!RUN) return ''; if(!RUN.ending) return RUN.phases[RUN.pi].k; return RUN.gameDone?'':'game'; }
 function renderDock(){
   const T=$('dockTopRow'), B=$('dockBotRow'); if(!T) return; T.innerHTML=''; B.innerHTML='';
@@ -1145,7 +1176,7 @@ function printSheet(lv,animals){
 window.addEventListener('afterprint',()=>{ document.body.classList.remove('sheet'); $('printArea').innerHTML=''; });
 
 /* ================= 학생 기록 보기 ================= */
-const PH_NAME={quiz:'퀴즈',sort:'정리하기'};
+const PH_NAME={quiz:'퀴즈',five:'다섯 고개',sort:'정리하기'};
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const barH=v=>'<span class="bar100"><b style="width:'+v+'%"></b></span>'+v+'%';
 const dayOf=t=>{ const d=new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
@@ -1174,7 +1205,7 @@ function renderRecords(){
   else{
     const ok=r=>r.res==='first';
     h+='<h3>바로 맞힌 비율 (처음 절반 → 최근 절반)</h3><table><tr><th>수준</th><th>단계</th><th>문제 수</th><th>처음</th><th>최근</th></tr>';
-    [1,2,3].forEach(lv=>['quiz','sort'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
+    [1,2,3].forEach(lv=>['quiz','five','sort'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
       const m=Math.floor(all.length/2), a=all.slice(0,m||all.length), b=all.slice(m);
       h+='<tr><td>'+LV[lv].name+'</td><td>'+PH_NAME[ph]+'</td><td>'+all.length+'</td><td>'+barH(pct(a.filter(ok).length,a.length))+'</td><td>'+barH(pct(b.filter(ok).length,b.length))+'</td></tr>'; }));
     h+='</table>';
