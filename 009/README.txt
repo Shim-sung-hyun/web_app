@@ -36,8 +36,8 @@
 다음 할 일 (2026-10-31 정리 — "저장소를 Claude Code로 이사" 세션에서 "009 만들기" 세션으로 넘김)
 지금 상태: 다시 짠 판이 main에 있음(https://shim-sung-hyun.github.io/web_app/009/animal-riddle.html). 목소리 392마디 모두 내장.
   선생님 의견으로 마지막에 고친 것: 하 보기는 그림에서 보기에도 확실히 다른 동물만 / 하·중은 동물 하나가 한 묶음(정지 + 한 번 더·다음 동물)
-  / 상은 그림 단서 없이 서식지 배경만 / 중·상 '패스' / 몸이 흰 동물 그림의 흰 테두리 다시 정리(tools/clean-edges.py)
+  / 상은 그림 단서 없이 서식지 배경만 / 중·상 '패스' / 동물 그림 가장자리는 2026-10-31 새 방법으로 다시 정리(tools/clean-edges.py)
 1. 선생님이 써 보고 의견 받기(중의 말 알아듣기는 실제 마이크로 아직 확인 못 함 — 크롬 권장. 학생 목소리가 Google로 가는 것을 학교에서 써도 되는지도)
 2. 서버 study/009/에 server-loader.html을 animal-riddle.html 이름으로 올리기(선생님)
 3. 캡처 animal-riddle01.jpg~(1366×768), 설명서 _manual·_guide, 홍보 그림 새로(첫 판 것은 버림) → 선생님이 게시판 글 → 글 번호를 reportLink·endLesson 주소에 넣기
-4. (생각해 볼 것) 동물 더 넣기 — 넣을 때 AD(그림에서 보기에도 다른지)·RID 20개·ALIAS를 함께, 그림은 tools/clean-edges.py로 정리 뒤 확대해서 확인
+4. (생각해 볼 것) 동물 더 넣기 — 넣을 때 AD(그림에서 보기에도 다른지)·RID 20개·ALIAS를 함께, 그림은 흰 바탕을 지운 직후 tools/clean-edges.py로 정리 → 어두운 배경에서 확대해 확인(갇힌 흰 바탕은 HOLES에)
