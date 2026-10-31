@@ -909,13 +909,14 @@ async function riddle(it,tok){
   const layer=()=>{ const c=document.createElement('canvas'); c.width=CW; c.height=CH; sc.appendChild(c); return c; };
   const shape=(ctx,p)=>{ const k=AS/512, [x0,y0,x1,y1]=p.b.map((v,i)=>v*k+(i%2?AY:AX)); ctx.beginPath(); if(p.t==='e') ctx.ellipse((x0+x1)/2,(y0+y1)/2,(x1-x0)/2,(y1-y0)/2,0,0,Math.PI*2); else ctx.rect(x0,y0,x1-x0,y1-y0); };
   const drawPart=p=>{ if(!img) return; const c=layer(), x=c.getContext('2d'); x.save(); shape(x,p); x.clip(); x.drawImage(img,AX,AY,AS,AS); x.restore(); requestAnimationFrame(()=>c.classList.add('on')); };
-  /* 그림자(2026-10-31 선생님 의견): 물이 차오르듯 발부터 위로, 윗선은 일렁이는 물결. 동물 모양 그대로를 진한 색(불투명 92%)으로.
-     고개마다 정해진 높이까지 천천히 오르고(마지막 고개에 다 참), 물결은 늘 조금씩 움직임 */
+  /* 차오르는 그림(2026-10-31 선생님 의견): 물이 차오르듯 발부터 위로, 윗선은 일렁이는 물결.
+     그림자 대신 원래 동물 그림을 아주 흐리게(GHOST — 살짝 신경 써서 보면 보일 만큼). 고개마다 정해진 높이까지 천천히 오르고(마지막 고개에 다 참) */
+  const GHOST=.05;
   const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   let shd=null, lvNow=0, lvTo=0;
   const shadowInit=()=>{ const c=layer(); c.classList.add('on');
     const off=document.createElement('canvas'); off.width=CW; off.height=CH; const o=off.getContext('2d');
-    o.drawImage(img,AX,AY,AS,AS); o.globalCompositeOperation='source-in'; o.fillStyle='rgb(58,48,72)'; o.fillRect(0,0,CW,CH);
+    o.drawImage(img,AX,AY,AS,AS);
     const tmp=document.createElement('canvas'); tmp.width=tmp.height=64; const tx=tmp.getContext('2d'); tx.drawImage(img,0,0,64,64); const d=tx.getImageData(0,0,64,64).data;
     let ty=64, by=-1; for(let y=0;y<64;y++) for(let x=0;x<64;x++) if(d[(y*64+x)*4+3]>40){ if(y<ty) ty=y; by=y; }
     shd={x:c.getContext('2d'),off,top:AY+AS*ty/64,bot:AY+AS*(by+1)/64,amp:AS*.02}; };
@@ -923,7 +924,7 @@ async function riddle(it,tok){
     const y0=bot-(bot-top+amp*3.2)*lvNow, w1=AS*.12, w2=AS*.05;
     x.save(); x.beginPath(); x.moveTo(0,CH);
     for(let px=0;px<=CW+8;px+=8) x.lineTo(px,y0+amp*Math.sin(px/w1+t/900)+amp*.55*Math.sin(px/w2-t/560));
-    x.lineTo(CW,CH); x.closePath(); x.clip(); x.globalAlpha=.92; x.drawImage(off,0,0); x.restore(); };
+    x.lineTo(CW,CH); x.closePath(); x.clip(); x.globalAlpha=GHOST; x.drawImage(off,0,0); x.restore(); };
   const tick=t=>{ if(!alive(tok)||over) return; lvNow+=(lvTo-lvNow)*(RM?1:.035); drawShadow(RM?0:t); requestAnimationFrame(tick); };
   const growShadow=frac=>{ if(!img) return; if(!shd){ shadowInit(); requestAnimationFrame(tick); } lvTo=frac; };
   const bg=sc.querySelector('.bg');
