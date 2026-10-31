@@ -493,6 +493,12 @@ function speak(text){ return new Promise(resolve=>{
 function chime(){ if(!S.sound) return; try{ const c=getCtx(); if(!c) return; const t=c.currentTime;
   [[660,0],[880,0.12]].forEach(([f,d])=>{ const o=c.createOscillator(), g=c.createGain(); o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(0,t+d); g.gain.linearRampToValueAtTime(0.16,t+d+0.02); g.gain.exponentialRampToValueAtTime(0.001,t+d+0.35); o.connect(g); g.connect(c.destination); o.start(t+d); o.stop(t+d+0.4); }); }catch(e){} }
 
+/* 바스락: 덤불이 흔들리는 작은 소리(흰 소음을 걸러 0.35초, 작게) — 숨은 동물 찾기 도움 */
+function rustle(){ if(!S.sound) return; try{ const c=getCtx(); if(!c) return; const t=c.currentTime, n=Math.floor(c.sampleRate*.4), b=c.createBuffer(1,n,c.sampleRate), d=b.getChannelData(0);
+  for(let i=0;i<n;i++){ const e=i/n; d[i]=(Math.random()*2-1)*Math.pow(1-e,1.6)*(.55+.45*Math.sin(e*Math.PI*7)**2); }
+  const src=c.createBufferSource(), f=c.createBiquadFilter(), g=c.createGain(); src.buffer=b; f.type='bandpass'; f.frequency.value=2600; f.Q.value=.7;
+  g.gain.setValueAtTime(0.09,t); src.connect(f); f.connect(g); g.connect(c.destination); src.start(t); }catch(e){} }
+
 /* ================= 전체 화면 ================= */
 function goFull(){ try{ const d=document.documentElement; if(document.fullscreenElement||document.webkitFullscreenElement) return;
   fsAskAt=performance.now();
@@ -1061,7 +1067,7 @@ async function playHide(p,lvG,targets,tok){
       ox=(cost(1)<=cost(-1)?1:-1)*need; }
     else oy=-((1-vis)*dh+dh*.12);
     if(x+ox-dw/2<0) ox=dw/2-x; if(x+ox+dw/2>W) ox=W-dw/2-x; if(y+oy-dh/2<0) oy=dh/2-y;   /* 장면 밖으로 나가지 않게 */
-    const it={a,im,ox,oy,dw,dh};
+    const it={a,im,ox,oy,dw,dh,pr};
     /* 땅에 닿는 그림자(2026-10-26): 땅 위 장면에서만 동물 발밑·소품 밑에 옅은 타원 — 오려 붙인 티가 나지 않게. 동물 그림자는 동물과 함께 움직임 */
     if(m==='walk'||m==='slide'){ it.sh=groundShadow(card,x,y+dh/2,dw*.8,1); it.sh.style.transition='transform 1s ease-in-out';
       groundShadow(card,hb.left+hb.sw/2,hb.top+hb.sh*.97,hb.sw*.86,3); }
@@ -1082,7 +1088,10 @@ async function playHide(p,lvG,targets,tok){
   const toCenter=t=>{ const x=parseFloat(t.im.style.left)+t.ox, y=parseFloat(t.im.style.top)+t.oy, k=Math.max(1,Math.min(2.2,H*.42/Math.max(t.dw,t.dh)));
     t.im.style.zIndex=5000; t.im.style.transition='transform .9s ease-in-out, filter 1s'; move(t,1,W/2-x,H*.52-y,k); };
   for(const a of shuffle(targets)){ const t=items.find(x=>x.a===a); if(!t) continue;
-    await findIt(tok,a,p,t.im,n=>move(t,n===1?.5:.8),
+    /* 흔들기: 동물을 가린 소품이 아래를 축으로 살짝 두 번 흔들림(번쩍임 없이 0.7초) + 바스락 */
+    const shake=()=>{ if(!t.pr.animate) return; const b=t.pr.style.transform||''; t.pr.style.transformOrigin='50% 95%'; rustle();
+      t.pr.animate([0,-3,2.5,-2,1.2,0].map(r=>({transform:b+' rotate('+r+'deg)'})),{duration:700,easing:'ease-in-out'}); };
+    await findIt(tok,a,p,t.im,n=>n==='shake'?shake():move(t,n===1?.5:.8),
       async()=>{ move(t,1); if(L.fade) t.im.style.filter=''; await wait(1050); if(!alive(tok)) return; toCenter(t); await wait(950); },
       async()=>{ move(t,1); await wait(950); });
     if(!alive(tok)) return; await wait(400); if(!alive(tok)) return; }
@@ -1094,7 +1103,7 @@ function groundShadow(card,x,y,w,z){ const s=document.createElement('div');
   card.appendChild(s); return s; }
 /* 하나 찾기(2026-10-31 바꿈): 이름은 한 번 부르고 기다림. 같은 이름을 3초마다 되풀이하면 재촉받는 듯 불안해지므로
    ① 잘못 세 번 누르면(찾고 있으나 헷갈림) ② 12초 동안 다시 부르지 않았으면(잊었을 수 있음 — 숨은 그림을 훑어보는 데는 10초 넘게 걸리므로 그보다 조금 길게) 한 번 더 부름.
-   방금(3초 안) 누르며 찾고 있거나 손가락이 닿아 있으면 끝날 때까지 기다렸다 부름. 도움은 18초에 조금, 32초에 더 */
+   방금(3초 안) 누르며 찾고 있거나 손가락이 닿아 있으면 끝날 때까지 기다렸다 부름. 도움은 18초에 조금 나옴, 24초부터 10초마다 소품이 바스락 흔들림, 32초에 더 나옴 */
 function findIt(tok,a,p,el,help,found,after){ return new Promise(res=>{
   let over=false, wrong=0, lastTap=0, lastCall=0, tm=0; window.__gameTarget=a;
   const card=el.parentElement, live=()=>alive(tok)&&!over;
@@ -1103,6 +1112,7 @@ function findIt(tok,a,p,el,help,found,after){ return new Promise(res=>{
   const schedule=ms=>{ clearTimeout(tm); tm=setTimeout(call,ms); };
   call();
   later(()=>{ if(live()) help(1); },18000); later(()=>{ if(live()) help(2); },32000);
+  const shk=()=>{ if(!live()) return; help('shake'); later(shk,10000); }; later(shk,24000);   /* 24초부터 10초마다 소품이 바스락 흔들림 */
   const miss=e=>{ if(!live()||e.target===el) return; lastTap=Date.now(); if(++wrong>=3&&Date.now()-lastCall>4000){ wrong=0; schedule(600); } };
   card.addEventListener('pointerdown',miss);
   const h=async e=>{ if(e) e.stopPropagation(); if(over||!alive(tok)) return; over=true; clearTimeout(tm); card.removeEventListener('pointerdown',miss); el.removeEventListener('pointerdown',h); clearTimers(); chime();
