@@ -38,6 +38,7 @@ HOLES = {
     '007/pics/saeu.webp': [(335, 269)],
     'media/animals/baengno.webp': [(222, 412)],
     'media/animals/bidulgi.webp': [(305, 427)],
+    'media/animals/beol.webp': [(368, 287)],   # 2026-10-31 머리와 다리 사이
     'media/animals/bueongi.webp': [(255, 434)],
     'media/animals/jeongal.webp': [(191, 277), (182, 311)],
     'media/animals/ojingeo.webp': [(169, 359), (224, 402)],

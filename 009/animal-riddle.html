@@ -413,7 +413,9 @@ const FOOD={grass:['풀을 먹어요.','grass'],leaf:['나뭇잎을 먹어요.',
 const AN={}; Object.keys(AD).forEach(n=>{ const [home,legs,cover,move,f,m,fo,snd]=AD[n].split('|');
   AN[n]={home:home==='?'?null:home,legs:legs==='?'?null:+legs,cover:cover==='?'?null:cover,move:move==='?'?null:move.split('+')[0],moves:move==='?'?null:move.split('+'),feats:f?f.split('+'):[],maybe:m?m.split('+'):[],foods:fo?fo.split('+'):[],sound:snd||null}; });
 const ALL=Object.keys(AD);
-const pic=a=>OLD[a]?P007+OLD[a]+'.webp':PNEW+NEW[a]+'.webp';
+/* IMGV: 동물 그림을 고치면 올림 — 기기에 남은 옛 그림 대신 새 그림을 받게 */
+const IMGV='?v=20261031b';
+const pic=a=>(OLD[a]?P007+OLD[a]+'.webp':PNEW+NEW[a]+'.webp')+IMGV;
 /* 실제 크기(2026-10-31 선생님 의견, 1편 008의 REAL·relSize와 같은 셈): 한 화면에 동물이 둘 이상이면 가장 큰 동물을 1로 놓고
    나머지를 실제 몸 크기(m, 가장 긴 쪽) 비율의 0.7제곱으로 줄임. 카드는 장면보다 작아서 가장 작아도 0.45(알아볼 수 있게, 장면은 0.3). 혼자 나오는 화면은 그대로 크게.
    카드 크기는 그대로, 카드 안의 그림만. 땅 동물은 발이 모두 같은 선(카드 아래쪽)에 닿게, 하늘·물 동물은 가운데.
