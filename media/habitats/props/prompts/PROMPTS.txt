@@ -1,0 +1,88 @@
+008 숨은 동물 찾기 — 새 가림 소품 그리기 (2026-10-31)
+
+왜: 소품 종류가 적어(곳마다 2~5개) 같은 바위·덤불이 되풀이되면, 학생이 동물이 아니라 "소품"을 찾게 됨.
+목표: 곳마다 8개 넘게. 판 6장 × 8개 = 48개를 새로 그림.
+
+하는 법
+1. 판마다 Gemini 새 대화창을 연다(판끼리 섞이지 않게).
+2. 같은 폴더의 style-ref.png(지금 소품 6개를 한 장에 모은 그림체 본보기)를 붙인다.
+3. 아래 [공통] 글 + 그 판의 글을 함께 붙여 넣는다.
+4. 받은 판을 Claude Code 세션에 올리고 "008 소품 판 A"처럼 말하면 Claude가 칸마다 잘라
+   흰 바탕을 지우고(tools/clean-edges.py) 이름을 붙여 넣은 뒤 tools/props-index.py로 목록을 고친다.
+   판이 정사각형이 아니거나 3×3이 아니면 그대로 올려도 됨(Claude가 확인).
+   마음에 안 드는 칸은 빼고 넣어도 된다.
+
+[공통] — 판마다 맨 앞에 붙임
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object: a single prop seen from the front at eye level, centred in its cell, filling most of the cell, on pure white — no ground line, no cast shadow, no background scenery, no animals, no people, no text, no frame.
+These props are used to hide animals behind them in a picture, so each must be wide or tall and SOLID: the lower two-thirds must be dense with no see-through gaps. Make every object clearly different in shape and silhouette from the others and from the reference.
+No grid lines or cell borders.
+
+[판 A] 땅 위 · 숲 (ground, forest)
+1 a tangled bramble bush with small dark berries, wide and rounded
+2 a pile of fallen branches and twigs heaped together
+3 an old mossy tree stump with thick roots spreading out
+4 a tall clump of wildflowers and long grass, yellow and white flowers
+5 a large mound of fallen autumn leaves, brown and orange
+6 a tall oval evergreen shrub, dark green, taller than wide
+7 an arched tree root coming out of the ground with ferns at its base
+8 a low wide rock ledge with grass tufts on top
+
+[판 B] 초원 · 사막 (grassland, desert)
+1 a tall reddish-brown termite mound
+2 a low thorny savanna shrub, dense, olive green
+3 a round tussock of dry golden grass, wide
+4 a large layered sandstone rock, orange-tan
+5 a dense grey-green desert saltbush, wide and low
+6 a cluster of agave plants with thick pointed leaves
+7 a group of three round barrel cacti of different sizes
+8 a pile of sun-bleached sandy rocks, pale tan
+
+[판 C] 극지 · 하늘 (polar, sky)
+1 a snowdrift with chunks of blue ice sticking out
+2 a tall jagged iceberg chunk, white and pale blue
+3 a long ridge of broken ice slabs piled up
+4 a dark rock half-covered with snow
+5 a pile of square ice blocks of different sizes
+6 a tall puffy white cumulus cloud, taller than wide
+7 a long low bank of soft white clouds
+8 a small cluster of three round white clouds joined together
+
+[판 D] 바다 · 물 속 (sea, water — under water)
+1 a tall kelp cluster, brown-green, many long fronds
+2 a group of sea anemones on a rock, soft purple and pink
+3 a flat fan-shaped sea fan coral, orange-red, wide
+4 a rock arch covered with seaweed and small corals
+5 a round brain coral boulder, beige with wavy grooves
+6 a cluster of tube corals, yellow and orange
+7 a sunken old log lying flat with seaweed growing on it
+8 a mound of pebbles and sand with short seagrass on top
+
+[판 E] 강·연못 · 논·습지 (pond, wetland)
+1 tall lotus leaves on long stems with one pink lotus flower
+2 a clump of blue water irises with sword-shaped leaves
+3 a wide tuft of sedge grass, bright green
+4 a muddy bank with tall grass growing on it
+5 a small willow shrub with drooping thin branches, dense
+6 a tangle of dry broken reeds, pale brown
+7 a mossy log lying in mud with grass around it
+8 a clump of underwater pondweed, long wavy green leaves
+
+[판 F] 땅속 (underground — in the soil)
+1 a cluster of grey stones packed in brown soil
+2 a tangled ball of tree roots, light brown
+3 a large buried rock, rounded, dark grey
+4 a lump of soil with small pebbles mixed in
+5 a thick tree root cut across, seen from the side
+6 a lump of reddish clay
+7 a pocket of small gravel and pebbles
+8 flat layers of slate stone stacked unevenly
+
+판 이름 → 소품 파일 이름(Claude가 자를 때 씀)
+A: bramble branchpile mossstump flowerclump leafpile evergreen rootarch ledge
+B: termite thornbush tussock sandstone saltbush agave barrelcactus sandrocks
+C: icedrift iceberg iceridge snowrock iceblocks cloudtall cloudbank cloudpuffs
+D: kelp anemone seafan rockarch braincoral tubecoral sunkenlog pebblemound
+E: lotus iris sedge mudbank willow dryreeds mudlog pondweed
+F: soilstones rootball buriedrock pebbleclod rootcut clay gravel slate

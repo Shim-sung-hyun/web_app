@@ -935,20 +935,19 @@ function drawEnd(tok){
    보통: 놀이용 장면 + 소품이 아래나 옆을 가림(머리나 꼬리 쪽 3분의 1쯤 보임) + 같은 곳 다른 동물 2~3 + 빈 소품 1~2
    어려움: 동물이 더 작고 귀·꼬리 끝만 보임, 빛깔도 장면에 묻힘 + 다른 동물 3~4(같이 숨음) + 빈 소품 3~4 → 유심히 봐야 찾음
    이름을 부르면 찾아 누름. 틀리면 반응 없음. 16초 뒤 동물이 조금 더 나와 줌. 찾으면 동물이 소품 뒤에서 걸어(헤엄쳐·날아) 나옴 */
-const PROPS={ground:['bush','boulder','grass','fern','log'],land:['bush','boulder','grass','fern','log'],underground:['clod','flatrock'],water:['seaweed','mossrock','stones','coral'],
-  sky:['cloud','cloud2'],forest:['bush','trunk','log','fern'],grassland:['goldgrass','boulder','acacia'],desert:['dune','cactus','boulder'],polar:['snow','ice'],
-  sea:['seaweed','coral','mossrock'],pond:['reeds','mossrock','marsh','stones'],wetland:['rice','reeds','marsh']};
-/* 소품마다 빈틈 없이 꽉 찬 부분(그림 대비 왼쪽·위·오른쪽·아래). 풀잎 끝·나뭇가지 사이로 동물이 비쳐 보이지 않게 이 부분으로 가림 */
-const SOLID={acacia:[.44,.03,.59,.99],boulder:[.11,.28,.9,.92],bush:[.07,.23,.93,.9],cactus:[.36,.07,.65,.99],clod:[.15,.19,.86,.9],cloud:[.05,.42,.92,.9],
-  cloud2:[.11,.54,.89,.97],coral:[.14,.37,.88,.93],dune:[.21,.28,.82,.91],fern:[.19,.36,.77,.91],flatrock:[.17,.07,.85,.92],goldgrass:[.24,.45,.8,.99],
-  grass:[.2,.44,.8,.99],ice:[.03,.1,.94,.92],log:[.04,.25,.68,.91],marsh:[.22,.59,.78,1],mossrock:[.12,.19,.89,.92],reeds:[.21,.57,.75,1],
-  rice:[.33,.62,.69,.98],seaweed:[.17,.4,.84,.94],snow:[.13,.4,.86,.89],stones:[.19,.18,.82,.84],trunk:[.26,.03,.74,.94]};
+/* 소품 목록은 media/habitats/props/index.json(tools/props-index.py로 만듦): 소품마다 size 크기 · solid 빈틈 없이 꽉 찬 부분(그림 대비 왼·위·오른·아래 —
+   풀잎 끝·나뭇가지 사이로 동물이 비쳐 보이지 않게 이 부분으로 가림) · places 쓰는 곳. 새 소품은 그림과 이 목록만 넣으면 됨(앱은 고치지 않음) */
+let PROPS={}, PROPSZ={}, SOLID={};
 /* 어렵기마다: base 가장 큰 동물의 크기(장면 높이 대비) · vis 보이는 몫(그려진 동물 대비) · edge 보이는 선을 소품의 어디에 맞출지(0 풀잎 끝, 1 꽉 찬 부분) · nd 다른 동물 · decoy 빈 소품 · side 옆에서 가릴 확률 · fade 빛깔 묻힘 · min 가장 작은 크기(px) */
 const GLV={1:{base:.6,vis:.55,edge:0,nd:[0,0],decoy:[0,0],side:0,fade:0,min:72},
            2:{base:.5,vis:.36,edge:.4,nd:[2,3],decoy:[1,2],side:.4,fade:0,min:64},
            3:{base:.42,vis:.28,edge:.6,nd:[3,4],decoy:[3,4],side:.5,fade:1,min:60}};
-let PROPSZ={};
-const gameReady=fetch(HAB+'props/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{ PROPSZ=j||{}; }).catch(()=>{});
+const gameReady=fetch(HAB+'props/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{
+  Object.entries(j||{}).forEach(([nm,v])=>{ if(!v||!v.size) return; PROPSZ[nm]=v.size; SOLID[nm]=v.solid; (v.places||[]).forEach(p=>(PROPS[p]=PROPS[p]||[]).push(nm)); });
+  }).catch(()=>{}).then(()=>{   /* 목록을 못 받으면 기본 소품으로 */
+  const D={ground:'bush boulder grass',forest:'bush log fern',grassland:'goldgrass boulder',desert:'dune boulder',polar:'snow ice',sky:'cloud cloud2',underground:'clod flatrock',
+    water:'seaweed stones',sea:'seaweed coral',pond:'reeds stones',wetland:'rice reeds'};
+  Object.keys(D).forEach(p=>{ if(!PROPS[p]||!PROPS[p].length) PROPS[p]=D[p].split(' '); }); PROPS.land=PROPS.ground; });
 const GAMELV_NAME={1:'쉬움',2:'보통',3:'어려움'};
 /* 놀이 첫 화면: 큰 제목 + 아래 "시작"(학생이 누름). 제목을 눌러도 시작 */
 function gameIntro(tok){
@@ -985,8 +984,9 @@ function revealCard(card){
 const pick1=l=>l[Math.floor(Math.random()*l.length)], rint=([a,b])=>a+Math.floor(Math.random()*(b-a+1));
 /* 한 동물과 그 소품의 자리 계산. x,y = 그려진 동물의 가운데, dw·dh = 그려진 동물의 폭·높이.
    소품의 꽉 찬 부분이 동물을 덮게 크기를 맞춤. 돌려주는 rect는 겹침 검사용(동물+소품), bad는 소품이 지나치게 커지는 정도 */
-function hideBox(p,x,y,dw,dh,mode,dir,nm,vis,edge){
-  const [pw,ph]=PROPSZ[nm]||[480,360], [s0,t0s,s1,t1]=SOLID[nm]||[.15,.3,.85,.92], t0=t0s*(edge==null?1:edge), m=MOVE[p], foot=m==='walk'||m==='slide';
+function hideBox(p,x,y,dw,dh,mode,dir,lk,vis,edge){
+  const nm=lk.nm, [pw0,ph]=PROPSZ[nm]||[480,360], pw=pw0*lk.st, S0=SOLID[nm]||[.15,.3,.85,.92], s0=lk.flip?1-S0[2]:S0[0], s1=lk.flip?1-S0[0]:S0[2], t0s=S0[1], t1=S0[3],
+    t0=t0s*(edge==null?1:edge), m=MOVE[p], foot=m==='walk'||m==='slide';
   let k,left,top;
   if(mode==='side'){   /* dir 쪽 끝만 보이게 옆에서 가림 */
     k=Math.max(((1-vis)*dw+dw*.1)/((s1-s0)*pw),(dh*1.08)/((t1-t0)*ph));
@@ -997,16 +997,19 @@ function hideBox(p,x,y,dw,dh,mode,dir,nm,vis,edge){
     left=x-((s0+s1)/2)*pw*k+(Math.random()-.5)*dw*.12; top=y-dh/2+vis*dh-t0*ph*k;
   }
   const sw=pw*k, sh=ph*k;
-  return {nm,left,top,sw,sh,bad:Math.max(sh/dh,sw/dw*.8),rect:[Math.min(left,x-dw/2),Math.min(top,y-dh/2),Math.max(left+sw,x+dw/2),Math.max(top+sh,y+dh/2)]};
+  return {nm,lk,left,top,sw,sh,bad:Math.max(sh/dh,sw/dw*.8),rect:[Math.min(left,x-dw/2),Math.min(top,y-dh/2),Math.max(left+sw,x+dw/2),Math.max(top+sh,y+dh/2)]};
 }
 /* 이 곳 소품 가운데 동물을 알맞게 가리는 것(지나치게 커지지 않는 것 중에서 덜 쓴 것) */
-function chooseHide(p,x,y,dw,dh,mode,dir,vis,used,edge){
-  const c=shuffle(PROPS[p]).map(nm=>hideBox(p,x,y,dw,dh,mode,dir,nm,vis,edge)), ok=c.filter(h=>h.bad<2.3), u=nm=>(used&&used[nm])||0;
+function chooseHide(p,x,y,dw,dh,mode,dir,vis,used,edge,looks){
+  const c=shuffle(PROPS[p]).map(nm=>hideBox(p,x,y,dw,dh,mode,dir,looks[nm],vis,edge)), ok=c.filter(h=>h.bad<2.3), u=nm=>(used&&used[nm])||0;
   return ok.length?ok.sort((a,b)=>u(a.nm)-u(b.nm))[0]:c.sort((a,b)=>a.bad-b.bad)[0];
 }
 /* 아래가 반듯하게 잘린 소품(갈대·벼·풀)은 아랫단을 흐리게 → 땅·물에 꽂힌 듯 */
-function propImg(nm,l,t,w,h){ const pr=document.createElement('img'); pr.src=HAB+'props/'+nm+'.webp'; pr.alt=''; pr.draggable=false;
-  Object.assign(pr.style,{position:'absolute',left:l+'px',top:t+'px',width:w+'px',height:h+'px',pointerEvents:'none',zIndex:4});
+/* 같은 소품도 놓을 때마다 달라 보이게: 좌우 뒤집기 · 폭 늘이고 줄이기 · 밝기·빛깔 조금씩 */
+function propLook(nm){ return {nm,flip:Math.random()<.5,st:.82+Math.random()*.36,br:.9+Math.random()*.16,sat:.85+Math.random()*.25}; }
+function propImg(lk,l,t,w,h){ const nm=lk.nm, pr=document.createElement('img'); pr.src=HAB+'props/'+nm+'.webp'; pr.alt=''; pr.draggable=false;
+  Object.assign(pr.style,{position:'absolute',left:l+'px',top:t+'px',width:w+'px',height:h+'px',pointerEvents:'none',zIndex:4,
+    transform:lk.flip?'scaleX(-1)':'',filter:'brightness('+lk.br.toFixed(2)+') saturate('+lk.sat.toFixed(2)+')'});
   if((SOLID[nm]||[0,0,0,0])[3]>=.97) pr.style.webkitMaskImage=pr.style.maskImage='linear-gradient(to bottom,#000 86%,transparent 100%)';
   return pr; }
 const overlap=(r,q)=>Math.max(0,Math.min(r[2],q[2])-Math.max(r[0],q[0]))*Math.max(0,Math.min(r[3],q[3])-Math.max(r[1],q[1]));
@@ -1026,13 +1029,14 @@ async function playHide(p,lvG,targets,tok){
     const vis=Math.min(.6,Math.max(L.vis,18/Math.max(dw,dh)));   /* 어려워도 18px은 보이게 */
     let side=m!=='dig'&&Math.random()<(m==='swim'&&lvG>1?.6:L.side);   /* 물에서는 옆에서 가리는 일이 많음 */
     const dir=Math.random()<.5?-1:1;
-    if(side&&chooseHide(p,W/2,H/2,dw,dh,'side',dir,vis).bad>=2.3) side=false;   /* 옆에서 가릴 알맞은 소품이 없으면(구름·눈 더미) 아래에서 */
+    if(side&&chooseHide(p,W/2,H/2,dw,dh,'side',dir,vis,null,L.edge,Object.fromEntries(PROPS[p].map(nm=>[nm,propLook(nm)]))).bad>=2.3) side=false;   /* 옆에서 가릴 알맞은 소품이 없으면(구름·눈 더미) 아래에서 */
+    const looks={}; PROPS[p].forEach(nm=>looks[nm]=propLook(nm));
     let best=null, bs=Infinity;
     for(let t2=0;t2<60;t2++){
       const x=dw/2+W*.03+(W-dw-W*.06)*Math.random();
       let y=H*(yr[0]+(yr[1]-yr[0])*Math.random()); if(m==='walk'||m==='slide') y-=dh/2;   /* 발 높이 → 가운데 */
       y=Math.max(dh/2+H*.02,Math.min(H-dh/2-H*.01,y));
-      const hb=chooseHide(p,x,y,dw,dh,side?'side':'below',dir,vis,used,L.edge);
+      const hb=chooseHide(p,x,y,dw,dh,side?'side':'below',dir,vis,used,L.edge,looks);
       const sc=placed.reduce((s,q)=>s+overlap(hb.rect,q),0)+(hb.rect[0]<0?-hb.rect[0]*H:0)+(hb.rect[2]>W?(hb.rect[2]-W)*H:0)
         +(m==='swim'?Math.max(0,H*.9-(hb.top+hb.sh))*W:0);   /* 물: 바위·바닷말이 물속에 떠 있지 않게 바닥 가까이 */
       if(sc<bs){ bs=sc; best={x,y,hb}; } if(sc===0&&t2>6) break; }
@@ -1042,8 +1046,7 @@ async function playHide(p,lvG,targets,tok){
     Object.assign(im.style,{width:z+'px',height:z+'px',left:x+'px',top:y+'px',pointerEvents:'auto',cursor:'pointer',zIndex:99+Math.round(hb.top+hb.sh),transition:'transform 1s ease-in-out, filter 1s'});   /* 앞(아래)에 있는 소품이 위에 오게: 소품은 아랫단 높이로, 동물은 제 소품 바로 뒤 */
     if(L.fade) im.style.filter='saturate(.72) brightness(.94) drop-shadow(0 2px 2px rgba(0,0,0,.18))';
     card.appendChild(im);
-    const pr=propImg(hb.nm,hb.left,hb.top,hb.sw,hb.sh); pr.style.zIndex=100+Math.round(hb.top+hb.sh);
-    if(!side&&Math.abs((SOLID[hb.nm]||[0,0,1])[0]+(SOLID[hb.nm]||[0,0,1])[2]-1)<.1&&Math.random()<.5) pr.style.transform='scaleX(-1)';   /* 좌우 뒤집어 같은 소품도 달라 보이게(옆에서 가릴 때는 꽉 찬 자리가 바뀌므로 그대로) */
+    const pr=propImg(hb.lk,hb.left,hb.top,hb.sw,hb.sh); pr.style.zIndex=100+Math.round(hb.top+hb.sh);
     card.appendChild(pr);
     /* 나올 길: 옆에서 가렸으면 보이는 쪽으로, 아래에서 가렸으면 걷는 동물은 옆으로 비켜 나오고 나는·헤엄치는·땅속 동물은 위로 */
     let ox=0, oy=0;
@@ -1060,12 +1063,13 @@ async function playHide(p,lvG,targets,tok){
     items.push(it);
   });
   /* 빈 소품(그 뒤에 아무것도 없음): 소품마다 들여다봐야 하게 */
-  for(let i=0,nd=rint(L.decoy);i<nd;i++){ const nm=pick1(PROPS[p]), [pw,ph]=PROPSZ[nm]||[480,360], sw=big*(.5+Math.random()*.4), sh=sw*ph/pw;
+  for(let i=0,nd=rint(L.decoy);i<nd;i++){ const nm=[...shuffle(PROPS[p])].sort((a,b)=>(used[a]||0)-(used[b]||0))[0], lk=propLook(nm); used[nm]=(used[nm]||0)+1;
+    const [pw,ph]=PROPSZ[nm]||[480,360], sw=big*(.5+Math.random()*.4)*lk.st, sh=sw/lk.st*ph/pw;
     let best=null, bs=Infinity;
     for(let t2=0;t2<40;t2++){ const x=W*.04+(W*.92-sw)*Math.random(), fy=m==='swim'?H*(.9+.1*Math.random()):H*(yr[0]+(yr[1]-yr[0])*Math.random()), top=(m==='walk'||m==='slide'||m==='swim')?fy-sh:fy-sh/2, r=[x,top,x+sw,top+sh];
       const sc=placed.reduce((s,q)=>s+overlap(r,q),0); if(sc<bs){ bs=sc; best=r; } if(sc===0) break; }
     placed.push(best);
-    { const d=propImg(nm,best[0],best[1],sw,sh); d.style.zIndex=100+Math.round(best[3]); card.appendChild(d); } if(m==='walk'||m==='slide') groundShadow(card,best[0]+sw/2,best[1]+sh*.97,sw*.86,3); }
+    { const d=propImg(lk,best[0],best[1],sw,sh); d.style.zIndex=100+Math.round(best[3]); card.appendChild(d); } if(m==='walk'||m==='slide') groundShadow(card,best[0]+sw/2,best[1]+sh*.97,sw*.86,3); }
   await revealCard(card); if(!alive(tok)) return;
   const move=(t,f)=>{ const tr='translate('+(t.ox*f)+'px,'+(t.oy*f)+'px)'; t.im.style.transform='translate(-50%,-50%) '+tr; if(t.sh) t.sh.style.transform='translate(-50%,-50%) '+tr; };
   for(const a of shuffle(targets)){ const t=items.find(x=>x.a===a); if(!t) continue;
