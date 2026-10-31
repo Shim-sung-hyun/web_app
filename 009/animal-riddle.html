@@ -417,8 +417,8 @@ const ALL=Object.keys(AD);
 const IMGV='?v=20261031b';
 const pic=a=>(OLD[a]?P007+OLD[a]+'.webp':PNEW+NEW[a]+'.webp')+IMGV;
 /* 실제 크기(2026-10-31 선생님 의견, 1편 008과 같은 셈): 배경(사는 곳 장면)이 있을 때만 씀 — 중·상 고개 장면.
-   그려진 동물의 가장 긴 쪽 = 장면 높이 × absFrac(실제 몸 크기 m를 로그 눈금으로, 장면 높이의 17~100%).
-   배경 없는 카드(하 퀴즈·정리하기·학습·같은 동물 찾기)는 여럿이어도 늘 카드에 가득(크기 비교 안 함) */
+   그려진 동물의 가장 긴 쪽 = 장면 높이 × absFrac(실제 몸 크기 m를 로그 눈금으로) — 고개 장면은 동물이 혼자라 가장 작아도 30%(선생님 의견).
+   카드 하나에 동물 한 마리면 늘 카드에 가득(하 퀴즈·정리하기·학습·같은 동물 찾기 — 카드가 따로따로라 크기 비교 안 함) */
 const REAL={'벌':.02,'나비':.08,'두더지':.17,'토끼':.45,'부엉이':.55,'고양이':.7,'원숭이':.7,'개':.9,'독수리':.9,'문어':1,'펭귄':1,
   '곰':2,'호랑이':2.6,'사자':2.4,'소':2.4,'얼룩말':2.4,'상어':4,'기린':5,'코끼리':6,'고래':12};
 /* 그림마다 동물이 차지하는 폭·높이(512칸 대비, 008과 같음) — 그려진 부분의 가장 긴 쪽으로 견줌 */
@@ -901,7 +901,7 @@ async function riddle(it,tok){
   setBubble(F,WHO,'');
   /* 그림 준비: 동물을 배경 아래쪽 가운데에(장면 높이의 72%) */
   const img=await imgLoad(pic(t)); if(!alive(tok)) return;
-  const dpr=Math.min(2,window.devicePixelRatio||1), CW=Math.round(sw*dpr), CH=Math.round(sh*dpr), AS=Math.min(CW,CH*absFrac(t)/Math.max(...(BB[t]||[.9,.9]))), AX=(CW-AS)/2,
+  const dpr=Math.min(2,window.devicePixelRatio||1), CW=Math.round(sw*dpr), CH=Math.round(sh*dpr), AS=Math.min(CW,CH*Math.max(.3,absFrac(t))/Math.max(...(BB[t]||[.9,.9]))), AX=(CW-AS)/2,
     home=AN[t]&&AN[t].home, bb=BB[t]||[.9,.9], AY=home==='ground'||home==='underground'?CH*.95-AS*(.5+bb[1]/2):CH*(home==='sky'?.42:.55)-AS/2;   /* 실제 크기(배경이 있으니): 땅 동물은 발이 아래에, 하늘은 위쪽, 물은 가운데 */
   const layer=()=>{ const c=document.createElement('canvas'); c.width=CW; c.height=CH; sc.appendChild(c); return c; };
   const shape=(ctx,p)=>{ const k=AS/512, [x0,y0,x1,y1]=p.b.map((v,i)=>v*k+(i%2?AY:AX)); ctx.beginPath(); if(p.t==='e') ctx.ellipse((x0+x1)/2,(y0+y1)/2,(x1-x0)/2,(y1-y0)/2,0,0,Math.PI*2); else ctx.rect(x0,y0,x1-x0,y1-y0); };
