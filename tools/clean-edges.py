@@ -49,7 +49,11 @@ HOLES = {
     'media/habitats/props/coral.webp': [(310, 113), (261, 130), (360, 191)],
 }
 # 흰 곳이 전혀 없는 그림(풀·나무): 거의 흰 점은 모두 바탕
-ALL_WHITE_IS_BG = {'grass', 'goldgrass', 'rice', 'reeds', 'seaweed', 'marsh', 'fern', 'bush', 'acacia', 'coral', 'lilypads'}
+ALL_WHITE_IS_BG = {'grass', 'goldgrass', 'rice', 'reeds', 'seaweed', 'marsh', 'fern', 'bush', 'acacia', 'coral', 'lilypads',
+    # 2026-10-31 새 소품(가지·잎·뿌리 사이에 흰 바탕이 갇힘)
+    'agave', 'asters', 'bramble', 'branchpile', 'darkbush', 'dryreeds', 'evergreen', 'gnarlroot', 'iris', 'juniper', 'kelp',
+    'leafpile', 'lotus', 'pinkbloom', 'pondweed', 'rootarch', 'rockarch', 'rootball', 'saltbush', 'seafan', 'sedge',
+    'thornbush', 'tubecoral', 'tussock', 'twigbush', 'willow', 'anemone', 'mudbank', 'mudlog', 'sunkenlog', 'pebblemound'}
 
 N4 = ((1, 0), (-1, 0), (0, 1), (0, -1))
 N8 = N4 + ((1, 1), (1, -1), (-1, 1), (-1, -1))
