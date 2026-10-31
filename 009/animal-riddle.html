@@ -911,7 +911,7 @@ async function riddle(it,tok){
   const drawPart=p=>{ if(!img) return; const c=layer(), x=c.getContext('2d'); x.save(); shape(x,p); x.clip(); x.drawImage(img,AX,AY,AS,AS); x.restore(); requestAnimationFrame(()=>c.classList.add('on')); };
   /* 차오르는 그림(2026-10-31 선생님 의견): 물이 차오르듯 발부터 위로, 윗선은 일렁이는 물결.
      그림자 대신 원래 동물 그림을 아주 흐리게(GHOST — 살짝 신경 써서 보면 보일 만큼). 고개마다 정해진 높이까지 천천히 오르고(마지막 고개에 다 참) */
-  const GHOST=.05;
+  const GHOST=.03;
   const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   let shd=null, lvNow=0, lvTo=0;
   const shadowInit=()=>{ const c=layer(); c.classList.add('on');
