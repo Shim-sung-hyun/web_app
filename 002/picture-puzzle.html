@@ -1405,7 +1405,8 @@ function layout(){
   /* 자리 */
   const list=R.pieces.filter(p=>!p.placed);
   const slots=slotsFor(list.length);
-  shuffleArr(list).forEach((p,i)=>{ p.slot={x:slots[i].x,y:slots[i].y,s:G.s}; if(!p.dragging&&(R.active||R.done)){ if(p.free) clampPiece(p); else { p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; } } });
+  const fw=G.EW*G.s, fh=G.EH*G.s, sx=v=>Math.min(Math.max(EDGE,v),W-EDGE-fw), sy=v=>Math.min(Math.max(EDGE,v),H-EDGE-fh); /* 처음 자리도 화면 끝에서 띄움 */
+  shuffleArr(list).forEach((p,i)=>{ p.slot={x:sx(slots[i].x),y:sy(slots[i].y),s:G.s}; if(!p.dragging&&(R.active||R.done)){ if(p.free) clampPiece(p); else { p.x=p.slot.x; p.y=p.slot.y; p.s=G.s; } } });
   R.pieces.forEach(p=>{ if(p.placed){ p.x=G.ix+p.c*G.pw-G.m; p.y=G.iy+p.r*G.ph-G.m; p.s=1; } if(!p.dragging) setPos(p); });
   if(R.cue) showTarget(R.cue);
   placeDoneLabel();
@@ -1485,8 +1486,9 @@ function drawPiece(p){
   ctx.lineJoin='round'; ctx.lineWidth=1.4; ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.stroke();
 }
 function setPos(p){ const r=p.rot||0; p.el.style.transform=r&&G?`translate(${p.x}px,${p.y}px) scale(${p.s}) translate(${G.EW/2}px,${G.EH/2}px) rotate(${r}deg) translate(${-G.EW/2}px,${-G.EH/2}px)`:`translate(${p.x}px,${p.y}px) scale(${p.s})`; }
+const EDGE=24; /* 조각이 화면 끝에서 떨어질 거리 */
 function clampPiece(p){ const pl=$('play'), W=pl.clientWidth, H=pl.clientHeight, w=G.EW*p.s, h=G.EH*p.s; /* 화면 끝에 딱 붙지 않게 24px 띄움: 태블릿·전자칠판은 화면 끝을 누르면 기기 몸짓(뒤로 가기·알림창 등)으로 가져가서 조각이 안 눌림 */
-  const E=24; p.x=Math.min(Math.max(E,p.x),W-E-w); p.y=Math.min(Math.max(E,p.y),H-E-h);
+  const E=EDGE; p.x=Math.min(Math.max(E,p.x),W-E-w); p.y=Math.min(Math.max(E,p.y),H-E-h);
   if(p.x+w>W-74&&p.y+h>H-74) p.x=Math.max(0,W-74-w); /* 관리 버튼은 가리지 않게 */
   if(S.R&&isSuper(S.R.level)&&p.x<190&&p.y+h>H-64) p.y=Math.max(0,H-64-h); /* 초시계도 */ }
 function updateProgress(){ const R=S.R; if(!R) return; const pr=$('prog');
