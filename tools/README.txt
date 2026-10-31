@@ -69,3 +69,13 @@
    다리 사이 등에 흰 바탕이 갇혀 있으면 HOLES에 그 자리 한 점을 적고 다시 돌림.
  2026-10-31: 79장(007/pics 동물 31 · media/animals 24 · 소품 24)을 정리 전 원본(a555b70^)에서 이 방법으로 다시 만듦.
    예전 방법(밝은 점을 통째로 지움)은 가장자리가 계단처럼 거칠고 흰 점이 남았음(보이는 흰 점: 원본 23,394 → 예전 42,480 → 지금 122).
+
+
+5. 가림 소품 목록 — props-index.py (008 숨은 동물 찾기)
+
+   python3 tools/props-index.py
+
+ 하는 일: media/habitats/props/의 소품 그림을 모두 재서 index.json(크기·꽉 찬 부분·쓰는 곳)을 고쳐 씁니다.
+ 새 소품: 흰 바탕을 지운 webp를 넣고 → clean-edges.py로 가장자리 정리 → 이 도구를 돌림
+   → "places가 비어 있는 소품"으로 나온 것은 index.json에서 쓰는 곳을 채우고 다시 돌림. 앱은 고치지 않아도 됩니다.
+ Gemini 프롬프트와 그림체 본보기: media/habitats/props/prompts/
