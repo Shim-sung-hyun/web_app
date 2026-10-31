@@ -983,6 +983,7 @@ function gameCard(src){
   clearStage(); const st=$('stage'), A=area();
   const h=Math.min(A.h*0.9,(A.w*0.94)*3/4), w=h*4/3;
   const card=document.createElement('div'); card.className='showCard'; card.style.width=w+'px'; card.style.height=h+'px'; card.style.touchAction='none';
+  card.style.cursor='pointer';   /* 장면 어디서나 같은 손가락 커서 — 동물 위에서만 바뀌면 커서가 숨은 자리를 알려 줌(자극 통제) */
   card.innerHTML='<img class="bg" src="'+src+'" alt="" draggable="false" style="object-fit:fill">';
   card.style.opacity=0; card.style.transition='opacity .45s ease';   /* 동물·소품을 다 놓고 그림을 다 받은 뒤에 보여 줌 */
   st.appendChild(card); return {card,w,h};
@@ -1054,7 +1055,7 @@ async function playHide(p,lvG,targets,tok){
     placed.push(best.hb.rect); used[best.hb.nm]=(used[best.hb.nm]||0)+1;
     const {x,y,hb}=best;
     const im=document.createElement('img'); im.className='placed'; im.src=pic(a); im.alt=a; im.draggable=false;
-    Object.assign(im.style,{width:z+'px',height:z+'px',left:x+'px',top:y+'px',pointerEvents:'auto',cursor:'pointer',zIndex:99+Math.round(hb.top+hb.sh),transition:'transform 1s ease-in-out, filter 1s'});   /* 앞(아래)에 있는 소품이 위에 오게: 소품은 아랫단 높이로, 동물은 제 소품 바로 뒤 */
+    Object.assign(im.style,{width:z+'px',height:z+'px',left:x+'px',top:y+'px',pointerEvents:'auto',cursor:'inherit',zIndex:99+Math.round(hb.top+hb.sh),transition:'transform 1s ease-in-out, filter 1s'});   /* 앞(아래)에 있는 소품이 위에 오게: 소품은 아랫단 높이로, 동물은 제 소품 바로 뒤 */
     if(L.fade) im.style.filter='saturate(.82) brightness(.96) drop-shadow(0 2px 2px rgba(0,0,0,.18))';
     card.appendChild(im);
     const pr=propImg(hb.lk,hb.left,hb.top,hb.sw,hb.sh); pr.style.zIndex=100+Math.round(hb.top+hb.sh);
