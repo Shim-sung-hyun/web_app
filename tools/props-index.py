@@ -9,6 +9,9 @@ index.json 한 줄:  "bush": {"size":[480,383], "solid":[왼,위,오른,아래],
          (풀잎 끝·가지 사이로 동물이 비쳐 보이지 않게). 그림을 바꾸면 이 도구로 다시 잼.
   mask   모양 표 [가로 칸, 세로 칸, base64] — 그림을 가장 긴 쪽 48칸으로 나눠 칸마다 칠해졌는지(1)·비었는지(0), 왼쪽 위부터 줄마다.
          앱은 이것으로 동물의 칠해진 칸 중 몇 %가 실제로 가려지는지 셈(2026-11-01, 별 모양이면 뾰족한 끝까지 그대로)
+  real   실제 높이(m) [가장 낮게, 가장 높게] 또는 "far"(구름처럼 아주 멀리 있는 것 — 동물을 가리지 않고 빈 소품으로만).
+         앱은 가리는 동물과 같은 거리에 있다고 보고, 그 동물의 화면 크기 ÷ 실제 크기 비율로 이 높이를 화면 크기로 바꿔
+         그 범위(조금 앞이면 1.8배까지)에서만 씀 → 모래 언덕이 다람쥐만 하게 줄어 앞에 놓이는 일이 없음(2026-11-01). 손으로 적는 칸
   places 이 소품을 쓰는 곳(앱의 PL 이름: ground forest grassland desert polar sky underground water sea pond wetland.
          수준 1의 '땅'(land)은 ground를 따름). 앱을 고치지 않고 이 칸만 고치면 됨.
 동물 그림 모양 표도 함께 만듦: media/animals/masks.json — {"그림 파일 이름(확장자 빼고)": base64(48×48 칸, 512 그림 전체)}.
@@ -57,7 +60,7 @@ def mask_of(path, n=48):
 
 def main():
     old = json.load(open(IDX, encoding='utf-8')) if os.path.exists(IDX) else {}
-    out, empty = {}, []
+    out, empty, noreal = {}, [], []
     for f in sorted(os.listdir(ROOT)):
         if not f.endswith('.webp'):
             continue
@@ -65,12 +68,17 @@ def main():
         w, h, s = solid_box(os.path.join(ROOT, f))
         o = old.get(nm)
         places = o.get('places', []) if isinstance(o, dict) else []
-        out[nm] = {'size': [w, h], 'solid': s, 'mask': mask_of(os.path.join(ROOT, f)), 'places': places}
+        real = o.get('real') if isinstance(o, dict) else None
+        out[nm] = {'size': [w, h], 'solid': s, 'mask': mask_of(os.path.join(ROOT, f)), 'real': real, 'places': places}
+        if real is None:
+            noreal.append(nm)
         if not places:
             empty.append(nm)
     with open(IDX, 'w', encoding='utf-8') as fp:
         fp.write('{\n' + ',\n'.join('"%s": %s' % (k, json.dumps(v, ensure_ascii=False, separators=(',', ':'))) for k, v in out.items()) + '\n}\n')
     print('소품 %d개' % len(out))
+    if noreal:
+        print('real(실제 높이)이 비어 있는 소품(앱은 0.3~1m로 봄 — index.json에 적어 넣기):', ', '.join(noreal))
     if empty:
         print('places가 비어 있는 소품(놀이에 안 나옴):', ', '.join(empty))
     animals = {}

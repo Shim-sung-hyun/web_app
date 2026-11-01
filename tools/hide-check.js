@@ -3,7 +3,7 @@ const {chromium}=require('playwright'); const fs=require('fs');
    찾을 동물마다 앞에 놓인 소품·다른 동물에 가려지고 남은 점 수를 셈(그림을 캔버스에 겹쳐 그려서).
      node tools/hide-check.js [TRIALS=5]        (저장소 맨 위에서, playwright 필요)
    결과: 완전히 가려진(보이는 점 60 미만) 동물 목록과 비율, '제 소품만으로' 가려진 것과 '다른 것에' 가려진 것을 나눠 보여 줌.
-   2026-11-01(008 세션): 보이는 몫이 어렵기마다 목표 범위(쉬움 50~65% · 보통 25~35% · 어려움 10~18%, ±5) 안에 드는 비율도 보여 줌 */
+   2026-11-01(008 세션): 실제 크기에 맞는 소품이 없어 크기를 무시한 경우도 셈. 보이는 몫이 어렵기마다 목표 범위(쉬움 50~65% · 보통 25~35% · 어려움 10~18%, ±5) 안에 드는 비율도 보여 줌 */
 const path=require('path');
 const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
 (async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1366,height:768}});
@@ -38,7 +38,7 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
        const occ=info.filter(o=>o!==A&&o.z>A.z), cnt=()=>{ const d=x.getImageData(0,0,W,H).data; let n=0; for(let i=3;i<d.length;i+=4) if(d[i]>128) n++; return n; };
        const own=occ.filter(o=>!o.animal&&Math.abs(o.z-A.z)===1); own.forEach(draw); const nOwn=cnt();
        occ.filter(o=>!own.includes(o)).forEach(draw); const n1=cnt();
-       out.push({pl,lv,a:A.a,target:targets.includes(A.a),n0,own:nOwn,vis:n1,frac:n0?n1/n0:0,ok:!!A.im,anim:A.e.complete&&A.e.naturalWidth>0});
+       out.push({free:A.e.dataset.free||'',pl,lv,a:A.a,target:targets.includes(A.a),n0,own:nOwn,vis:n1,frac:n0?n1/n0:0,ok:!!A.im,anim:A.e.complete&&A.e.naturalWidth>0});
      }
      RUN.token=99; await wait(50); clearStage();
     } }
@@ -50,5 +50,8 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
  const okB=x=>{ const [lo,hi]=BAND[x.lv]; return x.frac>=lo-TOL&&(x.frac<=hi+TOL||x.vis<=330*1.6); };
  [1,2,3].forEach(lv=>{ const a=t.filter(x=>x.lv===lv).sort((u,v)=>u.frac-v.frac), q=k=>a.length?Math.round(100*a[Math.floor(k*(a.length-1))].frac):0, inb=a.filter(okB).length;
    console.log('  '+['','쉬움','보통','어려움'][lv]+' 보이는 몫: 가장 적게 '+q(0)+'% · 아래 1/4 '+q(.25)+'% · 가운데 '+q(.5)+'% · 위 1/4 '+q(.75)+'% · 가장 많이 '+q(1)+'%  — 목표 '+BAND[lv].map(v=>v*100).join('~')+'%(±'+TOL*100+') 안 '+Math.round(100*inb/Math.max(1,a.length))+'%'); });
+ /* 실제 크기에 맞는 소품이 없어 크기를 무시한 경우(그 곳에 그 크기의 소품을 더 그려야 함) */
+ const fr=t.filter(x=>x.free); console.log('  실제 크기에 맞는 소품이 없어 크기를 무시함: 찾을 동물 '+t.length+' 중 '+fr.length+' ('+Math.round(100*fr.length/Math.max(1,t.length))+'%)');
+ const fm={}; fr.forEach(x=>{ const k=x.pl+' '+x.a; fm[k]=(fm[k]||0)+1; }); if(fr.length) console.log('    '+Object.entries(fm).sort((u,v)=>v[1]-u[1]).map(([k,n])=>k+' '+n).join(' · '));
  const outB=t.filter(x=>!okB(x)).sort((u,v)=>u.frac-v.frac); if(outB.length){ console.log('  목표 밖:'); outB.slice(0,20).forEach(x=>console.log('    '+x.pl+' '+['','쉬움','보통','어려움'][x.lv]+' '+x.a+' '+Math.round(100*x.frac)+'% ('+x.vis+'점)')); }
  hid.sort((x,y)=>x.vis-y.vis).forEach(x=>console.log('  '+x.pl+' '+['','쉬움','보통','어려움'][x.lv]+' '+x.a+' · 원래 '+x.n0+'점 → 제 소품 뒤 '+x.own+' → 최종 '+x.vis)); await b.close(); })();

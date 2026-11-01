@@ -948,7 +948,7 @@ function drawEnd(tok){
    이름을 부르면 찾아 누름. 틀리면 반응 없음. 16초 뒤 동물이 조금 더 나와 줌. 찾으면 동물이 소품 뒤에서 걸어(헤엄쳐·날아) 나옴 */
 /* 소품 목록은 media/habitats/props/index.json(tools/props-index.py로 만듦): 소품마다 size 크기 · solid 빈틈 없이 꽉 찬 부분(그림 대비 왼·위·오른·아래 —
    풀잎 끝·나뭇가지 사이로 동물이 비쳐 보이지 않게 이 부분으로 가림) · places 쓰는 곳. 새 소품은 그림과 이 목록만 넣으면 됨(앱은 고치지 않음) */
-let PROPS={}, PROPSZ={}, SOLID={}, PMASK={};   /* PMASK: 소품 모양 표(index.json mask) */
+let PROPS={}, PROPSZ={}, SOLID={}, PMASK={}, PREAL={};   /* PMASK: 소품 모양 표(index.json mask) · PREAL: 실제 높이 m [낮게, 높게] 또는 'far'(index.json real) */
 /* 어렵기마다: base 가장 큰 동물의 크기(실제 크기 absFrac에 곱함) · band 찾을 동물이 보이는 몫(칠해진 칸 중 %, 2026-11-01 — 이 범위 안에서 무작위) ·
    nd 다른 동물 · decoy 빈 소품 · side 옆에서 가릴 확률 · fade 빛깔 묻힘 · min 가장 작은 크기(px) */
 const GLV={1:{base:1,band:[.50,.65],nd:[0,0],decoy:[0,0],side:0,fade:0,min:72},
@@ -962,7 +962,7 @@ let AMASK={};
 const amaskReady=fetch(PNEW+'masks.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{ Object.entries(j||{}).forEach(([k,b])=>{ const M=decodeMask(48,48,b); M.pts=[];
   for(let i=0;i<48*48;i++) if(M.bits[i]) M.pts.push([(i%48+.5)/48,(Math.floor(i/48)+.5)/48]); AMASK[k]=M; }); }).catch(()=>{});
 const gameReady0=fetch(HAB+'props/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{
-  Object.entries(j||{}).forEach(([nm,v])=>{ if(!v||!v.size) return; PROPSZ[nm]=v.size; SOLID[nm]=v.solid; if(v.mask) PMASK[nm]=decodeMask(...v.mask); (v.places||[]).forEach(p=>(PROPS[p]=PROPS[p]||[]).push(nm)); });
+  Object.entries(j||{}).forEach(([nm,v])=>{ if(!v||!v.size) return; PROPSZ[nm]=v.size; SOLID[nm]=v.solid; if(v.mask) PMASK[nm]=decodeMask(...v.mask); PREAL[nm]=v.real||[.3,1]; (v.places||[]).forEach(p=>(PROPS[p]=PROPS[p]||[]).push(nm)); });
   }).catch(()=>{}).then(()=>{   /* 목록을 못 받으면 기본 소품으로 */
   const D={ground:'bush boulder grass',forest:'bush log fern',grassland:'goldgrass boulder',desert:'dune boulder',polar:'snow ice',sky:'cloud cloud2',underground:'clod flatrock',
     water:'seaweed stones',sea:'seaweed coral',pond:'reeds stones',wetland:'rice reeds'};
@@ -1020,12 +1020,18 @@ function seen(b,occ){ const M=amOf(b.a); if(!M) return {f:1,px:1e9,win:[b.bx,b.b
 /* 동물 a를 소품 lk로 가리는 자리 찾기(동물 그림 칸 크기 1, 가운데 (0,0) 기준): 동물의 칠해진 칸 중 tgt만큼 보이게.
    소품 크기를 몇 가지로 해 보며, 아래에서 가리면 소품을 위아래로, 옆에서 가리면 좌우로 옮겨 보이는 몫을 맞춤(반씩 좁혀 가며).
    아래에서 가릴 때 소품은 늘 동물 발끝보다 아래까지 내려오게(발이 소품 밑으로 삐져나오지 않게) */
-function hideCfg(a,p,mode,dir,tgt,lk){
+function hideCfg(a,p,mode,dir,tgt,lk,free){
   const B=BB[a]||[.9,.9], dw=B[0], dh=B[1], box={a,bx:-.5,by:-.5,z:1}, nm=lk.nm, [pw0,ph]=PROPSZ[nm]||[480,360], pw=pw0*lk.st,
     S0=SOLID[nm]||[.15,.3,.85,.92], s0=lk.flip?1-S0[2]:S0[0], s1=lk.flip?1-S0[0]:S0[2], t0=S0[1], t1=S0[3], m=MOVE[p], foot=m==='walk'||m==='slide'||m==='swim';
   const k0=Math.max(dw*1.05/((s1-s0)*pw),dh*.8/((t1-t0)*ph)), sc=c=>c.err*10+Math.max(0,c.bad-2.4);
+  /* 실제 크기(2026-11-01): 소품은 가리는 동물과 같은 거리(조금 앞이면 1.8배까지)에 있다고 보고, 동물의 화면 크기÷실제 크기로 소품 높이를 정함.
+     free=true면(알맞은 소품이 하나도 없을 때만) 이 범위를 무시 */
+  const R0=PREAL[nm]||[.3,1], ppm=Math.max(dw,dh)/realOf(a);
+  if(R0==='far'&&!free) return {score:1e6,err:1,bad:9,nm,lk};
+  const klo=R0==='far'||free?0:ppm*R0[0]*.85/ph, khi=R0==='far'||free?1e9:ppm*R0[1]*1.8/ph;
+  const ks=[...new Set([1,1.2,1.45,1.75].map(km=>Math.min(khi,Math.max(klo,k0*km))))];
   let best=null;
-  for(const km of [1,1.2,1.45,1.75]){ const k=k0*km, sw=pw*k, sh=ph*k, cx=-((s0+s1)/2)*sw, g={nm,flip:lk.flip,sw,sh,left:cx,top:0};
+  for(const k of ks){ sw=pw*k, sh=ph*k, cx=-((s0+s1)/2)*sw, g={nm,flip:lk.flip,sw,sh,left:cx,top:0};
     let set, hi;
     if(mode==='side'){ g.top=foot?dh/2+dh*.04-t1*sh:-((t0+t1)/2)*sh; set=d=>{ g.left=cx-dir*d; }; hi=dw+sw; }
     else { g.left=cx+(Math.random()-.5)*dw*.12; set=d=>{ g.top=dh/2+dh*.03-t1*sh+d; }; hi=dh+t1*sh; }
@@ -1035,11 +1041,16 @@ function hideCfg(a,p,mode,dir,tgt,lk){
     else { let a0=0, a1=hi; for(let it=0;it<14;it++){ const mid=(a0+a1)/2; set(mid); if(f()<tgt) a0=mid; else a1=mid; } set(a1); c={f:f()}; }
     Object.assign(c,{nm,lk,left:g.left,top:g.top,sw,sh,err:Math.abs(c.f-tgt),bad:Math.max(sh/dh,sw/dw*.8)});
     if(!best||sc(c)<sc(best)) best=c; if(c.err<.025&&c.bad<2.4) break; }
-  best.score=sc(best); return best;
+  best.score=sc(best)+(free?3:0); best.free=!!free; return best;
 }
 /* 이 곳 소품 몇 가지(덜 쓴 것부터)로 해 보고 가장 잘 맞는 것 */
+/* 이 곳 소품을 모두 해 보고(실제 크기가 맞는 것만) 가장 잘 맞는 것. 같은 소품이 되풀이되지 않게 많이 쓴 것은 조금 덜 고름.
+   실제 크기가 맞는 소품이 없으면(그릴 소품이 아직 없는 곳) 크기를 무시하고 고름 */
 function pickHide(a,p,mode,dir,tgt,used){
-  return shuffle([...PROPS[p]]).sort((x,y)=>(used[x]||0)-(used[y]||0)).slice(0,6).map(nm=>hideCfg(a,p,mode,dir,tgt,propLook(nm))).sort((x,y)=>x.score-y.score)[0]; }
+  const u=nm=>(used[nm]||0)*.06, all=shuffle([...PROPS[p]]);
+  let c=all.map(nm=>hideCfg(a,p,mode,dir,tgt,propLook(nm))).sort((x,y)=>x.score+u(x.nm)-y.score-u(y.nm))[0];
+  if(!c||c.score>1.2){ const f=all.filter(nm=>PREAL[nm]!=='far').concat(all.filter(nm=>PREAL[nm]==='far')).slice(0,8).map(nm=>hideCfg(a,p,mode,dir,tgt,propLook(nm),true)).sort((x,y)=>x.score-y.score)[0]; if(f&&(!c||f.score<c.score)) c=f; }
+  return c; }
 /* 찾았을 때 나올 길이: (ux,uy) 쪽으로 얼마나 가야 제 소품에서 다 나오는지(97% 보임) */
 function clearDist(a,c,ux,uy){ const g={nm:c.nm,flip:c.lk.flip,sw:c.sw,sh:c.sh,left:c.left,top:c.top}; let a0=0, a1=2+c.sw+c.sh;
   for(let it=0;it<14;it++){ const mid=(a0+a1)/2; if(seen({a,bx:-.5+ux*mid,by:-.5+uy*mid,z:1},[{p:g}]).f>=.97) a1=mid; else a0=mid; } return a1; }
@@ -1113,6 +1124,7 @@ async function playHide(p,lvG,targets,tok){
     const im=document.createElement('img'); im.className='placed'; im.src=pic(a); im.alt=a; im.draggable=false;
     Object.assign(im.style,{width:z+'px',height:z+'px',left:x+'px',top:y+'px',pointerEvents:'auto',cursor:'inherit',zIndex:99+Math.round(pg.top+pg.sh),transition:'transform 1s ease-in-out, filter 1s'});   /* 앞(아래)에 있는 소품이 위에 오게: 소품은 아랫단 높이로, 동물은 제 소품 바로 뒤 */
     if(L.fade) im.style.filter='saturate(.82) brightness(.96) drop-shadow(0 2px 2px rgba(0,0,0,.18))';
+    if(c.free) im.dataset.free=c.nm;   /* 실제 크기에 맞는 소품이 없어 크기를 무시함(검사 도구가 셈) */
     card.appendChild(im);
     const pr=propImg(c.lk,pg.left,pg.top,pg.sw,pg.sh); pr.style.zIndex=100+Math.round(pg.top+pg.sh);
     card.appendChild(pr);
@@ -1125,15 +1137,21 @@ async function playHide(p,lvG,targets,tok){
     else oy=-(clearDist(a,c,0,-1)*z+4);
     if(x+ox-dw/2<0) ox=dw/2-x; if(x+ox+dw/2>W) ox=W-dw/2-x; if(y+oy-dh/2<0) oy=dh/2-y;   /* 장면 밖으로 나가지 않게 */
     const it={a,im,ox,oy,dw,dh,pr};
-    const gp={kind:isT?'t':'o',im,pr,pg,box:{a,bx:x-z/2,by:y-z/2,z},fOwn:c.f,pxOwn:c.f*area,els:[im,pr]}; groups.push(gp);
+    const gp={kind:isT?'t':'o',im,pr,pg,box:{a,bx:x-z/2,by:y-z/2,z},fOwn:c.f,pxOwn:c.f*area,ppm:Math.max(dw,dh)/realOf(a),els:[im,pr]}; groups.push(gp);
     /* 땅에 닿는 그림자(2026-10-26): 땅 위 장면에서만 동물 발밑·소품 밑에 옅은 타원 — 오려 붙인 티가 나지 않게. 동물 그림자는 동물과 함께 움직임 */
     if(m==='walk'||m==='slide'){ it.sh=groundShadow(card,x,y+dh/2,dw*.8,1); it.sh.style.transition='transform 1s ease-in-out';
       gp.els.push(it.sh,groundShadow(card,pg.left+pg.sw/2,pg.top+pg.sh*.97,pg.sw*.86,3)); }
     items.push(it);
   });
   /* 빈 소품(그 뒤에 아무것도 없음): 소품마다 들여다봐야 하게 */
-  for(let i=0,nd=rint(L.decoy);i<nd;i++){ const nm=[...shuffle(PROPS[p])].sort((a,b)=>(used[a]||0)-(used[b]||0))[0], lk=propLook(nm); used[nm]=(used[nm]||0)+1;
-    const [pw,ph]=PROPSZ[nm]||[480,360], sw=Math.min(big,H*.42)*(.6+Math.random()*.4)*lk.st, sh=sw/lk.st*ph/pw;
+  for(let i=0,nd=rint(L.decoy);i<nd;i++){
+    /* 빈 소품 크기도 실제 크기로: 이 장면 동물 하나의 '1m가 몇 점'을 빌려 씀(구름처럼 먼 것은 예전처럼). 화면에 너무 크거나 작으면 다른 소품 */
+    let nm=null, lk, sw, sh;
+    for(const n of [...shuffle(PROPS[p])].sort((a,b)=>(used[a]||0)-(used[b]||0))){ const l=propLook(n), [pw,ph]=PROPSZ[n]||[480,360], R0=PREAL[n]||[.3,1];
+      let h; if(R0==='far') h=Math.min(big,H*.42)*(.6+Math.random()*.4)*ph/pw;
+      else { const gs=groups.filter(g=>g.ppm); if(!gs.length) continue; const ppm=pick1(gs).ppm; h=ppm*(R0[0]+(R0[1]-R0[0])*Math.random())*(.9+.5*Math.random()); }
+      const w=h*pw/ph*l.st; if(h>H*.55||w>W*.75||h<18) continue; nm=n; lk=l; sw=w; sh=h; break; }
+    if(!nm) continue; used[nm]=(used[nm]||0)+1;
     let best=null, bs=Infinity;
     for(let t2=0;t2<40;t2++){ const x=W*.04+(W*.92-sw)*Math.random(), fy=m==='swim'?H*(.9+.1*Math.random()):H*(yr[0]+(yr[1]-yr[0])*Math.random()), top=(m==='walk'||m==='slide'||m==='swim')?fy-sh:fy-sh/2, r=[x,top,x+sw,top+sh];
       const sc=placed.reduce((s,q)=>s+overlap(r,q),0)+keepCost(r); if(sc<bs){ bs=sc; best=r; } if(sc===0) break; }

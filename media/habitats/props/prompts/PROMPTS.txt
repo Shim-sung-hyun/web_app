@@ -86,3 +86,85 @@ C: icedrift iceberg iceridge snowrock iceblocks cloudtall cloudbank cloudpuffs
 D: kelp anemone seafan rockarch braincoral tubecoral sunkenlog pebblemound
 E: lotus iris sedge mudbank willow dryreeds mudlog pondweed
 F: soilstones rootball buriedrock pebbleclod rootcut clay gravel slate
+
+
+==================================================================
+2026-11-01 둘째 묶음 — 실제 크기에 맞는 가림 소품 (판 G~L, 48개)
+==================================================================
+왜: 앱이 이제 소품의 실제 크기를 지킴(모래 언덕은 다람쥐를 못 가림). 그러자 비는 곳이 생김:
+  · 하늘: 구름은 아주 멀고 커서 새·곤충을 가릴 수 없음 → 가까이 있는 나뭇가지(화면 옆에서 들어옴)·꽃줄기(화면 아래에서 올라옴)
+  · 아주 작은 동물(벌·나비·소금쟁이·물방개·거미·달팽이·우렁이·새우·조개): 그 크기 세계의 버섯·잎·꽃·조약돌
+  · 아주 큰 동물(고래·하마·악어·코끼리·기린): 큰 바위·산호초·바오바브·파피루스 숲
+하는 법은 위와 같음(판마다 새 대화창 · style-ref.png 붙임 · [공통] + 그 판의 글). 판 G·H는 [잘린 끝] 글도 함께 붙임.
+
+[잘린 끝] — 판 G·H에만 [공통] 다음에 붙임
+In this sheet every object is CUT OFF on one side, as if it continues outside the picture: draw it touching the cell border on that side,
+with a clean straight cut exactly along the cell border (no rounded end, no stump drawn, no outline along the cut).
+
+[판 G] 하늘 — 새를 가리는 가지 (모두 왼쪽 끝이 잘려 칸 왼쪽 테두리에 닿음, 오른쪽으로 뻗음)
+1 a leafy oak branch, dense green leaves, cut off at the left
+2 a pine branch with thick needle clusters, cut off at the left
+3 a cherry branch full of pink blossoms and a few leaves, cut off at the left
+4 a maple branch with dense green leaves, cut off at the left
+5 a spray of bamboo leaves on thin stems, cut off at the left
+6 an apple tree branch with leaves and two small red apples, cut off at the left
+7 a thick linden branch with large heart-shaped leaves, very dense, cut off at the left
+8 a ginkgo branch with fan-shaped yellow-green leaves, cut off at the left
+
+[판 H] 하늘 — 벌·나비·잠자리를 가리는 꽃과 풀 (모두 줄기 아래 끝이 잘려 칸 아래 테두리에 닿음, 위로 자람, 가까이서 크게 본 모습)
+1 one big sunflower head with two large leaves on a thick stem, cut off at the bottom
+2 a cluster of pink and white cosmos flowers on thin stems, cut off at the bottom
+3 dandelions: two yellow flowers and one white puffball with jagged leaves, cut off at the bottom
+4 a dense clump of tall green grass blades, cut off at the bottom
+5 a bunch of purple lavender stems, cut off at the bottom
+6 a purple thistle flower with spiky leaves, cut off at the bottom
+7 one big broad hosta leaf and two smaller leaves on stems, cut off at the bottom
+8 a cluster of white daisies with green leaves, cut off at the bottom
+
+[판 I] 땅 위·숲 — 거미·달팽이처럼 아주 작은 동물을 가리는 것 (가까이서 크게 본 모습, 옆에서 본 모습)
+1 a cluster of three small brown mushrooms
+2 a big curled dry autumn leaf standing on its edge
+3 a pine cone lying on its side with two acorns
+4 a dense patch of clover with round leaves
+5 a small wild strawberry plant with leaves and one berry
+6 a soft round clump of green moss
+7 a small pile of smooth pebbles
+8 a clump of purple violets with heart-shaped leaves
+
+[판 J] 강·연못·논 — 소금쟁이·물방개·우렁이·미꾸라지를 가리는 것 (가까이서 크게 본 모습, 물가 높이에서 옆으로 본 모습)
+1 one lily pad seen from a low side angle, slightly tilted, with a small white water lily flower
+2 the base of a few reed stems with short blades
+3 a small floating twig with three leaves
+4 arrowhead water plant: a few arrow-shaped leaves on stems
+5 a small clump of young rice seedlings
+6 two smooth pebbles with green algae
+7 a sprig of underwater hornwort with feathery green leaves
+8 a small lump of mud with tiny green sprouts
+
+[판 K] 바다·물 속 — 작은 것과 아주 큰 것
+1 a small rock with green algae on top
+2 a short tuft of seagrass
+3 a low mound of sand with a few shells-free pebbles
+4 a cluster of round sea pebbles
+5 a huge wide reef rock, much wider than tall, with small corals on it
+6 a large wide coral reef mound with many kinds of coral
+7 a tall underwater rock pillar with seaweed
+8 a big underwater cliff rock, wide, covered with kelp and sea grass
+
+[판 L] 사막·초원·강·논 — 작은 것과 큰 것
+1 a prickly pear cactus with flat round pads
+2 a small dry thorny twig bush
+3 a small clump of desert flowers, yellow and orange
+4 a big savanna rock outcrop made of rounded granite boulders piled up, wide
+5 a baobab tree with a thick trunk and a small crown
+6 a wide dense bed of tall river reeds
+7 a large clump of tall papyrus with round tufts on top
+8 a big fallen dead tree trunk lying on the ground, thick, with a few branch stubs
+
+판 이름 → 소품 파일 이름, 실제 높이(m), 쓰는 곳 (Claude가 넣을 때 씀)
+G: oakbranch pinebranch cherrybranch maplebranch bamboobranch applebranch lindenbranch ginkgobranch — 0.4~1.5 · 왼쪽 끝 잘림 · sky
+H: sunflower cosmos dandelion tallgrass lavender thistle hosta daisies — 0.08~0.6(가까이) · 아래 끝 잘림 · sky
+I: mushrooms dryleaf pinecone clover strawberry moss pebbles violets — 0.03~0.2 · ground forest
+J: lilypad reedbase floattwig arrowhead seedlings algaepebbles hornwort mudsprouts — 0.02~0.2 · pond wetland (hornwort pond water)
+K: algaerock seagrass sandmound seapebbles reefrock reefmound rockpillar seacliff — 작은 것 0.05~0.4 · 큰 것 3~20 · sea water
+L: pricklypear thorntwig desertflowers kopje baobab reedbed papyrus deadtrunk — desert grassland pond wetland
