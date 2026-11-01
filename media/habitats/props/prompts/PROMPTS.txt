@@ -334,3 +334,6 @@ drawn as one connected silhouette sitting on the ground with a flat bottom, wide
 
 [판 N] 벌용 작은 꽃(1~4, 아래 끝 잘림 → anchor bottom, sky, 0.1~0.2m) · 하마용 큰 물가 덩어리(5~8, pond, 3~5m) — 2026-11-01
 판 이름 → 소품 파일 이름: N: clovers smallflowers buttercups grassbuds | hippobank mangrove reedisland bigmudrock
+
+[판 O] 벌용 아주 작은 소품 — 꽃송이 하나·잎 한 장(아래 끝 잘림 → anchor bottom, sky, 0.04~0.08m) — 2026-11-01
+판 이름 → 소품 파일 이름: O: onecosmos oneclover onedaisy onebuttercup oneleaf twoleaves onebud onepoppy
