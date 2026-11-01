@@ -186,3 +186,148 @@ J: lilypad reedbase floattwig arrowhead seedlings algaepebbles hornwort mudsprou
 K: algaerock seagrass sandmound seapebbles redcoral soillump rootlets halfstone
 L: oakboulder fallentree thicket meadowtree bouldergroup acaciathicket kopje baobab
 M: rockoutcrop duneridge riverbank waterrock reedbed papyrus reefrock seacliff
+
+
+==================================================================
+2026-11-01 셋째 — 판 G~M을 그대로 붙여 넣는 글 (그림체를 단단히 못 박음)
+==================================================================
+처음 그린 G·H·I가 사진처럼·세밀화로 나와(베이지 바탕·네모 테두리) 다시 만든 글. 판마다:
+ 1. Gemini 새 대화창 → 2. style-ref.png를 붙임(꼭) → 3. 아래 [판 ○] 줄 다음의 영어 글을 통째로 붙여 넣기(다른 글은 더 붙이지 않음)
+ 결과가 또 사진·세밀화처럼 나오면 같은 대화창에 이어서: "Redraw in exactly the flat cartoon style of the attached reference: bold dark-brown outlines, flat colours, pure white background, no frames."
+
+[판 G] 하늘 — 새를 가리는 가지 (왼쪽 끝이 잘림)
+STYLE — must match the attached reference image exactly: simple flat cartoon props for a children's learning app, like picture-book stickers.
+Every shape has a bold, clean, even dark-brown outline. Flat fill colours with at most one soft darker shade per colour.
+NO realism, NO photo look, NO botanical drawing, NO hatching, NO pencil or watercolour texture, NO fine leaf veins, NO tiny details.
+Muted natural colours. The background is PURE WHITE everywhere — no paper colour, no beige, no texture.
+LAYOUT: one square image. An invisible 3×3 grid — draw NO grid lines, NO frames, NO boxes, NO borders around the objects.
+Put the 8 objects below in cells 1 to 8 in reading order (left to right, top to bottom), one object per cell, each filling most of its cell.
+Leave cell 9 (bottom-right corner) completely empty and white. No text, no numbers, no animals, no people, no ground line, no shadows.
+CUT EDGE: each object enters from the LEFT side of its cell. Its thick end is cut off with a clean straight vertical cut exactly at the left edge of its cell,
+as if the branch continues outside the picture. No stump, no rounded end, no outline along the cut. The object grows to the right and is very leafy and dense.
+
+1 a leafy oak branch with dense green leaves
+2 a pine branch with thick needle clusters
+3 a cherry branch full of pink blossoms with a few leaves
+4 a maple branch with dense green leaves
+5 a spray of bamboo leaves on thin stems
+6 an apple tree branch with leaves and two small red apples
+7 a thick linden branch with large heart-shaped leaves, very dense
+8 a ginkgo branch with fan-shaped yellow-green leaves
+
+[판 H] 하늘 — 벌·나비·잠자리를 가리는 꽃과 풀 (아래 끝이 잘림)
+STYLE — must match the attached reference image exactly: simple flat cartoon props for a children's learning app, like picture-book stickers.
+Every shape has a bold, clean, even dark-brown outline. Flat fill colours with at most one soft darker shade per colour.
+NO realism, NO photo look, NO botanical drawing, NO hatching, NO pencil or watercolour texture, NO fine leaf veins, NO tiny details.
+Muted natural colours. The background is PURE WHITE everywhere — no paper colour, no beige, no texture.
+LAYOUT: one square image. An invisible 3×3 grid — draw NO grid lines, NO frames, NO boxes, NO borders around the objects.
+Put the 8 objects below in cells 1 to 8 in reading order (left to right, top to bottom), one object per cell, each filling most of its cell.
+Leave cell 9 (bottom-right corner) completely empty and white. No text, no numbers, no animals, no people, no ground line, no shadows.
+CUT EDGE: each plant grows up from the BOTTOM of its cell. Its stems are cut off with a clean straight horizontal cut exactly at the bottom edge of its cell,
+as if the plant continues below the picture. No pot, no soil, no roots, no outline along the cut. Seen very close up, large in the cell.
+
+1 one big sunflower head with two large leaves on a thick stem
+2 a cluster of pink and white cosmos flowers on thin stems
+3 dandelions: two yellow flowers and one white puffball with jagged leaves
+4 a dense clump of tall green grass blades
+5 a bunch of purple lavender stems
+6 a purple thistle flower with spiky leaves
+7 one big broad hosta leaf and two smaller leaves on stems
+8 a cluster of white daisies with green leaves
+
+[판 I] 땅 위·숲·사막 — 거미·달팽이·전갈을 가리는 작은 것
+STYLE — must match the attached reference image exactly: simple flat cartoon props for a children's learning app, like picture-book stickers.
+Every shape has a bold, clean, even dark-brown outline. Flat fill colours with at most one soft darker shade per colour.
+NO realism, NO photo look, NO botanical drawing, NO hatching, NO pencil or watercolour texture, NO fine leaf veins, NO tiny details.
+Muted natural colours. The background is PURE WHITE everywhere — no paper colour, no beige, no texture.
+LAYOUT: one square image. An invisible 3×3 grid — draw NO grid lines, NO frames, NO boxes, NO borders around the objects.
+Put the 8 objects below in cells 1 to 8 in reading order (left to right, top to bottom), one object per cell, each filling most of its cell.
+Leave cell 9 (bottom-right corner) completely empty and white. No text, no numbers, no animals, no people, no ground line, no shadows.
+SMALL THINGS SEEN CLOSE UP: each object is a tiny real-world thing (a few centimetres) drawn large, seen from the side at ground level, solid and compact.
+
+1 a cluster of three small brown mushrooms
+2 a big curled dry autumn leaf standing on its edge
+3 a pine cone lying on its side with two acorns
+4 a dense patch of clover with round leaves
+5 a soft round clump of green moss
+6 a clump of purple violets with heart-shaped leaves
+7 a few small desert pebbles with a dry twig
+8 a small tuft of dry desert grass
+
+[판 J] 강·연못·논 — 소금쟁이·물방개·우렁이·미꾸라지·개구리를 가리는 작은 것
+STYLE — must match the attached reference image exactly: simple flat cartoon props for a children's learning app, like picture-book stickers.
+Every shape has a bold, clean, even dark-brown outline. Flat fill colours with at most one soft darker shade per colour.
+NO realism, NO photo look, NO botanical drawing, NO hatching, NO pencil or watercolour texture, NO fine leaf veins, NO tiny details.
+Muted natural colours. The background is PURE WHITE everywhere — no paper colour, no beige, no texture.
+LAYOUT: one square image. An invisible 3×3 grid — draw NO grid lines, NO frames, NO boxes, NO borders around the objects.
+Put the 8 objects below in cells 1 to 8 in reading order (left to right, top to bottom), one object per cell, each filling most of its cell.
+Leave cell 9 (bottom-right corner) completely empty and white. No text, no numbers, no animals, no people, no ground line, no shadows.
+SMALL THINGS SEEN CLOSE UP: each object is a tiny real-world thing (a few centimetres) drawn large, seen from the side at ground level, solid and compact.
+
+1 one lily pad seen from a low side angle, slightly tilted, with a small white water lily flower
+2 the base of a few reed stems with short blades
+3 a small floating twig with three leaves
+4 arrowhead water plant: a few arrow-shaped leaves on stems
+5 a small clump of young rice seedlings
+6 two smooth pebbles with green algae
+7 a sprig of underwater hornwort with feathery green leaves
+8 a small lump of mud with tiny green sprouts
+
+[판 K] 바다·물 속·땅속 — 새우·조개·땅강아지를 가리는 작은 것
+STYLE — must match the attached reference image exactly: simple flat cartoon props for a children's learning app, like picture-book stickers.
+Every shape has a bold, clean, even dark-brown outline. Flat fill colours with at most one soft darker shade per colour.
+NO realism, NO photo look, NO botanical drawing, NO hatching, NO pencil or watercolour texture, NO fine leaf veins, NO tiny details.
+Muted natural colours. The background is PURE WHITE everywhere — no paper colour, no beige, no texture.
+LAYOUT: one square image. An invisible 3×3 grid — draw NO grid lines, NO frames, NO boxes, NO borders around the objects.
+Put the 8 objects below in cells 1 to 8 in reading order (left to right, top to bottom), one object per cell, each filling most of its cell.
+Leave cell 9 (bottom-right corner) completely empty and white. No text, no numbers, no animals, no people, no ground line, no shadows.
+SMALL THINGS SEEN CLOSE UP: each object is a tiny real-world thing (a few centimetres) drawn large, seen from the side at ground level, solid and compact.
+
+1 a small rock with green algae on top
+2 a short tuft of seagrass
+3 a low mound of sand with a few pebbles
+4 a cluster of round sea pebbles
+5 a small branch of red coral
+6 a crumbly lump of dark soil
+7 a tangle of thin pale roots
+8 a small flat stone half buried in soil
+
+[판 L] 큰 은폐물 — 땅 위·숲·초원
+STYLE — must match the attached reference image exactly: simple flat cartoon props for a children's learning app, like picture-book stickers.
+Every shape has a bold, clean, even dark-brown outline. Flat fill colours with at most one soft darker shade per colour.
+NO realism, NO photo look, NO botanical drawing, NO hatching, NO pencil or watercolour texture, NO fine leaf veins, NO tiny details.
+Muted natural colours. The background is PURE WHITE everywhere — no paper colour, no beige, no texture.
+LAYOUT: one square image. An invisible 3×3 grid — draw NO grid lines, NO frames, NO boxes, NO borders around the objects.
+Put the 8 objects below in cells 1 to 8 in reading order (left to right, top to bottom), one object per cell, each filling most of its cell.
+Leave cell 9 (bottom-right corner) completely empty and white. No text, no numbers, no animals, no people, no ground line, no shadows.
+BIG GROUPS: each cell is ONE natural group of several big things standing together (for example a big tree with a large boulder at its base),
+drawn as one connected silhouette sitting on the ground with a flat bottom, wide and solid enough for a large animal to hide behind. The whole group is visible.
+
+1 a big old oak tree trunk with a large mossy boulder at its base and ferns
+2 a giant fallen tree with its upturned roots and earth, lying on the ground
+3 a dense thicket of several tall bushes growing together
+4 a big leafy tree with thick bushes around its base (meadow)
+5 a large group of boulders with shrubs growing between them
+6 an acacia tree with thick thorny bushes around its base (savanna)
+7 a big savanna rock outcrop of rounded granite boulders piled up
+8 a baobab tree with a very thick trunk and tall grass at its base
+
+[판 M] 큰 은폐물 — 사막·강·논·바다
+STYLE — must match the attached reference image exactly: simple flat cartoon props for a children's learning app, like picture-book stickers.
+Every shape has a bold, clean, even dark-brown outline. Flat fill colours with at most one soft darker shade per colour.
+NO realism, NO photo look, NO botanical drawing, NO hatching, NO pencil or watercolour texture, NO fine leaf veins, NO tiny details.
+Muted natural colours. The background is PURE WHITE everywhere — no paper colour, no beige, no texture.
+LAYOUT: one square image. An invisible 3×3 grid — draw NO grid lines, NO frames, NO boxes, NO borders around the objects.
+Put the 8 objects below in cells 1 to 8 in reading order (left to right, top to bottom), one object per cell, each filling most of its cell.
+Leave cell 9 (bottom-right corner) completely empty and white. No text, no numbers, no animals, no people, no ground line, no shadows.
+BIG GROUPS: each cell is ONE natural group of several big things standing together (for example a big tree with a large boulder at its base),
+drawn as one connected silhouette sitting on the ground with a flat bottom, wide and solid enough for a large animal to hide behind. The whole group is visible.
+
+1 a large rocky outcrop with desert shrubs, sandy brown
+2 a sand dune ridge with clumps of dry grass on its crest
+3 a big riverbank mound of mud and grass with tall reeds
+4 a large rock at the water's edge with reeds around it
+5 a very dense, wide bed of tall reeds and cattails
+6 a large clump of tall papyrus with round tufts on top
+7 a huge wide reef rock covered with many corals (under water), much wider than tall
+8 a big underwater cliff rock with kelp and sea grass, wide
