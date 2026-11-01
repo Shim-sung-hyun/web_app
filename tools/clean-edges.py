@@ -57,11 +57,11 @@ ALL_WHITE_IS_BG = {'grass', 'goldgrass', 'rice', 'reeds', 'seaweed', 'marsh', 'f
     'thornbush', 'tubecoral', 'tussock', 'twigbush', 'willow', 'anemone', 'mudbank', 'mudlog', 'sunkenlog', 'pebblemound',
     # 2026-11-01 판 G~M(가지·꽃·풀·뿌리·큰 덩어리)
     'oakbranch', 'pinebranch', 'cherrybranch', 'maplebranch', 'bamboobranch', 'applebranch', 'lindenbranch', 'ginkgobranch',
-    'cosmos', 'dandelion', 'tallgrass', 'lavender', 'thistle', 'hosta', 'daisies', 'sunflower', 'clover', 'violets', 'drytuft',
+    'tallgrass', 'lavender', 'thistle', 'hosta', 'sunflower', 'clover', 'violets', 'drytuft',
     'mushrooms', 'desertpebbles', 'reedbase', 'floattwig', 'arrowhead', 'seedlings', 'hornwort', 'mudsprouts', 'seagrass', 'redcoral',
     'rootlets', 'oakboulder', 'fallentree', 'thicket', 'meadowtree', 'bouldergroup', 'acaciathicket', 'baobab', 'rockoutcrop',
     'riverbank', 'waterrock', 'reedbed', 'papyrus', 'reefrock', 'seacliff', 'pinecone', 'moss',
-    'clovers', 'smallflowers', 'buttercups', 'grassbuds', 'mangrove', 'reedisland', 'bigmudrock', 'buttercups'}
+    'smallflowers', 'buttercups', 'grassbuds', 'mangrove', 'reedisland', 'bigmudrock', 'buttercups'}
 
 N4 = ((1, 0), (-1, 0), (0, 1), (0, -1))
 N8 = N4 + ((1, 1), (1, -1), (-1, 1), (-1, -1))

@@ -1169,6 +1169,19 @@ async function playHide(p,lvG,targets,tok){
     const d=propImg(lk,best[0],best[1],sw,sh); d.style.zIndex=100+Math.round(best[3]); card.appendChild(d);
     const gp={kind:'d',pr:d,pg:{left:best[0],top:best[1],sw,sh,nm,flip:lk.flip},els:[d]}; groups.push(gp);
     if(m==='walk'||m==='slide') gp.els.push(groundShadow(card,best[0]+sw/2,best[1]+sh*.97,sw*.86,3)); }
+  /* 큰 소품 앞 꾸밈(2026-11-01): 화면 높이의 1/5이 넘는 소품이 덩그러니 놓이지 않게, 그 밑동 앞에 같은 곳의 작은 풀·돌을 1~3개(실제 크기 비율 그대로).
+     빈 소품처럼 다룸 — 찾을 동물의 단서를 덮으면 unhide가 뺌 */
+  const ppmAll=Math.min(...groups.filter(g=>g.ppm).map(g=>g.ppm));
+  groups.filter(g=>g.pg&&g.pg.sh>H*.2&&!PANCH[g.pg.nm]).forEach(G=>{
+    const R0=PREAL[G.pg.nm]; if(!R0||R0==='far') return; const big=(R0[0]+R0[1])/2, ppm=G.ppm||ppmAll;
+    const small=PROPS[p].filter(nm=>{ const r=PREAL[nm]; if(!r||r==='far'||PANCH[nm]) return false; const t=(r[0]+r[1])/2; return t<=big*.4&&t*ppm>=H*.05; });
+    for(let i=0,n=1+Math.floor(Math.random()*Math.min(3,small.length));i<n&&small.length;i++){
+      const nm=pick1(small), lk=propLook(nm), [pw,ph]=PROPSZ[nm]||[480,360], r=PREAL[nm], sh=ppm*(r[0]+(r[1]-r[0])*Math.random()), sw=sh*pw/ph*lk.st;
+      const cx=G.pg.left+G.pg.sw*(.08+.84*Math.random()), bot=G.pg.top+G.pg.sh*(.97+.06*Math.random());
+      const left=Math.max(-sw*.2,Math.min(W-sw*.8,cx-sw/2)), top=Math.min(H-sh*.85,bot-sh);
+      const d=propImg(lk,left,top,sw,sh); d.style.zIndex=Math.max(+G.pr.style.zIndex+1,100+Math.round(top+sh)); card.appendChild(d);
+      const gp={kind:'d',pr:d,pg:{left,top,sw,sh,nm,flip:lk.flip},els:[d]}; groups.push(gp);
+      if(m==='walk'||m==='slide') gp.els.push(groundShadow(card,left+sw/2,top+sh*.97,sw*.86,3)); } });
   if(!unhide(groups,items)) break; }
   await revealCard(card); if(!alive(tok)) return;
   const move=(t,f,dx,dy,k)=>{ const tr='translate('+(t.ox*f+(dx||0))+'px,'+(t.oy*f+(dy||0))+'px)'+(k?' scale('+k+')':''); t.im.style.transform='translate(-50%,-50%) '+tr;
@@ -1203,6 +1216,7 @@ function findIt(tok,a,p,el,help,found,after){ return new Promise(res=>{
     wrong=0; speak(nameLine(a)).then(()=>{ lastCall=Date.now(); schedule(12000); }); };
   const schedule=ms=>{ clearTimeout(tm); tm=setTimeout(call,ms); };
   call();
+  window.__help=n=>{ if(live()) help(n); };   /* 검사 도구가 도움을 바로 부를 때 */
   later(()=>{ if(live()) help(1); },18000); later(()=>{ if(live()) help(2); },32000);
   const shk=()=>{ if(!live()) return; help('shake'); later(shk,10000); }; later(shk,24000);   /* 24초부터 10초마다 소품이 바스락 흔들림 */
   const miss=e=>{ if(!live()||e.target===el) return; lastTap=Date.now(); if(++wrong>=3&&Date.now()-lastCall>4000){ wrong=0; schedule(600); } };
