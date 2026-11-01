@@ -51,7 +51,7 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
  [1,2,3].forEach(lv=>{ const a=t.filter(x=>x.lv===lv).sort((u,v)=>u.frac-v.frac), q=k=>a.length?Math.round(100*a[Math.floor(k*(a.length-1))].frac):0, inb=a.filter(okB).length;
    console.log('  '+['','쉬움','보통','어려움'][lv]+' 보이는 몫: 가장 적게 '+q(0)+'% · 아래 1/4 '+q(.25)+'% · 가운데 '+q(.5)+'% · 위 1/4 '+q(.75)+'% · 가장 많이 '+q(1)+'%  — 목표 '+BAND[lv].map(v=>v*100).join('~')+'%(±'+TOL*100+') 안 '+Math.round(100*inb/Math.max(1,a.length))+'%'); });
  /* 실제 크기에 맞는 소품이 없어 크기를 무시한 경우(그 곳에 그 크기의 소품을 더 그려야 함) */
- const fr=t.filter(x=>x.free); console.log('  실제 크기에 맞는 소품이 없어 크기를 무시함: 찾을 동물 '+t.length+' 중 '+fr.length+' ('+Math.round(100*fr.length/Math.max(1,t.length))+'%)');
+ const fr=t.filter(x=>x.free); console.log('  실제 크기(보통 높이 ±25%)에 맞는 소품이 없어 크기를 늘리거나 줄임: 찾을 동물 '+t.length+' 중 '+fr.length+' ('+Math.round(100*fr.length/Math.max(1,t.length))+'%)');
  const fm={}; fr.forEach(x=>{ const k=x.pl+' '+x.a; fm[k]=(fm[k]||0)+1; }); if(fr.length) console.log('    '+Object.entries(fm).sort((u,v)=>v[1]-u[1]).map(([k,n])=>k+' '+n).join(' · '));
  const outB=t.filter(x=>!okB(x)).sort((u,v)=>u.frac-v.frac); if(outB.length){ console.log('  목표 밖:'); outB.slice(0,20).forEach(x=>console.log('    '+x.pl+' '+['','쉬움','보통','어려움'][x.lv]+' '+x.a+' '+Math.round(100*x.frac)+'% ('+x.vis+'점)')); }
  hid.sort((x,y)=>x.vis-y.vis).forEach(x=>console.log('  '+x.pl+' '+['','쉬움','보통','어려움'][x.lv]+' '+x.a+' · 원래 '+x.n0+'점 → 제 소품 뒤 '+x.own+' → 최종 '+x.vis)); await b.close(); })();
