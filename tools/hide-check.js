@@ -36,6 +36,7 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
          x.restore(); };
        draw(A); const d0=x.getImageData(0,0,W*3,H*3).data; let n0=0; for(let i=3;i<d0.length;i+=4) if(d0[i]>128) n0++;
        x.globalCompositeOperation='destination-out';
+       if(A.e.dataset.wl) x.fillRect(-W,+A.e.dataset.wl,W*3,H*3);   /* 물에 잠긴 몸(물낯 아래)은 안 보이는 것으로 */
        const occ=info.filter(o=>o!==A&&o.z>A.z), cnt=()=>{ const d=x.getImageData(W,H,W,H).data; let n=0; for(let i=3;i<d.length;i+=4) if(d[i]>128) n++; return n; };
        const own=occ.filter(o=>!o.animal&&Math.abs(o.z-A.z)===1); own.forEach(draw); const nOwn=cnt();
        occ.filter(o=>!own.includes(o)).forEach(draw); const n1=cnt();
