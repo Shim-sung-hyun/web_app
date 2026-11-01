@@ -337,3 +337,16 @@ drawn as one connected silhouette sitting on the ground with a flat bottom, wide
 
 [판 O] 벌용 아주 작은 소품 — 꽃송이 하나·잎 한 장(아래 끝 잘림 → anchor bottom, sky, 0.04~0.08m) — 2026-11-01
 판 이름 → 소품 파일 이름: O: onecosmos oneclover onedaisy onebuttercup oneleaf twoleaves onebud onepoppy
+
+==================================================================
+2026-11-01 넷째 — 크게 보이는 소품 30개를 큰 그림으로 다시 (한 장에 하나, 장면 그림과 함께)
+==================================================================
+왜: 1920×1080 화면에서 이 30개는 원본(가장 긴 쪽 480점)의 1.25~2배로 늘어나 흐리고 윤곽선이 굵어 보임. 또 장면과 따로 그려 어울리지 않음.
+하는 법: 장면마다 Gemini 새 대화창 하나 → media/habitats/game/의 그 장면 그림 + style-ref.png를 붙이고 [첫 글]의 ○○ 자리에 첫 소품을 넣어 보냄
+  → 다음부터는 같은 대화창에 [다음 글]의 ○○만 바꿔 보냄. 받은 그림은 이름 그대로(oakboulder 등) 바꿔 넣음(real·places는 그대로).
+장면별 소품: forest.jpg — oakboulder bouldergroup boulder thicket meadowtree fallentree twigbush stones
+            grassland.jpg — kopje acacia termite thornbush
+            desert.jpg — sandstone cactus flatrock
+            polar.jpg — iceridge2 icedrift icedrift2 snowrock2 ice iceridge
+            sea.jpg — reefrock seacliff rockarch algaepebbles
+            pond.jpg — reedisland mangrove willow papyrus reedbed
