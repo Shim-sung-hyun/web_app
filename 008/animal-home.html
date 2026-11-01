@@ -1006,6 +1006,17 @@ const pick1=l=>l[Math.floor(Math.random()*l.length)], rint=([a,b])=>a+Math.floor
 /* 한 동물과 그 소품의 자리 계산. x,y = 그려진 동물의 가운데, dw·dh = 그려진 동물의 폭·높이.
    소품의 꽉 찬 부분이 동물을 덮게 크기를 맞춤. 돌려주는 rect는 겹침 검사용(동물+소품), bad는 소품이 지나치게 커지는 정도 */
 const amOf=a=>AMASK[OLD[a]||NEW[a]];
+/* 사는 자리(2026-11-01) — 틀린 장면이 되지 않게 동물마다 숨을 수 있는 자리와 소품을 따로 정함(소품 목록은 index.json places의 '곳-자리'):
+   tree 나무 위(가지 뒤, 땅 그림자 없음) · mid 물 가운데(키 큰 물풀 뒤) · big 큰 바다 동물(바다 절벽·바위 아치·다시마 숲 뒤, 가장자리 내밀기 자주)
+   surf 물 위(소금쟁이: 물낯 높이, 떠 있는 잎 뒤) · wet 물에 잠긴 곳(논·습지의 물이 있는 칸에만, 물풀 뒤) */
+const ZONE={forest:{부엉이:'tree',딱따구리:'tree',원숭이:'tree'},sea:{고래:'big',상어:'big',해파리:'mid',오징어:'mid'},water:{고래:'big',상어:'big',해파리:'mid',오징어:'mid'},
+  pond:{소금쟁이:'surf'},wetland:{우렁이:'wet',미꾸라지:'wet',악어:'wet',백로:'wet',개구리:'wet'}};
+const WATERLINE={pond:.49};   /* 강·연못 장면에서 물낯 높이(장면 높이 대비) */
+/* 논·습지 놀이 장면(game/wetland.jpg)에서 물이 고인 칸(48×36, 그림 색으로 만듦) */
+const WETGRID=(()=>{ const b64='/////////////////////////ahn////AAcAAAAAAAAAAAAAAADvQAAAAIAAAAAAAAAAAAAAAH8AAAAAAAf/gABwAAH/wB/AAAB4Af4AAA+AD/8AA/AAAC8A9AAAAAXAAAGgAAHwAAAAAADwAIAASAB8CdwDWAB8SYABwA/g7dgAAf+A/b4AAF4A/dfYAAQA//78AAAAbf3fAAAAbf/cAAAAe7rwAAAACqvAAAAAA64AAAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+  const M=decodeMask(48,36,b64); for(let i=0;i<48*4;i++) M.bits[i]=0; return M; })();   /* 위 네 줄은 하늘이라 뺌 */
+const inWater=(fx,fy)=>{ const i=Math.floor(fx*48), j=Math.floor(fy*36); if(i<0||i>=48||j<0||j>=36) return false; return WETGRID.bits[j*48+i]===1; };
+let PLIST=null;   /* 지금 동물이 쓸 소품 목록(사는 자리가 있으면 그 목록) */
 /* 그림 속 동물 머리가 어느 쪽인지(L 왼쪽 · R 오른쪽, 없으면 앞을 봄) — 가장자리에서 내밀 때 머리가 화면 안쪽을 보게 좌우를 뒤집음 */
 const FACE={개:'L',고양이:'L',토끼:'R',소:'L',돼지:'L',말:'R',코끼리:'R',사자:'L',호랑이:'L',기린:'R',곰:'R',물고기:'L',붕어:'L',새우:'L',달팽이:'L',
   참새:'R',까치:'R',독수리:'L',다람쥐:'L',여우:'L',낙타:'L',펭귄:'R',하마:'L',악어:'R',고래:'R',상어:'L',바다표범:'R',북극곰:'R',두더지:'R',
@@ -1015,7 +1026,7 @@ const FACE={개:'L',고양이:'L',토끼:'R',소:'L',돼지:'L',말:'R',코끼�
 function edgeCfg(a,p,tgt,z,dw,dh,W,H,yr,used){
   const m=MOVE[p], F=FACE[a]; if(!F||m==='dig'||m==='fly') return null;
   const sideE=Math.random()<.5?-1:1, flip=(F==='R')!==(sideE<0), ppm=Math.max(dw,dh)/realOf(a);
-  const cands=shuffle(PROPS[p].filter(nm=>{ const r=PREAL[nm]; if(!r||r==='far'||PANCH[nm]) return false; const h=ppm*(r[0]+r[1])/2; return h>=dh*.7&&h<=dh*2.2; }))
+  const cands=shuffle((PLIST||PROPS[p]).filter(nm=>{ const r=PREAL[nm]; if(!r||r==='far'||PANCH[nm]) return false; const h=ppm*(r[0]+r[1])/2; return h>=dh*.7&&h<=dh*2.2; }))
     .sort((x,y)=>(used[x]||0)-(used[y]||0)).slice(0,5);
   let best=null;
   for(const nm of cands){ const lk=propLook(nm), [pw,ph]=PROPSZ[nm]||[480,360], r=PREAL[nm], sh=ppm*(r[0]+(r[1]-r[0])*Math.random()), sw=sh*pw/ph*lk.st;
@@ -1082,7 +1093,7 @@ function hideCfg(a,p,mode,dir,tgt,lk,free,cap){
 /* 이 곳 소품을 모두 해 보고(실제 크기가 맞는 것만) 가장 잘 맞는 것. 같은 소품이 되풀이되지 않게 많이 쓴 것은 조금 덜 고름.
    실제 크기가 맞는 소품이 없으면(그릴 소품이 아직 없는 곳) 범위를 조금씩 넓혀 고름 */
 function pickHide(a,p,mode,dir,tgt,used,cap){
-  const u=nm=>(used[nm]||0)*.06, all=shuffle([...PROPS[p]]);
+  const u=nm=>(used[nm]||0)*.06, all=shuffle([...(PLIST||PROPS[p])]);
   let c=null;
   for(const rx of [1,1.5,2.2,9]){ const f=all.map(nm=>hideCfg(a,p,mode,dir,tgt,propLook(nm),rx,cap)).sort((x,y)=>x.score+u(x.nm)-y.score-u(y.nm))[0];
     if(f&&(!c||f.score<c.score)) c=f; if(c&&c.err<.04&&c.bad<2.6) break; }
@@ -1160,20 +1171,26 @@ async function playHide(p,lvG,targets,tok){
     const M=amOf(a), area=M?M.pts.length*(z/48)*(z/48):dw*dh;
     const tgt=Math.min(.65,Math.max(L.band[0]+(L.band[1]-L.band[0])*(.2+.6*Math.random()),CLUE_PX*1.15/area));
     const dir=Math.random()<.5?-1:1;
-    /* 큰 동물(화면 높이의 1/4 넘게)은 가끔 가장자리에서 내밀기 — 한 장면에 한 마리까지 */
-    const ec=(!edgeUsed&&lvG>1&&dh>H*.25&&Math.random()<.5)?edgeCfg(a,p,tgt,z,dw,dh,W,H,yr,used):null;
-    if(ec){ edgeUsed=true; placeEdge(a,isT,z,dw,dh,area,ec); return; }
-    let side=m!=='dig'&&Math.random()<(m==='swim'&&lvG>1?.6:L.side), c=null;   /* 물에서는 옆에서 가리는 일이 많음 */
+    const zn=(ZONE[p]||ZONE[DEXG(p)]||{})[a], zl=zn&&PROPS[p+'-'+zn]; PLIST=zl&&zl.length?zl:null;
+    const pM=zn==='tree'?'sky':zn==='surf'?'wetland':p, mA=MOVE[pM];   /* 나무 위 동물은 나는 동물처럼 놓음, 물 위는 발이 물낯에 */
+    const yrA=zn==='tree'?[.12,.55]:zn==='surf'?[WATERLINE[p],WATERLINE[p]]:zn==='mid'||zn==='big'?[.25,.75]:yr;
+    /* 큰 동물(화면 높이의 1/4 넘게)은 가끔 가장자리에서 내밀기 — 한 장면에 한 마리까지(고래·상어는 자주) */
+    const ec=(!edgeUsed&&(lvG>1||zn==='big')&&dh>H*.25&&Math.random()<(zn==='big'?.8:.5))?edgeCfg(a,p,tgt,z,dw,dh,W,H,yrA,used):null;
+    if(ec){ edgeUsed=true; placeEdge(a,isT,z,dw,dh,area,ec); PLIST=null; return; }
+    let side=m!=='dig'&&zn!=='surf'&&Math.random()<(m==='swim'&&lvG>1?.6:L.side), c=null;   /* 물에서는 옆에서 가리는 일이 많음 */
     const cap=[W*.8/z,H*.8/z];
-    if(side){ c=pickHide(a,p,'side',dir,tgt,used,cap); if(c.err>.04||c.bad>2.6) side=false; }   /* 옆에서 알맞게 못 가리면(구름·눈 더미) 아래에서 */
-    if(!side) c=pickHide(a,p,'below',dir,tgt,used,cap);
+    if(side){ c=pickHide(a,pM,'side',dir,tgt,used,cap); if(c.err>.04||c.bad>2.6) side=false; }   /* 옆에서 알맞게 못 가리면(구름·눈 더미) 아래에서 */
+    if(!side) c=pickHide(a,pM,'below',dir,tgt,used,cap);
+    PLIST=null;
+    if(!c||c.score>=1e6){ side=false; c=pickHide(a,p,'below',dir,tgt,used,cap); }   /* 사는 자리 소품이 맞지 않으면 그 곳 소품으로 */
+    if(!c||c.score>=1e6) c=pickHide(a,p,'below',dir,tgt,used,null);
     side=c.mode==='side'; const dirC=c.dir;   /* 잘린 소품은 가리는 쪽이 정해져 있음 */
     const pg0=(x,y)=>({left:x+c.left*z,top:y+c.top*z,sw:c.sw*z,sh:c.sh*z,nm:c.nm,flip:c.lk.flip});
     const v0=seen({a,bx:-.5,by:-.5,z:1},[{p:{left:c.left,top:c.top,sw:c.sw,sh:c.sh,nm:c.nm,flip:c.lk.flip}}]), wr=v0.win||[-.1,-.5,.1,-.4];   /* 보이는 칸 상자(동물 칸 크기 1 기준) */
     let best=null, bs=Infinity;
     for(let t2=0;t2<60;t2++){
       let x=dw/2+W*.03+(W-dw-W*.06)*Math.random();
-      let y=H*(yr[0]+(yr[1]-yr[0])*Math.random()); if(m==='walk'||m==='slide') y-=dh/2;   /* 발 높이 → 가운데 */
+      let y=H*(yrA[0]+(yrA[1]-yrA[0])*Math.random()); if(mA==='walk'||mA==='slide') y-=dh/2;   /* 발 높이 → 가운데 */
       y=Math.max(dh/2+H*.02,Math.min(H-dh/2-H*.01,y));
       /* 잘린 소품은 잘린 쪽이 화면 테두리에 닿게(조금 넘어가도 됨): 동물 자리가 그만큼 정해짐 */
       if(c.an==='left'){ const u=Math.random()*.12*c.sw*z; x=c.lk.flip?W+u-(c.left+c.sw)*z:-u-c.left*z; }
@@ -1181,7 +1198,8 @@ async function playHide(p,lvG,targets,tok){
       const g=pg0(x,y), rect=[Math.min(g.left,x-dw/2),Math.min(g.top,y-dh/2),Math.max(g.left+g.sw,x+dw/2),Math.max(g.top+g.sh,y+dh/2)], win=[x+wr[0]*z,y+wr[1]*z,x+wr[2]*z,y+wr[3]*z];
       const sc=placed.reduce((s,q)=>s+overlap(rect,q),0)+keepCost(rect)+(isT?placed.reduce((s,q)=>s+overlap(win,q),0)*KEEPW:0)+(c.an?0:(rect[0]<0?-rect[0]*H:0)+(rect[2]>W?(rect[2]-W)*H:0))
         +(c.an?(Math.max(0,dw/2-x,x+dw/2-W,dh/2-y,y+dh/2-H)*H*4):0)   /* 잘린 소품에 붙은 동물이 화면 밖으로 나가지 않게 */
-        +(m==='swim'&&!c.an?Math.max(0,H*.9-(g.top+g.sh))*W:0);   /* 물: 바위·바닷말이 물속에 떠 있지 않게 바닥 가까이 */
+        +(m==='swim'&&!c.an&&zn!=='mid'?Math.max(0,H*.9-(g.top+g.sh))*W:0)   /* 물: 바위·바닷말이 물속에 떠 있지 않게 바닥 가까이 */
+        +(zn==='wet'&&!inWater(x/W,(y+dh*.42)/H)?W*H:0);   /* 논·습지 물에 사는 동물은 물이 있는 칸에만 */
       if(sc<bs){ bs=sc; best={x,y,g,rect,win}; } if(sc===0&&t2>6) break; }
     placed.push(best.rect); if(isT) keep.push(best.win); used[c.nm]=(used[c.nm]||0)+1;
     const {x,y,g:pg}=best;
@@ -1195,7 +1213,7 @@ async function playHide(p,lvG,targets,tok){
     /* 나올 길(제 소품에서 다 나올 만큼): 옆에서 가렸으면 보이는 쪽으로, 아래에서 가렸으면 걷는 동물은 옆으로 비켜 나오고 나는·헤엄치는·땅속 동물은 위로 */
     let ox=0, oy=0;
     if(side) ox=dirC*(clearDist(a,c,dirC,0)*z+4);
-    else if(m==='walk'||m==='slide'){ const own=placed.length-1;   /* 비어 있는 쪽으로(다른 동물·소품과 덜 겹치고 장면 안인 쪽) */
+    else if(mA==='walk'||mA==='slide'){ const own=placed.length-1;   /* 비어 있는 쪽으로(다른 동물·소품과 덜 겹치고 장면 안인 쪽) */
       const cost=d=>{ const need=clearDist(a,c,d,0)*z+4, r=[x+d*need-dw/2,y-dh/2,x+d*need+dw/2,y+dh/2]; return placed.reduce((s,q,i)=>i===own?s:s+overlap(r,q),0)+Math.max(0,-r[0],r[2]-W)*H*2; };
       const d=cost(1)<=cost(-1)?1:-1; ox=d*(clearDist(a,c,d,0)*z+4); }
     else oy=-(clearDist(a,c,0,-1)*z+4);
@@ -1203,8 +1221,8 @@ async function playHide(p,lvG,targets,tok){
     const it={a,im,ox,oy,dw,dh,pr};
     const gp={kind:isT?'t':'o',im,pr,pg,box:{a,bx:x-z/2,by:y-z/2,z,cw:W,ch:H},fOwn:c.f,pxOwn:c.f*area,ppm:Math.max(dw,dh)/realOf(a),els:[im,pr]}; groups.push(gp);
     /* 땅에 닿는 그림자(2026-10-26): 땅 위 장면에서만 동물 발밑·소품 밑에 옅은 타원 — 오려 붙인 티가 나지 않게. 동물 그림자는 동물과 함께 움직임 */
-    if(m==='walk'||m==='slide'){ it.sh=groundShadow(card,x,y+dh/2,dw*.8,1); it.sh.style.transition='transform 1s ease-in-out';
-      gp.els.push(it.sh,groundShadow(card,pg.left+pg.sw/2,pg.top+pg.sh*.97,pg.sw*.86,3)); }
+    if((m==='walk'||m==='slide')&&!zn){ it.sh=groundShadow(card,x,y+dh/2,dw*.8,1); it.sh.style.transition='transform 1s ease-in-out';
+      gp.els.push(it.sh,groundShadow(card,pg.left+pg.sw/2,pg.top+pg.sh*.97,pg.sw*.86,3)); }   /* 나무 위·물 위·물속 동물은 땅 그림자 없음 */
     items.push(it);
   });
   /* 빈 소품(그 뒤에 아무것도 없음): 소품마다 들여다봐야 하게 */
