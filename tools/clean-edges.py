@@ -54,7 +54,13 @@ ALL_WHITE_IS_BG = {'grass', 'goldgrass', 'rice', 'reeds', 'seaweed', 'marsh', 'f
     # 2026-10-31 새 소품(가지·잎·뿌리 사이에 흰 바탕이 갇힘)
     'agave', 'asters', 'bramble', 'branchpile', 'darkbush', 'dryreeds', 'evergreen', 'gnarlroot', 'iris', 'juniper', 'kelp',
     'leafpile', 'lotus', 'pinkbloom', 'pondweed', 'rootarch', 'rockarch', 'rootball', 'saltbush', 'seafan', 'sedge',
-    'thornbush', 'tubecoral', 'tussock', 'twigbush', 'willow', 'anemone', 'mudbank', 'mudlog', 'sunkenlog', 'pebblemound'}
+    'thornbush', 'tubecoral', 'tussock', 'twigbush', 'willow', 'anemone', 'mudbank', 'mudlog', 'sunkenlog', 'pebblemound',
+    # 2026-11-01 판 G~M(가지·꽃·풀·뿌리·큰 덩어리)
+    'oakbranch', 'pinebranch', 'cherrybranch', 'maplebranch', 'bamboobranch', 'applebranch', 'lindenbranch', 'ginkgobranch',
+    'cosmos', 'dandelion', 'tallgrass', 'lavender', 'thistle', 'hosta', 'daisies', 'sunflower', 'clover', 'violets', 'drytuft',
+    'mushrooms', 'desertpebbles', 'reedbase', 'floattwig', 'arrowhead', 'seedlings', 'hornwort', 'mudsprouts', 'seagrass', 'redcoral',
+    'rootlets', 'oakboulder', 'fallentree', 'thicket', 'meadowtree', 'bouldergroup', 'acaciathicket', 'baobab', 'rockoutcrop',
+    'riverbank', 'waterrock', 'reedbed', 'papyrus', 'reefrock', 'seacliff', 'pinecone', 'moss'}
 
 N4 = ((1, 0), (-1, 0), (0, 1), (0, -1))
 N8 = N4 + ((1, 1), (1, -1), (-1, 1), (-1, -1))

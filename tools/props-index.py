@@ -12,6 +12,7 @@ index.json 한 줄:  "bush": {"size":[480,383], "solid":[왼,위,오른,아래],
   real   실제 높이(m) [가장 낮게, 가장 높게] 또는 "far"(구름처럼 아주 멀리 있는 것 — 동물을 가리지 않고 빈 소품으로만).
          그 물건의 보통 높이 ±25%로 적음. 앱은 가리는 동물과 같은 거리에 있다고 보고, 그 동물의 화면 크기 ÷ 실제 크기 비율로
          이 높이를 화면 크기로 바꿔 그 범위에서만 씀 → 작은 돌을 키워 낙타를 가리는 억지가 없음(2026-11-01). 손으로 적는 칸
+  anchor (있을 때만) 'left' = 왼쪽 끝이 잘린 가지(앱이 화면 옆 테두리에 붙임) · 'bottom' = 아래 끝이 잘린 꽃줄기(화면 아래 테두리에 붙임). 손으로 적는 칸
   places 이 소품을 쓰는 곳(앱의 PL 이름: ground forest grassland desert polar sky underground water sea pond wetland.
          수준 1의 '땅'(land)은 ground를 따름). 앱을 고치지 않고 이 칸만 고치면 됨.
 동물 그림 모양 표도 함께 만듦: media/animals/masks.json — {"그림 파일 이름(확장자 빼고)": base64(48×48 칸, 512 그림 전체)}.
@@ -70,6 +71,8 @@ def main():
         places = o.get('places', []) if isinstance(o, dict) else []
         real = o.get('real') if isinstance(o, dict) else None
         out[nm] = {'size': [w, h], 'solid': s, 'mask': mask_of(os.path.join(ROOT, f)), 'real': real, 'places': places}
+        if isinstance(o, dict) and o.get('anchor'):
+            out[nm]['anchor'] = o['anchor']
         if real is None:
             noreal.append(nm)
         if not places:
