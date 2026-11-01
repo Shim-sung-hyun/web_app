@@ -60,7 +60,8 @@ ALL_WHITE_IS_BG = {'grass', 'goldgrass', 'rice', 'reeds', 'seaweed', 'marsh', 'f
     'cosmos', 'dandelion', 'tallgrass', 'lavender', 'thistle', 'hosta', 'daisies', 'sunflower', 'clover', 'violets', 'drytuft',
     'mushrooms', 'desertpebbles', 'reedbase', 'floattwig', 'arrowhead', 'seedlings', 'hornwort', 'mudsprouts', 'seagrass', 'redcoral',
     'rootlets', 'oakboulder', 'fallentree', 'thicket', 'meadowtree', 'bouldergroup', 'acaciathicket', 'baobab', 'rockoutcrop',
-    'riverbank', 'waterrock', 'reedbed', 'papyrus', 'reefrock', 'seacliff', 'pinecone', 'moss'}
+    'riverbank', 'waterrock', 'reedbed', 'papyrus', 'reefrock', 'seacliff', 'pinecone', 'moss',
+    'clovers', 'smallflowers', 'buttercups', 'grassbuds', 'mangrove', 'reedisland', 'bigmudrock', 'buttercups'}
 
 N4 = ((1, 0), (-1, 0), (0, 1), (0, -1))
 N8 = N4 + ((1, 1), (1, -1), (-1, 1), (-1, -1))
