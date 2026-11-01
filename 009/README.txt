@@ -38,7 +38,7 @@
 자료: 동물 그림 007/pics·media/animals(가장자리 정리함) · 배경 media/habitats · 먹이 그림 007/game/feed/food · 목소리 media/voice/leda-0.92
 저장 칸: animalRiddle.* (log2·resume2·picks·설정. 첫 판의 log·resume·done은 쓰지 않음), 학생 명단 webapp.students
 기록 한 줄: 학생·시각·수업·수준·단계(quiz·sort)·동물·결과(바로/도움)·먼저 고른·말한 것·들은 고개 수(·하 퀴즈의 단서 종류)
-게시판 글: 아직 없음 → 생기면 reportLink·endLesson의 주소를 webapp/글번호로
+게시판 글: 본문 animal-riddle_manual.html 만듦(2026-11-01), 아직 안 올림 → 올리면 reportLink·endLesson의 주소를 webapp/글번호로
 
 다음 할 일 (2026-10-31 "009 만들기" 세션)
 지금 상태: main에 있음(https://shim-sung-hyun.github.io/web_app/009/animal-riddle.html). 목소리 392마디 모두 내장.
@@ -50,5 +50,6 @@
 1. 선생님이 써 보고 의견 받기 — 특히 중 흐린 그림(지금 5% — 3%는 안 보였음, 바꿀 때는 GHOST 한 줄만. 마음에 안 들면 부위 그림을 새로 그려 PARTS·drawPart로 하나씩),
    마이크는 실제 기기에서 아직 확인 못 함(되는 브라우저는 docs/guidelines.md 5절 '말 알아듣기' — 게시판 글·_guide에 적기). 학생 목소리가 Google로 가는 것을 학교에서 써도 되는지도
 2. 서버 study/009/에 server-loader.html을 animal-riddle.html 이름으로 올리기(선생님)
-3. 캡처 animal-riddle01.jpg~(1366×768), 설명서 _manual·_guide, 홍보 그림 새로(첫 판 것은 버림) → 선생님이 게시판 글 → 글 번호를 reportLink·endLesson 주소에 넣기
+3. (2026-11-01 만듦) 캡처 animal-riddle01~14.jpg(1366×768: 01 설정 02~05 하 학습·카드 퀴즈·다섯 고개·특징 정리 06·07 중 열 고개·맞힘 08·09 상 학습·스무고개 10 정리하기 11 같은 동물 찾기 12 선생님 메뉴 13 기록 예시 14 활동지),
+   animal-riddle_manual.html(게시판 본문)·animal-riddle_guide.html·animal-riddle-promo.jpg → 선생님이 게시판 글 → 글 번호를 reportLink·endLesson 주소에 넣기
 4. (생각해 볼 것) 동물 더 넣기 — 넣을 때 AD(그림에서 보기에도 다른지)·RID 20개·ALIAS·REAL·BB를 함께, 그림은 흰 바탕을 지운 직후 tools/clean-edges.py로 정리 → 어두운 배경에서 확대해 확인(갇힌 흰 바탕은 HOLES에)

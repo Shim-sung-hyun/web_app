@@ -1186,6 +1186,7 @@ function exampleLog(){ /* 가상의 학생 홍길동의 한 달(이 기기 기�
   for(let d=0;d<28;d+=2){ const lv=d<14?1:2, L=shuffle(ALL).slice(0,LV[lv].n), g=start+d*864e5+9*36e5;
     const items=lv===1?L.flatMap(a=>easyHints(a).map((h,i)=>({a,i,h}))):L.map(a=>({a}));
     items.forEach((it,i)=>{ const ok=rnd()<Math.min(.95,.5+d*.017); rows.push({s:'ex',t:g+i*40e3,g,lv,ph:'quiz',a:it.a,res:ok?'first':'help',w:ok?'':L.find(x=>x!==it.a),n:lv===1?it.i+1:3+Math.floor(rnd()*7),h:it.h?it.h.k:''}); });
+    if(lv===1) L.forEach((a,i)=>{ const ok=rnd()<Math.min(.95,.6+d*.015); rows.push({s:'ex',t:g+(30+i)*40e3,g,lv,ph:'five',a,res:ok?'first':'help',w:ok?'':L.find(x=>x!==a),n:5}); });
     L.forEach((a,i)=>{ const ok=rnd()<Math.min(.95,.55+d*.015); rows.push({s:'ex',t:g+(50+i)*40e3,g,lv,ph:'sort',a,res:ok?'first':'help',w:ok?'':L.find(x=>x!==a),n:2}); }); }
   return rows;
 }
