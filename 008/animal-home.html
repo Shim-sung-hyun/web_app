@@ -1006,15 +1006,46 @@ const pick1=l=>l[Math.floor(Math.random()*l.length)], rint=([a,b])=>a+Math.floor
 /* 한 동물과 그 소품의 자리 계산. x,y = 그려진 동물의 가운데, dw·dh = 그려진 동물의 폭·높이.
    소품의 꽉 찬 부분이 동물을 덮게 크기를 맞춤. 돌려주는 rect는 겹침 검사용(동물+소품), bad는 소품이 지나치게 커지는 정도 */
 const amOf=a=>AMASK[OLD[a]||NEW[a]];
+/* 그림 속 동물 머리가 어느 쪽인지(L 왼쪽 · R 오른쪽, 없으면 앞을 봄) — 가장자리에서 내밀 때 머리가 화면 안쪽을 보게 좌우를 뒤집음 */
+const FACE={개:'L',고양이:'L',토끼:'R',소:'L',돼지:'L',말:'R',코끼리:'R',사자:'L',호랑이:'L',기린:'R',곰:'R',물고기:'L',붕어:'L',새우:'L',달팽이:'L',
+  참새:'R',까치:'R',독수리:'L',다람쥐:'L',여우:'L',낙타:'L',펭귄:'R',하마:'L',악어:'R',고래:'R',상어:'L',바다표범:'R',북극곰:'R',두더지:'R',
+  땅강아지:'R',비둘기:'R',딱따구리:'L',얼룩말:'R',전갈:'L',수달:'R',우렁이:'L',백로:'R',미꾸라지:'R',지렁이:'R'};
+/* 가장자리에서 내밀기(2026-11-01): 큰 동물의 몸을 화면 옆 밖으로 밀고, 화면 가장자리 가까이 놓인 (동물보다 작은) 소품 뒤에서 머리 쪽만 조금 내밀게.
+   돌려줌: 동물 가운데(x,y)·뒤집기·소품 자리, 또는 못 하면 null. 실제 크기는 같은 규칙(보통 높이 ±25%) */
+function edgeCfg(a,p,tgt,z,dw,dh,W,H,yr,used){
+  const m=MOVE[p], F=FACE[a]; if(!F||m==='dig'||m==='fly') return null;
+  const sideE=Math.random()<.5?-1:1, flip=(F==='R')!==(sideE<0), ppm=Math.max(dw,dh)/realOf(a);
+  const cands=shuffle(PROPS[p].filter(nm=>{ const r=PREAL[nm]; if(!r||r==='far'||PANCH[nm]) return false; const h=ppm*(r[0]+r[1])/2; return h>=dh*.7&&h<=dh*2.2; }))
+    .sort((x,y)=>(used[x]||0)-(used[y]||0)).slice(0,5);
+  let best=null;
+  for(const nm of cands){ const lk=propLook(nm), [pw,ph]=PROPSZ[nm]||[480,360], r=PREAL[nm], sh=ppm*(r[0]+(r[1]-r[0])*Math.random()), sw=sh*pw/ph*lk.st;
+    if(sw>W*.5) continue;
+    const foot=m==='walk'||m==='slide';
+    let gy=foot?H*(yr[0]+(yr[1]-yr[0])*Math.random()):H*(.88+.1*Math.random());   /* 소품 밑동 높이 */
+    gy=Math.min(H,Math.max(sh+H*.05,gy));
+    const left=sideE<0?-sw*(.05+.15*Math.random()):W-sw*(.95-.15*Math.random()), g={left,top:gy-sh,sw,sh,nm,flip:lk.flip};
+    const y=foot?gy-dh/2-dh*.02:gy-sh*(.45+.2*Math.random());
+    if(y-dh/2<H*.02) continue;
+    /* 동물 가운데 x를 바깥(다 가려짐)에서 안쪽으로 옮기며 보이는 몫이 tgt가 되는 자리 */
+    const inner=sideE<0?left+sw:left, out=sideE<0?-dw/2-4:W+dw/2+4, at=x=>seen({a,bx:x-z/2,by:y-z/2,z,flip,cw:W,ch:H},[{p:g}]).f;
+    let x0=out, x1=sideE<0?inner+dw/2:inner-dw/2; if(at(x1)<tgt) continue;
+    for(let it=0;it<16;it++){ const mid=(x0+x1)/2; if(at(mid)<tgt) x0=mid; else x1=mid; }
+    const f=at(x1), on=Math.min(W,x1+dw/2)-Math.max(0,x1-dw/2);
+    if(Math.abs(f-tgt)>.04||on>dw*.75) continue;   /* 몸의 3/4 넘게 화면 안이면 '가장자리에서 내밀기'가 아님 */
+    const c={x:x1,y,flip,sideE,g,lk,nm,f,err:Math.abs(f-tgt)}; if(!best||c.err<best.err) best=c; }
+  return best;
+}
 /* 소품 g{left,top,sw,sh,nm,flip} 그림에서 (X,Y) 자리가 칠해졌는지 */
 function propAt(g,X,Y){ let u=(X-g.left)/g.sw; const v=(Y-g.top)/g.sh; if(u<0||u>=1||v<0||v>=1) return false; if(g.flip) u=1-u;
   const M=PMASK[g.nm]; return M?M.bits[Math.floor(v*M.gh)*M.gw+Math.floor(u*M.gw)]===1:true; }
 /* 동물 b{a,bx,by,z}(그림 칸 왼쪽 위·크기)에서 (X,Y) 자리가 칠해졌는지 */
-function animAt(b,X,Y){ const u=(X-b.bx)/b.z, v=(Y-b.by)/b.z; if(u<0||u>=1||v<0||v>=1) return false; const M=amOf(b.a); return M?M.bits[Math.floor(v*48)*48+Math.floor(u*48)]===1:true; }
+function animAt(b,X,Y){ let u=(X-b.bx)/b.z; if(b.flip) u=1-u; const v=(Y-b.by)/b.z; if(u<0||u>=1||v<0||v>=1) return false; const M=amOf(b.a); return M?M.bits[Math.floor(v*48)*48+Math.floor(u*48)]===1:true; }
 /* 동물 b의 칠해진 칸 중 occ(덮는 것: {p:소품} 또는 {b:동물})에 덮이지 않은 몫 f, 보이는 넓이 px(점²), 보이는 칸을 둘러싼 상자 win */
 function seen(b,occ){ const M=amOf(b.a); if(!M) return {f:1,px:1e9,win:[b.bx,b.by,b.bx+b.z,b.by+b.z]};
   let n=0, x0=1e9, y0=1e9, x1=-1e9, y1=-1e9;
-  for(const [u,v] of M.pts){ const X=b.bx+u*b.z, Y=b.by+v*b.z; if(occ.some(o=>o.p?propAt(o.p,X,Y):animAt(o.b,X,Y))) continue;
+  for(const [u0,v] of M.pts){ const u=b.flip?1-u0:u0, X=b.bx+u*b.z, Y=b.by+v*b.z;
+    if(b.cw&&(X<0||X>b.cw||Y<0||Y>b.ch)) continue;   /* 화면 밖은 안 보임 */
+    if(occ.some(o=>o.p?propAt(o.p,X,Y):animAt(o.b,X,Y))) continue;
     n++; if(X<x0) x0=X; if(X>x1) x1=X; if(Y<y0) y0=Y; if(Y>y1) y1=Y; }
   const c=b.z/48; return {f:n/M.pts.length, px:n*c*c, win:n?[x0-c/2,y0-c/2,x1+c/2,y1+c/2]:null}; }
 /* 동물 a를 소품 lk로 가리는 자리 찾기(동물 그림 칸 크기 1, 가운데 (0,0) 기준): 동물의 칠해진 칸 중 tgt만큼 보이게.
@@ -1103,12 +1134,34 @@ async function playHide(p,lvG,targets,tok){
      뒤에 놓는 다른 동물·소품·빈 소품이 피하게 함(2026-11-01 — 뒤에 놓인 것이 앞에서 덮어 완전히 가려지던 일) */
   const big1=(u,v)=>realOf(v)-realOf(u), order=[...targets].sort(big1).concat([...others].sort(big1));
   const KEEPW=40, keepCost=r=>keep.reduce((s,q)=>s+overlap(r,q),0)*KEEPW;
+  let edgeUsed=false;
+  /* 가장자리에서 내밀기로 놓기: 찾으면 화면 안쪽으로 걸어(헤엄쳐) 들어와 다 보임 */
+  const placeEdge=(a,isT,z,dw,dh,area,ec)=>{ const {x,y,flip,g:pg,lk}=ec;
+    const win=[Math.max(0,x-dw/2),y-dh/2,Math.min(W,x+dw/2),y+dh/2], rect=[Math.max(0,Math.min(pg.left,x-dw/2)),Math.min(pg.top,y-dh/2),Math.min(W,Math.max(pg.left+pg.sw,x+dw/2)),Math.max(pg.top+pg.sh,y+dh/2)];
+    placed.push(rect); if(isT) keep.push(win); used[ec.nm]=(used[ec.nm]||0)+1;
+    const im=document.createElement('img'); im.className='placed'; im.src=pic(a); im.alt=a; im.draggable=false;
+    Object.assign(im.style,{width:z+'px',height:z+'px',left:x+'px',top:y+'px',pointerEvents:'none',cursor:'inherit',zIndex:99+Math.round(pg.top+pg.sh),transition:'transform 1s ease-in-out, filter 1s'});
+    if(L.fade) im.style.filter='saturate(.82) brightness(.96) drop-shadow(0 2px 2px rgba(0,0,0,.18))';
+    if(flip){ im.style.transform='translate(-50%,-50%) scaleX(-1)'; im.dataset.flip=1; }
+    card.appendChild(im);
+    const pr=propImg(lk,pg.left,pg.top,pg.sw,pg.sh); pr.style.zIndex=100+Math.round(pg.top+pg.sh); card.appendChild(pr);
+    /* 나올 길: 화면 안쪽으로 — 몸이 다 들어오고 소품에서도 벗어날 만큼(장면 폭 안에서) */
+    const want=ec.sideE<0?Math.max(dw/2+8,pg.left+pg.sw+dw/2+6):Math.min(W-dw/2-8,pg.left-dw/2-6);
+    const tx=Math.max(dw/2+4,Math.min(W-dw/2-4,want)), ox=tx-x, oy=0;
+    const it={a,im,ox,oy,dw,dh,pr,flip};
+    const gp={kind:isT?'t':'o',im,pr,pg,box:{a,bx:x-z/2,by:y-z/2,z,flip,cw:W,ch:H},fOwn:ec.f,pxOwn:ec.f*area,ppm:Math.max(dw,dh)/realOf(a),els:[im,pr]}; groups.push(gp);
+    if(MOVE[p]==='walk'||MOVE[p]==='slide'){ it.sh=groundShadow(card,x,y+dh/2,dw*.8,1); it.sh.style.transition='transform 1s ease-in-out';
+      gp.els.push(it.sh,groundShadow(card,pg.left+pg.sw/2,pg.top+pg.sh*.97,pg.sw*.86,3)); }
+    items.push(it); };
   order.forEach(a=>{ const isT=targets.includes(a);
     const b=BB[a]||[.9,.9], t=Math.max(L.min*Math.max(b[0],b[1]),big*relSize(all,a,.3)), z=boxOf(a,p,t), dw=z*b[0], dh=z*b[1];
     /* 보이는 몫 목표: 어렵기 범위 안에서 무작위, 아주 작은 동물은 CLUE_PX만큼은 보이게 */
     const M=amOf(a), area=M?M.pts.length*(z/48)*(z/48):dw*dh;
     const tgt=Math.min(.65,Math.max(L.band[0]+(L.band[1]-L.band[0])*(.2+.6*Math.random()),CLUE_PX*1.15/area));
     const dir=Math.random()<.5?-1:1;
+    /* 큰 동물(화면 높이의 1/4 넘게)은 가끔 가장자리에서 내밀기 — 한 장면에 한 마리까지 */
+    const ec=(!edgeUsed&&lvG>1&&dh>H*.25&&Math.random()<.5)?edgeCfg(a,p,tgt,z,dw,dh,W,H,yr,used):null;
+    if(ec){ edgeUsed=true; placeEdge(a,isT,z,dw,dh,area,ec); return; }
     let side=m!=='dig'&&Math.random()<(m==='swim'&&lvG>1?.6:L.side), c=null;   /* 물에서는 옆에서 가리는 일이 많음 */
     if(side){ c=pickHide(a,p,'side',dir,tgt,used); if(c.err>.04||c.bad>2.6) side=false; }   /* 옆에서 알맞게 못 가리면(구름·눈 더미) 아래에서 */
     if(!side) c=pickHide(a,p,'below',dir,tgt,used);
@@ -1146,7 +1199,7 @@ async function playHide(p,lvG,targets,tok){
     else oy=-(clearDist(a,c,0,-1)*z+4);
     if(x+ox-dw/2<0) ox=dw/2-x; if(x+ox+dw/2>W) ox=W-dw/2-x; if(y+oy-dh/2<0) oy=dh/2-y;   /* 장면 밖으로 나가지 않게 */
     const it={a,im,ox,oy,dw,dh,pr};
-    const gp={kind:isT?'t':'o',im,pr,pg,box:{a,bx:x-z/2,by:y-z/2,z},fOwn:c.f,pxOwn:c.f*area,ppm:Math.max(dw,dh)/realOf(a),els:[im,pr]}; groups.push(gp);
+    const gp={kind:isT?'t':'o',im,pr,pg,box:{a,bx:x-z/2,by:y-z/2,z,cw:W,ch:H},fOwn:c.f,pxOwn:c.f*area,ppm:Math.max(dw,dh)/realOf(a),els:[im,pr]}; groups.push(gp);
     /* 땅에 닿는 그림자(2026-10-26): 땅 위 장면에서만 동물 발밑·소품 밑에 옅은 타원 — 오려 붙인 티가 나지 않게. 동물 그림자는 동물과 함께 움직임 */
     if(m==='walk'||m==='slide'){ it.sh=groundShadow(card,x,y+dh/2,dw*.8,1); it.sh.style.transition='transform 1s ease-in-out';
       gp.els.push(it.sh,groundShadow(card,pg.left+pg.sw/2,pg.top+pg.sh*.97,pg.sw*.86,3)); }
@@ -1184,7 +1237,7 @@ async function playHide(p,lvG,targets,tok){
       if(m==='walk'||m==='slide') gp.els.push(groundShadow(card,left+sw/2,top+sh*.97,sw*.86,3)); } });
   if(!unhide(groups,items)) break; }
   await revealCard(card); if(!alive(tok)) return;
-  const move=(t,f,dx,dy,k)=>{ const tr='translate('+(t.ox*f+(dx||0))+'px,'+(t.oy*f+(dy||0))+'px)'+(k?' scale('+k+')':''); t.im.style.transform='translate(-50%,-50%) '+tr;
+  const move=(t,f,dx,dy,k)=>{ const tr='translate('+(t.ox*f+(dx||0))+'px,'+(t.oy*f+(dy||0))+'px)'+(k?' scale('+k+')':'')+(t.flip?' scaleX(-1)':''); t.im.style.transform='translate(-50%,-50%) '+tr;
     if(t.sh){ t.sh.style.transform='translate(-50%,-50%) translate('+(t.ox*f)+'px,'+(t.oy*f)+'px)'; t.sh.style.opacity=dx||dy?0:1; } };
   /* 찾으면: 소품 뒤에서 나옴 → 가운데로 와서 크게 보여 주며 문장 → 제 자리(나온 자리)로 돌아감 */
   const toCenter=t=>{ const x=parseFloat(t.im.style.left)+t.ox, y=parseFloat(t.im.style.top)+t.oy, k=Math.max(1,Math.min(2.2,H*.42/Math.max(t.dw,t.dh)));
