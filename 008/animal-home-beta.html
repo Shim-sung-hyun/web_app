@@ -142,6 +142,38 @@ body.admin #stage{pointer-events:none}
 .gPics img{width:clamp(90px,14vw,180px);aspect-ratio:4/3;object-fit:cover;border-radius:14px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .gGo{min-width:220px;height:80px;border:0;border-radius:22px;background:var(--sci);color:#fff;font-family:var(--f-display);font-size:38px;cursor:pointer;touch-action:none;box-shadow:0 4px 12px rgba(78,52,120,.25)}
 /* 도감 */
+/* 스페셜 */
+#spRankView{position:fixed;inset:0;z-index:90;background:rgba(30,24,44,.35);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
+#spRankView.on{display:flex}
+#spRankCard{background:#fff;border-radius:18px;max-width:560px;width:100%;padding:18px 20px 22px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+#spRankCard h2{margin:0 0 12px;font-size:21px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+#spRankCard h4{margin:18px 0 6px;font-size:15px;color:var(--muted);font-weight:500}
+.spRankBox{margin-top:12px}
+.spRankBox table,#spRankCard table{width:100%;border-collapse:collapse;font-size:16px}
+.spRankBox td,#spRankCard td{padding:6px 8px;border-bottom:1px solid #EEE9F3}
+.spRankBox td.r,#spRankCard td.r{width:36px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.spRankBox td.t,#spRankCard td.t{text-align:right;font-variant-numeric:tabular-nums}
+.spRankBox tr.me td{background:var(--sci-l);font-weight:700}
+.spRankBox td.gap{text-align:center;color:var(--muted)}
+.spRankBox .note,#spRankCard .note{font-size:13px;color:var(--muted);margin:8px 0 0}
+.spNick{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:14px}
+.spNick input{font:inherit;font-size:15px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;width:9em;margin:0 4px}
+.spSide{position:absolute;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;gap:10px;z-index:6;pointer-events:none}
+.spSide.l{left:12px} .spSide.r{right:12px}
+.spW{position:relative;font-family:var(--f-display);font-size:inherit;white-space:nowrap;line-height:1.15;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:14px;
+  padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:52px;transition:background .3s,border-color .3s,color .3s}
+.spW img{width:40px;height:40px;object-fit:contain;opacity:0;transition:opacity .4s}
+.spW.now{border-color:var(--sci);background:var(--sci-l)}
+.spW.done{color:#A39CAE;background:#F6F4F8;border-color:#ECE8F1}
+.spW.done img{opacity:1}
+.spW.done::after{content:'✓';position:absolute;right:-6px;top:-8px;width:22px;height:22px;border-radius:50%;background:#5E9E6E;color:#fff;font:700 13px/22px var(--f-body);text-align:center}
+.spClock{position:absolute;top:2px;left:50%;transform:translateX(-50%);font:600 15px/1 var(--f-body);color:var(--muted);font-variant-numeric:tabular-nums;background:rgba(255,255,255,.85);padding:5px 12px;border-radius:999px;z-index:6}
+.spDone{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6000;background:#fff;border-radius:20px;box-shadow:0 12px 36px rgba(30,24,44,.25);padding:22px 26px 20px;width:min(440px,92vw);text-align:center}
+.spDone h3{margin:0;font-size:18px;font-weight:600}
+.spDone .big{font-family:var(--f-display);font-size:46px;margin:8px 0 2px;color:var(--sci-d)}
+.spDone .sub{font-size:14px;color:var(--muted)}
+.spDone .row{justify-content:center;margin-top:16px}
+.spDone .spRankBox{text-align:left;max-height:40vh;overflow:auto}
 #dexView{position:fixed;inset:0;z-index:90;background:rgba(30,24,44,.35);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
 #dexView.on{display:flex}
 #dexBox{background:#fff;border-radius:18px;max-width:1100px;width:100%;padding:18px 20px 24px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
@@ -243,6 +275,11 @@ body.setup #adminBtn{display:none}
     <div class="row" style="margin-top:12px"><button class="chip sm" id="printOpen">🖨️ 활동지 출력 (A4 · 장면 + 오려 붙일 동물)</button></div>
   </div>
 
+  <div class="card" id="cSp"><h2><span class="num">★</span>스페셜 · 숨은 동물 많이 찾기</h2>
+    <p class="tip">한 곳에 숨은 동물 6~10마리를 모두 찾아요. 가장 어렵게 숨어 있고, 이름 글자를 보며 찾아요. 걸린 시간으로 순위를 매기고, 수업 기록에는 남지 않아요.</p>
+    <div id="spBox" style="margin-top:12px"></div>
+  </div>
+
   <details class="more" id="more"><summary>더 정하기 (단계 · 소리 · 목소리)</summary>
     <div class="card">
       <div class="opt"><span>할 단계</span><div class="row" id="stepRow"></div></div>
@@ -267,6 +304,7 @@ body.setup #adminBtn{display:none}
 <div class="dock" id="dockBot"><div class="rowx" id="dockBotRow"></div></div>
 <div id="recView"><div id="recBox"></div></div>
 <div id="dexView"><div id="dexBox"></div></div>
+<div id="spRankView"><div id="spRankCard"></div></div>
 <div id="spot"></div><div id="spotTip"></div>
 <button id="adminBtn" type="button" aria-label="교사 모드: 3초 동안 누르기"><span class="ab-label" id="abLabel">charum</span></button>
 
@@ -572,7 +610,7 @@ function renderSetup(){
   [['보여 주기',1],['보여 주지 않기',0]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+((S.endScene?1:0)===v?' on':''); b.textContent=n; b.onclick=()=>{ S.endScene=!!v; saveS(); renderSetup(); }; er.appendChild(b); });
   const sn=$('sndRow'); sn.innerHTML='';
   [['켬',1],['끔',0]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+((S.sound?1:0)===v?' on':''); b.textContent=n; b.onclick=()=>{ S.sound=!!v; saveS(); renderSetup(); }; sn.appendChild(b); });
-  renderVoiceRow();
+  renderVoiceRow(); renderSpecial();
 }
 function renderPick(){
   const lv=S.level, mr=$('modeRow'); mr.innerHTML='';
@@ -1003,7 +1041,8 @@ let PROPS={}, PROPSZ={}, SOLID={}, PMASK={}, PREAL={}, PANCH={};   /* PANCH: 'le
    그래서 보이는 넓이를 이 범위에 맞추고, 몫은 fr 범위 안에서만(쉬움은 절반 안팎 보이게, 어려움은 귀·꼬리 끝) */
 const GLV={1:{base:1,band:[.50,.65],area:[.9,2.0],fr:[.45,.85],nd:[0,0],decoy:[0,0],side:0,fade:0,min:72},
            2:{base:.88,band:[.25,.35],area:[.28,.5],fr:[.16,.45],nd:[2,3],decoy:[1,2],side:.4,fade:0,min:64},
-           3:{base:.8,band:[.10,.18],area:[.08,.15],fr:[.04,.2],nd:[3,4],decoy:[3,4],side:.5,fade:1,min:64}};
+           3:{base:.8,band:[.10,.18],area:[.08,.15],fr:[.04,.2],nd:[3,4],decoy:[3,4],side:.5,fade:1,min:64},
+           4:{base:.8,band:[.10,.18],area:[.08,.15],fr:[.04,.2],nd:[0,0],decoy:[3,5],side:.5,fade:1,min:56}};   /* 4 = 스페셜(찾을 동물 6~10마리가 한 장면에, 어려움만큼 숨음) */
 const CLUE_PX=300;   /* 아무리 어려워도 동물이 이만큼(점², 17×17쯤)은 보이게 — 아주 작은 동물(소금쟁이·벌)은 몫이 범위보다 커질 수 있음 */
 /* 모양 표(2026-11-01, tools/props-index.py가 만듦): 그림을 가장 긴 쪽 48칸으로 나눠 칸마다 칠해졌는지. 동물은 media/animals/masks.json(48×48) —
    동물의 칠해진 칸 중 몇 %가 소품·다른 동물에 실제로 가려지는지 셈(별 모양 소품이면 뾰족한 끝까지 그대로) */
@@ -1039,9 +1078,9 @@ async function playGame(tok){
   await speak('다 찾았어요.'); if(!alive(tok)) return; await wait(800); if(!alive(tok)) return;
   RUN.gameDone=true; startEnd();
 }
-function gameCard(src){
+function gameCard(src,wmax){
   clearStage(); const st=$('stage'), A=area();
-  const h=Math.min(A.h*0.9,(A.w*0.94)*3/4), w=h*4/3;
+  const h=Math.min(A.h*0.9,Math.min(A.w*0.94,wmax||1e9)*3/4), w=h*4/3;
   const card=document.createElement('div'); card.className='showCard'; card.style.width=w+'px'; card.style.height=h+'px'; card.style.touchAction='none';
   card.style.cursor='pointer';   /* 장면 어디서나 같은 손가락 커서 — 동물 위에서만 바뀌면 커서가 숨은 자리를 알려 줌(자극 통제) */
   card.innerHTML='<img class="bg" src="'+src+'" alt="" draggable="false" style="object-fit:fill">';
@@ -1183,9 +1222,9 @@ function unhide(groups,items){
     if(!changed) break; }
   return live().filter(g=>g.kind==='t'&&!ok(g)).length;
 }
-async function playHide(p,lvG,targets,tok){
+async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wmax, onReady·onCall·onFound) */
   const L=GLV[lvG], m=MOVE[p], wlP=WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
-  const {card,w:W,h:H}=gameCard(HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg');
+  const {card,w:W,h:H}=gameCard(HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg',o.wmax);
   const g=DEXG(p), pool=[]; Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ if(DEXG(x.p)===g&&!targets.includes(x.a)&&!pool.includes(x.a)&&!PAIRS.some(pr=>pr.includes(x.a)&&targets.some(t=>pr.includes(t)))) pool.push(x.a); })));
   /* 함께 숨는 다른 동물도 찾을 동물과 실제 크기가 10배 넘게 다르지 않은 것만 */
   const rmin=Math.min(...targets.map(realOf)), rmax=Math.max(...targets.map(realOf));
@@ -1333,7 +1372,7 @@ async function playHide(p,lvG,targets,tok){
       const gp={kind:'d',pr:d,pg:{left,top,sw,sh,nm,flip:lk.flip},els:[d]}; groups.push(gp);
       if(m==='walk'||m==='slide') gp.els.push(groundShadow(card,left+sw/2,top+sh*.97,sw*.86,3)); } });
   if(!unhide(groups,items)) break; }
-  await revealCard(card); if(!alive(tok)) return;
+  await revealCard(card); if(!alive(tok)) return; if(o.onReady) o.onReady(items.length);
   const move=(t,f,dx,dy,k)=>{ const tr='translate('+(t.ox*f+(dx||0))+'px,'+(t.oy*f+(dy||0))+'px)'+(k?' scale('+k+')':'')+(t.flip?' scaleX(-1)':''); t.im.style.transform='translate(-50%,-50%) '+tr;
     if(t.sh){ t.sh.style.transform='translate(-50%,-50%) translate('+(t.ox*f)+'px,'+(t.oy*f)+'px)'; t.sh.style.opacity=dx||dy?0:1; } };
   /* 찾으면: 소품 뒤에서 나옴 → 가운데로 와서 크게 보여 주며 문장 → 제 자리(나온 자리)로 돌아감 */
@@ -1374,6 +1413,11 @@ async function playHide(p,lvG,targets,tok){
     /* 흔들기: 동물을 가린 소품이 아래를 축으로 살짝 두 번 흔들림(번쩍임 없이 0.7초) + 바스락 */
     const shake=()=>{ if(!t.pr.animate) return; const b=t.pr.style.transform||''; t.pr.style.transformOrigin='50% 95%'; rustle();
       t.pr.animate([0,-3,2.5,-2,1.2,0].map(r=>({transform:b+' rotate('+r+'deg)'})),{duration:700,easing:'ease-in-out'}); };
+    if(o.special){   /* 스페셜: 찾으면 소품 뒤에서 조금 나와 그 자리에 남음(가운데로 오지 않음 — 다음 동물을 바로 찾게) */
+      await findIt(tok,a,p,t.im,n=>n==='shake'?shake():t.sub?null:move(t,n===1?.5:.8),
+        async()=>{ if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage=''; move(t,1); if(L.fade) t.im.style.filter=''; if(o.onFound) o.onFound(a); await wait(700); },
+        null,{quiet:true,onCall:o.onCall,h1:30000,h2:50000,sk:40000});
+      found.push(t); if(!alive(tok)) return; await wait(300); if(!alive(tok)) return; continue; }
     await findIt(tok,a,p,t.im,n=>n==='shake'?shake():t.sub?null:move(t,n===1?.5:.8),   /* 물에 잠긴 하마는 도움 때 움직이지 않고 흔들기만 */
       async()=>{ if(t.fly){ t.flip0=!!t.flip; if(L.fade) t.im.style.filter=''; await flyIn(t); return; }
         if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage=''; move(t,1); if(L.fade) t.im.style.filter=''; await wait(1050); if(!alive(tok)) return; toCenter(t); await wait(950); },
@@ -1390,22 +1434,127 @@ function groundShadow(card,x,y,w,z){ const s=document.createElement('div');
 /* 하나 찾기(2026-10-31 바꿈): 이름은 한 번 부르고 기다림. 같은 이름을 3초마다 되풀이하면 재촉받는 듯 불안해지므로
    ① 잘못 세 번 누르면(찾고 있으나 헷갈림) ② 12초 동안 다시 부르지 않았으면(잊었을 수 있음 — 숨은 그림을 훑어보는 데는 10초 넘게 걸리므로 그보다 조금 길게) 한 번 더 부름.
    방금(3초 안) 누르며 찾고 있거나 손가락이 닿아 있으면 끝날 때까지 기다렸다 부름. 도움은 18초에 조금 나옴, 24초부터 10초마다 소품이 바스락 흔들림, 32초에 더 나옴 */
-function findIt(tok,a,p,el,help,found,after){ return new Promise(res=>{
+function findIt(tok,a,p,el,help,found,after,o={}){ return new Promise(res=>{   /* o: quiet(찾은 뒤 문장 없음)·onCall(이름 부를 때)·h1·h2·sk(도움 때, ms) */
   let over=false, wrong=0, lastTap=0, lastCall=0, tm=0; window.__gameTarget=a;
   const card=el.parentElement, live=()=>alive(tok)&&!over;
   const call=()=>{ if(!live()) return; if(pdown||Date.now()-lastTap<3000){ schedule(1500); return; }
-    wrong=0; speak(nameLine(a)).then(()=>{ lastCall=Date.now(); schedule(12000); }); };
+    wrong=0; if(o.onCall) o.onCall(a); speak(nameLine(a)).then(()=>{ lastCall=Date.now(); schedule(12000); }); };
   const schedule=ms=>{ clearTimeout(tm); tm=setTimeout(call,ms); };
   call();
   window.__help=n=>{ if(live()) help(n); };   /* 검사 도구가 도움을 바로 부를 때 */
-  later(()=>{ if(live()) help(1); },18000); later(()=>{ if(live()) help(2); },32000);
-  const shk=()=>{ if(!live()) return; help('shake'); later(shk,10000); }; later(shk,24000);   /* 24초부터 10초마다 소품이 바스락 흔들림 */
+  later(()=>{ if(live()) help(1); },o.h1||18000); later(()=>{ if(live()) help(2); },o.h2||32000);
+  const shk=()=>{ if(!live()) return; help('shake'); later(shk,10000); }; later(shk,o.sk||24000);   /* 24초부터 10초마다 소품이 바스락 흔들림 */
   const miss=e=>{ if(!live()||e.target===el) return; lastTap=Date.now(); if(++wrong>=3&&Date.now()-lastCall>4000){ wrong=0; schedule(600); } };
   card.addEventListener('pointerdown',miss);
   const h=async e=>{ if(e) e.stopPropagation(); if(over||!alive(tok)) return; over=true; clearTimeout(tm); card.removeEventListener('pointerdown',miss); el.removeEventListener('pointerdown',h); clearTimers(); chime();
-    await found(); if(!alive(tok)) return; await speak(liveLine(a,p)); if(!alive(tok)) return; if(after) await after(); res(); };
+    await found(); if(!alive(tok)) return; if(!o.quiet){ await speak(liveLine(a,p)); if(!alive(tok)) return; } if(after) await after(); res(); };
   el.addEventListener('pointerdown',h);
 }); }
+
+/* ================= 스페셜: 많이 숨은 동물 찾기 (2026-11-02 베타) =================
+   한 곳(무작위)에 그 곳 동물 6~10마리가 가장 어렵게 숨음. 장면 좌우에 이름 글자, 이름을 부를 때 그 글자가 한 번 살짝 커짐(소리-글자 잇기),
+   찾으면 글자 옆에 그림과 ✓. 시간 제한 없음, 도움은 늦게(30초·50초, 40초부터 바스락). 수업 기록에는 남기지 않고 놀이로만.
+   순위: 별명(실명 말고)을 정한 학생만 charum.org/charum-api/seek-rank.php로 별명·곳·마릿수·시간만 보냄. 곳마다·마릿수마다 10위까지.
+   곳 동물 = 수준 3의 그 곳 동물 + SP_EXTRA(수업엔 없지만 그 곳에 사는, 그림·이름 목소리가 있는 동물). 새 동물을 그리면 SP_EXTRA에 더함 */
+const SP_EXTRA={sea:['오징어','해파리']};
+const SP_MIN=6, SP_MAX=10, SP_URL='https://www.charum.org/charum-api/seek-rank.php';
+function spPool(p){ const s=new Set(); (POOL[3]||[]).forEach(x=>{ if(x.p===p) s.add(x.a); }); (SP_EXTRA[p]||[]).forEach(a=>{ if(OLD[a]||NEW[a]) s.add(a); }); return [...s]; }
+function spPlaces(){ return (PLACES[3]||[]).filter(p=>spPool(p).length>=SP_MIN); }
+const spCount=p=>Math.min(SP_MAX,spPool(p).length), spKey=p=>p+'-'+spCount(p);
+let SPREC=[]; try{ SPREC=JSON.parse(store.get('spRec')||'[]')||[]; }catch(e){ SPREC=[]; }
+const saveSpRec=()=>store.set('spRec',JSON.stringify(SPREC.slice(-500)));
+let NICK={}; try{ NICK=JSON.parse(store.get('nicks')||'{}')||{}; }catch(e){ NICK={}; }
+const saveNick=()=>store.set('nicks',JSON.stringify(NICK));
+const DEV=(()=>{ let d=store.get('dev'); if(!/^[a-z0-9]{12}$/.test(d||'')){ d=Array.from({length:12},()=>'abcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random()*36)]).join(''); store.set('dev',d); } return d; })();
+const NICK_OK=/^[가-힣a-zA-Z0-9 ]{1,8}$/;
+const NICK_BAD=['시발','씨발','ㅅㅂ','ㅆㅂ','병신','ㅂㅅ','개새','새끼','좆','존나','지랄','미친','fuck','shit','bitch','sex','섹스','장애','애자','등신','찐따'];   /* 서버(seek-rank.php)와 같은 목록 */
+const spWho=()=>S.stu||'_';
+const spTime=ms=>{ const s=Math.round(ms/1000); return s<60?s+'초':Math.floor(s/60)+'분 '+String(s%60).padStart(2,'0')+'초'; };
+let SP_LAST='';
+function startSpecial(p){ unlockAudio(); const ps=spPlaces(); if(!ps.length) return;
+  if(!p||!ps.includes(p)){ const q=ps.length>1?ps.filter(x=>x!==SP_LAST):ps; p=pick1(q); } SP_LAST=p;
+  RUN={special:true,p,lv:3,bd:{places:[p],items:[],label:'스페셜 · '+PL[p].label},plan:[],idx:0,phases:[],pi:0,ii:0,token:0,ending:true,gameDone:false,placed:{}};
+  document.body.classList.remove('setup'); goFull(); setTimeout(()=>{ if(RUN&&RUN.special) runSpecial(); },350); }
+/* 이 놀이에서 할 말이 내장 목소리에 다 있으면 내장, 아니면 이 판은 기기 목소리(섞지 않음) */
+async function spEngine(names){ await voiceReady; const hs=await Promise.all(names.map(a=>sha16(nameLine(a))).concat([sha16('다 찾았어요.')]));
+  S.engineNow=(S.engine==='builtin'&&hs.every(h=>VSET.has(h)))?'builtin':'device'; }
+async function runSpecial(){
+  if(!RUN||!RUN.special) return;
+  RUN.token++; const tok=RUN.token; clearTimers(); stopVoice(); clearStage(); renderProg();
+  await gameReady; if(!alive(tok)) return;
+  const p=RUN.p, names=shuffle(spPool(p)).slice(0,SP_MAX); await spEngine(names); if(!alive(tok)) return;
+  const st=$('stage'), A=area(), half=Math.ceil(names.length/2);
+  const pw=Math.max(124,Math.min(210,A.w*.15)), fs=Math.max(16,Math.min(30,(pw-74)/Math.max(...names.map(x=>x.length))));   /* 가장 긴 이름이 한 줄에 */
+  const mk=(side,list)=>{ const d=document.createElement('div'); d.className='spSide '+side; d.style.width=pw+'px'; d.style.fontSize=fs+'px'; st.appendChild(d);
+    list.forEach(a=>{ const w=document.createElement('div'); w.className='spW'; w.dataset.a=a; w.innerHTML='<span class="t">'+esc(a)+'</span><img alt="" src="'+pic(a)+'">'; d.appendChild(w); }); };
+  const clock=document.createElement('div'); clock.className='spClock'; clock.textContent='0:00';
+  const W=a=>st.querySelector('.spW[data-a="'+a+'"]');
+  let t0=0, nf=0;
+  let iv=0; const tick=()=>{ if(!alive(tok)||!t0||!clock.isConnected){ clearInterval(iv); return; } const s=Math.floor((Date.now()-t0)/1000); clock.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };   /* 찾을 때마다 clearTimers가 돌아 later는 못 씀 */
+  await playHide(p,4,names,tok,{special:true,wmax:A.w-2*pw-28,
+    onReady:()=>{ mk('l',names.slice(0,half)); mk('r',names.slice(half)); st.appendChild(clock); t0=Date.now(); tick(); iv=setInterval(tick,500); },
+    onCall:a=>{ st.querySelectorAll('.spW.now').forEach(x=>x.classList.remove('now')); const w=W(a); if(!w) return; w.classList.add('now');
+      if(w.animate) w.animate([{transform:'scale(1)'},{transform:'scale(1.16)',offset:.4},{transform:'scale(1)'}],{duration:800,easing:'ease-in-out'}); },
+    onFound:a=>{ const w=W(a); if(w){ w.classList.remove('now'); w.classList.add('done'); } nf++; }});
+  if(!alive(tok)||!t0) return;
+  clearInterval(iv); const ms=Date.now()-t0; clock.textContent=spTime(ms);
+  const k=spWho(), key=spKey(p), prev=SPREC.filter(r=>r.k===k&&r.key===key).reduce((m,r)=>Math.min(m,r.ms),Infinity);
+  const rec={k,key,p,n:names.length,ms,t:Date.now(),nick:NICK[k]||'',up:0}; SPREC.push(rec); saveSpRec();
+  await wait(500); if(!alive(tok)) return; speak('다 찾았어요.');
+  spResult(tok,rec,prev);
+}
+function spResult(tok,rec,prev){
+  const st=$('stage'), d=document.createElement('div'); d.className='spDone';
+  const best=rec.ms<prev;
+  d.innerHTML='<h3>'+esc(PL[rec.p].label)+' · '+rec.n+'마리를 다 찾았어요</h3><div class="big">'+spTime(rec.ms)+'</div>'
+    +'<div class="sub">'+(prev===Infinity?'첫 기록이에요':best?'이 기기 최고 기록!':'이 기기 최고 '+spTime(prev))+'</div>'
+    +'<div class="spRankBox" id="spRankNow"><p class="note">'+(rec.nick?'순위표를 불러오는 중이에요…':'별명을 정하면 모든 학교 순위표에 올라가요(설정 화면 스페셜에서).')+'</p></div>'
+    +'<div class="row"><button class="chip on" id="spAgain">다른 곳에서 또</button><button class="chip" id="spSame">같은 곳 다시</button><button class="chip" id="spHome">그만하기</button></div>';
+  st.appendChild(d);
+  $('spAgain').onclick=()=>startSpecial(); $('spSame').onclick=()=>startSpecial(rec.p);
+  $('spHome').onclick=()=>{ RUN=null; clearTimers(); stopVoice(); clearStage(); document.body.classList.add('setup'); renderSetup(); window.scrollTo(0,0); };
+  if(rec.nick) spPush().then(()=>spLoad(rec.p,$('spRankNow'),rec.key));
+}
+let spPushing=false;
+async function spPush(){ if(spPushing) return; spPushing=true;
+  try{ for(const r of SPREC.filter(x=>!x.up&&x.nick)){
+    const res=await fetch(SP_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'add',lv:r.key,ms:Math.round(r.ms),nick:r.nick,dev:DEV})}).then(x=>x.json()).catch(()=>null);
+    if(!res) break; r.up=res.ok?1:2; saveSpRec(); } }finally{ spPushing=false; } }
+async function spLoad(p,box,key){ if(!box) return; key=key||spKey(p);
+  const res=await fetch(SP_URL+'?lv='+encodeURIComponent(key)+'&dev='+DEV).then(x=>x.json()).catch(()=>null);
+  if(!box.isConnected) return;
+  if(!res||!Array.isArray(res.top)){ box.innerHTML='<p class="note">지금은 순위표를 불러오지 못했어요. 기록은 이 기기에 남아 있다가 다음에 보내져요.</p>'; return; }
+  const row=r=>'<tr class="'+(r.me?'me':'')+'"><td class="r">'+r.r+'</td><td>'+esc(r.n)+'</td><td class="t">'+spTime(r.ms)+'</td></tr>';
+  const out=(res.mine||[]).filter(m=>m.r>res.top.length).slice(0,3).map(row).join('');
+  box.innerHTML=res.top.length?'<table>'+res.top.map(row).join('')+(out?'<tr><td colspan="3" class="gap">…</td></tr>'+out:'')+'</table><p class="note">모든 학교 · '+esc(PL[p].label)+' '+key.split('-')[1]+'마리 · 별명마다 가장 빠른 기록 · '+res.total+'명</p>'
+    :'<p class="note">아직 올라온 기록이 없어요. 첫 기록의 주인공이 되어 보세요!</p>'; }
+/* 설정 화면의 스페셜 칸 */
+function renderSpecial(){
+  const box=$('spBox'); if(!box) return; const ps=spPlaces(), k=spWho();
+  box.innerHTML='<div class="row"><button class="chip on" id="spGo"'+(ps.length?'':' disabled')+'>★ 스페셜 시작 (아무 곳이나)</button><button class="chip sm" id="spRk">🏆 순위 보기</button></div>'
+    +'<p class="pickNote">나오는 곳: '+ps.map(p=>PL[p].label+' '+spCount(p)+'마리').join(' · ')+'</p>'
+    +'<div class="spNick"><b>순위표 별명</b> <small>— '+(k==='_'?'연습':esc(nameOf(k)))+'</small> <input id="spNickIn" maxlength="8" placeholder="예: 번개손" value="'+esc(NICK[k]||'')+'" autocomplete="off"><button class="chip sm" id="spNickOk">저장</button><button class="chip sm" id="spNickDel">지우기</button> <span id="spNickMsg" class="pickNote"></span>'
+    +'<p class="pickNote">별명을 정하면 기록이 모든 학교 순위표에 올라가요. 보내는 것은 별명·곳·시간뿐이고 학생 이름·학교는 보내지 않아요. 실명이나 학교를 알 수 있는 별명은 쓰지 않아요.</p></div>';
+  $('spGo').onclick=()=>startSpecial();
+  $('spRk').onclick=()=>openSpRank(ps[0]);
+  $('spNickOk').onclick=()=>{ const v=$('spNickIn').value.trim().replace(/\s+/g,' '), low=v.replace(/ /g,'').toLowerCase();
+    if(!NICK_OK.test(v)){ $('spNickMsg').textContent='한글·영문·숫자로 8자까지 써 주세요.'; return; }
+    if(NICK_BAD.some(w=>low.includes(w))){ $('spNickMsg').textContent='다른 별명을 써 주세요.'; return; }
+    if(students.some(x=>x.name&&x.name.length>=2&&low.includes(x.name.replace(/ /g,'').toLowerCase()))){ $('spNickMsg').textContent='실명이 들어 있어요. 별명으로 써 주세요.'; return; }
+    NICK[k]=v; saveNick(); SPREC.forEach(r=>{ if(r.k===k&&!r.nick){ r.nick=v; r.up=0; } }); saveSpRec(); $('spNickMsg').textContent='저장했어요.'; };
+  $('spNickDel').onclick=()=>{ delete NICK[k]; saveNick(); $('spNickIn').value=''; $('spNickMsg').textContent='지웠어요. 앞으로는 이 기기에만 남아요.'; };
+}
+function openSpRank(p){ const v=$('spRankView'), ps=spPlaces(); if(!ps.length) return; p=ps.includes(p)?p:ps[0];
+  const k=spWho(), mine=SPREC.filter(r=>r.k===k&&r.key===spKey(p)).sort((a,b)=>a.ms-b.ms).slice(0,5);
+  $('spRankCard').innerHTML='<h2><span>🏆 스페셜 순위</span><button class="chip sm" id="spRkX">닫기</button></h2>'
+    +'<div class="row">'+ps.map(q=>'<button class="chip sm'+(q===p?' on':'')+'" data-p="'+q+'">'+PL[q].label+'</button>').join('')+'</div>'
+    +'<div class="spRankBox" id="spRankAll"><p class="note">불러오는 중이에요…</p></div>'
+    +'<h4>'+(k==='_'?'연습':esc(nameOf(k)))+' · 이 기기</h4>'+(mine.length?'<table>'+mine.map((r,i)=>'<tr><td class="r">'+(i+1)+'</td><td>'+new Date(r.t).toLocaleDateString('ko-KR')+'</td><td class="t">'+spTime(r.ms)+'</td></tr>').join('')+'</table>':'<p class="note">아직 기록이 없어요.</p>');
+  v.classList.add('on');
+  $('spRkX').onclick=()=>v.classList.remove('on');
+  $('spRankCard').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>openSpRank(b.dataset.p));
+  spPush().then(()=>spLoad(p,$('spRankAll')));
+}
 
 /* ================= 동물 도감 ================= */
 let DEX_SEL='';
@@ -1433,6 +1582,7 @@ function renderDex(){
       tapper(im,()=>{ unlockAudio(); speak(liveLine(it.a,it.p)); }); sc.appendChild(im); }); }));
 }
 $('dexView').addEventListener('pointerdown',e=>{ if(e.target.id==='dexView') $('dexView').classList.remove('on'); });
+$('spRankView').addEventListener('pointerdown',e=>{ if(e.target.id==='spRankView') $('spRankView').classList.remove('on'); });
 
 /* ================= 활동지 (A4 가로 2쪽: 사는 곳 장면 + 오려 붙일 동물) ================= */
 function sheetHTML(lv,plan){
@@ -1505,6 +1655,7 @@ function setAdmin(on){
 }
 function closeAdmin(){ setAdmin(false); goFull();
   if(!RUN) return;
+  if(RUN.special){ runSpecial(); return; }   /* 스페셜은 이 곳을 처음부터(새로 숨김) */
   if(RUN.ending){ startEnd(); return; }   /* 놀이는 처음부터, 끝 장면은 그대로 다시 그림 */
   runStep();   /* 멈춘 단계 처음부터 */
 }
@@ -1519,17 +1670,19 @@ function renderDock(){
   const btn=(g,t,fn,cls,id,dis)=>{ const b=document.createElement('button'); b.type='button'; b.textContent=t; if(cls) b.className=cls; if(id) b.id=id; if(dis) b.disabled=true; b.onclick=fn; g.appendChild(b); return b; };
   const cur=curStep(), want=PEND||cur;
   /* 위: 지금 상태(단계) */
-  if(RUN){ const g=grp(T,planTitle()+' ·');
+  if(RUN&&RUN.special){ grp(T,RUN.bd.label); }
+  else if(RUN){ const g=grp(T,planTitle()+' ·');
     stepKeys().forEach(k=>btn(g,STEP_NAME(k),()=>{ PEND=k===cur?null:k; renderDock(); },(want===k?'on':'')+(cur===k?' now':''),'dk_'+k)); }
   const lvNow=PEND_LV||S.gameLv;
-  if(RUN&&S.game){ const g=grp(T,'놀이'); [1,2,3].forEach(v=>btn(g,GAMELV_NAME[v],()=>{ PEND_LV=v===S.gameLv?null:v; renderDock(); },lvNow===v?'on':'','dkLv'+v)); }
+  if(RUN&&!RUN.special&&S.game){ const g=grp(T,'놀이'); [1,2,3].forEach(v=>btn(g,GAMELV_NAME[v],()=>{ PEND_LV=v===S.gameLv?null:v; renderDock(); },lvNow===v?'on':'','dkLv'+v)); }
   { const g=grp(T,''); btn(g,S.sound?'🔊 소리':'🔇 소리 끔',()=>{ S.sound=!S.sound; saveS(); if(!S.sound) stopVoice(); renderDock(); },S.sound?'':'on','dkSnd');
     btn(g,'⚙ 설정',()=>{ saveSpot(); RUN=null; PEND=null; PEND_LV=null; clearTimers(); stopVoice(); setAdmin(false); clearStage(); document.body.classList.add('setup'); renderSetup(); window.scrollTo(0,0); },'','dkHome');
     btn(g,'? 도움말',()=>startHelp(),'','dkHelp'); }
   /* 아래: 다시 하기 · 기록 · 도감 · 활동지 | 바꾼 설정으로 이어서 */
-  { const g=grp(B,''); btn(g,'↺ 이 단계 처음부터',()=>{ PEND=null; applyLv(); closeAdmin(); },'','dkRedo',!RUN);
+  if(RUN&&RUN.special){ const g=grp(B,''); btn(g,'↺ 이 곳 다시',()=>{ setAdmin(false); goFull(); runSpecial(); },'','dkSpSame'); btn(g,'다른 곳',()=>{ setAdmin(false); startSpecial(); },'','dkSpNext'); }
+  else { const g=grp(B,''); btn(g,'↺ 이 단계 처음부터',()=>{ PEND=null; applyLv(); closeAdmin(); },'','dkRedo',!RUN);
     btn(g,'⟲ 묶음 처음부터',()=>{ PEND=null; applyLv(); const lv=RUN.lv,plan=RUN.plan,i=RUN.idx; setAdmin(false); RUN=buildRun(lv,plan,i); goFull(); runStep(); },'','dkAgain',!RUN); }
-  { const g=grp(B,''); btn(g,'기록',()=>openRecords(false),'','dkRec'); btn(g,'🐾 도감',()=>openDex(),'','dkDex'); btn(g,'🖨 활동지',()=>printSheet(RUN?RUN.lv:S.level,RUN?RUN.plan:makePlan()),'','dkPrint'); }
+  { const g=grp(B,''); btn(g,'기록',()=>openRecords(false),'','dkRec'); btn(g,'🐾 도감',()=>openDex(),'','dkDex'); btn(g,'🖨 활동지',()=>printSheet(RUN&&!RUN.special?RUN.lv:S.level,RUN&&!RUN.special?RUN.plan:makePlan()),'','dkPrint'); }
   { const g=grp(B,''); btn(g,'바꾼 설정으로 이어서',()=>goPending(),'go','dkGo',!(PEND||PEND_LV)); }
   $('dockNote').textContent=S.voiceNote||'';
 }

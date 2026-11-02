@@ -16,6 +16,8 @@ charum.org 서버에 올리는 파일의 원본입니다. GitHub Pages에서는 
   donate-config.php (저장소에는 donate-config.sample.php만) GitHub 토큰(charum-inbox 하나만, Contents 읽기·쓰기). 채팅·저장소에 넣지 않음.
   puzzle-rank.php   내 그림 퍼즐(002) S·S+ 모든 학교 순위표. 기록: charum-api/puzzle-rank-data/. 점검: ?ping → "ok": true
                     잘못된 별명을 지우려면 맨 위 $ADMIN_TOKEN 에 20자 이상 글자를 서버에서만 넣고 act:"del".
+  seek-rank.php     동물이 사는 곳(008) 스페셜 '숨은 동물 많이 찾기' 모든 학교 순위표(2026-11-02, puzzle-rank.php와 같은 꼴). 판 = 곳-마릿수(예: forest-8), 10위까지.
+                    기록: charum-api/seek-rank-data/. 점검: ?ping → "ok": true, "version": "2026-11-02". 별명 지우기는 $ADMIN_TOKEN(서버에서만) + act:"del".
   photo-relay.php   차름 앱(001·002) 휴대폰에서 사진 받기 — 2026-10-26 판(새로 씀): QR 한 번에 여러 장(max 12), 받는 순간 지움.
                     기록: charum-api/photo-relay-data/. 점검: ?ping → "version": "2026-10-26", "multi": 12
   key-relay.php     휴대폰에서 키 받기(잠가서 3분, 받는 순간 지움). 기록: charum-api/key-relay-data/. 원본은 아직 서버에만 있음.

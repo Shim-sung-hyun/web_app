@@ -1,0 +1,51 @@
+008 스페셜 '숨은 동물 많이 찾기'용 새 동물 (2026-11-02). 곳마다 동물을 10마리쯤으로(초원 4→10, 극지방 3→10, 사막 6→10, 산 8→9, 바다 8→10, 갯벌 6→10).
+판 하나 = Gemini 새 대화창 하나. media/animals/prompts/style-ref.png 를 붙이고 아래를 그대로 복사해 붙여 넣음. 받은 그림(판)은 Claude에게 주면 잘라 넣음.
+(머리가 왼쪽이든 오른쪽이든 상관없음 — 앱이 숨길 때 좌우를 뒤집어 머리부터 나오게 함. 다만 정면을 보는 그림은 머리 방향이 없어 뒤집기를 못 하므로 옆모습으로)
+
+■ 동물 판 3 (초원 6 · 사막 2) — Gemini 새 대화창 · media/animals/prompts/style-ref.png 붙임
+STYLE — must match the attached reference sheet exactly: cute but not babyish flat cartoon animals for a school learning app, bold clean dark-brown outlines, flat natural colours with soft simple shading, friendly face with small round eyes. Each animal is drawn WHOLE (head to tail, all legs), seen from the SIDE (head clearly to the left or to the right, not facing the viewer), standing or resting naturally.
+NO background, NO ground, NO water, NO plants, NO rocks, NO shadow, NO text — only the animal on PURE WHITE, because the picture must not show where the animal lives.
+LAYOUT: one square image, an invisible 3×3 grid — NO grid lines, NO frames. Put the 8 animals below in cells 1 to 8 in reading order, one per cell, each filling most of its cell. Leave cell 9 (bottom-right) empty and white.
+1 a white rhinoceros, grey, two horns
+2 a cheetah, slim, golden with black spots and black tear lines on the face
+3 a spotted hyena, sandy brown with dark spots, sloping back
+4 an ostrich, black body feathers, long bare neck and long legs
+5 a Thomson's gazelle, tan with a black side stripe, thin curved horns
+6 an African buffalo, dark grey-black, thick curved horns
+7 a desert rattlesnake, sandy with brown diamond pattern, rattle on the tail, coiled loosely with head raised
+8 a small desert jerboa / gerbil (desert rat), sandy, big hind legs, long tufted tail
+
+■ 동물 판 4 (극지방 7 · 사막 1) — Gemini 새 대화창 · media/animals/prompts/style-ref.png 붙임
+STYLE — must match the attached reference sheet exactly: cute but not babyish flat cartoon animals for a school learning app, bold clean dark-brown outlines, flat natural colours with soft simple shading, friendly face with small round eyes. Each animal is drawn WHOLE (head to tail, all legs), seen from the SIDE (head clearly to the left or to the right, not facing the viewer), standing or resting naturally.
+NO background, NO ground, NO water, NO plants, NO rocks, NO shadow, NO text — only the animal on PURE WHITE, because the picture must not show where the animal lives.
+LAYOUT: one square image, an invisible 3×3 grid — NO grid lines, NO frames. Put the 8 animals below in cells 1 to 8 in reading order, one per cell, each filling most of its cell. Leave cell 9 (bottom-right) empty and white.
+1 an arctic fox in white winter fur, bushy tail
+2 a walrus, brown-pink, long white tusks, whiskers
+3 a reindeer, brown with pale neck and big branched antlers
+4 a snowy owl, white with a few small dark spots, yellow eyes, standing
+5 an arctic hare, white fur, black ear tips, sitting
+6 a musk ox, very long dark-brown shaggy fur, curved horns
+7 an arctic wolf, white-grey fur
+8 a dung beetle rolling a small ball of dung (shiny black beetle)
+
+■ 동물 판 5 (사막 1 · 산 1 · 바다 2 · 갯벌 4) — Gemini 새 대화창 · media/animals/prompts/style-ref.png 붙임
+STYLE — must match the attached reference sheet exactly: cute but not babyish flat cartoon animals for a school learning app, bold clean dark-brown outlines, flat natural colours with soft simple shading, friendly face with small round eyes. Each animal is drawn WHOLE (head to tail, all legs), seen from the SIDE (head clearly to the left or to the right, not facing the viewer), standing or resting naturally.
+NO background, NO ground, NO water, NO plants, NO rocks, NO shadow, NO text — only the animal on PURE WHITE, because the picture must not show where the animal lives.
+LAYOUT: one square image, an invisible 3×3 grid — NO grid lines, NO frames. Put the 8 animals below in cells 1 to 8 in reading order, one per cell, each filling most of its cell. Leave cell 9 (bottom-right) empty and white.
+1 an Arabian oryx, white body, long straight thin horns
+2 a wild boar, dark brown bristly fur, small tusks
+3 a green sea turtle swimming, flippers spread
+4 a bottlenose dolphin, grey, smiling beak
+5 a moon snail (round smooth sea snail shell with the soft foot out), creamy brown
+6 a razor clam (long thin straight shell), olive-brown, a little of the soft body showing at one end
+7 a small shorebird (sandpiper), brown-grey back, white belly, thin straight beak, long thin legs
+8 a small mud-flat crab (Korean helice crab), dark green-brown square shell, two equal claws, seen from the side-front
+
+판 → 파일 이름(Claude가 넣을 때, media/animals/이름.webp):
+  · 동물 판 3: 코뿔소 koppulso  치타 chita  하이에나 haiena  타조 tajo  가젤 gajel  물소 mulso  방울뱀 bangulbaem  사막쥐 samakjwi
+  · 동물 판 4: 북극여우 bukgeukyeou  바다코끼리 badakokkiri  순록 sullok  흰올빼미 huinolppaemi  북극토끼 bukgeuktokki  사향소 sahyangso  북극늑대 bukgeuknukdae  쇠똥구리 soettongguri
+  · 동물 판 5: 오릭스 oriks  멧돼지 metdwaeji  바다거북 badageobuk  돌고래 dolgorae  갯우렁이 gaeturengi  맛조개 matjogae  도요새 doyosae  방게 bangge
+
+넣을 때 할 일(Claude): 자르기·흰 테두리 지우기(tools/clean-edges.py) → 008 NEW 표·BB(몸 상자)·REAL(실제 크기)·FACE(머리 쪽)에 적기 → tools/props-index.py(모양 표)
+  → SP_EXTRA(스페셜 곳 동물)에 더함 → 이름 목소리('코뿔소.' 등)를 voice-lines-beta.json에 더해 선생님이 목소리 도구로 만듦(없으면 그 곳 스페셜은 기기 목소리)
+  · 순위표는 곳·마릿수마다 따로라, 동물이 늘면 새 순위표가 시작됨
