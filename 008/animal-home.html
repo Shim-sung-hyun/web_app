@@ -997,8 +997,8 @@ const amaskReady=fetch(PNEW+'masks.json',{cache:'no-cache'}).then(r=>r.ok?r.json
 const gameReady0=fetch(HAB+'props/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{
   Object.entries(j||{}).forEach(([nm,v])=>{ if(!v||!v.size) return; PROPSZ[nm]=v.size; SOLID[nm]=v.solid; if(v.mask) PMASK[nm]=decodeMask(...v.mask); PREAL[nm]=v.real||[.3,1]; if(v.anchor) PANCH[nm]=v.anchor; (v.places||[]).forEach(p=>(PROPS[p]=PROPS[p]||[]).push(nm)); });
   }).catch(()=>{}).then(()=>{   /* 목록을 못 받으면 기본 소품으로 */
-  const D={ground:'bush boulder grass',forest:'bush log fern',grassland:'goldgrass boulder',desert:'dune boulder',polar:'snow ice',sky:'cloud cloud2',underground:'clod flatrock',
-    water:'seaweed stones',sea:'seaweed coral',pond:'reeds stones',wetland:'rice reeds'};
+  const D={ground:'bush boulder grass',forest:'bush log fern',grassland:'goldgrass boulder',desert:'dune sandrocks',polar:'snow ice',sky:'cloud cloud2',underground:'clod flatrock',
+    water:'seaweed seapebbles',sea:'seaweed coral',pond:'reeds pebblemound',wetland:'rice reeds'};
   Object.keys(D).forEach(p=>{ if(!PROPS[p]||!PROPS[p].length) PROPS[p]=D[p].split(' '); }); PROPS.land=PROPS.ground; });
 const gameReady=Promise.all([gameReady0,amaskReady]);
 const GAMELV_NAME={1:'쉬움',2:'보통',3:'어려움'};
