@@ -53,6 +53,7 @@ audio{height:28px;vertical-align:middle;margin-left:6px}
 <section>
 <h2><b>2</b>만들 문장</h2>
 <label for="lines">한 줄에 한 문장. 앱의 말 목록(voice-lines.json) 주소를 넣고 불러와도 됩니다.</label>
+<p class="note">발음이 이상한 문장은 <b>문장 = 읽는 법</b>으로 씁니다. 예: <code>쇠똥구리. = 쐬똥구리.</code> — 파일은 앞 문장 이름으로, 소리는 뒤의 읽는 법으로 만들고, 이미 있는 문장이어도 다시 만듭니다(넣으면 바뀜). 들어 보고 이상하면 읽는 법을 고쳐 다시 만들기.</p>
 <div class="row" style="margin-bottom:8px"><input id="url" value="https://shim-sung-hyun.github.io/web_app/008/voice-lines-beta.json"><button class="ghost" id="loadUrl" style="flex:0 0 auto">불러오기</button></div>
 <textarea id="lines" placeholder="고양이는 땅에 살아요.&#10;고양이."></textarea>
 <div class="row" style="margin-top:10px"><button id="check" style="flex:0 0 auto">없는 문장 찾기</button></div>
@@ -98,11 +99,12 @@ $('key').onchange=()=>store.set(keyName(),$('key').value.trim());
 $('azRegion').onchange=()=>store.set('webapp.azureRegion',$('azRegion').value.trim());
 $('loadUrl').onclick=async()=>{ try{ const r=await fetch($('url').value,{cache:'no-cache'}); const j=await r.json(); $('lines').value=(Array.isArray(j)?j:Object.keys(j)).join('\n'); $('checkNote').textContent=(Array.isArray(j)?j.length:0)+'문장을 불러왔습니다.'; }catch(e){ $('checkNote').textContent='불러오지 못했습니다: '+e.message; } };
 $('check').onclick=async()=>{
-  const lines=[...new Set($('lines').value.split('\n').map(s=>s.trim()).filter(Boolean))];
+  const raw=[...new Set($('lines').value.split('\n').map(s=>s.trim()).filter(Boolean))];
+  const SAY={}; const lines=raw.map(l=>{ const k=l.indexOf(' = '); if(k<0) return l; const t=l.slice(0,k).trim(); SAY[t]=l.slice(k+3).trim(); return t; });   /* 문장 = 읽는 법 */
   let files=new Set(); try{ const j=await (await fetch(BASE+$('pack').value+'/index.json',{cache:'no-cache'})).json(); files=new Set(j.files||[]); }catch(e){}
-  MISSING=[]; for(const t of lines){ const h=await sha16(t); if(!files.has(h)) MISSING.push({t,h}); }
-  $('missing').innerHTML=MISSING.map(m=>'<li>'+m.t.replace(/</g,'&lt;')+'</li>').join('');
-  $('checkNote').textContent=lines.length+'문장 중 '+MISSING.length+'문장이 '+$('pack').value+'에 없습니다.';
+  MISSING=[]; for(const t of lines){ const h=await sha16(t); if(!files.has(h)||SAY[t]) MISSING.push({t,h,say:SAY[t]||''}); }
+  $('missing').innerHTML=MISSING.map(m=>'<li>'+m.t.replace(/</g,'&lt;')+(m.say?' <small>(읽는 법: '+m.say.replace(/</g,'&lt;')+' · 다시 만듦)</small>':'')+'</li>').join('');
+  $('checkNote').textContent=lines.length+'문장 중 '+MISSING.length+'문장을 만듭니다('+$('pack').value+'에 없거나 읽는 법을 정한 문장).';
   $('make').disabled=!MISSING.length;
 };
 async function synth(t){
@@ -122,9 +124,9 @@ async function synth(t){
 }
 $('make').onclick=async()=>{
   $('make').disabled=true; const ol=$('made'); ol.innerHTML='';   /* 이미 만든 문장은 건너뜀(중간에 막혀 다시 눌러도 이어서) */
-  for(const [i,m] of MISSING.entries()){ if(MADE.some(x=>x.h===m.h)) continue;
+  for(const [i,m] of MISSING.entries()){ if(MADE.some(x=>x.h===m.h&&(x.say||'')===(m.say||''))) continue; MADE=MADE.filter(x=>x.h!==m.h);
     const li=document.createElement('li'); li.textContent=m.t+' … '; ol.appendChild(li);
-    try{ const wav=await synth(m.t); MADE.push({...m,wav}); li.className='done'; li.textContent=m.t+' ✓';
+    try{ const wav=await synth(m.say||m.t); MADE.push({...m,wav}); li.className='done'; li.textContent=m.t+(m.say?' ('+m.say+')':'')+' ✓';
       const a=document.createElement('audio'); a.controls=true; a.src=URL.createObjectURL(new Blob([wav],{type:'audio/wav'})); li.appendChild(a); }
     catch(e){ li.className='err'; li.textContent=m.t+' — '+e.message; if(/40[13]/.test(e.message)) break; if(/429/.test(e.message)){ await new Promise(r=>setTimeout(r,20000)); } }
     $('makeNote').textContent=(i+1)+' / '+MISSING.length; await new Promise(r=>setTimeout(r,$('svc').value==='azure'?3100:350));
@@ -133,7 +135,7 @@ $('make').onclick=async()=>{
   $('makeNote').textContent=MADE.length+'문장을 만들었습니다. 들어 보고 zip을 받으세요.';
 };
 $('zip').onclick=async()=>{
-  const z=new JSZip(), meta={pack:$('pack').value,app:$('app').value.trim(),service:$('svc').value,voice:$('svc').value==='google'?'ko-KR-Chirp3-HD-Leda':$('azVoice').value.trim(),made:new Date().toISOString().slice(0,10),lines:MADE.map(m=>({t:m.t,h:m.h,oneSyl:oneSyl(m.t)}))};
+  const z=new JSZip(), meta={pack:$('pack').value,app:$('app').value.trim(),service:$('svc').value,voice:$('svc').value==='google'?'ko-KR-Chirp3-HD-Leda':$('azVoice').value.trim(),made:new Date().toISOString().slice(0,10),lines:MADE.map(m=>({t:m.t,h:m.h,oneSyl:oneSyl(m.say||m.t),say:m.say||undefined}))};
   MADE.forEach(m=>z.file(m.h+'.wav',m.wav)); z.file('voice-meta.json',JSON.stringify(meta,null,1));
   const b=await z.generateAsync({type:'blob'}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='voice-'+meta.pack+'-'+meta.app+'-'+meta.made+'.zip'; a.click();
 };
