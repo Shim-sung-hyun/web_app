@@ -61,7 +61,7 @@ ALL_WHITE_IS_BG = {'grass', 'goldgrass', 'rice', 'reeds', 'seaweed', 'marsh', 'f
     'mushrooms', 'desertpebbles', 'reedbase', 'floattwig', 'arrowhead', 'seedlings', 'hornwort', 'mudsprouts', 'seagrass', 'redcoral',
     'rootlets', 'oakboulder', 'fallentree', 'thicket', 'meadowtree', 'bouldergroup', 'acaciathicket', 'baobab', 'rockoutcrop',
     'riverbank', 'waterrock', 'reedbed', 'papyrus', 'reefrock', 'seacliff', 'pinecone', 'moss',
-    'smallflowers', 'buttercups', 'grassbuds', 'mangrove', 'reedisland', 'bigmudrock', 'buttercups', 'reedtips', 'watertuft', 'floattwig2',
+    'smallflowers', 'buttercups', 'grassbuds', 'mangrove', 'reedisland', 'bigmudrock', 'buttercups', 'reedtips', 'watertuft', 'floattwig2', 'weedsprig', 'twigleft1', 'twigleft2', 'reedwide1', 'reedwide2',
     'pondreeds', 'pondcattails', 'watergrass', 'lotusleaves', 'pondsedge', 'waterpatch', 'arrowleaves', 'bulrush', 'kelpgold', 'eelgrass', 'seawhip', 'kelpstalks', 'searibbons', 'softcoral', 'kelpbrown', 'sealettuce'}
 
 N4 = ((1, 0), (-1, 0), (0, 1), (0, -1))
