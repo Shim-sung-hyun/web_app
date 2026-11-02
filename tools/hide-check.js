@@ -40,7 +40,7 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
        const occ=info.filter(o=>o!==A&&o.z>A.z), cnt=()=>{ const d=x.getImageData(W,H,W,H).data; let n=0; for(let i=3;i<d.length;i+=4) if(d[i]>128) n++; return n; };
        const own=occ.filter(o=>!o.animal&&Math.abs(o.z-A.z)===1); own.forEach(draw); const nOwn=cnt();
        occ.filter(o=>!own.includes(o)).forEach(draw); const n1=cnt();
-       out.push({edge:!!A.e.dataset.flip||(parseFloat(A.e.style.left)-parseFloat(A.e.style.width)/2<0)||(parseFloat(A.e.style.left)+parseFloat(A.e.style.width)/2>W),free:A.e.dataset.free||'',pl,lv,a:A.a,target:targets.includes(A.a),n0,own:nOwn,vis:n1,frac:n0?n1/n0:0,ok:!!A.im,anim:A.e.complete&&A.e.naturalWidth>0});
+       out.push({edge:(parseFloat(A.e.style.left)-parseFloat(A.e.style.width)/2<0)||(parseFloat(A.e.style.left)+parseFloat(A.e.style.width)/2>W),free:A.e.dataset.free||'',pl,lv,a:A.a,target:targets.includes(A.a),n0,own:nOwn,vis:n1,frac:n0?n1/n0:0,ok:!!A.im,anim:A.e.complete&&A.e.naturalWidth>0});
      }
      RUN.token=99; await wait(50); clearStage();
     } }
