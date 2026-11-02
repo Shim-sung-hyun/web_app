@@ -45,7 +45,7 @@ audio{height:28px;vertical-align:middle;margin-left:6px}
 <h2><b>1</b>어떤 목소리 묶음에 넣을까요</h2>
 <div class="row">
  <div><label for="pack">묶음</label>
-  <select id="pack"><option value="leda-0.92">leda-0.92 · 빠르기 0.92 (001·003·005·006·008·009·새 앱)</option><option value="leda-0.90">leda-0.90 · 빠르기 0.90 (007)</option></select></div>
+  <select id="pack"><option value="azure-sunhi-0.92">azure-sunhi-0.92 · Azure 선희 · 빠르기 0.92 (008 베타부터)</option><option value="leda-0.92">leda-0.92 · Google Leda · 빠르기 0.92 (001·003·005·006·009)</option><option value="leda-0.90">leda-0.90 · Google Leda · 빠르기 0.90 (007)</option></select></div>
  <div><label for="app">쓰는 앱 번호</label><input id="app" value="008" inputmode="numeric"></div>
 </div>
 </section>
@@ -53,7 +53,7 @@ audio{height:28px;vertical-align:middle;margin-left:6px}
 <section>
 <h2><b>2</b>만들 문장</h2>
 <label for="lines">한 줄에 한 문장. 앱의 말 목록(voice-lines.json) 주소를 넣고 불러와도 됩니다.</label>
-<div class="row" style="margin-bottom:8px"><input id="url" value="https://shim-sung-hyun.github.io/web_app/008/voice-lines.json"><button class="ghost" id="loadUrl" style="flex:0 0 auto">불러오기</button></div>
+<div class="row" style="margin-bottom:8px"><input id="url" value="https://shim-sung-hyun.github.io/web_app/008/voice-lines-beta.json"><button class="ghost" id="loadUrl" style="flex:0 0 auto">불러오기</button></div>
 <textarea id="lines" placeholder="고양이는 땅에 살아요.&#10;고양이."></textarea>
 <div class="row" style="margin-top:10px"><button id="check" style="flex:0 0 auto">없는 문장 찾기</button></div>
 <p class="note" id="checkNote"></p>
@@ -64,14 +64,14 @@ audio{height:28px;vertical-align:middle;margin-left:6px}
 <h2><b>3</b>목소리 서비스와 키</h2>
 <div class="row">
  <div><label for="svc">서비스</label>
-  <select id="svc"><option value="google">Google Cloud TTS · Chirp3-HD Leda (지금 목소리와 같음)</option><option value="azure">Azure Speech (다른 목소리 — 아래 안내)</option></select></div>
+  <select id="svc"><option value="azure">Azure Speech</option><option value="google">Google Cloud TTS · Chirp3-HD Leda</option></select></div>
  <div id="azRegionBox" hidden><label for="azRegion">Azure 지역(region)</label><input id="azRegion" placeholder="koreacentral"></div>
 </div>
 <div id="azVoiceBox" hidden><label for="azVoice">Azure 목소리</label><input id="azVoice" value="ko-KR-SunHiNeural"></div>
 <label for="key">API 키 <span style="font-weight:400">(이 기기에만 저장됩니다)</span></label>
 <input id="key" type="password" autocomplete="off">
-<p class="note warn" id="azWarn" hidden>Azure 목소리는 지금 쓰는 Google Leda와 다릅니다. 한 수업에서 목소리가 섞이면 안 되므로, Azure로 만들면 그 앱의 말 전체를 Azure로 다시 만들어야 합니다(다른 묶음 이름으로 넣음).</p>
-<p class="note">Google 키는 Cloud Text-to-Speech API를 켠 키라야 합니다. 1분에 많이 보내면 막히므로 문장 사이에 잠깐 쉽니다.</p>
+<p class="note warn" id="azWarn" hidden>Azure 키는 Azure 포털 → Speech 리소스 → "키 및 엔드포인트"의 키 1과 지역(예: koreacentral)입니다. 무료(F0)는 1분에 20문장까지라 문장 사이에 3초씩 쉽니다(240문장이면 약 13분).</p>
+<p class="note">한 수업의 목소리는 섞이지 않게, 묶음과 서비스·목소리가 짝이 맞아야 합니다(azure-sunhi-0.92 = Azure · ko-KR-SunHiNeural, leda = Google). 다른 Azure 목소리로 하려면 묶음을 그 이름으로 새로 정해야 하니 Claude에게 먼저 말해 주세요.</p>
 </section>
 
 <section>
@@ -91,7 +91,9 @@ async function sha16(t){ const b=await crypto.subtle.digest('SHA-1',new TextEnco
 const oneSyl=t=>/^[가-힣][.?!]?$/.test(t.trim());
 function keyName(){ return $('svc').value==='azure'?'webapp.azureKey':'webapp.cloudKey'; }
 function syncSvc(){ const az=$('svc').value==='azure'; $('azRegionBox').hidden=!az; $('azVoiceBox').hidden=!az; $('azWarn').hidden=!az; $('key').value=store.get(keyName()); $('azRegion').value=store.get('webapp.azureRegion'); }
-$('svc').onchange=syncSvc; syncSvc();
+$('svc').onchange=syncSvc;
+function syncPack(){ const az=$('pack').value.startsWith('azure-'); $('svc').value=az?'azure':'google'; $('svc').disabled=true; if(az) $('azVoice').value='ko-KR-SunHiNeural'; $('azVoice').disabled=az; syncSvc(); }
+$('pack').onchange=syncPack; syncPack();
 $('key').onchange=()=>store.set(keyName(),$('key').value.trim());
 $('azRegion').onchange=()=>store.set('webapp.azureRegion',$('azRegion').value.trim());
 $('loadUrl').onclick=async()=>{ try{ const r=await fetch($('url').value,{cache:'no-cache'}); const j=await r.json(); $('lines').value=(Array.isArray(j)?j:Object.keys(j)).join('\n'); $('checkNote').textContent=(Array.isArray(j)?j.length:0)+'문장을 불러왔습니다.'; }catch(e){ $('checkNote').textContent='불러오지 못했습니다: '+e.message; } };
@@ -104,7 +106,7 @@ $('check').onclick=async()=>{
   $('make').disabled=!MISSING.length;
 };
 async function synth(t){
-  const rate=$('pack').value==='leda-0.90'?0.90:0.92, text=oneSyl(t)?'글자. '+t.replace(/[.?!]$/,'')+'.':t, key=$('key').value.trim();
+  const rate=/0\.90/.test($('pack').value)?0.90:0.92, text=oneSyl(t)?'글자. '+t.replace(/[.?!]$/,'')+'.':t, key=$('key').value.trim();
   if(!key) throw new Error('키가 없습니다');
   if($('svc').value==='google'){
     const r=await fetch('https://texttospeech.googleapis.com/v1/text:synthesize',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':key},
@@ -119,13 +121,13 @@ async function synth(t){
   return new Uint8Array(await r.arrayBuffer());
 }
 $('make').onclick=async()=>{
-  $('make').disabled=true; MADE=[]; const ol=$('made'); ol.innerHTML='';
-  for(const [i,m] of MISSING.entries()){
+  $('make').disabled=true; const ol=$('made'); ol.innerHTML='';   /* 이미 만든 문장은 건너뜀(중간에 막혀 다시 눌러도 이어서) */
+  for(const [i,m] of MISSING.entries()){ if(MADE.some(x=>x.h===m.h)) continue;
     const li=document.createElement('li'); li.textContent=m.t+' … '; ol.appendChild(li);
     try{ const wav=await synth(m.t); MADE.push({...m,wav}); li.className='done'; li.textContent=m.t+' ✓';
       const a=document.createElement('audio'); a.controls=true; a.src=URL.createObjectURL(new Blob([wav],{type:'audio/wav'})); li.appendChild(a); }
-    catch(e){ li.className='err'; li.textContent=m.t+' — '+e.message; if(/40[13]/.test(e.message)) break; }
-    $('makeNote').textContent=(i+1)+' / '+MISSING.length; await new Promise(r=>setTimeout(r,350));
+    catch(e){ li.className='err'; li.textContent=m.t+' — '+e.message; if(/40[13]/.test(e.message)) break; if(/429/.test(e.message)){ await new Promise(r=>setTimeout(r,20000)); } }
+    $('makeNote').textContent=(i+1)+' / '+MISSING.length; await new Promise(r=>setTimeout(r,$('svc').value==='azure'?3100:350));
   }
   $('zip').disabled=!MADE.length; $('make').disabled=false;
   $('makeNote').textContent=MADE.length+'문장을 만들었습니다. 들어 보고 zip을 받으세요.';

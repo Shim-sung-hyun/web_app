@@ -10,8 +10,7 @@
   2. 한 글자 이름("개." 등)은 "글자. 개." 로 만든 소리라 마지막 마디만 잘라 넣음
   3. 앞뒤 조용한 곳을 다듬지는 않음(앱의 cleanF가 재생할 때 다듬음)
   4. media/voice/<묶음>/index.json 의 files·used_by 에 더함(이미 있으면 used_by에 앱만 더함)
-Azure로 만든 소리(voice-meta.json service=azure)는 Leda와 목소리가 달라 같은 묶음에 넣지 않는다
-  — 넣으려면 --pack azure-<목소리> 처럼 다른 묶음 이름을 주어야 함(앱도 그 묶음을 읽게 고쳐야 함).
+Azure로 만든 소리는 azure-로 시작하는 묶음(예: azure-sunhi-0.92)에만, Google 소리는 leda- 묶음에만 넣는다(목소리를 섞지 않음).
 """
 import hashlib, io, json, os, re, subprocess, sys, tempfile, zipfile
 import numpy as np
@@ -94,9 +93,9 @@ def main():
         print(__doc__); return 1
     z = zipfile.ZipFile(args[0])
     meta = json.loads(z.read('voice-meta.json'))
-    if meta.get('service') == 'azure' and not pack:
-        print('Azure 소리는 Leda와 목소리가 달라 같은 묶음에 넣지 않습니다. --pack 으로 다른 묶음 이름을 주세요.'); return 1
     pack = pack or meta['pack']
+    if (meta.get('service') == 'azure') != pack.startswith('azure-'):
+        print('서비스(%s)와 묶음(%s)이 맞지 않습니다 — 한 묶음에 다른 목소리를 섞지 않습니다.' % (meta.get('service'), pack)); return 1
     app = meta.get('app') or '???'
     d = os.path.join(ROOT, 'media', 'voice', pack)
     os.makedirs(d, exist_ok=True)

@@ -9,7 +9,7 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
 (async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1366,height:768}});
  await p.route('https://shim-sung-hyun.github.io/web_app/**',r=>{ const f=ROOT+decodeURIComponent(new URL(r.request().url()).pathname.replace('/web_app/','')); if(fs.existsSync(f)) r.fulfill({path:f,headers:{'access-control-allow-origin':'*'}}); else r.fulfill({status:404,body:''}); });
  p.on('pageerror',e=>console.log('ERR',e.message));
- await p.goto('https://shim-sung-hyun.github.io/web_app/008/animal-home.html'); await p.waitForTimeout(1500);
+ await p.goto('https://shim-sung-hyun.github.io/web_app/008/'+(process.env.APP||'animal-home.html'));   /* 베타: APP=animal-home-beta.html node tools/hide-check.js */ await p.waitForTimeout(1500);
  const res=await p.evaluate(async(TRIALS)=>{
    S.sound=false; speak=()=>Promise.resolve(); await gameReady;
    const byP={}; Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ (byP[x.p]=byP[x.p]||new Set()).add(x.a); })));

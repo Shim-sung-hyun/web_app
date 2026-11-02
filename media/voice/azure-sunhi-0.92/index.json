@@ -1,0 +1,10 @@
+{
+"voice": "Azure ko-KR-SunHiNeural",
+"rate": 0.92,
+"made": "2026-11-02",
+"note": "008 베타부터 쓰는 Azure 목소리 묶음. media/voice/voice-maker.html로 만들고 tools/voice-add.py로 넣음. 이름 = 문장 SHA-1 앞 16자리, 한 글자는 \"글자. ○.\"의 마지막 마디",
+"files": [
+],
+"used_by": {
+}
+}

@@ -1,0 +1,52 @@
+008 베타(교과서에 맞춘 구성) — 새로 그릴 것 (2026-11-02). 프롬프트 하나 = 그림 하나(또는 판 하나). 그대로 복사해 붙여 넣음.
+
+■ 동물 판 1 (메기·고등어·송사리·다슬기·소라·칠게·농게·짱뚱어) — Gemini 새 대화창 · media/animals/prompts/style-ref.png 붙임
+STYLE — must match the attached reference sheet exactly: cute but not babyish flat cartoon animals for a school learning app, bold clean dark-brown outlines, flat natural colours with soft simple shading, friendly face with small round eyes. Each animal is drawn WHOLE (head to tail, all legs), seen from the side or three-quarter view, standing or resting naturally.
+NO background, NO ground, NO water, NO plants, NO rocks, NO shadow, NO text — only the animal on PURE WHITE, because the picture must not show where the animal lives.
+LAYOUT: one square image, an invisible 3×3 grid — NO grid lines, NO frames. Put the 8 animals below in cells 1 to 8 in reading order, one per cell, each filling most of its cell. Leave cell 9 (bottom-right) empty and white.
+1 a catfish (Korean river catfish), long whiskers, dark olive-grey
+2 a mackerel, blue-green striped back and silver belly
+3 a tiny Japanese rice fish (medaka), pale olive, small and slim
+4 a freshwater snail with a long pointed spiral shell (Korean marsh snail, dark brown)
+5 a sea snail with a thick spiky spiral shell (turban shell)
+6 a small mud-flat crab with a square grey-brown shell and long eye stalks
+7 a fiddler crab with one very big orange-red claw
+8 a mudskipper fish with big bulging eyes on top of its head, propping itself up on its front fins
+
+■ 동물 판 2 (낙지·갯지렁이·산양·도마뱀·사막거북·미어캣·제비·박새) — Gemini 새 대화창 · media/animals/prompts/style-ref.png 붙임
+STYLE — must match the attached reference sheet exactly: cute but not babyish flat cartoon animals for a school learning app, bold clean dark-brown outlines, flat natural colours with soft simple shading, friendly face with small round eyes. Each animal is drawn WHOLE (head to tail, all legs), seen from the side or three-quarter view, standing or resting naturally.
+NO background, NO ground, NO water, NO plants, NO rocks, NO shadow, NO text — only the animal on PURE WHITE, because the picture must not show where the animal lives.
+LAYOUT: one square image, an invisible 3×3 grid — NO grid lines, NO frames. Put the 8 animals below in cells 1 to 8 in reading order, one per cell, each filling most of its cell. Leave cell 9 (bottom-right) empty and white.
+1 a long-arm octopus (small octopus) with eight long thin arms, reddish brown
+2 a lugworm / ragworm (sea worm), segmented with many tiny side legs, pinkish red
+3 a long-tailed goral (Korean mountain goat), grey-brown with short black horns
+4 a lizard, green-brown, long tail, standing on four legs
+5 a desert tortoise with a high domed brown shell
+6 a meerkat standing up on its hind legs, looking around
+7 a barn swallow flying with forked tail, dark blue back and red throat
+8 a great tit (small bird) with a black head, white cheeks and yellow belly, perched pose without branch
+
+■ 장면: 갯벌 (보기·쉬움용) — Gemini 새 대화창 · media/habitats/sea.jpg 붙임
+I attach an example background from the same learning app. Draw a NEW background in exactly the same style (same flat cartoon look, same thin dark outlines, same colour softness, same 4:3 landscape shape and the same eye-level viewpoint).
+SCENE: a Korean mud flat (갯벌) at low tide on a sunny day — wide shiny grey-brown mud with small tidal water channels and puddles reflecting the sky, a few small holes in the mud, a line of sea far away at the horizon, low hills on the far left, a small clump of salt-marsh reeds and some red glasswort at one side.
+The CENTRE and the LOWER HALF must be open empty mud (animals will be placed there later). NO animals, NO birds, NO people, NO boats, NO text. Keep the bottom-right corner plain mud (no objects there). Same aspect ratio as the attached image — do not crop or make it square.
+
+■ 장면: 갯벌 (놀이용, 숨을 곳이 더 많은) — Gemini 새 대화창 · media/habitats/game/sea.jpg 붙임
+I attach an example background from the same learning app. Draw a NEW background in exactly the same style (same flat cartoon look, same thin dark outlines, same colour softness, same 4:3 landscape shape and the same eye-level viewpoint).
+SCENE: a Korean mud flat (갯벌) at low tide on a sunny day, seen a little closer with MORE things to hide behind — wide shiny grey-brown mud with small tidal water channels and puddles reflecting the sky, a few small holes in the mud, a line of sea far away at the horizon, low hills on the far left, several clumps of salt-marsh reeds, patches of red glasswort, a few rocks with oysters and barnacles, and small mud banks spread around the scene.
+The CENTRE and the LOWER HALF must be open empty mud (animals will be placed there later). NO animals, NO birds, NO people, NO boats, NO text. Keep the bottom-right corner plain mud (no objects there). Same aspect ratio as the attached image — do not crop or make it square.
+
+■ 갯벌 가림 소품 판 T — Gemini 새 대화창 · media/habitats/props/prompts/style-ref.png 붙임
+STYLE — must match the attached reference image exactly: simple flat cartoon props for a children's learning app, like picture-book stickers. Every shape has a bold, clean, even dark-brown outline. Flat fill colours with at most one soft darker shade per colour. NO realism, NO photo look, NO hatching, NO texture, NO tiny details. Muted natural colours. The background is PURE WHITE everywhere. LAYOUT: one square image, an invisible 3×3 grid — NO grid lines, NO frames, NO borders. Put the 8 objects below in cells 1 to 8 in reading order, one per cell, each filling most of its cell. Leave cell 9 (bottom-right) empty and white. No text, no animals, no people, no shadows, no ground lines.
+Each object sits on a Korean mud flat, seen from the front at eye level, with a flat bottom, solid and dense in its lower two-thirds.
+1 a low mound of wet grey-brown mud with a few small holes
+2 a rock covered with oysters and barnacles
+3 a dense clump of salt-marsh reeds
+4 a clump of red glasswort (samphire) plants
+5 a small pile of empty sea shells
+6 a rock with green seaweed draped over it
+7 an old wooden post stuck in the mud with seaweed at its base
+8 a small mud bank with short salt-marsh grass on top
+
+판 이름 → 파일 이름(Claude가 넣을 때): 동물 판 1 megi godeungeo songsari daseulgi sora chilge nongge jjangttungeo · 동물 판 2 nakji gaetjireongi sanyang domabaem samakgeobuk mieokaet jebi baksae
+  · 장면 mudflat.jpg(media/habitats/, game/) · 소품 T mudmound oysterrock saltreeds glasswort shellpile weedrock mudpost mudbank2
