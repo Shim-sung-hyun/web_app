@@ -127,6 +127,8 @@ def main():
     done = []
     for L in meta['lines']:
         t, h = L['t'], L['h']
+        if ' = ' in t:   # 옛 목소리 도구(읽는 법 기능 전)로 '문장 = 읽는 법' 줄을 통째로 읽은 것 — 넣지 않음
+            print('읽는 법 줄이 통째로 들어 있어 건너뜀(목소리 도구를 새로고침해 다시 만들기):', t); continue
         if sha16(t) != h:
             print('이름이 맞지 않아 건너뜀:', t); continue
         x = wav_to_f32(z.read(h + '.wav'))
