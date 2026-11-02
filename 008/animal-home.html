@@ -1321,7 +1321,7 @@ async function playHide(p,lvG,targets,tok){
     if(t.sh){ t.sh.style.transform='translate(-50%,-50%) translate('+(t.ox*f)+'px,'+(t.oy*f)+'px)'; t.sh.style.opacity=dx||dy?0:1; } };
   /* 찾으면: 소품 뒤에서 나옴 → 가운데로 와서 크게 보여 주며 문장 → 제 자리(나온 자리)로 돌아감 */
   const toCenter=t=>{ const x=parseFloat(t.im.style.left)+t.ox, y=parseFloat(t.im.style.top)+t.oy, k=Math.max(1,Math.min(2.2,H*.42/Math.max(t.dw,t.dh)));
-    { const hd=FACE[t.a]?((FACE[t.a]==='L')!==!!t.flip?-1:1):0, sg=Math.sign(W/2-x); if(hd&&sg&&Math.abs(W/2-x)>t.dw*.3&&sg!==hd) t.flip=!t.flip; }   /* 가운데로 갈 때 머리부터 */
+    /* 가운데로 갈 때·제자리로 갈 때 좌우로 뒤집지 않음(2026-11-02 — 움직이는 중에 뒤집으면 빙글 도는 것처럼 보여 주의가 흩어짐). 나올 때 머리 방향은 숨길 때 정함 */
     t.im.style.zIndex=5000; t.im.style.transition='transform .9s ease-in-out, filter 1s'; move(t,1,W/2-x,H*.52-y,k); };
   /* 나는 동물(하늘·나무 위)은 찾으면 제자리에서 돌거나 뒤집지 않고 날아다님(2026-11-02):
      머리가 향한 쪽으로 날아 화면 밖으로 → 옆에서(머리가 가운데를 보며) 또는 먼 곳에서(작게 → 크게) 가운데로 날아옴 → 문장 → 화면 밖으로 날아갔다가 먼 곳에서 제자리로 내려앉음.
@@ -1361,9 +1361,6 @@ async function playHide(p,lvG,targets,tok){
       async()=>{ if(t.fly){ t.flip0=!!t.flip; if(L.fade) t.im.style.filter=''; await flyIn(t); return; }
         if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage=''; move(t,1); if(L.fade) t.im.style.filter=''; await wait(1050); if(!alive(tok)) return; toCenter(t); await wait(950); },
       async()=>{ if(t.fly){ await flyBack(t); return; }
-        /* 제자리로 돌아갈 때도 머리부터: 가는 쪽과 머리 방향이 다르면 뒤집음 */
-        const hd=FACE[t.a]?((FACE[t.a]==='L')!==!!t.flip?-1:1):0, cx=W/2, bx=parseFloat(t.im.style.left)+t.ox;
-        if(hd&&Math.sign(bx-cx)&&Math.sign(bx-cx)!==hd) t.flip=!t.flip;
         move(t,1); await wait(950); });
     found.push(t);
     if(!alive(tok)) return; await wait(400); if(!alive(tok)) return; }
@@ -1423,7 +1420,8 @@ $('dexView').addEventListener('pointerdown',e=>{ if(e.target.id==='dexView') $('
 /* ================= 활동지 (A4 가로 2쪽: 사는 곳 장면 + 오려 붙일 동물) ================= */
 function sheetHTML(lv,plan){
   let body=''; plan.forEach(bd=>{ body+=sheetPages(lv,bd); });
-  return sheetHead()+body+'<script>window.onload=function(){setTimeout(function(){window.print();},600);};<\/script></body></html>';
+  return sheetHead()+body+'<div class="noprint closeBar"><button onclick="window.close()">닫고 돌아가기</button></div>'
+    +'</body></html>';
 }
 function sheetPages(lv,bd){
   const lab=LV[lv].name+' · '+esc(bd.label);
@@ -1448,11 +1446,21 @@ function sheetHead(){
    +'.cut{flex:1;display:grid;grid-template-columns:repeat(4,58mm);justify-content:center;align-content:center;gap:4mm}'
    +'.ac{border:.5mm dashed #888;border-radius:3mm;height:68mm;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3mm}'
    +'.ac img{width:48mm;height:48mm;object-fit:contain}.ac div{font-family:Jua,sans-serif;font-size:26px;margin-top:2mm}'
-   +'.note{font-size:11px;color:#777;text-align:center;margin-top:3mm}</style></head><body>';
+   +'.note{font-size:11px;color:#777;text-align:center;margin-top:3mm}'
+   +'.closeBar{position:fixed;top:12px;right:12px}.closeBar button{font:600 15px/1 sans-serif;padding:10px 16px;border-radius:999px;border:1.5px solid #6A4C9C;background:#fff;color:#4E3478;cursor:pointer}@media print{.noprint{display:none!important}}</style></head><body>';
 }
 function printSheet(lv,plan){
   const w=window.open('','_blank'); if(!w){ alert('새 창이 막혀 있어 활동지를 열지 못했습니다. 이 사이트의 팝업을 허용해 주십시오.'); return; }
   w.document.open(); w.document.write(sheetHTML(lv,plan)); w.document.close();
+  /* 활동지 창(2026-11-02): 그림이 다 오면 인쇄 창을 열고, 저장·인쇄·취소로 인쇄 창이 닫히면 활동지 창도 닫고 앱으로 돌아옴.
+     인쇄와 닫기는 이 앱 창이 맡음(새 창 안의 시계는 기기에 따라 멈춰 있기도 함). 인쇄 창이 곧바로 닫히는 기기(일부 태블릿)를 위해
+     1초 안에 온 afterprint는 건너뜀 → 그때는 활동지 창의 '닫고 돌아가기' 단추 */
+  let shut=false; const fin=()=>{ if(shut) return; shut=true; try{ w.close(); }catch(e){} try{ window.focus(); }catch(e){} };
+  const ims=[...w.document.images].map(im=>im.complete?0:new Promise(r=>{ im.addEventListener('load',r); im.addEventListener('error',r); }));
+  Promise.race([Promise.all(ims),wait(8000)]).then(()=>wait(300)).then(()=>{ if(w.closed) return;
+    const t0=Date.now(); w.addEventListener('afterprint',()=>{ if(Date.now()-t0>=1000) setTimeout(fin,100); });
+    try{ w.focus(); w.print(); }catch(e){ return; }
+    if(Date.now()-t0>=300) setTimeout(fin,100); });   /* print()가 인쇄 창이 닫힐 때까지 멈춰 있던 기기(데스크톱 크롬 등) */
 }
 
 /* ================= 교사 모드 버튼 =================
