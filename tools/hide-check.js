@@ -18,7 +18,7 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
    document.body.classList.remove('setup');
    for(const pl of Object.keys(byP)){ const animals=[...byP[pl]];
     for(const lv of [1,2,3]) for(let tr=0;tr<TRIALS;tr++){
-     const a0=shuffle(animals)[0], targets=shuffle(animals.filter(a=>realOf(a)<=realOf(a0)*10&&realOf(a)*10>=realOf(a0))).slice(0,Math.min(4,animals.length));   /* 앱처럼 실제 크기 10배 안의 동물끼리 한 장면 */
+     const targets=shuffle(animals).slice(0,Math.min(4,animals.length));   /* 같은 곳 동물끼리 한 장면(앱과 같음) */
      RUN={token:1,bd:{places:[pl],items:targets.map(a=>({a,p:pl}))},lv:1}; const tok=1;
      playHide(pl,lv,targets,tok);
      let card=null; for(let i=0;i<60;i++){ await wait(100); card=document.querySelector('.showCard'); if(card&&card.style.opacity==='1') break; }
