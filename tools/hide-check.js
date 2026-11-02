@@ -40,7 +40,7 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
        const occ=info.filter(o=>o!==A&&o.z>A.z), cnt=()=>{ const d=x.getImageData(W,H,W,H).data; let n=0; for(let i=3;i<d.length;i+=4) if(d[i]>128) n++; return n; };
        const own=occ.filter(o=>!o.animal&&Math.abs(o.z-A.z)===1); own.forEach(draw); const nOwn=cnt();
        occ.filter(o=>!own.includes(o)).forEach(draw); const n1=cnt();
-       out.push({edge:(parseFloat(A.e.style.left)-parseFloat(A.e.style.width)/2<0)||(parseFloat(A.e.style.left)+parseFloat(A.e.style.width)/2>W),free:A.e.dataset.free||'',pl,lv,a:A.a,target:targets.includes(A.a),n0,own:nOwn,vis:n1,frac:n0?n1/n0:0,ok:!!A.im,anim:A.e.complete&&A.e.naturalWidth>0});
+       out.push({scene:W*H,edge:(parseFloat(A.e.style.left)-parseFloat(A.e.style.width)/2<0)||(parseFloat(A.e.style.left)+parseFloat(A.e.style.width)/2>W),free:A.e.dataset.free||'',pl,lv,a:A.a,target:targets.includes(A.a),n0,own:nOwn,vis:n1,frac:n0?n1/n0:0,ok:!!A.im,anim:A.e.complete&&A.e.naturalWidth>0});
      }
      RUN.token=99; await wait(50); clearStage();
     } }
@@ -48,13 +48,17 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
  const t=res.filter(x=>x.target), hid=t.filter(x=>x.vis<60);
  [1,2,3].forEach(lv=>{ const a=t.filter(x=>x.lv===lv), z=a.filter(x=>x.vis<60); console.log(['','쉬움','보통','어려움'][lv]+': 찾을 동물 '+a.length+' 중 완전히 가려짐 '+z.length+' ('+Math.round(100*z.length/Math.max(1,a.length))+'%), 제 소품만으로 '+z.filter(x=>x.own<60).length); });
  /* 보이는 몫(동물 칠해진 점 중 보이는 %)이 앱의 목표 범위(GLV band) 안에 드는지. 아주 작은 동물은 CLUE_PX만큼 보이게 하므로 범위보다 커도 그 크기 안이면 맞음 */
- const BAND={1:[.50,.65],2:[.25,.35],3:[.10,.18]}, TOL=.05;
- const okB=x=>{ const [lo,hi]=BAND[x.lv]; return x.frac>=lo-TOL&&(x.frac<=hi+TOL||x.vis<=330*1.6); };
+ /* 2026-11-02: 목표는 보이는 넓이(장면 대비 %) — 앱 GLV area. 몫이 fr 끝에 걸려 넓이를 못 맞춘 경우(아주 큰·작은 동물)는 fr 끝이면 맞음 */
+ const BAND={1:[.9,2.0],2:[.28,.5],3:[.08,.15]}, FR={1:[.45,.85],2:[.16,.45],3:[.04,.2]}, TOL=.25;
+ const okB=x=>{ const [lo,hi]=BAND[x.lv], a=100*x.vis/x.scene, [f0,f1]=FR[x.lv]; return (a>=lo*(1-TOL)&&a<=hi*(1+TOL))||(a<lo&&x.frac>=f1-.06)||(a>hi&&(x.frac<=f0+.03||x.vis<=330*1.6)); };
  [1,2,3].forEach(lv=>{ const a=t.filter(x=>x.lv===lv).sort((u,v)=>u.frac-v.frac), q=k=>a.length?Math.round(100*a[Math.floor(k*(a.length-1))].frac):0, inb=a.filter(okB).length;
-   console.log('  '+['','쉬움','보통','어려움'][lv]+' 보이는 몫: 가장 적게 '+q(0)+'% · 아래 1/4 '+q(.25)+'% · 가운데 '+q(.5)+'% · 위 1/4 '+q(.75)+'% · 가장 많이 '+q(1)+'%  — 목표 '+BAND[lv].map(v=>v*100).join('~')+'%(±'+TOL*100+') 안 '+Math.round(100*inb/Math.max(1,a.length))+'%'); });
+   console.log('  '+['','쉬움','보통','어려움'][lv]+' 보이는 몫: 가장 적게 '+q(0)+'% · 아래 1/4 '+q(.25)+'% · 가운데 '+q(.5)+'% · 위 1/4 '+q(.75)+'% · 가장 많이 '+q(1)+'%  — 넓이 목표 '+BAND[lv].join('~')+'%(±25%, 몫 끝에 걸린 것 포함) 안 '+Math.round(100*inb/Math.max(1,a.length))+'%'); });
  /* 실제 크기에 맞는 소품이 없어 크기를 무시한 경우(그 곳에 그 크기의 소품을 더 그려야 함) */
  console.log('  가장자리에서 내민 찾을 동물: '+t.filter(x=>x.edge).length+' / '+t.length);
  const fr=t.filter(x=>x.free); console.log('  실제 크기(보통 높이 ±25%)에 맞는 소품이 없어 크기를 늘리거나 줄임: 찾을 동물 '+t.length+' 중 '+fr.length+' ('+Math.round(100*fr.length/Math.max(1,t.length))+'%)');
  const fm={}; fr.forEach(x=>{ const k=x.pl+' '+x.a; fm[k]=(fm[k]||0)+1; }); if(fr.length) console.log('    '+Object.entries(fm).sort((u,v)=>v[1]-u[1]).map(([k,n])=>k+' '+n).join(' · '));
+ /* 보이는 넓이(장면 넓이 대비 %): 큰 동물은 몫이 작아도 넓게 보여 쉬움 — 어렵기가 실제로 느껴지는지 */
+ [1,2,3].forEach(lv=>{ const a=t.filter(x=>x.lv===lv).map(x=>100*x.vis/x.scene).sort((u,v)=>u-v), q=k=>a.length?a[Math.floor(k*(a.length-1))].toFixed(2):'-';
+   console.log('  '+['','쉬움','보통','어려움'][lv]+' 보이는 넓이(장면 대비 %): 아래 1/4 '+q(.25)+' · 가운데 '+q(.5)+' · 위 1/4 '+q(.75)+' · 가장 많이 '+q(1)); });
  const outB=t.filter(x=>!okB(x)).sort((u,v)=>u.frac-v.frac); if(outB.length){ console.log('  목표 밖:'); outB.slice(0,20).forEach(x=>console.log('    '+x.pl+' '+['','쉬움','보통','어려움'][x.lv]+' '+x.a+' '+Math.round(100*x.frac)+'% ('+x.vis+'점)')); }
  hid.sort((x,y)=>x.vis-y.vis).forEach(x=>console.log('  '+x.pl+' '+['','쉬움','보통','어려움'][x.lv]+' '+x.a+' · 원래 '+x.n0+'점 → 제 소품 뒤 '+x.own+' → 최종 '+x.vis)); await b.close(); })();

@@ -718,6 +718,22 @@ function answerSlot(key,n){
   H.push(pick); return pick;
 }
 const putAt=(arr,x,i)=>{ const r=shuffle(arr.filter(y=>y!==x)); r.splice(i,0,x); return r; };
+/* 동물 보고 곳: 곳 카드 배치 고르기(2026-11-02). 정답 자리만 섞으면 '땅 왼쪽·물 오른쪽'처럼 배치가 그대로일 때가 많아 학생이 곳을 자리로 외움.
+   모든 배치(곳 4개면 24가지) 중에서 — 정답 자리가 바로 앞과 같으면(보기 둘이면 세 번째부터) 크게 깎고, 곳마다 바로 앞과 같은 자리에 있으면 깎고
+   정답이 덜 나온 자리를 고름. 보기 둘이면 무작위로 하되 정답 자리가 세 번 이어지지 않게만 */
+function perms(a){ return a.length<=1?[a]:a.flatMap((x,i)=>perms([...a.slice(0,i),...a.slice(i+1)]).map(r=>[x,...r])); }
+function arrangePlaces(places,ans){
+  const M=(RUN.lay=RUN.lay||{hist:[],slots:[]}), n=places.length, H=M.hist, S0=M.slots, prev=H[H.length-1], prev2=H[H.length-2];
+  const cnt=Array.from({length:n},(_,i)=>S0.filter(x=>x===i).length);
+  let best=null, bs=Infinity;
+  shuffle(perms(places)).forEach(L=>{ const k=L.indexOf(ans); let sc=n===2?Math.random()*3:cnt[k]*2;   /* 보기 둘이면 규칙(가가나나)이 보이지 않게 무작위 + 세 번 이어지지만 않게 */
+    if(n>=3&&S0.length&&k===S0[S0.length-1]) sc+=100;
+    if(n===2&&S0.length>=2&&k===S0[S0.length-1]&&k===S0[S0.length-2]) sc+=200;   /* 정답 자리가 세 번 이어지는 것을 배치보다 먼저 막음 */
+    if(prev){ const same=L.filter((p,i)=>prev[i]===p).length; sc+=n>=3?same*12:0;
+      if(n===2&&prev2&&L.join()===prev.join()&&prev.join()===prev2.join()) sc+=6; }   /* 보기 둘: 같은 배치 세 번은 되도록 피함(정답 자리보다는 약하게) */
+    if(sc<bs){ bs=sc; best=L; } });
+  H.push(best); S0.push(best.indexOf(ans)); return best;
+}
 let TIMERS=[]; function later(fn,ms){ TIMERS.push(setTimeout(fn,ms)); } function clearTimers(){ TIMERS.forEach(clearTimeout); TIMERS=[]; }
 const alive=tok=>RUN&&RUN.token===tok&&!S.admin;
 
@@ -840,7 +856,7 @@ function logRow(ph,it,wrongId,help){
 
 /* ---- 2. 동물 보고 곳 고르기: 견본 = 동물(말풍선), 보기 = 곳 장면 2~4개 ---- */
 function stepA2P(it,tok){
-  const st=$('stage'), A=area(), n=RUN.bd.places.length, places=putAt(RUN.bd.places,it.p,answerSlot('a2p',n));
+  const st=$('stage'), A=area(), n=RUN.bd.places.length, places=arrangePlaces(RUN.bd.places,it.p);
   const sh=Math.min(A.h*0.30,220);
   const bub=document.createElement('div'); bub.className='bubble'; bub.innerHTML='<img class="a" src="'+pic(it.a)+'" alt="'+esc(it.a)+'" style="width:'+sh+'px;height:'+sh+'px">';
   const gap=Math.max(14,A.w*0.022);
@@ -966,9 +982,11 @@ function drawEnd(tok){
 let PROPS={}, PROPSZ={}, SOLID={}, PMASK={}, PREAL={}, PANCH={};   /* PANCH: 'left'(왼쪽 끝이 잘린 가지 — 화면 옆 테두리에 붙임) · 'bottom'(아래 끝이 잘린 꽃줄기 — 화면 아래 테두리에 붙임) */   /* PMASK: 소품 모양 표(index.json mask) · PREAL: 실제 높이 m [낮게, 높게] 또는 'far'(index.json real) */
 /* 어렵기마다: base 가장 큰 동물의 크기(실제 크기 absFrac에 곱함) · band 찾을 동물이 보이는 몫(칠해진 칸 중 %, 2026-11-01 — 이 범위 안에서 무작위) ·
    nd 다른 동물 · decoy 빈 소품 · side 옆에서 가릴 확률 · fade 빛깔 묻힘 · min 가장 작은 크기(px) */
-const GLV={1:{base:1,band:[.50,.65],nd:[0,0],decoy:[0,0],side:0,fade:0,min:72},
-           2:{base:.88,band:[.25,.35],nd:[2,3],decoy:[1,2],side:.4,fade:0,min:64},
-           3:{base:.8,band:[.10,.18],nd:[3,4],decoy:[3,4],side:.5,fade:1,min:64}};
+/* area: 보이는 넓이(장면 넓이 대비 %, 2026-11-02) — 몫만 맞추면 큰 동물은 어려움에서도 넓게 보이고 작은 동물은 쉬움에서도 작아 단계가 겹침.
+   그래서 보이는 넓이를 이 범위에 맞추고, 몫은 fr 범위 안에서만(쉬움은 절반 안팎 보이게, 어려움은 귀·꼬리 끝) */
+const GLV={1:{base:1,band:[.50,.65],area:[.9,2.0],fr:[.45,.85],nd:[0,0],decoy:[0,0],side:0,fade:0,min:72},
+           2:{base:.88,band:[.25,.35],area:[.28,.5],fr:[.16,.45],nd:[2,3],decoy:[1,2],side:.4,fade:0,min:64},
+           3:{base:.8,band:[.10,.18],area:[.08,.15],fr:[.04,.2],nd:[3,4],decoy:[3,4],side:.5,fade:1,min:64}};
 const CLUE_PX=300;   /* 아무리 어려워도 동물이 이만큼(점², 17×17쯤)은 보이게 — 아주 작은 동물(소금쟁이·벌)은 몫이 범위보다 커질 수 있음 */
 /* 모양 표(2026-11-01, tools/props-index.py가 만듦): 그림을 가장 긴 쪽 48칸으로 나눠 칸마다 칠해졌는지. 동물은 media/animals/masks.json(48×48) —
    동물의 칠해진 칸 중 몇 %가 소품·다른 동물에 실제로 가려지는지 셈(별 모양 소품이면 뾰족한 끝까지 그대로) */
@@ -1192,7 +1210,8 @@ async function playHide(p,lvG,targets,tok){
     const b=BB[a]||[.9,.9], t=Math.max(L.min*Math.max(b[0],b[1]),big*relSizeH(all,a,.3)), z=boxOf(a,p,t), dw=z*b[0], dh=z*b[1];
     /* 보이는 몫 목표: 어렵기 범위 안에서 무작위, 아주 작은 동물은 CLUE_PX만큼은 보이게 */
     const M=amOf(a), area=M?M.pts.length*(z/48)*(z/48):dw*dh;
-    const tgt0=Math.min(.65,Math.max(L.band[0]+(L.band[1]-L.band[0])*(.2+.6*Math.random()),CLUE_PX*1.15/area));
+    const aT=W*H*(L.area[0]+(L.area[1]-L.area[0])*Math.random())/100;   /* 보일 넓이 목표(점²) */
+    const tgt0=Math.min(.85,Math.max(Math.min(L.fr[1],Math.max(L.fr[0],aT/area)),CLUE_PX*1.15/area));
     const dir=Math.random()<.5?-1:1;   /* 나올 쪽 = 화면 가운데 쪽(동물은 그 반대쪽 절반에 놓음) — 머리가 이쪽을 보게 뒤집음 */
     let fl=FACE[a]?(FACE[a]==='L'?dir>0:dir<0):false; HFLIP=fl;
     let zn=(ZONE[p]||ZONE[DEXG(p)]||{})[a]; if(zn==='sub'&&(lvG===1||Math.random()<.3)) zn=null;   /* 하마는 물에 잠기거나(보통·어려움에서 70%) 물속 바닥을 걸음 — 쉬움은 몸이 다 보여야 해서 바닥 */
