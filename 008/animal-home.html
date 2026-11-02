@@ -94,8 +94,8 @@ details.more .card{margin-top:8px;font-size:14px}
 .startBar{position:sticky;bottom:0;padding:14px 0 18px;background:linear-gradient(to top,var(--bg) 70%,rgba(247,244,250,0));display:flex;justify-content:center;gap:12px;z-index:5}
 #startBtn{min-width:260px;height:62px;border-radius:18px;border:0;background:var(--sci);color:#fff;font-family:var(--f-display);font-size:28px;cursor:pointer;box-shadow:0 4px 12px rgba(78,52,120,.25)}
 .linkish{background:none;border:0;color:var(--sci-d);text-decoration:underline;cursor:pointer;font-size:14px;padding:4px}
-.newStu{display:flex;gap:8px;margin-top:10px}
-.newStu input{flex:1;max-width:260px;height:44px;border-radius:10px;border:1.5px solid var(--line);padding:0 12px;font-size:16px;font-family:inherit}
+#rosterBox{--rs-line:var(--line)}
+#rosterBox input{height:44px;border-radius:10px;border:1.5px solid var(--line);padding:0 12px;font-size:16px;font-family:inherit}
 
 /* ===== 학생 화면 ===== */
 #game{position:fixed;inset:0;background:#FBFAF7;display:none;user-select:none;-webkit-user-select:none}
@@ -226,7 +226,7 @@ body.setup #adminBtn{display:none}
 
   <div class="card" id="c1"><h2><span class="num">1</span>누구와 할까요?</h2>
     <div class="row" id="stuRow"></div>
-    <div class="newStu hidden" id="newStu"><input id="newName" maxlength="20" placeholder="학생 이름"><button class="chip sm on" id="newOk">넣기</button><button class="chip sm" id="newNo">그만</button></div>
+    <div class="hidden" id="rosterBox"></div>
     <div id="resumeBox"></div>
     <div class="row" style="margin-top:12px"><button class="chip sm" id="dexOpen">🐾 동물 도감</button></div>
   </div>
@@ -269,6 +269,127 @@ body.setup #adminBtn{display:none}
 <div id="spot"></div><div id="spotTip"></div>
 <button id="adminBtn" type="button" aria-label="교사 모드: 3초 동안 누르기"><span class="ab-label" id="abLabel">charum</span></button>
 
+<script id="roster">
+/* 차름 공통 모듈: 학생 명단(roster) — 원본은 common/roster.js. 앱 안의 <script id="roster">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   명단은 같은 기기의 모든 차름 앱이 함께 쓴다(webapp.students). 뺀 학생은 webapp.students.out에 뺀 날과 함께 옮긴다.
+   뺀 학생의 기록은 KEEP_DAYS(6개월) 동안 남겨 두고, 그동안 같은 이름으로 다시 넣으면 같은 학생으로 되살아나 기록이 이어진다.
+   6개월이 지나면 앱마다 Roster.purge(기록)로 그 학생의 줄을 지운다. 빼낸 표시는 다른 앱도 지울 수 있게 3년 동안 남긴다.
+
+   쓰는 법(앱):
+     Roster.list()            지금 명단 [{id,name}]
+     Roster.nameOf(id)        이름(뺀 학생도)
+     Roster.has(id)           지금 명단에 있는지
+     Roster.add(이름)         넣은(또는 되살린) 학생을 돌려줌
+     Roster.remove(id)        명단에서 뺌(기록은 앱이 6개월 보관)
+     Roster.kept()            기록을 보관 중인 뺀 학생 [{id,name,at,until}]
+     Roster.purge(log, row=>row.s)   보관 기간이 지난 학생의 줄을 뺀 새 배열
+     Roster.mount(칸, {btn, on, input, onChange})   넣기·빼기 화면을 칸 안에 그림
+       btn·on·input: 그 앱의 단추·눌림·입력 칸 class(얼굴은 앱마다). onChange({type:'add'|'remove'|'restore', id})
+*/
+(function () {
+  'use strict';
+  var KEY = 'webapp.students', OUT = 'webapp.students.out', DAY = 864e5, KEEP_DAYS = 183, MARK_DAYS = 1100;
+  function get(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return Array.isArray(v) ? v : d; } catch (e) { return d; } }
+  function put(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function clean(n) { return String(n || '').trim().replace(/\s+/g, ' ').slice(0, 20); }
+  function newId() { return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  function list() { return get(KEY, []).filter(function (s) { return s && s.id && s.name; }); }
+  function outs() {
+    var now = Date.now(), all = get(OUT, []), live = all.filter(function (o) { return o && o.id && now - (o.at || 0) < MARK_DAYS * DAY; });
+    if (live.length !== all.length) put(OUT, live);
+    return live;
+  }
+  function kept() {
+    var now = Date.now(), ids = {};
+    list().forEach(function (s) { ids[s.id] = 1; });
+    return outs().filter(function (o) { return !ids[o.id] && now - o.at < KEEP_DAYS * DAY; })
+      .map(function (o) { return { id: o.id, name: o.name, at: o.at, until: o.at + KEEP_DAYS * DAY }; });
+  }
+  function nameOf(id) {
+    var s = list().filter(function (x) { return x.id === id; })[0] || outs().filter(function (x) { return x.id === id; })[0];
+    return s ? s.name : '';
+  }
+  function has(id) { return list().some(function (s) { return s.id === id; }); }
+  function add(name) {
+    var n = clean(name); if (!n) return null;
+    var L = list(), same = L.filter(function (s) { return s.name === n; })[0];
+    if (same) return same;
+    var back = kept().filter(function (o) { return o.name === n; }).sort(function (a, b) { return b.at - a.at; })[0];
+    var st = back ? { id: back.id, name: n } : { id: newId(), name: n };
+    L.push(st); put(KEY, L);
+    if (back) put(OUT, outs().filter(function (o) { return o.id !== back.id; }));
+    return st;
+  }
+  function remove(id) {
+    var L = list(), st = L.filter(function (s) { return s.id === id; })[0]; if (!st) return;
+    put(KEY, L.filter(function (s) { return s.id !== id; }));
+    put(OUT, outs().filter(function (o) { return o.id !== id; }).concat([{ id: st.id, name: st.name, at: Date.now() }]));
+  }
+  function purge(log, idOf) {
+    if (!Array.isArray(log)) return log;
+    var now = Date.now(), gone = {};
+    outs().forEach(function (o) { if (now - o.at >= KEEP_DAYS * DAY) gone[o.id] = 1; });
+    list().forEach(function (s) { delete gone[s.id]; });
+    return log.filter(function (r) { return !gone[idOf ? idOf(r) : r.s]; });
+  }
+  function md(t) { var d = new Date(t); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일'; }
+
+  /* 기본 꼴: 자리·간격만. 색·글꼴·둥글기는 앱의 단추 class와 CSS 변수(--rs-line, --rs-soft)로 앱마다 */
+  var CSS = ':where(.rs){display:grid;gap:10px;margin-top:10px}'
+    + ':where(.rs-add){display:flex;gap:8px;flex-wrap:wrap}'
+    + ':where(.rs-add input){flex:1;min-width:140px;max-width:260px}'
+    + ':where(.rs-names){display:flex;flex-wrap:wrap;gap:6px 8px;margin:0;padding:0;list-style:none}'
+    + ':where(.rs-names li){display:inline-flex;align-items:center;gap:2px;padding:2px 2px 2px 12px;border:1.5px solid var(--rs-line,#d6d2cb);border-radius:999px;min-height:40px}'
+    + ':where(.rs-x){border:0;background:none;font:inherit;font-size:20px;line-height:1;width:40px;height:40px;border-radius:50%;cursor:pointer;color:inherit;opacity:.55}'
+    + ':where(.rs-x:hover,.rs-x:focus-visible){opacity:1;background:var(--rs-soft,rgba(0,0,0,.06))}'
+    + ':where(.rs-none,.rs-out){font-size:14px;opacity:.8;margin:0}'
+    + ':where(.rs-out summary){cursor:pointer}'
+    + ':where(.rs-out ul){margin:6px 0 0;padding:0;list-style:none;display:grid;gap:6px}'
+    + ':where(.rs-out li){display:flex;align-items:center;gap:10px;flex-wrap:wrap}';
+  function style() {
+    if (document.getElementById('rsStyle')) return;
+    var s = document.createElement('style'); s.id = 'rsStyle'; s.textContent = CSS;
+    (document.head || document.documentElement).insertBefore(s, (document.head || document.documentElement).firstChild);
+  }
+
+  function mount(box, opt) {
+    opt = opt || {}; style();
+    var btn = opt.btn || '', on = opt.on || '', inp = opt.input || '', tell = opt.onChange || function () {};
+    function draw() {
+      var L = list(), K = kept(), h = '<div class="rs">';
+      h += '<div class="rs-add"><input class="' + inp + '" maxlength="20" placeholder="학생 이름" aria-label="넣을 학생 이름" autocomplete="off">'
+        + '<button type="button" class="' + btn + ' ' + on + '" data-rs="add">넣기</button></div>';
+      h += L.length ? '<ul class="rs-names">' + L.map(function (s) {
+        return '<li><span>' + esc(s.name) + '</span><button type="button" class="rs-x" data-rs="del" data-id="' + esc(s.id) + '" aria-label="' + esc(s.name) + ' 빼기">×</button></li>';
+      }).join('') + '</ul>' : '<p class="rs-none">아직 넣은 학생이 없어요.</p>';
+      if (K.length) h += '<details class="rs-out"><summary>뺀 학생 ' + K.length + '명 — 기록은 보관 중</summary><ul>' + K.map(function (o) {
+        return '<li><span>' + esc(o.name) + ' · ' + md(o.until) + '까지 보관</span><button type="button" class="' + btn + '" data-rs="back" data-id="' + esc(o.id) + '">다시 넣기</button></li>';
+      }).join('') + '</ul></details>';
+      box.innerHTML = h + '</div>';
+      var input = box.querySelector('input');
+      function doAdd() { var st = add(input.value); if (!st) { input.focus(); return; } draw(); tell({ type: 'add', id: st.id }); }
+      box.querySelector('[data-rs=add]').onclick = doAdd;
+      input.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); doAdd(); } };
+      Array.prototype.forEach.call(box.querySelectorAll('[data-rs=del]'), function (b) {
+        b.onclick = function () {
+          var id = b.getAttribute('data-id'), n = nameOf(id);
+          if (!confirm(n + ' 학생을 명단에서 뺄까요?\n\n이 기기의 다른 차름 앱 명단에서도 함께 빠져요.\n기록은 6개월 동안 남아 있다가, 그동안 다시 넣지 않으면 지워져요.')) return;
+          remove(id); draw(); tell({ type: 'remove', id: id });
+        };
+      });
+      Array.prototype.forEach.call(box.querySelectorAll('[data-rs=back]'), function (b) {
+        b.onclick = function () { var st = add(nameOf(b.getAttribute('data-id'))); draw(); if (st) tell({ type: 'restore', id: st.id }); };
+      });
+    }
+    draw();
+    return { refresh: draw, focus: function () { var i = box.querySelector('input'); if (i) i.focus(); } };
+  }
+
+  window.Roster = { list: list, nameOf: nameOf, has: has, add: add, remove: remove, kept: kept, purge: purge, mount: mount, KEEP_DAYS: KEEP_DAYS };
+})();
+</script>
 <script>
 /* ================= 자료 =================
    동물 그림: 007에 있는 것은 007/pics, 새로 그린 것은 media/animals (흰 바탕 없이 동물만 — 배경이 사는 곳을 알려 주지 않게)
@@ -355,15 +476,14 @@ if(!Array.isArray(S.bsel)||!S.bsel.length) S.bsel=[S.bundle];
 function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('mode',S.mode); store.set('bsel',JSON.stringify(S.bsel)); store.set('psel',JSON.stringify(S.psel)); store.set('pn',S.pn); store.set('ppick',JSON.stringify(S.ppick)); store.set('asel',JSON.stringify(S.asel)); store.set('endScene',S.endScene?'1':'0'); store.set('game',S.game); store.set('gameLv',S.gameLv); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
 
 /* ================= 학생 명단·기록 =================
-   명단은 다른 차름 앱과 함께 씀(webapp.students). 기록은 이 기기 브라우저에만.
+   명단은 공통 모듈 Roster(common/roster.js — 다른 차름 앱과 함께 씀). 기록은 이 기기 브라우저에만, 뺀 학생의 기록은 6개월 보관 뒤 지움.
    한 줄 = 문제 하나: {s 학생, t 시각, g 수업(시작 시각), lv 수준, b 묶음, ph 단계(a2p·p2a·sort), a 동물, p 정답 곳, res first(바로)·help(도움 받아), w 먼저 누른 것(곳 id 또는 동물)} */
-let students=[]; try{ students=JSON.parse(ls.get('webapp.students')||'[]')||[]; }catch(e){ students=[]; }
-const saveStudents=()=>ls.set('webapp.students',JSON.stringify(students));
+let students=Roster.list();
 let LOG=[]; try{ LOG=JSON.parse(store.get('log')||'[]')||[]; }catch(e){ LOG=[]; }
 const saveLog=()=>{ if(LOG.length>12000) LOG=LOG.slice(-12000); store.set('log',JSON.stringify(LOG)); };
-if(S.stu&&!students.some(s=>s.id===S.stu)) S.stu='';
-const nameOf=id=>(students.find(s=>s.id===id)||{}).name||'';
-const newSid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+{ const n=LOG.length; LOG=Roster.purge(LOG); if(LOG.length!==n) saveLog(); }
+if(S.stu&&!Roster.has(S.stu)) S.stu='';
+const nameOf=Roster.nameOf;
 let RESUME={}; try{ RESUME=JSON.parse(store.get('resume')||'{}')||{}; }catch(e){ RESUME={}; }
 const saveResume=()=>store.set('resume',JSON.stringify(RESUME));
 /* 도감: 학생마다 집을 찾아 준 동물(곳|동물 → 처음 날짜) */
@@ -516,13 +636,18 @@ function tapper(el,fn){
 document.addEventListener('click',e=>{ if(!document.body.classList.contains('setup')&&performance.now()-lastTapAt<450&&!e.target.closest('.dock,#recView,#dexView,#adminBtn,#endBtn,#reportBtn')){ e.stopPropagation(); e.preventDefault(); } },true);
 
 /* ================= 설정 화면 ================= */
+let ROSTER=null;   /* 열린 넣기·빼기 칸 */
 function renderSetup(){
   /* ① 누구와 */
-  const sr=$('stuRow'); sr.innerHTML='';
+  students=Roster.list(); const sr=$('stuRow'); sr.innerHTML='';
   const mk=(id,label)=>{ const b=document.createElement('button'); b.className='chip'+(S.stu===id?' on':''); b.textContent=label;
     b.onclick=()=>{ S.stu=id; saveS(); renderSetup(); flash('c2'); }; sr.appendChild(b); };
   mk('','연습 (기록 안 함)'); students.forEach(s=>mk(s.id,s.name));
-  const add=document.createElement('button'); add.className='chip add'; add.textContent='+ 학생 넣기'; add.onclick=()=>{ $('newStu').classList.remove('hidden'); $('newName').focus(); }; sr.appendChild(add);
+  const add=document.createElement('button'); add.className='chip add'; add.textContent=ROSTER?'명단 닫기':'학생 넣기·빼기'; add.onclick=(()=>{ const b=$('rosterBox');
+    if(ROSTER){ ROSTER=null; b.classList.add('hidden'); b.innerHTML=''; renderSetup(); return; }
+    b.classList.remove('hidden'); ROSTER=Roster.mount(b,{btn:'chip sm',on:'on',onChange:e=>{
+      if(e.type==='remove'){ if(S.stu===e.id) S.stu=''; } else S.stu=e.id;
+      saveS(); renderSetup(); }}); ROSTER.focus(); renderSetup(); }); sr.appendChild(add);
   const rb=$('resumeBox'); rb.innerHTML='';
   const rs=RESUME[S.stu||'_'];
   if(rs&&!rs.plan&&BUN[rs.lv]&&BUN[rs.lv][rs.b]){ rs.plan=[{places:BUN[rs.lv][rs.b].places,items:BUN[rs.lv][rs.b].items,label:'묶음 '+(rs.b+1),bi:rs.b}]; rs.idx=0; }   /* 예전 꼴 */
@@ -614,9 +739,6 @@ function renderVoiceRow(){
   if(VSET&&!BUILTIN_OK&&S.engine==='builtin'){ const s=document.createElement('span'); s.style.cssText='font-size:13px;color:#8A5A12'; s.textContent='내장 목소리를 준비하는 중이라 지금은 기기 목소리로 해요.'; vr.appendChild(s); }
 }
 function flash(id){ const c=$(id); if(!c) return; c.scrollIntoView({behavior:'smooth',block:'nearest'}); c.classList.add('flash'); setTimeout(()=>c.classList.remove('flash'),900); }
-$('newOk').onclick=()=>{ const n=$('newName').value.trim(); if(!n) return; const s={id:newSid(),name:n}; students.push(s); saveStudents(); S.stu=s.id; saveS(); $('newName').value=''; $('newStu').classList.add('hidden'); renderSetup(); };
-$('newNo').onclick=()=>{ $('newStu').classList.add('hidden'); };
-$('newName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('newOk').click(); });
 $('startBtn').onclick=()=>{ unlockAudio(); const plan=makePlan(); if(!planOk(plan)){ flash('c2'); renderSetup(); return; } photosReady.then(()=>startLesson(null)); };
 $('recOpen').onclick=()=>openRecords(false);
 $('dexOpen').onclick=()=>openDex();
@@ -1584,14 +1706,14 @@ function exampleLog(){ /* 가상의 학생 홍길동의 한 달(이 기기 기�
 let REC_SEL='';
 function openRecords(example){
   $('recView').classList.add('on');
-  REC_SEL=example?'ex':(REC_SEL&&REC_SEL!=='ex'?REC_SEL:(S.stu||(students[0]||{}).id||''));
+  students=Roster.list(); REC_SEL=example?'ex':(REC_SEL&&REC_SEL!=='ex'?REC_SEL:(S.stu||(students[0]||{}).id||''));
   renderRecords();
 }
 function renderRecords(){
   const ex=REC_SEL==='ex', rows=ex?exampleLog():LOG.filter(r=>r.s===REC_SEL);
   const who=ex?'홍길동 (예시)':nameOf(REC_SEL);
   let h='<h2><span>학생 기록'+(who?' — '+esc(who):'')+'</span><button class="chip sm noprint" id="recX">닫기</button></h2>';
-  h+='<div class="row noprint" style="margin-bottom:8px">'+students.map(s=>'<button class="chip sm'+(REC_SEL===s.id?' on':'')+'" data-s="'+s.id+'">'+esc(s.name)+'</button>').join('')
+  h+='<div class="row noprint" style="margin-bottom:8px">'+students.concat(Roster.kept().map(o=>({id:o.id,name:o.name+' (뺀 학생)'}))).map(s=>'<button class="chip sm'+(REC_SEL===s.id?' on':'')+'" data-s="'+s.id+'">'+esc(s.name)+'</button>').join('')
     +'<button class="chip sm'+(ex?' on':'')+'" data-s="ex">예시 (홍길동)</button></div>';
   if(!rows.length){ h+='<p class="tip">아직 기록이 없습니다. 설정 화면 ①에서 학생을 고르고 수업하면 문제마다 기록됩니다(연습은 기록하지 않음). 기록은 이 기기에만 있습니다.</p>'; }
   else{
