@@ -1168,6 +1168,9 @@ function unhide(groups,items){
     if(!changed) break; }
   return live().filter(g=>g.kind==='t'&&!ok(g)).length;
 }
+/* 숨은 동물 그림의 transform은 늘 같은 짜임(가운데 맞춤 · 옮김 · 크기 · 좌우)으로(2026-11-02).
+   짜임이 다르면 브라우저가 행렬로 이어 그리며 좌우 뒤집기(scaleX(-1))를 180° 회전으로 바꿔, 뒤집어 숨긴 동물이 빙글 돌며 나왔음 */
+const XF=(dx,dy,k,fl)=>'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) scale('+k+') scaleX('+(fl?-1:1)+')';
 async function playHide(p,lvG,targets,tok){
   const L=GLV[lvG], m=MOVE[p], wlP=WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
   const {card,w:W,h:H}=gameCard(HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg');
@@ -1197,7 +1200,7 @@ async function playHide(p,lvG,targets,tok){
     const im=document.createElement('img'); im.className='placed'; im.src=pic(a); im.alt=a; im.draggable=false;
     Object.assign(im.style,{width:z+'px',height:z+'px',left:x+'px',top:y+'px',pointerEvents:'none',cursor:'inherit',zIndex:99+Math.round(pg.top+pg.sh),transition:'transform 1s ease-in-out, filter 1s'});
     if(L.fade) im.style.filter='saturate(.82) brightness(.96) drop-shadow(0 2px 2px rgba(0,0,0,.18))';
-    if(flip){ im.style.transform='translate(-50%,-50%) scaleX(-1)'; im.dataset.flip=1; }
+    im.style.transform=XF(0,0,1,flip); if(flip) im.dataset.flip=1;
     card.appendChild(im);
     const pr=propImg(lk,pg.left,pg.top,pg.sw,pg.sh); pr.style.zIndex=100+Math.round(pg.top+pg.sh); card.appendChild(pr);
     /* 나올 길: 화면 안쪽으로 — 몸이 다 들어오고 소품에서도 벗어날 만큼(장면 폭 안에서) */
@@ -1265,7 +1268,7 @@ async function playHide(p,lvG,targets,tok){
     Object.assign(im.style,{width:z+'px',height:z+'px',left:x+'px',top:y+'px',pointerEvents:'none',cursor:'inherit',zIndex:99+Math.round(pg.top+pg.sh),transition:'transform 1s ease-in-out, filter 1s'});   /* 앞(아래)에 있는 소품이 위에 오게: 소품은 아랫단 높이로, 동물은 제 소품 바로 뒤 */
     if(L.fade) im.style.filter='saturate(.82) brightness(.96) drop-shadow(0 2px 2px rgba(0,0,0,.18))';
     if(c.free) im.dataset.free=c.nm;   /* 실제 크기에 맞는 소품이 없어 크기를 무시함(검사 도구가 셈) */
-    if(fl){ im.style.transform='translate(-50%,-50%) scaleX(-1)'; im.dataset.flip=1; }
+    im.style.transform=XF(0,0,1,fl); if(fl) im.dataset.flip=1;
     if(zn==='sub'){ const pc=((wlRel+.5)*100).toFixed(1); im.dataset.wl=wlP*H;   /* 물낯 아래 몸은 바닥부터 자란 물풀 뒤라 보이지 않음 */
       im.style.webkitMaskImage=im.style.maskImage='linear-gradient(to bottom,#000 '+pc+'%,transparent '+pc+'%)'; }
     card.appendChild(im);
@@ -1319,7 +1322,7 @@ async function playHide(p,lvG,targets,tok){
       if(m==='walk'||m==='slide') gp.els.push(groundShadow(card,left+sw/2,top+sh*.97,sw*.86,3)); } });
   if(!unhide(groups,items)) break; }
   await revealCard(card); if(!alive(tok)) return;
-  const move=(t,f,dx,dy,k)=>{ const tr='translate('+(t.ox*f+(dx||0))+'px,'+(t.oy*f+(dy||0))+'px)'+(k?' scale('+k+')':'')+(t.flip?' scaleX(-1)':''); t.im.style.transform='translate(-50%,-50%) '+tr;
+  const move=(t,f,dx,dy,k)=>{ t.im.style.transform=XF(t.ox*f+(dx||0),t.oy*f+(dy||0),k||1,t.flip);
     if(t.sh){ t.sh.style.transform='translate(-50%,-50%) translate('+(t.ox*f)+'px,'+(t.oy*f)+'px)'; t.sh.style.opacity=dx||dy?0:1; } };
   /* 찾으면: 소품 뒤에서 나옴 → 가운데로 와서 크게 보여 주며 문장 → 제 자리(나온 자리)로 돌아감 */
   const toCenter=t=>{ const x=parseFloat(t.im.style.left)+t.ox, y=parseFloat(t.im.style.top)+t.oy, k=Math.max(1,Math.min(2.2,H*.42/Math.max(t.dw,t.dh)));
@@ -1328,7 +1331,7 @@ async function playHide(p,lvG,targets,tok){
   /* 나는 동물(하늘·나무 위)은 찾으면 제자리에서 돌거나 뒤집지 않고 날아다님(2026-11-02):
      머리가 향한 쪽으로 날아 화면 밖으로 → 옆에서(머리가 가운데를 보며) 또는 먼 곳에서(작게 → 크게) 가운데로 날아옴 → 문장 → 화면 밖으로 날아갔다가 먼 곳에서 제자리로 내려앉음.
      뒤집기는 화면 밖에 있거나 아주 작을 때만 */
-  const TF=(dx,dy,k,fl)=>'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) scale('+k+')'+(fl?' scaleX(-1)':'');
+  const TF=XF;
   const headDir=t=>FACE[t.a]?((FACE[t.a]==='L')!==!!t.flip?-1:1):1;
   const flyTo=(t,kf,ms)=>{ t.im.style.transition='none'; const an=t.im.animate(kf,{duration:ms,easing:'ease-in-out',fill:'forwards'}); return an.finished.catch(()=>{}).then(()=>{ t.im.style.transform=kf[kf.length-1].transform; an.cancel(); }); };
   const flyIn=async t=>{ const x=parseFloat(t.im.style.left), y=parseFloat(t.im.style.top), k=Math.max(1,Math.min(2.2,H*.42/Math.max(t.dw,t.dh))), cx=W/2-x, cy=H*.5-y, hd=headDir(t), fl=!!t.flip;
