@@ -103,3 +103,13 @@
  새 소품: 흰 바탕을 지운 webp를 넣고 → clean-edges.py로 가장자리 정리 → 이 도구를 돌림
    → "places가 비어 있는 소품"으로 나온 것은 index.json에서 쓰는 곳을 채우고 다시 돌림. 앱은 고치지 않아도 됩니다.
  Gemini 프롬프트와 그림체 본보기: media/habitats/props/prompts/
+
+
+6. 목소리 넣기 — voice-add.py (목소리 만들기 도구 media/voice/voice-maker.html 과 짝)
+
+   python3 tools/voice-add.py 받은파일.zip         (--dry 로 보기만)
+
+ 하는 일: voice-maker.html에서 받은 zip(wav + voice-meta.json)을 mp3로 바꿔 media/voice/<묶음>/에 넣고 index.json(files·used_by)을 고칩니다.
+   한 글자 이름("개.")은 "글자. 개."로 만든 소리라 마지막 마디만 잘라 넣습니다. 문장과 파일 이름(SHA-1 앞 16자리)이 맞지 않으면 넣지 않습니다.
+   Azure로 만든 소리는 Leda와 목소리가 달라 같은 묶음에 넣지 않습니다(--pack 다른묶음).
+

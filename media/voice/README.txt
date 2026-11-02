@@ -25,11 +25,12 @@
   https://shim-sung-hyun.github.io/web_app/media/voice/<묶음>/<이름>.mp3
   앱마다 "말 목록 뽑기"(예: 001 __voiceLines() → voice-lines.json)는 그대로 둠.
 
-■ 새 말 넣기
-  1) 앱의 말 목록에서 이 묶음에 없는 말만 고름
-  2) 만들기 화면(제작자 Cloud 키, 일회용)에서 같은 목소리·같은 빠르기로 만들어 zip
-  3) 받침·연음·한 글자를 들어 보고 이 폴더에 넣고 index.json(files·used_by)에 더함
-  4) 만들기 화면은 지움
+■ 새 말 넣기(2026-11-02부터 늘 쓰는 도구)
+  1) 제작자: media/voice/voice-maker.html 을 엶(https://shim-sung-hyun.github.io/web_app/media/voice/voice-maker.html)
+     묶음·앱 번호 → 앱 말 목록(voice-lines.json) 불러오기 → "없는 문장 찾기" → Google 키 → 만들기 → 들어 보고 zip 받기
+     (Google Cloud TTS Chirp3-HD Leda = 지금 목소리와 같음. Azure는 목소리가 달라 앱 말 전체를 다른 묶음으로 만들 때만)
+  2) Claude 세션에 zip을 올림 → python3 tools/voice-add.py 받은.zip  (wav → mp3, 한 글자는 마지막 마디만, index.json files·used_by에 더함)
+  3) 받침·연음·한 글자를 들어 보고 이상하면 다시 만들기
 
 ■ 옮긴 앱 (2026-10-22)
   001 · 003 · 004 · 005 · 006 · 008 → 여기서 읽음(001은 정수기 새 말 10마디까지, 006 자리 이름 5개, 008 191마디 더해 729개 — 008은 2026-10-23, 한 글자 이름 개·소·말·곰·벌은 "글자. ○."의 마지막 마디). 옛 NNN/voice/leda/ 는 2026-10-23 지움

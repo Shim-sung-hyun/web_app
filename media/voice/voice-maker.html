@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>차름 목소리 만들기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+/* 제작자용 도구: 앱에 없는 목소리 문장만 골라 Google(또는 Azure) TTS로 만들어 zip으로 받음.
+   받은 zip은 Claude 세션에 올리면 tools/voice-add.py가 mp3로 바꿔 media/voice/<묶음>/에 넣고 index.json을 고침.
+   키는 이 기기에만(webapp.cloudKey · webapp.azureKey), 저장소·서버로 보내지 않음 */
+:root{--ink:#2B2838;--muted:#6B6777;--line:#DDD8E4;--bg:#FBFAF7;--card:#fff;--sci:#6A4C9C;--ok:#2F7D4F;--warn:#9A5B12}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#ECE9F2;--muted:#A9A4B5;--line:#3A3644;--bg:#1C1A22;--card:#24212C;--sci:#B79BE6;--ok:#7CC79A;--warn:#E3B06A}}
+:root[data-theme="dark"]{--ink:#ECE9F2;--muted:#A9A4B5;--line:#3A3644;--bg:#1C1A22;--card:#24212C;--sci:#B79BE6;--ok:#7CC79A;--warn:#E3B06A}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 'Noto Sans KR',sans-serif}
+main{max-width:860px;margin:0 auto;padding:28px 16px 80px}
+h1{font-size:24px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 22px;font-size:15px}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+h2{font-size:17px;margin:0 0 10px}
+h2 b{display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:var(--sci);color:#fff;font-size:14px;margin-right:6px}
+label{display:block;font-size:14px;color:var(--muted);margin:8px 0 4px}
+input,select,textarea{width:100%;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+textarea{min-height:150px;font-size:15px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 200px}
+button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:10px 18px;background:var(--sci);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--sci);border:1.5px solid var(--sci)}
+button:disabled{opacity:.45;cursor:default}
+.note{font-size:14px;color:var(--muted);margin:8px 0 0}
+.warn{color:var(--warn)}
+ol.list{margin:8px 0 0;padding-left:22px;max-height:300px;overflow:auto;font-size:15px}
+ol.list li.done{color:var(--ok)} ol.list li.err{color:var(--warn)}
+audio{height:28px;vertical-align:middle;margin-left:6px}
+</style>
+</head>
+<body>
+<main>
+<h1>차름 목소리 만들기</h1>
+<p class="sub">앱에 아직 없는 문장만 골라 같은 목소리로 만들고 zip으로 받습니다. 받은 zip은 Claude 세션에 올려 주세요.</p>
+
+<section>
+<h2><b>1</b>어떤 목소리 묶음에 넣을까요</h2>
+<div class="row">
+ <div><label for="pack">묶음</label>
+  <select id="pack"><option value="leda-0.92">leda-0.92 · 빠르기 0.92 (001·003·005·006·008·009·새 앱)</option><option value="leda-0.90">leda-0.90 · 빠르기 0.90 (007)</option></select></div>
+ <div><label for="app">쓰는 앱 번호</label><input id="app" value="008" inputmode="numeric"></div>
+</div>
+</section>
+
+<section>
+<h2><b>2</b>만들 문장</h2>
+<label for="lines">한 줄에 한 문장. 앱의 말 목록(voice-lines.json) 주소를 넣고 불러와도 됩니다.</label>
+<div class="row" style="margin-bottom:8px"><input id="url" value="https://shim-sung-hyun.github.io/web_app/008/voice-lines.json"><button class="ghost" id="loadUrl" style="flex:0 0 auto">불러오기</button></div>
+<textarea id="lines" placeholder="고양이는 땅에 살아요.&#10;고양이."></textarea>
+<div class="row" style="margin-top:10px"><button id="check" style="flex:0 0 auto">없는 문장 찾기</button></div>
+<p class="note" id="checkNote"></p>
+<ol class="list" id="missing"></ol>
+</section>
+
+<section>
+<h2><b>3</b>목소리 서비스와 키</h2>
+<div class="row">
+ <div><label for="svc">서비스</label>
+  <select id="svc"><option value="google">Google Cloud TTS · Chirp3-HD Leda (지금 목소리와 같음)</option><option value="azure">Azure Speech (다른 목소리 — 아래 안내)</option></select></div>
+ <div id="azRegionBox" hidden><label for="azRegion">Azure 지역(region)</label><input id="azRegion" placeholder="koreacentral"></div>
+</div>
+<div id="azVoiceBox" hidden><label for="azVoice">Azure 목소리</label><input id="azVoice" value="ko-KR-SunHiNeural"></div>
+<label for="key">API 키 <span style="font-weight:400">(이 기기에만 저장됩니다)</span></label>
+<input id="key" type="password" autocomplete="off">
+<p class="note warn" id="azWarn" hidden>Azure 목소리는 지금 쓰는 Google Leda와 다릅니다. 한 수업에서 목소리가 섞이면 안 되므로, Azure로 만들면 그 앱의 말 전체를 Azure로 다시 만들어야 합니다(다른 묶음 이름으로 넣음).</p>
+<p class="note">Google 키는 Cloud Text-to-Speech API를 켠 키라야 합니다. 1분에 많이 보내면 막히므로 문장 사이에 잠깐 쉽니다.</p>
+</section>
+
+<section>
+<h2><b>4</b>만들기</h2>
+<div class="row"><button id="make" style="flex:0 0 auto" disabled>없는 문장 만들기</button><button class="ghost" id="zip" style="flex:0 0 auto" disabled>zip 받기</button></div>
+<p class="note" id="makeNote"></p>
+<ol class="list" id="made"></ol>
+</section>
+<p class="note">한 글자 이름(개·소·말·곰·벌 등)은 "글자. 개." 속에서 만들고, 넣을 때 마지막 마디만 잘라 씁니다(도구가 알아서).</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const BASE='https://shim-sung-hyun.github.io/web_app/media/voice/';
+const store={get:k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+let MISSING=[], MADE=[];
+async function sha16(t){ const b=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,16); }
+const oneSyl=t=>/^[가-힣][.?!]?$/.test(t.trim());
+function keyName(){ return $('svc').value==='azure'?'webapp.azureKey':'webapp.cloudKey'; }
+function syncSvc(){ const az=$('svc').value==='azure'; $('azRegionBox').hidden=!az; $('azVoiceBox').hidden=!az; $('azWarn').hidden=!az; $('key').value=store.get(keyName()); $('azRegion').value=store.get('webapp.azureRegion'); }
+$('svc').onchange=syncSvc; syncSvc();
+$('key').onchange=()=>store.set(keyName(),$('key').value.trim());
+$('azRegion').onchange=()=>store.set('webapp.azureRegion',$('azRegion').value.trim());
+$('loadUrl').onclick=async()=>{ try{ const r=await fetch($('url').value,{cache:'no-cache'}); const j=await r.json(); $('lines').value=(Array.isArray(j)?j:Object.keys(j)).join('\n'); $('checkNote').textContent=(Array.isArray(j)?j.length:0)+'문장을 불러왔습니다.'; }catch(e){ $('checkNote').textContent='불러오지 못했습니다: '+e.message; } };
+$('check').onclick=async()=>{
+  const lines=[...new Set($('lines').value.split('\n').map(s=>s.trim()).filter(Boolean))];
+  let files=new Set(); try{ const j=await (await fetch(BASE+$('pack').value+'/index.json',{cache:'no-cache'})).json(); files=new Set(j.files||[]); }catch(e){}
+  MISSING=[]; for(const t of lines){ const h=await sha16(t); if(!files.has(h)) MISSING.push({t,h}); }
+  $('missing').innerHTML=MISSING.map(m=>'<li>'+m.t.replace(/</g,'&lt;')+'</li>').join('');
+  $('checkNote').textContent=lines.length+'문장 중 '+MISSING.length+'문장이 '+$('pack').value+'에 없습니다.';
+  $('make').disabled=!MISSING.length;
+};
+async function synth(t){
+  const rate=$('pack').value==='leda-0.90'?0.90:0.92, text=oneSyl(t)?'글자. '+t.replace(/[.?!]$/,'')+'.':t, key=$('key').value.trim();
+  if(!key) throw new Error('키가 없습니다');
+  if($('svc').value==='google'){
+    const r=await fetch('https://texttospeech.googleapis.com/v1/text:synthesize',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':key},
+      body:JSON.stringify({input:{text},voice:{languageCode:'ko-KR',name:'ko-KR-Chirp3-HD-Leda'},audioConfig:{audioEncoding:'LINEAR16',sampleRateHertz:24000,speakingRate:rate}})});
+    if(!r.ok) throw new Error('Google '+r.status+' '+(await r.text()).slice(0,120));
+    const j=await r.json(), bin=atob(j.audioContent), u8=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i); return u8;
+  }
+  const reg=$('azRegion').value.trim(); if(!reg) throw new Error('Azure 지역이 없습니다');
+  const pct=Math.round((rate-1)*100)+'%', ssml='<speak version="1.0" xml:lang="ko-KR"><voice name="'+$('azVoice').value.trim()+'"><prosody rate="'+pct+'">'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</prosody></voice></speak>';
+  const r=await fetch('https://'+reg+'.tts.speech.microsoft.com/cognitiveservices/v1',{method:'POST',headers:{'Ocp-Apim-Subscription-Key':key,'Content-Type':'application/ssml+xml','X-Microsoft-OutputFormat':'riff-24khz-16bit-mono-pcm'},body:ssml});
+  if(!r.ok) throw new Error('Azure '+r.status);
+  return new Uint8Array(await r.arrayBuffer());
+}
+$('make').onclick=async()=>{
+  $('make').disabled=true; MADE=[]; const ol=$('made'); ol.innerHTML='';
+  for(const [i,m] of MISSING.entries()){
+    const li=document.createElement('li'); li.textContent=m.t+' … '; ol.appendChild(li);
+    try{ const wav=await synth(m.t); MADE.push({...m,wav}); li.className='done'; li.textContent=m.t+' ✓';
+      const a=document.createElement('audio'); a.controls=true; a.src=URL.createObjectURL(new Blob([wav],{type:'audio/wav'})); li.appendChild(a); }
+    catch(e){ li.className='err'; li.textContent=m.t+' — '+e.message; if(/40[13]/.test(e.message)) break; }
+    $('makeNote').textContent=(i+1)+' / '+MISSING.length; await new Promise(r=>setTimeout(r,350));
+  }
+  $('zip').disabled=!MADE.length; $('make').disabled=false;
+  $('makeNote').textContent=MADE.length+'문장을 만들었습니다. 들어 보고 zip을 받으세요.';
+};
+$('zip').onclick=async()=>{
+  const z=new JSZip(), meta={pack:$('pack').value,app:$('app').value.trim(),service:$('svc').value,voice:$('svc').value==='google'?'ko-KR-Chirp3-HD-Leda':$('azVoice').value.trim(),made:new Date().toISOString().slice(0,10),lines:MADE.map(m=>({t:m.t,h:m.h,oneSyl:oneSyl(m.t)}))};
+  MADE.forEach(m=>z.file(m.h+'.wav',m.wav)); z.file('voice-meta.json',JSON.stringify(meta,null,1));
+  const b=await z.generateAsync({type:'blob'}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='voice-'+meta.pack+'-'+meta.app+'-'+meta.made+'.zip'; a.click();
+};
+</script>
+</body>
+</html>
