@@ -663,8 +663,11 @@ function buildRun(lv,plan,idx){
   PHASES.forEach(([k])=>{ if(!S.steps[k]) return;
     const items=k==='show'?[...bd.items, ...bd.places.filter(p=>PHOTOS[PL[p].scene]).map(p=>({photo:true,p}))]:shuffleNoRepeat(bd.items);
     phases.push({k,items}); });
-  return {lv,plan,idx,b:bd.bi==null?-1:bd.bi,bd,phases,pi:0,ii:0,g:Date.now(),placed:{},token:0};
+  return {lv,plan,idx,b:bd.bi==null?-1:bd.bi,bd,phases,pi:0,ii:0,g:Date.now(),placed:{},token:(TOKBASE+=1e5)};
 }
+/* 판 번호는 판마다 새로(2026-11-02): 0부터 다시 세면, 설정으로 나갈 때 그림을 기다리던 앞 판이 새 판과 같은 번호가 되어 되살아나
+   한 화면을 서로 지우고 그림(스페셜에서 배경만 남고 '다 찾았어요') */
+let TOKBASE=0;
 function shuffleNoRepeat(items){ /* 같은 곳이 세 번 이어 나오지 않게 섞음 */
   for(let t=0;t<30;t++){ const s=shuffle(items); let ok=true; for(let i=2;i<s.length;i++) if(s[i].p===s[i-1].p&&s[i].p===s[i-2].p) ok=false; if(ok) return s; }
   return shuffle(items);

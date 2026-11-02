@@ -740,8 +740,11 @@ function buildRun(lv,animals){
   PHASES.forEach(([k])=>{ if(!S.steps[k]||(lv<3&&k!=='sort')) return;
     const items=k==='learn'?[{grid:1}]:k==='quiz'?quizItems(lv,animals):shuffle(animals).map(a=>({a}));
     phases.push({k,items}); });
-  return {lv,animals,phases,pi:0,ii:0,sub:null,g:Date.now(),token:0,ending:false,gameDone:!S.steps.game,seen:[],used:{}};
+  return {lv,animals,phases,pi:0,ii:0,sub:null,g:Date.now(),token:(TOKBASE+=1e5),ending:false,gameDone:!S.steps.game,seen:[],used:{}};
 }
+/* 판 번호는 판마다 새로(2026-11-02, 008과 같음): 0부터 다시 세면 앞 판이 새 판과 같은 번호가 되어 되살아날 수 있음 */
+let TOKBASE=0;
+
 function startLesson(rs){
   unlockAudio(); chooseEngine();
   const lv=rs?rs.lv:S.level, animals=rs?rs.animals:todayAnimals(lv);
