@@ -108,4 +108,6 @@
 - (선생님) 서버에 server/charum-api/seek-rank.php 올리기(charum-api/ 폴더, 토큰 칸은 비워 둬도 됨) → https://www.charum.org/charum-api/seek-rank.php?ping 이 "ok": true
 - (선생님) 목소리 도구(media/voice/voice-maker.html, 묶음 azure-sunhi-0.92, 목록 008/voice-lines-beta.json)로 '없는 문장 찾기' → 새 이름 24개 Azure로 만들어 zip → Claude가 tools/voice-add.py로 넣음
 - 스페셜을 학생과 해 보고: 10마리가 너무 많거나 어려우면 GLV[4]·SP_MAX 조정
+- (선생님) 크게 보이는 동물 19마리를 한 장에 한 마리씩 다시 그리기(media/animals/prompts/PROMPTS-2026-11-hd.txt) — 고래가 흐리고 선이 굵던 까닭: 판에서 잘라 낸 300점 원본을 2~3배 키움.
+  앱에서 잰 가장 큰 표시 크기(1366 화면): 고래 524 · 코끼리 430 · 기린 402 · 코뿔소·곰·오릭스·낙타·바다코끼리·하마·사슴·돌고래·호랑이·사향소 300~330. 오면 1024점으로 넣고 008만 새 그림을 가리킴
 - 001~010 초기 설정 문제는 별도 세션
