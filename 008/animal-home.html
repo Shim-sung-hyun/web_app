@@ -984,9 +984,13 @@ async function playGame(tok){
   await gameReady; if(!alive(tok)) return;
   const lvG=RUN.forceMode||S.gameLv||1;
   for(const p of RUN.bd.places){
-    const all=shuffle(RUN.bd.items.filter(x=>x.p===p).map(x=>x.a)), n=Math.ceil(all.length/4);
-    for(let i=0;i<n;i++){ const part=all.slice(Math.round(i*all.length/n),Math.round((i+1)*all.length/n));   /* 4마리 넘으면 고르게 나눔 */
-      await playHide(p,lvG,part,tok); if(!alive(tok)) return; await wait(700); if(!alive(tok)) return; } }
+    /* 한 장면에 실제 크기가 너무 다른 동물(10배 넘게)을 함께 두지 않음(2026-11-02) — 아주 작은 동물은 알아보게 키우는데, 그 동물을 가리는 잎·풀도 함께 커져
+       큰 동물 옆에 큰 동물만 한 나뭇잎이 놓이는 틀린 장면이 됨. 크기 순으로 나눈 뒤 4마리 넘는 묶음은 다시 고르게 나눔 */
+    const all=shuffle(RUN.bd.items.filter(x=>x.p===p).map(x=>x.a)).sort((u,v)=>realOf(u)-realOf(v)), groups=[[]];
+    all.forEach(a=>{ const g=groups[groups.length-1]; if(g.length&&realOf(a)/realOf(g[0])>10) groups.push([a]); else g.push(a); });
+    for(const g of groups){ const sh=shuffle(g), n=Math.ceil(sh.length/4);
+      for(let i=0;i<n;i++){ const part=sh.slice(Math.round(i*sh.length/n),Math.round((i+1)*sh.length/n));
+        await playHide(p,lvG,part,tok); if(!alive(tok)) return; await wait(700); if(!alive(tok)) return; } } }
   await speak('다 찾았어요.'); if(!alive(tok)) return; await wait(800); if(!alive(tok)) return;
   RUN.gameDone=true; startEnd();
 }
@@ -1135,7 +1139,9 @@ async function playHide(p,lvG,targets,tok){
   const L=GLV[lvG], m=MOVE[p], wlP=WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
   const {card,w:W,h:H}=gameCard(HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg');
   const g=DEXG(p), pool=[]; Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ if(DEXG(x.p)===g&&!targets.includes(x.a)&&!pool.includes(x.a)&&!PAIRS.some(pr=>pr.includes(x.a)&&targets.some(t=>pr.includes(t)))) pool.push(x.a); })));
-  const others=shuffle(pool).slice(0,rint(L.nd)), all=[...targets,...others];
+  /* 함께 숨는 다른 동물도 찾을 동물과 실제 크기가 10배 넘게 다르지 않은 것만 */
+  const rmin=Math.min(...targets.map(realOf)), rmax=Math.max(...targets.map(realOf));
+  const others=shuffle(pool.filter(a=>realOf(a)<=rmin*10&&realOf(a)*10>=rmax)).slice(0,rint(L.nd)), all=[...targets,...others];
   /* 크기: 가장 큰 동물 = 장면 높이 × base(동물이 많으면 조금 줄임, 가장 큰 동물이 작은 동물이면 덜 키움) */
   const smax=Math.max(...all.map(realOf)), crowd=Math.min(1,Math.sqrt(4/all.length));
   const big0=H*absFrac(bigOf(all))*L.base*crowd*(realOf(bigOf(all))>2?.88:1);   /* 큰 동물은 조금 작게(숨길 수 있게) */   /* 가장 큰 동물은 실제 크기대로(고래는 장면을 거의 채움), 나머지는 비율로 줄이되 알아볼 수 있게 0.3 아래로는 안 줄임 */
