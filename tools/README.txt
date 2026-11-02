@@ -36,6 +36,18 @@
    공통 모듈을 한 앱에서 고쳤다면, 이 검사로 다른 앱이 옛 판으로 남지 않았는지 봅니다.
 
 
+2-1. 공통 모듈 넣기 — sync-modules.py
+
+   python3 tools/sync-modules.py            (common/이름.js 원본을 앱의 <script id="이름"> 칸에 넣음)
+   python3 tools/sync-modules.py --check    (바꾸지 않고, 원본과 다른 앱만 보여 줌)
+
+ 하는 일: 공통 모듈 원본은 common/ 한 곳에만 둡니다. 원본을 고친 뒤 이 도구를 돌리면
+   그 모듈을 쓰는 모든 앱에 같은 판이 들어갑니다. 앱은 지금처럼 HTML 한 파일로 열립니다.
+ 새 앱에 넣을 때: 앱 본문 <script> 앞에 빈 칸 <script id="roster"></script>를 두고 돌립니다.
+ 지금 원본이 있는 모듈: roster(학생 명단 — 넣기·빼기, 뺀 학생 기록 6개월 보관)
+ 007은 통합본에 넣은 뒤 split.py도 돌립니다.
+
+
 3. 화면 캡처 — shot.js
 
    node tools/shot.js 008/animal-home.html
