@@ -1170,6 +1170,8 @@ function unhide(groups,items){
 }
 /* 숨은 동물 그림의 transform은 늘 같은 짜임(가운데 맞춤 · 옮김 · 크기 · 좌우)으로(2026-11-02).
    짜임이 다르면 브라우저가 행렬로 이어 그리며 좌우 뒤집기(scaleX(-1))를 180° 회전으로 바꿔, 뒤집어 숨긴 동물이 빙글 돌며 나왔음 */
+/* 나는 동물(새·벌레·나무 위)도 다른 동물처럼 소품 뒤에서 나와 가운데로(2026-11-02 선생님: 날아다니는 것이 요란함). 다시 날게 하려면 true */
+const FLY_SHOW=false;
 const XF=(dx,dy,k,fl)=>'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) scale('+k+') scaleX('+(fl?-1:1)+')';
 async function playHide(p,lvG,targets,tok){
   const L=GLV[lvG], m=MOVE[p], wlP=WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
@@ -1363,9 +1365,9 @@ async function playHide(p,lvG,targets,tok){
     const shake=()=>{ if(!t.pr.animate) return; const b=t.pr.style.transform||''; t.pr.style.transformOrigin='50% 95%'; rustle();
       t.pr.animate([0,-3,2.5,-2,1.2,0].map(r=>({transform:b+' rotate('+r+'deg)'})),{duration:700,easing:'ease-in-out'}); };
     await findIt(tok,a,p,t.im,n=>n==='shake'?shake():t.sub?null:move(t,n===1?.5:.8),   /* 물에 잠긴 하마는 도움 때 움직이지 않고 흔들기만 */
-      async()=>{ if(t.fly){ t.flip0=!!t.flip; if(L.fade) t.im.style.filter=''; await flyIn(t); return; }
+      async()=>{ if(t.fly&&FLY_SHOW){ t.flip0=!!t.flip; if(L.fade) t.im.style.filter=''; await flyIn(t); return; }
         if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage=''; move(t,1); if(L.fade) t.im.style.filter=''; await wait(1050); if(!alive(tok)) return; toCenter(t); await wait(950); },
-      async()=>{ if(t.fly){ await flyBack(t); return; }
+      async()=>{ if(t.fly&&FLY_SHOW){ await flyBack(t); return; }
         move(t,1); await wait(950); });
     found.push(t);
     if(!alive(tok)) return; await wait(400); if(!alive(tok)) return; }
