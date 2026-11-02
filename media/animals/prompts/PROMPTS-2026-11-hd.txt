@@ -136,5 +136,12 @@ Because the picture is large, keep the outline THIN and even (about the thicknes
 NO background, NO ground, NO water, NO plants, NO rocks, NO shadow, NO text, NO frame — only the animal on PURE WHITE. Square image.
 The animal: a long-tailed goral (Korean mountain goat) standing, grey-brown with short black horns.
 
+■ 20. 사자 (saja) — 2026-11-02 더함
+Draw ONE animal only, in exactly the same style as the attached reference sheet: cute but not babyish flat cartoon, clean dark-brown outlines, flat natural colours with soft simple shading, friendly face with small round eyes.
+The animal is drawn WHOLE (head to tail, all legs), seen from the SIDE (head clearly to the left or to the right), and it fills almost the whole square image (a small white margin only).
+Because the picture is large, keep the outline THIN and even (about the thickness of a pencil line, not a marker) and draw clean crisp details.
+NO background, NO ground, NO water, NO plants, NO rocks, NO shadow, NO text, NO frame — only the animal on PURE WHITE. Square image.
+The animal: a male African lion standing, golden body, big brown mane, tail with a dark tuft.
+
 넣을 때(Claude): 자르기·흰 테두리 정리 → media/animals/이름.webp (1024점) → 008(정식판·베타) 표가 이 그림을 가리키게(007/pics의 곰·기린·코끼리·낙타·하마·사슴·호랑이는 007 앱 것이라 그대로 두고 008만 새 그림으로)
   → BB(몸 상자)·FACE(머리 쪽) 다시 재기 → tools/props-index.py → 장면에서 크기·선 굵기 확인
