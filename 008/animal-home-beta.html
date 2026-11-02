@@ -51,6 +51,7 @@ body:not(.setup) #setupView{display:none}
 .mode{display:flex;gap:8px;margin:14px 0 4px;flex-wrap:wrap}
 .mode .chip{min-width:110px}
 .pickNote{font-size:13.5px;color:var(--muted);margin:8px 0 0}
+.perRow{align-items:center;gap:6px;margin-top:10px} .perLab{font-size:14px;color:var(--muted);margin-right:4px}
 .pickWarn{font-size:14px;color:#9A3328;margin:8px 0 0;font-weight:700}
 .bd .ord{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--sci);color:#fff;font-size:14px;align-items:center;justify-content:center;margin-right:6px}
 .plc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
@@ -312,11 +313,11 @@ const LV={
   'ground:고양이,거미|underground:두더지,땅강아지|water:메기|sky:제비,벌','ground:너구리,닭|underground:지렁이|water:고등어|sky:비둘기,딱따구리',
   'ground:다람쥐|underground:땅강아지,지렁이|water:문어|sky:박새,독수리','ground:소,코끼리|underground:두더지|water:조개|sky:까치,잠자리']},
  3:{name:'수준 3',desc:'산 · 초원 · 사막 · 극지방 · 강·호수 · 바다 · 갯벌',opts:3,bundles:[
-  'forest:다람쥐,부엉이|desert:낙타,전갈|sea:고래,문어','grassland:사자,얼룩말|polar:펭귄,북극곰|pond:송사리,미꾸라지',
-  'forest:딱따구리,산양|polar:바다표범,펭귄|mudflat:칠게,조개','grassland:기린,코끼리|mudflat:짱뚱어,낙지|pond:소금쟁이,수달',
-  'desert:사막여우,미어캣|pond:하마,메기|forest:호랑이,너구리','desert:도마뱀,사막거북|sea:상어,소라|polar:북극곰,바다표범',
-  'mudflat:농게,갯지렁이|forest:곰,사슴|pond:다슬기,백로',
-  'sea:불가사리,고등어|mudflat:조개,칠게|pond:붕어,개구리','forest:다람쥐,산양|grassland:사자,얼룩말|desert:전갈,사막여우']}
+  'forest:다람쥐,부엉이,곰,사슴|desert:낙타,전갈,도마뱀,미어캣|sea:고래,문어,상어,소라','grassland:사자,얼룩말,기린,코끼리|polar:펭귄,북극곰,바다표범|pond:송사리,미꾸라지,붕어,백로',
+  'forest:딱따구리,산양,호랑이,너구리|polar:바다표범,펭귄,북극곰|mudflat:칠게,조개,짱뚱어,농게','grassland:기린,코끼리,얼룩말,사자|mudflat:짱뚱어,낙지,갯지렁이,칠게|pond:소금쟁이,수달,메기,다슬기',
+  'desert:사막여우,미어캣,사막거북,낙타|pond:하마,메기,백로,미꾸라지|forest:호랑이,너구리,부엉이,다람쥐','desert:도마뱀,사막거북,전갈,사막여우|sea:상어,소라,고등어,불가사리|polar:북극곰,바다표범,펭귄',
+  'mudflat:농게,갯지렁이,조개,낙지|forest:곰,사슴,산양,딱따구리|pond:다슬기,백로,송사리,소금쟁이',
+  'sea:불가사리,고등어,문어,고래|mudflat:조개,칠게,낙지,짱뚱어|pond:붕어,개구리,메기,수달','forest:다람쥐,산양,곰,부엉이|grassland:사자,얼룩말,코끼리,기린|desert:전갈,사막여우,낙타,미어캣']}
 };
 /* 교과서에 맞춘 구성(2026-11-02 베타): 중학교 기본 「동물의 생활」(땅 위·땅속·물·하늘·사막, 가급적 두 종류로) · 초3 공통 2단원(사막·극지방·산악 지형 / 강이나 호수·바다·갯벌).
    두 곳을 오가는 동물(개미·뱀·수달·개구리·오리)은 수준 1·2에 넣지 않음. 수준 3 마지막 두 묶음은 비슷한 곳 구별하기(물 셋 · 땅 셋) */
@@ -329,6 +330,10 @@ const DEXG=p=>p==='land'?'ground':p;   /* 도감에서는 수준 1 "땅"을 "땅
 const PAIRS=[['여우','사막여우'],['곰','북극곰'],['물고기','붕어'],['지렁이','갯지렁이'],['낙지','문어'],['낙지','오징어'],['거북이','사막거북']];
 function parseB(s){ const places=[], items=[]; s.split('|').forEach(g=>{ const [p,as]=g.split(':'); places.push(p); as.split(',').forEach(a=>items.push({a,p})); }); return {places,items}; }
 const BUN={}; Object.keys(LV).forEach(l=>{ BUN[l]=LV[l].bundles.map(parseB); });
+/* 수준 3 묶음은 곳마다 4마리까지 적어 두고, 앞에서부터 S.per마리(기본 3, 선생님이 4로 고름)만 씀(2026-11-02).
+   앞의 3마리에 수준 1·2에서 익힌 동물을 하나 넘게 넣음(아는 동물 섞기). 극지방은 3마리뿐이라 4로 골라도 3 */
+const PERLV=3;
+function trimB(lv,bd){ if(+lv!==PERLV) return bd.items; const c={}; return bd.items.filter(x=>(c[x.p]=(c[x.p]||0)+1)<=S.per); }
 
 /* ================= 한국어 ================= */
 function batchim(w){const c=w.charCodeAt(w.length-1); return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0;}
@@ -355,11 +360,11 @@ const S={
   steps:JSON.parse(store.get('steps')||'{"show":1,"a2p":1,"p2a":1,"sort":1}'),
   endScene:store.get('endScene')!=='0', game:+(store.get('game')??1), gameLv:+(store.get('gameLv')||1), sound:store.get('sound')!=='0', engine:store.get('engine')||'builtin',
   admin:false, run:null, engineNow:'', voiceNote:'',
-  mode:store.get('mode')||'bundle', bsel:JSON.parse(store.get('bsel')||'null'), psel:JSON.parse(store.get('psel')||'[]'), pn:+(store.get('pn')||6), ppick:JSON.parse(store.get('ppick')||'[]'), asel:JSON.parse(store.get('asel')||'[]')
+  mode:store.get('mode')||'bundle', bsel:JSON.parse(store.get('bsel')||'null'), psel:JSON.parse(store.get('psel')||'[]'), pn:+(store.get('pn')||6), ppick:JSON.parse(store.get('ppick')||'[]'), asel:JSON.parse(store.get('asel')||'[]'), per:store.get('per')==='4'?4:3
 };
 if(!LV[S.level]) S.level=1; if(!BUN[S.level][S.bundle]) S.bundle=0;
 if(!Array.isArray(S.bsel)||!S.bsel.length) S.bsel=[S.bundle];
-function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('mode',S.mode); store.set('bsel',JSON.stringify(S.bsel)); store.set('psel',JSON.stringify(S.psel)); store.set('pn',S.pn); store.set('ppick',JSON.stringify(S.ppick)); store.set('asel',JSON.stringify(S.asel)); store.set('endScene',S.endScene?'1':'0'); store.set('game',S.game); store.set('gameLv',S.gameLv); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
+function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('mode',S.mode); store.set('bsel',JSON.stringify(S.bsel)); store.set('psel',JSON.stringify(S.psel)); store.set('pn',S.pn); store.set('ppick',JSON.stringify(S.ppick)); store.set('asel',JSON.stringify(S.asel)); store.set('per',S.per); store.set('endScene',S.endScene?'1':'0'); store.set('game',S.game); store.set('gameLv',S.gameLv); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
 
 /* ================= 학생 명단·기록 =================
    명단은 다른 차름 앱과 함께 씀(webapp.students). 기록은 이 기기 브라우저에만.
@@ -533,7 +538,7 @@ function renderSetup(){
   const add=document.createElement('button'); add.className='chip add'; add.textContent='+ 학생 넣기'; add.onclick=()=>{ $('newStu').classList.remove('hidden'); $('newName').focus(); }; sr.appendChild(add);
   const rb=$('resumeBox'); rb.innerHTML='';
   const rs=RESUME[S.stu||'_'];
-  if(rs&&!rs.plan&&BUN[rs.lv]&&BUN[rs.lv][rs.b]){ rs.plan=[{places:BUN[rs.lv][rs.b].places,items:BUN[rs.lv][rs.b].items,label:'묶음 '+(rs.b+1),bi:rs.b}]; rs.idx=0; }   /* 예전 꼴 */
+  if(rs&&!rs.plan&&BUN[rs.lv]&&BUN[rs.lv][rs.b]){ rs.plan=[{places:BUN[rs.lv][rs.b].places,items:trimB(rs.lv,BUN[rs.lv][rs.b]),label:'묶음 '+(rs.b+1),bi:rs.b}]; rs.idx=0; }   /* 예전 꼴 */
   if(rs&&rs.plan&&rs.plan.some(b=>b.items.some(x=>!PL[x.p]||!(OLD[x.a]||NEW[x.a])||!(POOL[rs.lv]||[]).some(y=>y.a===x.a&&y.p===x.p)))){ delete RESUME[S.stu||'_']; saveResume(); }   /* 구성이 바뀌어 없는 동물·곳 */
   if(RESUME[S.stu||'_']&&rs&&rs.plan&&LV[rs.lv]&&rs.plan[rs.idx]){
     rb.innerHTML='<div class="resume">멈춘 곳: '+LV[rs.lv].name+' · '+esc(rs.plan[rs.idx].label)+(rs.plan.length>1?' ('+(rs.idx+1)+'/'+rs.plan.length+')':'')+' · '+(PHASES.find(p=>p[0]===rs.ph)||['',''])[1]
@@ -577,13 +582,17 @@ function renderPick(){
   const note=(t,warn)=>{ const d=document.createElement('div'); d.className=warn?'pickWarn':'pickNote'; d.textContent=t; A.appendChild(d); return d; };
   if(S.mode==='bundle'){
     note('묶음을 '+MAXB+'개까지 고를 수 있어요. 고른 차례대로 합니다.');
+    if(+lv===PERLV){ const r=document.createElement('div'); r.className='row perRow'; r.innerHTML='<span class="perLab">곳마다 동물</span>'; A.appendChild(r);
+      [[3,'3마리'],[4,'4마리']].forEach(([v,n])=>{ const b=document.createElement('button'); b.className='chip sm'+(S.per===v?' on':''); b.textContent=n;
+        b.onclick=()=>{ S.per=v; saveS(); renderSetup(); flash('c3'); }; r.appendChild(b); });
+      note('처음에는 3마리로 하고, 익숙해지면 4마리로 늘려요(극지방은 3마리).'); }
     const g=document.createElement('div'); g.className='bundles'; A.appendChild(g);
     const done=(DONE[S.stu||'_']||{});
     BUN[lv].forEach((bd,i)=>{ const k=S.bsel.indexOf(i), b=document.createElement('button'); b.className='bd'+(k>=0?' on':'');
       const key=lv+'-'+(i+1);
       b.innerHTML='<div class="bh"><span>'+(k>=0?'<span class="ord">'+(k+1)+'</span>':'')+'묶음 '+(i+1)+'</span>'+(HARD.has(key)?' <em>비슷한 곳 구별하기</em>':'')+'</div>'
         +'<div class="pl">'+bd.places.map(p=>PL[p].label).join(' · ')+'</div>'
-        +'<div class="an">'+bd.items.map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div>'
+        +'<div class="an">'+trimB(lv,bd).map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div>'
         +(done[key]?'<div class="done">✓ 마침 '+done[key]+'번</div>':'');
       b.onclick=()=>{ if(k>=0){ if(S.bsel.length>1) S.bsel.splice(k,1); }
         else if(S.bsel.length>=MAXB){ w.textContent='묶음은 '+MAXB+'개까지예요. 먼저 고른 것을 눌러 빼고 고르세요.'; return; }
@@ -659,7 +668,7 @@ function makePlan(){
     return [{places:PLACES[lv].filter(p=>items.some(x=>x.p===p)),items,label:'동물 고르기',bi:null}];
   }
   const sel=(S.bsel||[]).filter(i=>BUN[lv][i]); if(!sel.length) sel.push(0);
-  return sel.map(i=>({places:BUN[lv][i].places,items:BUN[lv][i].items,label:'묶음 '+(i+1),bi:i}));
+  return sel.map(i=>({places:BUN[lv][i].places,items:trimB(lv,BUN[lv][i]),label:'묶음 '+(i+1),bi:i}));
 }
 function planOk(plan){ return plan.every(b=>b.places.length>=2&&b.items.length>=2&&b.places.length<=MAXP); }
 const planTitle=()=>LV[RUN.lv].name+' · '+RUN.bd.label+(RUN.plan.length>1?' ('+(RUN.idx+1)+'/'+RUN.plan.length+')':'');
