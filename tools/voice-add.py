@@ -8,7 +8,7 @@
   1. zip 안의 <이름>.wav 를 mp3(24kHz·한 채널·64k)로 바꿔 media/voice/<묶음>/<이름>.mp3 로 넣음
      (이름 = 문장 SHA-1 앞 16자리 — voice-meta.json의 문장으로 다시 맞춰 봄, 틀리면 넣지 않음)
   2. 한 글자 이름("개." 등)은 "글자. 개." 로 만든 소리라 마지막 마디만 잘라 넣음
-  3. 앞뒤 조용한 곳을 다듬지는 않음(앱의 cleanF가 재생할 때 다듬음)
+  3. 끝의 긴 조용한 꼬리는 0.25초만 남김(앞은 그대로 — 앱의 cleanF가 재생할 때 마저 다듬음)
   4. media/voice/<묶음>/index.json 의 files·used_by 에 더함(이미 있으면 used_by에 앱만 더함)
 Azure로 만든 소리는 azure-로 시작하는 묶음(예: azure-sunhi-0.92)에만, Google 소리는 leda- 묶음에만 넣는다(목소리를 섞지 않음).
 """
@@ -55,6 +55,18 @@ def last_phrase(x, rate=24000):
     return x[max(0, (gap_start - 4) * W):]
 
 
+def trim_tail(x, rate=24000, keep=.25):
+    """끝의 긴 조용한 꼬리(Azure는 1초쯤 붙음)를 keep초만 남기고 자름"""
+    W = rate // 100
+    e = np.array([np.sqrt((x[i * W:(i + 1) * W] ** 2).mean()) for i in range(len(x) // W)])
+    if not len(e):
+        return x
+    loud = np.where(e > e.max() * .02)[0]
+    if not len(loud):
+        return x
+    return x[:min(len(x), (loud[-1] + 1) * W + int(keep * rate))]
+
+
 def to_mp3(x, path):
     with tempfile.NamedTemporaryFile(suffix='.raw', delete=False) as f:
         f.write(x.astype(np.float32).tobytes())
@@ -68,6 +80,16 @@ def add_to_index(idx_path, names, app):
     """index.json을 줄 단위로 고침(나머지 줄과 순서는 그대로 — 큰 diff가 나지 않게)"""
     s = open(idx_path, encoding='utf-8').read()
     d = json.loads(s)
+    if not d.get('files') or not d.get('used_by'):   # 비어 있는 묶음: 처음 한 번은 통째로 씀(빈 목록에 줄을 끼우면 쉼표가 남음)
+        for h in names:
+            if h not in d.setdefault('files', []): d['files'].append(h)
+            d.setdefault('used_by', {}).setdefault(h, [])
+            if app not in d['used_by'][h]: d['used_by'][h].append(app)
+        head = {k: v for k, v in d.items() if k not in ('files', 'used_by')}
+        out = '{\n' + ''.join('%s: %s,\n' % (json.dumps(k, ensure_ascii=False), json.dumps(v, ensure_ascii=False)) for k, v in head.items())
+        out += '"files": [\n' + ',\n'.join(json.dumps(h) for h in d['files']) + '\n],\n'
+        out += '"used_by": {\n' + ',\n'.join('%s: %s' % (json.dumps(h), json.dumps(u)) for h, u in d['used_by'].items()) + '\n}\n}\n'
+        json.loads(out); open(idx_path, 'w', encoding='utf-8').write(out); return
     for h in names:
         if h not in d['files']:
             s = s.replace('"files": [\n', '"files": [\n"%s",\n' % h, 1)
@@ -110,6 +132,7 @@ def main():
         x = wav_to_f32(z.read(h + '.wav'))
         if L.get('oneSyl'):
             x = last_phrase(x)
+        x = trim_tail(x)
         print(('(보기만) ' if dry else '') + '%s  %.2f초  %s' % (h, len(x) / 24000, t))
         if not dry:
             to_mp3(x, os.path.join(d, h + '.mp3'))

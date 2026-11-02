@@ -64,12 +64,12 @@
     / 극지방: 펭귄 북극곰 바다표범 / 강·호수: 송사리 미꾸라지 소금쟁이 수달 하마 메기 다슬기 백로 붕어 개구리 / 바다: 고래 문어 상어 소라 불가사리 고등어
     / 갯벌: 칠게 조개 짱뚱어 낙지 농게 갯지렁이. 비슷한 곳 구별하기 = 묶음 8(바다·갯벌·강·호수) · 9(산·초원·사막)
 - 뺀 것: 원숭이·악어(우리나라에 안 삶), 우렁이(교과서 다슬기로), 논·습지 곳(교과서에 없음), 물고기(붕어·고등어로), 새우·물방개
-- 목소리: media/voice/azure-sunhi-0.92/ (Azure ko-KR-SunHiNeural, -8%) — 아직 비어 있어 베타는 기기 목소리로 남
+- 목소리: media/voice/azure-sunhi-0.92/ (Azure ko-KR-SunHiNeural, -8%) 236문장 모두 넣음(2026-11-02, 끝의 조용한 꼬리 0.25초로)
+- 그림: 새 동물 16(media/animals) · 갯벌 장면 2(별 로고 지움) · 갯벌 소품 판 T 7개(네모난 진흙 둑 mudbank2는 상자처럼 보여 안 씀)
 
 다음 할 일
-- (선생님) 베타 그림: media/animals/prompts/PROMPTS-2026-11-beta.txt — 동물 판 2장(16마리) · 갯벌 장면 2장 · 갯벌 소품 판 T. 받으면 넣고 BB·FACE·REAL·masks(tools/props-index.py) 채우기
-- (선생님) 베타 목소리: media/voice/voice-maker.html → 묶음 azure-sunhi-0.92 · voice-lines-beta.json 불러오기 → zip → tools/voice-add.py
-- 그림·목소리가 다 오면 APP=animal-home-beta.html node tools/hide-check.js 5, 캡처·설명서, 선생님께 여쭙고 정식판에 합침
+- (선생님) 베타를 학생과 해 보고 의견(서버 study/008/animal-home-beta.html = server-loader-beta.html). 좋으면 정식판에 합침 — 합칠 때 캡처·설명서·게시판 글도 새 구성으로
+- 베타 검사 2026-11-02: APP=animal-home-beta.html node tools/hide-check.js 3 — 완전히 가려짐 0%, 크기 바꿈 0%대, 모든 묶음 끝까지 오류 0
 - (선생님) 학생과 해 보고 의견 — 크기·어렵기·장면. 이상한 장면은 사진으로
 - (선생님) 서식지 분류 다시 보기 — 교과(중학교 기본 「동물의 생활」: 땅 위·땅속·물·하늘·사막, 초3 공통: 강·호수/바다/갯벌, 극지·산악) 참고.
   분류를 바꾸면 그 문장 목소리(○○는 ○○에 살아요.)가 있는지 확인하고, 없으면 같은 목소리 조각으로 만듦
