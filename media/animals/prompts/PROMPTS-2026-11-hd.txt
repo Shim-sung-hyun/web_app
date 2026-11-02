@@ -1,5 +1,6 @@
 008 크게 보이는 동물 다시 그리기 (2026-11-02) — 한 장에 한 마리, 크게.
 왜: 지금 그림은 한 판에 8마리를 그려 잘라서 한 마리가 300점쯤. 고래·코끼리처럼 실제 크기대로 크게 보여 주는 동물은 2~3배 늘어나 흐리고 선이 굵어 보임.
+별 표시 줄이기(2026-11-02 선생님 생각): 앞으로는 '오른쪽 1/3 비우기' 줄(21번 꼴)을 넣으면 Gemini 별이 그림에 걸치지 않음.
 쓰는 법: 아래 한 칸(■ 이름 줄 다음부터 빈 줄 전까지)을 그대로 복사해 Gemini 새 대화창에 붙여 넣음 · media/animals/prompts/style-ref.png 붙임.
   1~13번이 먼저, 14~19번은 되도록 함께. 받은 그림은 그대로 Claude에게(파일 이름은 상관없음).
 
@@ -142,6 +143,13 @@ The animal is drawn WHOLE (head to tail, all legs), seen from the SIDE (head cle
 Because the picture is large, keep the outline THIN and even (about the thickness of a pencil line, not a marker) and draw clean crisp details.
 NO background, NO ground, NO water, NO plants, NO rocks, NO shadow, NO text, NO frame — only the animal on PURE WHITE. Square image.
 The animal: a male African lion standing, golden body, big brown mane, tail with a dark tuft.
+
+■ 21. 해파리 (haepari) — 2026-11-02 더함 · 오른쪽 1/3을 비워 Gemini 별 표시(오른쪽 아래)가 그림에 걸치지 않게
+Draw ONE animal only, in exactly the same style as the attached reference sheet: cute but not babyish flat cartoon, clean dark-brown outlines, flat natural colours with soft simple shading, friendly face with small round eyes.
+LAYOUT: square image. Divide it into three equal vertical strips. Draw the animal ONLY inside the LEFT TWO strips (the left two-thirds), as large as fits there. The RIGHT third must stay completely empty pure white.
+Because the picture is large, keep the outline THIN and even (about the thickness of a pencil line, not a marker) and draw clean crisp details.
+NO background, NO water, NO plants, NO rocks, NO bubbles, NO shadow, NO text, NO frame — only the animal on PURE WHITE.
+The animal: a moon jellyfish floating upright, a round soft lilac-pink bell (flat colours, not see-through), four short frilly arms under the bell and many long thin wavy tentacles hanging down.
 
 넣을 때(Claude): 자르기·흰 테두리 정리 → media/animals/이름.webp (1024점) → 008(정식판·베타) 표가 이 그림을 가리키게(007/pics의 곰·기린·코끼리·낙타·하마·사슴·호랑이는 007 앱 것이라 그대로 두고 008만 새 그림으로)
   → BB(몸 상자)·FACE(머리 쪽) 다시 재기 → tools/props-index.py → 장면에서 크기·선 굵기 확인
