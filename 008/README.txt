@@ -91,8 +91,11 @@
 - 시간 제한 없음, 도움 30초·50초, 40초부터 바스락. 위에 시계(찾을 때마다 clearTimers가 돌아 setInterval로 따로 셈). 교사 메뉴: 이 곳 다시 · 다른 곳(메뉴를 닫으면 이 곳을 새로 숨겨 처음부터)
 - 목소리: 그 판에 나오는 이름 + "다 찾았어요."가 내장 목소리에 다 있으면 내장, 아니면 그 판만 기기 목소리(수업의 내장 목소리 확인 BUILTIN_OK와 따로)
 - 수업 기록에 안 남김. 이 기기 기록 spRec. 순위: 학생마다 별명(nicks, 실명·나쁜 말 막음)을 정하면 charum.org/charum-api/seek-rank.php로 별명·판(곳-마릿수)·시간만. 판마다 10위
-- 곳 동물 = 수준 3의 그 곳 동물 + SP_EXTRA(지금 바다: 오징어·해파리). 지금 나오는 곳: 산 8 · 사막 6 · 바다 8 · 강·호수 10 · 갯벌 6 (초원 4·극지방 3은 6마리가 안 돼 안 나옴)
-- 새 동물 24(초원 6·극지방 7·사막 4·산 1·바다 2·갯벌 4) 그림 주문서: media/animals/prompts/PROMPTS-2026-11-special.txt
+- 곳 동물 = 수준 3의 그 곳 동물 + SP_EXTRA. 지금(2026-11-02 그림 판 3·4·5, 24마리 넣음): 산 9 · 초원 10 · 사막 10 · 극지방 10 · 강·호수 10 · 바다 10 · 갯벌 10
+  새 동물(스페셜에만): 코뿔소 치타 하이에나 타조 가젤 물소 / 북극여우 바다코끼리 순록 흰올빼미 북극토끼 사향소 북극늑대 / 방울뱀 사막쥐 쇠똥구리 오릭스 / 멧돼지 / 바다거북 돌고래(ZONE big·mid) / 갯우렁이 맛조개 도요새 방게.
+  NEW·REAL·BB·FACE에 적음(정면인 흰올빼미·맛조개·방게는 FACE 없음). 주문서 media/animals/prompts/PROMPTS-2026-11-special.txt
+- 목소리: 새 이름 24개("코뿔소." 등)는 voice-lines-beta.json 끝에 더함(260문장). 아직 만들지 않아 그 이름이 나오는 판은 기기 목소리.
+  수업의 내장 목소리 확인(BUILTIN_OK)은 수업 말(lessonParts)만 보므로 수업은 그대로 Azure
 
 다음 할 일
 - (선생님) 베타를 학생과 해 보고 의견(서버 study/008/animal-home-beta.html = server-loader-beta.html). 좋으면 정식판에 합침 — 합칠 때 캡처·설명서·게시판 글도 새 구성으로
@@ -103,6 +106,6 @@
 - (선생님) 목소리 확인: "악어는 강이나 연못에 살아요."(이어 만든 것), 단독 이름 첫소리가 센 개·부엉이·붕어·개구리·두더지·북극곰
 - (선생님) 게시판 59860 본문은 바뀐 것 없음(2026-10-31 판 그대로)
 - (선생님) 서버에 server/charum-api/seek-rank.php 올리기(charum-api/ 폴더, 토큰 칸은 비워 둬도 됨) → https://www.charum.org/charum-api/seek-rank.php?ping 이 "ok": true
-- (선생님) 스페셜 새 동물 판 3·4·5 그리기(PROMPTS-2026-11-special.txt) → Claude가 넣고 이름 목소리 목록을 만들면 목소리 도구로 Azure 소리 만들기
+- (선생님) 목소리 도구(media/voice/voice-maker.html, 묶음 azure-sunhi-0.92, 목록 008/voice-lines-beta.json)로 '없는 문장 찾기' → 새 이름 24개 Azure로 만들어 zip → Claude가 tools/voice-add.py로 넣음
 - 스페셜을 학생과 해 보고: 10마리가 너무 많거나 어려우면 GLV[4]·SP_MAX 조정
 - 001~010 초기 설정 문제는 별도 세션
