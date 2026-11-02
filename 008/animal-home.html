@@ -703,8 +703,21 @@ function runStep(){
   if(!RUN) return;
   RUN.token++; clearTimers(); stopVoice(); clearStage(); renderProg(); saveSpot();
   const ph=RUN.phases[RUN.pi], it=ph.items[RUN.ii];
+  /* 정리하기에 놓인 동물은 늘 '이 단계에서 지금보다 앞 차례 동물'로 다시 셈(2026-11-02) — 단계를 바꾸거나 처음부터 하거나 이어 할 때 전에 놓은 동물이 남지 않게 */
+  if(ph.k==='sort'){ RUN.placed={}; ph.items.slice(0,RUN.ii).forEach(x=>(RUN.placed[x.p]=RUN.placed[x.p]||[]).push(x.a)); }
   ({show:stepShow,a2p:stepA2P,p2a:stepP2A,sort:stepSort})[ph.k](it,RUN.token);
 }
+/* 보기 카드 중 정답 자리 고르기(2026-11-02): 무작위로만 섞으면 같은 자리가 서너 번 이어질 때가 있어 학생이 자리로 답을 맞힘.
+   이 단계에서 정답이 덜 나온 자리 중에서 고르고, 바로 앞 문제와 같은 자리는 피함(보기가 둘이면 같은 자리 두 번까지) */
+function answerSlot(key,n){
+  const H=(RUN.slots=RUN.slots||{})[key+n]=(RUN.slots[key+n]||[]), cnt=Array.from({length:n},(_,i)=>H.filter(x=>x===i).length);
+  let ok=[...Array(n).keys()];
+  if(H.length&&n>=3) ok=ok.filter(i=>i!==H[H.length-1]);
+  if(n===2&&H.length>=2&&H[H.length-1]===H[H.length-2]) ok=ok.filter(i=>i!==H[H.length-1]);
+  const m=Math.min(...ok.map(i=>cnt[i])), pick=shuffle(ok.filter(i=>cnt[i]<=m+(n===2?1:0)))[0];
+  H.push(pick); return pick;
+}
+const putAt=(arr,x,i)=>{ const r=shuffle(arr.filter(y=>y!==x)); r.splice(i,0,x); return r; };
 let TIMERS=[]; function later(fn,ms){ TIMERS.push(setTimeout(fn,ms)); } function clearTimers(){ TIMERS.forEach(clearTimeout); TIMERS=[]; }
 const alive=tok=>RUN&&RUN.token===tok&&!S.admin;
 
@@ -827,7 +840,7 @@ function logRow(ph,it,wrongId,help){
 
 /* ---- 2. 동물 보고 곳 고르기: 견본 = 동물(말풍선), 보기 = 곳 장면 2~4개 ---- */
 function stepA2P(it,tok){
-  const st=$('stage'), A=area(), places=shuffle(RUN.bd.places), n=places.length;
+  const st=$('stage'), A=area(), n=RUN.bd.places.length, places=putAt(RUN.bd.places,it.p,answerSlot('a2p',n));
   const sh=Math.min(A.h*0.30,220);
   const bub=document.createElement('div'); bub.className='bubble'; bub.innerHTML='<img class="a" src="'+pic(it.a)+'" alt="'+esc(it.a)+'" style="width:'+sh+'px;height:'+sh+'px">';
   const gap=Math.max(14,A.w*0.022);
@@ -849,7 +862,7 @@ function stepP2A(it,tok){
   /* 같은 곳 동물이 겹치지 않게 곳이 다른 것부터 고름 */
   const picks=[]; shuffle(pool).forEach(x=>{ if(picks.length<k&&!picks.some(y=>y.p===x.p)) picks.push(x); });
   shuffle(pool).forEach(x=>{ if(picks.length<k&&!picks.includes(x)) picks.push(x); });
-  const opts=shuffle([it,...picks]);
+  const opts=putAt([it,...picks],it,answerSlot('p2a',picks.length+1));
   const bh=portrait()?Math.min(A.h*0.34,(A.w*0.8)*3/4,380):Math.min(A.h*0.36,260), bw=bh*4/3;
   const bub=document.createElement('div'); bub.className='bubble';
   bub.innerHTML='<div class="showCard" style="width:'+bw+'px;height:'+bh+'px;border-width:0"><img class="bg" src="'+HAB+PL[it.p].scene+'.jpg" alt=""><div class="lab">'+PL[it.p].label+'</div></div>';
