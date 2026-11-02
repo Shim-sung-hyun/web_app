@@ -350,3 +350,6 @@ drawn as one connected silhouette sitting on the ground with a flat bottom, wide
             polar.jpg — iceridge2 icedrift icedrift2 snowrock2 ice iceridge
             sea.jpg — reefrock seacliff rockarch algaepebbles
             pond.jpg — reedisland mangrove willow papyrus reedbed
+
+[판 S] 2026-11-02 — 물방개(물속 바닥의 아주 작은 것 1~4) · 딱따구리(작은 가지, 왼쪽 끝 잘림 5~6) · 하마·악어(물낯 위 넓은 갈대밭 7~8)
+판 이름 → 소품 파일 이름: S: tinypebbles sunkenleaf weedsprig snailshell | twigleft1 twigleft2 | reedwide1 reedwide2
