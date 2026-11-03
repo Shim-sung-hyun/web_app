@@ -127,6 +127,9 @@ body.admin #stage{pointer-events:none}
 .glow{border-color:#E8B84A!important;box-shadow:0 0 0 6px rgba(232,184,74,.35)}
 .right{border-color:var(--ok)!important}
 .placed{position:absolute;transform:translate(-50%,-50%);object-fit:contain;pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
+/* 숨은 동물 찾기 장면의 동물은 그림자 필터 없이(2026-11-03): 아이패드 사파리에서 filter와 transform(옮김·좌우 뒤집기)이 함께 있으면
+   그림이 제 상자 밖 일부가 반듯하게 잘려 보였음(고래 머리가 세로로 잘림). 숨은 동물에는 그림자가 필요 없음 */
+.hideCard img.placed{filter:none;will-change:transform}
 .fly{position:fixed;z-index:60;pointer-events:none;object-fit:contain;transition:left .8s ease,top .8s ease,width .8s ease,height .8s ease}
 .nameTag{font-family:var(--f-display);font-size:clamp(26px,4vw,46px);color:var(--ink);text-align:center}
 .showCard{position:relative;border-radius:22px;overflow:hidden;border:3px solid #D8D3CC;background:#eee}
@@ -1254,7 +1257,7 @@ async function playGame(tok){
 function gameCard(src,wmax,hmax){
   clearStage(); const st=$('stage'), A=area();
   const h=Math.min(A.h*0.9,hmax||1e9,Math.min(A.w*0.94,wmax||1e9)*3/4), w=h*4/3;
-  const card=document.createElement('div'); card.className='showCard'; card.style.width=w+'px'; card.style.height=h+'px'; card.style.touchAction='none';
+  const card=document.createElement('div'); card.className='showCard hideCard'; card.style.width=w+'px'; card.style.height=h+'px'; card.style.touchAction='none';
   card.style.cursor='pointer';   /* 장면 어디서나 같은 손가락 커서 — 동물 위에서만 바뀌면 커서가 숨은 자리를 알려 줌(자극 통제) */
   card.innerHTML='<img class="bg" src="'+src+'" alt="" draggable="false" style="object-fit:fill">';
   card.style.opacity=0; card.style.transition='opacity .45s ease';   /* 동물·소품을 다 놓고 그림을 다 받은 뒤에 보여 줌 */
@@ -1428,7 +1431,7 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
     placed.push(rect); if(isT) keep.push(win); used[ec.nm]=(used[ec.nm]||0)+1;
     const im=document.createElement('img'); im.className='placed'; im.src=pic(a); im.alt=a; im.draggable=false;
     Object.assign(im.style,{width:z+'px',height:z+'px',left:x+'px',top:y+'px',pointerEvents:'none',cursor:'inherit',zIndex:99+Math.round(pg.top+pg.sh),transition:'transform 1s ease-in-out, filter 1s'});
-    if(L.fade) im.style.filter='saturate(.82) brightness(.96) drop-shadow(0 2px 2px rgba(0,0,0,.18))';
+    if(L.fade) im.style.filter='saturate(.82) brightness(.96)';
     im.style.transform=XF(0,0,1,flip); if(flip) im.dataset.flip=1;
     card.appendChild(im);
     const pr=propImg(lk,pg.left,pg.top,pg.sw,pg.sh); pr.style.zIndex=100+Math.round(pg.top+pg.sh); card.appendChild(pr);
@@ -1495,7 +1498,7 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
     const {x,y,g:pg}=best;
     const im=document.createElement('img'); im.className='placed'; im.src=pic(a); im.alt=a; im.draggable=false;
     Object.assign(im.style,{width:z+'px',height:z+'px',left:x+'px',top:y+'px',pointerEvents:'none',cursor:'inherit',zIndex:99+Math.round(pg.top+pg.sh),transition:'transform 1s ease-in-out, filter 1s'});   /* 앞(아래)에 있는 소품이 위에 오게: 소품은 아랫단 높이로, 동물은 제 소품 바로 뒤 */
-    if(L.fade) im.style.filter='saturate(.82) brightness(.96) drop-shadow(0 2px 2px rgba(0,0,0,.18))';
+    if(L.fade) im.style.filter='saturate(.82) brightness(.96)';
     if(c.free) im.dataset.free=c.nm;   /* 실제 크기에 맞는 소품이 없어 크기를 무시함(검사 도구가 셈) */
     im.style.transform=XF(0,0,1,fl); if(fl) im.dataset.flip=1;
     if(zn==='sub'){ const pc=((wlRel+.5)*100).toFixed(1); im.dataset.wl=wlP*H;   /* 물낯 아래 몸은 바닥부터 자란 물풀 뒤라 보이지 않음 */
