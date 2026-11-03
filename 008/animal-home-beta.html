@@ -169,6 +169,10 @@ body.admin #stage{pointer-events:none}
 .spNick input{font:inherit;font-size:15px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;width:9em;margin:0 4px}
 .spSide{position:absolute;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;gap:10px;z-index:6;pointer-events:none}
 .spSide.l{left:12px} .spSide.r{right:12px}
+.spSide.t,.spSide.b{left:8px;right:8px;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:6px}
+.spSide.t{top:30px;bottom:auto} .spSide.b{bottom:8px;top:auto}
+.spSide.t .spW,.spSide.b .spW{min-height:40px;padding:5px 10px;gap:4px}
+.spSide.t .spW img,.spSide.b .spW img{width:28px;height:28px}
 .spW{position:relative;font-family:var(--f-display);font-size:inherit;white-space:nowrap;line-height:1.15;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:14px;
   padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:52px;transition:background .3s,border-color .3s,color .3s}
 .spW img{width:40px;height:40px;object-fit:contain;opacity:0;transition:opacity .4s}
@@ -1143,6 +1147,7 @@ function finishBundle(){
   startEnd();
 }
 function startEnd(){
+  if(RUN&&RUN.special){ runSpecial(); return; }   /* 스페셜은 수업 놀이가 아님(동물이 없어 빈 화면이 됨) */
   RUN.token++; const tok=RUN.token; clearTimers(); stopVoice(); clearStage(); renderProg();
   if(!RUN.gameDone) gameIntro(tok); else drawEnd(tok);
 }
@@ -1230,9 +1235,9 @@ async function playGame(tok){
   await speak('다 찾았어요.'); if(!alive(tok)) return; await wait(800); if(!alive(tok)) return;
   RUN.gameDone=true; startEnd();
 }
-function gameCard(src,wmax){
+function gameCard(src,wmax,hmax){
   clearStage(); const st=$('stage'), A=area();
-  const h=Math.min(A.h*0.9,Math.min(A.w*0.94,wmax||1e9)*3/4), w=h*4/3;
+  const h=Math.min(A.h*0.9,hmax||1e9,Math.min(A.w*0.94,wmax||1e9)*3/4), w=h*4/3;
   const card=document.createElement('div'); card.className='showCard'; card.style.width=w+'px'; card.style.height=h+'px'; card.style.touchAction='none';
   card.style.cursor='pointer';   /* 장면 어디서나 같은 손가락 커서 — 동물 위에서만 바뀌면 커서가 숨은 자리를 알려 줌(자극 통제) */
   card.innerHTML='<img class="bg" src="'+src+'" alt="" draggable="false" style="object-fit:fill">';
@@ -1381,7 +1386,7 @@ const FLY_SHOW=false;
 const XF=(dx,dy,k,fl)=>'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) scale('+k+') scaleX('+(fl?-1:1)+')';
 async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wmax, onReady·onCall·onFound) */
   const L=GLV[lvG], m=MOVE[p], wlP=WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
-  const {card,w:W,h:H}=gameCard(HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg',o.wmax);
+  const {card,w:W,h:H}=gameCard(HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg',o.wmax,o.hmax);
   const g=DEXG(p), pool=[]; Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ if(DEXG(x.p)===g&&!targets.includes(x.a)&&!pool.includes(x.a)&&!PAIRS.some(pr=>pr.includes(x.a)&&targets.some(t=>pr.includes(t)))) pool.push(x.a); })));
   /* 함께 숨는 다른 동물도 찾을 동물과 실제 크기가 10배 넘게 다르지 않은 것만 */
   const rmin=Math.min(...targets.map(realOf)), rmax=Math.max(...targets.map(realOf));
@@ -1636,6 +1641,12 @@ function startSpecial(p){ unlockAudio(); const ps=spPlaces(); if(!ps.length) ret
 /* 이 놀이에서 할 말이 내장 목소리에 다 있으면 내장, 아니면 이 판은 기기 목소리(섞지 않음) */
 async function spEngine(names){ await voiceReady; const hs=await Promise.all(names.map(a=>sha16(nameLine(a))).concat([sha16('다 찾았어요.')]));
   S.engineNow=(S.engine==='builtin'&&hs.every(h=>VSET.has(h)))?'builtin':'device'; }
+/* 스페셜 이름 칸 자리(2026-11-03): 가로 화면은 장면 좌우, 세로 화면(휴대폰 등)은 장면 위아래 — 세로에서 좌우에 두면 장면이 폭 80점쯤으로 작아짐.
+   화면을 돌리면 이름 칸 자리를 바꾸고 장면은 늘이거나 줄여 맞춤(fitCard) — 찾던 것·시계는 그대로 */
+const spTB=()=>{ const A=area(); return A.w<A.h*1.15; };
+function spSideStyle(d,tb){ const pw=+d.dataset.pw, fs=+d.dataset.fs, top=d.classList.contains('l')||d.classList.contains('t');
+  d.classList.remove('l','r','t','b'); d.classList.add(tb?(top?'t':'b'):(top?'l':'r'));
+  d.style.width=tb?'':pw+'px'; d.style.fontSize=(tb?Math.min(fs,20):fs)+'px'; }
 async function runSpecial(){
   if(!RUN||!RUN.special) return;
   RUN.token++; const tok=RUN.token; clearTimers(); stopVoice(); clearStage(); renderProg();
@@ -1643,14 +1654,15 @@ async function runSpecial(){
   const p=RUN.p, names=shuffle(spPool(p)).slice(0,SP_MAX); await spEngine(names); if(!alive(tok)) return;
   const st=$('stage'), A=area(), half=Math.ceil(names.length/2);
   const pw=Math.max(124,Math.min(210,A.w*.15)), fs=Math.max(16,Math.min(30,(pw-74)/Math.max(...names.map(x=>x.length))));   /* 가장 긴 이름이 한 줄에 */
-  const mk=(side,list)=>{ const d=document.createElement('div'); d.className='spSide '+side; d.style.width=pw+'px'; d.style.fontSize=fs+'px'; st.appendChild(d);
+  const tb=spTB(), mk=(side,list)=>{ const d=document.createElement('div'); d.className='spSide '+side; d.dataset.pw=pw; d.dataset.fs=fs; st.appendChild(d); spSideStyle(d,tb);
     list.forEach(a=>{ const w=document.createElement('div'); w.className='spW'; w.dataset.a=a; w.innerHTML='<span class="t">'+esc(a)+'</span><img alt="" src="'+pic(a)+'">'; d.appendChild(w); }); };
   const clock=document.createElement('div'); clock.className='spClock'; clock.textContent='0:00';
   const W=a=>st.querySelector('.spW[data-a="'+a+'"]');
   let t0=0, nf=0;
   let iv=0; const tick=()=>{ if(!alive(tok)||!t0||!clock.isConnected){ clearInterval(iv); return; } const s=Math.floor((Date.now()-t0)/1000); clock.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };   /* 찾을 때마다 clearTimers가 돌아 later는 못 씀 */
-  await playHide(p,4,names,tok,{special:true,wmax:A.w-2*pw-28,
-    onReady:()=>{ mk('l',names.slice(0,half)); mk('r',names.slice(half)); st.appendChild(clock); t0=Date.now(); tick(); iv=setInterval(tick,500); },
+  const nRows=Math.ceil(half/Math.max(1,Math.floor((A.w-24)/118)));   /* 세로 화면: 위·아래 줄 수 */
+  await playHide(p,4,names,tok,{special:true,wmax:tb?A.w*.96:A.w-2*pw-28,hmax:tb?A.h-2*nRows*50-30:0,
+    onReady:()=>{ mk(tb?'t':'l',names.slice(0,half)); mk(tb?'b':'r',names.slice(half)); st.appendChild(clock); t0=Date.now(); tick(); iv=setInterval(tick,500); },
     onCall:a=>{ st.querySelectorAll('.spW.now').forEach(x=>x.classList.remove('now')); const w=W(a); if(!w) return; w.classList.add('now');
       if(w.animate) w.animate([{transform:'scale(1)'},{transform:'scale(1.16)',offset:.4},{transform:'scale(1)'}],{duration:800,easing:'ease-in-out'}); },
     onFound:a=>{ const w=W(a); if(w){ w.classList.remove('now'); w.classList.add('done'); } nf++; }});
@@ -1973,7 +1985,16 @@ document.addEventListener('pointerdown',e=>{
   if(e.target.closest('.dock,#adminBtn,#agDot,#endBtn,#reportBtn,#endCover,#recView,#dexView,#spotTip')) return;
   wantFull=false; fullTapAt=performance.now(); goFull();
 },true);
-window.addEventListener('resize',()=>{ if(performance.now()-fullTapAt<1500) return; if(RUN&&!document.body.classList.contains('setup')&&!S.admin){ clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(RUN.ending) startEnd(); else runStep(); },300); } });
+/* 화면 크기가 바뀌면(휴대폰을 돌리는 등) 다시 그림. 단 숨은 동물 찾기·스페셜을 하는 중이면 다시 그리지 않고 장면만 새 크기에 맞춤(2026-11-03) —
+   다시 그리면 놀이가 처음부터 되고, 스페셜은 수업 놀이로 잘못 다시 불려 동물 0마리로 '다 찾았어요'와 빈 배경만 남았음 */
+function fitCard(){ const c=document.querySelector('#stage .showCard'); if(!c) return false; const w0=parseFloat(c.style.width), h0=parseFloat(c.style.height); if(!w0||!h0) return false;
+  const A=area(), sd=[...document.querySelectorAll('#stage .spSide')], tb=sd.length&&spTB(); sd.forEach(d=>spSideStyle(d,tb));
+  const rw=tb?0:sd.reduce((n,e)=>n+e.offsetWidth,0)+(sd.length?28:0), rh=tb?sd.reduce((n,e)=>n+e.offsetHeight,0)+24:0;
+  const k=Math.max(.2,Math.min((A.w*0.94-rw)/w0,(A.h*0.9-rh)/h0)); c.style.transformOrigin='50% 50%'; c.style.transform=Math.abs(k-1)<.01?'':'scale('+k.toFixed(3)+')'; return true; }
+window.addEventListener('resize',()=>{ if(performance.now()-fullTapAt<1500) return; if(RUN&&!document.body.classList.contains('setup')&&!S.admin){ clearTimeout(window.__rz); window.__rz=setTimeout(()=>{
+  if(RUN.special){ if(!fitCard()&&!document.querySelector('#stage .spDone')) runSpecial(); return; }
+  if(RUN.ending&&!RUN.gameDone&&fitCard()) return;
+  if(RUN.ending) startEnd(); else runStep(); },300); } });
 renderSetup();
 </script>
 <script id="holdBubble">
