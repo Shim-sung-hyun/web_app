@@ -140,6 +140,15 @@ body.admin #stage{pointer-events:none}
 .gTitle{font-family:var(--f-display);font-size:clamp(40px,8vw,96px);color:var(--sci-d);text-align:center;line-height:1.1;cursor:pointer;touch-action:none}
 .gPics{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .gPics img{width:clamp(90px,14vw,180px);aspect-ratio:4/3;object-fit:cover;border-radius:14px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.introBox{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4.5vh;height:100%;width:100%}
+.stepRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;font-size:clamp(13px,1.5vw,16px);color:#9A94A6}
+.stepRow span{padding:5px 12px;border-radius:999px;background:#F1EDF6;white-space:nowrap}
+.stepRow span.done{color:#7C7489;background:#ECE7F3}
+.stepRow span.now{background:var(--sci);color:#fff;font-weight:700}
+.stepRow i{width:14px;height:2px;background:#DDD6E8;border-radius:2px}
+.gPics.fig{align-items:center}
+.gPics img.an{width:clamp(70px,10vw,130px);aspect-ratio:1;object-fit:contain;background:#fff;border-radius:14px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.gArrow{font-size:clamp(28px,4vw,48px);color:var(--sci-m);padding:0 6px;align-self:center}
 .gGo{min-width:220px;height:80px;border:0;border-radius:22px;background:var(--sci);color:#fff;font-family:var(--f-display);font-size:38px;cursor:pointer;touch-action:none;box-shadow:0 4px 12px rgba(78,52,120,.25)}
 /* 도감 */
 /* 스페셜 */
@@ -285,6 +294,7 @@ body.setup #adminBtn{display:none}
       <div class="opt"><span>할 단계</span><div class="row" id="stepRow"></div></div>
       <div class="opt"><span>묶음 끝 놀이</span><div class="row" id="gameRow"></div></div>
       <div class="opt"><span>놀이 어렵기</span><div class="row" id="gameLvRow"></div></div>
+      <div class="opt"><span>단계 알림</span><div class="row" id="introRow"></div></div>
       <div class="opt"><span>끝 장면</span><div class="row" id="endRow"></div></div>
       <div class="opt"><span>소리</span><div class="row" id="sndRow"></div></div>
       <div class="opt"><span>목소리</span><div class="row" id="voiceRow"></div></div>
@@ -513,17 +523,17 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const shuffle=a=>{a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;};
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
-const PHASES=[['show','보기'],['a2p','동물 보고 곳'],['p2a','곳 보고 동물'],['sort','정리하기']];
+const PHASES=[['show','살펴보기'],['a2p','사는 곳 찾기'],['p2a','동물 찾기'],['sort','정리하기']];   /* 2026-11-03 선생님과 정한 이름(옛 이름: 보기·동물 보고 곳·곳 보고 동물). 기록에는 k(show·a2p·p2a·sort)로 남음 */
 const S={
   stu:store.get('stu')||'', level:+(store.get('level')||1), bundle:+(store.get('bundle')||0),
   steps:JSON.parse(store.get('steps')||'{"show":1,"a2p":1,"p2a":1,"sort":1}'),
-  endScene:store.get('endScene')!=='0', game:+(store.get('game')??1), gameLv:+(store.get('gameLv')||1), sound:store.get('sound')!=='0', engine:store.get('engine')||'builtin',
+  endScene:store.get('endScene')!=='0', intro:store.get('intro')!=='0', game:+(store.get('game')??1), gameLv:+(store.get('gameLv')||1), sound:store.get('sound')!=='0', engine:store.get('engine')||'builtin',
   admin:false, run:null, engineNow:'', voiceNote:'',
   mode:store.get('mode')||'bundle', bsel:JSON.parse(store.get('bsel')||'null'), psel:JSON.parse(store.get('psel')||'[]'), pn:+(store.get('pn')||6), ppick:JSON.parse(store.get('ppick')||'[]'), asel:JSON.parse(store.get('asel')||'[]'), per:store.get('per')==='4'?4:3
 };
 if(!LV[S.level]) S.level=1; if(!BUN[S.level][S.bundle]) S.bundle=0;
 if(!Array.isArray(S.bsel)||!S.bsel.length) S.bsel=[S.bundle];
-function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('mode',S.mode); store.set('bsel',JSON.stringify(S.bsel)); store.set('psel',JSON.stringify(S.psel)); store.set('pn',S.pn); store.set('ppick',JSON.stringify(S.ppick)); store.set('asel',JSON.stringify(S.asel)); store.set('per',S.per); store.set('endScene',S.endScene?'1':'0'); store.set('game',S.game); store.set('gameLv',S.gameLv); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
+function saveS(){ store.set('stu',S.stu); store.set('level',S.level); store.set('bundle',S.bundle); store.set('steps',JSON.stringify(S.steps)); store.set('mode',S.mode); store.set('bsel',JSON.stringify(S.bsel)); store.set('psel',JSON.stringify(S.psel)); store.set('pn',S.pn); store.set('ppick',JSON.stringify(S.ppick)); store.set('asel',JSON.stringify(S.asel)); store.set('per',S.per); store.set('endScene',S.endScene?'1':'0'); store.set('intro',S.intro?'1':'0'); store.set('game',S.game); store.set('gameLv',S.gameLv); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); }
 
 /* ================= 학생 명단·기록 =================
    명단은 공통 모듈 Roster(common/roster.js — 다른 차름 앱과 함께 씀). 기록은 이 기기 브라우저에만, 뺀 학생의 기록은 6개월 보관 뒤 지움.
@@ -591,7 +601,7 @@ function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim
 /* 말 목록 뽑기(제작자용): 콘솔에서 __voiceLines() → 008/voice-lines.json 과 같은 목록 */
 const lessonParts=()=>{ const parts=[]; allLines().forEach(t=>splitSay(t).forEach(x=>{ if(!parts.includes(x)) parts.push(x); })); return parts; };
 /* 스페셜에 나오는 이름까지(수업 목소리 확인 BUILTIN_OK는 수업 말만 봄 — 스페셜 이름 소리가 아직 없어도 수업은 내장 목소리로) */
-window.__voiceLines=()=>{ const parts=lessonParts(); if(typeof SP_EXTRA!=='undefined') Object.keys(SP_EXTRA).forEach(p=>SP_EXTRA[p].forEach(a=>{ const x=nameLine(a); if(!parts.includes(x)) parts.push(x); })); return parts; };
+window.__voiceLines=()=>{ const parts=lessonParts(); ['살펴보기.','사는 곳 찾기.','동물 찾기.','정리하기.','숨은 동물 찾기.'].forEach(x=>{ if(!parts.includes(x)) parts.push(x); });   /* 단계 알림 제목(없으면 말 없이) */ if(typeof SP_EXTRA!=='undefined') Object.keys(SP_EXTRA).forEach(p=>SP_EXTRA[p].forEach(a=>{ const x=nameLine(a); if(!parts.includes(x)) parts.push(x); })); return parts; };
 let BUILTIN_OK=false;
 const builtinCheck=voiceReady.then(async()=>{ const hs=await Promise.all(lessonParts().map(sha16)); BUILTIN_OK=hs.length>0&&hs.every(h=>VSET.has(h)); renderVoiceRow(); });
 function chooseEngine(){ S.engineNow=(S.engine==='builtin'&&BUILTIN_OK)?'builtin':'device';
@@ -733,6 +743,8 @@ function renderSetup(){
   [['끔',0],['묶음마다',1],['두 묶음마다',2]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+(S.game===v?' on':''); b.textContent=n; b.onclick=()=>{ S.game=v; saveS(); renderSetup(); }; gr.appendChild(b); });
   const gl=$('gameLvRow'); gl.innerHTML='';
   [1,2,3].forEach(v=>{ const b=document.createElement('button'); b.className='chip sm'+(S.gameLv===v?' on':''); b.textContent=GAMELV_NAME[v]; b.onclick=()=>{ S.gameLv=v; saveS(); renderSetup(); }; gl.appendChild(b); });
+  const ir=$('introRow'); ir.innerHTML='';
+  [['보여 주기',1],['보여 주지 않기',0]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+((S.intro?1:0)===v?' on':''); b.textContent=n; b.onclick=()=>{ S.intro=!!v; saveS(); renderSetup(); }; ir.appendChild(b); });
   const er=$('endRow'); er.innerHTML='';
   [['보여 주기',1],['보여 주지 않기',0]].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+((S.endScene?1:0)===v?' on':''); b.textContent=n; b.onclick=()=>{ S.endScene=!!v; saveS(); renderSetup(); }; er.appendChild(b); });
   const sn=$('sndRow'); sn.innerHTML='';
@@ -886,6 +898,7 @@ function runStep(){
   RUN.token++; clearTimers(); stopVoice(); clearStage(); renderProg(); saveSpot();
   const ph=RUN.phases[RUN.pi], it=ph.items[RUN.ii];
   /* 정리하기에 놓인 동물은 늘 '이 단계에서 지금보다 앞 차례 동물'로 다시 셈(2026-11-02) — 단계를 바꾸거나 처음부터 하거나 이어 할 때 전에 놓은 동물이 남지 않게 */
+  if(S.intro&&RUN.ii===0&&!(RUN.introSeen=RUN.introSeen||{})[ph.k]){ stageIntro(ph.k,RUN.token,()=>{ RUN.introSeen[ph.k]=1; runStep(); }); return; }   /* 단계 알림(2026-11-03) */
   if(ph.k==='sort'){ RUN.placed={}; ph.items.slice(0,RUN.ii).forEach(x=>(RUN.placed[x.p]=RUN.placed[x.p]||[]).push(x.a)); }
   ({show:stepShow,a2p:stepA2P,p2a:stepP2A,sort:stepSort})[ph.k](it,RUN.token);
 }
@@ -1187,13 +1200,24 @@ const gameReady0=fetch(HAB+'props/index.json',{cache:'no-cache'}).then(r=>r.ok?r
 const gameReady=Promise.all([gameReady0,amaskReady]);
 const GAMELV_NAME={1:'쉬움',2:'보통',3:'어려움'};
 /* 놀이 첫 화면: 큰 제목 + 아래 "시작"(학생이 누름). 제목을 눌러도 시작 */
-function gameIntro(tok){
-  const st=$('stage');
-  const box=document.createElement('div'); box.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5vh;height:100%;width:100%';
-  box.innerHTML='<div class="gTitle">동물을 찾아보자!</div><div class="gPics">'+RUN.bd.places.map(p=>'<img src="'+HAB+PL[p].scene+'.jpg" alt="">').join('')+'</div><button type="button" class="gGo">시작</button>';
+function gameIntro(tok){ stageIntro('game',tok,()=>{ unlockAudio(); playGame(tok); }); }
+/* 단계 알림(2026-11-03): 단계마다 시작 전에 한 장 — 큰 제목 · 그 단계를 보여 주는 작은 그림 · 단계 표(지금 몇 번째인지) · 시작.
+   보기만 하다가 누르기로 바뀌는 것처럼 할 일이 바뀌는 때를 알려 주어 전환을 예측하게(시각적 일과표). 효과·칭찬 소리 없이 매번 같게.
+   제목은 한 번 들려줌(내장 목소리에 그 소리가 있을 때만 — 없으면 말 없이). 학생이 시작(또는 제목)을 누르면 시작. 설정 '단계 알림'으로 끔(놀이 알림은 늘) */
+const INTRO_TITLE={show:'살펴보기',a2p:'사는 곳 찾기',p2a:'동물 찾기',sort:'정리하기',game:'숨은 동물 찾기'};
+async function sayIfHave(t){ if(S.engineNow==='builtin'){ await voiceReady; if(!VSET||!VSET.has(await sha16(t))) return; } return speak(t); }
+function stageIntro(k,tok,go){
+  const st=$('stage'), bd=RUN.bd, sc=p=>'<img class="sc" src="'+HAB+PL[p].scene+'.jpg" alt="">', an=a=>'<img class="an" src="'+pic(a)+'" alt="">';
+  const ps=bd.places.slice(0,3), as=bd.items.slice(0,3).map(x=>x.a), arrow='<span class="gArrow">→</span>';
+  const fig=k==='a2p'?an(bd.items[0].a)+arrow+ps.map(sc).join(''):k==='p2a'?sc(bd.places[0])+arrow+as.map(an).join(''):k==='sort'?as.map(an).join('')+arrow+ps.map(sc).join(''):ps.map(sc).join('');
+  const keys=stepKeys().filter(x=>x!=='end'), cur=keys.indexOf(k);
+  const row='<div class="stepRow">'+keys.map((x,i)=>'<span class="'+(i<cur?'done':i===cur?'now':'')+'">'+(i<cur?'✓ ':'')+INTRO_TITLE[x]+'</span>').join('<i></i>')+'</div>';
+  const box=document.createElement('div'); box.className='introBox';
+  box.innerHTML=row+'<div class="gTitle">'+INTRO_TITLE[k]+'</div><div class="gPics'+(k==='show'||k==='game'?'':' fig')+'">'+fig+'</div><button type="button" class="gGo">시작</button>';
   st.appendChild(box);
-  let went=false; const go=()=>{ if(went||!alive(tok)) return; went=true; unlockAudio(); playGame(tok); };
-  tapper(box.querySelector('.gGo'),go); tapper(box.querySelector('.gTitle'),go);
+  let went=false; const g=()=>{ if(went||!alive(tok)) return; went=true; unlockAudio(); stopVoice(); go(); };
+  tapper(box.querySelector('.gGo'),g); tapper(box.querySelector('.gTitle'),g);
+  later(()=>{ if(alive(tok)&&!went) sayIfHave(INTRO_TITLE[k]+'.'); },500);
 }
 async function playGame(tok){
   await gameReady; if(!alive(tok)) return;
@@ -1833,12 +1857,12 @@ function goPending(){
 }
 /* ================= 도움말: 단추마다 말풍선 "3 / 9" ================= */
 const HELP=[
-  ['[id^=dk_]','지금 단계','지금 하는 곳에 밑줄이 있어요. 다른 단계(보기·고르기·정리하기·숨은 동물 찾기·끝 장면)를 고르고 아래 "바꾼 설정으로 이어서"를 누르면 그 단계 처음부터 해요.'],
+  ['[id^=dk_]','지금 단계','지금 하는 곳에 밑줄이 있어요. 다른 단계(살펴보기·사는 곳 찾기·동물 찾기·정리하기·숨은 동물 찾기·끝 장면)를 고르고 아래 "바꾼 설정으로 이어서"를 누르면 그 단계 처음부터 해요.'],
   ['[id^=dkLv]','놀이 어렵기','숨은 동물 찾기의 쉬움·보통·어려움이에요. 고른 뒤 "바꾼 설정으로 이어서"를 누르면 다음 놀이부터 바뀌어요(놀이 중이면 처음부터).'],
   ['#dkSnd','소리','목소리와 맞힐 때 나는 소리를 켜고 꺼요.'],
   ['#dkHome','설정','처음 설정 화면으로 가요. 하던 곳은 저장되어 다음에 이어 할 수 있어요.'],
   ['#dkRedo','이 단계 처음부터','지금 단계를 처음부터 다시 해요. 관리 버튼을 한 번 눌러 닫아도 같아요.'],
-  ['#dkAgain','묶음 처음부터','지금 묶음을 보기부터 다시 해요.'],
+  ['#dkAgain','묶음 처음부터','지금 묶음을 살펴보기부터 다시 해요.'],
   ['#dkRec','기록','학생마다 바로 맞힌 비율, 도움이 더 필요한 동물, 자주 헷갈린 곳을 봐요.'],
   ['#dkDex','도감','학생마다 집을 찾아 준 동물이 사는 곳별로 쌓여요. 동물을 누르면 그 문장을 들려줘요.'],
   ['#dkPrint','활동지','지금 묶음의 A4 활동지(사는 곳 장면 + 오려 붙일 동물)를 출력해요.'],
@@ -1864,7 +1888,7 @@ function showHelp(){
 function hideSpot(){ $('spot').style.display='none'; $('spotTip').style.display='none'; }
 
 /* ================= 학생 기록 보기 ================= */
-const PH_NAME={a2p:'동물 보고 곳',p2a:'곳 보고 동물',sort:'정리하기'};
+const PH_NAME={a2p:'사는 곳 찾기',p2a:'동물 찾기',sort:'정리하기'};
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const barH=v=>'<span class="bar100"><b style="width:'+v+'%"></b></span>'+v+'%';
 const dayOf=t=>{ const d=new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
