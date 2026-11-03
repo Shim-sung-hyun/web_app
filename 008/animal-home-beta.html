@@ -1113,7 +1113,9 @@ function stepSort(it,tok){
   const REF=RUN.bd.items.map(x=>x.a);
   requestAnimationFrame(()=>cards.forEach(c=>layoutPlaced(c.querySelector('.scene'),c.dataset.p,RUN.placed[c.dataset.p]||[],REF)));
   let wrong=null, helped=false, over=false;
-  const sayName=()=>speak(nameLine(it.a));
+  /* 다시 부를 때는 이름만 — 단 한 글자 이름(곰·개·소·말·벌·닭)은 짧게 잘라 만든 소리라 '곰'이 '공'처럼 들려(2026-11-03),
+     질문 두 가지를 번갈아 씀(모두 있는 소리) */
+  let rc=1; const sayName=()=>[...it.a].length>1?speak(nameLine(it.a)):speak((rc++%2?whereLine:askPlace)(it.a));
   /* 정리하기 첫 말(2026-11-03 선생님): 이름만 부르면 무엇을 하라는지 알기 어려워, 두 질문 중 하나를 무작위로 —
      "고양이가 사는 곳을 찾아 눌러요." · "고양이는 어디에 살까요?"(소리가 있을 때만). 다시 부를 때는 이름만(같은 긴 말 되풀이는 재촉처럼 들림) */
   const firstAsk=async()=>{ const q=[askPlace(it.a)], w=whereLine(it.a);
