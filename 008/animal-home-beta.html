@@ -514,6 +514,7 @@ const eun=w=>w+(batchim(w)?'은':'는');
 const iga=w=>w+(batchim(w)?'이':'가');
 const liveLine=(a,p)=>eun(a)+' '+PL[p].live+'.';
 const askPlace=a=>iga(a)+' 사는 곳을 찾아 눌러요.';
+const whereLine=a=>eun(a)+' 어디에 살까요?';   /* 정리하기 질문(2026-11-03) */
 const askAnimal=p=>PL[p].find+' 찾아 눌러요.';
 const nameLine=a=>a+'.';
 const END_LINE='다 했어요.';
@@ -605,7 +606,8 @@ function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim
 /* 말 목록 뽑기(제작자용): 콘솔에서 __voiceLines() → 008/voice-lines.json 과 같은 목록 */
 const lessonParts=()=>{ const parts=[]; allLines().forEach(t=>splitSay(t).forEach(x=>{ if(!parts.includes(x)) parts.push(x); })); return parts; };
 /* 스페셜에 나오는 이름까지(수업 목소리 확인 BUILTIN_OK는 수업 말만 봄 — 스페셜 이름 소리가 아직 없어도 수업은 내장 목소리로) */
-window.__voiceLines=()=>{ const parts=lessonParts(); ['살펴보기.','사는 곳 찾기.','동물 찾기.','정리하기.','숨은 동물 찾기.'].forEach(x=>{ if(!parts.includes(x)) parts.push(x); });   /* 단계 알림 제목(없으면 말 없이) */ if(typeof SP_EXTRA!=='undefined') Object.keys(SP_EXTRA).forEach(p=>SP_EXTRA[p].forEach(a=>{ const x=nameLine(a); if(!parts.includes(x)) parts.push(x); })); return parts; };
+window.__voiceLines=()=>{ const parts=lessonParts(); ['살펴보기.','사는 곳 찾기.','동물 찾기.','정리하기.','숨은 동물 찾기.'].forEach(x=>{ if(!parts.includes(x)) parts.push(x); });
+  const seenA=new Set(); Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(({a})=>{ if(seenA.has(a)) return; seenA.add(a); const x=whereLine(a); if(!parts.includes(x)) parts.push(x); })));   /* 정리하기 질문(없으면 있는 질문만) */   /* 단계 알림 제목(없으면 말 없이) */ if(typeof SP_EXTRA!=='undefined') Object.keys(SP_EXTRA).forEach(p=>SP_EXTRA[p].forEach(a=>{ const x=nameLine(a); if(!parts.includes(x)) parts.push(x); })); return parts; };
 let BUILTIN_OK=false;
 const builtinCheck=voiceReady.then(async()=>{ const hs=await Promise.all(lessonParts().map(sha16)); BUILTIN_OK=hs.length>0&&hs.every(h=>VSET.has(h)); renderVoiceRow(); });
 function chooseEngine(){ S.engineNow=(S.engine==='builtin'&&BUILTIN_OK)?'builtin':'device';
@@ -1109,7 +1111,12 @@ function stepSort(it,tok){
   requestAnimationFrame(()=>cards.forEach(c=>layoutPlaced(c.querySelector('.scene'),c.dataset.p,RUN.placed[c.dataset.p]||[],REF)));
   let wrong=null, helped=false, over=false;
   const sayName=()=>speak(nameLine(it.a));
-  sayName().then(()=>{ if(!alive(tok)) return;
+  /* 정리하기 첫 말(2026-11-03 선생님): 이름만 부르면 무엇을 하라는지 알기 어려워, 두 질문 중 하나를 무작위로 —
+     "고양이가 사는 곳을 찾아 눌러요." · "고양이는 어디에 살까요?"(소리가 있을 때만). 다시 부를 때는 이름만(같은 긴 말 되풀이는 재촉처럼 들림) */
+  const firstAsk=async()=>{ const q=[askPlace(it.a)], w=whereLine(it.a);
+    if(S.engineNow!=='builtin'||(VSET&&VSET.has(await sha16(w)))) q.push(w);
+    return speak(q[Math.floor(Math.random()*q.length)]); };
+  firstAsk().then(()=>{ if(!alive(tok)) return;
     const again=()=>{ later(()=>{ if(alive(tok)&&!over){ if(drag||pdown) return again(); sayName().then(again); } },3000); }; again();   /* 놀이 신호: 맞힐 때까지 말이 끝나고 3초마다(손가락이 닿아 있으면 기다림) */
     later(()=>{ if(alive(tok)&&!over){ helped=true; cards.filter(c=>c.dataset.p===it.p).forEach(c=>c.classList.add('glow')); } },16000);
   });
