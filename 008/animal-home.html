@@ -981,7 +981,10 @@ function boxOf(a,p,t){ const b=BB[a]||[.9,.9]; return t/Math.max(b[0],b[1]); }
    ref: 크기를 견줄 동물들(한 화면에 함께 나오는 동물 전체). 없으면 이 장면의 동물끼리 */
 function layoutPlaced(sceneEl,p,list,ref){
   sceneEl.querySelectorAll('.placed').forEach(x=>x.remove());
-  const n=list.length; if(!n) return; const W=sceneEl.clientWidth, H=sceneEl.clientHeight; const [y0,y1]=PL[p].y, R=ref&&ref.length?ref:list;
+  /* 크기 기준 R(2026-11-03): 이 곳에 이번 묶음에서 들어올 동물(ref 가운데 이 곳 것). 예전엔 묶음 전체(고래 포함)를 기준으로 해
+     땅의 소·개가 둘 다 가장 작은 비율(0.26)에 걸려 같은 크기로 보였음. 정리하기에서 동물이 하나씩 늘어도 크기가 바뀌지 않게 '들어올 동물 전체'로 */
+  const n=list.length; if(!n) return; const W=sceneEl.clientWidth, H=sceneEl.clientHeight; const [y0,y1]=PL[p].y;
+  const R=(()=>{ if(!ref||!ref.length) return list; const own=(RUN&&RUN.bd?RUN.bd.items:[]).filter(x=>x.p===p&&ref.includes(x.a)).map(x=>x.a); const r=[...new Set(own.concat(list))]; return r.length?r:list; })();
   const rows=n<=4?[list]:[list.slice(0,Math.ceil(n/2)),list.slice(Math.ceil(n/2))];
   rows.forEach((row,ri)=>{
     const back=rows.length>1&&ri===0, big=H*absFrac(bigOf(R))*(rows.length>1?.62:n<=2?1:.85)*(back?.85:1);
