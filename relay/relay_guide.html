@@ -62,7 +62,15 @@ tr:last-child td{border-bottom:0}
 <h2 id="s3"><span class="n">3</span>Claude에게 부탁하기 (가장 쉬운 길)</h2>
 <p>앱을 Claude와 함께 만들었다면, 아래 글을 복사해 Claude에게 붙여 넣고 <b>밑줄 칸에 연수 코드</b>만 바꿉니다. 사진을 어디에 쓸지(예: “받은 사진을 퍼즐 그림으로”)를 한 줄 덧붙이면 더 좋습니다.</p>
 <button class="copy" type="button" data-copy="prompt">복사</button>
-<div class="prompt" id="prompt">내 웹앱에 "휴대폰에서 사진 받기" 기능을 넣어 줘. 차름 사진 다리를 써.
+<div class="prompt" id="prompt">휴대폰 사진 받기를 내 웹앱에 넣어 줘.
+사진 다리 : &lt;script src="https://shim-sung-hyun.github.io/web_app/relay/charum-relay.js"&gt;&lt;/script&gt;
+쓰는 법 : CharumRelay.receive({ code: 내 코드, onPhoto: function (blob) { … } }) — QR 창은 모듈이 띄움
+내 코드 : ________
+기타 : (받은 사진을 어디에 쓸지. 예: 퍼즐 그림으로)</div>
+<p class="small">“내 코드” 칸에 받은 연수 코드를, “기타” 칸에 사진을 어디에 쓸지 씁니다. 첫 줄의 주소와 “쓰는 법”은 지우지 마세요. Claude는 “사진 다리”라는 이름만으로는 무엇인지 모르고, 이 두 줄을 보고 넣습니다.</p>
+<details><summary class="small" style="cursor:pointer">더 자세히 맞추고 싶으면 (긴 문장)</summary>
+<button class="copy" type="button" data-copy="prompt2">복사</button>
+<div class="prompt" id="prompt2">내 웹앱에 "휴대폰에서 사진 받기" 기능을 넣어 줘. 차름 사진 다리를 써.
 - &lt;/body&gt; 바로 앞에 이 한 줄을 넣어:
   &lt;script src="https://shim-sung-hyun.github.io/web_app/relay/charum-relay.js"&gt;&lt;/script&gt;
 - 사진이 필요한 곳에 "📱 휴대폰에서 받기" 단추를 만들고, 누르면 이렇게 불러:
@@ -73,6 +81,7 @@ tr:last-child td{border-bottom:0}
 - QR·번호가 나오는 받기 창은 모듈이 띄우니 따로 만들지 마. 받은 사진을 다른 서버로 보내지 마.
 - 단추와 받은 사진을 보여 주는 화면은 내 앱의 색·글꼴·꾸밈에 맞춰 만들어. 받기 창도 color에 내 앱의 주 색을 넣어 맞춰(예: color: '#2E7D5B'). 받기 창 글꼴은 내 앱 글꼴을 따라가.
 - 연수 코드: ________</div>
+</details>
 
 <h2 id="s4"><span class="n">4</span>직접 넣기 (코드를 아는 선생님)</h2>
 <p>앱 HTML의 <code>&lt;/body&gt;</code> 바로 앞에 두 덩어리를 넣으면 끝입니다.</p>
@@ -103,7 +112,7 @@ tr:last-child td{border-bottom:0}
 
 <h2 id="s5"><span class="n">5</span>휴대폰에서는</h2>
 <p>휴대폰 카메라로 QR을 찍으면 <b>charum.org/study/send.html</b>이 번호가 들어간 채로 열립니다. <b>사진 찍기</b> 또는 <b>앨범에서 고르기</b>(여러 장) → <b>보내기</b>. 더 보낼 것이 있으면 <b>더 보내기</b>, 끝나면 <b>다 보냈습니다</b>를 누르면 큰 화면의 받기 창이 닫힙니다.</p>
-<div class="card"><b>잘 나온 사진은 나눠 주세요.</b> 사진을 고르면 휴대폰 화면에 <b>“이 사진을 나눠 주실래요? (선택)”</b>이 나옵니다. 나눌 사진을 누르고 무엇을 찍었는지 알려 주면 보내기와 함께 <b>차름 사진 모음</b>에 기증됩니다. 제작자가 살펴본 뒤 올리면, 다른 학교 선생님과 학생들도 낱말·도형·퍼즐 공부에 함께 씁니다. 사람·얼굴·이름·번호판·학교 이름이 보이는 사진은 기증할 수 없습니다. 기증은 고른 사진만, 고를 때만 갑니다. 사진 모음은 <b>출처 표시·비영리(CC BY-NC 4.0)</b>로 누구나 함께 씁니다.</div>
+<div class="card"><b>잘 나온 사진은 나눠 주세요.</b> 휴대폰에서 사진마다 <b>기증(선택)</b>에 체크하면 보내기와 함께 <b>차름 사진 모음</b>에 기증됩니다. 제작자가 살펴본 뒤 올리면, 다른 학교 선생님과 학생들도 낱말·도형·퍼즐 공부에 함께 씁니다. 사람·얼굴·이름·번호판·학교 이름이 보이는 사진은 기증할 수 없습니다. 기증은 고른 사진만, 고를 때만 갑니다. 사진 모음은 <b>출처 표시·비영리(CC BY-NC 4.0)</b>로 누구나 함께 씁니다.</div>
 
 <h2 id="s6"><span class="n">6</span>잘 안 될 때</h2>
 <table>
