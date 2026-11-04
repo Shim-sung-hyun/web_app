@@ -79,8 +79,6 @@
    "bush"
   ],
   "missing": [
-   "acaciagrove",
-   "thorntrees",
    "kopjebig"
   ],
   "skirt": [
@@ -171,11 +169,7 @@
   "far": [
    "hedge"
   ],
-  "missing": [
-   "talltree",
-   "tallpine",
-   "treehedge"
-  ],
+  "missing": [],
   "skirt": [
    "grasstuft",
    "clover",

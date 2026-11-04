@@ -1,4 +1,4 @@
-무대 그림 받기 6 — 008 숨은 동물 찾기용 키 큰 요소 (2026-11-04)  ※ 1~63번은 앞 파일들(다 받음)
+무대 그림 받기 6 — 008 숨은 동물 찾기용 키 큰 요소 (2026-11-04)  ※ 1~64번은 앞 파일들(다 받음 — 64번의 큰 바위 언덕만 65번으로 다시)
 왜: 기린(5m)·코끼리를 알맞게 가릴 만큼 키 크고 빽빽한 요소가 들판·초원에 없어, 어려움에서 기린이 다 가려지는 일이 있었음.
 
 ━━━━━━━━ 64. 키 큰 가림 요소 (들판 3 · 초원 3)
@@ -15,4 +15,13 @@ Objects in order:
 4 a tall dense group of acacia trees with thick foliage, crowns overlapping and reaching low, solid
 5 a tall dense thicket of thorny savanna trees, solid, wider than tall
 6 a huge pile of rounded granite boulders, taller than a giraffe, solid
+▲ 여기까지
+
+━━━━━━━━ 65. 초원 큰 바위 언덕 (다시 — 64번 것은 너무 가파르게 솟아 무너질 듯함)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/grassland/items/kopjebig.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw ONE object on a pure white background, in a wide 16:9 picture: a big African kopje — a broad, low hill of rounded granite boulders that rises GENTLY and spreads out wide, about two and a half times wider than tall, like boulders that have settled naturally over a long time (not a steep heap that could fall). A few large boulders sit on its top, and in front of its base there are some dry savanna bushes and clumps of golden grass partly covering the lower rocks.
+The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. It must be dense and SOLID with no see-through gaps in the lower two-thirds. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Leave the bottom-right corner empty and white.
 ▲ 여기까지
