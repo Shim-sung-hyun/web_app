@@ -150,5 +150,5 @@
 - (선생님) 목소리 확인: "악어는 강이나 연못에 살아요."(이어 만든 것), 단독 이름 첫소리가 센 개·부엉이·붕어·개구리·두더지·북극곰
 - (선생님) 서버에 server/charum-api/seek-rank.php 올리기(charum-api/ 폴더, 토큰 칸은 비워 둬도 됨) → https://www.charum.org/charum-api/seek-rank.php?ping 이 "ok": true
 - 스페셜을 학생과 해 보고: 10마리가 너무 많거나 어려우면 GLV[4]·SP_MAX 조정
-- 무대 다음: 하늘 장면도 무대로(가지 요소를 받아야 함), 숲을 덜 공원 같게 — 무대 세션(media/stage/README.txt)
+- 무대 다음: 가림 소품이 무대 원근을 따르게(작은 동물을 키우면 소품이 거인처럼 커짐 — media/stage/README.txt '검토' 가~라), 하늘 장면도 무대로(가지 요소를 받아야 함), 숲을 덜 공원 같게 — 무대 세션(media/stage/README.txt)
 - 001~010 초기 설정 문제는 별도 세션
