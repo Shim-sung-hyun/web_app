@@ -1,6 +1,0 @@
-{
-  "note": "목소리 비교(tools/tts-compare.html)에서 키 없이 들어 보는 견본. ElevenLabs 무료 계정 웹 화면에서 만든 것으로, 비교용으로만 씀(앱 수업에는 쓰지 않음).",
-  "eleven": [
-    { "file": "ElevenLabs_2026-11-04T06_21_26_Roger_-_Laid-Back_Casual_Resonant_pre_s50_sim75_v4.mp3", "voice": "Roger", "settings": "s50 sim75 v4", "text": "" }
-  ]
-}
