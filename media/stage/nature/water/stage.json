@@ -164,6 +164,19 @@
     0.6
    ],
    "from": "nature/sea"
+  },
+  "reeflow": {
+   "name": "낮은 산호 바위",
+   "real": [
+    1,
+    2
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ],
+   "from": "nature/sea"
   }
  }
 }

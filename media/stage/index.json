@@ -78,9 +78,7 @@
   "far": [
    "bush"
   ],
-  "missing": [
-   "kopjebig"
-  ],
+  "missing": [],
   "skirt": [
    "drygrass",
    "redearth",
@@ -207,10 +205,7 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [
-   "icefield",
-   "icepieces"
-  ],
+  "missing": [],
   "skirt": [
    "snowdrift",
    "snowcrumbs"
@@ -319,7 +314,8 @@
    "tubecoral",
    "weedboulder",
    "grassbed",
-   "shellpile"
+   "shellpile",
+   "reeflow"
   ],
   "front": [
    "seafloor"
@@ -359,7 +355,8 @@
    "tubecoral",
    "weedboulder",
    "grassbed",
-   "shellpile"
+   "shellpile",
+   "reeflow"
   ],
   "front": [],
   "used_by": [

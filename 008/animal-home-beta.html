@@ -1383,7 +1383,7 @@ const stgReady=gameReady0.then(()=>fetch(STG+'hide-index.json',{cache:'no-cache'
     if(v.scalefree) SCALEFREE.add(nm); (v.places||[]).forEach(q=>(L[q]=L[q]||[]).push(nm)); });
   Object.keys(STGP).forEach(sc=>{ if(L[sc]&&L[sc].length>=4) PROPS[sc]=L[sc]; }); PROPS.land=PROPS.ground;
   const ids=(sc,a)=>a.map(i=>'nature/'+sc+'/items/'+i).filter(n=>PROPSZ[n]), put=(k,a)=>{ if(a.length>=2) PROPS[k]=a; };
-  put('sea-big',ids('sea',['kelp','reefrock','rockarch','rockwall','kelpforest','tablecoral','weedboulder'])); put('water-big',PROPS['sea-big']||[]);   /* 사는 자리 소품도 무대 것으로(나무 위 가지·강 물낯은 옛 소품) */
+  put('sea-big',ids('sea',['kelp','reefrock','reeflow','rockarch','rockwall','kelpforest','tablecoral','weedboulder'])); put('water-big',PROPS['sea-big']||[]);   /* 사는 자리 소품도 무대 것으로(나무 위 가지·강 물낯은 옛 소품) */
   put('sea-mid',ids('sea',['kelp','seafan','seagrass','kelpforest','grassbed','tubecoral'])); put('water-mid',PROPS['sea-mid']||[]);
   put('wetland-wet',ids('wetland',['reeds','cattails','rice','sedge','lotus','dryreeds','reedbed','iris','ripe','plantain','tallsedge'])); }).catch(()=>{});
 const gameReady=Promise.all([gameReady0,amaskReady,stgReady]);
