@@ -13,18 +13,6 @@
   }
  ],
  "items": {
-  "reeds": {
-   "name": "갈대",
-   "real": [
-    1.5,
-    2.5
-   ],
-   "role": "big",
-   "ground": [
-    0,
-    0.65
-   ]
-  },
   "cattails": {
    "name": "부들",
    "real": [

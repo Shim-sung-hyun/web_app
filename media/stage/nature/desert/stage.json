@@ -134,13 +134,6 @@
     1.2
    ]
   },
-  "duneridge": {
-   "name": "모래 언덕",
-   "real": [
-    1,
-    2
-   ]
-  },
   "creosote": {
    "name": "사막 덤불",
    "real": [
@@ -158,7 +151,6 @@
  },
  "skirt": [
   "sanddrift",
-  "sandpebbles",
-  "twigs"
+  "sandpebbles"
  ]
 }

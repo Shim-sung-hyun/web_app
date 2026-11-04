@@ -20,7 +20,6 @@
    "organpipe",
    "deadtree",
    "tumbleweed",
-   "duneridge",
    "creosote",
    "stones"
   ],
@@ -35,8 +34,7 @@
   "missing": [],
   "skirt": [
    "sanddrift",
-   "sandpebbles",
-   "twigs"
+   "sandpebbles"
   ]
  },
  "nature/grassland": {
@@ -187,7 +185,6 @@
    "snowmound",
    "snowrock",
    "icechunks",
-   "snowdrift",
    "snowridge",
    "iceslab",
    "snowboulder",
@@ -274,7 +271,6 @@
    "weedrocks",
    "oysters",
    "marshgrass",
-   "ledge",
    "posts"
   ],
   "front": [
@@ -375,7 +371,6 @@
    "bg"
   ],
   "items": [
-   "reeds",
    "cattails",
    "waterweed",
    "lilypads",
@@ -418,7 +413,6 @@
    "roundstones",
    "stump",
    "rootclay",
-   "gravelvein",
    "bulbs",
    "sandlump"
   ],

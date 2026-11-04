@@ -25,6 +25,7 @@
 - 무대(2026-11-04 정식판): 숨은 동물 찾기 장면 = 무대 빈 배경 + 가림 소품(무대 요소, media/stage/hide-index.json) + 겹치지 않는 꾸밈·먼 띠 + 밑동 덮개.
   공통 모듈 stagekit(common/stagekit.js). 하늘만 옛 장면·소품(habitats). 나무 위 가지·강 물낯 소품도 옛 것. 무대 그림을 바꾸면 python3 tools/stage-index.py.
   검사: node tools/hide-check.js 3 → 2026-11-04 완전히 가려짐 0% · 목표 안 97~99% · 크기 맞는 소품 없음 8%. 자세한 것은 media/stage/README.txt.
+  2026-11-04 선생님 지적: 좌우 끝이 잘린 소품(사막 모래 언덕 등 6개)이 섞여 있었음 → 뺌. stage-index.py가 '잘린 끝?'을 알려 줌.
   옛 숨은 그림 media/habitats/seek 는 _trash/2026-11-04/ 로 옮김(어디서도 안 부름).
   2026-11-04 무대 세션이 512점이던 큰 동물 8마리를 1024점으로 같은 이름·같은 머리 방향으로 바꿈(악어·돼지는 media/words, 북극곰·얼룩말·치타·바다표범·북극늑대·하이에나는 media/animals). 악어는 꼬리를 든 자세로 조금 바뀜. masks.json 다시 만듦.
 - 실제 사진: media/habitats/photos.json(보기 끝 실제 사진, 아직 없음)

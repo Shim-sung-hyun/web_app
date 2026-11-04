@@ -2,3 +2,9 @@ media/habitats/seek — 숨은 그림(seek) 놀이를 008에서 지움 — 어�
 media/stage/nature/polar/items/icecliff.webp — 얼음을 벽돌·정육면체로 쌓은 꼴이라 사람이 만든 것처럼 보임(자연스러운 꼴 아님) — 66번으로 다시
 media/stage/nature/polar/items/iceblocks.webp — 얼음을 벽돌·정육면체로 쌓은 꼴이라 사람이 만든 것처럼 보임(자연스러운 꼴 아님) — 66번으로 다시
 media/stage/nature/polar/items/cubes.webp — 얼음을 벽돌·정육면체로 쌓은 꼴이라 사람이 만든 것처럼 보임(자연스러운 꼴 아님) — 66번으로 다시
+media/stage/nature/desert/items/duneridge.webp — 좌우 끝이 세로로 잘린 그림(선생님이 쓰지 말라고 한 꼴) — 받을 때 못 걸러 냄
+media/stage/nature/polar/items/snowdrift.webp — 좌우 끝이 세로로 잘린 그림(선생님이 쓰지 말라고 한 꼴) — 받을 때 못 걸러 냄
+media/stage/nature/mudflat/items/ledge.webp — 좌우 끝이 세로로 잘린 그림(선생님이 쓰지 말라고 한 꼴) — 받을 때 못 걸러 냄
+media/stage/nature/pond/items/reeds.webp — 좌우 끝이 세로로 잘린 그림(선생님이 쓰지 말라고 한 꼴) — 받을 때 못 걸러 냄
+media/stage/nature/desert/skirt/twigs.webp — 좌우 끝이 세로로 잘린 그림(선생님이 쓰지 말라고 한 꼴) — 받을 때 못 걸러 냄
+media/stage/nature/underground/items/gravelvein.webp — 좌우 끝이 곧게 잘린 띠 꼴(끝 검사에 걸림)
