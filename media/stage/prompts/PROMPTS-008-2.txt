@@ -1,0 +1,195 @@
+무대 그림 받기 2 — 008 (2026-11-04)  ※ 1~26번은 PROMPTS-008.txt (다 받음)
+번호마다 Gemini 새 창 → 적힌 그림을 붙이고 ▼~▲ 글을 통째로 붙여 넣기. 받은 그림은 "무대 27번"처럼 번호를 말하며 올려 주세요.
+왜 더 받나: ① 논·습지 배경을 다시(물길이 땅을 가로질러 요소가 물 위에 뜸 · 논이 아님) ② 가까이 크게 보일 큰 요소를 크게(판에서 자른 그림은 250점쯤이라 가까이 놓으면 흐림)
+          ③ 깊이: 먼 띠(먼 숲·먼 나무줄)와 화면 가장자리의 가까운 나무줄기 ④ 작게 그려진 큰 동물을 크게(512점 → 1024점)
+
+■ 논·습지 다시
+━━━━━━━━ 27. 논·습지 배경 (다시)
+새 Gemini 창 · 붙일 그림: media/habitats/wetland.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/wetland/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO tall plants, NO rocks, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. Korean flooded rice paddies: the whole ground is shallow still water reflecting the pale sky, with only very short young rice seedlings as faint tiny texture in neat rows. Two or three thin low grassy earth ridges run straight across the picture from left to right, dividing the paddies (no winding streams, no channels, no puddles). Far away, low soft green hills. The horizon is at about 33% from the top. The ground is calm and evenly lit, getting finer toward the horizon. No shadows. Keep the bottom-right corner plain.
+▲ 여기까지
+
+■ 크게 다시 그릴 요소 (한 장에 둘씩 — 가까이 크게 놓일 것)
+━━━━━━━━ 28. 사막 큰 그림 둘 (saguaro · sandstone)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 왼쪽 → media/stage/nature/desert/items/saguaro.webp · 오른쪽 → media/stage/nature/desert/items/sandstone.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a wide 16:9 picture on a pure white background with TWO objects side by side, each filling its half from top to bottom as large as possible, with a wide white gap between them. Leave the bottom-right corner (bottom fifth of the right fifth) empty and white.
+Each object is seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: these pictures will be shown very large.
+Left: a tall saguaro cactus with two raised arms
+Right: a large layered sandstone rock, orange-tan, wider than tall
+▲ 여기까지
+
+━━━━━━━━ 29. 초원 큰 그림 둘 (acacia · kopje)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 왼쪽 → media/stage/nature/grassland/items/acacia.webp · 오른쪽 → media/stage/nature/grassland/items/kopje.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a wide 16:9 picture on a pure white background with TWO objects side by side, each filling its half from top to bottom as large as possible, with a wide white gap between them. Leave the bottom-right corner (bottom fifth of the right fifth) empty and white.
+Each object is seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: these pictures will be shown very large.
+Left: a flat-topped umbrella acacia tree
+Right: a pile of large rounded granite boulders
+▲ 여기까지
+
+━━━━━━━━ 30. 숲 큰 그림 둘 (oak · pine)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 왼쪽 → media/stage/nature/forest/items/oak.webp · 오른쪽 → media/stage/nature/forest/items/pine.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a wide 16:9 picture on a pure white background with TWO objects side by side, each filling its half from top to bottom as large as possible, with a wide white gap between them. Leave the bottom-right corner (bottom fifth of the right fifth) empty and white.
+Each object is seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: these pictures will be shown very large.
+Left: a big oak tree with a thick trunk and full round crown
+Right: a tall Korean red pine tree with a reddish trunk
+▲ 여기까지
+
+━━━━━━━━ 31. 숲 · 가까운 줄기 큰 그림 둘 (oaktrunk · pinetrunk)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 왼쪽 → media/stage/nature/forest/items/oaktrunk.webp · 오른쪽 → media/stage/nature/forest/items/pinetrunk.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a wide 16:9 picture on a pure white background with TWO objects side by side, each filling its half from top to bottom as large as possible, with a wide white gap between them. Leave the bottom-right corner (bottom fifth of the right fifth) empty and white.
+Each object is seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: these pictures will be shown very large.
+Left: a very close view of a thick oak tree trunk with rough bark and spreading roots at the bottom; the trunk goes straight out of the TOP edge of the picture (no crown visible)
+Right: a very close view of a thick Korean red pine trunk with reddish scaly bark and roots at the bottom; the trunk goes straight out of the TOP edge of the picture (no crown visible)
+▲ 여기까지
+
+━━━━━━━━ 32. 들판 · 논·습지 큰 그림 둘 (meadowtree · willow)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 왼쪽 → media/stage/nature/ground/items/meadowtree.webp · 오른쪽 → media/stage/nature/wetland/items/willow.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a wide 16:9 picture on a pure white background with TWO objects side by side, each filling its half from top to bottom as large as possible, with a wide white gap between them. Leave the bottom-right corner (bottom fifth of the right fifth) empty and white.
+Each object is seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: these pictures will be shown very large.
+Left: a round leafy deciduous tree standing alone
+Right: a weeping willow tree
+▲ 여기까지
+
+━━━━━━━━ 33. 극지방 큰 그림 둘 (iceberg · icecliff)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 왼쪽 → media/stage/nature/polar/items/iceberg.webp · 오른쪽 → media/stage/nature/polar/items/icecliff.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a wide 16:9 picture on a pure white background with TWO objects side by side, each filling its half from top to bottom as large as possible, with a wide white gap between them. Leave the bottom-right corner (bottom fifth of the right fifth) empty and white.
+Each object is seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: these pictures will be shown very large.
+Left: a large white-blue iceberg with flat cliffs
+Right: a wide wall of blue-white ice blocks
+▲ 여기까지
+
+━━━━━━━━ 34. 바닷속 큰 그림 둘 (kelp · reefrock)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 왼쪽 → media/stage/nature/sea/items/kelp.webp · 오른쪽 → media/stage/nature/sea/items/reefrock.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a wide 16:9 picture on a pure white background with TWO objects side by side, each filling its half from top to bottom as large as possible, with a wide white gap between them. Leave the bottom-right corner (bottom fifth of the right fifth) empty and white.
+Each object is seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: these pictures will be shown very large.
+Left: a tall kelp plant with long wavy brown-green leaves
+Right: a large underwater rock with small corals
+▲ 여기까지
+
+━━━━━━━━ 35. 큰 동물을 가릴 것 큰 그림 둘 (rockarch · thicket)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 왼쪽 → media/stage/nature/sea/items/rockarch.webp · 오른쪽 → media/stage/nature/grassland/items/thicket.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a wide 16:9 picture on a pure white background with TWO objects side by side, each filling its half from top to bottom as large as possible, with a wide white gap between them. Leave the bottom-right corner (bottom fifth of the right fifth) empty and white.
+Each object is seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: these pictures will be shown very large.
+Left: a huge underwater rock arch with corals, much wider than tall, solid with no holes in the lower half
+Right: a very wide dense savanna thicket of thorny bushes, olive green, solid
+▲ 여기까지
+
+━━━━━━━━ 36. 논·습지 · 강·호수 큰 그림 둘 (paddybank · reeds)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 왼쪽 → media/stage/nature/wetland/items/paddybank.webp · 오른쪽 → media/stage/nature/pond/items/reeds.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a wide 16:9 picture on a pure white background with TWO objects side by side, each filling its half from top to bottom as large as possible, with a wide white gap between them. Leave the bottom-right corner (bottom fifth of the right fifth) empty and white.
+Each object is seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: these pictures will be shown very large.
+Left: a long low grassy earth ridge between rice paddies, seen from the front, much wider than tall
+Right: a tall dense clump of reeds with feathery tops
+▲ 여기까지
+
+■ 먼 띠 (지평선에 세워 모든 요소 뒤에 깔 것 — 먼 곳이 비어 보이지 않게)
+━━━━━━━━ 37. 먼 띠 판 (숲·들판·초원·논)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 첫째 → media/stage/nature/forest/far/trees.webp · 둘째 → media/stage/nature/ground/far/hedge.webp · 셋째 → media/stage/nature/grassland/far/bush.webp · 넷째 → media/stage/nature/wetland/far/reeds.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (same flat cartoon style, dark-brown outlines). Do not copy its objects.
+On a pure white background draw 4 separate long horizontal strips stacked from top to bottom with wide white gaps between them. Each strip spans the full width of the picture and is about one sixth as tall as it is wide.
+Each strip is a FAR-AWAY row of vegetation seen at eye level, drawn small and simple with soft hazy blue-green colours: the bottom edge is straight, the top edge is the irregular outline of treetops or plants. No sky, no ground patch, no shadow, no animals, no text. Leave the bottom fifth of the picture empty and white.
+Strips from top to bottom:
+1 a dense wall of distant forest trees, mixed round and pointed treetops
+2 a distant hedgerow with a few small round trees
+3 a distant line of savanna bushes and small flat-topped acacia trees
+4 a distant reed bed with two or three small willow trees
+▲ 여기까지
+
+■ 크게 다시 그릴 동물 (지금 512점 그림이라 가까이 크게 나오면 흐림 — 같은 그림을 크게)
+━━━━━━━━ 38. 악어 크게
+새 Gemini 창 · 붙일 그림: media/words/akeo.webp
+받은 그림 → media/words/akeo.webp 를 바꿈(이름 그대로 — 머리 방향이 같아야 008의 FACE 표가 맞음)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Redraw the attached animal picture as a larger, sharper version: the SAME animal, the SAME pose, facing the SAME direction, the SAME colours and the same flat cartoon style with dark-brown outlines.
+Square picture on a pure white background. The animal fills the picture as large as possible with a small white margin. The whole body is visible (nothing cut off). No ground, no shadow, no background, no text. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 39. 북극곰 크게
+새 Gemini 창 · 붙일 그림: media/animals/bukgeukgom.webp
+받은 그림 → media/animals/bukgeukgom.webp 를 바꿈(이름 그대로 — 머리 방향이 같아야 008의 FACE 표가 맞음)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Redraw the attached animal picture as a larger, sharper version: the SAME animal, the SAME pose, facing the SAME direction, the SAME colours and the same flat cartoon style with dark-brown outlines.
+Square picture on a pure white background. The animal fills the picture as large as possible with a small white margin. The whole body is visible (nothing cut off). No ground, no shadow, no background, no text. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 40. 얼룩말 크게
+새 Gemini 창 · 붙일 그림: media/animals/eollukmal.webp
+받은 그림 → media/animals/eollukmal.webp 를 바꿈(이름 그대로 — 머리 방향이 같아야 008의 FACE 표가 맞음)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Redraw the attached animal picture as a larger, sharper version: the SAME animal, the SAME pose, facing the SAME direction, the SAME colours and the same flat cartoon style with dark-brown outlines.
+Square picture on a pure white background. The animal fills the picture as large as possible with a small white margin. The whole body is visible (nothing cut off). No ground, no shadow, no background, no text. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 41. 치타 크게
+새 Gemini 창 · 붙일 그림: media/animals/chita.webp
+받은 그림 → media/animals/chita.webp 를 바꿈(이름 그대로 — 머리 방향이 같아야 008의 FACE 표가 맞음)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Redraw the attached animal picture as a larger, sharper version: the SAME animal, the SAME pose, facing the SAME direction, the SAME colours and the same flat cartoon style with dark-brown outlines.
+Square picture on a pure white background. The animal fills the picture as large as possible with a small white margin. The whole body is visible (nothing cut off). No ground, no shadow, no background, no text. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 42. 바다표범 크게
+새 Gemini 창 · 붙일 그림: media/animals/badapyobeom.webp
+받은 그림 → media/animals/badapyobeom.webp 를 바꿈(이름 그대로 — 머리 방향이 같아야 008의 FACE 표가 맞음)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Redraw the attached animal picture as a larger, sharper version: the SAME animal, the SAME pose, facing the SAME direction, the SAME colours and the same flat cartoon style with dark-brown outlines.
+Square picture on a pure white background. The animal fills the picture as large as possible with a small white margin. The whole body is visible (nothing cut off). No ground, no shadow, no background, no text. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 43. 북극늑대 크게
+새 Gemini 창 · 붙일 그림: media/animals/bukgeuknukdae.webp
+받은 그림 → media/animals/bukgeuknukdae.webp 를 바꿈(이름 그대로 — 머리 방향이 같아야 008의 FACE 표가 맞음)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Redraw the attached animal picture as a larger, sharper version: the SAME animal, the SAME pose, facing the SAME direction, the SAME colours and the same flat cartoon style with dark-brown outlines.
+Square picture on a pure white background. The animal fills the picture as large as possible with a small white margin. The whole body is visible (nothing cut off). No ground, no shadow, no background, no text. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 44. 하이에나 크게
+새 Gemini 창 · 붙일 그림: media/animals/haiena.webp
+받은 그림 → media/animals/haiena.webp 를 바꿈(이름 그대로 — 머리 방향이 같아야 008의 FACE 표가 맞음)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Redraw the attached animal picture as a larger, sharper version: the SAME animal, the SAME pose, facing the SAME direction, the SAME colours and the same flat cartoon style with dark-brown outlines.
+Square picture on a pure white background. The animal fills the picture as large as possible with a small white margin. The whole body is visible (nothing cut off). No ground, no shadow, no background, no text. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 45. 돼지 크게
+새 Gemini 창 · 붙일 그림: media/words/dwaeji.webp
+받은 그림 → media/words/dwaeji.webp 를 바꿈(이름 그대로 — 머리 방향이 같아야 008의 FACE 표가 맞음)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Redraw the attached animal picture as a larger, sharper version: the SAME animal, the SAME pose, facing the SAME direction, the SAME colours and the same flat cartoon style with dark-brown outlines.
+Square picture on a pure white background. The animal fills the picture as large as possible with a small white margin. The whole body is visible (nothing cut off). No ground, no shadow, no background, no text. Leave the bottom-right corner empty and white.
+▲ 여기까지
+

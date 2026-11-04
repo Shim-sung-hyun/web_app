@@ -1,6 +1,6 @@
 /* 무대(stage) 공통 모듈 — 원본은 common/stage.js 한 곳. 앱 안의 이 칸은 손으로 고치지 말고 python3 tools/sync-modules.py
    빈 배경 위에 요소(나무·바위·동물…)를 '밑동이 아래인 것이 앞'으로 쌓는다(만화영화 셀처럼).
-   자료: media/stage/<갈래>/<장소>/ (bg.jpg · items/*.webp · front/*.webp · stage.json), 차림표 media/stage/index.json
+   자료: media/stage/<갈래>/<장소>/ (bg.jpg · items/*.webp · front/*.webp 앞가림 띠 · far/*.webp 먼 띠 · stage.json), 차림표 media/stage/index.json
    쓰는 법
      const pl = await Stage.load('nature/desert');                 // stage.json 읽고 그림을 미리 받음
      const lay = Stage.compose(pl, {seed: 7});                      // 무작위 배치(같은 seed면 같은 장면) — 고정 배치는 {fixed:[…]}
@@ -23,6 +23,7 @@
       jobs.push(img(it.src).then(i => { it.img = i; if (i) { it.w = i.naturalWidth; it.h = i.naturalHeight; } }));
     }
     for (const f of pl.front || []) { f.srcUrl = dir + 'front/' + f.src + '.webp'; jobs.push(img(f.srcUrl).then(i => f.img = i)); }
+    for (const f of pl.far || []) { f.srcUrl = dir + 'far/' + f.src + '.webp'; jobs.push(img(f.srcUrl).then(i => f.img = i)); }
     await Promise.all(jobs);
     for (const k of Object.keys(pl.items || {})) if (!pl.items[k].img) delete pl.items[k];   // 아직 안 받은 그림은 빼고 그림
     return pl;
@@ -46,7 +47,7 @@
   function compose(pl, opt = {}) {
     if (opt.fixed) return opt.fixed.map(f => place(pl, pl.items[f.id], f.x, f.y, f.r ?? .5, f.flip));
     const R = rnd(opt.seed ?? (Math.random() * 1e9)), items = Object.values(pl.items || {});
-    const big = items.filter(i => i.role === 'big'), small = items.filter(i => i.role !== 'big' && !i.float), sky = items.filter(i => i.float);
+    const big = items.filter(i => i.role === 'big'), small = items.filter(i => !i.role && !i.float), sky = items.filter(i => i.float), frame = items.filter(i => i.role === 'frame');
     const out = [], pick = a => a[Math.floor(R() * a.length)], clamp = (v, a, b) => Math.max(a, Math.min(b, v));
     const gy = r => pl.groundTop + (1 - pl.groundTop) * r;
     const free = (x, y, w) => !inAvoid(pl, x, y) && out.every(o => Math.abs(o.x - x) > (o.w + w) * .35 || Math.abs(o.y - y) > .05);
@@ -76,6 +77,10 @@
     for (let j = 0; j < (opt.sky ?? (sky.length ? 2 : 0)); j++) {   // 구름처럼 뜬 것: 지평선 위
       const it = pick(sky); out.push(place(Object.assign({}, pl, {view: 'flat'}), it, .1 + R() * .8, .08 + R() * (pl.horizon - .12), R(), R() < .5));
     }
+    if (frame.length && R() < (opt.frame ?? .5)) {   // 가까운 나무줄기 하나를 화면 가장자리에(위가 화면 밖으로 나감 — 앞뒤 거리감)
+      const it = pick(frame), left = R() < .5, y = .9 + R() * .08;
+      const p = place(pl, it, 0, y, R(), !left); p.x = left ? p.w * .3 : 1 - p.w * .3; out.push(p);
+    }
     return out;
   }
 
@@ -92,6 +97,10 @@
     box.innerHTML = ''; box.style.position = 'relative'; box.style.aspectRatio = box.style.aspectRatio || '4 / 3'; box.style.overflow = 'hidden';
     const mk = (tag, css) => { const e = document.createElement(tag); e.style.cssText = 'position:absolute;pointer-events:none;' + css; box.appendChild(e); return e; };
     if (pl.bgImg) { const b = mk('img', 'left:0;top:0;width:100%;height:100%;object-fit:cover;z-index:0'); b.src = pl.bgImg.src; b.alt = ''; }
+    for (const f of pl.far || []) if (f.img) {   // 먼 띠(먼 숲·먼 갈대밭): 지평선 위에 서서 모든 요소 뒤
+      const h = f.h || .08, y = f.y ?? pl.horizon + .01;
+      const e = mk('img', `left:-1%;width:102%;top:${(y - h) * 100}%;height:${h * 100}%;z-index:2;object-fit:fill;filter:saturate(${1 - .4 * hz}) brightness(${1 + .12 * hz}) contrast(${1 - .25 * hz})`); e.src = f.srcUrl; e.alt = '';
+    }
     const order = lay.slice().sort((a, b) => a.y - b.y);   // 밑동이 위(먼 것)부터 → 아래(가까운 것)가 위 레이어
     order.forEach((o, i) => {
       const z = 10 + i * 2, far = pl.view === 'flat' ? 0 : Math.max(0, 1 - (o.y - pl.horizon) / (1 - pl.horizon));

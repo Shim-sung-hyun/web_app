@@ -1,9 +1,9 @@
 {
  "name": "물속",
- "view": "flat",
- "horizon": 0.3,
- "groundTop": 0.31,
- "unit": 0.18,
+ "view": "ground",
+ "horizon": 0.56,
+ "groundTop": 0.58,
+ "unit": 0.12,
  "avoid": [],
  "front": [],
  "items": {
@@ -80,7 +80,19 @@
     0.3
    ],
    "from": "nature/sea"
+  },
+  "rockarch": {
+   "name": "바위 굴",
+   "real": [
+    3,
+    5
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ],
+   "from": "nature/sea"
   }
- },
- "note": "단면(옆에서 본 꼴): 원근 없이 어디서나 같은 크기"
+ }
 }

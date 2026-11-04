@@ -1,8 +1,8 @@
 {
  "name": "사막",
  "view": "ground",
- "horizon": 0.33,
- "groundTop": 0.34,
+ "horizon": 0.3,
+ "groundTop": 0.31,
  "unit": 0.2,
  "avoid": [],
  "front": [

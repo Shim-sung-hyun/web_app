@@ -22,7 +22,7 @@
    "role": "big",
    "ground": [
     0,
-    0.65
+    0.4
    ]
   },
   "pine": {
@@ -34,7 +34,7 @@
    "role": "big",
    "ground": [
     0,
-    0.65
+    0.4
    ]
   },
   "stump": {
@@ -78,6 +78,29 @@
     0.1,
     0.25
    ]
+  },
+  "oaktrunk": {
+   "name": "가까운 참나무 줄기",
+   "real": [
+    4,
+    6
+   ],
+   "role": "frame"
+  },
+  "pinetrunk": {
+   "name": "가까운 소나무 줄기",
+   "real": [
+    4,
+    6
+   ],
+   "role": "frame"
   }
- }
+ },
+ "far": [
+  {
+   "src": "trees",
+   "name": "먼 숲",
+   "h": 0.1
+  }
+ ]
 }

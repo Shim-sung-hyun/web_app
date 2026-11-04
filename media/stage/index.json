@@ -3,7 +3,9 @@
   "name": "사막",
   "group": "nature",
   "view": "ground",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "saguaro",
    "pricklypear",
@@ -20,13 +22,17 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [],
+  "missing": []
  },
  "nature/grassland": {
   "name": "초원",
   "group": "nature",
   "view": "ground",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "acacia",
    "termite",
@@ -35,7 +41,8 @@
    "tussock",
    "lowshrub",
    "stones",
-   "drygrass"
+   "drygrass",
+   "thicket"
   ],
   "front": [
    "goldgrass"
@@ -43,13 +50,22 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [
+   "bush"
+  ],
+  "missing": [
+   "thicket",
+   "far/bush"
+  ]
  },
  "nature/forest": {
   "name": "숲(산)",
   "group": "nature",
   "view": "ground",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "oak",
    "pine",
@@ -58,7 +74,9 @@
    "fern",
    "bush",
    "mossrock",
-   "mushrooms"
+   "mushrooms",
+   "oaktrunk",
+   "pinetrunk"
   ],
   "front": [
    "ferns"
@@ -66,13 +84,23 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [
+   "trees"
+  ],
+  "missing": [
+   "oaktrunk",
+   "pinetrunk",
+   "far/trees"
+  ]
  },
  "nature/ground": {
   "name": "땅 위(들판)",
   "group": "nature",
   "view": "ground",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "meadowtree",
    "bush",
@@ -89,13 +117,21 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [
+   "hedge"
+  ],
+  "missing": [
+   "far/hedge"
+  ]
  },
  "nature/polar": {
   "name": "극지방",
   "group": "nature",
   "view": "ground",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "iceberg",
    "icecliff",
@@ -112,13 +148,17 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [],
+  "missing": []
  },
  "nature/wetland": {
   "name": "논·습지",
   "group": "nature",
   "view": "ground",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "willow",
    "reeds",
@@ -126,8 +166,8 @@
    "rice",
    "sedge",
    "lotus",
-   "mudbank",
-   "dryreeds"
+   "dryreeds",
+   "paddybank"
   ],
   "front": [
    "reedsedge"
@@ -135,13 +175,22 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [
+   "reeds"
+  ],
+  "missing": [
+   "paddybank",
+   "far/reeds"
+  ]
  },
  "nature/mudflat": {
   "name": "갯벌",
   "group": "nature",
   "view": "ground",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "mudmound",
    "saltreeds",
@@ -158,13 +207,17 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [],
+  "missing": []
  },
  "nature/sea": {
   "name": "바닷속",
   "group": "nature",
   "view": "flat",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "kelp",
    "reefrock",
@@ -173,7 +226,8 @@
    "seagrass",
    "anemone",
    "braincoral",
-   "pebbles"
+   "pebbles",
+   "rockarch"
   ],
   "front": [
    "seafloor"
@@ -181,13 +235,19 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [],
+  "missing": [
+   "rockarch"
+  ]
  },
  "nature/water": {
   "name": "물속",
   "group": "nature",
   "view": "flat",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "kelp",
    "reefrock",
@@ -196,19 +256,26 @@
    "seagrass",
    "anemone",
    "braincoral",
-   "pebbles"
+   "pebbles",
+   "rockarch"
   ],
   "front": [],
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [],
+  "missing": [
+   "rockarch"
+  ]
  },
  "nature/pond": {
   "name": "강·호수",
   "group": "nature",
   "view": "flat",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "reeds",
    "cattails",
@@ -225,13 +292,17 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [],
+  "missing": []
  },
  "nature/underground": {
   "name": "땅속",
   "group": "nature",
   "view": "flat",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "rootball",
    "buriedrock",
@@ -246,13 +317,17 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [],
+  "missing": []
  },
  "nature/sky": {
   "name": "하늘",
   "group": "nature",
   "view": "ground",
-  "bg": [],
+  "bg": [
+   "bg"
+  ],
   "items": [
    "cloud",
    "cloud2",
@@ -267,6 +342,8 @@
   "used_by": [
    "008"
   ],
-  "ready": false
+  "ready": true,
+  "far": [],
+  "missing": []
  }
 }

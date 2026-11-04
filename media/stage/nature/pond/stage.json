@@ -1,9 +1,9 @@
 {
  "name": "강·호수",
- "view": "flat",
- "horizon": 0.4,
- "groundTop": 0.41,
- "unit": 0.18,
+ "view": "ground",
+ "horizon": 0.78,
+ "groundTop": 0.8,
+ "unit": 0.15,
  "avoid": [],
  "front": [
   {
@@ -75,6 +75,5 @@
     1
    ]
   }
- },
- "note": "단면(옆에서 본 꼴): 원근 없이 어디서나 같은 크기"
+ }
 }
