@@ -11,7 +11,13 @@
  select,button,label{font:inherit}
  button{padding:4px 12px;border:1px solid var(--line);background:transparent;color:inherit;border-radius:6px;cursor:pointer}
  #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:12px}
- figure{margin:0} figcaption{font-size:13px;opacity:.7}
+ figure{margin:0} figcaption{font-size:13px;opacity:.75;margin-top:4px;line-height:1.6}
+ .no{position:absolute;z-index:9500;transform:translate(-50%,-100%);min-width:20px;height:20px;padding:0 4px;border-radius:10px;background:#fff;color:#7a2e1f;border:1.5px solid #7a2e1f;font:600 12px/17px system-ui,sans-serif;text-align:center;pointer-events:none}
+ .hideNo .no{display:none}
+ textarea{width:100%;box-sizing:border-box;margin-top:6px;font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:transparent;color:inherit;min-height:52px}
+ #placeNote{margin:0 0 12px}
+ #copyBtn{font-weight:600}
+ #copied{font-size:13px;opacity:.75}
  .st{border-radius:4px;background:#ddd}
  #msg{font-size:14px;opacity:.8}
 </style></head><body>
@@ -23,8 +29,11 @@
  <label>먼 것 흐림 <input id="hz" type="range" min="0" max="1" step="0.05" value="0.3"></label>
  <label><input id="fr" type="checkbox" checked> 앞가림 띠</label>
  <label><input id="bd" type="checkbox"> 자리 보기</label>
+ <label><input id="nb" type="checkbox" checked> 번호</label>
+ <button id="copyBtn">멘트 모아 복사</button> <span id="copied"></span>
  <span id="msg"></span>
 </header>
+<textarea id="placeNote" placeholder="이 곳 전체에 대한 멘트(배경·먼 띠·어울리지 않는 요소 등)"></textarea>
 <div id="grid"></div>
 <script id="stagekit">
 /* 무대(stage) 공통 모듈 stagekit — 원본은 common/stagekit.js 한 곳. 앱 안의 이 칸은 손으로 고치지 말고 python3 tools/sync-modules.py
@@ -202,11 +211,25 @@ async function start(){
   for(const [k,v] of Object.entries(idx)) $('pl').add(new Option(v.name+' · '+k+(v.ready?'':' (그림 기다림)'),k));
   const h=location.hash.slice(1).split('/'); if(h.length>=2) $('pl').value=h[0]+'/'+h[1];
   if(h[2]) seeds=[+h[2]];
-  $('pl').onchange=()=>{seeds=[];open()}; $('again').onclick=()=>{seeds=[];draw()};
+  $('pl').onchange=()=>{seeds=[];open()};
+  $('nb').oninput=()=>$('grid').classList.toggle('hideNo',!$('nb').checked);
+  $('placeNote').oninput=()=>note($('pl').value+'/all',$('placeNote').value);
+  $('copyBtn').onclick=async()=>{ const t=gather(); if(!t){ $('copied').textContent='쓴 멘트가 없어요'; return; }
+    try{ await navigator.clipboard.writeText(t); $('copied').textContent='복사했어요 — Claude 대화에 붙여 넣으세요'; }
+    catch(e){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); $('copied').textContent='복사했어요'; } }; $('again').onclick=()=>{seeds=[];draw()};
   for(const id of ['sh','hz','fr','bd']) $(id).oninput=()=>draw(true);
   open();
 }
-async function open(){ $('msg').textContent='읽는 중…'; pl=await Stage.load($('pl').value,{base:'./'}); draw(); }
+async function open(){ $('msg').textContent='읽는 중…'; $('placeNote').value=note($('pl').value+'/all'); pl=await Stage.load($('pl').value,{base:'./'}); draw(); }
+const LEG={};
+function note(k,v){ try{ const all=JSON.parse(localStorage.getItem('stageNotes')||'{}'); if(v===undefined) return all[k]||''; if(v) all[k]=v; else delete all[k]; localStorage.setItem('stageNotes',JSON.stringify(all)); }catch(e){ return ''; } }
+/* 멘트 모아 복사: 이 대화(Claude)에 붙여 넣을 글 — 장소·판 번호·번호표·멘트. 판 번호로 같은 장면을 다시 띄워 고침 */
+function gather(){ let out=[];
+  let all={}; try{ all=JSON.parse(localStorage.getItem('stageNotes')||'{}'); }catch(e){}
+  Object.keys(all).sort().forEach(k=>{ const [g,place,seed]=k.split('/'); const id=g+'/'+place;
+    if(seed==='all') out.push(`■ ${id} 전체: ${all[k]}`);
+    else out.push(`■ ${id} 판 ${seed}${LEG[seed]?'\n  번호표: '+LEG[seed].join(' · '):''}\n  멘트: ${all[k]}`); });
+  return out.length?'[무대 시험 멘트]\n'+out.join('\n'):''; }
 function draw(keep){
   const n=Object.keys(pl.items||{}).length;
   $('msg').textContent=(pl.bgImg?'':'배경 없음 · ')+'요소 '+n+'개'+(n?'':' — 아직 그림을 받기 전');
@@ -215,8 +238,14 @@ function draw(keep){
   for(const s of seeds){
     const f=document.createElement('figure'), d=document.createElement('div'), c=document.createElement('figcaption');
     d.className='st'; f.append(d,c); $('grid').append(f);
-    Stage.render(d,pl,Stage.compose(pl,{seed:s}),{shadow:+$('sh').value,haze:+$('hz').value,front:$('fr').checked,showBeds:$('bd').checked});
-    c.innerHTML=`<a href="#${pl.id}/${s}" style="color:inherit">${s}</a>`;
+    const lay=Stage.compose(pl,{seed:s}).sort((a,b)=>a.x-b.x);   /* 번호는 왼쪽부터 */
+    Stage.render(d,pl,lay,{shadow:+$('sh').value,haze:+$('hz').value,front:$('fr').checked,showBeds:$('bd').checked});
+    lay.forEach((o,i)=>{ const b=document.createElement('div'); b.className='no'; b.textContent=i+1;
+      b.style.left=Math.max(2,Math.min(98,o.x*100))+'%'; b.style.top=Math.max(4,(o.y-o.h*o.base*.92)*100)+'%'; d.appendChild(b); });
+    LEG[s]=lay.map((o,i)=>`${i+1} ${(pl.items[o.id]||{}).name||o.id}(${o.id}·${(pl.beds[o.bed]||{}).name||o.bed})`);
+    c.innerHTML=`판 <a href="#${pl.id}/${s}" style="color:inherit">${s}</a> · `+LEG[s].join(' · ');
+    const t=document.createElement('textarea'); t.placeholder='이 판에 대한 멘트(번호로: 예) 3번이 너무 큼, 5번은 물가에 있어야 함)'; t.value=note(pl.id+'/'+s);
+    t.oninput=()=>note(pl.id+'/'+s,t.value); f.append(t);
   }
 }
 start();
