@@ -125,18 +125,4 @@
    한 글자 이름("개.")은 "글자. 개."로 만든 소리라 마지막 마디만 잘라 넣습니다. 문장과 파일 이름(SHA-1 앞 16자리)이 맞지 않으면 넣지 않습니다.
    Azure로 만든 소리는 Leda와 목소리가 달라 같은 묶음에 넣지 않습니다(--pack 다른묶음).
 
-
-
-목소리 비교 — tts-compare.html (제작자용 화면, 학생 앱 아님)
-
-   https://shim-sung-hyun.github.io/web_app/tools/tts-compare.html
-
- 하는 일: 같은 말·같은 빠르기(기본 0.92)로 기기 목소리 · Google Cloud · Azure · ElevenLabs를
-   나란히 듣고, "차례로 듣기"나 "가리고 듣기"(이름을 가리고 섞어 들음)로 비교합니다. mp3로 받을 수도 있습니다.
- 키: 모두 이 기기에만 저장(webapp.cloudKey 차름 앱과 같은 칸 · webapp.azureKey/azureRegion · webapp.elevenKey).
-   Google 키는 웹사이트 제한이 있어 github.io·charum.org 주소에서 열어야 합니다.
- ElevenLabs 키가 없을 때: 웹 체험 화면에서 만든 mp3를 "파일 넣기"로 넣으면 차례로 듣기에 함께 나옵니다
-   (넣은 파일은 새로 고치면 사라짐). 늘 들어 볼 견본은 tts-samples/eleven/에 넣고 tts-samples/index.json에 한 줄 적습니다
-   (text 칸에 파일 속 말을 적으면 위의 말과 다를 때 알려 줌). 견본은 비교용이고 앱 수업에는 쓰지 않습니다.
-
 - trash.py : 버릴 자료 상자. 안 쓰는 파일을 _trash/<날짜>/로 옮기고(--why 이유), 90일 지나면 --empty로 비움
