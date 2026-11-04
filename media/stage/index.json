@@ -55,8 +55,7 @@
    "bush"
   ],
   "missing": [
-   "thicket",
-   "far/bush"
+   "thicket"
   ]
  },
  "nature/forest": {
@@ -88,11 +87,7 @@
   "far": [
    "trees"
   ],
-  "missing": [
-   "oaktrunk",
-   "pinetrunk",
-   "far/trees"
-  ]
+  "missing": []
  },
  "nature/ground": {
   "name": "땅 위(들판)",
@@ -121,9 +116,7 @@
   "far": [
    "hedge"
   ],
-  "missing": [
-   "far/hedge"
-  ]
+  "missing": []
  },
  "nature/polar": {
   "name": "극지방",
@@ -179,10 +172,7 @@
   "far": [
    "reeds"
   ],
-  "missing": [
-   "paddybank",
-   "far/reeds"
-  ]
+  "missing": []
  },
  "nature/mudflat": {
   "name": "갯벌",
@@ -237,9 +227,7 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [
-   "rockarch"
-  ]
+  "missing": []
  },
  "nature/water": {
   "name": "물속",
@@ -265,9 +253,7 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [
-   "rockarch"
-  ]
+  "missing": []
  },
  "nature/pond": {
   "name": "강·호수",

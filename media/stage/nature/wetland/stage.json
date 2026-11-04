@@ -1,17 +1,10 @@
 {
  "name": "논·습지",
  "view": "ground",
- "horizon": 0.35,
- "groundTop": 0.36,
+ "horizon": 0.14,
+ "groundTop": 0.18,
  "unit": 0.2,
- "avoid": [
-  [
-   0,
-   0.47,
-   1,
-   0.75
-  ]
- ],
+ "avoid": [],
  "front": [
   {
    "src": "reedsedge",
@@ -29,7 +22,7 @@
    "role": "big",
    "ground": [
     0,
-    0.3
+    0.25
    ]
   },
   "reeds": {
@@ -82,7 +75,6 @@
    ]
   }
  },
- "note": "배경 다시 받기 전 임시: 물길(가운데 띠)에는 놓지 않음",
  "far": [
   {
    "src": "reeds",

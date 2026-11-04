@@ -1,0 +1,44 @@
+무대 그림 받기 3 — 008 (2026-11-04)  ※ 1~45번은 PROMPTS-008.txt · PROMPTS-008-2.txt (다 받음)
+지난번 그림 중 물건이 그림 가장자리에서 잘린 것만 다시 받습니다. 이번에는 한 장에 하나씩, 사방에 흰 여백을 두게 했습니다.
+Gemini가 안 되면 ChatGPT에 같은 글과 그림을 넣어도 됩니다(그림체가 조금 달라도 괜찮은지 넣은 뒤 Claude가 봄).
+
+━━━━━━━━ 46. 빙산 (극지방)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/polar/items/iceberg.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw ONE object on a pure white background: a large white-blue iceberg with flat cliffs and a flat top, wider than tall.
+The WHOLE object must be visible: leave a clear white margin on ALL four sides — nothing may touch or be cut off by the edge of the picture. Make the picture wide (16:9) so the object can still be drawn large.
+Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: this picture will be shown very large. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 47. 얼음 벽 (극지방)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/polar/items/icecliff.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw ONE object on a pure white background: a wide low wall of blue-white ice blocks, much wider than tall.
+The WHOLE object must be visible: leave a clear white margin on ALL four sides — nothing may touch or be cut off by the edge of the picture. Make the picture wide (16:9) so the object can still be drawn large.
+Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: this picture will be shown very large. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 48. 넓은 덤불 (초원 — 코끼리를 가릴 것)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/grassland/items/thicket.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw ONE object on a pure white background: a very wide dense savanna thicket of thorny bushes, olive green, solid with no see-through gaps in the lower half, about three times wider than tall.
+The WHOLE object must be visible: leave a clear white margin on ALL four sides — nothing may touch or be cut off by the edge of the picture. Make the picture wide (16:9) so the object can still be drawn large.
+Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: this picture will be shown very large. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+━━━━━━━━ 49. 큰 바위 (사막)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/desert/items/sandstone.webp
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw ONE object on a pure white background: a large layered sandstone rock, orange-tan, with a rounded top, about twice as wide as tall.
+The WHOLE object must be visible: leave a clear white margin on ALL four sides — nothing may touch or be cut off by the edge of the picture. Make the picture wide (16:9) so the object can still be drawn large.
+Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: this picture will be shown very large. Leave the bottom-right corner empty and white.
+▲ 여기까지
+

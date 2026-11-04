@@ -107,7 +107,7 @@
     }
     if (frame.length && R() < (opt.frame ?? .5)) {   // 가까운 나무줄기 하나를 화면 가장자리에(위가 화면 밖으로 나감 — 앞뒤 거리감)
       const it = pick(frame), left = R() < .5, y = .9 + R() * .08;
-      const p = place(pl, it, 0, y, R(), !left); p.x = left ? p.w * .3 : 1 - p.w * .3; out.push(p);
+      const p = place(pl, it, 0, y, R(), !left); p.h = 1.08 + R() * .12; p.w = p.h * (it.w / it.h) * .75; p.x = left ? -p.w * .15 : 1 + p.w * .15; out.push(p);   // 위가 늘 화면 밖, 줄기의 1/3쯤만 보이게
     }
     return out;
   }
