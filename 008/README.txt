@@ -8,7 +8,7 @@
 파일
 - animal-home.html      : 정식판(study/008/animal-home.html = server-loader.html). 2026-11-02 베타를 합침(교과서 구성·수준 3 곳마다 3·4마리·스페셜·Azure 목소리·새 그림).
                           2026-11-04 무대를 합쳤다가 같은 날 되돌림(물 안·밖이 뒤섞이고 물풀이 떠다니는 등 장면이 말이 안 됨 — 선생님). 지금은 옛 장면·소품.
-- animal-home-beta.html : 베타(study/008/animal-home-beta.html = server-loader-beta.html). 무대로 다시 만드는 중(2026-11-04~, 무대 세션) — 정식판에 넣기 전에 선생님께 장면을 보여 드리고 여쭘.
+- animal-home-beta.html : 베타(study/008/animal-home-beta.html = server-loader-beta.html). 무대로 다시 만드는 중(2026-11-04~, 무대 세션) — 지금 베타의 숨은 동물 찾기는 옛 엔진에 무대를 덧댄 판(장면이 말이 안 됨). 무대 위에서 새로 짜는 계획은 media/stage/README.txt '다음'.
                           베타를 정식판에 합칠 때는 선생님께 여쭙고, 합치면 제목의 "(베타)"만 빼고 통째로 복사(cp) + voice-lines.json도 맞춤
 - voice-lines.json · voice-lines-beta.json : 앱이 쓰는 말 목록(콘솔 __voiceLines(), 스페셜 이름 포함) 260문장 — 모두 media/voice/azure-sunhi-0.92에 있음
 - server-loader.html    : 서버 study/008/에 animal-home.html 이름으로 올리는 불러오기 파일(열 때마다 GitHub 판을 받아 옴 — 합쳐도 서버는 그대로)

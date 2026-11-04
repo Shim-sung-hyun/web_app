@@ -9,7 +9,8 @@
   {
    "src": "pondbed",
    "name": "물속 바닥",
-   "h": 0.11
+   "h": 0.11,
+   "base": 0.9788
   }
  ],
  "items": {
@@ -18,14 +19,26 @@
    "real": [
     1,
     2
-   ]
+   ],
+   "base": 0.9727,
+   "foot": [
+    0.132,
+    0.868
+   ],
+   "bed": "bank"
   },
   "waterweed": {
    "name": "물풀",
    "real": [
     0.4,
     1
-   ]
+   ],
+   "base": 0.9719,
+   "foot": [
+    0.271,
+    0.775
+   ],
+   "bed": "bottom"
   },
   "lilypads": {
    "name": "수련",
@@ -33,39 +46,121 @@
     0.05,
     0.1
    ],
-   "float": true
+   "float": true,
+   "base": 0.9524,
+   "foot": [
+    0.247,
+    0.907
+   ],
+   "bed": "surface"
   },
   "rock": {
    "name": "물속 바위",
    "real": [
     0.4,
     1
-   ]
+   ],
+   "base": 0.9621,
+   "foot": [
+    0.143,
+    0.812
+   ],
+   "bed": "bottom"
   },
   "sunkenlog": {
    "name": "가라앉은 나무",
    "real": [
     0.3,
     0.6
-   ]
+   ],
+   "base": 0.9551,
+   "foot": [
+    0.086,
+    0.356
+   ],
+   "bed": "bottom"
   },
   "pebbles": {
    "name": "작은 돌",
    "real": [
     0.1,
     0.3
-   ]
+   ],
+   "base": 0.9451,
+   "foot": [
+    0.465,
+    0.58
+   ],
+   "bed": "bottom"
   },
   "hornwort": {
    "name": "붕어마름",
    "real": [
     0.5,
     1
-   ]
+   ],
+   "base": 0.9715,
+   "foot": [
+    0.431,
+    0.596
+   ],
+   "bed": "bottom"
   }
  },
  "skirt": [
   "silt"
  ],
- "waterline": 0.51
+ "waterline": 0.51,
+ "skirtMeta": {
+  "silt": {
+   "base": 0.9456,
+   "foot": [
+    0.145,
+    0.812
+   ]
+  }
+ },
+ "beds": {
+  "bottom": {
+   "name": "물속 바닥",
+   "y": [
+    0.88,
+    1
+   ],
+   "persp": false,
+   "skirt": [
+    "silt"
+   ]
+  },
+  "surface": {
+   "name": "물낯",
+   "y": [
+    0.505,
+    0.515
+   ],
+   "persp": false,
+   "skirt": []
+  },
+  "bank": {
+   "name": "물가 둑",
+   "y": [
+    0.56,
+    0.7
+   ],
+   "x": [
+    [
+     0,
+     0.12
+    ],
+    [
+     0.9,
+     1
+    ]
+   ],
+   "persp": false,
+   "skirt": [
+    "silt"
+   ]
+  }
+ }
 }

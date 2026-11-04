@@ -1,7 +1,7 @@
 {
  "name": "하늘",
  "view": "ground",
- "horizon": 0.82,
+ "horizon": 0.74,
  "groundTop": 0.83,
  "unit": 0.2,
  "avoid": [],
@@ -13,7 +13,13 @@
     1,
     1
    ],
-   "float": true
+   "float": true,
+   "base": 0.955,
+   "foot": [
+    0.247,
+    0.646
+   ],
+   "bed": "air"
   },
   "cloud2": {
    "name": "작은 구름",
@@ -21,7 +27,13 @@
     1,
     1
    ],
-   "float": true
+   "float": true,
+   "base": 0.9403,
+   "foot": [
+    0.293,
+    0.717
+   ],
+   "bed": "air"
   },
   "cloudbank": {
    "name": "긴 구름",
@@ -29,7 +41,13 @@
     1,
     1
    ],
-   "float": true
+   "float": true,
+   "base": 0.9286,
+   "foot": [
+    0.031,
+    0.966
+   ],
+   "bed": "air"
   },
   "cloudpuffs": {
    "name": "뭉게구름",
@@ -37,35 +55,86 @@
     1,
     1
    ],
-   "float": true
+   "float": true,
+   "base": 0.9444,
+   "foot": [
+    0.717,
+    0.942
+   ],
+   "bed": "air"
   },
   "sunflower": {
    "name": "해바라기",
    "real": [
     1.5,
     2.5
-   ]
+   ],
+   "base": 0.9712,
+   "foot": [
+    0.455,
+    0.533
+   ],
+   "bed": "ground"
   },
   "tallgrass": {
    "name": "긴 풀",
    "real": [
     0.6,
     1
-   ]
+   ],
+   "base": 0.9701,
+   "foot": [
+    0.183,
+    0.833
+   ],
+   "bed": "ground"
   },
   "daisies": {
    "name": "데이지",
    "real": [
     0.3,
     0.5
-   ]
+   ],
+   "base": 0.9662,
+   "foot": [
+    0.375,
+    0.696
+   ],
+   "bed": "ground"
   },
   "lavender": {
    "name": "라벤더",
    "real": [
     0.4,
     0.7
-   ]
+   ],
+   "base": 0.9686,
+   "foot": [
+    0.291,
+    0.733
+   ],
+   "bed": "ground"
+  }
+ },
+ "skirtMeta": {},
+ "beds": {
+  "air": {
+   "name": "하늘",
+   "y": [
+    0.08,
+    0.55
+   ],
+   "persp": false,
+   "skirt": []
+  },
+  "ground": {
+   "name": "땅",
+   "y": [
+    0.8,
+    1
+   ],
+   "persp": true,
+   "skirt": []
   }
  }
 }

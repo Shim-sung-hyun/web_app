@@ -9,7 +9,8 @@
   {
    "src": "reedsedge",
    "name": "물가 풀",
-   "h": 0.11
+   "h": 0.11,
+   "base": 0.9419
   }
  ],
  "items": {
@@ -26,56 +27,105 @@
    ],
    "skirt": [
     "mudsprouts"
-   ]
+   ],
+   "base": 0.9878,
+   "foot": [
+    0.143,
+    0.888
+   ],
+   "bed": "farbank"
   },
   "reeds": {
    "name": "갈대",
    "real": [
     1.5,
     2.5
-   ]
+   ],
+   "base": 0.973,
+   "foot": [
+    0.272,
+    0.724
+   ],
+   "bed": "paddy"
   },
   "cattails": {
    "name": "부들",
    "real": [
     1,
     2
-   ]
+   ],
+   "base": 0.9713,
+   "foot": [
+    0.228,
+    0.772
+   ],
+   "bed": "paddy"
   },
   "rice": {
    "name": "벼",
    "real": [
     0.6,
     1
-   ]
+   ],
+   "base": 0.9708,
+   "foot": [
+    0.279,
+    0.714
+   ],
+   "bed": "paddy"
   },
   "sedge": {
    "name": "사초",
    "real": [
     0.4,
     0.8
-   ]
+   ],
+   "base": 0.9662,
+   "foot": [
+    0.148,
+    0.865
+   ],
+   "bed": "paddy"
   },
   "lotus": {
    "name": "연꽃",
    "real": [
     0.6,
     1.2
-   ]
+   ],
+   "base": 0.9707,
+   "foot": [
+    0.349,
+    0.687
+   ],
+   "bed": "paddy"
   },
   "dryreeds": {
    "name": "마른 갈대",
    "real": [
     1,
     1.8
-   ]
+   ],
+   "base": 0.9709,
+   "foot": [
+    0.261,
+    0.691
+   ],
+   "bed": "paddy"
   },
   "paddybank": {
    "name": "논둑",
    "real": [
     0.3,
     0.5
-   ]
+   ],
+   "base": 0.9573,
+   "foot": [
+    0.02,
+    0.969
+   ],
+   "bed": "paddy",
+   "skirt": false
   },
   "reedbed": {
    "name": "갈대밭",
@@ -87,35 +137,65 @@
    "ground": [
     0,
     0.65
-   ]
+   ],
+   "base": 0.9716,
+   "foot": [
+    0.14,
+    0.863
+   ],
+   "bed": "paddy"
   },
   "silvergrass": {
    "name": "억새",
    "real": [
     1.5,
     2
-   ]
+   ],
+   "base": 0.9738,
+   "foot": [
+    0.239,
+    0.671
+   ],
+   "bed": "paddy"
   },
   "iris": {
    "name": "붓꽃",
    "real": [
     0.6,
     1
-   ]
+   ],
+   "base": 0.9669,
+   "foot": [
+    0.191,
+    0.813
+   ],
+   "bed": "paddy"
   },
   "ripe": {
    "name": "익은 벼",
    "real": [
     0.8,
     1.1
-   ]
+   ],
+   "base": 0.9722,
+   "foot": [
+    0.284,
+    0.712
+   ],
+   "bed": "paddy"
   },
   "plantain": {
    "name": "질경이택사",
    "real": [
     0.4,
     0.7
-   ]
+   ],
+   "base": 0.9705,
+   "foot": [
+    0.179,
+    0.827
+   ],
+   "bed": "paddy"
   },
   "willowshrub": {
    "name": "작은 버드나무",
@@ -127,26 +207,88 @@
    "ground": [
     0,
     0.65
-   ]
+   ],
+   "base": 0.9689,
+   "foot": [
+    0.269,
+    0.698
+   ],
+   "bed": "farbank"
   },
   "tallsedge": {
    "name": "큰 사초",
    "real": [
     1,
     1.5
-   ]
+   ],
+   "base": 0.974,
+   "foot": [
+    0.243,
+    0.757
+   ],
+   "bed": "paddy"
   }
  },
  "far": [
   {
    "src": "reeds",
    "name": "먼 갈대밭",
-   "h": 0.06
+   "h": 0.06,
+   "base": 0.9375
   }
  ],
  "skirt": [
   "ripples",
   "mudsprouts",
   "reedripple"
- ]
+ ],
+ "skirtMeta": {
+  "mudsprouts": {
+   "base": 0.9463,
+   "foot": [
+    0.314,
+    0.709
+   ]
+  },
+  "reedripple": {
+   "base": 0.9588,
+   "foot": [
+    0.197,
+    0.806
+   ]
+  },
+  "ripples": {
+   "base": 0.9245,
+   "foot": [
+    0.252,
+    0.748
+   ]
+  }
+ },
+ "beds": {
+  "paddy": {
+   "name": "물 댄 논",
+   "y": [
+    0.22,
+    1
+   ],
+   "persp": true,
+   "skirt": [
+    "ripples",
+    "reedripple",
+    "mudsprouts"
+   ]
+  },
+  "farbank": {
+   "name": "먼 둑",
+   "y": [
+    0.16,
+    0.22
+   ],
+   "persp": true,
+   "skirt": [
+    "mudsprouts"
+   ]
+  }
+ }
 }

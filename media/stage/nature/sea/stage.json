@@ -9,7 +9,8 @@
   {
    "src": "seafloor",
    "name": "바다 바닥",
-   "h": 0.11
+   "h": 0.11,
+   "base": 0.9437
   }
  ],
  "items": {
@@ -23,7 +24,13 @@
    "ground": [
     0,
     0.65
-   ]
+   ],
+   "base": 0.9874,
+   "foot": [
+    0.445,
+    0.534
+   ],
+   "bed": "bottom"
   },
   "reefrock": {
    "name": "큰 바위",
@@ -35,49 +42,91 @@
    "ground": [
     0,
     0.65
-   ]
+   ],
+   "base": 0.9855,
+   "foot": [
+    0.018,
+    0.993
+   ],
+   "bed": "bottom"
   },
   "coral": {
    "name": "산호",
    "real": [
     0.5,
     1
-   ]
+   ],
+   "base": 0.9673,
+   "foot": [
+    0.403,
+    0.564
+   ],
+   "bed": "bottom"
   },
   "seafan": {
    "name": "부채산호",
    "real": [
     0.6,
     1.2
-   ]
+   ],
+   "base": 0.9682,
+   "foot": [
+    0.468,
+    0.561
+   ],
+   "bed": "bottom"
   },
   "seagrass": {
    "name": "잘피",
    "real": [
     0.4,
     0.8
-   ]
+   ],
+   "base": 0.9704,
+   "foot": [
+    0.213,
+    0.787
+   ],
+   "bed": "bottom"
   },
   "anemone": {
    "name": "말미잘",
    "real": [
     0.2,
     0.4
-   ]
+   ],
+   "base": 0.9674,
+   "foot": [
+    0.321,
+    0.679
+   ],
+   "bed": "bottom"
   },
   "braincoral": {
    "name": "뇌산호",
    "real": [
     0.3,
     0.6
-   ]
+   ],
+   "base": 0.968,
+   "foot": [
+    0.228,
+    0.762
+   ],
+   "bed": "bottom"
   },
   "pebbles": {
    "name": "작은 돌",
    "real": [
     0.1,
     0.3
-   ]
+   ],
+   "base": 0.9492,
+   "foot": [
+    0.384,
+    0.682
+   ],
+   "bed": "bottom"
   },
   "rockarch": {
    "name": "바위 굴",
@@ -89,7 +138,13 @@
    "ground": [
     0,
     0.65
-   ]
+   ],
+   "base": 0.9864,
+   "foot": [
+    0.013,
+    0.986
+   ],
+   "bed": "bottom"
   },
   "rockwall": {
    "name": "바위 벽",
@@ -101,7 +156,13 @@
    "ground": [
     0,
     0.65
-   ]
+   ],
+   "base": 0.9706,
+   "foot": [
+    0.024,
+    0.973
+   ],
+   "bed": "bottom"
   },
   "kelpforest": {
    "name": "다시마 숲",
@@ -113,7 +174,13 @@
    "ground": [
     0,
     0.65
-   ]
+   ],
+   "base": 0.9722,
+   "foot": [
+    0.145,
+    0.862
+   ],
+   "bed": "bottom"
   },
   "tablecoral": {
    "name": "상 모양 산호",
@@ -125,35 +192,65 @@
    "ground": [
     0,
     0.65
-   ]
+   ],
+   "base": 0.9569,
+   "foot": [
+    0.243,
+    0.793
+   ],
+   "bed": "bottom"
   },
   "tubecoral": {
    "name": "관 산호",
    "real": [
     0.5,
     1
-   ]
+   ],
+   "base": 0.9699,
+   "foot": [
+    0.21,
+    0.813
+   ],
+   "bed": "bottom"
   },
   "weedboulder": {
    "name": "해초 바위",
    "real": [
     1,
     2
-   ]
+   ],
+   "base": 0.9691,
+   "foot": [
+    0.189,
+    0.808
+   ],
+   "bed": "bottom"
   },
   "grassbed": {
    "name": "잘피 밭",
    "real": [
     0.5,
     1
-   ]
+   ],
+   "base": 0.9664,
+   "foot": [
+    0.081,
+    0.922
+   ],
+   "bed": "bottom"
   },
   "shellpile": {
    "name": "조개껍데기 돌무더기",
    "real": [
     0.3,
     0.6
-   ]
+   ],
+   "base": 0.9572,
+   "foot": [
+    0.381,
+    0.731
+   ],
+   "bed": "bottom"
   },
   "reeflow": {
    "name": "낮은 산호 바위",
@@ -165,12 +262,56 @@
    "ground": [
     0,
     0.65
-   ]
+   ],
+   "base": 0.9811,
+   "foot": [
+    0.094,
+    0.921
+   ],
+   "bed": "bottom"
   }
  },
  "skirt": [
   "sandmound",
   "seasprigs",
   "rubble"
- ]
+ ],
+ "skirtMeta": {
+  "rubble": {
+   "base": 0.9392,
+   "foot": [
+    0.315,
+    0.643
+   ]
+  },
+  "sandmound": {
+   "base": 0.9333,
+   "foot": [
+    0.239,
+    0.641
+   ]
+  },
+  "seasprigs": {
+   "base": 0.9389,
+   "foot": [
+    0.2,
+    0.774
+   ]
+  }
+ },
+ "beds": {
+  "bottom": {
+   "name": "바다 바닥",
+   "y": [
+    0.58,
+    1
+   ],
+   "persp": true,
+   "skirt": [
+    "sandmound",
+    "seasprigs",
+    "rubble"
+   ]
+  }
+ }
 }

@@ -54,6 +54,8 @@ for pid in idx:
         if nm not in out:
             w, h, solid = PI.solid_box(path)
             out[nm] = {'size': [w, h], 'solid': solid, 'mask': PI.mask_of(path), 'real': 'far' if it.get('float') else it.get('real', [.3, 1]), 'places': []}
+            out[nm]['bed'] = it.get('bed') or next(iter(cfg.get('beds', {'ground': 0})))
+            out[nm]['base'] = it.get('base', 1)
             if k in SCALEFREE:
                 out[nm]['scalefree'] = 1
         if place not in out[nm]['places']:
