@@ -6,14 +6,14 @@
   정식판·베타 모두 넣음. 캡처 01의 ① 칸만 새로 찍어 붙임.
 
 파일
-- animal-home.html      : 정식판(study/008/animal-home.html = server-loader.html). 2026-11-02 베타를 합침(교과서 구성·수준 3 곳마다 3·4마리·스페셜·Azure 목소리·새 그림)
-- animal-home-beta.html : 베타(study/008/animal-home-beta.html = server-loader-beta.html). 2026-11-04 무대 시험 중 — 숨은 동물 찾기 장면을 무대(빈 배경 + 무대 요소·꾸밈·밑동 덮개)로 그림.
-                          그 밖은 정식판과 같음. 자세한 것과 검사 결과는 media/stage/README.txt '008 베타 연결'.
+- animal-home.html      : 정식판(study/008/animal-home.html = server-loader.html). 2026-11-02 베타를 합침(교과서 구성·수준 3 곳마다 3·4마리·스페셜·Azure 목소리·새 그림).
+                          2026-11-04 무대 베타를 합침(선생님: 비영리라 바로 정식으로) — 숨은 동물 찾기 장면을 무대로 그림(아래 '무대')
+- animal-home-beta.html : 베타(study/008/animal-home-beta.html = server-loader-beta.html). 지금은 정식판과 같음(2026-11-04 무대를 합침) — 다음 큰 변경을 먼저 시험하는 자리.
                           베타를 정식판에 합칠 때는 선생님께 여쭙고, 합치면 제목의 "(베타)"만 빼고 통째로 복사(cp) + voice-lines.json도 맞춤
 - voice-lines.json · voice-lines-beta.json : 앱이 쓰는 말 목록(콘솔 __voiceLines(), 스페셜 이름 포함) 260문장 — 모두 media/voice/azure-sunhi-0.92에 있음
 - server-loader.html    : 서버 study/008/에 animal-home.html 이름으로 올리는 불러오기 파일(열 때마다 GitHub 판을 받아 옴 — 합쳐도 서버는 그대로)
 - animal-home_manual.html(게시판 59860 본문) · animal-home_guide.html(자세한 설명, study/doc.html?008/animal-home_guide) · animal-home01~16.jpg(캡처) · animal-home-promo.jpg
-  캡처 01 설정 02 보기 03 동물 보고 곳 04 곳 보고 동물 05 정리하기 06 놀이 첫 화면 07 보통(초원) 08 어려움(산) 09 끝 장면 10 선생님 메뉴 11 도감 12 기록 예시
+  캡처(07·08·14는 2026-11-04 무대로 새로 찍음) 01 설정 02 보기 03 동물 보고 곳 04 곳 보고 동물 05 정리하기 06 놀이 첫 화면 07 보통(초원) 08 어려움(산) 09 끝 장면 10 선생님 메뉴 11 도감 12 기록 예시
        13 활동지 14 스페셜 찾는 중 15 스페셜 결과(순위는 예시) 16 설정의 스페셜 칸 17 단계 알림 — 2026-11-02 새로 찍음, 06·10·17은 11-03(1366×768)
 
 자료(앱 폴더가 아니라 media/)
@@ -22,7 +22,9 @@
 - 가림 소품: media/habitats/props — 185개. 목록 index.json(크기·꽉 찬 부분 solid·모양 표 mask·실제 높이 real·잘린 쪽 anchor·쓰는 곳 places)
   tools/props-index.py로 만듦(real·anchor·places만 손으로). 새로 그릴 때 프롬프트: props/prompts/PROMPTS.txt·PROMPTS-5.txt, 본보기 style-ref.png
 - 목소리: media/voice/leda-0.92 (모두 내장). "악어는 강이나 연못에 살아요."는 같은 목소리 조각을 이어 만듦(2026-11-02)
-- 무대(2026-11-04~): 숨은 동물 찾기 장면을 빈 배경 + 따로 그린 요소로 쌓는 쪽으로 옮기는 중(무대 세션, media/stage/README.txt). 옮기기 전까지 지금 장면·소품 그대로.
+- 무대(2026-11-04 정식판): 숨은 동물 찾기 장면 = 무대 빈 배경 + 가림 소품(무대 요소, media/stage/hide-index.json) + 겹치지 않는 꾸밈·먼 띠 + 밑동 덮개.
+  공통 모듈 stagekit(common/stagekit.js). 하늘만 옛 장면·소품(habitats). 나무 위 가지·강 물낯 소품도 옛 것. 무대 그림을 바꾸면 python3 tools/stage-index.py.
+  검사: node tools/hide-check.js 3 → 2026-11-04 완전히 가려짐 0% · 목표 안 97~99% · 크기 맞는 소품 없음 8%. 자세한 것은 media/stage/README.txt.
   옛 숨은 그림 media/habitats/seek 는 _trash/2026-11-04/ 로 옮김(어디서도 안 부름).
   2026-11-04 무대 세션이 512점이던 큰 동물 8마리를 1024점으로 같은 이름·같은 머리 방향으로 바꿈(악어·돼지는 media/words, 북극곰·얼룩말·치타·바다표범·북극늑대·하이에나는 media/animals). 악어는 꼬리를 든 자세로 조금 바뀜. masks.json 다시 만듦.
 - 실제 사진: media/habitats/photos.json(보기 끝 실제 사진, 아직 없음)
@@ -147,5 +149,5 @@
 - (선생님) 목소리 확인: "악어는 강이나 연못에 살아요."(이어 만든 것), 단독 이름 첫소리가 센 개·부엉이·붕어·개구리·두더지·북극곰
 - (선생님) 서버에 server/charum-api/seek-rank.php 올리기(charum-api/ 폴더, 토큰 칸은 비워 둬도 됨) → https://www.charum.org/charum-api/seek-rank.php?ping 이 "ok": true
 - 스페셜을 학생과 해 보고: 10마리가 너무 많거나 어려우면 GLV[4]·SP_MAX 조정
-- 장기: 숨은 동물 찾기 장면을 '무대'(media/stage, 빈 배경 + 요소를 깊이 순서로 쌓기)로 — 소품이 떠 보이거나 아랫단 흐림 사이로 다리가 비치는 문제의 근본 해결. 무대 세션이 맡음
+- 무대 다음: 하늘 장면도 무대로(가지 요소를 받아야 함), 숲을 덜 공원 같게 — 무대 세션(media/stage/README.txt)
 - 001~010 초기 설정 문제는 별도 세션
