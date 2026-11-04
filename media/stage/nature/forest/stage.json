@@ -1,0 +1,83 @@
+{
+ "name": "숲(산)",
+ "view": "ground",
+ "horizon": 0.36,
+ "groundTop": 0.37,
+ "unit": 0.2,
+ "avoid": [],
+ "front": [
+  {
+   "src": "ferns",
+   "name": "고사리와 낙엽",
+   "h": 0.11
+  }
+ ],
+ "items": {
+  "oak": {
+   "name": "참나무",
+   "real": [
+    10,
+    16
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "pine": {
+   "name": "소나무",
+   "real": [
+    10,
+    18
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "stump": {
+   "name": "그루터기",
+   "real": [
+    0.5,
+    0.8
+   ]
+  },
+  "log": {
+   "name": "쓰러진 나무",
+   "real": [
+    0.5,
+    0.9
+   ]
+  },
+  "fern": {
+   "name": "고사리",
+   "real": [
+    0.5,
+    1
+   ]
+  },
+  "bush": {
+   "name": "덤불",
+   "real": [
+    1,
+    2
+   ]
+  },
+  "mossrock": {
+   "name": "이끼 바위",
+   "real": [
+    0.5,
+    1.2
+   ]
+  },
+  "mushrooms": {
+   "name": "버섯",
+   "real": [
+    0.1,
+    0.25
+   ]
+  }
+ }
+}

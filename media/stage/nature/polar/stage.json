@@ -1,0 +1,83 @@
+{
+ "name": "극지방",
+ "view": "ground",
+ "horizon": 0.33,
+ "groundTop": 0.34,
+ "unit": 0.2,
+ "avoid": [],
+ "front": [
+  {
+   "src": "snow",
+   "name": "눈 덩이",
+   "h": 0.11
+  }
+ ],
+ "items": {
+  "iceberg": {
+   "name": "빙산",
+   "real": [
+    4,
+    10
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "icecliff": {
+   "name": "얼음 벽",
+   "real": [
+    2,
+    4
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "iceridge": {
+   "name": "얼음 언덕",
+   "real": [
+    1,
+    2
+   ]
+  },
+  "iceblocks": {
+   "name": "얼음 덩이",
+   "real": [
+    0.5,
+    1
+   ]
+  },
+  "snowmound": {
+   "name": "눈 더미",
+   "real": [
+    0.5,
+    1.5
+   ]
+  },
+  "snowrock": {
+   "name": "눈 덮인 바위",
+   "real": [
+    0.5,
+    1.5
+   ]
+  },
+  "icechunks": {
+   "name": "작은 얼음",
+   "real": [
+    0.2,
+    0.4
+   ]
+  },
+  "snowdrift": {
+   "name": "눈 둔덕",
+   "real": [
+    0.3,
+    0.6
+   ]
+  }
+ }
+}

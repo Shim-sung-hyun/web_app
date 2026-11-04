@@ -1,0 +1,189 @@
+무대 그림 받기 — 008부터 (2026-11-04). 빈 배경 · 요소 · 앞가림 띠를 따로 받는다.
+
+하는 법
+1. 한 장마다 Gemini 새 대화창(장끼리 섞이지 않게). 아래 [배경 공통]/[요소 공통]/[띠 공통] + 그 장의 글을 함께 붙여 넣는다.
+2. 본보기 그림을 붙인다. 배경: media/habitats/<장소>.jpg (그림체만 따라 하게) · 요소·띠: media/habitats/props/prompts/style-ref.png
+3. 받은 그림을 무대 세션에 올리고 "무대 사막 배경", "무대 사막 요소"처럼 말하면 Claude가 잘라 media/stage/<갈래>/<장소>/에 넣는다.
+   마음에 안 들면 같은 창에서 "again, emptier ground" 처럼 다시 받기. 버린 그림은 저장소에 넣지 않는다.
+4. 순서: 사막 3장(배경·요소·띠 판 1) → 시험 페이지로 확인 → 괜찮으면 나머지.
+
+[배경 공통]
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
+
+[요소 공통]
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+
+[띠 공통]
+Use the attached image only as a STYLE reference (same flat cartoon style, dark-brown outlines). Do not copy its objects.
+On a pure white background draw 4 separate long horizontal strips stacked from top to bottom with wide white gaps between them. Each strip spans the full width of the picture and is about one eighth as tall as it is wide.
+Each strip is low foreground vegetation seen at eye level: the bottom edge is straight, the top edge is irregular (blades, leaves, pebbles). No sky, no ground patch, no shadow, no animals, no text. Leave the bottom fifth of the picture empty and white.
+
+━━ 1. 사막 (nature/desert)
+[배경 · 사막] 본보기 media/habitats/desert.jpg  →  media/stage/nature/desert/bg.jpg
+Only: pale golden sand with very soft low dunes far away, distant purple-brown mesas and mountains on the horizon, clear light-blue sky with two or three small soft clouds. The horizon is at about 33% from the top.
+[요소 · 사막] 본보기 style-ref.png  →  media/stage/nature/desert/items/
+1 a tall saguaro cactus with two raised arms      (saguaro · 큰 선인장)
+2 a wide prickly pear cactus with flat oval pads      (pricklypear · 부채선인장)
+3 a group of three round barrel cacti of different sizes      (barrelcacti · 둥근 선인장)
+4 a large layered sandstone rock, orange-tan, wider than tall      (sandstone · 큰 바위)
+5 a small cluster of pale tan sandy rocks      (rocks · 작은 돌)
+6 a dense rounded dry desert shrub, grey-green and brown twigs      (drybush · 마른 덤불)
+7 a clump of dry golden desert grass      (drygrass · 마른 풀)
+8 an agave plant with thick pointed grey-green leaves      (agave · 용설란)
+
+━━ 2. 초원 (nature/grassland)
+[배경 · 초원] 본보기 media/habitats/grassland.jpg  →  media/stage/nature/grassland/bg.jpg
+Only: wide flat golden-green savanna grass plain, distant blue hills, a far line of tiny trees only as a soft blur on the horizon, warm light-blue sky with soft clouds. The horizon is at about 33% from the top.
+[요소 · 초원] 본보기 style-ref.png  →  media/stage/nature/grassland/items/
+1 a flat-topped umbrella acacia tree      (acacia · 아카시아)
+2 a tall reddish-brown termite mound      (termite · 흙탑)
+3 a pile of large rounded granite boulders      (kopje · 바위 언덕)
+4 a low dense thorny savanna shrub, olive green      (thornbush · 가시덤불)
+5 a round tussock of dry golden grass, wide      (tussock · 풀 무더기)
+6 a small round green bush      (lowshrub · 작은 덤불)
+7 a few grey stones grouped together      (stones · 작은 돌)
+8 a clump of thin dry grass with seed heads      (drygrass · 마른 풀)
+
+━━ 3. 숲(산) (nature/forest)
+[배경 · 숲(산)] 본보기 media/habitats/forest.jpg  →  media/stage/nature/forest/bg.jpg
+Only: a soft forest floor of moss and fallen leaves, the far background a hazy blue-green wall of distant forest and mountain slopes, small patches of pale sky at the top. The horizon is at about 36% from the top.
+[요소 · 숲(산)] 본보기 style-ref.png  →  media/stage/nature/forest/items/
+1 a big oak tree with a thick trunk and full round crown      (oak · 참나무)
+2 a tall Korean red pine tree      (pine · 소나무)
+3 an old mossy tree stump with roots      (stump · 그루터기)
+4 a fallen log lying sideways, mossy      (log · 쓰러진 나무)
+5 a clump of large ferns      (fern · 고사리)
+6 a dense round green bush      (bush · 덤불)
+7 a grey rock with green moss      (mossrock · 이끼 바위)
+8 a small group of brown forest mushrooms      (mushrooms · 버섯)
+
+━━ 4. 땅 위(들판) (nature/ground)
+[배경 · 땅 위(들판)] 본보기 media/habitats/ground.jpg  →  media/stage/nature/ground/bg.jpg
+Only: a gentle green meadow, rolling green hills far away, light-blue sky with soft white clouds. The horizon is at about 33% from the top.
+[요소 · 땅 위(들판)] 본보기 style-ref.png  →  media/stage/nature/ground/items/
+1 a round leafy deciduous tree standing alone      (meadowtree · 들판 나무)
+2 a dense round green bush      (bush · 덤불)
+3 a medium grey rounded rock      (rock · 바위)
+4 a clump of wildflowers, yellow and white      (flowers · 꽃 무더기)
+5 a thick clump of long green grass      (grassclump · 풀 무더기)
+6 a few small grey pebbles      (stones · 작은 돌)
+7 a few dandelions, flowers and white seed heads      (dandelions · 민들레)
+8 a low patch of clover with white flowers      (clover · 토끼풀)
+
+━━ 5. 극지방 (nature/polar)
+[배경 · 극지방] 본보기 media/habitats/polar.jpg  →  media/stage/nature/polar/bg.jpg
+Only: flat white snow and ice field, a strip of dark blue sea and far white ice cliffs at the horizon, pale cold blue sky. The horizon is at about 33% from the top.
+[요소 · 극지방] 본보기 style-ref.png  →  media/stage/nature/polar/items/
+1 a large white-blue iceberg with flat cliffs      (iceberg · 빙산)
+2 a wide wall of blue-white ice blocks      (icecliff · 얼음 벽)
+3 a ridge of jagged pressure ice      (iceridge · 얼음 언덕)
+4 a pile of square ice blocks      (iceblocks · 얼음 덩이)
+5 a smooth rounded snow mound      (snowmound · 눈 더미)
+6 a dark rock half covered with snow      (snowrock · 눈 덮인 바위)
+7 a few small ice chunks      (icechunks · 작은 얼음)
+8 a low wind-shaped snowdrift      (snowdrift · 눈 둔덕)
+
+━━ 6. 논·습지 (nature/wetland)
+[배경 · 논·습지] 본보기 media/habitats/wetland.jpg  →  media/stage/nature/wetland/bg.jpg
+Only: a flat marsh with shallow shiny water and muddy green ground, far low green hills, light sky. The horizon is at about 35% from the top.
+[요소 · 논·습지] 본보기 style-ref.png  →  media/stage/nature/wetland/items/
+1 a weeping willow tree      (willow · 버드나무)
+2 a tall clump of reeds with feathery tops      (reeds · 갈대)
+3 a clump of cattails      (cattails · 부들)
+4 a clump of green rice plants      (rice · 벼)
+5 a round clump of sedge grass      (sedge · 사초)
+6 lotus leaves and a pink lotus flower on stems      (lotus · 연꽃)
+7 a low grassy mud bank      (mudbank · 흙둑)
+8 a clump of dry brown reeds      (dryreeds · 마른 갈대)
+
+━━ 7. 갯벌 (nature/mudflat)
+[배경 · 갯벌] 본보기 media/habitats/mudflat.jpg  →  media/stage/nature/mudflat/bg.jpg
+Only: wide flat wet grey mudflat with soft shine, a thin strip of sea at the horizon, pale sky. The horizon is at about 33% from the top.
+[요소 · 갯벌] 본보기 style-ref.png  →  media/stage/nature/mudflat/items/
+1 a low mound of wet grey mud      (mudmound · 진흙 둔덕)
+2 a clump of salt marsh grass      (saltreeds · 갯가 풀)
+3 a patch of red glasswort plants      (glasswort · 칠면초)
+4 a rock covered with oyster shells      (oysterrock · 굴 바위)
+5 a small pile of shells      (shellpile · 조개껍데기)
+6 a weathered wooden post stuck in mud      (mudpost · 나무 말뚝)
+7 a rock with green seaweed      (weedrock · 해초 바위)
+8 a few small wet pebbles      (pebbles · 작은 돌)
+
+━━ 8. 바닷속 (nature/sea)
+[배경 · 바닷속] 본보기 media/habitats/sea.jpg  →  media/stage/nature/sea/bg.jpg
+Only: an underwater sea view seen from the side: blue-green water getting lighter toward the top with soft light rays, a flat sandy sea floor in the lower third, a hazy far reef only as faint blue shapes.
+[요소 · 바닷속] 본보기 style-ref.png  →  media/stage/nature/sea/items/
+1 a tall kelp plant with long wavy brown-green leaves      (kelp · 다시마)
+2 a large underwater rock with small corals      (reefrock · 큰 바위)
+3 a branching pink-orange coral      (coral · 산호)
+4 a purple sea fan      (seafan · 부채산호)
+5 a clump of long green sea grass      (seagrass · 잘피)
+6 a sea anemone with soft tentacles      (anemone · 말미잘)
+7 a round brain coral      (braincoral · 뇌산호)
+8 a few round sea pebbles      (pebbles · 작은 돌)
+
+━━ 9. 물속 (nature/water)
+[배경 · 물속] 본보기 media/habitats/water.jpg  →  media/stage/nature/water/bg.jpg
+Only: a simple underwater view seen from the side: clear blue water with soft light rays from the top, a flat sandy bottom in the lower third.
+(요소는 바닷속 것을 빌려 씀 — 받을 것 없음)
+
+━━ 10. 강·호수 (nature/pond)
+[배경 · 강·호수] 본보기 media/habitats/pond.jpg  →  media/stage/nature/pond/bg.jpg
+Only: a lake seen as a cut-away: the upper 40% shows a calm far shore with hills and sky above a straight water surface line, below the line clear green-blue water down to a muddy sandy bottom in the lowest fifth.
+[요소 · 강·호수] 본보기 style-ref.png  →  media/stage/nature/pond/items/
+1 a tall clump of reeds growing up from the bottom      (reeds · 갈대)
+2 a clump of cattails      (cattails · 부들)
+3 a clump of soft underwater water weed      (waterweed · 물풀)
+4 water lily pads with a white flower, flat on water      (lilypads · 수련)
+5 a rounded rock with green algae      (rock · 물속 바위)
+6 a sunken log lying on the bottom      (sunkenlog · 가라앉은 나무)
+7 a few small round pebbles      (pebbles · 작은 돌)
+8 a feathery underwater plant      (hornwort · 붕어마름)
+
+━━ 11. 땅속 (nature/underground)
+[배경 · 땅속] 본보기 media/habitats/underground.jpg  →  media/stage/nature/underground/bg.jpg
+Only: a cut-away of soil seen from the side: a thin strip of grass and sky at the very top (top 12%), below that even brown soil layers getting slightly darker downward, with only very faint texture.
+[요소 · 땅속] 본보기 style-ref.png  →  media/stage/nature/underground/items/
+1 a tangle of tree roots growing downward      (rootball · 나무뿌리)
+2 a large rounded buried rock      (buriedrock · 묻힌 바위)
+3 a cluster of small stones in soil      (stones · 작은 돌)
+4 a lump of darker clay soil      (clod · 흙덩이)
+5 a small patch of gravel      (gravel · 자갈)
+6 thin hanging rootlets      (rootlets · 잔뿌리)
+7 a flat layered slate stone      (slate · 납작 돌)
+8 a smooth lump of reddish clay      (clay · 진흙 덩이)
+
+━━ 12. 하늘 (nature/sky)
+[배경 · 하늘] 본보기 media/habitats/sky.jpg  →  media/stage/nature/sky/bg.jpg
+Only: a big open light-blue sky filling most of the picture, a thin strip of low green hills along the very bottom (bottom 18%). The horizon is at about 82% from the top.
+[요소 · 하늘] 본보기 style-ref.png  →  media/stage/nature/sky/items/
+1 a big fluffy white cumulus cloud      (cloud · 구름)
+2 a small fluffy white cloud      (cloud2 · 작은 구름)
+3 a long flat bank of soft clouds      (cloudbank · 긴 구름)
+4 a few small round cloud puffs together      (cloudpuffs · 뭉게구름)
+5 a tall sunflower      (sunflower · 해바라기)
+6 a clump of tall green grass      (tallgrass · 긴 풀)
+7 a clump of white daisies      (daisies · 데이지)
+8 a clump of purple lavender      (lavender · 라벤더)
+
+━━ 앞가림 띠 판 (띠는 한 판에 4개)
+[띠 판 1] 본보기 style-ref.png
+1 a band of rippled sand with a few small pebbles and short dry grass tufts      (사막 → media/stage/nature/desert/front/sand.webp)
+2 a band of tall golden savanna grass blades, dense      (초원 → media/stage/nature/grassland/front/goldgrass.webp)
+3 a band of ferns, moss and fallen leaves      (숲(산) → media/stage/nature/forest/front/ferns.webp)
+4 a band of fresh green grass blades with a few tiny white and yellow flowers      (땅 위(들판) → media/stage/nature/ground/front/grass.webp)
+
+[띠 판 2] 본보기 style-ref.png
+1 a band of lumpy snow and small ice chunks      (극지방 → media/stage/nature/polar/front/snow.webp)
+2 a band of short sedges, water grass and mud at a water edge      (논·습지 → media/stage/nature/wetland/front/reedsedge.webp)
+3 a band of wet grey mud with small shells and glasswort      (갯벌 → media/stage/nature/mudflat/front/mud.webp)
+4 a band of sea grass, small corals and pebbles on sand      (바닷속 → media/stage/nature/sea/front/seafloor.webp)
+
+[띠 판 3] 본보기 style-ref.png  (띠가 하나뿐 — [띠 공통]의 "4 separate long horizontal strips"를 "1 long horizontal strip"으로 바꿔 붙임)
+1 a band of water weeds and pebbles on a muddy bottom      (강·호수 → media/stage/nature/pond/front/pondbed.webp)
+

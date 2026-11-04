@@ -1,0 +1,80 @@
+{
+ "name": "강·호수",
+ "view": "flat",
+ "horizon": 0.4,
+ "groundTop": 0.41,
+ "unit": 0.18,
+ "avoid": [],
+ "front": [
+  {
+   "src": "pondbed",
+   "name": "물속 바닥",
+   "h": 0.11
+  }
+ ],
+ "items": {
+  "reeds": {
+   "name": "갈대",
+   "real": [
+    1.5,
+    2.5
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "cattails": {
+   "name": "부들",
+   "real": [
+    1,
+    2
+   ]
+  },
+  "waterweed": {
+   "name": "물풀",
+   "real": [
+    0.4,
+    1
+   ]
+  },
+  "lilypads": {
+   "name": "수련",
+   "real": [
+    0.05,
+    0.1
+   ],
+   "float": true
+  },
+  "rock": {
+   "name": "물속 바위",
+   "real": [
+    0.4,
+    1
+   ]
+  },
+  "sunkenlog": {
+   "name": "가라앉은 나무",
+   "real": [
+    0.3,
+    0.6
+   ]
+  },
+  "pebbles": {
+   "name": "작은 돌",
+   "real": [
+    0.1,
+    0.3
+   ]
+  },
+  "hornwort": {
+   "name": "붕어마름",
+   "real": [
+    0.5,
+    1
+   ]
+  }
+ },
+ "note": "단면(옆에서 본 꼴): 원근 없이 어디서나 같은 크기"
+}

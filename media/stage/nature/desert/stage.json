@@ -1,0 +1,83 @@
+{
+ "name": "사막",
+ "view": "ground",
+ "horizon": 0.33,
+ "groundTop": 0.34,
+ "unit": 0.2,
+ "avoid": [],
+ "front": [
+  {
+   "src": "sand",
+   "name": "모래와 마른 풀",
+   "h": 0.11
+  }
+ ],
+ "items": {
+  "saguaro": {
+   "name": "큰 선인장",
+   "real": [
+    3,
+    6
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "pricklypear": {
+   "name": "부채선인장",
+   "real": [
+    0.8,
+    1.5
+   ]
+  },
+  "barrelcacti": {
+   "name": "둥근 선인장",
+   "real": [
+    0.4,
+    0.8
+   ]
+  },
+  "sandstone": {
+   "name": "큰 바위",
+   "real": [
+    1.5,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "rocks": {
+   "name": "작은 돌",
+   "real": [
+    0.2,
+    0.5
+   ]
+  },
+  "drybush": {
+   "name": "마른 덤불",
+   "real": [
+    0.5,
+    1
+   ]
+  },
+  "drygrass": {
+   "name": "마른 풀",
+   "real": [
+    0.2,
+    0.4
+   ]
+  },
+  "agave": {
+   "name": "용설란",
+   "real": [
+    0.6,
+    1.2
+   ]
+  }
+ }
+}

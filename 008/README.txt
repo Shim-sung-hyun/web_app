@@ -21,6 +21,8 @@
 - 가림 소품: media/habitats/props — 185개. 목록 index.json(크기·꽉 찬 부분 solid·모양 표 mask·실제 높이 real·잘린 쪽 anchor·쓰는 곳 places)
   tools/props-index.py로 만듦(real·anchor·places만 손으로). 새로 그릴 때 프롬프트: props/prompts/PROMPTS.txt·PROMPTS-5.txt, 본보기 style-ref.png
 - 목소리: media/voice/leda-0.92 (모두 내장). "악어는 강이나 연못에 살아요."는 같은 목소리 조각을 이어 만듦(2026-11-02)
+- 무대(2026-11-04~): 숨은 동물 찾기 장면을 빈 배경 + 따로 그린 요소로 쌓는 쪽으로 옮기는 중(무대 세션, media/stage/README.txt). 옮기기 전까지 지금 장면·소품 그대로.
+  옛 숨은 그림 media/habitats/seek 는 _trash/2026-11-04/ 로 옮김(어디서도 안 부름).
 - 실제 사진: media/habitats/photos.json(보기 끝 실제 사진, 아직 없음)
 
 수준과 동물(2026-11-02, 55종)

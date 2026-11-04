@@ -1,0 +1,83 @@
+{
+ "name": "갯벌",
+ "view": "ground",
+ "horizon": 0.33,
+ "groundTop": 0.34,
+ "unit": 0.2,
+ "avoid": [],
+ "front": [
+  {
+   "src": "mud",
+   "name": "갯벌 흙",
+   "h": 0.11
+  }
+ ],
+ "items": {
+  "mudmound": {
+   "name": "진흙 둔덕",
+   "real": [
+    0.3,
+    0.8
+   ]
+  },
+  "saltreeds": {
+   "name": "갯가 풀",
+   "real": [
+    0.5,
+    1
+   ]
+  },
+  "glasswort": {
+   "name": "칠면초",
+   "real": [
+    0.2,
+    0.4
+   ]
+  },
+  "oysterrock": {
+   "name": "굴 바위",
+   "real": [
+    0.5,
+    1.2
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "shellpile": {
+   "name": "조개껍데기",
+   "real": [
+    0.1,
+    0.3
+   ]
+  },
+  "mudpost": {
+   "name": "나무 말뚝",
+   "real": [
+    1,
+    1.6
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "weedrock": {
+   "name": "해초 바위",
+   "real": [
+    0.4,
+    1
+   ]
+  },
+  "pebbles": {
+   "name": "작은 돌",
+   "real": [
+    0.1,
+    0.3
+   ]
+  }
+ }
+}

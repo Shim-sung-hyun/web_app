@@ -21,7 +21,7 @@ for f in sorted(os.listdir(SRC)):
 
 changed, same = {}, {}
 for dirpath, dirs, files in os.walk(ROOT):
-    dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ('node_modules', 'common')]
+    dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ('node_modules', 'common', '_trash')]
     for f in sorted(files):
         if not f.endswith('.html'):
             continue

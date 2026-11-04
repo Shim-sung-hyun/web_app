@@ -1,0 +1,78 @@
+{
+ "name": "땅속",
+ "view": "flat",
+ "horizon": 0.12,
+ "groundTop": 0.13,
+ "unit": 0.15,
+ "avoid": [],
+ "front": [],
+ "items": {
+  "rootball": {
+   "name": "나무뿌리",
+   "real": [
+    1,
+    2
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "buriedrock": {
+   "name": "묻힌 바위",
+   "real": [
+    0.4,
+    1
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "stones": {
+   "name": "작은 돌",
+   "real": [
+    0.1,
+    0.3
+   ]
+  },
+  "clod": {
+   "name": "흙덩이",
+   "real": [
+    0.2,
+    0.4
+   ]
+  },
+  "gravel": {
+   "name": "자갈",
+   "real": [
+    0.1,
+    0.2
+   ]
+  },
+  "rootlets": {
+   "name": "잔뿌리",
+   "real": [
+    0.4,
+    0.8
+   ]
+  },
+  "slate": {
+   "name": "납작 돌",
+   "real": [
+    0.2,
+    0.4
+   ]
+  },
+  "clay": {
+   "name": "진흙 덩이",
+   "real": [
+    0.2,
+    0.4
+   ]
+  }
+ },
+ "note": "단면(옆에서 본 꼴): 원근 없이 어디서나 같은 크기"
+}

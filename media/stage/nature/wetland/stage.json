@@ -1,0 +1,78 @@
+{
+ "name": "논·습지",
+ "view": "ground",
+ "horizon": 0.35,
+ "groundTop": 0.36,
+ "unit": 0.2,
+ "avoid": [],
+ "front": [
+  {
+   "src": "reedsedge",
+   "name": "물가 풀",
+   "h": 0.11
+  }
+ ],
+ "items": {
+  "willow": {
+   "name": "버드나무",
+   "real": [
+    5,
+    9
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "reeds": {
+   "name": "갈대",
+   "real": [
+    1.5,
+    2.5
+   ]
+  },
+  "cattails": {
+   "name": "부들",
+   "real": [
+    1,
+    2
+   ]
+  },
+  "rice": {
+   "name": "벼",
+   "real": [
+    0.6,
+    1
+   ]
+  },
+  "sedge": {
+   "name": "사초",
+   "real": [
+    0.4,
+    0.8
+   ]
+  },
+  "lotus": {
+   "name": "연꽃",
+   "real": [
+    0.6,
+    1.2
+   ]
+  },
+  "mudbank": {
+   "name": "흙둑",
+   "real": [
+    0.4,
+    0.8
+   ]
+  },
+  "dryreeds": {
+   "name": "마른 갈대",
+   "real": [
+    1,
+    1.8
+   ]
+  }
+ }
+}

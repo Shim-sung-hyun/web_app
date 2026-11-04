@@ -1,0 +1,78 @@
+{
+ "name": "땅 위(들판)",
+ "view": "ground",
+ "horizon": 0.33,
+ "groundTop": 0.34,
+ "unit": 0.2,
+ "avoid": [],
+ "front": [
+  {
+   "src": "grass",
+   "name": "풀밭",
+   "h": 0.11
+  }
+ ],
+ "items": {
+  "meadowtree": {
+   "name": "들판 나무",
+   "real": [
+    5,
+    8
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "bush": {
+   "name": "덤불",
+   "real": [
+    1,
+    1.6
+   ]
+  },
+  "rock": {
+   "name": "바위",
+   "real": [
+    0.4,
+    1
+   ]
+  },
+  "flowers": {
+   "name": "꽃 무더기",
+   "real": [
+    0.3,
+    0.6
+   ]
+  },
+  "grassclump": {
+   "name": "풀 무더기",
+   "real": [
+    0.3,
+    0.6
+   ]
+  },
+  "stones": {
+   "name": "작은 돌",
+   "real": [
+    0.1,
+    0.3
+   ]
+  },
+  "dandelions": {
+   "name": "민들레",
+   "real": [
+    0.15,
+    0.3
+   ]
+  },
+  "clover": {
+   "name": "토끼풀",
+   "real": [
+    0.1,
+    0.2
+   ]
+  }
+ }
+}

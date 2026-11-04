@@ -1,0 +1,86 @@
+{
+ "name": "물속",
+ "view": "flat",
+ "horizon": 0.3,
+ "groundTop": 0.31,
+ "unit": 0.18,
+ "avoid": [],
+ "front": [],
+ "items": {
+  "kelp": {
+   "name": "다시마",
+   "real": [
+    3,
+    6
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ],
+   "from": "nature/sea"
+  },
+  "reefrock": {
+   "name": "큰 바위",
+   "real": [
+    1.5,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ],
+   "from": "nature/sea"
+  },
+  "coral": {
+   "name": "산호",
+   "real": [
+    0.5,
+    1
+   ],
+   "from": "nature/sea"
+  },
+  "seafan": {
+   "name": "부채산호",
+   "real": [
+    0.6,
+    1.2
+   ],
+   "from": "nature/sea"
+  },
+  "seagrass": {
+   "name": "잘피",
+   "real": [
+    0.4,
+    0.8
+   ],
+   "from": "nature/sea"
+  },
+  "anemone": {
+   "name": "말미잘",
+   "real": [
+    0.2,
+    0.4
+   ],
+   "from": "nature/sea"
+  },
+  "braincoral": {
+   "name": "뇌산호",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "from": "nature/sea"
+  },
+  "pebbles": {
+   "name": "작은 돌",
+   "real": [
+    0.1,
+    0.3
+   ],
+   "from": "nature/sea"
+  }
+ },
+ "note": "단면(옆에서 본 꼴): 원근 없이 어디서나 같은 크기"
+}

@@ -1,0 +1,88 @@
+{
+ "name": "초원",
+ "view": "ground",
+ "horizon": 0.33,
+ "groundTop": 0.34,
+ "unit": 0.2,
+ "avoid": [],
+ "front": [
+  {
+   "src": "goldgrass",
+   "name": "누런 풀",
+   "h": 0.11
+  }
+ ],
+ "items": {
+  "acacia": {
+   "name": "아카시아",
+   "real": [
+    5,
+    8
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "termite": {
+   "name": "흙탑",
+   "real": [
+    1.5,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "kopje": {
+   "name": "바위 언덕",
+   "real": [
+    2,
+    4
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "thornbush": {
+   "name": "가시덤불",
+   "real": [
+    1,
+    2
+   ]
+  },
+  "tussock": {
+   "name": "풀 무더기",
+   "real": [
+    0.5,
+    1
+   ]
+  },
+  "lowshrub": {
+   "name": "작은 덤불",
+   "real": [
+    0.6,
+    1.2
+   ]
+  },
+  "stones": {
+   "name": "작은 돌",
+   "real": [
+    0.2,
+    0.5
+   ]
+  },
+  "drygrass": {
+   "name": "마른 풀",
+   "real": [
+    0.3,
+    0.6
+   ]
+  }
+ }
+}

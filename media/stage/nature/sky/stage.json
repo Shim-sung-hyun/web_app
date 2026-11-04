@@ -1,0 +1,71 @@
+{
+ "name": "하늘",
+ "view": "ground",
+ "horizon": 0.82,
+ "groundTop": 0.83,
+ "unit": 0.2,
+ "avoid": [],
+ "front": [],
+ "items": {
+  "cloud": {
+   "name": "구름",
+   "real": [
+    1,
+    1
+   ],
+   "float": true
+  },
+  "cloud2": {
+   "name": "작은 구름",
+   "real": [
+    1,
+    1
+   ],
+   "float": true
+  },
+  "cloudbank": {
+   "name": "긴 구름",
+   "real": [
+    1,
+    1
+   ],
+   "float": true
+  },
+  "cloudpuffs": {
+   "name": "뭉게구름",
+   "real": [
+    1,
+    1
+   ],
+   "float": true
+  },
+  "sunflower": {
+   "name": "해바라기",
+   "real": [
+    1.5,
+    2.5
+   ]
+  },
+  "tallgrass": {
+   "name": "긴 풀",
+   "real": [
+    0.6,
+    1
+   ]
+  },
+  "daisies": {
+   "name": "데이지",
+   "real": [
+    0.3,
+    0.5
+   ]
+  },
+  "lavender": {
+   "name": "라벤더",
+   "real": [
+    0.4,
+    0.7
+   ]
+  }
+ }
+}

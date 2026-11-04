@@ -1,4 +1,4 @@
-무대(stage) — 장면을 레이어로 쌓아 만드는 공통 자료·모듈 (2026-11-03 시작 안내·보관 구조 정함. 그림은 아직 없음 — 다음 주쯤 받기 시작)
+무대(stage) — 장면을 레이어로 쌓아 만드는 공통 자료·모듈 (2026-11-04: 008의 12곳 폴더·stage.json·모듈·시험 페이지·Gemini 프롬프트까지 만듦. 그림은 아직 없음 — 사막부터 받는 중)
 무대 세션이 이 글부터 읽고 시작한다. 정한 것과 다음 할 일은 이 글을 고쳐 적는다(덧붙이기보다 해당 줄을 고쳐 씀).
 
 ■ 왜(선생님 생각, 2026-11-03)
@@ -37,25 +37,41 @@ index.json 꼴(장소 하나에 한 줄)
                      "tags":["더움","모래"],"used_by":["008"]}, …}
   - 그림을 넣거나 빼면 index.json 과 그 곳 stage.json 을 함께 고친다(나중에 tools/로 자동 만들기를 둘 수도)
 
-■ 모듈 common/stage.js — 쌓는 규칙(공통 모듈: 원본 한 곳, tools/sync-modules.py로 앱에 복사)
-    · 부르기: 장소 이름("nature/desert")만 넘기면 index.json·stage.json을 읽어 그림
-    · 깊이: 밑동이 화면 아래쪽(가까운 것)일수록 위 레이어. 동물·앱 소품도 같은 규칙으로 함께 쌓음
-    · 원근: 밑동 높이에 따라 크기를 줄임(지평선에 가까울수록 작게). 실제 높이 × 그 자리의 '1m가 몇 점'
-    · 무작위 배치(판마다 다른 장면)와 고정 배치(설명서·캡처용) 둘 다
-    · 모듈은 동작만, 얼굴(테두리·그림자 세기)은 앱이 넘겨 줌
+■ 장면 만드는 원칙(2026-11-04 선생님 결정 — docs/guidelines.md에도 있음)
+- 배경 · 대상 · 앞가림을 따로 그려 겹친다(만화영화 셀처럼). 한 장에 다 그려 받지 않는다(대상만 바꾸거나 움직일 수 없음).
+- 쌓는 차례는 세 층으로 딱 나누지 않고 '밑동이 아래(가까운 것)일수록 위'. 덤불은 어떤 동물에겐 앞가림, 다른 동물에겐 뒤 배경이 됨.
+  따로 그리는 앞가림은 화면 아래에 까는 얇은 띠(풀·모래·물풀)뿐 — front/*.webp. 대상의 아랫부분을 살짝 덮어 "그 안에 있는" 느낌.
+- 그림자는 그림에 넣지 않고 모듈이 그림(방향·진하기가 모두 같게, 크기 따라 줄어듦). 대상은 투명 바탕, 밑동은 반듯하게.
+- 고르게 흩뿌리지 않음: 2~4 덩어리(큰 것 하나 + 앞쪽 작은 것 몇)와 빈 땅. 먼 것은 살짝 옅고 흐리게(공기 원근).
+- 그림체·빛 방향(왼쪽 위)을 하나로: 배경 본보기 media/habitats/<곳>.jpg(그림체만), 요소·띠 본보기 media/habitats/props/prompts/style-ref.png.
+- 다시 그려야 하면 과감하게 다시 받는다. 옛 그림(장면에 그려진 나무·바위, 아랫단을 흐린 소품)을 고쳐 쓰느라 품을 들이지 않는다.
 
-■ 그림 받는 법(선생님이 Gemini로)
-- 그림체는 media/habitats/props/prompts/style-ref.png 와 같게(소품) — 배경은 지금 장면(media/habitats/*.jpg) 그림체
-- 오른쪽 아래 Gemini 별 표시가 걸치지 않게 "오른쪽 1/5과 아래 1/5은 비워 두기"(한 장 한 개) 또는 3×3 판의 9번 칸 비우기
-- 배경 프롬프트에는 "NO trees, NO rocks, NO cactus, NO buildings — only sky, far mountains, horizon and empty ground" 를 꼭
-- 요소는 "flat bottom touching the ground, seen from the front at eye level, no shadow, no ground line"
-- 받은 그림 자르기: 008에서 쓴 방법(별 지우기·흰 테두리 정리 tools/clean-edges.py, 투명 바탕으로 온 그림은 그대로)
+■ 모듈 common/stage.js (공통 모듈: 원본 한 곳, python3 tools/sync-modules.py로 <script id="stage"> 칸에 복사)
+- Stage.load('nature/desert') → Stage.compose(pl,{seed}) 또는 {fixed:[{id,x,y,r,flip}]} → Stage.add(pl,lay,{동물…}) → Stage.render(div,pl,lay,{shadow,haze,front})
+- 좌표는 장면 대비 0~1, y는 밑동. 원근: 1m 몫 = unit × (y−지평선)/(1−지평선). view:'flat'(바닷속·물속·강 단면·땅속)은 어디서나 unit
+- 아직 받지 않은 그림은 빼고 그림(배경이 없으면 빈 칸). 시험 페이지 media/stage/test.html (#nature/desert/번호 로 같은 판 다시 보기)
+  2026-11-04 대신 그린 네모·타원으로 쌓기·원근·그림자·흐림·띠가 도는 것만 확인함 — 진짜 그림으로는 아직 못 봄
 
-■ 순서(권함)
-1. (다음 주부터) 사막 nature/desert 하나로 시험: 빈 배경 1장 + 요소 판 1~2장(선인장 크고 작게·바위·흙탑·덤불·마른 풀)
-2. common/stage.js 로 사막을 쌓아 보는 시험 페이지(media/stage/test.html) — 무작위 몇 판을 찍어 선생님께 보임
-3. 좋으면 008 베타 숨은 동물 찾기에 연결해 지금 방식과 견줌(소품 아랫단 흐리게 하기를 없앨 수 있는지)
-4. 나머지 곳으로 넓힘. 다른 앱이 쓰려면 그 앱 세션이 common/stage.js 를 넣고 media/stage/<이름>/ 을 부름
+stage.json 꼴(장소마다)
+  name·view('ground'|'flat')·horizon(지평선 높이 0~1)·groundTop(요소를 놓기 시작하는 높이)·unit(맨 아래에서 1m 몫)
+  avoid:[[x0,y0,x1,y1]…] 놓지 않는 자리 · front:[{src,name,h}] 앞가림 띠(h=띠 높이 몫)
+  items:{id:{name, real:[낮은,높은 m], role:'big'(덩어리의 중심), ground:[0~1 범위, 땅 위 어디까지], float(구름처럼 뜸), from(빌려 옴),
+            base(그림 중 밑동 줄의 몫, 기본 1), foot:[왼,오른](그림자 폭, 기본 .2~.8), flip:false(뒤집으면 안 됨), scale}}
+  그림을 받아 넣은 뒤 지평선(horizon)·unit을 그림에 맞게 고치고 index.json의 bg·ready를 고친다.
+
+■ 그림 받는 법 — 프롬프트 media/stage/prompts/PROMPTS-008.txt (배경 12 · 요소 판 11 · 띠 판 3. 물속은 바닷속 요소를 빌려 씀)
+- 한 장마다 Gemini 새 창. [공통] 글 + 그 장의 글 + 본보기 그림. 받은 그림을 이 세션에 올리면 Claude가 잘라 넣음
+- 요소: 흰 바탕 3×3 판(9번 칸 비움) → tools/clean-edges.py로 흰 바탕 지우고, 밑동 아래 빈 줄을 잘라 items/<id>.webp
+- 배경: 4:3, 1600×1200 jpg로 맞추고 오른쪽 아래 별 표시를 지움 → bg.jpg
+- 마음에 안 드는 그림은 저장소에 넣지 않는다. 이미 넣었다가 안 쓰게 된 것은 python3 tools/trash.py 경로 --why "이유" (3개월 뒤 비움)
+
+■ 지금 상태와 다음 할 일
+- 폴더: media/stage/nature/ 아래 008의 12곳(desert grassland forest ground polar wetland mudflat sea water pond underground sky). 장소마다 stage.json만 있고 그림 없음.
+  index.json 은 모두 ready:false. 다른 갈래(town·school·home·public·_common)는 그 앱이 필요할 때 만든다.
+- 다음: ① 사막 배경·요소·띠 판 1 받기 → 넣고 test.html로 네 판 찍어 선생님께 보임 ② 덩어리·크기·그림자·띠 높이 다듬기
+  ③ 좋으면 008 베타 숨은 동물 찾기에 연결(소품 아랫단 흐리게 하기 없애기, 동물은 Stage.add로 함께 쌓기) ④ 나머지 11곳 받기
+- 008 연결 때 생각할 것: 008의 숨기기 규칙(보이는 넓이·ZONE·FACE)은 008에 그대로 두고, 놓는 자리·크기·깊이만 무대에 맡김.
+  다 옮기면 media/habitats/props·game 장면은 _trash로(008이 더는 안 부를 때만).
 
 ■ 참고: 008이 지금 가진 것(옮겨 쓸 수 있음)
 - 008/animal-home.html: playHide·hideCfg·pickHide(실제 크기·보이는 넓이로 숨기기), PREAL(소품 실제 높이), zIndex = 밑동 높이 순

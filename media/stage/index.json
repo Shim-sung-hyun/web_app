@@ -1,1 +1,272 @@
-{}
+{
+ "nature/desert": {
+  "name": "사막",
+  "group": "nature",
+  "view": "ground",
+  "bg": [],
+  "items": [
+   "saguaro",
+   "pricklypear",
+   "barrelcacti",
+   "sandstone",
+   "rocks",
+   "drybush",
+   "drygrass",
+   "agave"
+  ],
+  "front": [
+   "sand"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/grassland": {
+  "name": "초원",
+  "group": "nature",
+  "view": "ground",
+  "bg": [],
+  "items": [
+   "acacia",
+   "termite",
+   "kopje",
+   "thornbush",
+   "tussock",
+   "lowshrub",
+   "stones",
+   "drygrass"
+  ],
+  "front": [
+   "goldgrass"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/forest": {
+  "name": "숲(산)",
+  "group": "nature",
+  "view": "ground",
+  "bg": [],
+  "items": [
+   "oak",
+   "pine",
+   "stump",
+   "log",
+   "fern",
+   "bush",
+   "mossrock",
+   "mushrooms"
+  ],
+  "front": [
+   "ferns"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/ground": {
+  "name": "땅 위(들판)",
+  "group": "nature",
+  "view": "ground",
+  "bg": [],
+  "items": [
+   "meadowtree",
+   "bush",
+   "rock",
+   "flowers",
+   "grassclump",
+   "stones",
+   "dandelions",
+   "clover"
+  ],
+  "front": [
+   "grass"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/polar": {
+  "name": "극지방",
+  "group": "nature",
+  "view": "ground",
+  "bg": [],
+  "items": [
+   "iceberg",
+   "icecliff",
+   "iceridge",
+   "iceblocks",
+   "snowmound",
+   "snowrock",
+   "icechunks",
+   "snowdrift"
+  ],
+  "front": [
+   "snow"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/wetland": {
+  "name": "논·습지",
+  "group": "nature",
+  "view": "ground",
+  "bg": [],
+  "items": [
+   "willow",
+   "reeds",
+   "cattails",
+   "rice",
+   "sedge",
+   "lotus",
+   "mudbank",
+   "dryreeds"
+  ],
+  "front": [
+   "reedsedge"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/mudflat": {
+  "name": "갯벌",
+  "group": "nature",
+  "view": "ground",
+  "bg": [],
+  "items": [
+   "mudmound",
+   "saltreeds",
+   "glasswort",
+   "oysterrock",
+   "shellpile",
+   "mudpost",
+   "weedrock",
+   "pebbles"
+  ],
+  "front": [
+   "mud"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/sea": {
+  "name": "바닷속",
+  "group": "nature",
+  "view": "flat",
+  "bg": [],
+  "items": [
+   "kelp",
+   "reefrock",
+   "coral",
+   "seafan",
+   "seagrass",
+   "anemone",
+   "braincoral",
+   "pebbles"
+  ],
+  "front": [
+   "seafloor"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/water": {
+  "name": "물속",
+  "group": "nature",
+  "view": "flat",
+  "bg": [],
+  "items": [
+   "kelp",
+   "reefrock",
+   "coral",
+   "seafan",
+   "seagrass",
+   "anemone",
+   "braincoral",
+   "pebbles"
+  ],
+  "front": [],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/pond": {
+  "name": "강·호수",
+  "group": "nature",
+  "view": "flat",
+  "bg": [],
+  "items": [
+   "reeds",
+   "cattails",
+   "waterweed",
+   "lilypads",
+   "rock",
+   "sunkenlog",
+   "pebbles",
+   "hornwort"
+  ],
+  "front": [
+   "pondbed"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/underground": {
+  "name": "땅속",
+  "group": "nature",
+  "view": "flat",
+  "bg": [],
+  "items": [
+   "rootball",
+   "buriedrock",
+   "stones",
+   "clod",
+   "gravel",
+   "rootlets",
+   "slate",
+   "clay"
+  ],
+  "front": [],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ },
+ "nature/sky": {
+  "name": "하늘",
+  "group": "nature",
+  "view": "ground",
+  "bg": [],
+  "items": [
+   "cloud",
+   "cloud2",
+   "cloudbank",
+   "cloudpuffs",
+   "sunflower",
+   "tallgrass",
+   "daisies",
+   "lavender"
+  ],
+  "front": [],
+  "used_by": [
+   "008"
+  ],
+  "ready": false
+ }
+}

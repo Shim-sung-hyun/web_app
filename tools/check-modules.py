@@ -25,7 +25,7 @@ def norm(code):
 
 mods = {}   # 모듈 이름 → {파일: 줄 목록}
 for dirpath, dirs, files in os.walk(ROOT):
-    dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'node_modules']
+    dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ('node_modules', '_trash')]
     for f in sorted(files):
         if not f.endswith('.html'):
             continue
