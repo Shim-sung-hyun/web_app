@@ -93,6 +93,85 @@
     0.65
    ],
    "from": "nature/sea"
+  },
+  "rockwall": {
+   "name": "바위 벽",
+   "real": [
+    4,
+    8
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ],
+   "from": "nature/sea"
+  },
+  "kelpforest": {
+   "name": "다시마 숲",
+   "real": [
+    5,
+    8
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ],
+   "from": "nature/sea"
+  },
+  "tablecoral": {
+   "name": "상 모양 산호",
+   "real": [
+    1.5,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ],
+   "from": "nature/sea"
+  },
+  "sponge": {
+   "name": "해면",
+   "real": [
+    0.8,
+    1.5
+   ],
+   "from": "nature/sea"
+  },
+  "tubecoral": {
+   "name": "관 산호",
+   "real": [
+    0.5,
+    1
+   ],
+   "from": "nature/sea"
+  },
+  "weedboulder": {
+   "name": "해초 바위",
+   "real": [
+    1,
+    2
+   ],
+   "from": "nature/sea"
+  },
+  "grassbed": {
+   "name": "잘피 밭",
+   "real": [
+    0.5,
+    1
+   ],
+   "from": "nature/sea"
+  },
+  "shellpile": {
+   "name": "조개껍데기 돌무더기",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "from": "nature/sea"
   }
  }
 }

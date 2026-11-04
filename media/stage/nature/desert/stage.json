@@ -78,6 +78,82 @@
     0.6,
     1.2
    ]
+  },
+  "butte": {
+   "name": "붉은 바위산",
+   "real": [
+    4,
+    8
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "boulderpile": {
+   "name": "큰 바위 더미",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "organpipe": {
+   "name": "기둥 선인장",
+   "real": [
+    2,
+    4
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "deadtree": {
+   "name": "마른 나무",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "tumbleweed": {
+   "name": "회전초 덤불",
+   "real": [
+    0.8,
+    1.2
+   ]
+  },
+  "duneridge": {
+   "name": "모래 언덕",
+   "real": [
+    1,
+    2
+   ]
+  },
+  "creosote": {
+   "name": "사막 덤불",
+   "real": [
+    1,
+    1.5
+   ]
+  },
+  "stones": {
+   "name": "작은 돌",
+   "real": [
+    0.2,
+    0.4
+   ]
   }
  },
  "skirt": [

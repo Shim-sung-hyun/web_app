@@ -78,6 +78,72 @@
     0.1,
     0.3
    ]
+  },
+  "barnaclerock": {
+   "name": "따개비 바위",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "shorereeds": {
+   "name": "갯가 갈대",
+   "real": [
+    1.5,
+    2
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "crabmound": {
+   "name": "게 구멍 둔덕",
+   "real": [
+    0.6,
+    1
+   ]
+  },
+  "weedrocks": {
+   "name": "해초 돌",
+   "real": [
+    0.4,
+    0.8
+   ]
+  },
+  "oysters": {
+   "name": "굴 껍데기 더미",
+   "real": [
+    0.3,
+    0.6
+   ]
+  },
+  "marshgrass": {
+   "name": "갯잔디",
+   "real": [
+    0.5,
+    0.8
+   ]
+  },
+  "ledge": {
+   "name": "낮은 바위턱",
+   "real": [
+    0.5,
+    1
+   ]
+  },
+  "posts": {
+   "name": "나무 말뚝 무리",
+   "real": [
+    1,
+    2
+   ]
   }
  },
  "skirt": [

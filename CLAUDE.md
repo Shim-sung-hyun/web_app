@@ -14,7 +14,7 @@
 - `common/` 공통 모듈 원본(`roster.js` 학생 명단 …). 고친 뒤 `python3 tools/sync-modules.py`로 앱마다 넣는다. 앱 안의 모듈 칸은 손으로 고치지 않는다.
 - `server/` charum.org 서버에 올리는 파일의 원본(토큰 칸은 비움). `relay/` 사진 다리.
 - `교과-과학/` 과학 교과서·지도서 정리(기본교육과정: 초5, 중·고 과학② Ⅲ단원 / 공통교육과정: 초3-1 2단원). 폴더 이름으로 기본/공통교육과정을 나눈다. 앱 내용을 교과와 맞출 때 `README.md` 색인부터 본다.
-- `media/stage/` 무대(빈 배경·요소를 장소별로, 차림표 `index.json`, 모듈 `common/stage.js`). `_trash/` 버릴 자료 상자(3개월 뒤 비움, `tools/trash.py`) — 세션 시작 때 `python3 tools/trash.py`로 비울 때가 됐는지 본다.
+- `media/stage/` 무대(빈 배경·요소를 장소별로, 차림표 `index.json`, 모듈 `common/stagekit.js`). `_trash/` 버릴 자료 상자(3개월 뒤 비움, `tools/trash.py`) — 세션 시작 때 `python3 tools/trash.py`로 비울 때가 됐는지 본다.
 - `docs/` 지침. `guidelines.md`가 기준, `guidelines-full.md`는 앱마다의 자세한 사정·저장 칸·기록 꼴(필요한 절만 찾아 읽음).
 
 ## 007 낱말 익히기 만드는 법

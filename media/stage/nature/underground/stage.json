@@ -72,6 +72,77 @@
     0.2,
     0.4
    ]
+  },
+  "rocklayer": {
+   "name": "바위층",
+   "real": [
+    1,
+    2
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "rootmass": {
+   "name": "뿌리 덩이",
+   "real": [
+    1.5,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "roundstones": {
+   "name": "둥근 돌 무리",
+   "real": [
+    0.3,
+    0.6
+   ]
+  },
+  "stump": {
+   "name": "묻힌 그루터기",
+   "real": [
+    1,
+    2
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "rootclay": {
+   "name": "뿌리 박힌 진흙",
+   "real": [
+    0.3,
+    0.6
+   ]
+  },
+  "gravelvein": {
+   "name": "자갈 줄",
+   "real": [
+    0.2,
+    0.4
+   ]
+  },
+  "bulbs": {
+   "name": "알뿌리",
+   "real": [
+    0.2,
+    0.4
+   ]
+  },
+  "sandlump": {
+   "name": "사암 덩이",
+   "real": [
+    0.3,
+    0.6
+   ]
   }
  },
  "note": "단면(옆에서 본 꼴): 원근 없이 어디서나 같은 크기"

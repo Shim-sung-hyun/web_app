@@ -25,11 +25,15 @@ const ROOT=path.resolve(__dirname,'..')+'/', TRIALS=+process.argv[2]||5;
      await wait(200); card=document.querySelector('.showCard'); if(!card) continue;
      const W=card.clientWidth,H=card.clientHeight;
      const els=[...card.querySelectorAll('img')].filter(e=>!e.classList.contains('bg'));
-     const info=await Promise.all(els.map(async e=>{ const im=await load(e.src); return {e,im,z:+e.style.zIndex||0,animal:e.classList.contains('placed'),a:e.alt}; }));
+     /* 무대(2026-11-04 베타): 소품이 상자(div) 안의 그림+밑동 덮개, 꾸밈은 % 단위 — 장면 좌표로 바꿔 셈 */
+     const px=(v,ref)=>String(v||'0').endsWith('%')?parseFloat(v)*ref/100:parseFloat(v)||0;
+     const geo=e=>{ const P=e.parentElement, inBox=P!==card&&String(P.style.left).endsWith('px'), rw=inBox?parseFloat(P.style.width):W, rh=inBox?parseFloat(P.style.height):H;
+       return {l:px(e.style.left,rw)+(inBox?parseFloat(P.style.left):0),t:px(e.style.top,rh)+(inBox?parseFloat(P.style.top):0),w:px(e.style.width,rw),h:px(e.style.height,rh),z:+e.style.zIndex||(inBox?+P.style.zIndex:0)||0}; };
+     const info=await Promise.all(els.map(async e=>{ const im=await load(e.src), g=geo(e); return {e,im,g,z:g.z,animal:e.classList.contains('placed'),a:e.alt}; }));
      for(const A of info.filter(x=>x.animal)){
        /* 캔버스를 장면보다 넓게 — 화면 밖으로 나간 몸도 '원래 점'에 셈하고, 보이는 점은 장면 안만 셈 */
        const c=document.createElement('canvas'); c.width=W*3; c.height=H*3; const x=c.getContext('2d'); x.translate(W,H);
-       const draw=(o)=>{ const e=o.e, w=parseFloat(e.style.width), h=parseFloat(e.style.height), l=parseFloat(e.style.left), t=parseFloat(e.style.top);
+       const draw=(o)=>{ const e=o.e, {w,h,l,t}=o.g;
          if(!o.im) return; x.save();
          if(o.animal){ if(e.dataset.flip){ x.translate(l,0); x.scale(-1,1); x.translate(-l,0); } x.drawImage(o.im,l-w/2,t-h/2,w,h); }
          else { if(e.style.transform.includes('scaleX(-1)')){ x.translate(l+w/2,0); x.scale(-1,1); x.translate(-(l+w/2),0); } x.drawImage(o.im,l,t,w,h); }

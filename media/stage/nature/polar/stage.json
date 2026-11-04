@@ -78,6 +78,77 @@
     0.3,
     0.6
    ]
+  },
+  "snowridge": {
+   "name": "눈 언덕",
+   "real": [
+    2,
+    4
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "iceslab": {
+   "name": "기운 얼음판",
+   "real": [
+    3,
+    6
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "snowboulder": {
+   "name": "눈 덮인 큰 바위",
+   "real": [
+    1.5,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "floes": {
+   "name": "얼음 조각 더미",
+   "real": [
+    1,
+    2
+   ]
+  },
+  "drift": {
+   "name": "눈 둔덕",
+   "real": [
+    1,
+    1.5
+   ]
+  },
+  "cubes": {
+   "name": "작은 얼음 덩이",
+   "real": [
+    0.3,
+    0.6
+   ]
+  },
+  "icyrock": {
+   "name": "고드름 바위",
+   "real": [
+    0.6,
+    1
+   ]
+  },
+  "lowmound": {
+   "name": "낮은 눈 더미",
+   "real": [
+    0.4,
+    0.8
+   ]
   }
  },
  "skirt": [

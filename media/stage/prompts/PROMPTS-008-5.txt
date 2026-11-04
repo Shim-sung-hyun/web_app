@@ -1,0 +1,184 @@
+무대 그림 받기 5 — 008 숨은 동물 찾기용 요소 더 (2026-11-04)  ※ 1~53번은 앞 파일들(다 받음)
+왜: 008 베타에 무대를 연결해 보니, 곳마다 요소가 8~10개뿐이라(옛 소품은 11~36개) 기린·코끼리·고래 같은 큰 동물을 알맞게 가릴 것이 모자람.
+     곳마다 한 판씩 더 받습니다. 큰 동물이 많은 곳부터(54 초원 → 55 들판 → 56 바닷속 → 57 숲 → 58 극지방 …). 한꺼번에 못 받으면 앞 번호부터.
+받은 그림은 "무대 54번"처럼 번호를 말하며 올려 주세요. 칸 이름 중 이미 있는 이름과 겹치는 것은 Claude가 뒤에 2를 붙여 넣습니다.
+
+━━━━━━━━ 54. 초원 요소 판 2 (nature/grassland)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/grassland/items/  칸 차례: 1 baobab(바오밥나무) · 2 elephantgrass(키 큰 풀숲) · 3 termitegroup(흙탑 무리) · 4 acaciabush(아카시아 덤불) · 5 granite(둥근 바위) · 6 deadtrunk(마른 통나무) · 7 tallgrass(긴 누런 풀) · 8 rockpile(돌무더기)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell, with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+These objects will hide animals behind them, so bushes, grass, rocks and trunks are dense and SOLID with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a baobab tree with a very thick trunk and a small flat crown
+2 a tall dense clump of elephant grass, solid, wider than tall
+3 a group of three reddish termite mounds of different heights, joined at the base
+4 a wide dense thorny acacia bush, olive green, solid
+5 a big rounded granite boulder, grey
+6 a dry fallen tree trunk lying sideways
+7 a clump of tall golden grass
+8 a small pile of grey rocks
+▲ 여기까지
+
+━━━━━━━━ 55. 땅 위(들판) 요소 판 2 (nature/ground)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/ground/items/  칸 차례: 1 hedge(큰 덤불 울타리) · 2 boulders(큰 바위 무리) · 3 silvergrass(억새) · 4 bramble(가시덤불) · 5 azalea(진달래 덤불) · 6 log(통나무) · 7 mossrock(이끼 바위) · 8 cosmos(코스모스)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell, with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+These objects will hide animals behind them, so bushes, grass, rocks and trunks are dense and SOLID with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a big dense hedge of round green bushes, much wider than tall, solid
+2 a large group of grey boulders
+3 a tall clump of Korean silver grass with feathery tops
+4 a wide bramble bush with small berries
+5 a low rounded azalea bush with pink flowers
+6 a fallen log lying sideways
+7 a grey rock with green moss
+8 a clump of tall cosmos flowers, pink and white
+▲ 여기까지
+
+━━━━━━━━ 56. 바닷속 요소 판 2 (nature/sea)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/sea/items/  칸 차례: 1 rockwall(바위 벽) · 2 kelpforest(다시마 숲) · 3 tablecoral(상 모양 산호) · 4 sponge(해면) · 5 tubecoral(관 산호) · 6 weedboulder(해초 바위) · 7 grassbed(잘피 밭) · 8 shellpile(조개껍데기 돌무더기)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell, with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+These objects will hide animals behind them, so bushes, grass, rocks and trunks are dense and SOLID with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a tall wide underwater rock wall with corals and sponges, solid, wider than tall
+2 a dense wide clump of many tall kelp plants, solid in the lower half
+3 a large table coral, flat top on a thick base
+4 a big barrel sea sponge, orange
+5 a cluster of purple tube corals
+6 a large round boulder covered with seaweed
+7 a wide bed of green sea grass
+8 a small pile of sea shells and stones
+▲ 여기까지
+
+━━━━━━━━ 57. 숲(산) 요소 판 2 (nature/forest)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/forest/items/  칸 차례: 1 bigboulder(큰 이끼 바위) · 2 thicket(진달래 숲) · 3 fallengiant(쓰러진 큰 나무) · 4 fir(어린 전나무) · 5 tallfern(큰 고사리) · 6 bramble(가시덤불) · 7 branchpile(나뭇가지 더미) · 8 rottenlog(버섯 핀 통나무)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell, with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+These objects will hide animals behind them, so bushes, grass, rocks and trunks are dense and SOLID with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a big mossy boulder, wider than tall
+2 a dense azalea thicket, dark green with a few pink flowers, wide and solid
+3 a huge fallen tree trunk with its round root plate standing up at one end
+4 a young fir tree, cone shaped, dense
+5 a clump of tall ferns
+6 a tangled bramble bush with dark berries
+7 a pile of fallen branches and twigs
+8 a rotten log with small mushrooms
+▲ 여기까지
+
+━━━━━━━━ 58. 극지방 요소 판 2 (nature/polar)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/polar/items/  칸 차례: 1 snowridge(눈 언덕) · 2 iceslab(기운 얼음판) · 3 snowboulder(눈 덮인 큰 바위) · 4 floes(얼음 조각 더미) · 5 drift(눈 둔덕) · 6 cubes(작은 얼음 덩이) · 7 icyrock(고드름 바위) · 8 lowmound(낮은 눈 더미)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell, with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+These objects will hide animals behind them, so bushes, grass, rocks and trunks are dense and SOLID with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a wide snow-covered ridge, much wider than tall
+2 a tall leaning slab of blue-white ice
+3 a large dark boulder covered with snow
+4 a pile of broken ice floes
+5 a tall wind-shaped snowdrift
+6 a few small ice blocks
+7 a dark rock with icicles
+8 a low snow mound with bits of ice
+▲ 여기까지
+
+━━━━━━━━ 59. 사막 요소 판 2 (nature/desert)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/desert/items/  칸 차례: 1 butte(붉은 바위산) · 2 boulderpile(큰 바위 더미) · 3 organpipe(기둥 선인장) · 4 deadtree(마른 나무) · 5 tumbleweed(회전초 덤불) · 6 duneridge(모래 언덕) · 7 creosote(사막 덤불) · 8 stones(작은 돌)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell, with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+These objects will hide animals behind them, so bushes, grass, rocks and trunks are dense and SOLID with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a small red rock butte with flat top and steep sides
+2 a big pile of rounded orange boulders
+3 a tall organ pipe cactus with many upright stems from the base
+4 a dead dry desert tree with bare twisted branches
+5 a wide round tumbleweed bush
+6 a low sand dune ridge, wider than tall
+7 a dense green creosote bush
+8 a small cluster of desert stones
+▲ 여기까지
+
+━━━━━━━━ 60. 갯벌 요소 판 2 (nature/mudflat)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/mudflat/items/  칸 차례: 1 barnaclerock(따개비 바위) · 2 shorereeds(갯가 갈대) · 3 crabmound(게 구멍 둔덕) · 4 weedrocks(해초 돌) · 5 oysters(굴 껍데기 더미) · 6 marshgrass(갯잔디) · 7 ledge(낮은 바위턱) · 8 posts(나무 말뚝 무리)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell, with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+These objects will hide animals behind them, so bushes, grass, rocks and trunks are dense and SOLID with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a big rock outcrop covered with barnacles
+2 a wide clump of reeds at the shore
+3 a large mound of wet mud with small crab holes
+4 a tangle of seaweed on wet rocks
+5 a heap of oyster shells
+6 a clump of salt marsh grass
+7 a low rocky ledge, wider than tall
+8 a cluster of three wooden posts with seaweed at the bottom
+▲ 여기까지
+
+━━━━━━━━ 61. 논·습지 요소 판 2 (nature/wetland)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/wetland/items/  칸 차례: 1 reedbed(갈대밭) · 2 silvergrass(억새) · 3 bank(풀 둑) · 4 iris(붓꽃) · 5 ripe(익은 벼) · 6 plantain(질경이택사) · 7 willowshrub(작은 버드나무) · 8 tallsedge(큰 사초)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell, with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+These objects will hide animals behind them, so bushes, grass, rocks and trunks are dense and SOLID with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a wide dense reed bed, solid
+2 a big clump of silver grass with feathery tops
+3 a low earth bank with grass, wider than tall
+4 a clump of purple irises
+5 a clump of tall golden rice plants with drooping heads
+6 a clump of water plantain with broad leaves
+7 a small bushy willow shrub
+8 a clump of tall sedge
+▲ 여기까지
+
+━━━━━━━━ 62. 땅속 요소 판 2 (nature/underground)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/underground/items/  칸 차례: 1 rocklayer(바위층) · 2 rootmass(뿌리 덩이) · 3 roundstones(둥근 돌 무리) · 4 stump(묻힌 그루터기) · 5 rootclay(뿌리 박힌 진흙) · 6 gravelvein(자갈 줄) · 7 bulbs(알뿌리) · 8 sandlump(사암 덩이)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell, with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+These objects will hide animals behind them, so bushes, grass, rocks and trunks are dense and SOLID with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a big flat layered rock, much wider than tall
+2 a large tangled mass of tree roots
+3 a cluster of round stones
+4 an old buried tree root stump
+5 a lump of clay with thin roots
+6 a long thin vein of gravel
+7 a cluster of plant bulbs with roots
+8 a layered sandstone lump
+▲ 여기까지
+
+━━━━━━━━ 63. 강·호수 배경 (다시 — 지난 그림은 수족관 상자처럼 세로 벽과 네모 바닥이 있음)
+새 Gemini 창 · 붙일 그림: media/habitats/pond.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/pond/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO plants, NO reeds, NO rocks, NO logs, NO animals, NO people, NO text, NO frame.
+A natural lake seen as a side cut-away, like looking through the side of the water: the upper part shows the calm far shore with soft green hills and sky above a straight, gently wavy water surface line at about 45% from the top. Below the line, clear green-blue water that gets a little darker with depth, down to a soft muddy-sandy lake bottom that slopes gently up toward the left and right edges. NO glass, NO tank walls, NO vertical lines, NO box corners, NO frame around the water. Keep the bottom-right corner plain.
+▲ 여기까지

@@ -94,6 +94,82 @@
     6
    ],
    "role": "frame"
+  },
+  "bigboulder": {
+   "name": "큰 이끼 바위",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "thicket": {
+   "name": "진달래 숲",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "fallengiant": {
+   "name": "쓰러진 큰 나무",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "fir": {
+   "name": "어린 전나무",
+   "real": [
+    3,
+    5
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "tallfern": {
+   "name": "큰 고사리",
+   "real": [
+    1,
+    1.5
+   ]
+  },
+  "bramble": {
+   "name": "가시덤불",
+   "real": [
+    1,
+    1.5
+   ]
+  },
+  "branchpile": {
+   "name": "나뭇가지 더미",
+   "real": [
+    0.6,
+    1
+   ]
+  },
+  "rottenlog": {
+   "name": "버섯 핀 통나무",
+   "real": [
+    0.4,
+    0.7
+   ]
   }
  },
  "far": [

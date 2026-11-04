@@ -25,13 +25,13 @@
  <span id="msg"></span>
 </header>
 <div id="grid"></div>
-<script id="stage">
-/* 무대(stage) 공통 모듈 — 원본은 common/stage.js 한 곳. 앱 안의 이 칸은 손으로 고치지 말고 python3 tools/sync-modules.py
+<script id="stagekit">
+/* 무대(stage) 공통 모듈 — 원본은 common/stagekit.js 한 곳. 앱 안의 이 칸은 손으로 고치지 말고 python3 tools/sync-modules.py
    빈 배경 위에 요소(나무·바위·동물…)를 '밑동이 아래인 것이 앞'으로 쌓는다(만화영화 셀처럼).
    자료: media/stage/<갈래>/<장소>/ (bg.jpg · items/*.webp · front/*.webp 앞가림 띠 · far/*.webp 먼 띠 · stage.json), 차림표 media/stage/index.json
    쓰는 법
      const pl = await Stage.load('nature/desert');                 // stage.json 읽고 그림을 미리 받음
-     const lay = Stage.compose(pl, {seed: 7});                      // 무작위 배치(같은 seed면 같은 장면) — 고정 배치는 {fixed:[…]}
+     const lay = Stage.compose(pl, {seed: 7});                      // 무작위 배치(같은 seed면 같은 장면) — 고정 배치는 {fixed:[…]}, 피할 자리 {avoid:[[x0,y0,x1,y1]…], min:0}
      Stage.add(pl, lay, {src, real: 1.2, x: .5, y: .8, w: 300, h: 200, name: '낙타'});  // 동물·앱 소품도 같은 규칙으로 끼움
      Stage.render(div, pl, lay, {shadow: .28, haze: .3});           // div 안에 그림(4:3, 크기는 %라 화면 크기를 따라감)
    모듈은 동작만, 얼굴(그림자 세기·흐림·테두리)은 앱이 넘겨 준다. 좌표 x·y는 장면 대비 0~1, y는 밑동(땅에 닿는 곳). */
@@ -114,6 +114,11 @@
       const it = pick(frame), left = R() < .5, y = .9 + R() * .08;
       const p = place(pl, it, 0, y, R(), !left); p.h = 1.08 + R() * .12; p.w = p.h * (it.w / it.h) * .75; p.x = left ? -p.w * .15 : 1 + p.w * .15; out.push(p);   // 위가 늘 화면 밖, 줄기의 1/3쯤만 보이게
     }
+    if (opt.avoid && opt.avoid.length) {   // 앱이 이미 놓은 것(동물·가림 소품) 자리와 겹치면 뺌 — 앱이 셈한 보이는 몫이 어긋나지 않게
+      const hit = o => opt.avoid.some(r => o.x + o.w / 2 > r[0] && o.x - o.w / 2 < r[2] && o.y > r[1] && o.y - o.h * o.base < r[3]);
+      for (let i = out.length - 1; i >= 0; i--) if (hit(out[i])) out.splice(i, 1);
+      if (opt.min === 0) return out;
+    }
     if ((opt._t || 0) < 5 && out.filter(o => o.h > .06).length < 2)   // 거의 빈 판(작은 돌 하나 등)은 다시 놓음
       return compose(pl, Object.assign({}, opt, {seed: (opt.seed ?? Math.floor(R() * 1e9)) + 1, _t: (opt._t || 0) + 1}));
     return out;
@@ -127,19 +132,20 @@
     lay.push(p); return p;
   }
 
-  /* 그리기. look: skirt(밑동 덮개 쓰기, 기본 true) · shadow(그림자 진하기 0~1, 기본 .28) · haze(먼 것 흐림 0~1, 기본 .3) · front(앞가림 띠 쓰기, 기본 true) · line(요소 테두리 CSS filter) */
+  /* 그리기. look: layer(앱 장면 안의 한 겹 — 상자 꼴을 건드리지 않음) · bg(false면 배경 안 그림) · zOf(o,i)·farZ·frontZ(앱의 z 차례에 맞출 때) · skirt(밑동 덮개 쓰기, 기본 true) · shadow(그림자 진하기 0~1, 기본 .28) · haze(먼 것 흐림 0~1, 기본 .3) · front(앞가림 띠 쓰기, 기본 true) · line(요소 테두리 CSS filter) */
   function render(box, pl, lay, look = {}) {
     const sh = look.shadow ?? .28, hz = look.haze ?? .3;
-    box.innerHTML = ''; box.style.position = 'relative'; box.style.aspectRatio = box.style.aspectRatio || '4 / 3'; box.style.overflow = 'hidden';
+    box.innerHTML = '';
+    if (!look.layer) { box.style.position = 'relative'; box.style.aspectRatio = box.style.aspectRatio || '4 / 3'; box.style.overflow = 'hidden'; }   // layer: 앱 장면 안의 한 겹(앱이 자리·크기를 정함)
     const mk = (tag, css) => { const e = document.createElement(tag); e.style.cssText = 'position:absolute;pointer-events:none;' + css; box.appendChild(e); return e; };
-    if (pl.bgImg) { const b = mk('img', 'left:0;top:0;width:100%;height:100%;object-fit:cover;z-index:0'); b.src = pl.bgImg.src; b.alt = ''; }
+    if (pl.bgImg && look.bg !== false) { const b = mk('img', 'left:0;top:0;width:100%;height:100%;object-fit:cover;z-index:0'); b.src = pl.bgImg.src; b.alt = ''; }
     for (const f of pl.far || []) if (f.img) {   // 먼 띠(먼 숲·먼 갈대밭): 지평선 위에 서서 모든 요소 뒤
       const h = f.h || .08, y = f.y ?? pl.horizon + .01;
-      const e = mk('img', `left:-1%;width:102%;top:${(y - h) * 100}%;height:${h * 100}%;z-index:2;object-fit:fill;filter:saturate(${1 - .4 * hz}) brightness(${1 + .12 * hz}) contrast(${1 - .25 * hz})`); e.src = f.srcUrl; e.alt = '';
+      const e = mk('img', `left:-1%;width:102%;top:${(y - h) * 100}%;height:${h * 100}%;z-index:${look.farZ ?? 2};object-fit:fill;filter:saturate(${1 - .4 * hz}) brightness(${1 + .12 * hz}) contrast(${1 - .25 * hz})`); e.src = f.srcUrl; e.alt = '';
     }
     const order = lay.slice().sort((a, b) => a.y - b.y);   // 밑동이 위(먼 것)부터 → 아래(가까운 것)가 위 레이어
     order.forEach((o, i) => {
-      const z = 10 + i * 2, far = pl.view === 'flat' ? 0 : Math.max(0, 1 - (o.y - pl.horizon) / (1 - pl.horizon));
+      const z = look.zOf ? look.zOf(o, i) : 10 + i * 2, far = pl.view === 'flat' ? 0 : Math.max(0, 1 - (o.y - pl.horizon) / (1 - pl.horizon));
       const top = o.y - o.h * o.base, left = o.x - o.w / 2;
       if (o.ground && sh > 0) {                                   // 발밑 옅은 그림자(프로그램이 그림 — 방향·진하기가 모두 같게)
         const fw = o.w * (o.foot[1] - o.foot[0]) * 1.1, fh = Math.max(.006, fw * .16);
@@ -160,7 +166,7 @@
       }
     });
     if (look.front !== false) for (const f of pl.front || []) if (f.img) {   // 앞가림 띠: 화면 아래에서 모든 것 위
-      const h = f.h || .12, e = mk('img', `left:-1%;width:102%;top:${(f.y ?? 1) * 100 - h * 100}%;height:${h * 100}%;z-index:9000;object-fit:fill`); e.src = f.srcUrl; e.alt = '';
+      const h = f.h || .12, e = mk('img', `left:-1%;width:102%;top:${(f.y ?? 1) * 100 - h * 100}%;height:${h * 100}%;z-index:${look.frontZ ?? 9000};object-fit:fill`); e.src = f.srcUrl; e.alt = '';
     }
     return order;
   }

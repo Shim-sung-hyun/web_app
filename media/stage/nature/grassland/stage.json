@@ -95,6 +95,87 @@
     0,
     0.65
    ]
+  },
+  "baobab": {
+   "name": "바오밥나무",
+   "real": [
+    8,
+    15
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "elephantgrass": {
+   "name": "키 큰 풀숲",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "termitegroup": {
+   "name": "흙탑 무리",
+   "real": [
+    2,
+    4
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "acaciabush": {
+   "name": "아카시아 덤불",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "granite": {
+   "name": "둥근 바위",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "deadtrunk": {
+   "name": "마른 통나무",
+   "real": [
+    0.6,
+    1
+   ]
+  },
+  "tallgrass": {
+   "name": "긴 누런 풀",
+   "real": [
+    1,
+    1.5
+   ]
+  },
+  "rockpile": {
+   "name": "돌무더기",
+   "real": [
+    0.3,
+    0.6
+   ]
   }
  },
  "far": [

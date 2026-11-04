@@ -14,7 +14,15 @@
    "rocks",
    "drybush",
    "drygrass",
-   "agave"
+   "agave",
+   "butte",
+   "boulderpile",
+   "organpipe",
+   "deadtree",
+   "tumbleweed",
+   "duneridge",
+   "creosote",
+   "stones"
   ],
   "front": [
    "sand"
@@ -24,7 +32,16 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [],
+  "missing": [
+   "butte",
+   "boulderpile",
+   "organpipe",
+   "deadtree",
+   "tumbleweed",
+   "duneridge",
+   "creosote",
+   "stones"
+  ],
   "skirt": [
    "sanddrift",
    "sandpebbles",
@@ -47,7 +64,15 @@
    "lowshrub",
    "stones",
    "drygrass",
-   "thicket"
+   "thicket",
+   "baobab",
+   "elephantgrass",
+   "termitegroup",
+   "acaciabush",
+   "granite",
+   "deadtrunk",
+   "tallgrass",
+   "rockpile"
   ],
   "front": [
    "goldgrass"
@@ -59,7 +84,16 @@
   "far": [
    "bush"
   ],
-  "missing": [],
+  "missing": [
+   "baobab",
+   "elephantgrass",
+   "termitegroup",
+   "acaciabush",
+   "granite",
+   "deadtrunk",
+   "tallgrass",
+   "rockpile"
+  ],
   "skirt": [
    "drygrass",
    "redearth",
@@ -83,7 +117,15 @@
    "mossrock",
    "mushrooms",
    "oaktrunk",
-   "pinetrunk"
+   "pinetrunk",
+   "bigboulder",
+   "thicket",
+   "fallengiant",
+   "fir",
+   "tallfern",
+   "bramble",
+   "branchpile",
+   "rottenlog"
   ],
   "front": [
    "ferns"
@@ -95,7 +137,16 @@
   "far": [
    "trees"
   ],
-  "missing": [],
+  "missing": [
+   "bigboulder",
+   "thicket",
+   "fallengiant",
+   "fir",
+   "tallfern",
+   "bramble",
+   "branchpile",
+   "rottenlog"
+  ],
   "skirt": [
    "leafmound",
    "mossroots",
@@ -117,7 +168,15 @@
    "grassclump",
    "stones",
    "dandelions",
-   "clover"
+   "clover",
+   "hedge",
+   "boulders",
+   "silvergrass",
+   "bramble",
+   "azalea",
+   "log",
+   "mossrock",
+   "cosmos"
   ],
   "front": [
    "grass"
@@ -129,7 +188,16 @@
   "far": [
    "hedge"
   ],
-  "missing": [],
+  "missing": [
+   "hedge",
+   "boulders",
+   "silvergrass",
+   "bramble",
+   "azalea",
+   "log",
+   "mossrock",
+   "cosmos"
+  ],
   "skirt": [
    "grasstuft",
    "clover",
@@ -151,7 +219,15 @@
    "snowmound",
    "snowrock",
    "icechunks",
-   "snowdrift"
+   "snowdrift",
+   "snowridge",
+   "iceslab",
+   "snowboulder",
+   "floes",
+   "drift",
+   "cubes",
+   "icyrock",
+   "lowmound"
   ],
   "front": [
    "snow"
@@ -161,7 +237,16 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [],
+  "missing": [
+   "snowridge",
+   "iceslab",
+   "snowboulder",
+   "floes",
+   "drift",
+   "cubes",
+   "icyrock",
+   "lowmound"
+  ],
   "skirt": [
    "snowdrift",
    "snowcrumbs"
@@ -182,7 +267,15 @@
    "sedge",
    "lotus",
    "dryreeds",
-   "paddybank"
+   "paddybank",
+   "reedbed",
+   "silvergrass",
+   "bank",
+   "iris",
+   "ripe",
+   "plantain",
+   "willowshrub",
+   "tallsedge"
   ],
   "front": [
    "reedsedge"
@@ -194,7 +287,16 @@
   "far": [
    "reeds"
   ],
-  "missing": [],
+  "missing": [
+   "reedbed",
+   "silvergrass",
+   "bank",
+   "iris",
+   "ripe",
+   "plantain",
+   "willowshrub",
+   "tallsedge"
+  ],
   "skirt": [
    "ripples",
    "mudsprouts",
@@ -216,7 +318,15 @@
    "shellpile",
    "mudpost",
    "weedrock",
-   "pebbles"
+   "pebbles",
+   "barnaclerock",
+   "shorereeds",
+   "crabmound",
+   "weedrocks",
+   "oysters",
+   "marshgrass",
+   "ledge",
+   "posts"
   ],
   "front": [
    "mud"
@@ -226,7 +336,16 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [],
+  "missing": [
+   "barnaclerock",
+   "shorereeds",
+   "crabmound",
+   "weedrocks",
+   "oysters",
+   "marshgrass",
+   "ledge",
+   "posts"
+  ],
   "skirt": [
    "mudmound",
    "mudwort"
@@ -248,7 +367,15 @@
    "anemone",
    "braincoral",
    "pebbles",
-   "rockarch"
+   "rockarch",
+   "rockwall",
+   "kelpforest",
+   "tablecoral",
+   "sponge",
+   "tubecoral",
+   "weedboulder",
+   "grassbed",
+   "shellpile"
   ],
   "front": [
    "seafloor"
@@ -258,7 +385,16 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [],
+  "missing": [
+   "rockwall",
+   "kelpforest",
+   "tablecoral",
+   "sponge",
+   "tubecoral",
+   "weedboulder",
+   "grassbed",
+   "shellpile"
+  ],
   "skirt": [
    "sandmound",
    "seasprigs",
@@ -281,7 +417,15 @@
    "anemone",
    "braincoral",
    "pebbles",
-   "rockarch"
+   "rockarch",
+   "rockwall",
+   "kelpforest",
+   "tablecoral",
+   "sponge",
+   "tubecoral",
+   "weedboulder",
+   "grassbed",
+   "shellpile"
   ],
   "front": [],
   "used_by": [
@@ -289,7 +433,16 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [],
+  "missing": [
+   "rockwall",
+   "kelpforest",
+   "tablecoral",
+   "sponge",
+   "tubecoral",
+   "weedboulder",
+   "grassbed",
+   "shellpile"
+  ],
   "skirt": []
  },
  "nature/pond": {
@@ -337,7 +490,15 @@
    "gravel",
    "rootlets",
    "slate",
-   "clay"
+   "clay",
+   "rocklayer",
+   "rootmass",
+   "roundstones",
+   "stump",
+   "rootclay",
+   "gravelvein",
+   "bulbs",
+   "sandlump"
   ],
   "front": [],
   "used_by": [
@@ -345,7 +506,16 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [],
+  "missing": [
+   "rocklayer",
+   "rootmass",
+   "roundstones",
+   "stump",
+   "rootclay",
+   "gravelvein",
+   "bulbs",
+   "sandlump"
+  ],
   "skirt": []
  },
  "nature/sky": {

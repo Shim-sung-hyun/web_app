@@ -446,12 +446,169 @@ body.setup #adminBtn{display:none}
   window.Roster = { list: list, nameOf: nameOf, has: has, add: add, remove: remove, kept: kept, purge: purge, mount: mount, KEEP_DAYS: KEEP_DAYS };
 })();
 </script>
+<script id="stagekit">
+/* 무대(stage) 공통 모듈 — 원본은 common/stagekit.js 한 곳. 앱 안의 이 칸은 손으로 고치지 말고 python3 tools/sync-modules.py
+   빈 배경 위에 요소(나무·바위·동물…)를 '밑동이 아래인 것이 앞'으로 쌓는다(만화영화 셀처럼).
+   자료: media/stage/<갈래>/<장소>/ (bg.jpg · items/*.webp · front/*.webp 앞가림 띠 · far/*.webp 먼 띠 · stage.json), 차림표 media/stage/index.json
+   쓰는 법
+     const pl = await Stage.load('nature/desert');                 // stage.json 읽고 그림을 미리 받음
+     const lay = Stage.compose(pl, {seed: 7});                      // 무작위 배치(같은 seed면 같은 장면) — 고정 배치는 {fixed:[…]}, 피할 자리 {avoid:[[x0,y0,x1,y1]…], min:0}
+     Stage.add(pl, lay, {src, real: 1.2, x: .5, y: .8, w: 300, h: 200, name: '낙타'});  // 동물·앱 소품도 같은 규칙으로 끼움
+     Stage.render(div, pl, lay, {shadow: .28, haze: .3});           // div 안에 그림(4:3, 크기는 %라 화면 크기를 따라감)
+   모듈은 동작만, 얼굴(그림자 세기·흐림·테두리)은 앱이 넘겨 준다. 좌표 x·y는 장면 대비 0~1, y는 밑동(땅에 닿는 곳). */
+(function (G) {
+  const BASE = 'https://shim-sung-hyun.github.io/web_app/media/stage/';
+  const rnd = s => () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const img = src => new Promise(ok => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; });
+
+  /* 장소 읽기. stage.json 꼴은 media/stage/README.txt 참고. 다른 곳 요소는 "from":"school/classroom" 으로 빌려 옴 */
+  async function load(id, opt = {}) {
+    const base = (opt.base || BASE), dir = base + id + '/';
+    const cfg = await fetch(dir + 'stage.json', {cache: 'no-cache'}).then(r => r.json());
+    const pl = Object.assign({id, dir, horizon: .35, groundTop: .36, unit: .22, view: 'ground'}, cfg);
+    const jobs = [img(dir + (opt.bg || 'bg') + '.jpg').then(i => pl.bgImg = i)];
+    for (const [k, it] of Object.entries(pl.items || {})) {
+      it.id = k; it.src = (it.from ? base + it.from + '/' : dir) + 'items/' + k + '.webp';
+      jobs.push(img(it.src).then(i => { it.img = i; if (i) { it.w = i.naturalWidth; it.h = i.naturalHeight; } }));
+    }
+    for (const f of pl.front || []) { f.srcUrl = dir + 'front/' + f.src + '.webp'; jobs.push(img(f.srcUrl).then(i => f.img = i)); }
+    for (const f of pl.far || []) { f.srcUrl = dir + 'far/' + f.src + '.webp'; jobs.push(img(f.srcUrl).then(i => f.img = i)); }
+    pl.skirtImg = {};   // 밑동 덮개(낙엽·흙더미·모래·물결): skirt/*.webp — 요소 밑동 앞에 덮어 땅에 박힌 듯
+    const sk = new Set([...(pl.skirt || []), ...Object.values(pl.items || {}).flatMap(i => Array.isArray(i.skirt) ? i.skirt : [])]);
+    for (const k of sk) jobs.push(img(dir + 'skirt/' + k + '.webp').then(i => { if (i) pl.skirtImg[k] = i; }));
+    await Promise.all(jobs);
+    for (const k of Object.keys(pl.items || {})) if (!pl.items[k].img) delete pl.items[k];   // 아직 안 받은 그림은 빼고 그림
+    return pl;
+  }
+
+  /* 그 자리(밑동 y)에서 1m가 장면 높이의 몇 몫인가. 땅을 평평하게 보면 지평선에서 내려온 만큼에 비례.
+     unit = 맨 아래 테두리에서 1m의 몫. view:'flat'(땅속 단면·물속 단면·하늘)은 어디서나 같음 */
+  const perM = (pl, y) => pl.view === 'flat' ? pl.unit : pl.unit * Math.max(.04, (y - pl.horizon) / (1 - pl.horizon));
+  const inAvoid = (pl, x, y) => (pl.avoid || []).some(r => x >= r[0] && x <= r[2] && y >= r[1] && y <= r[3]);
+
+  /* 하나 놓기: 실제 높이(m)와 밑동 자리로 장면 대비 크기를 셈 */
+  function place(pl, it, x, y, r, flip, extra) {
+    const realH = Array.isArray(it.real) ? it.real[0] + (it.real[1] - it.real[0]) * r : it.real;
+    const base = it.base ?? 1;                              // 그림 높이 중 밑동 줄이 있는 몫(1 = 맨 아래)
+    const h = realH * perM(pl, y) / base * (it.scale || 1); // 그림 전체 높이(장면 대비)
+    const w = h * (it.w / it.h) * .75;                      // 장면이 4:3이라 가로 몫으로 바꿈
+    const sks = it.float || it.skirt === false ? [] : (Array.isArray(it.skirt) ? it.skirt : pl.skirt || []).filter(k => pl.skirtImg && pl.skirtImg[k]);
+    const skirt = sks.length ? sks[Math.floor(((r * 7919) % 1) * sks.length)] : null;
+    return Object.assign({id: it.id, src: it.src, x, y, w, h, base, flip: !!flip, foot: it.foot || [.2, .8], ground: it.float ? 0 : 1, skirt}, extra || {});
+  }
+
+  /* 무작위 배치. 고르게 흩뿌리지 않고 2~4 덩어리(큰 것 하나 + 앞쪽에 작은 것 몇)로 놓고 빈 땅을 남긴다 */
+  function compose(pl, opt = {}) {
+    if (opt.fixed) return opt.fixed.map(f => place(pl, pl.items[f.id], f.x, f.y, f.r ?? .5, f.flip));
+    const R = rnd(opt.seed ?? (Math.random() * 1e9)), items = Object.values(pl.items || {});
+    const big = items.filter(i => i.role === 'big'), small = items.filter(i => !i.role && !i.float), sky = items.filter(i => i.float), frame = items.filter(i => i.role === 'frame');
+    const out = [], pick = a => a[Math.floor(R() * a.length)], clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const gy = r => pl.groundTop + (1 - pl.groundTop) * r;
+    const free = (x, y, w) => !inAvoid(pl, x, y) && out.every(o => Math.abs(o.x - x) > (o.w + w) * .35 || Math.abs(o.y - y) > .05);
+    const n = opt.clusters ?? (2 + Math.floor(R() * 3));
+    const xs = [...Array(n)].map((_, i) => (i + .2 + R() * .6) / n).sort(() => R() - .5);  // 덩어리끼리 가로로 떨어지게
+    for (let c = 0; c < n && (big.length || small.length); c++) {
+      const cy = gy(.1 + R() * .75), cx = xs[c];
+      const lead = big.length && R() < .8 ? pick(big) : pick(small);
+      if (!lead) continue;
+      const ok = (it, y) => !it.ground || (y >= gy(it.ground[0]) && y <= gy(it.ground[1]));
+      if (!ok(lead, cy) || inAvoid(pl, cx, cy)) continue;
+      const L = place(pl, lead, cx, cy, R(), lead.flip !== false && R() < .5); out.push(L);
+      const k = Math.floor(R() * 3) + (opt.busy ? 1 : 0);
+      for (let j = 0; j < k && small.length; j++) {
+        const it = pick(small), y = clamp(cy + .01 + R() * .06, pl.groundTop, .99), x = clamp(cx + (R() - .5) * L.w * 1.4, .03, .97);
+        if (!ok(it, y)) continue;
+        const p = place(pl, it, x, y, R(), it.flip !== false && R() < .5);
+        if (free(x, y, p.w * .5) || j === 0) out.push(p);
+      }
+    }
+    const loose = opt.loose ?? (1 + Math.floor(R() * 3));      // 덩어리 밖 작은 것(돌·풀) 몇 개
+    for (let j = 0, t = 0; j < loose && small.length && t < 30; t++) {
+      const it = pick(small), x = .05 + R() * .9, y = gy(R());
+      const p = place(pl, it, x, y, R() * .5, R() < .5);
+      if ((!it.ground || (y >= gy(it.ground[0]) && y <= gy(it.ground[1]))) && free(x, y, p.w)) { out.push(p); j++; }
+    }
+    for (let j = 0; j < (opt.sky ?? (sky.length ? 2 : 0)); j++) {   // 구름처럼 뜬 것: 지평선 위
+      const it = pick(sky); out.push(place(Object.assign({}, pl, {view: 'flat'}), it, .1 + R() * .8, .08 + R() * (pl.horizon - .12), R(), R() < .5));
+    }
+    if (frame.length && R() < (opt.frame ?? .5)) {   // 가까운 나무줄기 하나를 화면 가장자리에(위가 화면 밖으로 나감 — 앞뒤 거리감)
+      const it = pick(frame), left = R() < .5, y = .9 + R() * .08;
+      const p = place(pl, it, 0, y, R(), !left); p.h = 1.08 + R() * .12; p.w = p.h * (it.w / it.h) * .75; p.x = left ? -p.w * .15 : 1 + p.w * .15; out.push(p);   // 위가 늘 화면 밖, 줄기의 1/3쯤만 보이게
+    }
+    if (opt.avoid && opt.avoid.length) {   // 앱이 이미 놓은 것(동물·가림 소품) 자리와 겹치면 뺌 — 앱이 셈한 보이는 몫이 어긋나지 않게
+      const hit = o => opt.avoid.some(r => o.x + o.w / 2 > r[0] && o.x - o.w / 2 < r[2] && o.y > r[1] && o.y - o.h * o.base < r[3]);
+      for (let i = out.length - 1; i >= 0; i--) if (hit(out[i])) out.splice(i, 1);
+      if (opt.min === 0) return out;
+    }
+    if ((opt._t || 0) < 5 && out.filter(o => o.h > .06).length < 2)   // 거의 빈 판(작은 돌 하나 등)은 다시 놓음
+      return compose(pl, Object.assign({}, opt, {seed: (opt.seed ?? Math.floor(R() * 1e9)) + 1, _t: (opt._t || 0) + 1}));
+    return out;
+  }
+
+  /* 동물·앱 소품을 같은 규칙으로 끼움. real(실제 높이 m)을 주면 그 자리 원근 크기로, h를 주면 그대로 */
+  function add(pl, lay, a) {
+    const it = {id: a.name || 'actor', src: a.src, real: a.real || 1, w: a.w || 1, h: a.h || 1, base: a.base, foot: a.foot, skirt: a.skirt};
+    if (!a.skirt) it.skirt = false;   // 동물 발밑 덮개는 앱이 a.skirt:true 로 고를 때만
+    const p = a.real ? place(pl, it, a.x, a.y, .5, a.flip, {actor: true, el: a.el}) : Object.assign({id: it.id, src: a.src, x: a.x, y: a.y, w: a.sw, h: a.sh, base: a.base ?? 1, flip: !!a.flip, foot: a.foot || [.2, .8], ground: 1, actor: true, el: a.el});
+    lay.push(p); return p;
+  }
+
+  /* 그리기. look: layer(앱 장면 안의 한 겹 — 상자 꼴을 건드리지 않음) · bg(false면 배경 안 그림) · zOf(o,i)·farZ·frontZ(앱의 z 차례에 맞출 때) · skirt(밑동 덮개 쓰기, 기본 true) · shadow(그림자 진하기 0~1, 기본 .28) · haze(먼 것 흐림 0~1, 기본 .3) · front(앞가림 띠 쓰기, 기본 true) · line(요소 테두리 CSS filter) */
+  function render(box, pl, lay, look = {}) {
+    const sh = look.shadow ?? .28, hz = look.haze ?? .3;
+    box.innerHTML = '';
+    if (!look.layer) { box.style.position = 'relative'; box.style.aspectRatio = box.style.aspectRatio || '4 / 3'; box.style.overflow = 'hidden'; }   // layer: 앱 장면 안의 한 겹(앱이 자리·크기를 정함)
+    const mk = (tag, css) => { const e = document.createElement(tag); e.style.cssText = 'position:absolute;pointer-events:none;' + css; box.appendChild(e); return e; };
+    if (pl.bgImg && look.bg !== false) { const b = mk('img', 'left:0;top:0;width:100%;height:100%;object-fit:cover;z-index:0'); b.src = pl.bgImg.src; b.alt = ''; }
+    for (const f of pl.far || []) if (f.img) {   // 먼 띠(먼 숲·먼 갈대밭): 지평선 위에 서서 모든 요소 뒤
+      const h = f.h || .08, y = f.y ?? pl.horizon + .01;
+      const e = mk('img', `left:-1%;width:102%;top:${(y - h) * 100}%;height:${h * 100}%;z-index:${look.farZ ?? 2};object-fit:fill;filter:saturate(${1 - .4 * hz}) brightness(${1 + .12 * hz}) contrast(${1 - .25 * hz})`); e.src = f.srcUrl; e.alt = '';
+    }
+    const order = lay.slice().sort((a, b) => a.y - b.y);   // 밑동이 위(먼 것)부터 → 아래(가까운 것)가 위 레이어
+    order.forEach((o, i) => {
+      const z = look.zOf ? look.zOf(o, i) : 10 + i * 2, far = pl.view === 'flat' ? 0 : Math.max(0, 1 - (o.y - pl.horizon) / (1 - pl.horizon));
+      const top = o.y - o.h * o.base, left = o.x - o.w / 2;
+      if (o.ground && sh > 0) {                                   // 발밑 옅은 그림자(프로그램이 그림 — 방향·진하기가 모두 같게)
+        const fw = o.w * (o.foot[1] - o.foot[0]) * 1.1, fh = Math.max(.006, fw * .16);
+        const cx = o.x + (o.flip ? -1 : 1) * o.w * ((o.foot[0] + o.foot[1]) / 2 - .5);
+        mk('div', `left:${(cx - fw / 2) * 100}%;top:${(o.y - fh * .55) * 100}%;width:${fw * 100}%;height:${fh * 100}%;z-index:${z - 1};border-radius:50%;background:radial-gradient(closest-side,rgba(40,28,14,${sh}),rgba(40,28,14,0))`);
+      }
+      const e = o.el || document.createElement('img');
+      if (!o.el) { e.src = o.src; e.alt = ''; e.draggable = false; }
+      e.style.cssText += `;position:absolute;left:${left * 100}%;top:${top * 100}%;width:${o.w * 100}%;height:${o.h * 100}%;z-index:${z};transform:${o.flip ? 'scaleX(-1)' : 'none'};` +
+        (o.actor ? '' : `filter:${look.line || ''} saturate(${1 - .4 * hz * far}) brightness(${1 + .12 * hz * far}) contrast(${1 - .25 * hz * far});pointer-events:none;`);
+      box.appendChild(e); o.z = z;
+      const si = o.skirt && pl.skirtImg[o.skirt];
+      if (si && look.skirt !== false && o.h > .06) {               // 작은 돌·풀에는 안 씀                           // 밑동 덮개: 그림자 대신 '땅에 묻힌' 느낌. 요소 바로 위, 다음 요소 아래
+        const sw = o.w * (o.foot[1] - o.foot[0]) * 1.3, shh = Math.min(sw * (si.naturalHeight / si.naturalWidth) * 4 / 3, o.h * .15);
+        const cx = o.x + (o.flip ? -1 : 1) * o.w * ((o.foot[0] + o.foot[1]) / 2 - .5);
+        const k = mk('img', `left:${(cx - sw / 2) * 100}%;top:${(o.y - shh * .8) * 100}%;width:${sw * 100}%;height:${shh * 100}%;z-index:${z + 1};transform:${o.flip ? 'scaleX(-1)' : 'none'};filter:saturate(${1 - .4 * hz * far}) brightness(${1 + .12 * hz * far}) contrast(${1 - .25 * hz * far})`);
+        k.src = si.src; k.alt = '';
+      }
+    });
+    if (look.front !== false) for (const f of pl.front || []) if (f.img) {   // 앞가림 띠: 화면 아래에서 모든 것 위
+      const h = f.h || .12, e = mk('img', `left:-1%;width:102%;top:${(f.y ?? 1) * 100 - h * 100}%;height:${h * 100}%;z-index:${look.frontZ ?? 9000};object-fit:fill`); e.src = f.srcUrl; e.alt = '';
+    }
+    return order;
+  }
+
+  G.Stage = {load, compose, add, render, perM, BASE};
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
 <script>
 /* ================= 자료 =================
    동물 그림: 낱말 그림에 있는 것은 media/words, 새로 그린 것은 media/animals (흰 바탕 없이 동물만 — 배경이 사는 곳을 알려 주지 않게)
    장면 그림: media/habitats (동물 없이 장소만). 앱 안의 자료는 GitHub 절대 주소로 */
 const GH='https://shim-sung-hyun.github.io/web_app/';
 const P007=GH+'media/words/', PNEW=GH+'media/animals/', HAB=GH+'media/habitats/';
+/* 무대(2026-11-04 베타, 공통 모듈 stagekit — 앱에 id="stage" 칸이 있어 모듈 칸 이름을 stagekit으로): 숨은 동물 찾기 장면을 '빈 배경 + 따로 그린 요소'로 만듦(media/stage/README.txt).
+   가림 소품은 무대 요소(media/stage/hide-index.json, tools/stage-index.py), 숨기기 규칙(보이는 넓이·ZONE·FACE)은 그대로.
+   동물·소품과 겹치지 않는 자리에 무대 꾸밈(나무·바위 덩어리·먼 띠)을 더하고, 소품 아랫단을 흐리게 하던 것 대신 밑동 덮개(낙엽·흙더미·모래)를 덮음.
+   강·호수는 새 배경을 다시 받을 때까지, 하늘은 가림 소품이 가지·꽃이라 옛 장면 그대로 */
+const STG=GH+'media/stage/', STGP={ground:1,forest:1,grassland:1,desert:1,polar:1,sea:1,water:1,wetland:1,mudflat:1,underground:1};
+const stgOn=p=>!!(window.Stage&&PL[p]&&STGP[PL[p].scene]);
+const STGL={}; let STGCUR=null;   /* STGCUR: 지금 장면의 무대(밑동 덮개를 고를 때) */
+const stgLoad=p=>STGL[p]||(STGL[p]=Stage.load('nature/'+PL[p].scene,{base:STG}).catch(()=>null));
 const OLD={'개':'gae','고양이':'goyangi','토끼':'tokki','돼지':'dwaeji','말':'mal_dongmul','물고기':'mulgogi','붕어':'bungeo','조개':'jogae','새우':'saeu','달팽이':'dalpaengi','거미':'geomi','참새':'chamsae','까치':'kkachi','독수리':'doksuri','나비':'nabi','잠자리':'jamjari',
  '다람쥐':'daramjwi','여우':'yeou','원숭이':'wonsungi','펭귄':'penggwin','개구리':'gaeguri','악어':'akeo','닭':'dak','너구리':'neoguri'};
 const NEW={'소':'so','사자':'saja','코끼리':'kokkiri','기린':'girin','곰':'gom','낙타':'nakta','하마':'hama','사슴':'saseum','호랑이':'horangi','코뿔소':'koppulso','치타':'chita','하이에나':'haiena','타조':'tajo','가젤':'gajel','물소':'mulso','방울뱀':'bangulbaem','사막쥐':'samakjwi','북극여우':'bukgeukyeou','바다코끼리':'badakokkiri','순록':'sullok','흰올빼미':'huinolppaemi','북극토끼':'bukgeuktokki','사향소':'sahyangso','북극늑대':'bukgeuknukdae','쇠똥구리':'soettongguri','오릭스':'oriks','멧돼지':'metdwaeji','바다거북':'badageobuk','돌고래':'dolgorae','갯우렁이':'gaeturengi','맛조개':'matjogae','도요새':'doyosae','방게':'bangge',
@@ -1221,7 +1378,15 @@ const gameReady0=fetch(HAB+'props/index.json',{cache:'no-cache'}).then(r=>r.ok?r
   const D={ground:'bush boulder grass',forest:'bush log fern',grassland:'goldgrass boulder',desert:'dune sandrocks',polar:'snow ice',sky:'cloud cloud2',underground:'clod flatrock',
     water:'seaweed seapebbles',sea:'seaweed coral',pond:'reeds pebblemound',wetland:'rice reeds'};
   Object.keys(D).forEach(p=>{ if(!PROPS[p]||!PROPS[p].length) PROPS[p]=D[p].split(' '); }); PROPS.land=PROPS.ground; });
-const gameReady=Promise.all([gameReady0,amaskReady]);
+const stgReady=gameReady0.then(()=>fetch(STG+'hide-index.json',{cache:'no-cache'})).then(r=>r.ok?r.json():{}).then(j=>{ const L={};
+  Object.entries(j||{}).forEach(([nm,v])=>{ if(!v||!v.size) return; PROPSZ[nm]=v.size; SOLID[nm]=v.solid; if(v.mask) PMASK[nm]=decodeMask(...v.mask); PREAL[nm]=v.real||[.3,1];
+    if(v.scalefree) SCALEFREE.add(nm); (v.places||[]).forEach(q=>(L[q]=L[q]||[]).push(nm)); });
+  Object.keys(STGP).forEach(sc=>{ if(L[sc]&&L[sc].length>=4) PROPS[sc]=L[sc]; }); PROPS.land=PROPS.ground;
+  const ids=(sc,a)=>a.map(i=>'nature/'+sc+'/items/'+i).filter(n=>PROPSZ[n]), put=(k,a)=>{ if(a.length>=2) PROPS[k]=a; };
+  put('sea-big',ids('sea',['kelp','reefrock','rockarch'])); put('water-big',PROPS['sea-big']||[]);   /* 사는 자리 소품도 무대 것으로(나무 위 가지·강 물낯은 옛 소품) */
+  put('sea-mid',ids('sea',['kelp','seafan','seagrass'])); put('water-mid',PROPS['sea-mid']||[]);
+  put('wetland-wet',ids('wetland',['reeds','cattails','rice','sedge','lotus','dryreeds'])); }).catch(()=>{});
+const gameReady=Promise.all([gameReady0,amaskReady,stgReady]);
 const GAMELV_NAME={1:'쉬움',2:'보통',3:'어려움'};
 /* 놀이 첫 화면: 큰 제목 + 아래 "시작"(학생이 누름). 제목을 눌러도 시작 */
 function gameIntro(tok){ stageIntro('game',tok,()=>{ unlockAudio(); playGame(tok); }); }
@@ -1281,7 +1446,8 @@ const WATERLINE={pond:[.425,.49]};   /* 강·연못 장면에서 물낯 높이(�
 /* 논·습지 놀이 장면(game/wetland.jpg)에서 물이 고인 칸(48×36, 그림 색으로 만듦) */
 const WETGRID=(()=>{ const b64='/////////////////////////ahn////AAcAAAAAAAAAAAAAAADvQAAAAIAAAAAAAAAAAAAAAH8AAAAAAAf/gABwAAH/wB/AAAB4Af4AAA+AD/8AA/AAAC8A9AAAAAXAAAGgAAHwAAAAAADwAIAASAB8CdwDWAB8SYABwA/g7dgAAf+A/b4AAF4A/dfYAAQA//78AAAAbf3fAAAAbf/cAAAAe7rwAAAACqvAAAAAA64AAAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   const M=decodeMask(48,36,b64); for(let i=0;i<48*4;i++) M.bits[i]=0; return M; })();   /* 위 네 줄은 하늘이라 뺌 */
-const inWater=(fx,fy)=>{ const i=Math.floor(fx*48), j=Math.floor(fy*36); if(i<0||i>=48||j<0||j>=36) return false; return WETGRID.bits[j*48+i]===1; };
+const inWater=(fx,fy)=>{ if(STGCUR&&STGCUR.id==='nature/wetland') return fy>.22;   /* 무대 논 배경: 지평선 아래가 모두 물 */
+  const i=Math.floor(fx*48), j=Math.floor(fy*36); if(i<0||i>=48||j<0||j>=36) return false; return WETGRID.bits[j*48+i]===1; };
 /* 크기를 드러내지 않는 소품(돌·풀·물풀·흙 더미 등) — 아주 작은 동물을 알아보게 키웠을 때, 잎·꽃송이·나뭇가지처럼 크기가 뻔한 소품을 함께 키우면
    큰 동물 옆에 큰 나뭇잎이 놓인 틀린 장면이 되므로 이것만 씀(2026-11-02) */
 const SCALEFREE=new Set('stones tinypebbles pebblemound algaepebbles seapebbles mossrock algaerock grass tallgrass watergrass watertuft reeds pondreeds reedtips sedge pondsedge seaweed seagrass weedsprig hornwort pondweed moss clover mudmound mudsprouts drytuft tussock goldgrass saltreeds glasswort sandmound gravel clod soillump pebbleclod soilstones rootlets halfstone desertpebbles coral braincoral tubecoral anemone snow icedrift2 bramble twigbush bush fern'.split(' '));
@@ -1374,7 +1540,16 @@ function clearDist(a,c,ux,uy,fl){ const g={nm:c.nm,flip:c.lk.flip,sw:c.sw,sh:c.s
 /* 아래가 반듯하게 잘린 소품(갈대·벼·풀)은 아랫단을 흐리게 → 땅·물에 꽂힌 듯 */
 /* 같은 소품도 놓을 때마다 달라 보이게: 좌우 뒤집기 · 폭 늘이고 줄이기 · 밝기·빛깔 조금씩 */
 function propLook(nm){ return {nm,flip:Math.random()<.5,st:.82+Math.random()*.36,br:.9+Math.random()*.16,sat:.85+Math.random()*.25}; }
-function propImg(lk,l,t,w,h){ const nm=lk.nm, pr=document.createElement('img'); pr.src=HAB+'props/'+nm+'.webp'; pr.alt=''; pr.draggable=false;
+/* 무대 요소 소품: 그림 + 밑동 덮개를 한 상자에(상자째 z·흔들기). 덮개는 그 장면 무대의 skirt 중 하나, 꽉 찬 밑동 폭의 1.25배·소품 높이의 14%까지 */
+function stgProp(lk,l,t,w,h){ const d=document.createElement('div'), im=document.createElement('img'); im.src=STG+lk.nm+'.webp'; im.alt=''; im.draggable=false;
+  Object.assign(d.style,{position:'absolute',left:l+'px',top:t+'px',width:w+'px',height:h+'px',pointerEvents:'none',zIndex:4,filter:'brightness('+lk.br.toFixed(2)+') saturate('+lk.sat.toFixed(2)+')'});
+  Object.assign(im.style,{position:'absolute',left:0,top:0,width:'100%',height:'100%',transform:lk.flip?'scaleX(-1)':''}); d.appendChild(im);
+  const so=SOLID[lk.nm]||[.2,.2,.8,1], P=STGCUR, ks=P&&(P.skirt||[]).filter(k=>P.skirtImg&&P.skirtImg[k]);
+  if(ks&&ks.length&&so[3]>=.9&&PREAL[lk.nm]!=='far'&&h>30){ const si=P.skirtImg[pick1(ks)], sw=w*(so[2]-so[0])*1.25, sh=Math.min(sw*si.naturalHeight/si.naturalWidth,h*.14);
+    const cx=w/2+(lk.flip?-1:1)*w*((so[0]+so[2])/2-.5), k=document.createElement('img'); k.src=si.src; k.alt=''; k.draggable=false;
+    Object.assign(k.style,{position:'absolute',left:(cx-sw/2)+'px',top:(h*so[3]-sh*.8)+'px',width:sw+'px',height:sh+'px',transform:Math.random()<.5?'scaleX(-1)':''}); d.appendChild(k); }
+  return d; }
+function propImg(lk,l,t,w,h){ const nm=lk.nm; if(nm.includes('/')) return stgProp(lk,l,t,w,h); const pr=document.createElement('img'); pr.src=HAB+'props/'+nm+'.webp'; pr.alt=''; pr.draggable=false;
   Object.assign(pr.style,{position:'absolute',left:l+'px',top:t+'px',width:w+'px',height:h+'px',pointerEvents:'none',zIndex:4,
     transform:lk.flip?'scaleX(-1)':'',filter:'brightness('+lk.br.toFixed(2)+') saturate('+lk.sat.toFixed(2)+')'});
   if((SOLID[nm]||[0,0,0,0])[3]>=.97) pr.style.webkitMaskImage=pr.style.maskImage='linear-gradient(to bottom,#000 86%,transparent 100%)';
@@ -1404,8 +1579,9 @@ function unhide(groups,items){
 const FLY_SHOW=false;
 const XF=(dx,dy,k,fl)=>'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) scale('+k+') scaleX('+(fl?-1:1)+')';
 async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wmax, onReady·onCall·onFound) */
+  STGCUR=stgOn(p)?await stgLoad(p):null;
   const L=GLV[lvG], m=MOVE[p], wlP=WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
-  const {card,w:W,h:H}=gameCard(HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg',o.wmax,o.hmax);
+  const {card,w:W,h:H}=gameCard(STGCUR?STG+STGCUR.id+'/bg.jpg':HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg',o.wmax,o.hmax);
   const g=DEXG(p), pool=[]; Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ if(DEXG(x.p)===g&&!targets.includes(x.a)&&!pool.includes(x.a)&&!PAIRS.some(pr=>pr.includes(x.a)&&targets.some(t=>pr.includes(t)))) pool.push(x.a); })));
   /* 함께 숨는 다른 동물도 찾을 동물과 실제 크기가 10배 넘게 다르지 않은 것만 */
   const rmin=Math.min(...targets.map(realOf)), rmax=Math.max(...targets.map(realOf));
@@ -1553,6 +1729,11 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
       const gp={kind:'d',pr:d,pg:{left,top,sw,sh,nm,flip:lk.flip},els:[d]}; groups.push(gp);
       if(m==='walk'||m==='slide') gp.els.push(groundShadow(card,left+sw/2,top+sh*.97,sw*.86,3)); } });
   if(!unhide(groups,items)) break; }
+  if(STGCUR){   /* 무대 꾸밈: 동물·소품(그림자 포함)과 겹치지 않는 자리에만 — 보이는 몫 셈이 어긋나지 않게. z는 소품과 같은 규칙(밑동 높이) */
+    const cr=card.getBoundingClientRect(), av=[...card.children].filter(e=>!e.classList.contains('bg')).map(e=>{ const r=e.getBoundingClientRect();
+      return [(r.left-cr.left-8)/cr.width,(r.top-cr.top-8)/cr.height,(r.right-cr.left+8)/cr.width,(r.bottom-cr.top+8)/cr.height]; });
+    const ly=document.createElement('div'); ly.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none'; card.appendChild(ly);
+    Stage.render(ly,STGCUR,Stage.compose(STGCUR,{avoid:av,min:0,clusters:lvG===1?2:3,loose:2}),{layer:true,bg:false,front:false,zOf:q=>100+Math.round(q.y*H),farZ:3,shadow:.24,haze:.3}); }
   await revealCard(card); if(!alive(tok)) return; if(o.onReady) o.onReady(items.length);
   const move=(t,f,dx,dy,k)=>{ t.im.style.transform=XF(t.ox*f+(dx||0),t.oy*f+(dy||0),k||1,t.flip);
     if(t.sh){ t.sh.style.transform='translate(-50%,-50%) translate('+(t.ox*f)+'px,'+(t.oy*f)+'px)'; t.sh.style.opacity=dx||dy?0:1; } };

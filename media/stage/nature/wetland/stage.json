@@ -76,6 +76,72 @@
     0.3,
     0.5
    ]
+  },
+  "reedbed": {
+   "name": "갈대밭",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "silvergrass": {
+   "name": "억새",
+   "real": [
+    1.5,
+    2
+   ]
+  },
+  "bank": {
+   "name": "풀 둑",
+   "real": [
+    0.5,
+    0.8
+   ]
+  },
+  "iris": {
+   "name": "붓꽃",
+   "real": [
+    0.6,
+    1
+   ]
+  },
+  "ripe": {
+   "name": "익은 벼",
+   "real": [
+    0.8,
+    1.1
+   ]
+  },
+  "plantain": {
+   "name": "질경이택사",
+   "real": [
+    0.4,
+    0.7
+   ]
+  },
+  "willowshrub": {
+   "name": "작은 버드나무",
+   "real": [
+    2,
+    3
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "tallsedge": {
+   "name": "큰 사초",
+   "real": [
+    1,
+    1.5
+   ]
   }
  },
  "far": [
