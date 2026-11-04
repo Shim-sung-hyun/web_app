@@ -82,3 +82,61 @@ Flat cartoon illustration for a children's app: clean dark-brown outlines, soft 
 ▼
 Flat cartoon illustration for a children's app: clean dark-brown outlines, soft simple shading, muted natural colors, light from upper left. One object only, centered on a plain pure white background, whole object visible with white margin, flat level bottom, no shadow, no ground, no text. A broad low rock rising gently out of wet mud, twice as wide as tall, covered with barnacles, small shells around its base.
 ▲
+
+■ Bing Image Creator용 — 긴 판(2천 자까지 된다고 하셔서, 그림체를 더 자세히 적음. 위의 짧은 판 대신 이것을 쓰세요)
+
+━━ 65. 초원 큰 바위 언덕 → media/stage/nature/grassland/items/kopjebig.webp (1230자)
+▼
+Style: a flat cartoon illustration for a children's picture app, like a clean picture-book sticker. Clean, even, dark-brown outlines around every shape (not black). Soft, simple two-tone shading, no gradients, no texture noise, no photo-realism, no 3D render. Muted, natural, slightly soft colours. Light comes from the upper left.
+Layout: ONE object only, centred, on a plain pure white background. The whole object is visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background scenery, no animals, no people, no text, no frame.
+Shape: everything looks NATURAL, the way rocks, ice and sand really settle over a long time — rising GENTLY and spreading out wide at the base, never a steep tower or a neat stack that could fall, never bricks or cubes or anything built by people. Big objects are dense and solid with no see-through gaps in the lower two-thirds.
+Object: A broad low African kopje: rounded granite boulders rising gently, 2.5 times wider than tall, dry bushes and golden grass in front of its base.
+▲
+
+━━ 66-1. 극지방 얼음 언덕 → media/stage/nature/polar/items/icefield.webp (1209자)
+▼
+Style: a flat cartoon illustration for a children's picture app, like a clean picture-book sticker. Clean, even, dark-brown outlines around every shape (not black). Soft, simple two-tone shading, no gradients, no texture noise, no photo-realism, no 3D render. Muted, natural, slightly soft colours. Light comes from the upper left.
+Layout: ONE object only, centred, on a plain pure white background. The whole object is visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background scenery, no animals, no people, no text, no frame.
+Shape: everything looks NATURAL, the way rocks, ice and sand really settle over a long time — rising GENTLY and spreading out wide at the base, never a steep tower or a neat stack that could fall, never bricks or cubes or anything built by people. Big objects are dense and solid with no see-through gaps in the lower two-thirds.
+Object: A broad low mound of snow-covered pack ice rising gently, 3 times wider than tall, broken ice pieces in front of its base.
+▲
+
+━━ 66-2. 극지방 얼음 조각 → media/stage/nature/polar/items/icepieces.webp (1181자)
+▼
+Style: a flat cartoon illustration for a children's picture app, like a clean picture-book sticker. Clean, even, dark-brown outlines around every shape (not black). Soft, simple two-tone shading, no gradients, no texture noise, no photo-realism, no 3D render. Muted, natural, slightly soft colours. Light comes from the upper left.
+Layout: ONE object only, centred, on a plain pure white background. The whole object is visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background scenery, no animals, no people, no text, no frame.
+Shape: everything looks NATURAL, the way rocks, ice and sand really settle over a long time — rising GENTLY and spreading out wide at the base, never a steep tower or a neat stack that could fall, never bricks or cubes or anything built by people. Big objects are dense and solid with no see-through gaps in the lower two-thirds.
+Object: A few irregular broken pieces of sea ice half-buried in snow, rough natural shapes, not cubes.
+▲
+
+━━ 66-3. 바닷속 큰 바위 → media/stage/nature/sea/items/reefrock.webp (1210자)
+▼
+Style: a flat cartoon illustration for a children's picture app, like a clean picture-book sticker. Clean, even, dark-brown outlines around every shape (not black). Soft, simple two-tone shading, no gradients, no texture noise, no photo-realism, no 3D render. Muted, natural, slightly soft colours. Light comes from the upper left.
+Layout: ONE object only, centred, on a plain pure white background. The whole object is visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background scenery, no animals, no people, no text, no frame.
+Shape: everything looks NATURAL, the way rocks, ice and sand really settle over a long time — rising GENTLY and spreading out wide at the base, never a steep tower or a neat stack that could fall, never bricks or cubes or anything built by people. Big objects are dense and solid with no see-through gaps in the lower two-thirds.
+Object: A broad low underwater reef rock, rounded top, twice as wide as tall, corals growing over it, sand and pebbles at its foot.
+▲
+
+━━ 66-4. 초원 바위 언덕 → media/stage/nature/grassland/items/kopje.webp (1216자)
+▼
+Style: a flat cartoon illustration for a children's picture app, like a clean picture-book sticker. Clean, even, dark-brown outlines around every shape (not black). Soft, simple two-tone shading, no gradients, no texture noise, no photo-realism, no 3D render. Muted, natural, slightly soft colours. Light comes from the upper left.
+Layout: ONE object only, centred, on a plain pure white background. The whole object is visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background scenery, no animals, no people, no text, no frame.
+Shape: everything looks NATURAL, the way rocks, ice and sand really settle over a long time — rising GENTLY and spreading out wide at the base, never a steep tower or a neat stack that could fall, never bricks or cubes or anything built by people. Big objects are dense and solid with no see-through gaps in the lower two-thirds.
+Object: A broad low pile of rounded granite boulders settled naturally, twice as wide as tall, golden grass and a small bush at its base.
+▲
+
+━━ 66-5. 사막 큰 바위 더미 → media/stage/nature/desert/items/boulderpile.webp (1211자)
+▼
+Style: a flat cartoon illustration for a children's picture app, like a clean picture-book sticker. Clean, even, dark-brown outlines around every shape (not black). Soft, simple two-tone shading, no gradients, no texture noise, no photo-realism, no 3D render. Muted, natural, slightly soft colours. Light comes from the upper left.
+Layout: ONE object only, centred, on a plain pure white background. The whole object is visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background scenery, no animals, no people, no text, no frame.
+Shape: everything looks NATURAL, the way rocks, ice and sand really settle over a long time — rising GENTLY and spreading out wide at the base, never a steep tower or a neat stack that could fall, never bricks or cubes or anything built by people. Big objects are dense and solid with no see-through gaps in the lower two-thirds.
+Object: A broad low group of rounded orange desert boulders resting naturally, twice as wide as tall, sand drifted against its base.
+▲
+
+━━ 66-6. 갯벌 따개비 바위 → media/stage/nature/mudflat/items/barnaclerock.webp (1210자)
+▼
+Style: a flat cartoon illustration for a children's picture app, like a clean picture-book sticker. Clean, even, dark-brown outlines around every shape (not black). Soft, simple two-tone shading, no gradients, no texture noise, no photo-realism, no 3D render. Muted, natural, slightly soft colours. Light comes from the upper left.
+Layout: ONE object only, centred, on a plain pure white background. The whole object is visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background scenery, no animals, no people, no text, no frame.
+Shape: everything looks NATURAL, the way rocks, ice and sand really settle over a long time — rising GENTLY and spreading out wide at the base, never a steep tower or a neat stack that could fall, never bricks or cubes or anything built by people. Big objects are dense and solid with no see-through gaps in the lower two-thirds.
+Object: A broad low rock rising gently out of wet mud, twice as wide as tall, covered with barnacles, small shells around its base.
+▲
