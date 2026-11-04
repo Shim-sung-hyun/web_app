@@ -1,0 +1,18 @@
+무대 그림 받기 6 — 008 숨은 동물 찾기용 키 큰 요소 (2026-11-04)  ※ 1~63번은 앞 파일들(다 받음)
+왜: 기린(5m)·코끼리를 알맞게 가릴 만큼 키 크고 빽빽한 요소가 들판·초원에 없어, 어려움에서 기린이 다 가려지는 일이 있었음.
+
+━━━━━━━━ 64. 키 큰 가림 요소 (들판 3 · 초원 3)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 칸 차례: 1 들판 talltree(잎이 땅까지 내려온 큰 나무) · 2 들판 tallpine(가지가 땅까지 닿은 소나무) · 3 들판 treehedge(키 큰 나무 울타리) · 4 초원 acaciagrove(아카시아 숲) · 5 초원 thorntrees(가시나무 숲) · 6 초원 kopjebig(큰 바위 언덕)  (media/stage/nature/<곳>/items/<이름>.webp)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×2 grid sheet (3 columns, 2 rows) on a pure white background, one object per cell, in the order listed. No grid lines or cell borders. Leave the bottom-right corner of the picture (a small area) empty and white.
+Each object is TALL and BIG, seen from the front at eye level, filling most of its cell with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. These objects will hide a giraffe or an elephant behind them, so they must be dense and SOLID from the ground up, with no see-through gaps between trunks or branches in the lower two-thirds. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Objects in order:
+1 a tall dense round tree whose leafy crown reaches almost down to the ground, solid, no gaps
+2 a tall dense pine tree with thick branches all the way down to the ground, solid
+3 a tall dense row of leafy trees close together, much wider than tall, solid
+4 a tall dense group of acacia trees with thick foliage, crowns overlapping and reaching low, solid
+5 a tall dense thicket of thorny savanna trees, solid, wider than tall
+6 a huge pile of rounded granite boulders, taller than a giraffe, solid
+▲ 여기까지

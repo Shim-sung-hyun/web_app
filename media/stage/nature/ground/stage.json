@@ -139,6 +139,42 @@
     0.8,
     1.2
    ]
+  },
+  "talltree": {
+   "name": "잎이 땅까지 내려온 큰 나무",
+   "real": [
+    5,
+    7
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.6
+   ]
+  },
+  "tallpine": {
+   "name": "가지가 땅까지 닿은 소나무",
+   "real": [
+    4,
+    6
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.6
+   ]
+  },
+  "treehedge": {
+   "name": "키 큰 나무 울타리",
+   "real": [
+    4,
+    6
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.6
+   ]
   }
  },
  "far": [

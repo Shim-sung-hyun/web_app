@@ -176,6 +176,42 @@
     0.3,
     0.6
    ]
+  },
+  "acaciagrove": {
+   "name": "아카시아 숲",
+   "real": [
+    5,
+    7
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.6
+   ]
+  },
+  "thorntrees": {
+   "name": "가시나무 숲",
+   "real": [
+    4,
+    6
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.6
+   ]
+  },
+  "kopjebig": {
+   "name": "큰 바위 언덕",
+   "real": [
+    4,
+    6
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.6
+   ]
   }
  },
  "far": [

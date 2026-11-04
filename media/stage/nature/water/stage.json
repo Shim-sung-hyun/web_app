@@ -133,14 +133,6 @@
    ],
    "from": "nature/sea"
   },
-  "sponge": {
-   "name": "해면",
-   "real": [
-    0.8,
-    1.5
-   ],
-   "from": "nature/sea"
-  },
   "tubecoral": {
    "name": "관 산호",
    "real": [

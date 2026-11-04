@@ -604,8 +604,8 @@ const P007=GH+'media/words/', PNEW=GH+'media/animals/', HAB=GH+'media/habitats/'
 /* 무대(2026-11-04 베타, 공통 모듈 stagekit — 앱에 id="stage" 칸이 있어 모듈 칸 이름을 stagekit으로): 숨은 동물 찾기 장면을 '빈 배경 + 따로 그린 요소'로 만듦(media/stage/README.txt).
    가림 소품은 무대 요소(media/stage/hide-index.json, tools/stage-index.py), 숨기기 규칙(보이는 넓이·ZONE·FACE)은 그대로.
    동물·소품과 겹치지 않는 자리에 무대 꾸밈(나무·바위 덩어리·먼 띠)을 더하고, 소품 아랫단을 흐리게 하던 것 대신 밑동 덮개(낙엽·흙더미·모래)를 덮음.
-   강·호수는 새 배경을 다시 받을 때까지, 하늘은 가림 소품이 가지·꽃이라 옛 장면 그대로 */
-const STG=GH+'media/stage/', STGP={ground:1,forest:1,grassland:1,desert:1,polar:1,sea:1,water:1,wetland:1,mudflat:1,underground:1};
+   하늘은 가림 소품이 가지·꽃이라 옛 장면 그대로. 강·호수 물낯 높이는 무대 stage.json 의 waterline */
+const STG=GH+'media/stage/', STGP={ground:1,forest:1,grassland:1,desert:1,polar:1,sea:1,water:1,wetland:1,mudflat:1,underground:1,pond:1};
 const stgOn=p=>!!(window.Stage&&PL[p]&&STGP[PL[p].scene]);
 const STGL={}; let STGCUR=null;   /* STGCUR: 지금 장면의 무대(밑동 덮개를 고를 때) */
 const stgLoad=p=>STGL[p]||(STGL[p]=Stage.load('nature/'+PL[p].scene,{base:STG}).catch(()=>null));
@@ -1383,9 +1383,9 @@ const stgReady=gameReady0.then(()=>fetch(STG+'hide-index.json',{cache:'no-cache'
     if(v.scalefree) SCALEFREE.add(nm); (v.places||[]).forEach(q=>(L[q]=L[q]||[]).push(nm)); });
   Object.keys(STGP).forEach(sc=>{ if(L[sc]&&L[sc].length>=4) PROPS[sc]=L[sc]; }); PROPS.land=PROPS.ground;
   const ids=(sc,a)=>a.map(i=>'nature/'+sc+'/items/'+i).filter(n=>PROPSZ[n]), put=(k,a)=>{ if(a.length>=2) PROPS[k]=a; };
-  put('sea-big',ids('sea',['kelp','reefrock','rockarch'])); put('water-big',PROPS['sea-big']||[]);   /* 사는 자리 소품도 무대 것으로(나무 위 가지·강 물낯은 옛 소품) */
-  put('sea-mid',ids('sea',['kelp','seafan','seagrass'])); put('water-mid',PROPS['sea-mid']||[]);
-  put('wetland-wet',ids('wetland',['reeds','cattails','rice','sedge','lotus','dryreeds'])); }).catch(()=>{});
+  put('sea-big',ids('sea',['kelp','reefrock','rockarch','rockwall','kelpforest','tablecoral','weedboulder'])); put('water-big',PROPS['sea-big']||[]);   /* 사는 자리 소품도 무대 것으로(나무 위 가지·강 물낯은 옛 소품) */
+  put('sea-mid',ids('sea',['kelp','seafan','seagrass','kelpforest','grassbed','tubecoral'])); put('water-mid',PROPS['sea-mid']||[]);
+  put('wetland-wet',ids('wetland',['reeds','cattails','rice','sedge','lotus','dryreeds','reedbed','iris','ripe','plantain','tallsedge'])); }).catch(()=>{});
 const gameReady=Promise.all([gameReady0,amaskReady,stgReady]);
 const GAMELV_NAME={1:'쉬움',2:'보통',3:'어려움'};
 /* 놀이 첫 화면: 큰 제목 + 아래 "시작"(학생이 누름). 제목을 눌러도 시작 */
@@ -1580,7 +1580,7 @@ const FLY_SHOW=false;
 const XF=(dx,dy,k,fl)=>'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) scale('+k+') scaleX('+(fl?-1:1)+')';
 async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wmax, onReady·onCall·onFound) */
   STGCUR=stgOn(p)?await stgLoad(p):null;
-  const L=GLV[lvG], m=MOVE[p], wlP=WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
+  const L=GLV[lvG], m=MOVE[p], wlP=STGCUR&&STGCUR.waterline?STGCUR.waterline:WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
   const {card,w:W,h:H}=gameCard(STGCUR?STG+STGCUR.id+'/bg.jpg':HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg',o.wmax,o.hmax);
   const g=DEXG(p), pool=[]; Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ if(DEXG(x.p)===g&&!targets.includes(x.a)&&!pool.includes(x.a)&&!PAIRS.some(pr=>pr.includes(x.a)&&targets.some(t=>pr.includes(t)))) pool.push(x.a); })));
   /* 함께 숨는 다른 동물도 찾을 동물과 실제 크기가 10배 넘게 다르지 않은 것만 */

@@ -1,8 +1,8 @@
 {
  "name": "강·호수",
  "view": "ground",
- "horizon": 0.78,
- "groundTop": 0.8,
+ "horizon": 0.86,
+ "groundTop": 0.88,
  "unit": 0.15,
  "avoid": [],
  "front": [
@@ -78,5 +78,6 @@
  },
  "skirt": [
   "silt"
- ]
+ ],
+ "waterline": 0.51
 }
