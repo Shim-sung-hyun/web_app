@@ -7,13 +7,13 @@
 
 파일
 - animal-home.html      : 정식판(study/008/animal-home.html = server-loader.html). 2026-11-02 베타를 합침(교과서 구성·수준 3 곳마다 3·4마리·스페셜·Azure 목소리·새 그림).
-                          2026-11-04 무대 베타를 합침(선생님: 비영리라 바로 정식으로) — 숨은 동물 찾기 장면을 무대로 그림(아래 '무대')
-- animal-home-beta.html : 베타(study/008/animal-home-beta.html = server-loader-beta.html). 지금은 정식판과 같음(2026-11-04 무대를 합침) — 다음 큰 변경을 먼저 시험하는 자리.
+                          2026-11-04 무대를 합쳤다가 같은 날 되돌림(물 안·밖이 뒤섞이고 물풀이 떠다니는 등 장면이 말이 안 됨 — 선생님). 지금은 옛 장면·소품.
+- animal-home-beta.html : 베타(study/008/animal-home-beta.html = server-loader-beta.html). 무대로 다시 만드는 중(2026-11-04~, 무대 세션) — 정식판에 넣기 전에 선생님께 장면을 보여 드리고 여쭘.
                           베타를 정식판에 합칠 때는 선생님께 여쭙고, 합치면 제목의 "(베타)"만 빼고 통째로 복사(cp) + voice-lines.json도 맞춤
 - voice-lines.json · voice-lines-beta.json : 앱이 쓰는 말 목록(콘솔 __voiceLines(), 스페셜 이름 포함) 260문장 — 모두 media/voice/azure-sunhi-0.92에 있음
 - server-loader.html    : 서버 study/008/에 animal-home.html 이름으로 올리는 불러오기 파일(열 때마다 GitHub 판을 받아 옴 — 합쳐도 서버는 그대로)
 - animal-home_manual.html(게시판 59860 본문) · animal-home_guide.html(자세한 설명, study/doc.html?008/animal-home_guide) · animal-home01~16.jpg(캡처) · animal-home-promo.jpg
-  캡처(07·08·14는 2026-11-04 무대로 새로 찍음) 01 설정 02 보기 03 동물 보고 곳 04 곳 보고 동물 05 정리하기 06 놀이 첫 화면 07 보통(초원) 08 어려움(산) 09 끝 장면 10 선생님 메뉴 11 도감 12 기록 예시
+  캡처 01 설정 02 보기 03 동물 보고 곳 04 곳 보고 동물 05 정리하기 06 놀이 첫 화면 07 보통(초원) 08 어려움(산) 09 끝 장면 10 선생님 메뉴 11 도감 12 기록 예시
        13 활동지 14 스페셜 찾는 중 15 스페셜 결과(순위는 예시) 16 설정의 스페셜 칸 17 단계 알림 — 2026-11-02 새로 찍음, 06·10·17은 11-03(1366×768)
 
 자료(앱 폴더가 아니라 media/)
@@ -22,7 +22,7 @@
 - 가림 소품: media/habitats/props — 185개. 목록 index.json(크기·꽉 찬 부분 solid·모양 표 mask·실제 높이 real·잘린 쪽 anchor·쓰는 곳 places)
   tools/props-index.py로 만듦(real·anchor·places만 손으로). 새로 그릴 때 프롬프트: props/prompts/PROMPTS.txt·PROMPTS-5.txt, 본보기 style-ref.png
 - 목소리: media/voice/leda-0.92 (모두 내장). "악어는 강이나 연못에 살아요."는 같은 목소리 조각을 이어 만듦(2026-11-02)
-- 무대(2026-11-04 정식판): 숨은 동물 찾기 장면 = 무대 빈 배경 + 가림 소품(무대 요소, media/stage/hide-index.json) + 겹치지 않는 꾸밈·먼 띠 + 밑동 덮개.
+- 무대(베타에서만, 2026-11-04 정식판에서 되돌림): 숨은 동물 찾기 장면 = 무대 빈 배경 + 가림 소품(무대 요소, media/stage/hide-index.json) + 겹치지 않는 꾸밈·먼 띠 + 밑동 덮개.
   공통 모듈 stagekit(common/stagekit.js). 하늘만 옛 장면·소품(habitats). 나무 위 가지·강 물낯 소품도 옛 것. 무대 그림을 바꾸면 python3 tools/stage-index.py.
   검사: node tools/hide-check.js 3 → 2026-11-04 완전히 가려짐 0% · 목표 안 97~99% · 크기 맞는 소품 없음 8%. 자세한 것은 media/stage/README.txt.
   2026-11-04 선생님 지적: 좌우 끝이 잘린 소품(사막 모래 언덕 등 6개)이 섞여 있었음 → 뺌. stage-index.py가 '잘린 끝?'을 알려 줌.
