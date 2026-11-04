@@ -24,10 +24,7 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [
-   "skirt/sanddrift",
-   "skirt/sandpebbles"
-  ],
+  "missing": [],
   "skirt": [
    "sanddrift",
    "sandpebbles",
@@ -62,9 +59,7 @@
   "far": [
    "bush"
   ],
-  "missing": [
-   "skirt/redearth"
-  ],
+  "missing": [],
   "skirt": [
    "drygrass",
    "redearth",
@@ -322,12 +317,9 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [
-   "skirt/pondweeds"
-  ],
+  "missing": [],
   "skirt": [
-   "silt",
-   "pondweeds"
+   "silt"
   ]
  },
  "nature/underground": {
