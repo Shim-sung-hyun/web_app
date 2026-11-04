@@ -43,3 +43,42 @@ Objects in order:
 5 a broad, low group of rounded orange desert boulders resting naturally on each other, spreading out wide, about twice as wide as tall, with drifted sand piled softly against its base and a small dry shrub in front
 6 a broad, low rock outcrop rising gently out of the mud, about twice as wide as tall, covered with barnacles, with wet mud and small shells around its base
 ▲ 여기까지
+
+■ Bing Image Creator용 (Gemini를 다 썼을 때 — 2026-11-04)
+Bing은 본보기 그림을 붙일 수 없고 글이 480자까지라, 그림체를 글로 적고 한 장에 하나씩 받습니다. 아래 글을 통째로 붙여 넣으세요.
+그림체가 조금 다를 수 있어요 — 받은 그림을 올리면 Claude가 옛 그림과 나란히 놓고 보고, 너무 다르면 다시 요청합니다.
+
+━━ 65. 초원 큰 바위 언덕 → media/stage/nature/grassland/items/kopjebig.webp
+▼
+Flat cartoon illustration for a children's app: clean dark-brown outlines, soft simple shading, muted natural colors, light from upper left. One object only, centered on a plain pure white background, whole object visible with white margin, flat level bottom, no shadow, no ground, no text. A broad low African kopje: rounded granite boulders rising gently, 2.5 times wider than tall, dry bushes and golden grass in front of its base.
+▲
+
+━━ 66-1. 극지방 얼음 언덕 → media/stage/nature/polar/items/icefield.webp
+▼
+Flat cartoon illustration for a children's app: clean dark-brown outlines, soft simple shading, muted natural colors, light from upper left. One object only, centered on a plain pure white background, whole object visible with white margin, flat level bottom, no shadow, no ground, no text. A broad low mound of snow-covered pack ice rising gently, 3 times wider than tall, broken ice pieces in front of its base.
+▲
+
+━━ 66-2. 극지방 얼음 조각 → media/stage/nature/polar/items/icepieces.webp
+▼
+Flat cartoon illustration for a children's app: clean dark-brown outlines, soft simple shading, muted natural colors, light from upper left. One object only, centered on a plain pure white background, whole object visible with white margin, flat level bottom, no shadow, no ground, no text. A few irregular broken pieces of sea ice half-buried in snow, rough natural shapes, not cubes.
+▲
+
+━━ 66-3. 바닷속 큰 바위 → media/stage/nature/sea/items/reefrock.webp
+▼
+Flat cartoon illustration for a children's app: clean dark-brown outlines, soft simple shading, muted natural colors, light from upper left. One object only, centered on a plain pure white background, whole object visible with white margin, flat level bottom, no shadow, no ground, no text. A broad low underwater reef rock, rounded top, twice as wide as tall, corals growing over it, sand and pebbles at its foot.
+▲
+
+━━ 66-4. 초원 바위 언덕 → media/stage/nature/grassland/items/kopje.webp
+▼
+Flat cartoon illustration for a children's app: clean dark-brown outlines, soft simple shading, muted natural colors, light from upper left. One object only, centered on a plain pure white background, whole object visible with white margin, flat level bottom, no shadow, no ground, no text. A broad low pile of rounded granite boulders settled naturally, twice as wide as tall, golden grass and a small bush at its base.
+▲
+
+━━ 66-5. 사막 큰 바위 더미 → media/stage/nature/desert/items/boulderpile.webp
+▼
+Flat cartoon illustration for a children's app: clean dark-brown outlines, soft simple shading, muted natural colors, light from upper left. One object only, centered on a plain pure white background, whole object visible with white margin, flat level bottom, no shadow, no ground, no text. A broad low group of rounded orange desert boulders resting naturally, twice as wide as tall, sand drifted against its base.
+▲
+
+━━ 66-6. 갯벌 따개비 바위 → media/stage/nature/mudflat/items/barnaclerock.webp
+▼
+Flat cartoon illustration for a children's app: clean dark-brown outlines, soft simple shading, muted natural colors, light from upper left. One object only, centered on a plain pure white background, whole object visible with white margin, flat level bottom, no shadow, no ground, no text. A broad low rock rising gently out of wet mud, twice as wide as tall, covered with barnacles, small shells around its base.
+▲
