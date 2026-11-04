@@ -9,7 +9,7 @@
 
  하는 일: 앱과 설명서가 부르는 GitHub 주소(…github.io/web_app/…)의 파일이 저장소에 정말 있는지 봅니다.
    - 모든 .html 안에 적힌 주소
-   - 앱 안에서 이어 붙여 만드는 주소(예: 낱말 그림 007/pics/이름.webp, 008 서식지 그림)
+   - 앱 안에서 이어 붙여 만드는 주소(예: 낱말 그림 media/words/이름.webp, 008 서식지 그림)
    - 사진 모음 목록 media/photos/photos.json
    - 목소리 묶음 목록 media/voice/(leda-0.90, leda-0.92, poem)/index.json
  결과: 맨 끝에 "없는 파일 0"이 나오면 통과입니다.

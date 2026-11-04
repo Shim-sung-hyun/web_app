@@ -40,7 +40,7 @@
 - PARTS 부위 자리: 512칸 그림 기준(e 타원, r 네모). 2026-10-26 그림을 보고 잡음
 - 고친 뒤 확인: 콘솔에서 ALL.every(a=>easyHints(a).length===5), 여러 번 pickLesson(n)해도 sortHints가 비지 않아야 함
 동물 20마리: 코끼리·기린·얼룩말·토끼·소·사자·호랑이·곰·원숭이·개·고양이·독수리·부엉이·나비·벌·상어·고래·문어·펭귄·두더지
-자료: 동물 그림 007/pics·media/animals(가장자리 정리함) · 배경 media/habitats · 먹이 그림 007/game/feed/food · 목소리 media/voice/leda-0.92
+자료: 동물 그림 media/words·media/animals(가장자리 정리함) · 배경 media/habitats · 먹이 그림 media/play/feed/food · 목소리 media/voice/leda-0.92
 저장 칸: animalRiddle.* (log2·resume2·picks·설정. 첫 판의 log·resume·done은 쓰지 않음), 학생 명단 webapp.students
 기록 한 줄: 학생·시각·수업·수준·단계(quiz·sort)·동물·결과(바로/도움)·먼저 고른·말한 것·들은 고개 수(·하 퀴즈의 단서 종류)
 게시판 글: 본문 animal-riddle_manual.html 만듦(2026-11-01), 아직 안 올림 → 올리면 reportLink·endLesson의 주소를 webapp/글번호로
@@ -49,7 +49,7 @@
 지금 상태: main에 있음(https://shim-sung-hyun.github.io/web_app/009/animal-riddle.html). 목소리 392마디 모두 내장.
   선생님 의견으로 고친 것: 하 보기는 그림에서 보기에도 확실히 다른 동물만 / 하·중은 동물 하나가 한 묶음 / 상은 그림 단서 없이 서식지 배경만 / 중·상 '패스'
   / 동물 그림 가장자리는 2026-10-31 새 방법으로 다시 정리(tools/clean-edges.py, 다른 세션)
-  / 2026-10-31: 말풍선 먹이 그림 뒤 흰 네모 없앰, 먹이 그림 11장(007/game/feed/food) 테두리 정리(clean-edges → edge-specks, 귀뚜라미 다리 사이 흰 바탕)
+  / 2026-10-31: 말풍선 먹이 그림 뒤 흰 네모 없앰, 먹이 그림 11장(media/play/feed/food) 테두리 정리(clean-edges → edge-specks, 귀뚜라미 다리 사이 흰 바탕)
   / 2026-10-31: 동물 그림 좁은 틈의 흰 점 마무리(tools/edge-specks.py — 두더지 발톱·벌·나비 등), 그림 주소에 ?v=(IMGV, 그림을 고치면 올림)
   / 2026-10-31: 배경 있는 장면만 실제 크기(카드 하나에 한 마리면 늘 가득) / 중은 흐린 원래 그림이 물결로 차오르게 / 초원·사막 배경 오른쪽 아래 네모 이음매 메움 / 중·상 [정답(마이크)] 단추, 중 선생님 입력칸을 늘 보이게
 1. 선생님이 써 보고 의견 받기 — 특히 중 흐린 그림(지금 5% — 3%는 안 보였음, 바꿀 때는 GHOST 한 줄만. 마음에 안 들면 부위 그림을 새로 그려 PARTS·drawPart로 하나씩),

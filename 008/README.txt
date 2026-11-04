@@ -16,7 +16,7 @@
        13 활동지 14 스페셜 찾는 중 15 스페셜 결과(순위는 예시) 16 설정의 스페셜 칸 17 단계 알림 — 2026-11-02 새로 찍음, 06·10·17은 11-03(1366×768)
 
 자료(앱 폴더가 아니라 media/)
-- 동물 그림: 007에 있는 동물은 007/pics, 새로 그린 24마리는 media/animals (index.json). 모양 표 media/animals/masks.json
+- 동물 그림: 낱말 그림에 있는 동물은 media/words(옛 007/pics), 새로 그린 24마리는 media/animals (index.json). 모양 표 media/animals/masks.json
 - 장면 그림: media/habitats (쉬움·보기용 11장) · media/habitats/game (보통·어려움 놀이용 11장). 모두 동물 없이 장소만
 - 가림 소품: media/habitats/props — 185개. 목록 index.json(크기·꽉 찬 부분 solid·모양 표 mask·실제 높이 real·잘린 쪽 anchor·쓰는 곳 places)
   tools/props-index.py로 만듦(real·anchor·places만 손으로). 새로 그릴 때 프롬프트: props/prompts/PROMPTS.txt·PROMPTS-5.txt, 본보기 style-ref.png
@@ -105,7 +105,7 @@
 크게 보이는 동물 다시 그림(2026-11-02)
 - 고래가 흐리고 선이 굵던 까닭: 판(8마리)에서 잘라 낸 300점 원본을 2~3배 키움. 앱에서 잰 표시 크기가 큰 19마리를 한 장에 한 마리로 다시 그림 → media/animals/*.webp 1024×1024
   고래 코끼리 기린 코뿔소 곰 오릭스 낙타 바다코끼리 하마 사슴 돌고래 호랑이 사향소 멧돼지 상어 물소 순록 타조 산양 사자(20번) 소(2026-11-03, 젖소 → 누런 한우, OLD→NEW) 해파리(21번 — 옛 그림은 촉수 사이에 흰 바탕이 갇힘. 새 그림은 투명 바탕으로 받아 그대로 씀, 얼굴 없는 물해파리). 008(정식판·베타)·009가 씀.
-  코끼리·기린·곰·낙타·하마·사슴·호랑이·사자는 007/pics 대신 media/animals를 가리킴(OLD→NEW). 007은 먹이 주기의 입 벌린 그림(007/game/feed/animal)과 짝이라 그대로
+  코끼리·기린·곰·낙타·하마·사슴·호랑이·사자는 media/words 대신 media/animals를 가리킴(OLD→NEW). 007은 먹이 주기의 입 벌린 그림(media/play/feed/animal)과 짝이라 그대로
 - BB·FACE 다시 잼(코끼리·호랑이·오릭스·바다코끼리·사향소·멧돼지·산양 머리 쪽 바뀜). 009 PARTS(몸 부분 자리) 코끼리·기린·호랑이·곰·상어·고래 다시 잼
 - 자르기 실수 고침: 윤곽선 안의 아주 흰 몸이 순백 얼룩이 되던 것(fill_holes) — 흰 동물 15마리(판 3·4·5)도 다시 자름
 - Gemini 1024 그림 오른쪽 아래 반투명 별(동물 다리에 걸칠 때만 보임)은 위쪽 같은 다리 칸으로 바꿔 넣어 지움(낙타·사슴·순록)

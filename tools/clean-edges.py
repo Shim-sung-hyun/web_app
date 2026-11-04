@@ -31,11 +31,11 @@ MIX_TOL = 40      # 'F와 흰색을 섞은 색'에서 이만큼(0~255)까지 벗
 
 # 그림 안에 갇힌 흰 바탕(이 점에서 이어진 흰 곳을 바깥으로) — 어두운 배경에 놓고 확대해 보며 고른 자리
 HOLES = {
-    '007/pics/chamsae.webp': [(286, 398)],
-    '007/pics/doksuri.webp': [(235, 428)],
-    '007/pics/goyangi.webp': [(198, 415)],
-    '007/pics/kkachi.webp': [(305, 389)],
-    '007/pics/saeu.webp': [(335, 269)],
+    'media/words/chamsae.webp': [(286, 398)],
+    'media/words/doksuri.webp': [(235, 428)],
+    'media/words/goyangi.webp': [(198, 415)],
+    'media/words/kkachi.webp': [(305, 389)],
+    'media/words/saeu.webp': [(335, 269)],
     'media/animals/baengno.webp': [(222, 412)],
     'media/animals/bidulgi.webp': [(305, 427)],
     'media/animals/beol.webp': [(368, 287)],   # 2026-10-31 머리와 다리 사이

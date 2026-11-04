@@ -6,7 +6,7 @@
 
 보는 곳
   1. 모든 .html 안의 GitHub 절대 주소(github.io/web_app/…, raw.githubusercontent.com/…/main/…)
-  2. 앱 안에서 주소를 이어 붙인 것: const PICS_BASE = GH+'007/pics/' 같은 대문자 상수,
+  2. 앱 안에서 주소를 이어 붙인 것: const PICS_BASE = GH+'media/words/' 같은 대문자 상수,
      BASE+'이름.webp', BASE+표[…]+'.webp', BASE+표[…].scene+'.jpg' (표는 같은 파일의 const 표={…})
   3. media/photos/photos.json 의 files
   4. media/voice/*/index.json 의 files (파일 이름 + .mp3)

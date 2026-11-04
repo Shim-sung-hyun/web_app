@@ -19,11 +19,11 @@
 - record-guide.html        기록 활용법(가상의 학생 홍길동의 한 달 기록 예시, 설정 화면·교사용 기록에서 연결)
 - word-learn-rec1~2.jpg   기록 활용법 그림(한 장 요약 · 수준 알림과 다시 넣은 낱말)
 - cloud-key.html           Cloud 키 넣는 방법 (앱에서 연결)
-- pics/                    낱말 그림 350개 (webp)
+- (그림은 media/로 옮김, 2026-11-04) media/words/  낱말 그림 349장 (webp) + pics.json
                            몸 부위(손·발·눈·코·입·귀·머리·이·다리, 2편 얼굴·배·팔·무릎·손톱·발톱)는 같은 틀로 다시 그림(Gemini, 2026-10-20).
                            보기에서 그 부위만 비춤(스포트라이트, 한 번), 고르기·놀이에서는 비추지 않음.
-- game/                    놀이 그림(먹이 주기·스티커)
-- fonts/                   학교안심 바른바탕 B (woff2)
+- media/play/              놀이 그림(feed/food 먹이 · feed/animal 입 벌린 동물 · body 스티커)
+- media/fonts/             학교안심 바른바탕 B (woff2)
 - 기본 목소리(Google Leda, 빠르기 0.90, 3,339개)는 차름 소리 모음 ../media/voice/leda-0.90/ 에서 읽음(2026-10-22부터)
   (mp3 + index.json, 고쳐 만든 소리 기록 fixes.json 도 거기에)
 - 옛 voice/leda/ · voice/fixes.json 은 2026-10-23 지움(fixes.json 은 media/voice/leda-0.90/ 에)
@@ -86,9 +86,9 @@
 - 앱을 고치면 GitHub의 word-learn.html과 내 서버의 word-learn.html을 함께 바꾼다.
 - 지금 내 도메인: https://www.charum.org/study/007/word-learn.html (https). 혹시 http 주소에서 열려도 SHA-1을 직접 계산해 미리 만든 목소리를 찾는다(sha1Bytes). 휴대폰으로 키 받기(ECDH)는 https에서만 된다.
 - 내 서버에는 server-loader.html(약 1KB)을 word-learn.html 이름으로 한 번만 올려 둔다(2026-10-21). 열릴 때마다 GitHub의 최신 word-learn.html을 받아 그 주소에서 펼치므로, 앞으로 앱을 고쳐도 서버에 다시 올릴 필요가 없다(GitHub에 올리면 몇 분 안에 반영). 주소창은 내 도메인, 기록은 이 기기 브라우저(내 도메인 주소)에, 서버에는 아무것도 저장되지 않는다.
-- 2026-10-31(009 세션): 먹이 주기 그림 007/game/feed/food 80장 모두 tools/clean-edges.py → edge-specks.py로 테두리 정리. 블랙베리·블루베리·당근 잎·셀러리·클로버·포도·단풍잎·사탕수수·채소 통·물풀·귀뚜라미는 그림 안에 갇힌 흰 바탕도 투명하게. 동물 그림 007/game/feed/animal 62장(입 벌림·먹음)도 같은 방법으로 정리, 갇힌 흰 바탕은 없었음.
+- 2026-10-31(009 세션): 먹이 주기 그림 (지금 media/play/feed/food) 80장 모두 tools/clean-edges.py → edge-specks.py로 테두리 정리. 블랙베리·블루베리·당근 잎·셀러리·클로버·포도·단풍잎·사탕수수·채소 통·물풀·귀뚜라미는 그림 안에 갇힌 흰 바탕도 투명하게. 동물 그림 (지금 media/play/feed/animal) 62장(입 벌림·먹음)도 같은 방법으로 정리, 갇힌 흰 바탕은 없었음.
 
 [다음 할 일] (2026-11-04)
 - 2편 공개(OPEN_BOOKS = [1, 2]) — 선생님 확인 뒤
-- 공용 그림 옮기기 검토: 007/pics(008·009·010도 씀)와 007/game/feed/food(009도 씀)는 사실상 공용 자료라
-  media/ 아래로 옮기는 안을 선생님께 물음(옮기면 네 앱 주소를 함께 바꾸고 "없는 파일 0" 확인). 정해질 때까지 그대로 둠
+- (끝남 2026-11-04) 공용 그림 옮기기: 007/pics → media/words, 007/game → media/play, 007/fonts → media/fonts.
+  007·008·009·010 주소 바꿈, check-files "없는 파일 0". 그림 주소는 이제 늘 GitHub 절대 주소(MEDIA)

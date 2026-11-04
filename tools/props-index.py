@@ -89,7 +89,7 @@ def main():
     import re
     apps = [open(os.path.join(base, '008', fn), encoding='utf-8').read() for fn in ('animal-home.html', 'animal-home-beta.html')
             if os.path.exists(os.path.join(base, '008', fn)) and 'const OLD=' in open(os.path.join(base, '008', fn), encoding='utf-8').read()]
-    for var, d in (('OLD', '007/pics'), ('NEW', 'media/animals')):   # 008(정식판·베타)이 쓰는 동물 그림만(앱의 OLD·NEW 표)
+    for var, d in (('OLD', 'media/words'), ('NEW', 'media/animals')):   # 008(정식판·베타)이 쓰는 동물 그림만(앱의 OLD·NEW 표)
         body = ''.join(re.search(r'const %s=\{(.*?)\};' % var, app, re.S).group(1) for app in apps)
         for nm in re.findall(r":'([a-z_]+)'", body):
             p = os.path.join(base, d, nm + '.webp')
