@@ -72,10 +72,10 @@ button{font-family:inherit;cursor:pointer}
 .recst{font-size:13px;font-weight:500;color:var(--soft);margin-left:6px}
 .recst.on{color:#E0353B;font-weight:700}
 .recst.on::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;background:#E0353B;margin-right:5px;vertical-align:1px}
-.roster{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
-.roster span{display:inline-flex;align-items:center;gap:4px;background:#F3F0E9;border-radius:999px;padding:4px 6px 4px 12px;font-size:14px}
-.roster button{border:0;background:#E2DDD2;border-radius:50%;width:22px;height:22px;font-size:14px;line-height:1;color:#555;cursor:pointer}
-.roster .empty{font-size:13px;color:var(--soft)}
+#rosterMount{--rs-line:#DDD6C8;--rs-soft:#EFEBE2}
+#rosterMount .rs{margin-top:0}
+#rosterMount .rs-names li{background:#F3F0E9;border-color:transparent;font-size:15px}
+#rosterMount .rsin{font-size:15px;padding:9px 12px;border:1.5px solid #CFD6E2;border-radius:12px;font-family:inherit}
 .keyhelp summary{cursor:pointer;color:#2F5D8A;font-weight:500;list-style:none;display:inline-flex;gap:6px;align-items:center}
 .keyhelp summary::-webkit-details-marker{display:none}
 .keyhelp summary::before{content:'▸';font-size:11px}
@@ -475,9 +475,8 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
    <div class="rosterpanel hidden" id="rosterBox">
     <span class="sum hidden" id="rosterSum"></span>
     <div class="row" id="recRow">
-     <div class="addline"><input id="nameIn" placeholder="학생 이름(실명)" style="width:200px"><button class="btn mini" id="nameAdd">학생 넣기</button><button class="btn mini" id="rosterClose" type="button">닫기</button></div>
-     <div class="roster" id="roster"></div>
-     <div class="note">이름은 담임이 실명으로 넣어요. 명단은 이 사이트의 다른 앱과 함께 쓰고, 기록은 이 기기에만 저장돼요. ×를 누르면 그 학생과 기록을 지워요.</div>
+     <div id="rosterMount"></div>
+     <div class="note">이름은 담임이 실명으로 넣어요. 명단은 이 기기의 다른 차름 앱과 함께 쓰고, 기록은 이 기기에만 저장돼요. ×로 뺀 학생의 기록은 6개월 동안 남아 있어서, 그동안 다시 넣으면 이어져요.</div>
      <select id="recSelect" class="hidden"></select><button class="hidden" id="recStop"></button><span id="recStatus" class="hidden"></span>
     </div>
    </div>
@@ -928,6 +927,127 @@ ensureCss();
 if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
 })();
 </script>
+<script id="roster">
+/* 차름 공통 모듈: 학생 명단(roster) — 원본은 common/roster.js. 앱 안의 <script id="roster">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   명단은 같은 기기의 모든 차름 앱이 함께 쓴다(webapp.students). 뺀 학생은 webapp.students.out에 뺀 날과 함께 옮긴다.
+   뺀 학생의 기록은 KEEP_DAYS(6개월) 동안 남겨 두고, 그동안 같은 이름으로 다시 넣으면 같은 학생으로 되살아나 기록이 이어진다.
+   6개월이 지나면 앱마다 Roster.purge(기록)로 그 학생의 줄을 지운다. 빼낸 표시는 다른 앱도 지울 수 있게 3년 동안 남긴다.
+
+   쓰는 법(앱):
+     Roster.list()            지금 명단 [{id,name}]
+     Roster.nameOf(id)        이름(뺀 학생도)
+     Roster.has(id)           지금 명단에 있는지
+     Roster.add(이름)         넣은(또는 되살린) 학생을 돌려줌
+     Roster.remove(id)        명단에서 뺌(기록은 앱이 6개월 보관)
+     Roster.kept()            기록을 보관 중인 뺀 학생 [{id,name,at,until}]
+     Roster.purge(log, row=>row.s)   보관 기간이 지난 학생의 줄을 뺀 새 배열
+     Roster.mount(칸, {btn, on, input, onChange})   넣기·빼기 화면을 칸 안에 그림
+       btn·on·input: 그 앱의 단추·눌림·입력 칸 class(얼굴은 앱마다). onChange({type:'add'|'remove'|'restore', id})
+*/
+(function () {
+  'use strict';
+  var KEY = 'webapp.students', OUT = 'webapp.students.out', DAY = 864e5, KEEP_DAYS = 183, MARK_DAYS = 1100;
+  function get(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return Array.isArray(v) ? v : d; } catch (e) { return d; } }
+  function put(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function clean(n) { return String(n || '').trim().replace(/\s+/g, ' ').slice(0, 20); }
+  function newId() { return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  function list() { return get(KEY, []).filter(function (s) { return s && s.id && s.name; }); }
+  function outs() {
+    var now = Date.now(), all = get(OUT, []), live = all.filter(function (o) { return o && o.id && now - (o.at || 0) < MARK_DAYS * DAY; });
+    if (live.length !== all.length) put(OUT, live);
+    return live;
+  }
+  function kept() {
+    var now = Date.now(), ids = {};
+    list().forEach(function (s) { ids[s.id] = 1; });
+    return outs().filter(function (o) { return !ids[o.id] && now - o.at < KEEP_DAYS * DAY; })
+      .map(function (o) { return { id: o.id, name: o.name, at: o.at, until: o.at + KEEP_DAYS * DAY }; });
+  }
+  function nameOf(id) {
+    var s = list().filter(function (x) { return x.id === id; })[0] || outs().filter(function (x) { return x.id === id; })[0];
+    return s ? s.name : '';
+  }
+  function has(id) { return list().some(function (s) { return s.id === id; }); }
+  function add(name) {
+    var n = clean(name); if (!n) return null;
+    var L = list(), same = L.filter(function (s) { return s.name === n; })[0];
+    if (same) return same;
+    var back = kept().filter(function (o) { return o.name === n; }).sort(function (a, b) { return b.at - a.at; })[0];
+    var st = back ? { id: back.id, name: n } : { id: newId(), name: n };
+    L.push(st); put(KEY, L);
+    if (back) put(OUT, outs().filter(function (o) { return o.id !== back.id; }));
+    return st;
+  }
+  function remove(id) {
+    var L = list(), st = L.filter(function (s) { return s.id === id; })[0]; if (!st) return;
+    put(KEY, L.filter(function (s) { return s.id !== id; }));
+    put(OUT, outs().filter(function (o) { return o.id !== id; }).concat([{ id: st.id, name: st.name, at: Date.now() }]));
+  }
+  function purge(log, idOf) {
+    if (!Array.isArray(log)) return log;
+    var now = Date.now(), gone = {};
+    outs().forEach(function (o) { if (now - o.at >= KEEP_DAYS * DAY) gone[o.id] = 1; });
+    list().forEach(function (s) { delete gone[s.id]; });
+    return log.filter(function (r) { return !gone[idOf ? idOf(r) : r.s]; });
+  }
+  function md(t) { var d = new Date(t); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일'; }
+
+  /* 기본 꼴: 자리·간격만. 색·글꼴·둥글기는 앱의 단추 class와 CSS 변수(--rs-line, --rs-soft)로 앱마다 */
+  var CSS = ':where(.rs){display:grid;gap:10px;margin-top:10px}'
+    + ':where(.rs-add){display:flex;gap:8px;flex-wrap:wrap}'
+    + ':where(.rs-add input){flex:1;min-width:140px;max-width:260px}'
+    + ':where(.rs-names){display:flex;flex-wrap:wrap;gap:6px 8px;margin:0;padding:0;list-style:none}'
+    + ':where(.rs-names li){display:inline-flex;align-items:center;gap:2px;padding:2px 2px 2px 12px;border:1.5px solid var(--rs-line,#d6d2cb);border-radius:999px;min-height:40px}'
+    + ':where(.rs-x){border:0;background:none;font:inherit;font-size:20px;line-height:1;width:40px;height:40px;border-radius:50%;cursor:pointer;color:inherit;opacity:.55}'
+    + ':where(.rs-x:hover,.rs-x:focus-visible){opacity:1;background:var(--rs-soft,rgba(0,0,0,.06))}'
+    + ':where(.rs-none,.rs-out){font-size:14px;opacity:.8;margin:0}'
+    + ':where(.rs-out summary){cursor:pointer}'
+    + ':where(.rs-out ul){margin:6px 0 0;padding:0;list-style:none;display:grid;gap:6px}'
+    + ':where(.rs-out li){display:flex;align-items:center;gap:10px;flex-wrap:wrap}';
+  function style() {
+    if (document.getElementById('rsStyle')) return;
+    var s = document.createElement('style'); s.id = 'rsStyle'; s.textContent = CSS;
+    (document.head || document.documentElement).insertBefore(s, (document.head || document.documentElement).firstChild);
+  }
+
+  function mount(box, opt) {
+    opt = opt || {}; style();
+    var btn = opt.btn || '', on = opt.on || '', inp = opt.input || '', tell = opt.onChange || function () {};
+    function draw() {
+      var L = list(), K = kept(), h = '<div class="rs">';
+      h += '<div class="rs-add"><input class="' + inp + '" maxlength="20" placeholder="학생 이름" aria-label="넣을 학생 이름" autocomplete="off">'
+        + '<button type="button" class="' + btn + ' ' + on + '" data-rs="add">넣기</button></div>';
+      h += L.length ? '<ul class="rs-names">' + L.map(function (s) {
+        return '<li><span>' + esc(s.name) + '</span><button type="button" class="rs-x" data-rs="del" data-id="' + esc(s.id) + '" aria-label="' + esc(s.name) + ' 빼기">×</button></li>';
+      }).join('') + '</ul>' : '<p class="rs-none">아직 넣은 학생이 없어요.</p>';
+      if (K.length) h += '<details class="rs-out"><summary>뺀 학생 ' + K.length + '명 — 기록은 보관 중</summary><ul>' + K.map(function (o) {
+        return '<li><span>' + esc(o.name) + ' · ' + md(o.until) + '까지 보관</span><button type="button" class="' + btn + '" data-rs="back" data-id="' + esc(o.id) + '">다시 넣기</button></li>';
+      }).join('') + '</ul></details>';
+      box.innerHTML = h + '</div>';
+      var input = box.querySelector('input');
+      function doAdd() { var st = add(input.value); if (!st) { input.focus(); return; } draw(); tell({ type: 'add', id: st.id }); }
+      box.querySelector('[data-rs=add]').onclick = doAdd;
+      input.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); doAdd(); } };
+      Array.prototype.forEach.call(box.querySelectorAll('[data-rs=del]'), function (b) {
+        b.onclick = function () {
+          var id = b.getAttribute('data-id'), n = nameOf(id);
+          if (!confirm(n + ' 학생을 명단에서 뺄까요?\n\n이 기기의 다른 차름 앱 명단에서도 함께 빠져요.\n기록은 6개월 동안 남아 있다가, 그동안 다시 넣지 않으면 지워져요.')) return;
+          remove(id); draw(); tell({ type: 'remove', id: id });
+        };
+      });
+      Array.prototype.forEach.call(box.querySelectorAll('[data-rs=back]'), function (b) {
+        b.onclick = function () { var st = add(nameOf(b.getAttribute('data-id'))); draw(); if (st) tell({ type: 'restore', id: st.id }); };
+      });
+    }
+    draw();
+    return { refresh: draw, focus: function () { var i = box.querySelector('input'); if (i) i.focus(); } };
+  }
+
+  window.Roster = { list: list, nameOf: nameOf, has: has, add: add, remove: remove, kept: kept, purge: purge, mount: mount, KEEP_DAYS: KEEP_DAYS };
+})();
+</script>
 <script>
 "use strict";
 /* =========================================================
@@ -940,6 +1060,18 @@ const $$ = s => Array.from(document.querySelectorAll(s));
 const CANCEL = Symbol('cancel');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+/* 정답 자리 고르기(2026-11-04, 지침 1절 — 008 answerSlot과 같게): 그냥 섞으면 같은 자리가 서너 번 이어져 자리로 맞히므로
+   정답이 덜 나온 자리에서 고르고 바로 앞과 같은 자리는 피함(보기 둘이면 두 번까지). key: 화면 갈래, n: 보기 수 */
+const SLOTS = {};
+function answerSlot(key, n) {
+  const H = SLOTS[key + n] = SLOTS[key + n] || [], cnt = Array.from({ length: n }, (_, i) => H.filter(x => x === i).length);
+  let ok = [...Array(n).keys()];
+  if (H.length && n >= 3) ok = ok.filter(i => i !== H[H.length - 1]);
+  if (n === 2 && H.length >= 2 && H[H.length - 1] === H[H.length - 2]) ok = ok.filter(i => i !== H[H.length - 1]);
+  const m = Math.min(...ok.map(i => cnt[i])), pick = shuffle(ok.filter(i => cnt[i] <= m + (n === 2 ? 1 : 0)))[0];
+  H.push(pick); if (H.length > 40) H.shift(); return pick;
+}
+const putAt = (arr, x, key) => { const r = shuffle(arr.filter(y => y !== x)); r.splice(answerSlot(key, r.length + 1), 0, x); return r; };
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -1705,15 +1837,19 @@ function sha1Bytes(msg) {
   return out;
 }
 const Rec = {
-  students: [], log: [], recId: '',
+  /* 명단은 공통 모듈 roster(webapp.students, 다른 차름 앱과 함께)에서 그때그때 읽음 — 이 앱이 옛 명단을 들고 있다가 덮어쓰지 않게.
+     _st: 예시 기록(홍길동)을 보는 동안만 잠깐 쓰는 명단 */
+  _st: null, log: [], recId: '',
+  get students() { return this._st || Roster.list(); },
+  set students(v) { this._st = v; },
   load() {
-    try { this.students = JSON.parse(localStorage.getItem('webapp.students') || '[]') || []; } catch (e) { this.students = []; }
     this.log = LS.get('log', []);
+    const n = this.log.length; this.log = Roster.purge(this.log); if (this.log.length !== n) this.saveLog();   /* 뺀 지 6개월이 지난 학생의 기록 */
   },
-  saveStudents() { try { localStorage.setItem('webapp.students', JSON.stringify(this.students)); } catch (e) {} },
+  /* 학생 수준(wl)은 명단의 그 학생 칸에 — 저장할 때마다 명단을 새로 읽어 그 칸만 바꿈 */
+  setWl(id, v) { try { const L = JSON.parse(localStorage.getItem('webapp.students') || '[]'); const s = L.find(x => x && x.id === id); if (s) { s.wl = v; localStorage.setItem('webapp.students', JSON.stringify(L)); } } catch (e) {} },
   saveLog() { LS.set('log', this.log); },
-  nameOf(id) { return (this.students.find(s => s.id === id) || {}).name || ''; },
-  newId() { return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); },
+  nameOf(id) { const s = (this._st || []).find(x => x.id === id); return s ? s.name : Roster.nameOf(id); },
   /* 한 번 할 때마다 바로 저장. r: direct(바로)/helped(도움)/self(혼자 쓰기), sc: 닮음 %, m: 쓰기 방식 */
   add(word, st, result, score, x) {
     R.trials.push({ word, st, result, score });
@@ -1744,7 +1880,6 @@ function renderStudents() {
   const opts = Rec.students.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
   $('#recSelect').innerHTML = '<option value="">기록 안 함</option>' + opts; $('#recSelect').value = Rec.recId;
   $('#recStop').disabled = !Rec.recId;
-  $('#roster').innerHTML = Rec.students.map(s => `<span>${esc(s.name)}${LEVELS[s.wl] ? ' <small style="color:#6B7487">수준 ' + s.wl + '</small>' : ''}<button type="button" data-del="${esc(s.id)}" aria-label="${esc(s.name)} 지우기">×</button></span>`).join('') || '<span class="empty">아직 넣은 학생이 없어요.</span>';
   renderWho();
 }
 /* ---------- 학생마다 수준·이어 하기 ----------
@@ -1757,7 +1892,7 @@ function curLevel() {
 function setLevel(v) {
   v = +v; if (!LEVELS[v]) return;
   const s = Rec.students.find(x => x.id === Rec.recId);
-  if (s) { s.wl = v; Rec.saveStudents(); } else { S.level = v; LS.set('level', v); }
+  if (s) Rec.setWl(s.id, v); else { S.level = v; LS.set('level', v); }
 }
 /* 멈춘 곳: 학생마다(연습은 '_') 지금 하던 낱말들·낱말·단계를 저장 → 창을 닫아도 그 학생을 고르면 거기서부터 */
 const Resume = {
@@ -2229,7 +2364,7 @@ async function stageChoice(st, w, run) {
     prompt.appendChild(pw);
   }
   alive(run);
-  const opts = shuffle([w, ...others]);
+  const opts = putAt([w, ...others], w, 'pick' + st);
   choices.style.gap = gapX + 'px';
   if (grid) Object.assign(choices.style, { flexWrap: 'wrap', width: (cardW * 2 + gapX + 4) + 'px', margin: '0 auto', bottom: '5vh', rowGap: (H * 0.02) + 'px' });
   else if (W < H) { prompt.style.top = '14vh'; choices.style.bottom = Math.max(H * 0.07, H - H * 0.58 - cardH) + 'px'; }   /* 세로 화면: 견본과 보기를 가깝게, 전체를 가운데로 */
@@ -2629,7 +2764,7 @@ const STICKERS = [
   `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6l13 27 30 4-22 21 5 30-26-14-26 14 5-30L7 37l30-4z" fill="#ffd34d" stroke="#c99a12" stroke-width="5" stroke-linejoin="round"/><path d="M36 40l8-2" stroke="#fff6c7" stroke-width="5" stroke-linecap="round"/></svg>`,
   `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 88C20 66 6 50 6 32 6 18 17 8 30 8c9 0 16 5 20 12 4-7 11-12 20-12 13 0 24 10 24 24 0 18-14 34-44 56z" fill="#ff8fa8" stroke="#c9506c" stroke-width="5" stroke-linejoin="round"/><path d="M24 26c3-5 8-7 12-6" stroke="#ffe0e7" stroke-width="5" stroke-linecap="round" fill="none"/></svg>`
 ];
-const GLV = { 1: { n: 2, hint: 3000, again: 7000 }, 2: { n: 3, hint: 6000, again: 8000 }, 3: { n: 4, hint: 0, again: 6000 } };
+const GLV = { 1: { n: 2, hint: 3000 }, 2: { n: 3, hint: 6000 }, 3: { n: 4, hint: 0 } };
 const GMAX = 10;   /* 놀이 횟수 = 배운 낱말 수(수준 1·2·3 → 4·6·10번), 많아도 10번 */
 const KO_N = n => ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열'][n] || String(n);
 const GAME_NAMES = { feed: '먹이 주기', basket: '바구니 담기', body: '스티커 붙이기' };
@@ -2766,7 +2901,10 @@ function goNextBundle() {
   addEventListener('pointerup', fin, true); addEventListener('pointercancel', fin, true);
 })();
 /* 다시 듣기 단추: 화면 왼쪽 아래(오른쪽 아래 관리 버튼과 마주 봄). 누르면 신호를 다시 말함 */
-const REPEAT_MS = 3000;   /* 신호 말이 끝난 뒤 이만큼 지나도 못 찾으면 다시 말함 */
+const REPEAT_MS = 3000;   /* 보상 놀이(비눗방울): 신호 말이 끝난 뒤 이만큼 지나도 못 찾으면 다시 말함 */
+/* 정리하기 다시 부르기(2026-11-04, 지침 4절 — 008과 같게): 이름은 한 번 부르고 기다림. 3초마다 되풀이하면 재촉받는 듯 불안하므로
+   ① 잘못 세 번 누르면 ② 12초 동안 다시 부르지 않았으면 한 번 더. 방금(3초 안) 누르며 찾고 있거나 손가락이 닿아 있으면 멈출 때까지 기다렸다 부름 */
+const CALL_MS = 12000, WRONG_CALL = 3;
 function replayBtn(parent, fn) {
   const b = document.createElement('button'); b.className = 'replay'; b.setAttribute('aria-label', '다시 듣기');
   b.innerHTML = '<svg viewBox="0 0 24 24" width="58%" height="58%"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#5E7FA8"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="#5E7FA8" stroke-width="2" stroke-linecap="round"/></svg>';
@@ -2774,25 +2912,34 @@ function replayBtn(parent, fn) {
   ['pointerup', 'click'].forEach(t => b.addEventListener(t, e => e.stopPropagation()));
   parent.appendChild(b); return b;
 }
-/* 기다리기: 도움(노란 테두리)과 다시 말하기(말이 끝나고 gap 뒤마다). 맞는 것을 누르는 순간 onRight */
+/* 기다리기: 도움(노란 테두리)과 다시 부르기(CALL_MS·WRONG_CALL). 맞는 것을 누르는 순간 onRight */
 function waitTap(els, ans, lv, run, speakCue, firstSay, gap, onRight) {
   return new Promise((res, rej) => {
-    const xs = [], t0 = performance.now(); let hinted = false, answered = false, speaking = false, sayEnd = t0, started = false;
-    const cue = () => { speaking = true; Promise.resolve(speakCue()).catch(() => {}).then(() => { speaking = false; sayEnd = performance.now(); }); };
+    const xs = [], t0 = performance.now(); let hinted = false, answered = false, speaking = false, sayEnd = t0, started = false, wrong = 0, lastTap = 0, down = false, callNow = false;
+    const cue = () => { speaking = true; wrong = 0; callNow = false; Promise.resolve(speakCue()).catch(() => {}).then(() => { speaking = false; sayEnd = performance.now(); }); };
     const rb = replayBtn(GM, () => { if (!answered) cue(); });
+    const pd = () => { down = true; lastTap = performance.now(); }, pu = () => { down = false; };
+    GM.addEventListener('pointerdown', pd, true); addEventListener('pointerup', pu, true); addEventListener('pointercancel', pu, true);
+    const off = () => { clearInterval(tick); rb.remove(); GM.removeEventListener('pointerdown', pd, true); removeEventListener('pointerup', pu, true); removeEventListener('pointercancel', pu, true); };
     const tick = setInterval(() => {
-      if (run !== R.run) { clearInterval(tick); rb.remove(); rej(CANCEL); return; }
+      if (run !== R.run) { off(); rej(CANCEL); return; }
       if (S.teacher) { sayEnd = performance.now(); return; }
       const now = performance.now(), idle = now - t0;
       if (!hinted && lv.hint && idle > lv.hint) { hinted = true; els.find(e => e.dataset.w === ans).classList.add('ghint'); }
-      if (!answered && !speaking) { if (!started) { if (idle >= firstSay) { started = true; cue(); } } else if (now - sayEnd >= gap) cue(); }
+      if (answered || speaking) return;
+      if (!started) { if (idle >= firstSay) { started = true; cue(); } return; }
+      if (callNow || now - sayEnd >= gap) { if (down || now - lastTap < 3000) return; cue(); }   /* 찾으며 누르는 중이면 기다림 */
     }, 150);
     if (!firstSay) { started = true; cue(); }
     els.forEach(e => e.addEventListener('pointerdown', async ev => {   /* 전자칠판: 닿는 순간 바로(틀린 것은 어차피 반응 없음) */
       ev.preventDefault();
       if (answered || run !== R.run || S.teacher) return;
-      if (e.dataset.w !== ans) { if (!xs.includes(e.dataset.w)) xs.push(e.dataset.w); return; }          /* 틀린 터치에는 반응하지 않음 */
-      answered = true; clearInterval(tick); rb.remove(); Speech.stop();
+      if (e.dataset.w !== ans) {          /* 틀린 터치에는 반응하지 않음 */
+        if (!xs.includes(e.dataset.w)) xs.push(e.dataset.w);
+        if (started && ++wrong >= WRONG_CALL && performance.now() - sayEnd > 4000) callNow = true;
+        return;
+      }
+      answered = true; off(); Speech.stop();
       Rec.add(ans, 7, hinted || xs.length ? 'helped' : 'direct', null, xs);   /* 다른 것을 먼저 눌렀으면 바로 맞힘으로 보지 않음 */
       try { await onRight(e, hinted); res(); } catch (x) { rej(x); }
     }));
@@ -2801,7 +2948,7 @@ function waitTap(els, ans, lv, run, speakCue, firstSay, gap, onRight) {
 async function trial(ans, run) {
   const lv = GLV[G.lv], feed = G.kind === 'feed';
   const others = shuffle(G.words.filter(w => w !== ans && !isPair(w, ans))).slice(0, lv.n - 1);
-  const opts = shuffle(others.concat(ans));
+  const opts = putAt(others.concat(ans), ans, G.kind);
   const W = innerWidth, H = innerHeight;
   const box = gq('#targets'); box.innerHTML = '';
   const gr = feed ? 0.34 : 0.4; gq('#ground').style.height = (gr * 100) + '%';
@@ -2848,7 +2995,7 @@ async function trial(ans, run) {
   await wait(900, run);   /* 다 나타나 멈춘 뒤에 이름을 말함 */
   const speakCue = () => Speech.say(ans).catch(() => {});
   const read3 = G.lv === 3 && !feed;   /* 수준 3 바구니: 글자를 읽는 단계라 소리는 3초 뒤 도움으로만 */
-  await waitTap(els, ans, lv, run, speakCue, read3 ? 3000 : 0, read3 ? lv.again : REPEAT_MS, (e, hinted) => success(e, ans, feed, run));
+  await waitTap(els, ans, lv, run, speakCue, read3 ? 3000 : 0, CALL_MS, (e, hinted) => success(e, ans, feed, run));
 }
 async function success(el, ans, feed, run) {
   const it = gq('#item');
@@ -2999,7 +3146,7 @@ function bodyLayout() {
 async function trialBody(ans, run) {
   const lv = GLV[G.lv];
   const others = shuffle(G.words.filter(w => w !== ans && !isPair(w, ans))).slice(0, lv.n - 1);
-  const opts = shuffle(others.concat(ans));
+  const opts = putAt(others.concat(ans), ans, 'body');
   const L = bodyLayout();
   gq('#ground').style.display = 'none';
   let st = gq('#bodyStage');
@@ -3034,7 +3181,7 @@ async function trialBody(ans, run) {
   els.forEach(e => { e.style.transition = 'opacity .5s ease'; e.style.opacity = 1; });   /* 스티커가 자리 잡은 뒤 이름표가 제자리에서 나타남 */
   await wait(900, run);
   const speakCue = () => Speech.say(ans).catch(() => {});
-  await waitTap(els, ans, lv, run, speakCue, 0, REPEAT_MS, e => bodySuccess(e, ans, run, L));
+  await waitTap(els, ans, lv, run, speakCue, 0, CALL_MS, e => bodySuccess(e, ans, run, L));
 }
 async function bodySuccess(el, ans, run, L) {
   const it = gq('#item'), st = gq('#bodyStage');
@@ -3532,7 +3679,7 @@ const TOUR_STEPS = {
     { el: '#sheetBtn', t: '쓰기 연습지', x: '오늘 낱말을 A4에 한 장씩 인쇄해요.' },
     { el: '#voiceBox', t: '목소리', x: '기본 목소리는 키 없이 바로 쓰는 Google 목소리예요. 다른 Google 목소리는 Cloud 키가 필요해요(휴대폰으로 받기도 돼요).' },
     { el: '#moreBox', t: '수업 방식', x: '놀이 하기, 쓰기 방식, 쓰기 글자 모양(바른바탕), 글꼴을 정해요.' },
-    { el: '#rosterBox', t: '학생 명단', x: '학생 이름을 넣거나 지워요.' },
+    { el: '#rosterBox', t: '학생 명단', x: '학생 이름을 넣거나 빼요. 뺀 학생의 기록은 6개월 동안 남아요.' },
     { el: '#recBtn', t: '교사용 기록', x: '학생마다 바로 맞힘·도움 받아 맞힘, 쓰기, 놀이 기록을 보고 내보내요.' }
   ],
   lesson: [
@@ -3700,8 +3847,9 @@ function recordHTML(forPrint) {
   return h;
 }
 function showRecords() {
-  if (!Rec.students.some(s => s.id === view.student)) view.student = Rec.recId || (Rec.students[0] && Rec.students[0].id) || '';
-  $('#viewStudent').innerHTML = Rec.students.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('') || '<option value="">학생 없음</option>';
+  const all = Rec.students.concat(Roster.kept().map(o => ({ id: o.id, name: o.name + ' (뺀 학생)' })));   /* 뺀 학생도 보관하는 동안은 기록을 볼 수 있게 */
+  if (!all.some(s => s.id === view.student)) view.student = Rec.recId || (all[0] && all[0].id) || '';
+  $('#viewStudent').innerHTML = all.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('') || '<option value="">학생 없음</option>';
   $('#viewStudent').value = view.student;
   $$('#rangeSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === view.range));
   $('#recBody').innerHTML = recordHTML(false);
@@ -3716,7 +3864,7 @@ $('#rangeSeg').addEventListener('click', e => { const b = e.target.closest('butt
 const csvCell = v => { v = String(v ?? ''); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
 $('#exportBtn').addEventListener('click', () => {
   const head = ['이름', '날짜', '시각', '낱말', '단계', '결과', '닮음', '쓰기 방식', '수준', '헷갈린 보기'];
-  const lines = Rec.log.map(r => { const d = new Date(r.t); return [Rec.nameOf(r.s) || '(지운 학생)', dayOf(r.t), String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0'), r.w, STEP_NAMES[r.st], RES_TXT(r.st, r.r), r.sc ?? '', r.m ? WMODE_TXT[r.m] : '', r.lv || '', (r.x || []).join(' ')].map(csvCell).join(','); });
+  const lines = Rec.log.map(r => { const d = new Date(r.t); return [Rec.nameOf(r.s) || '(뺀 학생)', dayOf(r.t), String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0'), r.w, STEP_NAMES[r.st], RES_TXT(r.st, r.r), r.sc ?? '', r.m ? WMODE_TXT[r.m] : '', r.lv || '', (r.x || []).join(' ')].map(csvCell).join(','); });
   const blob = new Blob(['﻿' + [head.join(','), ...lines].join('\r\n')], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'word-learn-record-' + today() + '.csv';
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -3746,12 +3894,12 @@ $('#importFile').addEventListener('change', async e => {
     if (c.length < 6 || !c[0]) return;
     const [name, day, time, w, stn, res, sc, mode, lvx, xx] = c;
     const t = new Date(day + 'T' + time).getTime(), st = stOf(stn); if (isNaN(t) || !st || !w) return;
-    let s = Rec.students.find(x => x.name === name); if (!s) { s = { id: Rec.newId(), name }; Rec.students.push(s); }
+    const s = Roster.add(name); if (!s) return;   /* 명단에 없으면 넣음(뺀 지 6개월 안이면 같은 학생으로 되살림) */
     const k = key(s.id, t, w, st); if (seen.has(k)) return; seen.add(k);
     const e2 = { s: s.id, t, w, st, r: rOf(res) }; if (sc !== '' && sc != null) e2.sc = +sc; const m = mOf(mode); if (m) e2.m = m; if (+lvx) e2.lv = +lvx; if (xx) e2.x = xx.split(' ').filter(Boolean);
     Rec.log.push(e2); added++;
   });
-  Rec.log.sort((a, b) => a.t - b.t); Rec.saveStudents(); Rec.saveLog(); renderStudents(); updateRecMark(); showRecords();
+  Rec.log.sort((a, b) => a.t - b.t); Rec.saveLog(); renderStudents(); updateRecMark(); showRecords();
   alert(`기록 ${added}개를 불러왔어요.`);
 });
 $('#wipeBtn').addEventListener('click', () => {
@@ -3957,22 +4105,19 @@ $('#sheetBtn').addEventListener('click', () => printWorksheets(S.chosen.slice())
 /* 학생 명단·기록 고르기 */
 $('#recSelect').addEventListener('change', e => setRecording(e.target.value));
 $('#recStop').addEventListener('click', () => setRecording(''));
-function addStudent() {
-  const name = $('#nameIn').value.trim().replace(/\s+/g, ' '); if (!name) return;
-  Rec.load();
-  if (!Rec.students.some(s => s.name === name)) Rec.students.push({ id: Rec.newId(), name });
-  Rec.saveStudents(); $('#nameIn').value = ''; renderStudents();
+/* 학생 넣기·빼기: 공통 모듈 roster가 그림(얼굴은 이 앱의 단추). 뺀 학생의 기록은 6개월 보관 */
+var ROSTER = null;   /* 열린 넣기·빼기 칸(앞에서 그리는 renderWho도 읽으므로 var) */
+function toggleRoster(show) {
+  const p = $('#rosterBox'), box = $('#rosterMount');
+  if (show == null) show = !ROSTER;
+  if (!show) { ROSTER = null; p.classList.add('hidden'); box.innerHTML = ''; renderWho(); return; }
+  p.classList.remove('hidden');
+  ROSTER = Roster.mount(box, { btn: 'btn mini', on: 'main', input: 'rsin', onChange: e => {
+    if (e.type === 'remove') { if (Rec.recId === e.id) setRecording(''); else renderStudents(); }
+    else setRecording(e.id);   /* 넣은(되살린) 학생으로 바로 기록 */
+  } });
+  ROSTER.focus(); renderWho();
 }
-$('#nameAdd').addEventListener('click', addStudent);
-$('#rosterClose').addEventListener('click', () => $('#rosterBox').classList.add('hidden'));
-$('#nameIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addStudent(); } });
-$('#roster').addEventListener('click', e => {
-  const b = e.target.closest('button[data-del]'); if (!b) return;
-  const id = b.dataset.del, n = Rec.log.filter(r => r.s === id).length;
-  if (!confirm(`${Rec.nameOf(id)} 학생을 명단에서 지울까요?` + (n ? `\n이 앱의 기록 ${n}개도 함께 지워져요.` : ''))) return;
-  Rec.students = Rec.students.filter(s => s.id !== id); Rec.log = Rec.log.filter(r => r.s !== id); Rec.saveStudents(); Rec.saveLog();
-  if (Rec.recId === id) setRecording(''); else renderStudents();
-});
 /* 학생을 고르면: 그 학생의 수준, 다음에 할 묶음 */
 function onStudentChange() {
   S.writeMode = LEVELS[curLevel()].write; LS.set('writeMode', S.writeMode); paintSeg('#writeSeg', 'writeMode'); paintWriteNote();
@@ -4121,12 +4266,12 @@ function renderWho() {
   const el = $('#who'); if (!el) return;
   const b = (id, name, sub, cls) => `<button type="button" data-id="${esc(id)}" class="${cls || ''}${Rec.recId === id ? ' on' + (id ? ' recon' : '') : ''}">${esc(name)}${sub ? `<small>${esc(sub)}</small>` : ''}</button>`;
   el.innerHTML = b('', '연습', '기록 안 함') + Rec.students.map(s => b(s.id, s.name, '수준 ' + (LEVELS[s.wl] ? s.wl : 1))).join('')
-    + '<button type="button" class="add" data-add="1">+ 학생</button>' + (Rec.students.length ? '<button type="button" class="add" data-edit="1">명단 고치기</button>' : '');
+    + `<button type="button" class="add" data-add="1">${ROSTER ? '명단 닫기' : '학생 넣기·빼기'}</button>`;
   $('#rosterSum').textContent = Rec.students.length ? Rec.students.length + '명' : '아직 없어요';
 }
 $('#who').addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
-  if (t.dataset.add || t.dataset.edit) { const p = $('#rosterBox'); const show = t.dataset.add ? true : p.classList.contains('hidden'); p.classList.toggle('hidden', !show); if (show && t.dataset.add) $('#nameIn').focus(); return; }
+  if (t.dataset.add) { toggleRoster(); return; }
   setRecording(t.dataset.id || '');
 });
 /* 같은 편 안에서 (mi, bi) 다음 묶음: 마당의 마지막 묶음 다음은 다음 마당의 첫 묶음, 편의 마지막 다음은 편의 첫 묶음 */
@@ -4537,12 +4682,12 @@ view.demo = false;
   const baseHTML = recordHTML;
   recordHTML = function (forPrint) {
     if (view.demo) {
-      const D = demoData(), keep = [Rec.log, Rec.students, view.student, R.trials];
+      const D = demoData(), keep = [Rec.log, Rec._st, view.student, R.trials];
       Rec.log = D.log; Rec.students = [{ id: D.sid, name: D.name, wl: D.lv }]; view.student = D.sid; R.trials = [];
       try {
         return (forPrint ? '<h1>[차름 국어] 낱말 익히기 · 교사용 기록 (예시)</h1>' : '') + `<div class="demobar">예시 기록입니다. 가상의 학생 <b>홍길동</b>이 한 달(월~목, 하루 한 묶음) 쓴 것으로 만들었습니다. 이 기기의 기록에는 들어가지 않습니다.</div>`
           + insightHTML(D.log, D.sid, D.name, D.lv) + `<details class="more" style="margin-top:12px"><summary>낱말별 자세히</summary>${baseHTML(false)}</details>`;
-      } finally { [Rec.log, Rec.students, view.student, R.trials] = keep; }
+      } finally { [Rec.log, Rec._st, view.student, R.trials] = keep; }
     }
     const sid = view.student, s = Rec.students.find(x => x.id === sid);
     const top = sid ? insightHTML(Rec.log, sid, Rec.nameOf(sid), s && LEVELS[s.wl] ? s.wl : 1) : '';
