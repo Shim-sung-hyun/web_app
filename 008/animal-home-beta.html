@@ -599,8 +599,9 @@ body.setup #adminBtn{display:none}
       const si = o.skirt && pl.skirtImg[o.skirt];
       if (si && look.skirt !== false && o.h > .05) {   // 밑동 덮개: 덮개의 밑동 줄을 요소의 밑동 줄에 맞춰 땅에 붙임
         const m = (pl.skirtMeta || {})[o.skirt] || {base: 1, foot: [0, 1]}, vis = Math.max(.2, m.foot[1] - m.foot[0]);
-        let sw = (footR - footL) * 1.3 / vis, shh = sw * (si.naturalHeight / si.naturalWidth) * 4 / 3;
-        const cap = o.h * o.base * .16; if (shh * m.base > cap) { const k = cap / (shh * m.base); sw *= k; shh *= k; }
+        const ks = o.skirtScale || 1;   // 앱·선생님이 바꾼 덮개 배율
+        let sw = (footR - footL) * 1.3 * ks / vis, shh = sw * (si.naturalHeight / si.naturalWidth) * 4 / 3;
+        const cap = o.h * o.base * .16 * ks; if (shh * m.base > cap) { const k = cap / (shh * m.base); sw *= k; shh *= k; }
         const cx = (footL + footR) / 2 - sw * ((m.foot[0] + m.foot[1]) / 2 - .5);
         const k = mk('img', `left:${(cx - sw / 2) * 100}%;top:${(o.y + o.h * .004 - shh * m.base) * 100}%;width:${sw * 100}%;height:${shh * 100}%;z-index:${z + 1};filter:${fog(far)}`); k.src = si.src; k.alt = ''; o.skirtAt = [cx, o.y - shh * m.base * .45];   // 덮개 가운데(앱이 표시할 때)
       }

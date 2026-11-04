@@ -51,7 +51,9 @@ index.json 꼴(장소 하나에 한 줄)
   자리마다 y 범위(x 범위), 원근 여부(persp), 그 자리에 까는 덮개(skirt). 요소마다 bed(놓일 자리). 모듈은 요소를 제 자리에만 놓음.
 - base·foot: tools/stage-meta.py가 그림마다 실제 밑동 줄과 폭을 재어 stage.json에 적음(덮개는 skirtMeta). 모듈은 이 줄을 자리의 땅에 맞추고, 덮개의 밑동 줄도 요소의 밑동 줄에 맞춤.
 - 시험 페이지 '자리 보기'로 자리를 빨간 점선으로 봄. 요소마다 번호(왼쪽부터, 빨간 테), 밑동 덮개도 그다음 번호(초록 점선 테, '○번 밑')가 붙고, 판·곳마다 멘트 칸이 있음 → 선생님이 '멘트 모아 복사'로
-  '[무대 시험 멘트] ■ 곳 판 번호 · 번호표 · 멘트'를 대화에 붙여 주면, 그 판 번호(#nature/곳/번호)로 같은 장면을 다시 띄워 고친다(2026-11-04 정한 작업 방식). 그림을 넣거나 자리를 고치면: python3 tools/stage-meta.py → python3 tools/stage-index.py → 시험 페이지로 12곳을 눈으로 봄.
+  '[무대 시험 멘트] ■ 곳 판 번호 · 번호표 · 멘트'를 대화에 붙여 주면,
+  ('옮기기'를 켜면 선생님이 요소를 끌어 옮기고(위아래 = 원근대로 크기 바뀜) 바퀴로 크기·Shift+바퀴로 덮개 크기·두 번 눌러 뒤집기·K 덮개 바꾸기·N 덮개 없애기·Delete 빼기 —
+   '선생님이 옮긴 것: 4 소나무: 자리 (0.39,0.58)→(0.13,0.91), 크기 ×1.12 …'도 함께 복사됨 → 그것을 보고 놓는 규칙(크기·자리·덮개)을 고친다) 그 판 번호(#nature/곳/번호)로 같은 장면을 다시 띄워 고친다(2026-11-04 정한 작업 방식). 그림을 넣거나 자리를 고치면: python3 tools/stage-meta.py → python3 tools/stage-index.py → 시험 페이지로 12곳을 눈으로 봄.
 
 ■ 모듈 common/stagekit.js (공통 모듈: 원본 한 곳, python3 tools/sync-modules.py로 <script id="stagekit"> 칸에 복사)
 - Stage.load('nature/desert') → Stage.compose(pl,{seed}) 또는 {fixed:[{id,x,y,r,flip}]} → Stage.add(pl,lay,{동물…}) → Stage.render(div,pl,lay,{shadow,haze,front})
