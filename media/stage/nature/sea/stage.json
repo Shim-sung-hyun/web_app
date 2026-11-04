@@ -91,5 +91,10 @@
     0.65
    ]
   }
- }
+ },
+ "skirt": [
+  "sandmound",
+  "seasprigs",
+  "rubble"
+ ]
 }

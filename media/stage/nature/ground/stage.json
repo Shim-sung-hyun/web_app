@@ -81,5 +81,10 @@
    "name": "먼 나무줄",
    "h": 0.07
   }
+ ],
+ "skirt": [
+  "grasstuft",
+  "clover",
+  "dirtmound"
  ]
 }

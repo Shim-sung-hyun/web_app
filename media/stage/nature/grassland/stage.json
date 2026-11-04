@@ -103,5 +103,10 @@
    "name": "먼 덤불줄",
    "h": 0.06
   }
+ ],
+ "skirt": [
+  "drygrass",
+  "redearth",
+  "trampled"
  ]
 }

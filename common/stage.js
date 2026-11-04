@@ -24,6 +24,9 @@
     }
     for (const f of pl.front || []) { f.srcUrl = dir + 'front/' + f.src + '.webp'; jobs.push(img(f.srcUrl).then(i => f.img = i)); }
     for (const f of pl.far || []) { f.srcUrl = dir + 'far/' + f.src + '.webp'; jobs.push(img(f.srcUrl).then(i => f.img = i)); }
+    pl.skirtImg = {};   // 밑동 덮개(낙엽·흙더미·모래·물결): skirt/*.webp — 요소 밑동 앞에 덮어 땅에 박힌 듯
+    const sk = new Set([...(pl.skirt || []), ...Object.values(pl.items || {}).flatMap(i => Array.isArray(i.skirt) ? i.skirt : [])]);
+    for (const k of sk) jobs.push(img(dir + 'skirt/' + k + '.webp').then(i => { if (i) pl.skirtImg[k] = i; }));
     await Promise.all(jobs);
     for (const k of Object.keys(pl.items || {})) if (!pl.items[k].img) delete pl.items[k];   // 아직 안 받은 그림은 빼고 그림
     return pl;
@@ -40,7 +43,9 @@
     const base = it.base ?? 1;                              // 그림 높이 중 밑동 줄이 있는 몫(1 = 맨 아래)
     const h = realH * perM(pl, y) / base * (it.scale || 1); // 그림 전체 높이(장면 대비)
     const w = h * (it.w / it.h) * .75;                      // 장면이 4:3이라 가로 몫으로 바꿈
-    return Object.assign({id: it.id, src: it.src, x, y, w, h, base, flip: !!flip, foot: it.foot || [.2, .8], ground: it.float ? 0 : 1}, extra || {});
+    const sks = it.float || it.skirt === false ? [] : (Array.isArray(it.skirt) ? it.skirt : pl.skirt || []).filter(k => pl.skirtImg && pl.skirtImg[k]);
+    const skirt = sks.length ? sks[Math.floor(((r * 7919) % 1) * sks.length)] : null;
+    return Object.assign({id: it.id, src: it.src, x, y, w, h, base, flip: !!flip, foot: it.foot || [.2, .8], ground: it.float ? 0 : 1, skirt}, extra || {});
   }
 
   /* 무작위 배치. 고르게 흩뿌리지 않고 2~4 덩어리(큰 것 하나 + 앞쪽에 작은 것 몇)로 놓고 빈 땅을 남긴다 */
@@ -86,12 +91,13 @@
 
   /* 동물·앱 소품을 같은 규칙으로 끼움. real(실제 높이 m)을 주면 그 자리 원근 크기로, h를 주면 그대로 */
   function add(pl, lay, a) {
-    const it = {id: a.name || 'actor', src: a.src, real: a.real || 1, w: a.w || 1, h: a.h || 1, base: a.base, foot: a.foot};
+    const it = {id: a.name || 'actor', src: a.src, real: a.real || 1, w: a.w || 1, h: a.h || 1, base: a.base, foot: a.foot, skirt: a.skirt};
+    if (!a.skirt) it.skirt = false;   // 동물 발밑 덮개는 앱이 a.skirt:true 로 고를 때만
     const p = a.real ? place(pl, it, a.x, a.y, .5, a.flip, {actor: true, el: a.el}) : Object.assign({id: it.id, src: a.src, x: a.x, y: a.y, w: a.sw, h: a.sh, base: a.base ?? 1, flip: !!a.flip, foot: a.foot || [.2, .8], ground: 1, actor: true, el: a.el});
     lay.push(p); return p;
   }
 
-  /* 그리기. look: shadow(그림자 진하기 0~1, 기본 .28) · haze(먼 것 흐림 0~1, 기본 .3) · front(앞가림 띠 쓰기, 기본 true) · line(요소 테두리 CSS filter) */
+  /* 그리기. look: skirt(밑동 덮개 쓰기, 기본 true) · shadow(그림자 진하기 0~1, 기본 .28) · haze(먼 것 흐림 0~1, 기본 .3) · front(앞가림 띠 쓰기, 기본 true) · line(요소 테두리 CSS filter) */
   function render(box, pl, lay, look = {}) {
     const sh = look.shadow ?? .28, hz = look.haze ?? .3;
     box.innerHTML = ''; box.style.position = 'relative'; box.style.aspectRatio = box.style.aspectRatio || '4 / 3'; box.style.overflow = 'hidden';
@@ -115,6 +121,13 @@
       e.style.cssText += `;position:absolute;left:${left * 100}%;top:${top * 100}%;width:${o.w * 100}%;height:${o.h * 100}%;z-index:${z};transform:${o.flip ? 'scaleX(-1)' : 'none'};` +
         (o.actor ? '' : `filter:${look.line || ''} saturate(${1 - .4 * hz * far}) brightness(${1 + .12 * hz * far}) contrast(${1 - .25 * hz * far});pointer-events:none;`);
       box.appendChild(e); o.z = z;
+      const si = o.skirt && pl.skirtImg[o.skirt];
+      if (si && look.skirt !== false && o.h > .06) {               // 작은 돌·풀에는 안 씀                           // 밑동 덮개: 그림자 대신 '땅에 묻힌' 느낌. 요소 바로 위, 다음 요소 아래
+        const sw = o.w * (o.foot[1] - o.foot[0]) * 1.6, shh = Math.min(sw * (si.naturalHeight / si.naturalWidth) * 4 / 3, o.h * .22);
+        const cx = o.x + (o.flip ? -1 : 1) * o.w * ((o.foot[0] + o.foot[1]) / 2 - .5);
+        const k = mk('img', `left:${(cx - sw / 2) * 100}%;top:${(o.y - shh * .8) * 100}%;width:${sw * 100}%;height:${shh * 100}%;z-index:${z + 1};transform:${o.flip ? 'scaleX(-1)' : 'none'};filter:saturate(${1 - .4 * hz * far}) brightness(${1 + .12 * hz * far}) contrast(${1 - .25 * hz * far})`);
+        k.src = si.src; k.alt = '';
+      }
     });
     if (look.front !== false) for (const f of pl.front || []) if (f.img) {   // 앞가림 띠: 화면 아래에서 모든 것 위
       const h = f.h || .12, e = mk('img', `left:-1%;width:102%;top:${(f.y ?? 1) * 100 - h * 100}%;height:${h * 100}%;z-index:9000;object-fit:fill`); e.src = f.srcUrl; e.alt = '';

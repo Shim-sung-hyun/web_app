@@ -24,7 +24,16 @@
   ],
   "ready": true,
   "far": [],
-  "missing": []
+  "missing": [
+   "skirt/sanddrift",
+   "skirt/sandpebbles",
+   "skirt/twigs"
+  ],
+  "skirt": [
+   "sanddrift",
+   "sandpebbles",
+   "twigs"
+  ]
  },
  "nature/grassland": {
   "name": "초원",
@@ -55,7 +64,15 @@
    "bush"
   ],
   "missing": [
-   "thicket"
+   "thicket",
+   "skirt/drygrass",
+   "skirt/redearth",
+   "skirt/trampled"
+  ],
+  "skirt": [
+   "drygrass",
+   "redearth",
+   "trampled"
   ]
  },
  "nature/forest": {
@@ -87,7 +104,16 @@
   "far": [
    "trees"
   ],
-  "missing": []
+  "missing": [
+   "skirt/leafmound",
+   "skirt/mossroots",
+   "skirt/leaves"
+  ],
+  "skirt": [
+   "leafmound",
+   "mossroots",
+   "leaves"
+  ]
  },
  "nature/ground": {
   "name": "땅 위(들판)",
@@ -116,7 +142,16 @@
   "far": [
    "hedge"
   ],
-  "missing": []
+  "missing": [
+   "skirt/grasstuft",
+   "skirt/clover",
+   "skirt/dirtmound"
+  ],
+  "skirt": [
+   "grasstuft",
+   "clover",
+   "dirtmound"
+  ]
  },
  "nature/polar": {
   "name": "극지방",
@@ -143,7 +178,14 @@
   ],
   "ready": true,
   "far": [],
-  "missing": []
+  "missing": [
+   "skirt/snowdrift",
+   "skirt/snowcrumbs"
+  ],
+  "skirt": [
+   "snowdrift",
+   "snowcrumbs"
+  ]
  },
  "nature/wetland": {
   "name": "논·습지",
@@ -172,7 +214,16 @@
   "far": [
    "reeds"
   ],
-  "missing": []
+  "missing": [
+   "skirt/ripples",
+   "skirt/mudsprouts",
+   "skirt/reedripple"
+  ],
+  "skirt": [
+   "ripples",
+   "mudsprouts",
+   "reedripple"
+  ]
  },
  "nature/mudflat": {
   "name": "갯벌",
@@ -199,7 +250,14 @@
   ],
   "ready": true,
   "far": [],
-  "missing": []
+  "missing": [
+   "skirt/mudmound",
+   "skirt/mudwort"
+  ],
+  "skirt": [
+   "mudmound",
+   "mudwort"
+  ]
  },
  "nature/sea": {
   "name": "바닷속",
@@ -227,7 +285,16 @@
   ],
   "ready": true,
   "far": [],
-  "missing": []
+  "missing": [
+   "skirt/sandmound",
+   "skirt/seasprigs",
+   "skirt/rubble"
+  ],
+  "skirt": [
+   "sandmound",
+   "seasprigs",
+   "rubble"
+  ]
  },
  "nature/water": {
   "name": "물속",
@@ -253,7 +320,8 @@
   ],
   "ready": true,
   "far": [],
-  "missing": []
+  "missing": [],
+  "skirt": []
  },
  "nature/pond": {
   "name": "강·호수",
@@ -280,7 +348,14 @@
   ],
   "ready": true,
   "far": [],
-  "missing": []
+  "missing": [
+   "skirt/silt",
+   "skirt/pondweeds"
+  ],
+  "skirt": [
+   "silt",
+   "pondweeds"
+  ]
  },
  "nature/underground": {
   "name": "땅속",
@@ -305,7 +380,8 @@
   ],
   "ready": true,
   "far": [],
-  "missing": []
+  "missing": [],
+  "skirt": []
  },
  "nature/sky": {
   "name": "하늘",
@@ -330,6 +406,7 @@
   ],
   "ready": true,
   "far": [],
-  "missing": []
+  "missing": [],
+  "skirt": []
  }
 }

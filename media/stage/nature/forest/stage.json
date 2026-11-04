@@ -102,5 +102,10 @@
    "name": "먼 숲",
    "h": 0.1
   }
+ ],
+ "skirt": [
+  "leafmound",
+  "mossroots",
+  "leaves"
  ]
 }

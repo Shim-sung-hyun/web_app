@@ -1,5 +1,5 @@
 무대 그림 받기 3 — 008 (2026-11-04)  ※ 1~45번은 PROMPTS-008.txt · PROMPTS-008-2.txt (다 받음)
-지난번 그림 중 물건이 그림 가장자리에서 잘린 것만 다시 받습니다. 이번에는 한 장에 하나씩, 사방에 흰 여백을 두게 했습니다.
+46~49번: 지난번에 가장자리에서 잘린 것을 다시(한 장에 하나씩, 사방에 흰 여백). 50~52번: 밑동 덮개(새로).
 Gemini가 안 되면 ChatGPT에 같은 글과 그림을 넣어도 됩니다(그림체가 조금 달라도 괜찮은지 넣은 뒤 Claude가 봄).
 
 ━━━━━━━━ 46. 빙산 (극지방)
@@ -40,5 +40,61 @@ Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown
 Draw ONE object on a pure white background: a large layered sandstone rock, orange-tan, with a rounded top, about twice as wide as tall.
 The WHOLE object must be visible: leave a clear white margin on ALL four sides — nothing may touch or be cut off by the edge of the picture. Make the picture wide (16:9) so the object can still be drawn large.
 Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Draw fine detail: this picture will be shown very large. Leave the bottom-right corner empty and white.
+▲ 여기까지
+
+■ 밑동 덮개 (나무·바위·풀 밑동 앞에 덮어 땅에 "박힌" 느낌을 줌 — 낙엽·흙더미·모래·눈·물결)
+
+━━━━━━━━ 50. 밑동 덮개 판 1 (숲·들판·초원·사막)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 칸 차례: 1 숲 leafmound · 2 숲 mossroots · 3 들판 grasstuft · 4 들판 clover · 5 초원 drygrass · 6 초원 redearth · 7 사막 sanddrift · 8 사막 sandpebbles  (media/stage/nature/<곳>/skirt/<이름>.webp)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one item per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each item is a LOW, WIDE ground-cover patch that will be laid over the bottom of a tree trunk or plant stem so it looks naturally rooted in the ground. Each patch is about four times wider than tall, centred in its cell, filling the cell's width. Seen from the front at eye level: the bottom edge is straight and flat, the top edge is soft and irregular, thickest in the middle and thinning out to nothing at both ends so it blends into the ground. No tree, no trunk, no stem in the middle, no cast shadow, no background, no animals, no text. No grid lines or cell borders.
+Items in order:
+1 a low mound of fallen brown and orange leaves with a few twigs
+2 a low patch of green moss with small roots and a few fallen leaves
+3 a low patch of fresh green grass tufts
+4 a low patch of clover leaves with a few tiny white flowers
+5 a low patch of dry golden grass tufts
+6 a low patch of reddish earth with small pebbles and a few dry blades
+7 a low drift of pale golden sand piled softly
+8 a low patch of sand with small tan pebbles
+▲ 여기까지
+
+━━━━━━━━ 51. 밑동 덮개 판 2 (극지방·논·습지·갯벌·바닷속)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 칸 차례: 1 극지방 snowdrift · 2 극지방 snowcrumbs · 3 논·습지 ripples · 4 논·습지 mudsprouts · 5 갯벌 mudmound · 6 갯벌 mudwort · 7 바닷속 sandmound · 8 바닷속 seasprigs  (media/stage/nature/<곳>/skirt/<이름>.webp)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one item per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each item is a LOW, WIDE ground-cover patch that will be laid over the bottom of a tree trunk or plant stem so it looks naturally rooted in the ground. Each patch is about four times wider than tall, centred in its cell, filling the cell's width. Seen from the front at eye level: the bottom edge is straight and flat, the top edge is soft and irregular, thickest in the middle and thinning out to nothing at both ends so it blends into the ground. No tree, no trunk, no stem in the middle, no cast shadow, no background, no animals, no text. No grid lines or cell borders.
+Items in order:
+1 a low soft snowdrift, white with pale blue shading
+2 a low patch of snow with small ice crumbs
+3 flat water ripple rings seen from a low angle (squashed ellipses), light blue-grey lines with pale blue highlights and a little brown mud in the middle
+4 a low patch of wet brown mud with a few tiny green rice sprouts
+5 a low mound of wet grey mud with a few small shells
+6 a low patch of grey mud with tiny red glasswort sprigs
+7 a low mound of sea-floor sand with a few round pebbles
+8 a low patch of sand with tiny green seagrass sprigs
+▲ 여기까지
+
+━━━━━━━━ 52. 밑동 덮개 판 3 (강·호수·숲·들판·초원·사막·논·습지·바닷속)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 칸 차례: 1 강·호수 silt · 2 강·호수 pondweeds · 3 숲 leaves · 4 들판 dirtmound · 5 초원 trampled · 6 사막 twigs · 7 논·습지 reedripple · 8 바닷속 rubble  (media/stage/nature/<곳>/skirt/<이름>.webp)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one item per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each item is a LOW, WIDE ground-cover patch that will be laid over the bottom of a tree trunk or plant stem so it looks naturally rooted in the ground. Each patch is about four times wider than tall, centred in its cell, filling the cell's width. Seen from the front at eye level: the bottom edge is straight and flat, the top edge is soft and irregular, thickest in the middle and thinning out to nothing at both ends so it blends into the ground. No tree, no trunk, no stem in the middle, no cast shadow, no background, no animals, no text. No grid lines or cell borders.
+Items in order:
+1 a low mound of soft brown pond silt with small pebbles
+2 a low patch of short soft underwater pond weeds and pebbles
+3 a thin flat layer of scattered fallen leaves
+4 a low mound of brown soil with a few grass blades
+5 a low patch of flattened trampled dry grass
+6 a low patch of sand with a few dry twigs
+7 wider flat water ripple rings seen from a low angle, light blue-grey lines, with a few short reed stubs
+8 a low patch of small broken coral pieces and shells on sand
 ▲ 여기까지
 

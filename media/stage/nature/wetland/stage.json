@@ -81,5 +81,10 @@
    "name": "먼 갈대밭",
    "h": 0.06
   }
+ ],
+ "skirt": [
+  "ripples",
+  "mudsprouts",
+  "reedripple"
  ]
 }

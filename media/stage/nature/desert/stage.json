@@ -79,5 +79,10 @@
     1.2
    ]
   }
- }
+ },
+ "skirt": [
+  "sanddrift",
+  "sandpebbles",
+  "twigs"
+ ]
 }
