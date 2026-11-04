@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[차름 만들기] 목소리 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=Jua&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4f1ea; --card:#fffdf8; --ink:#24272c; --soft:#5d636b; --faint:#8b9097;
+  --line:#ddd6c8; --line2:#c9c0ae; --accent:#4E6A80; --accent-ink:#2F4556;
+  --ok:#3f7a4f; --warn:#9a5b1e; --hl:#e9e2d2;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:15px/1.55 "IBM Plex Sans KR",system-ui,sans-serif;padding:0 16px 110px}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1120px;margin:0 auto}
+header{padding:28px 0 14px;display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+header .tag{font-size:13px;color:var(--accent);letter-spacing:.02em}
+header h1{margin:2px 0 0;font:400 32px/1.1 Jua,sans-serif}
+header p{margin:0 0 4px auto;color:var(--soft);font-size:13.5px;max-width:420px}
+
+.say{margin:18px 0 6px;display:grid;grid-template-columns:1fr 210px;gap:14px}
+.say textarea{width:100%;min-height:92px;resize:vertical;border:1px solid var(--line2);background:var(--card);border-radius:6px;padding:12px 14px;font-size:20px;line-height:1.45}
+.say textarea:focus,input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.rate{border:1px solid var(--line);background:var(--card);border-radius:6px;padding:10px 14px}
+.rate label{font-size:13px;color:var(--soft);display:block}
+.rate output{font:400 30px/1.2 Jua,sans-serif;display:block}
+.rate input{width:100%;accent-color:var(--accent)}
+.rate .marks{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 22px}
+.chips button{border:1px solid var(--line2);background:transparent;border-radius:999px;padding:3px 11px;font-size:13.5px;cursor:pointer;color:var(--soft)}
+.chips button:hover{background:var(--hl);color:var(--ink)}
+.chips span{font-size:12.5px;color:var(--faint);align-self:center;margin-right:2px}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.eng{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;position:relative}
+.eng h2{margin:0;font-size:17px;font-weight:600;display:flex;align-items:baseline;gap:8px}
+.eng h2 small{font-weight:400;color:var(--faint);font-size:12.5px}
+.eng .state{position:absolute;top:16px;right:16px;font-size:12.5px;color:var(--faint)}
+.eng .state.ok{color:var(--ok)} .eng .state.warn{color:var(--warn)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row > label{font-size:13px;color:var(--soft);min-width:52px}
+.row select,.row input[type=text],.row input[type=password]{flex:1;min-width:0;border:1px solid var(--line2);background:#fff;border-radius:5px;padding:6px 9px;font-size:14px}
+.key{border-top:1px dashed var(--line);padding-top:10px}
+.key summary{cursor:pointer;font-size:13px;color:var(--soft);list-style:none}
+.key summary::-webkit-details-marker{display:none}
+.key summary::before{content:"▸ ";color:var(--faint)}
+.key[open] summary::before{content:"▾ "}
+.key .row{margin-top:8px}
+.key .help{font-size:12.5px;color:var(--faint);margin:6px 0 0}
+.key .help a{color:var(--accent)}
+.btns{display:flex;gap:8px;margin-top:auto;padding-top:4px;flex-wrap:wrap}
+.btn{border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:5px;padding:8px 18px;cursor:pointer;font-size:14.5px}
+.btn.line{background:transparent;color:var(--ink);border-color:var(--line2)}
+.btn.small{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.38;cursor:default}
+.btn.playing{background:var(--accent);border-color:var(--accent)}
+.meta{font-size:12.5px;color:var(--faint);margin-left:auto;align-self:center}
+.msg{font-size:13px;color:var(--warn);margin:0;min-height:0}
+.msg:empty{display:none}
+.fileinfo{font-size:13px;color:var(--soft);margin:0}
+.fileinfo b{font-weight:500;color:var(--ink)}
+label.btn{display:inline-block}
+.note{font-size:13px;color:var(--soft);margin:0;background:var(--hl);border-radius:5px;padding:8px 10px}
+
+.dock{position:fixed;left:0;right:0;bottom:0;background:rgba(244,241,234,.96);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.dock .wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dock .hint{font-size:13px;color:var(--soft)}
+.blind{display:none;margin-top:22px;background:var(--card);border:1px solid var(--line2);border-radius:8px;padding:16px}
+.blind.on{display:block}
+.blind h3{margin:0 0 4px;font-size:16px}
+.blind p{margin:0 0 12px;font-size:13.5px;color:var(--soft)}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.slot{border:1px solid var(--line2);border-radius:6px;padding:12px;text-align:center;background:#fff}
+.slot b{font:400 30px/1 Jua,sans-serif;display:block;margin-bottom:8px}
+.slot .who{font-size:13px;color:var(--soft);margin-top:8px;min-height:1.5em}
+.slot.pick{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.slot.now{background:var(--hl)}
+
+@media (max-width:760px){
+  header h1{font-size:27px} header p{margin-left:0}
+  .say{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><div class="tag">차름 만들기</div><h1>목소리 비교</h1></div>
+  <p>같은 말을 같은 빠르기로 들어 보고 고릅니다. 키는 이 기기에만 남고, 각 서비스로 바로 보냅니다.</p>
+</header>
+
+<section class="say">
+  <textarea id="text" aria-label="들어 볼 말">물에 사는 동물을 찾아요.</textarea>
+  <div class="rate">
+    <label for="rate">빠르기</label>
+    <output id="rateOut">0.92</output>
+    <input id="rate" type="range" min="0.7" max="1.2" step="0.01" value="0.92">
+    <div class="marks"><span>0.7</span><span>1.0</span><span>1.2</span></div>
+  </div>
+</section>
+<div class="chips" id="chips"><span>앱에서 쓰는 말</span></div>
+
+<section class="grid">
+
+  <!-- 기기 -->
+  <article class="eng" data-eng="device">
+    <h2>기기 목소리 <small>Web Speech</small></h2>
+    <span class="state" data-state></span>
+    <div class="row"><label for="devVoice">목소리</label><select id="devVoice"></select></div>
+    <p class="note">기기마다 다릅니다. 전자칠판·사파리·안드로이드에서 따로 들어 보세요.</p>
+    <p class="msg" data-msg></p>
+    <div class="btns">
+      <button class="btn" data-play>듣기</button>
+      <span class="meta" data-meta></span>
+    </div>
+  </article>
+
+  <!-- Google -->
+  <article class="eng" data-eng="google">
+    <h2>Google Cloud <small>Text-to-Speech</small></h2>
+    <span class="state" data-state></span>
+    <div class="row"><label for="gVoice">목소리</label><select id="gVoice"></select></div>
+    <p class="msg" data-msg></p>
+    <details class="key" id="gKeyBox">
+      <summary>음성 키</summary>
+      <div class="row"><input id="gKey" type="password" placeholder="AIza…" autocomplete="off" spellcheck="false"><button class="btn line small" data-load>목소리 불러오기</button></div>
+      <p class="help">차름 앱의 음성 키와 같은 칸을 씁니다. 키에 웹사이트 제한이 있으면 이 페이지를 차름 주소(github.io·charum.org)에서 여세요. <a href="https://www.charum.org/study/doc.html?001/cloud-key" target="_blank" rel="noopener">키 받는 법 자세히 보기</a></p>
+    </details>
+    <div class="btns">
+      <button class="btn" data-play>듣기</button>
+      <button class="btn line" data-save disabled>mp3</button>
+      <span class="meta" data-meta></span>
+    </div>
+  </article>
+
+  <!-- Azure -->
+  <article class="eng" data-eng="azure">
+    <h2>Azure <small>Speech</small></h2>
+    <span class="state" data-state></span>
+    <div class="row"><label for="aVoice">목소리</label><select id="aVoice"></select></div>
+    <div class="row" id="aStyleRow" hidden><label for="aStyle">말투</label><select id="aStyle"></select></div>
+    <p class="msg" data-msg></p>
+    <details class="key" id="aKeyBox">
+      <summary>리소스 키 · 지역</summary>
+      <div class="row"><input id="aKey" type="password" placeholder="Speech 리소스 키" autocomplete="off" spellcheck="false"></div>
+      <div class="row">
+        <select id="aRegion">
+          <option value="koreacentral">Korea Central</option>
+          <option value="japaneast">Japan East</option>
+          <option value="eastasia">East Asia</option>
+          <option value="southeastasia">Southeast Asia</option>
+          <option value="eastus">East US</option>
+          <option value="westus2">West US 2</option>
+          <option value="westeurope">West Europe</option>
+        </select>
+        <button class="btn line small" data-load>목소리 불러오기</button>
+      </div>
+      <p class="help">Azure 포털 → Speech 리소스 → "키 및 엔드포인트"의 키1과 지역. 지역이 리소스와 다르면 401이 납니다. <a href="https://learn.microsoft.com/ko-kr/azure/ai-services/speech-service/get-started-text-to-speech" target="_blank" rel="noopener">키 받는 법 자세히 보기</a></p>
+    </details>
+    <div class="btns">
+      <button class="btn" data-play>듣기</button>
+      <button class="btn line" data-save disabled>mp3</button>
+      <span class="meta" data-meta></span>
+    </div>
+  </article>
+
+  <!-- ElevenLabs -->
+  <article class="eng" data-eng="eleven">
+    <h2>ElevenLabs</h2>
+    <span class="state" data-state></span>
+    <div class="row"><label for="eVoice">목소리</label><select id="eVoice"></select></div>
+    <div class="row" id="eModelRow"><label for="eModel">모델</label>
+      <select id="eModel">
+        <option value="eleven_multilingual_v2">Multilingual v2 (안정)</option>
+        <option value="eleven_v3">v3 (표현 많음)</option>
+        <option value="eleven_flash_v2_5">Flash v2.5 (빠름)</option>
+      </select>
+    </div>
+    <p class="fileinfo" id="eFileInfo" hidden></p>
+    <p class="msg" data-msg></p>
+    <p class="note" id="eNoKey">웹에서 만든 mp3를 "파일 넣기"로 넣으면 다른 목소리와 함께 차례로 들을 수 있습니다. 위의 말을 복사해 체험 화면을 열려면 "웹에서 만들기"를 누르세요.</p>
+    <details class="key" id="eKeyBox">
+      <summary>API 키 (있으면)</summary>
+      <div class="row"><input id="eKey" type="password" placeholder="sk_…" autocomplete="off" spellcheck="false"><button class="btn line small" data-load>목소리 불러오기</button></div>
+      <p class="help">ElevenLabs → 개발자 → API Keys. 무료 계정도 한 달 쓸 양이 있습니다. <a href="https://elevenlabs.io/docs/api-reference/authentication" target="_blank" rel="noopener">키 받는 법 자세히 보기</a></p>
+    </details>
+    <div class="btns">
+      <button class="btn" data-play>듣기</button>
+      <button class="btn line" data-save disabled>mp3</button>
+      <label class="btn line" id="eFileBtn">파일 넣기<input id="eFile" type="file" accept="audio/mpeg,audio/*,.mp3" multiple hidden></label>
+      <button class="btn line" id="eWeb">웹에서 만들기</button>
+      <span class="meta" data-meta></span>
+    </div>
+  </article>
+
+</section>
+
+<section class="blind" id="blind">
+  <h3>가리고 듣기</h3>
+  <p>이름을 가린 채 섞어서 차례로 들려 드립니다. 마음에 드는 번호를 누르면 누구였는지 보입니다.</p>
+  <div class="slots" id="slots"></div>
+</section>
+</div>
+
+<div class="dock"><div class="wrap">
+  <button class="btn" id="playAll">차례로 듣기</button>
+  <button class="btn line" id="playBlind">가리고 듣기</button>
+  <button class="btn line" id="stop">멈춤</button>
+  <span class="hint" id="dockHint"></span>
+</div></div>
+
+<script>
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+const store = {
+  get(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } },
+  set(k,v){ try{ v ? localStorage.setItem(k,v) : localStorage.removeItem(k); }catch(e){} }
+};
+const K = { gKey:'webapp.cloudKey', aKey:'webapp.azureKey', aRegion:'webapp.azureRegion', eKey:'webapp.elevenKey',
+            pick:'ttscompare.voices', text:'ttscompare.text', rate:'ttscompare.rate' };
+
+/* ---------- 말과 빠르기 ---------- */
+const PRESETS = ['물에 사는 동물을 찾아요.','잘했어요.','글자. 가.','같은 색을 찾아요.','삼백이십오','동그라미','하늘을 나는 동물이에요.','다시 해 볼까요?'];
+const chips = $('#chips');
+PRESETS.forEach(t => { const b = document.createElement('button'); b.type='button'; b.textContent=t; b.onclick=()=>{ $('#text').value=t; saveText(); }; chips.appendChild(b); });
+const textEl = $('#text'), rateEl = $('#rate'), rateOut = $('#rateOut');
+if (store.get(K.text)) textEl.value = store.get(K.text);
+if (store.get(K.rate)) rateEl.value = store.get(K.rate);
+rateOut.textContent = (+rateEl.value).toFixed(2);
+function saveText(){ store.set(K.text, textEl.value); }
+textEl.addEventListener('input', saveText);
+rateEl.addEventListener('input', () => { rateOut.textContent = (+rateEl.value).toFixed(2); store.set(K.rate, rateEl.value); });
+const text = () => textEl.value.trim();
+const rate = () => +rateEl.value;
+
+let picks = {}; try{ picks = JSON.parse(store.get(K.pick) || '{}'); }catch(e){}
+function rememberPick(id, v){ picks[id]=v; store.set(K.pick, JSON.stringify(picks)); }
+
+/* ---------- 재생 ---------- */
+const audio = new Audio();
+let stopToken = 0;
+function stopAll(){
+  stopToken++;
+  audio.pause(); audio.removeAttribute('src');
+  try{ speechSynthesis.cancel(); }catch(e){}
+  document.querySelectorAll('.btn.playing').forEach(b=>b.classList.remove('playing'));
+  document.querySelectorAll('.slot.now').forEach(s=>s.classList.remove('now'));
+}
+function playBlob(blob){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(blob);
+    audio.onended = () => { URL.revokeObjectURL(url); res(); };
+    audio.onerror = () => { URL.revokeObjectURL(url); rej(new Error('소리를 틀지 못했습니다.')); };
+    audio.onpause = () => { if (!audio.ended) res(); };
+    audio.src = url; audio.play().catch(rej);
+  });
+}
+function b64ToBlob(b64, type){
+  const bin = atob(b64), u = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i);
+  return new Blob([u], {type});
+}
+async function readErr(r){
+  let t = ''; try{ t = await r.text(); }catch(e){}
+  try{ const j = JSON.parse(t); t = (j.error && (j.error.message || j.error)) || (j.detail && (j.detail.message || j.detail)) || t; }catch(e){}
+  if (typeof t === 'object') t = JSON.stringify(t);
+  return { status:r.status, text:String(t||'').slice(0,240) };
+}
+function esc(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c])); }
+
+/* ---------- 엔진 ---------- */
+const engines = {};
+function card(id){ return document.querySelector(`.eng[data-eng="${id}"]`); }
+function ui(id){
+  const c = card(id);
+  return { c, state:c.querySelector('[data-state]'), msg:c.querySelector('[data-msg]'), play:c.querySelector('[data-play]'),
+           save:c.querySelector('[data-save]'), meta:c.querySelector('[data-meta]'), load:c.querySelector('[data-load]') };
+}
+function setState(id, txt, cls){ const s = ui(id).state; s.textContent = txt; s.className = 'state' + (cls ? ' '+cls : ''); }
+function setMsg(id, txt){ ui(id).msg.textContent = txt || ''; }
+function fillSelect(sel, items, keep){
+  sel.innerHTML = '';
+  items.forEach(it => { const o = document.createElement('option'); o.value = it.value; o.textContent = it.label; sel.appendChild(o); });
+  if (keep && items.some(i=>i.value===keep)) sel.value = keep;
+}
+
+/* 기기 */
+engines.device = {
+  name:'기기',
+  ready(){ return !!this.voice(); },
+  voice(){ const n = $('#devVoice').value; return (speechSynthesis.getVoices()||[]).find(v => v.voiceURI === n); },
+  label(){ const v=this.voice(); return v ? '기기 · ' + v.name : '기기'; },
+  init(){
+    if (!('speechSynthesis' in window)){ setState('device','이 브라우저엔 없음','warn'); ui('device').play.disabled = true; return; }
+    const load = () => {
+      const all = speechSynthesis.getVoices() || [];
+      const ko = all.filter(v => /^ko/i.test(v.lang));
+      const list = (ko.length ? ko : all).map(v => ({ value:v.voiceURI, label: v.name + (v.localService ? '' : ' · 온라인') }));
+      fillSelect($('#devVoice'), list, picks.device);
+      setState('device', ko.length ? `한국어 ${ko.length}개` : (all.length ? '한국어 목소리 없음' : '불러오는 중'), ko.length ? 'ok' : 'warn');
+    };
+    load(); speechSynthesis.onvoiceschanged = load;
+    setTimeout(() => { if (!(speechSynthesis.getVoices()||[]).length) setState('device','목소리 없음','warn'); }, 2000);
+    $('#devVoice').onchange = e => rememberPick('device', e.target.value);
+  },
+  speak(token){
+    return new Promise((res, rej) => {
+      const u = new SpeechSynthesisUtterance(text());
+      const v = this.voice(); if (v){ u.voice = v; u.lang = v.lang; } else u.lang = 'ko-KR';
+      u.rate = rate();
+      u.onend = () => res(); u.onerror = e => (e.error==='interrupted'||e.error==='canceled') ? res() : rej(new Error('기기 목소리 오류: '+e.error));
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    });
+  }
+};
+
+/* Google */
+const GV_DEFAULT = 'ko-KR-Chirp3-HD-Leda';
+engines.google = {
+  name:'Google',
+  key(){ return $('#gKey').value.trim(); },
+  ready(){ return !!this.key(); },
+  label(){ return 'Google · ' + ($('#gVoice').value || '').replace('ko-KR-',''); },
+  init(){
+    $('#gKey').value = store.get(K.gKey);
+    fillSelect($('#gVoice'), [{value:GV_DEFAULT,label:'Chirp3-HD-Leda (차름 기본)'}], GV_DEFAULT);
+    $('#gKey').onchange = () => { store.set(K.gKey, this.key()); this.list(); };
+    $('#gVoice').onchange = e => rememberPick('google', e.target.value);
+    ui('google').load.onclick = () => { store.set(K.gKey, this.key()); this.list(); };
+    if (this.key()) this.list(); else { setState('google','키 필요'); $('#gKeyBox').open = true; }
+  },
+  async list(){
+    if (!this.key()) { setState('google','키 필요'); return; }
+    setState('google','확인 중…'); setMsg('google','');
+    try{
+      const r = await fetch('https://texttospeech.googleapis.com/v1/voices?languageCode=ko-KR', { headers:{'x-goog-api-key':this.key()} });
+      if (!r.ok) throw await readErr(r);
+      const j = await r.json();
+      const order = n => /Chirp3-HD/.test(n)?0 : /Chirp-HD/.test(n)?1 : /Neural2/.test(n)?2 : /Wavenet/.test(n)?3 : /Standard/.test(n)?4 : 5;
+      const vs = (j.voices||[]).filter(v=>v.languageCodes.includes('ko-KR')).sort((a,b)=>order(a.name)-order(b.name)||a.name.localeCompare(b.name));
+      const g = { FEMALE:'여', MALE:'남' };
+      fillSelect($('#gVoice'), vs.map(v => ({ value:v.name, label: v.name.replace('ko-KR-','') + (v.name===GV_DEFAULT?' (차름 기본)':'') + (g[v.ssmlGender] ? ' · '+g[v.ssmlGender] : '') })), picks.google || GV_DEFAULT);
+      setState('google', `목소리 ${vs.length}개`, 'ok'); $('#gKeyBox').open = false;
+    }catch(e){ setState('google','키 확인 안 됨','warn'); setMsg('google', googleWhy(e)); $('#gKeyBox').open = true; }
+  },
+  async make(){
+    const name = $('#gVoice').value || GV_DEFAULT;
+    const body = { input:{ text:text() }, voice:{ languageCode:'ko-KR', name }, audioConfig:{ audioEncoding:'MP3', speakingRate: rate() } };
+    const r = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', { method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':this.key()}, body:JSON.stringify(body) });
+    if (!r.ok) throw await readErr(r);
+    const j = await r.json();
+    return b64ToBlob(j.audioContent, 'audio/mpeg');
+  },
+  why: e => googleWhy(e)
+};
+function googleWhy(e){
+  if (e && e.status){
+    if (/referer|referrer/i.test(e.text)) return '이 키는 정해 둔 주소에서만 쓰도록 막혀 있습니다. 이 페이지를 차름 주소에서 열어 주세요.';
+    if (e.status===400 && /API key not valid/i.test(e.text)) return '키가 맞지 않습니다. 다시 붙여 넣어 주세요.';
+    if (e.status===403 && /disabled|not been used/i.test(e.text)) return 'Cloud Text-to-Speech API가 꺼져 있습니다. 콘솔에서 사용 설정해 주세요.';
+    return `Google 오류 ${e.status}: ${e.text}`;
+  }
+  return '연결하지 못했습니다. 인터넷이나 키 제한을 확인해 주세요.';
+}
+
+/* Azure */
+engines.azure = {
+  name:'Azure',
+  key(){ return $('#aKey').value.trim(); },
+  region(){ return $('#aRegion').value; },
+  ready(){ return !!this.key(); },
+  styles:{},
+  label(){ const v=$('#aVoice').value||''; return 'Azure · ' + v.replace('ko-KR-','').replace('Neural','') + ($('#aStyle').value ? ' · '+$('#aStyle').value : ''); },
+  init(){
+    $('#aKey').value = store.get(K.aKey);
+    if (store.get(K.aRegion)) $('#aRegion').value = store.get(K.aRegion);
+    fillSelect($('#aVoice'), [{value:'ko-KR-SunHiNeural',label:'SunHi · 여'},{value:'ko-KR-InJoonNeural',label:'InJoon · 남'}], picks.azure || 'ko-KR-SunHiNeural');
+    const save = () => { store.set(K.aKey, this.key()); store.set(K.aRegion, this.region()); };
+    $('#aKey').onchange = () => { save(); this.list(); };
+    $('#aRegion').onchange = () => { save(); this.list(); };
+    ui('azure').load.onclick = () => { save(); this.list(); };
+    $('#aVoice').onchange = e => { rememberPick('azure', e.target.value); this.showStyles(); };
+    if (this.key()) this.list(); else { setState('azure','키 필요'); $('#aKeyBox').open = true; }
+  },
+  showStyles(){
+    const st = this.styles[$('#aVoice').value] || [];
+    $('#aStyleRow').hidden = !st.length;
+    fillSelect($('#aStyle'), [{value:'',label:'보통'}].concat(st.map(s=>({value:s,label:s}))), '');
+  },
+  base(){ return `https://${this.region()}.tts.speech.microsoft.com/cognitiveservices`; },
+  async list(){
+    if (!this.key()) { setState('azure','키 필요'); return; }
+    setState('azure','확인 중…'); setMsg('azure','');
+    try{
+      const r = await fetch(this.base() + '/voices/list', { headers:{'Ocp-Apim-Subscription-Key':this.key()} });
+      if (!r.ok) throw await readErr(r);
+      const all = await r.json();
+      const vs = all.filter(v => v.Locale === 'ko-KR' || (v.SecondaryLocaleList||[]).includes('ko-KR'));
+      vs.sort((a,b) => (a.Locale==='ko-KR'?0:1)-(b.Locale==='ko-KR'?0:1) || a.ShortName.localeCompare(b.ShortName));
+      this.styles = {}; vs.forEach(v => { if (v.StyleList && v.StyleList.length) this.styles[v.ShortName] = v.StyleList; });
+      const g = { Female:'여', Male:'남' };
+      fillSelect($('#aVoice'), vs.map(v => ({ value:v.ShortName, label: (v.LocalName||v.DisplayName) + (v.Locale!=='ko-KR' ? ' · 다국어('+v.Locale+')' : '') + (g[v.Gender] ? ' · '+g[v.Gender] : '') + (v.Status && v.Status!=='GA' ? ' · '+v.Status : '') })), picks.azure);
+      this.showStyles();
+      setState('azure', `목소리 ${vs.length}개`, 'ok'); $('#aKeyBox').open = false;
+    }catch(e){ setState('azure','키 확인 안 됨','warn'); setMsg('azure', this.why(e)); $('#aKeyBox').open = true; }
+  },
+  async make(){
+    const v = $('#aVoice').value, st = $('#aStyle').value;
+    const pct = Math.round((rate()-1)*100);
+    let inner = `<prosody rate="${pct>=0?'+':''}${pct}%">${esc(text())}</prosody>`;
+    if (st) inner = `<mstts:express-as style="${esc(st)}">${inner}</mstts:express-as>`;
+    if (!/^ko-KR/.test(v)) inner = `<lang xml:lang="ko-KR">${inner}</lang>`;
+    const ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="ko-KR"><voice name="${esc(v)}">${inner}</voice></speak>`;
+    const r = await fetch(this.base() + '/v1', { method:'POST', headers:{ 'Ocp-Apim-Subscription-Key':this.key(), 'Content-Type':'application/ssml+xml', 'X-Microsoft-OutputFormat':'audio-24khz-96kbitrate-mono-mp3' }, body:ssml });
+    if (!r.ok) throw await readErr(r);
+    return await r.blob();
+  },
+  why(e){
+    if (e && e.status){
+      if (e.status===401) return '키나 지역이 맞지 않습니다. 리소스를 만든 지역을 골라 주세요.';
+      if (e.status===429) return '한꺼번에 너무 많이 보냈습니다. 잠시 뒤 다시 눌러 주세요.';
+      if (e.status===400) return '이 목소리·말투 조합을 받지 않습니다. 말투를 "보통"으로 바꿔 보세요.';
+      return `Azure 오류 ${e.status}: ${e.text}`;
+    }
+    return '연결하지 못했습니다. 지역 이름과 인터넷을 확인해 주세요.';
+  }
+};
+
+/* ElevenLabs — API 키로 만들기 + 웹에서 받은 mp3 넣기 */
+const SAMPLE_BASE = 'https://shim-sung-hyun.github.io/web_app/tools/tts-samples/';
+function parseElevenName(fn){
+  // 예: ElevenLabs_2026-11-04T06_21_26_Roger_-_Laid-Back_Casual_Resonant_pre_s50_sim75_v4.mp3
+  let n = fn.replace(/\.[a-z0-9]+$/i,'').replace(/^.*?ElevenLabs_\d{4}-\d\d-\d\dT\d\d_\d\d_\d\d_/i,'');
+  let set = '';
+  const m = n.match(/_(?:pre_)?(s\d+_sim\d+(?:_[a-z]*\d+)*)$/i);
+  if (m){ set = m[1].replace(/_/g,' '); n = n.slice(0, m.index); }
+  n = n.replace(/_pre$/,'');
+  const [voice, ...desc] = n.split('_-_');
+  return { voice: voice.replace(/_/g,' ').trim() || fn, desc: desc.join(' ').replace(/_/g,' '), set };
+}
+engines.eleven = {
+  name:'ElevenLabs',
+  files:[],            // {name, voice, desc, set, text, blob|url, from}
+  apiVoices:[],
+  key(){ return $('#eKey').value.trim(); },
+  sel(){ return $('#eVoice').value; },
+  file(){ const v=this.sel(); return v.startsWith('file:') ? this.files[+v.slice(5)] : null; },
+  ready(){ return !!this.file() || (!!this.key() && !!this.sel()); },
+  label(){
+    const f = this.file();
+    if (f) return 'ElevenLabs · ' + f.voice + ' (파일)';
+    const s=$('#eVoice'); return 'ElevenLabs · ' + (s.options[s.selectedIndex] ? s.options[s.selectedIndex].text.split(' · ')[0] : '') + ' · ' + $('#eModel').value.replace('eleven_','');
+  },
+  init(){
+    $('#eKey').value = store.get(K.eKey);
+    if (picks.elevenModel) $('#eModel').value = picks.elevenModel;
+    $('#eModel').onchange = e => rememberPick('elevenModel', e.target.value);
+    $('#eVoice').onchange = e => { rememberPick('eleven', e.target.value); this.show(); };
+    $('#eKey').onchange = () => { store.set(K.eKey, this.key()); this.list(); };
+    ui('eleven').load.onclick = () => { store.set(K.eKey, this.key()); this.list(); };
+    $('#eWeb').onclick = async () => {
+      try{ await navigator.clipboard.writeText(text()); }catch(e){}
+      window.open('https://elevenlabs.io/text-to-speech/korean', '_blank', 'noopener');
+      setMsg('eleven','말을 복사했습니다. 열린 화면에 붙여 넣고 만든 뒤, 받은 mp3를 "파일 넣기"로 넣으세요.');
+    };
+    $('#eFile').onchange = e => {
+      const fs = [...e.target.files]; e.target.value = '';
+      let last = -1;
+      fs.forEach(f => { const p = parseElevenName(f.name); this.files.push({ name:f.name, ...p, text:'', blob:f, from:'넣은 파일' }); last = this.files.length-1; });
+      if (last >= 0){ this.fill('file:'+last); setMsg('eleven', `파일 ${fs.length}개를 넣었습니다. 새로 고치면 사라집니다.`); }
+    };
+    this.fill();
+    this.loadSamples();
+    if (this.key()) this.list();
+  },
+  async loadSamples(){
+    try{
+      const r = await fetch(SAMPLE_BASE + 'index.json', { cache:'no-cache' });
+      if (!r.ok) return;
+      const j = await r.json();
+      (j.eleven || []).forEach(it => {
+        const p = parseElevenName(it.file);
+        this.files.push({ name:it.file, voice:it.voice || p.voice, desc:it.desc || p.desc, set:it.settings || p.set, text:it.text || '', url: SAMPLE_BASE + 'eleven/' + it.file, from:'저장소' });
+      });
+      this.fill();
+    }catch(e){}
+  },
+  fill(want){
+    const s = $('#eVoice'), keep = want || this.sel() || picks.eleven;
+    s.innerHTML = '';
+    const add = (parent, value, label) => { const o=document.createElement('option'); o.value=value; o.textContent=label; parent.appendChild(o); };
+    if (this.files.length){
+      const g = document.createElement('optgroup'); g.label = '받은 파일';
+      this.files.forEach((f,i) => add(g, 'file:'+i, f.voice + (f.set ? ' · '+f.set : '') + (f.from==='넣은 파일' ? ' · 넣은 것' : '')));
+      s.appendChild(g);
+    }
+    if (this.apiVoices.length){
+      const g = document.createElement('optgroup'); g.label = '키로 만들기';
+      this.apiVoices.forEach(v => add(g, v.value, v.label));
+      s.appendChild(g);
+    }
+    if (!s.options.length) add(s, '', '파일을 넣거나 키를 넣어 주세요');
+    if ([...s.options].some(o => o.value === keep)) s.value = keep;
+    this.show();
+  },
+  show(){
+    const f = this.file(), has = this.ready();
+    $('#eModelRow').hidden = !!f || !this.apiVoices.length;
+    $('#eNoKey').hidden = has;
+    ui('eleven').play.disabled = !has;
+    ui('eleven').save.hidden = !!f;
+    const info = $('#eFileInfo');
+    info.hidden = !f;
+    if (f){
+      const same = f.text && f.text.trim() === text();
+      info.innerHTML = f.text
+        ? `파일 속 말: <b>${esc(f.text)}</b>${same ? '' : ' — 위의 말과 다릅니다.'}`
+        : '파일에 든 말 그대로 나옵니다. 위의 말과 같은지 확인해 주세요.';
+      if (f.desc) info.innerHTML += `<br>${esc(f.desc)} · 빠르기는 파일에 정해진 대로`;
+    }
+    if (!this.key()) setState('eleven', this.files.length ? `파일 ${this.files.length}개` : '키 없음', this.files.length ? 'ok' : '');
+  },
+  async list(){
+    if (!this.key()){ this.apiVoices = []; this.fill(); return; }
+    setState('eleven','확인 중…'); setMsg('eleven','');
+    try{
+      const r = await fetch('https://api.elevenlabs.io/v1/voices', { headers:{'xi-api-key':this.key()} });
+      if (!r.ok) throw await readErr(r);
+      const j = await r.json();
+      this.apiVoices = (j.voices||[]).map(v => {
+        const l = v.labels || {}; const g = l.gender==='female'?'여':l.gender==='male'?'남':'';
+        return { value:v.voice_id, label: v.name + (g?' · '+g:'') + (l.accent?' · '+l.accent:'') };
+      });
+      this.fill();
+      setState('eleven', `목소리 ${this.apiVoices.length}개` + (this.files.length ? ` · 파일 ${this.files.length}개` : ''), 'ok'); $('#eKeyBox').open = false;
+    }catch(e){ this.apiVoices = []; this.fill(); setState('eleven','키 확인 안 됨','warn'); setMsg('eleven', this.why(e)); $('#eKeyBox').open = true; }
+  },
+  async make(){
+    const f = this.file();
+    if (f){
+      if (!f.blob){ const r = await fetch(f.url); if (!r.ok) throw new Error('저장소의 파일을 받지 못했습니다.'); f.blob = await r.blob(); }
+      return f.blob;
+    }
+    const model = $('#eModel').value, id = this.sel();
+    const body = { text:text(), model_id:model, voice_settings:{ stability:0.5, similarity_boost:0.75, speed: Math.min(1.2, Math.max(0.7, rate())) } };
+    if (model !== 'eleven_multilingual_v2') body.language_code = 'ko';
+    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(id)}?output_format=mp3_44100_128`, { method:'POST', headers:{'xi-api-key':this.key(),'Content-Type':'application/json','Accept':'audio/mpeg'}, body:JSON.stringify(body) });
+    if (!r.ok) throw await readErr(r);
+    return await r.blob();
+  },
+  why(e){
+    if (e && e.status){
+      if (e.status===401) return '키가 맞지 않거나 권한이 없습니다(Text to Speech·Voices 읽기).';
+      if (e.status===402 || /quota|credits/i.test(e.text)) return '이번 달 쓸 양을 다 썼습니다.';
+      return `ElevenLabs 오류 ${e.status}: ${e.text}`;
+    }
+    return (e && e.message) || '연결하지 못했습니다.';
+  }
+};
+textEl.addEventListener('input', () => engines.eleven.show && engines.eleven.files.length && engines.eleven.show());
+
+/* ---------- 만들기 · 기억 ---------- */
+const cache = {};   // id -> {sig, blob, ms}
+function sig(id){
+  const sel = { google:'#gVoice', azure:'#aVoice', eleven:'#eVoice' }[id];
+  return [text(), rate(), sel ? $(sel).value : '', id==='azure' ? $('#aStyle').value+engines.azure.region() : '', id==='eleven' ? $('#eModel').value : ''].join('|');
+}
+async function getBlob(id){
+  const s = sig(id), c = cache[id];
+  if (c && c.sig === s) return c;
+  const t0 = performance.now();
+  const blob = await engines[id].make();
+  const out = { sig:s, blob, ms: Math.round(performance.now()-t0) };
+  cache[id] = out;
+  const u = ui(id); u.save.disabled = false;
+  u.meta.textContent = (id==='eleven' && engines.eleven.file()) ? `파일 · ${Math.round(blob.size/1024)}KB` : `${(out.ms/1000).toFixed(1)}초 · ${Math.round(blob.size/1024)}KB`;
+  return out;
+}
+async function playOne(id){
+  if (!text()) { textEl.focus(); return; }
+  const u = ui(id), token = ++stopToken;
+  audio.pause(); try{ speechSynthesis.cancel(); }catch(e){}
+  document.querySelectorAll('.btn.playing').forEach(b=>b.classList.remove('playing'));
+  setMsg(id,'');
+  u.play.classList.add('playing');
+  try{
+    if (id === 'device'){ const t0=performance.now(); await engines.device.speak(token); u.meta.textContent = `${((performance.now()-t0)/1000).toFixed(1)}초 말함`; }
+    else {
+      u.play.textContent = '만드는 중…';
+      const c = await getBlob(id);
+      u.play.textContent = '듣기';
+      if (token !== stopToken) return;
+      await playBlob(c.blob);
+    }
+  }catch(e){ setMsg(id, engines[id].why ? engines[id].why(e) : (e.message||String(e))); }
+  finally{ u.play.textContent = '듣기'; u.play.classList.remove('playing'); }
+}
+function saveFile(id){
+  const c = cache[id]; if (!c) return;
+  const a = document.createElement('a');
+  const name = engines[id].label().replace(/\s*·\s*/g,'-').replace(/[^\w.-]+/g,'') || id;
+  a.href = URL.createObjectURL(c.blob); a.download = `${name}-${rate().toFixed(2)}.mp3`;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 800);
+}
+
+Object.keys(engines).forEach(id => {
+  engines[id].init();
+  const u = ui(id);
+  u.play.addEventListener('click', () => playOne(id));
+  if (u.save) u.save.addEventListener('click', () => saveFile(id));
+});
+
+/* ---------- 차례로 · 가리고 ---------- */
+const wait = ms => new Promise(r => setTimeout(r, ms));
+function readyIds(){ return Object.keys(engines).filter(id => engines[id].ready()); }
+function hint(t){ $('#dockHint').textContent = t || ''; }
+
+async function prepare(ids, token){
+  hint('만드는 중…');
+  const ok = [];
+  await Promise.all(ids.map(async id => {
+    if (id === 'device') { ok.push(id); return; }
+    try{ await getBlob(id); ok.push(id); }catch(e){ setMsg(id, engines[id].why(e)); }
+  }));
+  return ids.filter(id => ok.includes(id));
+}
+async function sayById(id){
+  if (id === 'device') return engines.device.speak();
+  return playBlob(cache[id].blob);
+}
+$('#playAll').onclick = async () => {
+  if (!text()) return textEl.focus();
+  stopAll(); const token = stopToken;
+  const ids = await prepare(readyIds(), token);
+  if (token !== stopToken) return;
+  for (const id of ids){
+    if (token !== stopToken) break;
+    const b = ui(id).play; b.classList.add('playing'); hint(engines[id].label());
+    try{ await sayById(id); }catch(e){}
+    b.classList.remove('playing');
+    await wait(700);
+  }
+  if (token === stopToken) hint('');
+};
+
+$('#playBlind').onclick = async () => {
+  if (!text()) return textEl.focus();
+  stopAll(); const token = stopToken;
+  let ids = await prepare(readyIds(), token);
+  if (token !== stopToken) return;
+  if (ids.length < 2){ hint('둘 이상 준비되어야 합니다.'); return; }
+  for (let i=ids.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [ids[i],ids[j]]=[ids[j],ids[i]]; }
+  const box = $('#slots'); box.innerHTML = ''; $('#blind').classList.add('on');
+  const labels = ids.map(id => engines[id].label());
+  const slots = ids.map((id, n) => {
+    const d = document.createElement('div'); d.className='slot';
+    d.innerHTML = `<b>${n+1}</b><button class="btn line small" data-again>다시</button> <button class="btn small" data-choose>이것</button><div class="who"></div>`;
+    d.querySelector('[data-again]').onclick = async () => { stopAll(); d.classList.add('now'); try{ await sayById(id); }catch(e){} d.classList.remove('now'); };
+    d.querySelector('[data-choose]').onclick = () => {
+      stopAll();
+      box.querySelectorAll('.slot').forEach((s,k) => { s.querySelector('.who').textContent = labels[k]; s.classList.toggle('pick', s===d); });
+      hint('');
+    };
+    box.appendChild(d); return d;
+  });
+  $('#blind').scrollIntoView({behavior:'smooth', block:'nearest'});
+  for (let n=0;n<ids.length;n++){
+    if (token !== stopToken) break;
+    slots[n].classList.add('now'); hint(`${n+1}번`);
+    try{ await sayById(ids[n]); }catch(e){}
+    slots[n].classList.remove('now');
+    await wait(900);
+  }
+  if (token === stopToken) hint('마음에 드는 번호의 "이것"을 누르세요.');
+};
+$('#stop').onclick = () => { stopAll(); hint(''); };
+})();
+</script>
+</body>
+</html>
