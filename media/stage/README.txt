@@ -25,7 +25,6 @@ media/stage/
   bg-<때>.jpg          같은 곳 다른 판이 생기면(bg-night, bg-winter, bg-rain …). 기본은 늘 bg.jpg
   items/<이름>.webp    요소(투명 바탕, 밑동이 반듯하게 땅에 닿게). 크기만 다른 같은 것은 cactus-s / cactus-l
   stage.json           지평선·땅 시작 높이, 놓으면 안 되는 자리, 요소마다 실제 높이(m)·밑동 자리·놓일 땅 높이 범위·뒤집기
-  prompts.txt          Gemini에 넣은 프롬프트 기록(다시 받을 때 그림체 맞추기)
 - 이름: 폴더·파일은 영어 소문자·숫자·붙임표만(008 props와 같은 꼴). 한글 이름은 index.json·stage.json에.
 - 다른 곳 요소 빌려 쓰기: 복사하지 않는다. stage.json 에 "from":"school/classroom" 처럼 적어 그 곳 파일을 부른다.
   두 곳 넘게 쓰이게 되면 _common/items/ 로 옮기고 부르던 곳의 from 을 고친다.
@@ -60,7 +59,8 @@ stage.json 꼴(장소마다)
   그림을 받아 넣은 뒤 지평선(horizon)·unit을 그림에 맞게 고치고 index.json의 bg·ready를 고친다.
 
 ■ 그림 받는 법 — 프롬프트 media/stage/prompts/PROMPTS-008.txt (배경 12 · 요소 판 11 · 띠 판 3. 물속은 바닷속 요소를 빌려 씀)
-- 한 장마다 Gemini 새 창. [공통] 글 + 그 장의 글 + 본보기 그림. 받은 그림을 이 세션에 올리면 Claude가 잘라 넣음
+- 번호마다 Gemini 새 창 + 적힌 본보기 그림 + ▼~▲ 글을 통째로(공통 글을 따로 두지 않음 — 선생님이 글을 합쳐 붙이지 않게). 받은 그림을 "무대 N번"으로 올리면 Claude가 잘라 넣음.
+  프롬프트는 장소 폴더가 아니라 media/stage/prompts/ 에 앱(묶음)마다 한 파일. 새로 받을 그림이 생기면 같은 꼴로 번호를 이어 씀
 - 요소: 흰 바탕 3×3 판(9번 칸 비움) → tools/clean-edges.py로 흰 바탕 지우고, 밑동 아래 빈 줄을 잘라 items/<id>.webp
 - 배경: 4:3, 1600×1200 jpg로 맞추고 오른쪽 아래 별 표시를 지움 → bg.jpg
 - 마음에 안 드는 그림은 저장소에 넣지 않는다. 이미 넣었다가 안 쓰게 된 것은 python3 tools/trash.py 경로 --why "이유" (3개월 뒤 비움)

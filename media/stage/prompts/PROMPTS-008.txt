@@ -1,189 +1,373 @@
-무대 그림 받기 — 008부터 (2026-11-04). 빈 배경 · 요소 · 앞가림 띠를 따로 받는다.
+무대 그림 받기 — 008 (2026-11-04)
+번호마다 Gemini 새 창을 열고, 적힌 그림을 붙인 뒤 ▼~▲ 사이 글을 통째로 붙여 넣으면 됩니다(다른 곳에서 글을 가져와 합칠 일 없음).
+받은 그림을 무대 세션에 올리며 "무대 1번"처럼 번호를 말하면 Claude가 잘라 넣습니다. 마음에 안 들면 같은 창에서 "again" 으로 다시 받고, 버린 그림은 올리지 않습니다.
+사막(1~3번)부터 받아 시험 페이지로 확인한 뒤 나머지를 받습니다.
 
-하는 법
-1. 한 장마다 Gemini 새 대화창(장끼리 섞이지 않게). 아래 [배경 공통]/[요소 공통]/[띠 공통] + 그 장의 글을 함께 붙여 넣는다.
-2. 본보기 그림을 붙인다. 배경: media/habitats/<장소>.jpg (그림체만 따라 하게) · 요소·띠: media/habitats/props/prompts/style-ref.png
-3. 받은 그림을 무대 세션에 올리고 "무대 사막 배경", "무대 사막 요소"처럼 말하면 Claude가 잘라 media/stage/<갈래>/<장소>/에 넣는다.
-   마음에 안 들면 같은 창에서 "again, emptier ground" 처럼 다시 받기. 버린 그림은 저장소에 넣지 않는다.
-4. 순서: 사막 3장(배경·요소·띠 판 1) → 시험 페이지로 확인 → 괜찮으면 나머지.
-
-[배경 공통]
+━━━━━━━━ 1. 사막 배경 (nature/desert)
+새 Gemini 창 · 붙일 그림: media/habitats/desert.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/desert/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
 Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
 Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
 Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
+Only: pale golden sand with very soft low dunes far away, distant purple-brown mesas and mountains on the horizon, clear light-blue sky with two or three small soft clouds. The horizon is at about 33% from the top.
+▲ 여기까지
 
-[요소 공통]
+━━━━━━━━ 2. 사막 요소 판 (nature/desert)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/desert/items/  칸 차례: 1 saguaro(큰 선인장) · 2 pricklypear(부채선인장) · 3 barrelcacti(둥근 선인장) · 4 sandstone(큰 바위) · 5 rocks(작은 돌) · 6 drybush(마른 덤불) · 7 drygrass(마른 풀) · 8 agave(용설란)
+▼ 아래 글을 통째로 복사해 붙여 넣기
 Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
 Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
 Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
 Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a tall saguaro cactus with two raised arms
+2 a wide prickly pear cactus with flat oval pads
+3 a group of three round barrel cacti of different sizes
+4 a large layered sandstone rock, orange-tan, wider than tall
+5 a small cluster of pale tan sandy rocks
+6 a dense rounded dry desert shrub, grey-green and brown twigs
+7 a clump of dry golden desert grass
+8 an agave plant with thick pointed grey-green leaves
+▲ 여기까지
 
-[띠 공통]
-Use the attached image only as a STYLE reference (same flat cartoon style, dark-brown outlines). Do not copy its objects.
+━━━━━━━━ 3. 앞가림 띠 판 1 (사막·초원·숲(산)·땅 위(들판))
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 첫째 띠 → media/stage/nature/desert/front/sand.webp (사막); 둘째 띠 → media/stage/nature/grassland/front/goldgrass.webp (초원); 셋째 띠 → media/stage/nature/forest/front/ferns.webp (숲(산)); 넷째 띠 → media/stage/nature/ground/front/grass.webp (땅 위(들판))
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do not copy its objects.
 On a pure white background draw 4 separate long horizontal strips stacked from top to bottom with wide white gaps between them. Each strip spans the full width of the picture and is about one eighth as tall as it is wide.
 Each strip is low foreground vegetation seen at eye level: the bottom edge is straight, the top edge is irregular (blades, leaves, pebbles). No sky, no ground patch, no shadow, no animals, no text. Leave the bottom fifth of the picture empty and white.
+Strips from top to bottom:
+1 a band of rippled sand with a few small pebbles and short dry grass tufts
+2 a band of tall golden savanna grass blades, dense
+3 a band of ferns, moss and fallen leaves
+4 a band of fresh green grass blades with a few tiny white and yellow flowers
+▲ 여기까지
 
-━━ 1. 사막 (nature/desert)
-[배경 · 사막] 본보기 media/habitats/desert.jpg  →  media/stage/nature/desert/bg.jpg
-Only: pale golden sand with very soft low dunes far away, distant purple-brown mesas and mountains on the horizon, clear light-blue sky with two or three small soft clouds. The horizon is at about 33% from the top.
-[요소 · 사막] 본보기 style-ref.png  →  media/stage/nature/desert/items/
-1 a tall saguaro cactus with two raised arms      (saguaro · 큰 선인장)
-2 a wide prickly pear cactus with flat oval pads      (pricklypear · 부채선인장)
-3 a group of three round barrel cacti of different sizes      (barrelcacti · 둥근 선인장)
-4 a large layered sandstone rock, orange-tan, wider than tall      (sandstone · 큰 바위)
-5 a small cluster of pale tan sandy rocks      (rocks · 작은 돌)
-6 a dense rounded dry desert shrub, grey-green and brown twigs      (drybush · 마른 덤불)
-7 a clump of dry golden desert grass      (drygrass · 마른 풀)
-8 an agave plant with thick pointed grey-green leaves      (agave · 용설란)
-
-━━ 2. 초원 (nature/grassland)
-[배경 · 초원] 본보기 media/habitats/grassland.jpg  →  media/stage/nature/grassland/bg.jpg
+━━━━━━━━ 4. 초원 배경 (nature/grassland)
+새 Gemini 창 · 붙일 그림: media/habitats/grassland.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/grassland/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: wide flat golden-green savanna grass plain, distant blue hills, a far line of tiny trees only as a soft blur on the horizon, warm light-blue sky with soft clouds. The horizon is at about 33% from the top.
-[요소 · 초원] 본보기 style-ref.png  →  media/stage/nature/grassland/items/
-1 a flat-topped umbrella acacia tree      (acacia · 아카시아)
-2 a tall reddish-brown termite mound      (termite · 흙탑)
-3 a pile of large rounded granite boulders      (kopje · 바위 언덕)
-4 a low dense thorny savanna shrub, olive green      (thornbush · 가시덤불)
-5 a round tussock of dry golden grass, wide      (tussock · 풀 무더기)
-6 a small round green bush      (lowshrub · 작은 덤불)
-7 a few grey stones grouped together      (stones · 작은 돌)
-8 a clump of thin dry grass with seed heads      (drygrass · 마른 풀)
+▲ 여기까지
 
-━━ 3. 숲(산) (nature/forest)
-[배경 · 숲(산)] 본보기 media/habitats/forest.jpg  →  media/stage/nature/forest/bg.jpg
+━━━━━━━━ 5. 초원 요소 판 (nature/grassland)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/grassland/items/  칸 차례: 1 acacia(아카시아) · 2 termite(흙탑) · 3 kopje(바위 언덕) · 4 thornbush(가시덤불) · 5 tussock(풀 무더기) · 6 lowshrub(작은 덤불) · 7 stones(작은 돌) · 8 drygrass(마른 풀)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a flat-topped umbrella acacia tree
+2 a tall reddish-brown termite mound
+3 a pile of large rounded granite boulders
+4 a low dense thorny savanna shrub, olive green
+5 a round tussock of dry golden grass, wide
+6 a small round green bush
+7 a few grey stones grouped together
+8 a clump of thin dry grass with seed heads
+▲ 여기까지
+
+━━━━━━━━ 6. 숲(산) 배경 (nature/forest)
+새 Gemini 창 · 붙일 그림: media/habitats/forest.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/forest/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: a soft forest floor of moss and fallen leaves, the far background a hazy blue-green wall of distant forest and mountain slopes, small patches of pale sky at the top. The horizon is at about 36% from the top.
-[요소 · 숲(산)] 본보기 style-ref.png  →  media/stage/nature/forest/items/
-1 a big oak tree with a thick trunk and full round crown      (oak · 참나무)
-2 a tall Korean red pine tree      (pine · 소나무)
-3 an old mossy tree stump with roots      (stump · 그루터기)
-4 a fallen log lying sideways, mossy      (log · 쓰러진 나무)
-5 a clump of large ferns      (fern · 고사리)
-6 a dense round green bush      (bush · 덤불)
-7 a grey rock with green moss      (mossrock · 이끼 바위)
-8 a small group of brown forest mushrooms      (mushrooms · 버섯)
+▲ 여기까지
 
-━━ 4. 땅 위(들판) (nature/ground)
-[배경 · 땅 위(들판)] 본보기 media/habitats/ground.jpg  →  media/stage/nature/ground/bg.jpg
+━━━━━━━━ 7. 숲(산) 요소 판 (nature/forest)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/forest/items/  칸 차례: 1 oak(참나무) · 2 pine(소나무) · 3 stump(그루터기) · 4 log(쓰러진 나무) · 5 fern(고사리) · 6 bush(덤불) · 7 mossrock(이끼 바위) · 8 mushrooms(버섯)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a big oak tree with a thick trunk and full round crown
+2 a tall Korean red pine tree
+3 an old mossy tree stump with roots
+4 a fallen log lying sideways, mossy
+5 a clump of large ferns
+6 a dense round green bush
+7 a grey rock with green moss
+8 a small group of brown forest mushrooms
+▲ 여기까지
+
+━━━━━━━━ 8. 땅 위(들판) 배경 (nature/ground)
+새 Gemini 창 · 붙일 그림: media/habitats/ground.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/ground/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: a gentle green meadow, rolling green hills far away, light-blue sky with soft white clouds. The horizon is at about 33% from the top.
-[요소 · 땅 위(들판)] 본보기 style-ref.png  →  media/stage/nature/ground/items/
-1 a round leafy deciduous tree standing alone      (meadowtree · 들판 나무)
-2 a dense round green bush      (bush · 덤불)
-3 a medium grey rounded rock      (rock · 바위)
-4 a clump of wildflowers, yellow and white      (flowers · 꽃 무더기)
-5 a thick clump of long green grass      (grassclump · 풀 무더기)
-6 a few small grey pebbles      (stones · 작은 돌)
-7 a few dandelions, flowers and white seed heads      (dandelions · 민들레)
-8 a low patch of clover with white flowers      (clover · 토끼풀)
+▲ 여기까지
 
-━━ 5. 극지방 (nature/polar)
-[배경 · 극지방] 본보기 media/habitats/polar.jpg  →  media/stage/nature/polar/bg.jpg
+━━━━━━━━ 9. 땅 위(들판) 요소 판 (nature/ground)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/ground/items/  칸 차례: 1 meadowtree(들판 나무) · 2 bush(덤불) · 3 rock(바위) · 4 flowers(꽃 무더기) · 5 grassclump(풀 무더기) · 6 stones(작은 돌) · 7 dandelions(민들레) · 8 clover(토끼풀)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a round leafy deciduous tree standing alone
+2 a dense round green bush
+3 a medium grey rounded rock
+4 a clump of wildflowers, yellow and white
+5 a thick clump of long green grass
+6 a few small grey pebbles
+7 a few dandelions, flowers and white seed heads
+8 a low patch of clover with white flowers
+▲ 여기까지
+
+━━━━━━━━ 10. 극지방 배경 (nature/polar)
+새 Gemini 창 · 붙일 그림: media/habitats/polar.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/polar/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: flat white snow and ice field, a strip of dark blue sea and far white ice cliffs at the horizon, pale cold blue sky. The horizon is at about 33% from the top.
-[요소 · 극지방] 본보기 style-ref.png  →  media/stage/nature/polar/items/
-1 a large white-blue iceberg with flat cliffs      (iceberg · 빙산)
-2 a wide wall of blue-white ice blocks      (icecliff · 얼음 벽)
-3 a ridge of jagged pressure ice      (iceridge · 얼음 언덕)
-4 a pile of square ice blocks      (iceblocks · 얼음 덩이)
-5 a smooth rounded snow mound      (snowmound · 눈 더미)
-6 a dark rock half covered with snow      (snowrock · 눈 덮인 바위)
-7 a few small ice chunks      (icechunks · 작은 얼음)
-8 a low wind-shaped snowdrift      (snowdrift · 눈 둔덕)
+▲ 여기까지
 
-━━ 6. 논·습지 (nature/wetland)
-[배경 · 논·습지] 본보기 media/habitats/wetland.jpg  →  media/stage/nature/wetland/bg.jpg
+━━━━━━━━ 11. 극지방 요소 판 (nature/polar)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/polar/items/  칸 차례: 1 iceberg(빙산) · 2 icecliff(얼음 벽) · 3 iceridge(얼음 언덕) · 4 iceblocks(얼음 덩이) · 5 snowmound(눈 더미) · 6 snowrock(눈 덮인 바위) · 7 icechunks(작은 얼음) · 8 snowdrift(눈 둔덕)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a large white-blue iceberg with flat cliffs
+2 a wide wall of blue-white ice blocks
+3 a ridge of jagged pressure ice
+4 a pile of square ice blocks
+5 a smooth rounded snow mound
+6 a dark rock half covered with snow
+7 a few small ice chunks
+8 a low wind-shaped snowdrift
+▲ 여기까지
+
+━━━━━━━━ 12. 앞가림 띠 판 2 (극지방·논·습지·갯벌·바닷속)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 첫째 띠 → media/stage/nature/polar/front/snow.webp (극지방); 둘째 띠 → media/stage/nature/wetland/front/reedsedge.webp (논·습지); 셋째 띠 → media/stage/nature/mudflat/front/mud.webp (갯벌); 넷째 띠 → media/stage/nature/sea/front/seafloor.webp (바닷속)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do not copy its objects.
+On a pure white background draw 4 separate long horizontal strips stacked from top to bottom with wide white gaps between them. Each strip spans the full width of the picture and is about one eighth as tall as it is wide.
+Each strip is low foreground vegetation seen at eye level: the bottom edge is straight, the top edge is irregular (blades, leaves, pebbles). No sky, no ground patch, no shadow, no animals, no text. Leave the bottom fifth of the picture empty and white.
+Strips from top to bottom:
+1 a band of lumpy snow and small ice chunks
+2 a band of short sedges, water grass and mud at a water edge
+3 a band of wet grey mud with small shells and glasswort
+4 a band of sea grass, small corals and pebbles on sand
+▲ 여기까지
+
+━━━━━━━━ 13. 논·습지 배경 (nature/wetland)
+새 Gemini 창 · 붙일 그림: media/habitats/wetland.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/wetland/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: a flat marsh with shallow shiny water and muddy green ground, far low green hills, light sky. The horizon is at about 35% from the top.
-[요소 · 논·습지] 본보기 style-ref.png  →  media/stage/nature/wetland/items/
-1 a weeping willow tree      (willow · 버드나무)
-2 a tall clump of reeds with feathery tops      (reeds · 갈대)
-3 a clump of cattails      (cattails · 부들)
-4 a clump of green rice plants      (rice · 벼)
-5 a round clump of sedge grass      (sedge · 사초)
-6 lotus leaves and a pink lotus flower on stems      (lotus · 연꽃)
-7 a low grassy mud bank      (mudbank · 흙둑)
-8 a clump of dry brown reeds      (dryreeds · 마른 갈대)
+▲ 여기까지
 
-━━ 7. 갯벌 (nature/mudflat)
-[배경 · 갯벌] 본보기 media/habitats/mudflat.jpg  →  media/stage/nature/mudflat/bg.jpg
+━━━━━━━━ 14. 논·습지 요소 판 (nature/wetland)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/wetland/items/  칸 차례: 1 willow(버드나무) · 2 reeds(갈대) · 3 cattails(부들) · 4 rice(벼) · 5 sedge(사초) · 6 lotus(연꽃) · 7 mudbank(흙둑) · 8 dryreeds(마른 갈대)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a weeping willow tree
+2 a tall clump of reeds with feathery tops
+3 a clump of cattails
+4 a clump of green rice plants
+5 a round clump of sedge grass
+6 lotus leaves and a pink lotus flower on stems
+7 a low grassy mud bank
+8 a clump of dry brown reeds
+▲ 여기까지
+
+━━━━━━━━ 15. 갯벌 배경 (nature/mudflat)
+새 Gemini 창 · 붙일 그림: media/habitats/mudflat.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/mudflat/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: wide flat wet grey mudflat with soft shine, a thin strip of sea at the horizon, pale sky. The horizon is at about 33% from the top.
-[요소 · 갯벌] 본보기 style-ref.png  →  media/stage/nature/mudflat/items/
-1 a low mound of wet grey mud      (mudmound · 진흙 둔덕)
-2 a clump of salt marsh grass      (saltreeds · 갯가 풀)
-3 a patch of red glasswort plants      (glasswort · 칠면초)
-4 a rock covered with oyster shells      (oysterrock · 굴 바위)
-5 a small pile of shells      (shellpile · 조개껍데기)
-6 a weathered wooden post stuck in mud      (mudpost · 나무 말뚝)
-7 a rock with green seaweed      (weedrock · 해초 바위)
-8 a few small wet pebbles      (pebbles · 작은 돌)
+▲ 여기까지
 
-━━ 8. 바닷속 (nature/sea)
-[배경 · 바닷속] 본보기 media/habitats/sea.jpg  →  media/stage/nature/sea/bg.jpg
+━━━━━━━━ 16. 갯벌 요소 판 (nature/mudflat)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/mudflat/items/  칸 차례: 1 mudmound(진흙 둔덕) · 2 saltreeds(갯가 풀) · 3 glasswort(칠면초) · 4 oysterrock(굴 바위) · 5 shellpile(조개껍데기) · 6 mudpost(나무 말뚝) · 7 weedrock(해초 바위) · 8 pebbles(작은 돌)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a low mound of wet grey mud
+2 a clump of salt marsh grass
+3 a patch of red glasswort plants
+4 a rock covered with oyster shells
+5 a small pile of shells
+6 a weathered wooden post stuck in mud
+7 a rock with green seaweed
+8 a few small wet pebbles
+▲ 여기까지
+
+━━━━━━━━ 17. 바닷속 배경 (nature/sea)
+새 Gemini 창 · 붙일 그림: media/habitats/sea.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/sea/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: an underwater sea view seen from the side: blue-green water getting lighter toward the top with soft light rays, a flat sandy sea floor in the lower third, a hazy far reef only as faint blue shapes.
-[요소 · 바닷속] 본보기 style-ref.png  →  media/stage/nature/sea/items/
-1 a tall kelp plant with long wavy brown-green leaves      (kelp · 다시마)
-2 a large underwater rock with small corals      (reefrock · 큰 바위)
-3 a branching pink-orange coral      (coral · 산호)
-4 a purple sea fan      (seafan · 부채산호)
-5 a clump of long green sea grass      (seagrass · 잘피)
-6 a sea anemone with soft tentacles      (anemone · 말미잘)
-7 a round brain coral      (braincoral · 뇌산호)
-8 a few round sea pebbles      (pebbles · 작은 돌)
+▲ 여기까지
 
-━━ 9. 물속 (nature/water)
-[배경 · 물속] 본보기 media/habitats/water.jpg  →  media/stage/nature/water/bg.jpg
+━━━━━━━━ 18. 바닷속 요소 판 (nature/sea)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/sea/items/  칸 차례: 1 kelp(다시마) · 2 reefrock(큰 바위) · 3 coral(산호) · 4 seafan(부채산호) · 5 seagrass(잘피) · 6 anemone(말미잘) · 7 braincoral(뇌산호) · 8 pebbles(작은 돌)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a tall kelp plant with long wavy brown-green leaves
+2 a large underwater rock with small corals
+3 a branching pink-orange coral
+4 a purple sea fan
+5 a clump of long green sea grass
+6 a sea anemone with soft tentacles
+7 a round brain coral
+8 a few round sea pebbles
+▲ 여기까지
+
+━━━━━━━━ 19. 물속 배경 (nature/water)
+새 Gemini 창 · 붙일 그림: media/habitats/water.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/water/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: a simple underwater view seen from the side: clear blue water with soft light rays from the top, a flat sandy bottom in the lower third.
-(요소는 바닷속 것을 빌려 씀 — 받을 것 없음)
+▲ 여기까지
 
-━━ 10. 강·호수 (nature/pond)
-[배경 · 강·호수] 본보기 media/habitats/pond.jpg  →  media/stage/nature/pond/bg.jpg
+━━━━━━━━ 20. 강·호수 배경 (nature/pond)
+새 Gemini 창 · 붙일 그림: media/habitats/pond.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/pond/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: a lake seen as a cut-away: the upper 40% shows a calm far shore with hills and sky above a straight water surface line, below the line clear green-blue water down to a muddy sandy bottom in the lowest fifth.
-[요소 · 강·호수] 본보기 style-ref.png  →  media/stage/nature/pond/items/
-1 a tall clump of reeds growing up from the bottom      (reeds · 갈대)
-2 a clump of cattails      (cattails · 부들)
-3 a clump of soft underwater water weed      (waterweed · 물풀)
-4 water lily pads with a white flower, flat on water      (lilypads · 수련)
-5 a rounded rock with green algae      (rock · 물속 바위)
-6 a sunken log lying on the bottom      (sunkenlog · 가라앉은 나무)
-7 a few small round pebbles      (pebbles · 작은 돌)
-8 a feathery underwater plant      (hornwort · 붕어마름)
+▲ 여기까지
 
-━━ 11. 땅속 (nature/underground)
-[배경 · 땅속] 본보기 media/habitats/underground.jpg  →  media/stage/nature/underground/bg.jpg
+━━━━━━━━ 21. 강·호수 요소 판 (nature/pond)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/pond/items/  칸 차례: 1 reeds(갈대) · 2 cattails(부들) · 3 waterweed(물풀) · 4 lilypads(수련) · 5 rock(물속 바위) · 6 sunkenlog(가라앉은 나무) · 7 pebbles(작은 돌) · 8 hornwort(붕어마름)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a tall clump of reeds growing up from the bottom
+2 a clump of cattails
+3 a clump of soft underwater water weed
+4 water lily pads with a white flower, flat on water
+5 a rounded rock with green algae
+6 a sunken log lying on the bottom
+7 a few small round pebbles
+8 a feathery underwater plant
+▲ 여기까지
+
+━━━━━━━━ 22. 앞가림 띠 판 3 (강·호수)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 첫째 띠 → media/stage/nature/pond/front/pondbed.webp (강·호수)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do not copy its objects.
+On a pure white background draw one long horizontal strip across the middle. It spans the full width of the picture and is about one eighth as tall as it is wide.
+It is low foreground vegetation seen at eye level: the bottom edge is straight, the top edge is irregular (blades, leaves, pebbles). No sky, no ground patch, no shadow, no animals, no text. Leave the bottom fifth of the picture empty and white.
+The strip:
+a band of water weeds and pebbles on a muddy bottom
+▲ 여기까지
+
+━━━━━━━━ 23. 땅속 배경 (nature/underground)
+새 Gemini 창 · 붙일 그림: media/habitats/underground.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/underground/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: a cut-away of soil seen from the side: a thin strip of grass and sky at the very top (top 12%), below that even brown soil layers getting slightly darker downward, with only very faint texture.
-[요소 · 땅속] 본보기 style-ref.png  →  media/stage/nature/underground/items/
-1 a tangle of tree roots growing downward      (rootball · 나무뿌리)
-2 a large rounded buried rock      (buriedrock · 묻힌 바위)
-3 a cluster of small stones in soil      (stones · 작은 돌)
-4 a lump of darker clay soil      (clod · 흙덩이)
-5 a small patch of gravel      (gravel · 자갈)
-6 thin hanging rootlets      (rootlets · 잔뿌리)
-7 a flat layered slate stone      (slate · 납작 돌)
-8 a smooth lump of reddish clay      (clay · 진흙 덩이)
+▲ 여기까지
 
-━━ 12. 하늘 (nature/sky)
-[배경 · 하늘] 본보기 media/habitats/sky.jpg  →  media/stage/nature/sky/bg.jpg
+━━━━━━━━ 24. 땅속 요소 판 (nature/underground)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/underground/items/  칸 차례: 1 rootball(나무뿌리) · 2 buriedrock(묻힌 바위) · 3 stones(작은 돌) · 4 clod(흙덩이) · 5 gravel(자갈) · 6 rootlets(잔뿌리) · 7 slate(납작 돌) · 8 clay(진흙 덩이)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a tangle of tree roots growing downward
+2 a large rounded buried rock
+3 a cluster of small stones in soil
+4 a lump of darker clay soil
+5 a small patch of gravel
+6 thin hanging rootlets
+7 a flat layered slate stone
+8 a smooth lump of reddish clay
+▲ 여기까지
+
+━━━━━━━━ 25. 하늘 배경 (nature/sky)
+새 Gemini 창 · 붙일 그림: media/habitats/sky.jpg (그림체만 따라 함)
+받은 그림 → media/stage/nature/sky/bg.jpg
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached picture ONLY as a reference for drawing style and colours (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours). Do NOT copy any object from it.
+Draw a 4:3 landscape picture. It is an EMPTY STAGE for a children's picture app: plants, rocks and animals will be added later as separate pictures, so draw NO trees, NO bushes, NO rocks, NO cactus, NO plants in front, NO buildings, NO animals, NO people, NO text, NO frame.
+Seen from a child's standing eye level. The ground is calm and evenly lit, with only faint soft texture that gets finer toward the horizon (perspective). No paths, no strong lines, no puddles, no shadows. Keep the bottom-right corner plain.
 Only: a big open light-blue sky filling most of the picture, a thin strip of low green hills along the very bottom (bottom 18%). The horizon is at about 82% from the top.
-[요소 · 하늘] 본보기 style-ref.png  →  media/stage/nature/sky/items/
-1 a big fluffy white cumulus cloud      (cloud · 구름)
-2 a small fluffy white cloud      (cloud2 · 작은 구름)
-3 a long flat bank of soft clouds      (cloudbank · 긴 구름)
-4 a few small round cloud puffs together      (cloudpuffs · 뭉게구름)
-5 a tall sunflower      (sunflower · 해바라기)
-6 a clump of tall green grass      (tallgrass · 긴 풀)
-7 a clump of white daisies      (daisies · 데이지)
-8 a clump of purple lavender      (lavender · 라벤더)
+▲ 여기까지
 
-━━ 앞가림 띠 판 (띠는 한 판에 4개)
-[띠 판 1] 본보기 style-ref.png
-1 a band of rippled sand with a few small pebbles and short dry grass tufts      (사막 → media/stage/nature/desert/front/sand.webp)
-2 a band of tall golden savanna grass blades, dense      (초원 → media/stage/nature/grassland/front/goldgrass.webp)
-3 a band of ferns, moss and fallen leaves      (숲(산) → media/stage/nature/forest/front/ferns.webp)
-4 a band of fresh green grass blades with a few tiny white and yellow flowers      (땅 위(들판) → media/stage/nature/ground/front/grass.webp)
-
-[띠 판 2] 본보기 style-ref.png
-1 a band of lumpy snow and small ice chunks      (극지방 → media/stage/nature/polar/front/snow.webp)
-2 a band of short sedges, water grass and mud at a water edge      (논·습지 → media/stage/nature/wetland/front/reedsedge.webp)
-3 a band of wet grey mud with small shells and glasswort      (갯벌 → media/stage/nature/mudflat/front/mud.webp)
-4 a band of sea grass, small corals and pebbles on sand      (바닷속 → media/stage/nature/sea/front/seafloor.webp)
-
-[띠 판 3] 본보기 style-ref.png  (띠가 하나뿐 — [띠 공통]의 "4 separate long horizontal strips"를 "1 long horizontal strip"으로 바꿔 붙임)
-1 a band of water weeds and pebbles on a muddy bottom      (강·호수 → media/stage/nature/pond/front/pondbed.webp)
+━━━━━━━━ 26. 하늘 요소 판 (nature/sky)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → media/stage/nature/sky/items/  칸 차례: 1 cloud(구름) · 2 cloud2(작은 구름) · 3 cloudbank(긴 구름) · 4 cloudpuffs(뭉게구름) · 5 sunflower(해바라기) · 6 tallgrass(긴 풀) · 7 daisies(데이지) · 8 lavender(라벤더)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one object per cell, in the order listed. Leave the 9th cell (bottom-right) completely empty and white.
+Each object is seen from the front at eye level, centred in its cell, filling most of the cell. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground (stems, roots and stones all end on that line). No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Bushes, grass and rocks are dense with no see-through gaps in the lower half. Every object has a clearly different silhouette. No grid lines or cell borders.
+Objects in order:
+1 a big fluffy white cumulus cloud
+2 a small fluffy white cloud
+3 a long flat bank of soft clouds
+4 a few small round cloud puffs together
+5 a tall sunflower
+6 a clump of tall green grass
+7 a clump of white daisies
+8 a clump of purple lavender
+▲ 여기까지
 
