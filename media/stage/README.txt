@@ -62,6 +62,7 @@ stage.json 꼴(장소마다)
   그림을 받아 넣은 뒤 지평선(horizon)·unit을 그림에 맞게 고치고 index.json의 bg·ready를 고친다.
 
 ■ 그림 받는 법 — 프롬프트 media/stage/prompts/PROMPTS-008.txt (배경 12 · 요소 판 11 · 띠 판 3. 물속은 바닷속 요소를 빌려 씀)
+- Gemini 사용량이 다 되면 Bing Image Creator에 같은 글 + 같은 본보기 그림(글 2천 자까지, 본보기 붙이기 됨 — 2026-11-04 선생님 확인)
 - 번호마다 Gemini 새 창 + 적힌 본보기 그림 + ▼~▲ 글을 통째로(공통 글을 따로 두지 않음 — 선생님이 글을 합쳐 붙이지 않게). 받은 그림을 "무대 N번"으로 올리면 Claude가 잘라 넣음.
   프롬프트는 장소 폴더가 아니라 media/stage/prompts/ 에 앱(묶음)마다 한 파일. 새로 받을 그림이 생기면 같은 꼴로 번호를 이어 씀
 - 요소: 흰 바탕 3×3 판(9번 칸 비움) → tools/clean-edges.py로 흰 바탕 지우고, 밑동 아래 빈 줄을 잘라 items/<id>.webp

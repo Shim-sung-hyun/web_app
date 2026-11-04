@@ -44,6 +44,8 @@ Objects in order:
 6 a broad, low rock outcrop rising gently out of the mud, about twice as wide as tall, covered with barnacles, with wet mud and small shells around its base
 ▲ 여기까지
 
+■ (참고) Bing Image Creator용 — Bing도 본보기 그림을 붙일 수 있으니, 실제로는 위 65·66번 글을 그대로 쓰고 style-ref.png를 붙이면 됨(2026-11-04 선생님 확인).
+   아래 짧은 판·긴 판은 본보기를 못 붙일 때만.
 ■ Bing Image Creator용 (Gemini를 다 썼을 때 — 2026-11-04)
 Bing은 본보기 그림을 붙일 수 없고 글이 480자까지라, 그림체를 글로 적고 한 장에 하나씩 받습니다. 아래 글을 통째로 붙여 넣으세요.
 그림체가 조금 다를 수 있어요 — 받은 그림을 올리면 Claude가 옛 그림과 나란히 놓고 보고, 너무 다르면 다시 요청합니다.
