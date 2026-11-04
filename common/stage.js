@@ -86,6 +86,8 @@
       const it = pick(frame), left = R() < .5, y = .9 + R() * .08;
       const p = place(pl, it, 0, y, R(), !left); p.h = 1.08 + R() * .12; p.w = p.h * (it.w / it.h) * .75; p.x = left ? -p.w * .15 : 1 + p.w * .15; out.push(p);   // 위가 늘 화면 밖, 줄기의 1/3쯤만 보이게
     }
+    if ((opt._t || 0) < 5 && out.filter(o => o.h > .06).length < 2)   // 거의 빈 판(작은 돌 하나 등)은 다시 놓음
+      return compose(pl, Object.assign({}, opt, {seed: (opt.seed ?? Math.floor(R() * 1e9)) + 1, _t: (opt._t || 0) + 1}));
     return out;
   }
 
@@ -123,7 +125,7 @@
       box.appendChild(e); o.z = z;
       const si = o.skirt && pl.skirtImg[o.skirt];
       if (si && look.skirt !== false && o.h > .06) {               // 작은 돌·풀에는 안 씀                           // 밑동 덮개: 그림자 대신 '땅에 묻힌' 느낌. 요소 바로 위, 다음 요소 아래
-        const sw = o.w * (o.foot[1] - o.foot[0]) * 1.6, shh = Math.min(sw * (si.naturalHeight / si.naturalWidth) * 4 / 3, o.h * .22);
+        const sw = o.w * (o.foot[1] - o.foot[0]) * 1.3, shh = Math.min(sw * (si.naturalHeight / si.naturalWidth) * 4 / 3, o.h * .15);
         const cx = o.x + (o.flip ? -1 : 1) * o.w * ((o.foot[0] + o.foot[1]) / 2 - .5);
         const k = mk('img', `left:${(cx - sw / 2) * 100}%;top:${(o.y - shh * .8) * 100}%;width:${sw * 100}%;height:${shh * 100}%;z-index:${z + 1};transform:${o.flip ? 'scaleX(-1)' : 'none'};filter:saturate(${1 - .4 * hz * far}) brightness(${1 + .12 * hz * far}) contrast(${1 - .25 * hz * far})`);
         k.src = si.src; k.alt = '';

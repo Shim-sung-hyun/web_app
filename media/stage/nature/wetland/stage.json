@@ -23,6 +23,9 @@
    "ground": [
     0,
     0.25
+   ],
+   "skirt": [
+    "mudsprouts"
    ]
   },
   "reeds": {

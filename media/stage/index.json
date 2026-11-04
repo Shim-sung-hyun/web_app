@@ -26,8 +26,7 @@
   "far": [],
   "missing": [
    "skirt/sanddrift",
-   "skirt/sandpebbles",
-   "skirt/twigs"
+   "skirt/sandpebbles"
   ],
   "skirt": [
    "sanddrift",
@@ -64,10 +63,7 @@
    "bush"
   ],
   "missing": [
-   "thicket",
-   "skirt/drygrass",
-   "skirt/redearth",
-   "skirt/trampled"
+   "skirt/redearth"
   ],
   "skirt": [
    "drygrass",
@@ -104,11 +100,7 @@
   "far": [
    "trees"
   ],
-  "missing": [
-   "skirt/leafmound",
-   "skirt/mossroots",
-   "skirt/leaves"
-  ],
+  "missing": [],
   "skirt": [
    "leafmound",
    "mossroots",
@@ -142,11 +134,7 @@
   "far": [
    "hedge"
   ],
-  "missing": [
-   "skirt/grasstuft",
-   "skirt/clover",
-   "skirt/dirtmound"
-  ],
+  "missing": [],
   "skirt": [
    "grasstuft",
    "clover",
@@ -178,10 +166,7 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [
-   "skirt/snowdrift",
-   "skirt/snowcrumbs"
-  ],
+  "missing": [],
   "skirt": [
    "snowdrift",
    "snowcrumbs"
@@ -214,11 +199,7 @@
   "far": [
    "reeds"
   ],
-  "missing": [
-   "skirt/ripples",
-   "skirt/mudsprouts",
-   "skirt/reedripple"
-  ],
+  "missing": [],
   "skirt": [
    "ripples",
    "mudsprouts",
@@ -250,10 +231,7 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [
-   "skirt/mudmound",
-   "skirt/mudwort"
-  ],
+  "missing": [],
   "skirt": [
    "mudmound",
    "mudwort"
@@ -285,11 +263,7 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [
-   "skirt/sandmound",
-   "skirt/seasprigs",
-   "skirt/rubble"
-  ],
+  "missing": [],
   "skirt": [
    "sandmound",
    "seasprigs",
@@ -349,7 +323,6 @@
   "ready": true,
   "far": [],
   "missing": [
-   "skirt/silt",
    "skirt/pondweeds"
   ],
   "skirt": [

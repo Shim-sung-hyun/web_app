@@ -1,0 +1,18 @@
+무대 그림 받기 4 — 008 (2026-11-04)  ※ 1~52번은 PROMPTS-008.txt · -2 · -3 (다 받음)
+밑동 덮개 중 양 끝이 세로로 딱 끊기거나 네모난 바닥판 위에 그려진 4개만 다시 받습니다.
+(끝이 끊기면 어디에 올려도 오려 붙인 티가 남 — 양 끝이 비스듬히 내려와 땅과 살며시 만나야 함)
+
+━━━━━━━━ 53. 밑동 덮개 다시 (초원 붉은 흙 · 사막 모래 둔덕 · 사막 모래와 자갈 · 강·호수 물풀)
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 칸 차례: 1 초원 redearth · 2 사막 sanddrift · 3 사막 sandpebbles · 4 강·호수 pondweeds  (media/stage/nature/<곳>/skirt/<이름>.webp)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 2×2 grid sheet on a pure white background, one item per cell, in the order listed. No grid lines or cell borders. Leave the bottom-right corner of the picture (a small area) empty and white.
+Each item is a LOW, WIDE, soft mound or patch of ground cover, about four times wider than tall, like a small heap seen from the front at eye level. Its shape is like a gentle hill: the top is soft and irregular, and BOTH the left and right ends slope down diagonally and thin out to nothing, meeting the flat bottom line softly in a point. The outline goes all the way around the mound.
+NEVER cut the ends straight down. NO vertical edges, NO rectangular base, NO slab, NO block of soil, NO cross-section, NO box shape. No tree, no stem in the middle, no cast shadow, no background, no animals, no text.
+Items in order:
+1 a low heap of reddish savanna earth with small pebbles and a few dry grass blades
+2 a low soft drift of pale golden desert sand
+3 a low heap of desert sand with small tan pebbles
+4 a low heap of soft brown pond mud with short green underwater weeds and a few pebbles
+▲ 여기까지
