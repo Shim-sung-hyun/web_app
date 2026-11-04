@@ -25,3 +25,21 @@ Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown
 Draw ONE object on a pure white background, in a wide 16:9 picture: a big African kopje — a broad, low hill of rounded granite boulders that rises GENTLY and spreads out wide, about two and a half times wider than tall, like boulders that have settled naturally over a long time (not a steep heap that could fall). A few large boulders sit on its top, and in front of its base there are some dry savanna bushes and clumps of golden grass partly covering the lower rocks.
 The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. It must be dense and SOLID with no see-through gaps in the lower two-thirds. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text. Leave the bottom-right corner empty and white.
 ▲ 여기까지
+
+━━━━━━━━ 66. 자연스러운 꼴로 다시 (극지방 얼음 언덕·얼음 조각 · 바닷속 큰 바위 · 초원 바위 언덕 · 사막 큰 바위 더미 · 갯벌 따개비 바위)
+왜: 가파르게 솟거나(무너질 듯) 벽돌·정육면체처럼 쌓인(사람이 만든 듯) 그림을, 펑퍼짐하게 퍼지며 높아지고 밑동 앞에 풀·모래·작은 돌이 있는 꼴로.
+새 Gemini 창 · 붙일 그림: media/habitats/props/prompts/style-ref.png
+받은 그림 → 칸 차례: 1 극지방 icefield(얼음 언덕) · 2 극지방 icepieces(얼음 조각) · 3 바닷속 reefrock(바다 큰 바위) · 4 초원 kopje(바위 언덕) · 5 사막 boulderpile(큰 바위 더미) · 6 갯벌 barnaclerock(따개비 바위)  (media/stage/nature/<곳>/items/<이름>.webp — 바닷속·초원·사막·갯벌 것은 옛 그림을 바꿈)
+▼ 아래 글을 통째로 복사해 붙여 넣기
+Use the attached image only as a STYLE reference (flat cartoon, clean dark-brown outlines, soft simple shading, muted natural colours, light from the upper left). Do not copy its objects.
+Draw a 3×2 grid sheet (3 columns, 2 rows) on a pure white background, one object per cell, in the order listed. No grid lines or cell borders. Leave the bottom-right corner of the picture (a small area) empty and white.
+Everything must look NATURAL, the way rocks, ice and sand really settle over a long time: shapes rise GENTLY and spread out wide at the base, never a steep tower or a neat stack that could fall, never bricks, cubes or anything that looks built by people. Small things (grass, sand, small stones, shells) gather around the base.
+Each object is seen from the front at eye level, filling most of its cell with a little white space around it so nothing touches the cell edge. Its bottom is FLAT and LEVEL, as if cut by one straight horizontal line where it touches the ground. Big objects are dense and SOLID with no see-through gaps in the lower two-thirds. No cast shadow, no ground patch, no ground line, no background, no animals, no people, no text.
+Objects in order:
+1 a broad, low mound of pack ice and old snow-covered ice, rising gently and spreading out wide, about three times wider than tall, with soft rounded snow on top and a few broken ice pieces lying in front of its base
+2 a few irregular broken pieces of sea ice of different sizes lying half-buried in snow, rough natural shapes (not cubes)
+3 a broad, low underwater reef rock with a rounded top, about twice as wide as tall, spreading out at its base, with corals and sea plants growing over it and some sand and small stones at its foot
+4 a broad, low pile of rounded granite boulders settled naturally, spreading out wide, about twice as wide as tall, with clumps of dry golden grass and a small bush in front of its base
+5 a broad, low group of rounded orange desert boulders resting naturally on each other, spreading out wide, about twice as wide as tall, with drifted sand piled softly against its base and a small dry shrub in front
+6 a broad, low rock outcrop rising gently out of the mud, about twice as wide as tall, covered with barnacles, with wet mud and small shells around its base
+▲ 여기까지

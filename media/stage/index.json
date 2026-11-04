@@ -185,9 +185,7 @@
   ],
   "items": [
    "iceberg",
-   "icecliff",
    "iceridge",
-   "iceblocks",
    "snowmound",
    "snowrock",
    "icechunks",
@@ -196,9 +194,10 @@
    "iceslab",
    "snowboulder",
    "floes",
-   "cubes",
    "icyrock",
-   "lowmound"
+   "lowmound",
+   "icefield",
+   "icepieces"
   ],
   "front": [
    "snow"
@@ -208,7 +207,10 @@
   ],
   "ready": true,
   "far": [],
-  "missing": [],
+  "missing": [
+   "icefield",
+   "icepieces"
+  ],
   "skirt": [
    "snowdrift",
    "snowcrumbs"

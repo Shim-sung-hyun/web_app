@@ -25,30 +25,11 @@
     0.65
    ]
   },
-  "icecliff": {
-   "name": "얼음 벽",
-   "real": [
-    2,
-    4
-   ],
-   "role": "big",
-   "ground": [
-    0,
-    0.65
-   ]
-  },
   "iceridge": {
    "name": "얼음 언덕",
    "real": [
     1,
     2
-   ]
-  },
-  "iceblocks": {
-   "name": "얼음 덩이",
-   "real": [
-    0.5,
-    1
    ]
   },
   "snowmound": {
@@ -122,13 +103,6 @@
     2
    ]
   },
-  "cubes": {
-   "name": "작은 얼음 덩이",
-   "real": [
-    0.3,
-    0.6
-   ]
-  },
   "icyrock": {
    "name": "고드름 바위",
    "real": [
@@ -138,6 +112,25 @@
   },
   "lowmound": {
    "name": "낮은 눈 더미",
+   "real": [
+    0.4,
+    0.8
+   ]
+  },
+  "icefield": {
+   "name": "얼음 언덕",
+   "real": [
+    2,
+    4
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ]
+  },
+  "icepieces": {
+   "name": "얼음 조각",
    "real": [
     0.4,
     0.8
