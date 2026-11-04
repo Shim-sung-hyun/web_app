@@ -50,7 +50,7 @@ index.json 꼴(장소 하나에 한 줄)
 - stage.json beds: 곳마다 자리 — 땅(ground) · 바다/물 바닥(bottom) · 물 댄 논(paddy)·먼 둑(farbank) · 강의 물속 바닥(bottom)·물낯(surface)·물가 둑(bank, 좌우 끝만) · 흙 속(soil) · 하늘(air).
   자리마다 y 범위(x 범위), 원근 여부(persp), 그 자리에 까는 덮개(skirt). 요소마다 bed(놓일 자리). 모듈은 요소를 제 자리에만 놓음.
 - base·foot: tools/stage-meta.py가 그림마다 실제 밑동 줄과 폭을 재어 stage.json에 적음(덮개는 skirtMeta). 모듈은 이 줄을 자리의 땅에 맞추고, 덮개의 밑동 줄도 요소의 밑동 줄에 맞춤.
-- 시험 페이지 '자리 보기'로 자리를 빨간 점선으로 봄. 요소마다 번호(왼쪽부터)가 붙고, 판·곳마다 멘트 칸이 있음 → 선생님이 '멘트 모아 복사'로
+- 시험 페이지 '자리 보기'로 자리를 빨간 점선으로 봄. 요소마다 번호(왼쪽부터, 빨간 테), 밑동 덮개도 그다음 번호(초록 점선 테, '○번 밑')가 붙고, 판·곳마다 멘트 칸이 있음 → 선생님이 '멘트 모아 복사'로
   '[무대 시험 멘트] ■ 곳 판 번호 · 번호표 · 멘트'를 대화에 붙여 주면, 그 판 번호(#nature/곳/번호)로 같은 장면을 다시 띄워 고친다(2026-11-04 정한 작업 방식). 그림을 넣거나 자리를 고치면: python3 tools/stage-meta.py → python3 tools/stage-index.py → 시험 페이지로 12곳을 눈으로 봄.
 
 ■ 모듈 common/stagekit.js (공통 모듈: 원본 한 곳, python3 tools/sync-modules.py로 <script id="stagekit"> 칸에 복사)

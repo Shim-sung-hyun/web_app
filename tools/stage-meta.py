@@ -34,6 +34,7 @@ for sj in sorted(glob.glob(os.path.join(ST, '*', '*', 'stage.json'))):
         if os.path.exists(src):
             it.update(meta(src)); n += 1
     for key, sub in (('skirtMeta', 'skirt'),):
+        old = c.get(key, {})
         c[key] = {}
         names = set(c.get('skirt', []))
         for b in c.get('beds', {}).values():
@@ -41,7 +42,7 @@ for sj in sorted(glob.glob(os.path.join(ST, '*', '*', 'stage.json'))):
         for k in sorted(names):
             f = os.path.join(d, sub, k + '.webp')
             if os.path.exists(f):
-                c[key][k] = meta(f); n += 1
+                c[key][k] = dict(meta(f), name=old.get(k, {}).get('name', k)); n += 1
     for f in c.get('front', []) + c.get('far', []):
         p = os.path.join(d, 'front' if f in c.get('front', []) else 'far', f['src'] + '.webp')
         if os.path.exists(p):
