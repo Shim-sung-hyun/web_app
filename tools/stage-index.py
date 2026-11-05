@@ -63,8 +63,10 @@ for pid in idx:
 with open(os.path.join(ST, 'hide-index.json'), 'w', encoding='utf-8') as f:
     f.write('{\n' + ',\n'.join(json.dumps(k, ensure_ascii=False) + ': ' + json.dumps(v, ensure_ascii=False, separators=(',', ':')) for k, v in out.items()) + '\n}\n')
 for pid in idx:   # 밑동 덮개도 끝 검사
-    for k in json.load(open(os.path.join(ST, pid, 'stage.json'), encoding='utf-8')).get('skirt', []):
-        f = os.path.join(ST, pid, 'skirt', k + '.webp')
+    cfg = json.load(open(os.path.join(ST, pid, 'stage.json'), encoding='utf-8'))
+    for k in cfg.get('skirt', []):
+        source = cfg.get('skirtFrom', {}).get(k, pid)
+        f = os.path.join(ST, source, 'skirt', k + '.webp')
         if os.path.exists(f) and cut_edge(f) > .4:
-            print('  잘린 끝?', pid + '/skirt/' + k)
+            print('  잘린 끝?', source + '/skirt/' + k)
 print('무대 가림 소품', len(out), '→ media/stage/hide-index.json')

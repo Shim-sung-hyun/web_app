@@ -437,6 +437,7 @@
    "cloud2",
    "cloudbank",
    "cloudpuffs",
+   "meadowtree",
    "sunflower",
    "tallgrass",
    "daisies",
@@ -449,6 +450,9 @@
   "ready": true,
   "far": [],
   "missing": [],
-  "skirt": []
+  "skirt": [
+   "grasstuft",
+   "clover"
+  ]
  }
 }

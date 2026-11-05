@@ -2,8 +2,11 @@
  "name": "하늘",
  "view": "ground",
  "horizon": 0.74,
- "groundTop": 0.83,
+ "groundTop": 0.74,
  "unit": 0.2,
+ "bedLoose": {
+  "ground": 3
+ },
  "avoid": [],
  "front": [],
  "items": {
@@ -63,6 +66,29 @@
    ],
    "bed": "air"
   },
+  "meadowtree": {
+   "name": "들판 나무",
+   "from": "nature/ground",
+   "real": [
+    5,
+    8
+   ],
+   "role": "big",
+   "ground": [
+    0,
+    0.28
+   ],
+   "base": 0.9891,
+   "foot": [
+    0.306,
+    0.691
+   ],
+   "bed": "ground",
+   "skirt": [
+    "grasstuft",
+    "clover"
+   ]
+  },
   "sunflower": {
    "name": "해바라기",
    "real": [
@@ -74,7 +100,15 @@
     0.455,
     0.533
    ],
-   "bed": "ground"
+   "ground": [
+    0,
+    0.55
+   ],
+   "bed": "ground",
+   "skirt": [
+    "grasstuft",
+    "clover"
+   ]
   },
   "tallgrass": {
    "name": "긴 풀",
@@ -87,7 +121,15 @@
     0.183,
     0.833
    ],
-   "bed": "ground"
+   "ground": [
+    0,
+    0.55
+   ],
+   "bed": "ground",
+   "skirt": [
+    "grasstuft",
+    "clover"
+   ]
   },
   "daisies": {
    "name": "데이지",
@@ -100,7 +142,15 @@
     0.375,
     0.696
    ],
-   "bed": "ground"
+   "ground": [
+    0,
+    0.55
+   ],
+   "bed": "ground",
+   "skirt": [
+    "grasstuft",
+    "clover"
+   ]
   },
   "lavender": {
    "name": "라벤더",
@@ -113,10 +163,43 @@
     0.291,
     0.733
    ],
-   "bed": "ground"
+   "ground": [
+    0,
+    0.55
+   ],
+   "bed": "ground",
+   "skirt": [
+    "grasstuft",
+    "clover"
+   ]
   }
  },
- "skirtMeta": {},
+ "skirt": [
+  "grasstuft",
+  "clover"
+ ],
+ "skirtFrom": {
+  "grasstuft": "nature/ground",
+  "clover": "nature/ground"
+ },
+ "skirtMeta": {
+  "grasstuft": {
+   "base": 0.9403,
+   "foot": [
+    0.091,
+    0.928
+   ],
+   "name": "풀포기"
+  },
+  "clover": {
+   "base": 0.9338,
+   "foot": [
+    0.068,
+    0.922
+   ],
+   "name": "토끼풀"
+  }
+ },
  "beds": {
   "air": {
    "name": "하늘",
@@ -130,11 +213,14 @@
   "ground": {
    "name": "땅",
    "y": [
-    0.8,
+    0.74,
     1
    ],
    "persp": true,
-   "skirt": []
+   "skirt": [
+    "grasstuft",
+    "clover"
+   ]
   }
  }
 }

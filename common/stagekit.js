@@ -33,7 +33,10 @@
     pl.skirtImg = {};
     const sk = new Set(Object.values(pl.beds).flatMap(b => b.skirt || []));
     Object.values(pl.items || {}).forEach(i => Array.isArray(i.skirt) && i.skirt.forEach(k => sk.add(k)));
-    for (const k of sk) jobs.push(img(dir + 'skirt/' + k + '.webp').then(i => { if (i) pl.skirtImg[k] = i; }));
+    for (const k of sk) {
+      const source = pl.skirtFrom && pl.skirtFrom[k] ? base + pl.skirtFrom[k] + '/skirt/' + k + '.webp' : dir + 'skirt/' + k + '.webp';
+      jobs.push(img(source).then(i => { if (i) pl.skirtImg[k] = i; }));
+    }
     await Promise.all(jobs);
     for (const k of Object.keys(pl.items || {})) if (!pl.items[k].img) delete pl.items[k];
     return pl;
@@ -97,6 +100,16 @@
     for (let j = 0, t = 0; j < loose && t < 30; t++) {
       const b = pick(beds), it = pick(byBed[b].filter(i => i.role !== 'big').length ? byBed[b].filter(i => i.role !== 'big') : byBed[b]), s = spot(b, it);
       if (!s) continue; const p = place(pl, it, s.x, s.y, R() * .6, R() < .5); if (!clash(p)) { out.push(p); j++; }
+    }
+    for (const [b, count] of Object.entries(opt.bedLoose || pl.bedLoose || {})) {
+      const pool = (byBed[b] || []).filter(i => i.role !== 'big'), used = new Set();
+      if (!pool.length || !Number.isFinite(count) || count <= 0) continue;
+      for (let j = 0, t = 0; j < count && t < count * 10; t++) {
+        const available = pool.filter(i => !used.has(i.id)), it = pick(available.length ? available : pool), s = spot(b, it);
+        if (!s) continue;
+        const p = place(pl, it, s.x, s.y, R() * .6, R() < .5);
+        if (!clash(p)) { out.push(p); used.add(it.id); j++; }
+      }
     }
     const frame = items.filter(i => i.role === 'frame');   // 가까운 줄기: 화면 가장자리, 위는 화면 밖
     if (frame.length && R() < (opt.frame ?? .5)) {
