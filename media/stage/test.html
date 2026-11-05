@@ -38,7 +38,7 @@
  <span id="msg"></span>
 </header>
 <textarea id="placeNote" placeholder="이 곳 전체에 대한 멘트(배경·먼 띠·어울리지 않는 요소 등)"></textarea>
-<p id="mvHelp" style="display:none;font-size:13px;margin:0 0 10px;opacity:.85">옮기기: 소품과 덮개(점선 번호)를 각각 끌어 옮겨요 · 바퀴 = 고른 요소 크기 · 위아래로 옮기면 소품은 원근대로 크기가 바뀜 · 두 번 누르기 = 소품 좌우 뒤집기 · K = 덮개 바꾸기, N = 덮개 없애기, Delete = 고른 요소 빼기. 옮긴 것은 '멘트 모아 복사'에 함께 들어가요(새 판을 누르면 사라지니 그 전에 복사).</p>
+<p id="mvHelp" style="display:none;font-size:13px;margin:0 0 10px;opacity:.85">옮기기: 소품과 덮개(점선 번호)를 각각 끌어 옮겨요(화면 밖으로도 이동 가능) · 바퀴 = 고른 요소 크기 · 위아래로 옮기면 소품은 원근대로 크기가 바뀜 · 두 번 누르기 = 소품 좌우 뒤집기 · K = 덮개 바꾸기, N = 덮개 없애기, Delete = 고른 요소 빼기. 화면 밖으로 나간 요소는 가장자리 번호를 눌러 다시 끌어올 수 있어요. 옮긴 것은 '멘트 모아 복사'에 함께 들어가요(새 판을 누르면 사라지니 그 전에 복사).</p>
 <div id="grid"></div>
 <script id="stagekit">
 /* 무대(stage) 공통 모듈 stagekit — 원본은 common/stagekit.js 한 곳. 앱 안의 이 칸은 손으로 고치지 말고 python3 tools/sync-modules.py
@@ -286,7 +286,7 @@ function paint(s){ const F=FIG[s], d=F.d, lay=F.lay.filter(o=>!o.gone);
     d.appendChild(img);
   });
   all.forEach(o=>{ const b=document.createElement('div'); b.className='no'+(o.kind==='skirt'?' sk':'')+(F.sel===o?' sel':''); b.dataset.no=o.no; b.textContent=o.no;
-    b.style.left=Math.max(2,Math.min(98,o.x*100))+'%'; b.style.top=Math.max(4,(o.y-o.h*o.base*.92)*100)+'%'; d.appendChild(b); });
+    b.style.left=Math.max(2,Math.min(98,o.x*100))+'%'; b.style.top=Math.max(4,Math.min(96,(o.y-o.h*o.base*.92)*100))+'%'; d.appendChild(b); });
   LEG[s]=lay.map(o=>`${o.no} ${nm(o)}(${o.id}·${(pl.beds[o.bed]||{}).name||o.bed})`).concat(skirts.map(o=>`${o.no} 덮개 ${skn(o.key)}(${o.key}·처음 ${o.owner.no}번 밑)`));
   F.c.innerHTML=`판 <a href="#${pl.id}/${s}" style="color:inherit">${s}</a> · `+LEG[s].join(' · ');
   const ch=changes(s); if(ch.length) F.c.innerHTML+=`<br><b>옮긴 것</b>: `+ch.join(' · '); }
@@ -316,7 +316,7 @@ function wire(s){ const F=FIG[s], d=F.d; let drag=null;
     const o=label?[...F.lay,...F.skirts].find(x=>x.no===+label.dataset.no):hit(F,fx,fy); SEL=F.sel=o||null; Object.values(FIG).forEach(G=>{ if(G!==F&&G.sel){ G.sel=null; paint(G.s); } });
     if(o){ const now=Date.now(); if(o.kind!=='skirt'&&F.last&&F.last.o===o&&now-F.last.t<380){ o.flip=!o.flip; F.last=null; paint(s); return; } F.last={o,t:now};   /* 두 번 누름 = 뒤집기(다시 그려도 알아채게 직접 셈) */
       drag={o,dx:fx-o.x,dy:fy-o.y}; d.setPointerCapture(e.pointerId); e.preventDefault(); } paint(s); });
-  d.addEventListener('pointermove',e=>{ if(!drag) return; const [fx,fy]=at(e), o=drag.o; o.x=Math.max(0,Math.min(1,fx-drag.dx)); o.y=Math.max(.02,Math.min(1,fy-drag.dy)); if(o.kind!=='skirt') resize(o); paint(s); });
+  d.addEventListener('pointermove',e=>{ if(!drag) return; const [fx,fy]=at(e), o=drag.o; o.x=Math.max(-o.w,Math.min(1+o.w,fx-drag.dx)); o.y=Math.max(-o.h,Math.min(1+o.h,fy-drag.dy)); if(o.kind!=='skirt') resize(o); paint(s); });
   d.addEventListener('pointerup',()=>{ drag=null; });
   d.addEventListener('wheel',e=>{ if(!$('mv').checked) return; const [fx,fy]=at(e), label=e.target.closest('.no');
     const o=label?[...F.lay,...F.skirts].find(x=>x.no===+label.dataset.no):hit(F,fx,fy)||F.sel; if(!o) return; e.preventDefault();
