@@ -70,7 +70,8 @@
    "foot": [
     0.007,
     0.994
-   ]
+   ],
+   "skirtHeightScale": 0.24
   },
   "rocks": {
    "name": "작은 돌",
