@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>숨은 동물 찾기 · Apple Style</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --apple-bg: #f5f5f7;
+      --apple-card-bg: rgba(255, 255, 255, 0.85);
+      --apple-text: #1d1d1f;
+      --apple-blue: #0071e3;
+      --apple-blue-hover: #0077ed;
+      --apple-gray: #86868b;
+      --apple-light-gray: #e8e8ed;
+      --apple-radius: 20px;
+      --apple-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
+      background-color: var(--apple-bg);
+      color: var(--apple-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px 16px;
+      user-select: none;
+    }
+
+    .glass-card {
+      background: var(--apple-card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: var(--apple-radius);
+      box-shadow: var(--apple-shadow);
+    }
+
+    .grid-item {
+      aspect-ratio: 1;
+      background: #ffffff;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.75rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .grid-item:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .grid-item:active {
+      transform: scale(0.95);
+    }
+
+    .grid-item.found {
+      background: #eefbf3;
+      border-color: #a3e635;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .grid-item.shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .apple-btn {
+      background: var(--apple-blue);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25);
+    }
+
+    .apple-btn:hover {
+      background: var(--apple-blue-hover);
+      transform: translateY(-1px);
+    }
+
+    .apple-btn:active {
+      transform: scale(0.98);
+    }
+
+    .apple-btn-secondary {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--apple-text);
+      box-shadow: none;
+    }
+
+    .apple-btn-secondary:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    .chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--apple-light-gray);
+      color: var(--apple-gray);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip.active {
+      background: var(--apple-blue);
+      color: white;
+    }
+
+    /* Admin Button with Holding Effect */
+    #adminBtn {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 100;
+      touch-action: none;
+    }
+
+    #adminBtn::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 2px solid var(--apple-blue);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.1s ease;
+    }
+
+    #adminBtn.holding::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="text-center mb-6 max-w-lg w-full">
+    <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-semibold mb-2">
+      <span>🍎 Apple HI-Inspired Education</span>
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-2">숨은 동물 찾기</h1>
+    <p class="text-gray-500 text-sm sm:text-base">자연에 숨어있는 동물 친구들을 찾아보세요!</p>
+  </header>
+
+  <!-- Game Container -->
+  <main class="game-container glass-card p-6 w-full max-w-lg flex flex-col gap-5">
+    
+    <!-- Top Control Bar -->
+    <div class="flex items-center justify-between border-b border-gray-100 pb-4">
+      <!-- Mode Selection -->
+      <div class="flex gap-2">
+        <button id="modeStandard" class="chip active" onclick="setMode('standard')">기본 모드</button>
+        <button id="modeSpecial" class="chip" onclick="setMode('special')">스페셜 도전 ⏱️</button>
+      </div>
+
+      <!-- Audio Toggle -->
+      <button id="soundToggleBtn" onclick="toggleSound()" class="p-2 rounded-full hover:bg-gray-100 transition-colors" title="소리 켜기/끄기">
+        🔊
+      </button>
+    </div>
+
+    <!-- Difficulty & Target Info -->
+    <div class="flex items-center justify-between bg-gray-50/80 p-3.5 rounded-2xl border border-gray-100">
+      <div class="flex gap-1.5" id="diffSelector">
+        <button class="chip active text-xs px-3 py-1" onclick="setDifficulty('easy') font-normal">쉬움</button>
+        <button class="chip text-xs px-3 py-1" onclick="setDifficulty('normal')">보통</button>
+        <button class="chip text-xs px-3 py-1" onclick="setDifficulty('hard')">어려움</button>
+      </div>
+
+      <!-- Target Text / Timer -->
+      <div class="text-right">
+        <div id="targetText" class="text-sm font-semibold text-blue-600">찾을 동물: 🦛 히포</div>
+        <div id="timerText" class="text-xs text-gray-400 font-mono hidden">시간: 00:00</div>
+      </div>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+      <div id="progressBar" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
+    </div>
+
+    <!-- Game Grid -->
+    <div id="gridContainer" class="grid grid-cols-3 gap-3 my-2">
+      <!-- Generated items will appear here -->
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="flex gap-3">
+      <button onclick="initGame()" class="apple-btn flex-1">
+        <span>🔄 다시 시작하기</span>
+      </button>
+      <button onclick="giveHint()" class="apple-btn apple-btn-secondary" title="힌트 보기">
+        💡 힌트
+      </button>
+    </div>
+  </main>
+
+  <!-- Teacher / Admin Panel Modal -->
+  <div id="adminModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="glass-card bg-white p-6 rounded-3xl max-w-md w-full shadow-2xl flex flex-col gap-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="text-lg font-bold text-gray-800">👩‍🏫 교사 설정 및 스탯</h3>
+        <button onclick="closeAdminModal()" class="text-gray-400 hover:text-gray-600 font-bold">✕</button>
+      </div>
+      
+      <div class="space-y-3 text-sm">
+        <div class="flex justify-between py-1 border-b border-gray-50">
+          <span class="text-gray-500">총 플레이 횟수</span>
+          <span id="statPlayCount" class="font-bold text-gray-800">0회</span>
+        </div>
+        <div class="flex justify-between py-1 border-b border-gray-50">
+          <span class="text-gray-500">찾은 동물의 수</span>
+          <span id="statFoundCount" class="font-bold text-blue-600">0마리</span>
+        </div>
+        <div class="flex justify-between py-1 border-b border-gray-50">
+          <span class="text-gray-500">스페셜 최고 기록</span>
+          <span id="statBestTime" class="font-bold text-green-600">기록 없음</span>
+        </div>
+      </div>
+
+      <div class="bg-blue-50 p-3 rounded-xl text-xs text-blue-700 leading-relaxed">
+        * 교사 모드는 오른쪽 아래 둥근 버튼을 <strong>3초간 길게</strong> 누르면 열립니다.
+      </div>
+
+      <button onclick="closeAdminModal()" class="apple-btn w-full mt-2">
+        확인
+      </button>
+    </div>
+  </div>
+
+  <!-- Long Press Admin Button -->
+  <div id="adminBtn" title="교사 모드 (3초 누르기)">
+    ⚙️
+  </div>
+
+  <script>
+    // --- Data Definitions ---
+    const ANIMALS = [
+      { name: '하마', emoji: '🦛' },
+      { name: '사자', emoji: '🦁' },
+      { name: '호랑이', emoji: '🐯' },
+      { name: '토끼', emoji: '🐰' },
+      { name: '여우', emoji: '🦊' },
+      { name: '곰', emoji: '🐻' },
+      { name: '팬더', emoji: '🐼' },
+      { name: '개구리', emoji: '🐸' },
+      { name: '원숭이', emoji: '🐵' },
+      { name: '돼지', emoji: '🐷' },
+      { name: '병아리', emoji: '🐥' },
+      { name: '다람쥐', emoji: '🐿️' }
+    ];
+
+    const COVER_ITEMS = ['🌿', '🌊', '🪨', '🌳', '☁️', '🍂'];
+
+    // --- State Variables ---
+    let currentMode = 'standard'; // 'standard' | 'special'
+    let currentDifficulty = 'easy'; // 'easy' | 'normal' | 'hard'
+    let soundEnabled = true;
+
+    let targetAnimal = null;
+    let targetAnimalsList = []; // For special mode
+    let gridData = [];
+    let foundCount = 0;
+    let totalTargetsCount = 1;
+
+    // Timer stats
+    let timerInterval = null;
+    let startTime = 0;
+
+    // Local Stats
+    let stats = {
+      plays: 0,
+      found: 0,
+      bestTime: null
+    };
+
+    // --- Web Audio API Synth ---
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.15) {
+      if (!soundEnabled) return;
+      initAudio();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playSuccessSound() {
+      if (!soundEnabled) return;
+      playTone(523.25, 'sine', 0.1); // C5
+      setTimeout(() => playTone(659.25, 'sine', 0.1), 100); // E5
+      setTimeout(() => playTone(783.99, 'sine', 0.2), 200); // G5
+    }
+
+    function playErrorSound() {
+      if (!soundEnabled) return;
+      playTone(220, 'sawtooth', 0.15); // A3
+    }
+
+    function speakText(text) {
+      if (!soundEnabled || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ko-KR';
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // --- Game Logic ---
+    function setDifficulty(diff) {
+      currentDifficulty = diff;
+      document.querySelectorAll('#diffSelector .chip').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(diff));
+      });
+      initGame();
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('modeStandard').classList.toggle('active', mode === 'standard');
+      document.getElementById('modeSpecial').classList.toggle('active', mode === 'special');
+      document.getElementById('timerText').classList.toggle('hidden', mode !== 'special');
+      initGame();
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundToggleBtn').textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function getGridSize() {
+      if (currentDifficulty === 'easy') return 9; // 3x3
+      if (currentDifficulty === 'normal') return 12; // 3x4 or 4x3
+      return 16; // 4x4
+    }
+
+    function initGame() {
+      clearInterval(timerInterval);
+      const gridContainer = document.getElementById('gridContainer');
+      gridContainer.innerHTML = '';
+
+      const count = getGridSize();
+      gridContainer.className = `grid gap-3 my-2 ${count === 16 ? 'grid-cols-4' : 'grid-cols-3'}`;
+
+      // Reset state
+      foundCount = 0;
+      stats.plays++;
+      updateStats();
+
+      // Shuffle & prepare animals
+      const shuffledAnimals = [...ANIMALS].sort(() => 0.5 - Math.random());
+
+      if (currentMode === 'standard') {
+        targetAnimal = shuffledAnimals[0];
+        targetAnimalsList = [targetAnimal];
+        totalTargetsCount = 1;
+
+        document.getElementById('targetText').textContent = `찾을 동물: ${targetAnimal.emoji} ${targetAnimal.name}`;
+        speakText(`${targetAnimal.name}를 찾아보세요!`);
+
+        // Prepare Grid Content
+        gridData = [];
+        const targetIndex = Math.floor(Math.random() * count);
+
+        for (let i = 0; i < count; i++) {
+          const cover = COVER_ITEMS[Math.floor(Math.random() * COVER_ITEMS.length)];
+          if (i === targetIndex) {
+            gridData.push({ isTarget: true, animal: targetAnimal, cover, revealed: false });
+          } else {
+            // Random non-target animal or empty distractor
+            const otherAnimal = shuffledAnimals[1 + (i % (shuffledAnimals.length - 1))];
+            gridData.push({ isTarget: false, animal: otherAnimal, cover, revealed: false });
+          }
+        }
+      } else {
+        // Special Time-Trial Mode (Find 6-10 animals)
+        totalTargetsCount = currentDifficulty === 'easy' ? 4 : currentDifficulty === 'normal' ? 6 : 8;
+        targetAnimalsList = shuffledAnimals.slice(0, totalTargetsCount);
+
+        document.getElementById('targetText').textContent = `남은 동물: ${totalTargetsCount}마리`;
+        speakText(`숨어있는 동물 ${totalTargetsCount}마리를 모두 찾으세요!`);
+
+        gridData = [];
+        let targetIdx = 0;
+
+        for (let i = 0; i < count; i++) {
+          const cover = COVER_ITEMS[Math.floor(Math.random() * COVER_ITEMS.length)];
+          if (targetIdx < totalTargetsCount && (Math.random() < 0.6 || count - i <= totalTargetsCount - targetIdx)) {
+            gridData.push({ isTarget: true, animal: targetAnimalsList[targetIdx], cover, revealed: false });
+            targetIdx++;
+          } else {
+            const dummyAnimal = shuffledAnimals[totalTargetsCount + (i % 2)];
+            gridData.push({ isTarget: false, animal: dummyAnimal, cover, revealed: false });
+          }
+        }
+
+        // Start Timer
+        startTime = Date.now();
+        timerInterval = setInterval(updateTimer, 1000);
+        updateTimer();
+      }
+
+      updateProgressBar();
+
+      // Render Grid Items
+      gridData.forEach((item, idx) => {
+        const el = document.createElement('div');
+        el.className = 'grid-item';
+        el.dataset.index = idx;
+        el.textContent = item.cover;
+        el.onclick = () => handleItemClick(idx, el);
+        gridContainer.appendChild(el);
+      });
+    }
+
+    function handleItemClick(index, element) {
+      const item = gridData[index];
+      if (item.revealed) return;
+
+      item.revealed = true;
+
+      if (item.isTarget) {
+        element.classList.add('found');
+        element.textContent = item.animal.emoji;
+        playSuccessSound();
+        speakText(item.animal.name);
+
+        foundCount++;
+        stats.found++;
+        updateStats();
+        updateProgressBar();
+
+        if (currentMode === 'standard') {
+          setTimeout(() => {
+            confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+            alert(`🎉 축하합니다! ${item.animal.name}(을)를 찾았습니다!`);
+            initGame();
+          }, 300);
+        } else {
+          document.getElementById('targetText').textContent = `남은 동물: ${totalTargetsCount - foundCount}마리`;
+
+          if (foundCount >= totalTargetsCount) {
+            clearInterval(timerInterval);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+            if (!stats.bestTime || elapsed < stats.bestTime) {
+              stats.bestTime = elapsed;
+            }
+
+            setTimeout(() => {
+              confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+              alert(`⏱️ 완료! ${elapsed}초 만에 모든 동물을 찾았습니다!`);
+              initGame();
+            }, 300);
+          }
+        }
+      } else {
+        element.classList.add('shake');
+        playErrorSound();
+        element.textContent = item.animal.emoji;
+
+        setTimeout(() => {
+          element.classList.remove('shake');
+          if (currentDifficulty !== 'easy') {
+            // Re-hide on higher difficulties
+            element.textContent = item.cover;
+            item.revealed = false;
+          }
+        }, 600);
+      }
+    }
+
+    function giveHint() {
+      const targetIndices = gridData
+        .map((item, idx) => (item.isTarget && !item.revealed ? idx : null))
+        .filter(idx => idx !== null);
+
+      if (targetIndices.length === 0) return;
+
+      const hintIndex = targetIndices[0];
+      const hintEl = document.querySelectorAll('.grid-item')[hintIndex];
+
+      hintEl.classList.add('shake');
+      playTone(440, 'triangle', 0.2);
+
+      setTimeout(() => hintEl.classList.remove('shake'), 600);
+    }
+
+    function updateProgressBar() {
+      const percent = (foundCount / totalTargetsCount) * 100;
+      document.getElementById('progressBar').style.width = `${percent}%`;
+    }
+
+    function updateTimer() {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      const secs = String(elapsed % 60).padStart(2, '0');
+      document.getElementById('timerText').textContent = `시간: ${mins}:${secs}`;
+    }
+
+    function updateStats() {
+      document.getElementById('statPlayCount').textContent = `${stats.plays}회`;
+      document.getElementById('statFoundCount').textContent = `${stats.found}마리`;
+      document.getElementById('statBestTime').textContent = stats.bestTime ? `${stats.bestTime}초` : '기록 없음';
+    }
+
+    // --- Admin / Teacher Press & Hold Listener ---
+    const adminBtn = document.getElementById('adminBtn');
+    let pressTimer = null;
+
+    adminBtn.addEventListener('pointerdown', () => {
+      adminBtn.classList.add('holding');
+      pressTimer = setTimeout(() => {
+        openAdminModal();
+        adminBtn.classList.remove('holding');
+      }, 3000);
+    });
+
+    adminBtn.addEventListener('pointerup', clearAdminTimer);
+    adminBtn.addEventListener('pointerleave', clearAdminTimer);
+
+    function clearAdminTimer() {
+      clearTimeout(pressTimer);
+      adminBtn.classList.remove('holding');
+    }
+
+    function openAdminModal() {
+      document.getElementById('adminModal').classList.remove('hidden');
+      document.getElementById('adminModal').classList.add('flex');
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.add('hidden');
+      document.getElementById('adminModal').classList.remove('flex');
+    }
+
+    // --- Initialization ---
+    window.onload = () => {
+      initGame();
+    };
+  </script>
+</body>
+</html>
+```
+
+This self-contained single-file HTML game provides an interactive game featuring difficulty levels, progress bars, interactive sound synthesizer effects, voice synthesis, and a teacher admin menu with press-and-hold interaction.
