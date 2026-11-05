@@ -63,7 +63,7 @@
     const base = it.base ?? 1;
     const h = realH * perM(pl, y, it.bed) / base * (it.scale || 1);
     const w = h * (it.w / it.h) * .75;   // 장면이 4:3
-    return Object.assign({id: it.id, src: it.src, bed: it.bed, x, y, w, h, base, flip: !!flip, foot: it.foot || [.2, .8], skirt: pickSkirt(pl, it, r)}, extra || {});
+    return Object.assign({id: it.id, src: it.src, bed: it.bed, x, y, w, h, base, flip: !!flip, foot: it.foot || [.2, .8], skirt: pickSkirt(pl, it, r), skirtOffset: it.skirtOffset, skirtScale: it.skirtScale}, extra || {});
   }
 
   /* 무작위 배치: 자리마다 그 자리의 요소만. 고르게 흩뿌리지 않고 2~4 덩어리(큰 것 하나 + 앞쪽 작은 것) + 빈 땅 */
@@ -164,10 +164,14 @@
       if (si && look.skirt !== false && o.h > .05) {   // 밑동 덮개: 덮개의 밑동 줄을 요소의 밑동 줄에 맞춰 땅에 붙임
         const m = (pl.skirtMeta || {})[o.skirt] || {base: 1, foot: [0, 1]}, vis = Math.max(.2, m.foot[1] - m.foot[0]);
         const ks = o.skirtScale || 1;   // 앱·선생님이 바꾼 덮개 배율
-        let sw = (footR - footL) * 1.3 * ks / vis, shh = sw * (si.naturalHeight / si.naturalWidth) * 4 / 3;
-        const cap = o.h * o.base * .16 * ks; if (shh * m.base > cap) { const k = cap / (shh * m.base); sw *= k; shh *= k; }
-        const cx = (footL + footR) / 2 - sw * ((m.foot[0] + m.foot[1]) / 2 - .5);
-        const k = mk('img', `left:${(cx - sw / 2) * 100}%;top:${(o.y + o.h * .004 - shh * m.base) * 100}%;width:${sw * 100}%;height:${shh * 100}%;z-index:${z + 1};filter:${fog(far)}`); k.src = si.src; k.alt = ''; o.skirtAt = [cx, o.y - shh * m.base * .45];   // 덮개 가운데(앱이 표시할 때)
+        const sw = (footR - footL) * 1.3 * ks / vis;
+        const naturalH = sw * (si.naturalHeight / si.naturalWidth) * 4 / 3;
+        const cap = o.h * o.base * .08 * ks;
+        const shh = Math.min(naturalH, Math.max(naturalH * .5, cap / m.base));
+        const offset = o.skirtOffset || [0, 0];
+        const cx = (footL + footR) / 2 - sw * ((m.foot[0] + m.foot[1]) / 2 - .5) + offset[0];
+        const cy = o.y + o.h * .004 + offset[1];
+        const k = mk('img', `left:${(cx - sw / 2) * 100}%;top:${(cy - shh * m.base) * 100}%;width:${sw * 100}%;height:${shh * 100}%;z-index:${z + 1};filter:${fog(far)}`); k.src = si.src; k.alt = ''; o.skirtAt = [cx, cy - shh * m.base * .45];   // 덮개 가운데(앱이 표시할 때)
       }
     });
     if (look.front !== false) for (const f of pl.front || []) if (f.img) {
