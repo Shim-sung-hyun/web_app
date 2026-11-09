@@ -282,16 +282,17 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     } catch (e) { pl.ground = null; }
   }
   const isGround = (pl, x, y) => { const G = pl.ground; if (!G) return true; const i = Math.floor(x * G.W), j = Math.floor(y * G.H); if (i < 0 || j < 0 || i >= G.W || j >= G.H) return true; return G.g[j * G.W + i] === 1; };
-  function footOnGround(pl, o) {   // 밑동 줄을 따라 다섯 점 중 넷 이상이 빈 땅이면 됨(낙엽 몇 장 정도는 괜찮게)
+  function footOnGround(pl, o, covers) {   // 밑동 줄을 따라 다섯 점 중 넷 이상이 빈 땅이면 됨(낙엽 몇 장 정도는 괜찮게)
     const B = pl.beds[o.bed] || {}; if (!pl.ground || B.persp === false || B.groundCheck === false) return true;
     const fx = f => o.x + (o.flip ? -1 : 1) * o.w * (f - .5), L = Math.min(fx(o.foot[0]), fx(o.foot[1])), Rr = Math.max(fx(o.foot[0]), fx(o.foot[1]));
     /* 밑동 전체가 빈 땅 위(2026-11-09 다시 — 넷만 보면 넓은 밑동의 한쪽이 배경 뿌리에 걸쳐도 통과했음): 밑동 줄과 그 조금 아래 두 줄, 9점 모두 */
-    for (const dy of [.004, .014]) for (let k = 0; k < 9; k++) if (!isGround(pl, L + (Rr - L) * k / 8, Math.min(.999, o.y + dy))) return false; return true;
+    for (const dy of [.004, .014]) for (let k = 0; k < 9; k++) { const x = L + (Rr - L) * k / 8, y = Math.min(.999, o.y + dy);
+      if (!isGround(pl, x, y) || (covers && covers.some(f => f !== o && f.img && solidAt(f, f.img, x, y, 256)))) return false; } return true;
+    /* covers(원리 19 다시, 2026-11-09 선생님 '큰 줄기도 배경으로 생각하면 된다'): 큰 줄기 그림이 덮은 곳은 빈 땅에서 뺌 —
+       뿌리 끝 앞의 땅(뿌리 끝을 가리며)과 뿌리 사이로 땅이 보이는 움푹한 곳에만 밑동이 옴 */
   }
   /* 앞뒤를 정하는 높이(원리 4·18): 보통은 밑동 y, 가장자리 큰 줄기는 퍼진 뿌리를 땅처럼 뒤에 깔고 줄기가 올라오는 곳 */
   const depthY = o => o.sortY ?? o.y;
-  /* 원리 19: 큰 줄기(rootX·sortY가 있는 것)의 퍼진 뿌리 위에 밑동이 오는가 — 그러면 앞에 그려도 뒤에 그려도 떠 보임 */
-  const onRoots = (lay, p) => lay.some(f => f.rootX && f !== p && p.x + p.w / 2 > f.rootX[0] && p.x - p.w / 2 < f.rootX[1] && p.y > f.sortY - .01 && p.y < f.y + .015);
   /* 그 자리에서 1m가 장면 높이의 몇 몫인가. 원근 자리(땅·바닥)는 지평선에서 내려온 만큼에 비례, 아니면(물낯·흙 속·하늘) 어디서나 같음 */
   const perM = (pl, y, bed) => {
     const b = typeof bed === 'string' ? pl.beds[bed] : bed;
@@ -342,11 +343,10 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     };
     /* 놓으면 안 되는 경우(장면의 원리, media/stage/README.txt '장면의 원리'):
        ⑦ 같은 소품은 한 장면에 2번까지 · ⑧ 좌우는 화면 안에 다 들어옴(좌우 가장자리에서 잘려도 되는 것은 가까운 줄기 frame뿐, 위로는 넘어가도 됨) · 같은 자리에서 너무 겹침 */
-    const clash = p => !footOnGround(pl, p) || out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
+    const clash = p => !footOnGround(pl, p, fr && [fr]) || out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
       || p.x - p.w / 2 < 0 || p.x + p.w / 2 > 1   // 좌우는 화면 안(위로는 키 큰 나무가 화면 위로 넘어가도 됨)
       || out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * C.overlap && Math.abs(o.y - p.y) < .04)
-      /* 원리 19(2026-11-09 선생님): 앞에 서려면 밑동이 뒤의 것 밑동보다 앞(아래)에. 줄기 뿌리와 가로로 겹치는 소품은 줄기 뒤(밑동이 줄기가 올라오는 곳보다 위)거나, 뿌리 끝보다 앞에만 — 그 사이면 뿌리 위에 떠 보임 */
-      || (fr && onRoots([fr], p));
+;
     /* 가까운 줄기(frame)를 먼저 정함 — 다른 소품이 그 뿌리 위에 떠 있지 않게(원리 19) */
     const frame = items.filter(i => i.role === 'frame');
     let fr = null, frLeft = false;
@@ -358,7 +358,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       if (M && M.m) { const r0 = Math.floor(M.h * p.base * (1 - (it.rootFrac ?? .25))), r1 = Math.ceil(M.h * p.base); u0 = 1; u1 = 0;
         for (let y = r0; y < Math.min(M.h, r1); y++) for (let x = 0; x < M.w; x++) if (M.m[y * M.w + x]) { u0 = Math.min(u0, x / M.w); u1 = Math.max(u1, (x + 1) / M.w); } if (u1 < u0) { u0 = 0; u1 = 1; } }
       const ux = u => p.x - p.w / 2 + (p.flip ? 1 - u : u) * p.w; p.rootX = [Math.min(ux(u0), ux(u1)), Math.max(ux(u0), ux(u1))];
-      fr = p; frLeft = left;
+      p.img = it.img; fr = p; frLeft = left;
     }
     const n = opt.clusters ?? rng(C.clusters);
     for (let c = 0, tries = 0; c < n && tries < n * 6; tries++) {   // 빈 땅에 맞는 자리를 못 찾으면 다시(건너뛰면 휑해짐)
@@ -391,10 +391,18 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       out.push(fr);
       /* 줄기가 선 판엔 소품을 더(2026-11-09 선생님): 줄기가 가린 만큼 나머지 땅이 비어 보이지 않게 — 줄기 쪽은 피해 frameExtra개 */
       const left = frLeft, p = fr, edge = left ? p.x + p.w / 2 : p.x - p.w / 2, small2 = items.filter(i => i.role !== 'big' && i.role !== 'frame');
-      for (let j = 0, t = 0, k = rng(C.frameExtra || [3, 5]); j < k && small2.length && t < k * 10; t++) {
+      /* 뿌리 둘레(2026-11-09 선생님): 줄기를 배경처럼 — 반쯤은 뿌리 끝 앞 땅(뿌리 끝을 가림)·뿌리 사이 움푹한 곳에 작은 것(들풀·낙엽·버섯·고사리), 나머지는 줄기 반대쪽 */
+      const nearPool = small2.filter(i => realMax(i) <= (pl.rootSmall ?? 1.2)), rx0 = Math.max(.02, p.rootX[0]), rx1 = Math.min(.98, p.rootX[1]);
+      const kRoot = rng(C.rootExtra || [2, 4]);
+      for (let j = 0, t = 0, k = rng(C.frameExtra || [3, 5]) + kRoot, kn = 0; j < k && small2.length && t < k * 25; t++) {
+        let q;
+        if (nearPool.length && kn < kRoot && t < k * 15 && rx1 > rx0) {
+          const it2 = pick(nearPool), y = clamp(p.sortY + R() * (Math.min(.995, p.y + .03) - p.sortY), pl.beds[it2.bed].y[0], .995);
+          q = place(pl, it2, rx0 + R() * (rx1 - rx0), y, R() * .7, R() < .5); if (!clash(q)) { out.push(q); j++; kn++; } continue;
+        }
         const it2 = pick(small2), b2 = it2.bed, s2 = spot(b2, it2); if (!s2) continue;
         if (left ? s2.x < edge + .04 : s2.x > edge - .04) continue;
-        const q = place(pl, it2, s2.x, s2.y, R() * .7, R() < .5); if (!clash(q)) { out.push(q); j++; }
+        q = place(pl, it2, s2.x, s2.y, R() * .7, R() < .5); if (!clash(q)) { out.push(q); j++; }
       }
     }
     if (opt.avoid && opt.avoid.length) {
@@ -469,15 +477,15 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
      맞는 소품이 없으면 그 동물을 가릴 만한 소품을 바로 앞에 하나 더 놓음. */
   const MASK = new WeakMap();
   function maskOf(img, n = 64) {   // 그림을 가장 긴 쪽 n칸으로 — 칸마다 칠해졌는지
-    if (MASK.has(img)) return MASK.get(img);
+    const C0 = MASK.get(img) || {}; if (C0[n]) return C0[n];
     const W = img.naturalWidth || img.width, H = img.naturalHeight || img.height, k = n / Math.max(W, H), w = Math.max(1, Math.round(W * k)), h = Math.max(1, Math.round(H * k));
     const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', {willReadFrequently: true});
     let m = null; try { x.drawImage(img, 0, 0, w, h); const d = x.getImageData(0, 0, w, h).data; m = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) m[i] = d[i * 4 + 3] > 110 ? 1 : 0; } catch (e) { m = null; }
     let x0 = w, y0 = h, x1 = -1, y1 = -1; if (m) for (let y = 0; y < h; y++) for (let i = 0; i < w; i++) if (m[y * w + i]) { if (i < x0) x0 = i; if (i > x1) x1 = i; if (y < y0) y0 = y; if (y > y1) y1 = y; }
-    const r = {w, h, m, box: x1 < 0 ? [0, 0, w, h] : [x0, y0, x1 + 1, y1 + 1]}; MASK.set(img, r); return r;
+    const r = {w, h, m, box: x1 < 0 ? [0, 0, w, h] : [x0, y0, x1 + 1, y1 + 1]}; C0[n] = r; MASK.set(img, C0); return r;
   }
-  const solidAt = (o, img, fx, fy) => {   // 장면 좌표(0~1)에 o의 그림이 칠해져 있나
-    const M = maskOf(img); if (!M.m) return false;
+  const solidAt = (o, img, fx, fy, n) => {   // 장면 좌표(0~1)에 o의 그림이 칠해져 있나
+    const M = maskOf(img, n); if (!M.m) return false;
     let u = (fx - (o.x - o.w / 2)) / o.w; const v = (fy - (o.y - o.h * o.base)) / o.h;
     if (u < 0 || u >= 1 || v < 0 || v >= 1) return false; if (o.flip) u = 1 - u;
     return M.m[Math.floor(v * M.h) * M.w + Math.floor(u * M.w)] === 1;
@@ -503,10 +511,11 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       return {id: a.name, src: a.src, img: a.img, bed, x, y, w, h, base: baseFrac, flip, foot: [M.box[0] / M.w, M.box[2] / M.w], actor: true, skirt: null, animal: a.name};
     };
     let best = null;
+    const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
     const minLong = opt.minLong ?? .07;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
     const tryAt = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x - A.w * .45 < 0 || A.x + A.w * .45 > 1) return;
       if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;
-      if (!footOnGround(pl, A) || onRoots(lay, A)) return;   // 동물 발도 빈 땅 위에, 큰 줄기 뿌리 위는 안 됨(원리 19)
+      if (!footOnGround(pl, A, covers)) return;   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
       /* 깔린 것처럼 보이지 않게(2026-11-09 선생님: 곰·너구리가 뿌리에 깔림): 가까운 줄기(frame)와는 겹치지 않고,
          앞 소품의 땅에 퍼진 밑동(아래 18%)이 동물의 발(아래 25%)을 덮지 않게 — 가리는 것은 소품의 몸통 */
       const Abox = [A.x - A.w * .4, A.y - A.h * A.base, A.x + A.w * .4, A.y];
@@ -530,7 +539,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       for (let t = 0; t < 80; t++) {
         const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), it = pool[Math.floor(R() * pool.length)];
         if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), R(), R() < .5); P.skirt = null;
-        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P) || onRoots(lay, P)) continue; tryAt(x, g, flip0(), P);
+        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers)) continue; tryAt(x, g, flip0(), P);
       }
     }
     if (!best) return null;
