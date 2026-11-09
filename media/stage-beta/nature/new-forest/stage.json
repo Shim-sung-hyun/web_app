@@ -65,8 +65,8 @@
    "bed": "ground",
    "base": 1.0,
    "foot": [
-    0.032,
-    0.367
+    0.32,
+    0.415
    ],
    "kind": "log"
   },
@@ -79,8 +79,8 @@
    "bed": "ground",
    "base": 1.0,
    "foot": [
-    0.067,
-    0.914
+    0.014,
+    0.966
    ],
    "kind": "fern"
   },
@@ -93,8 +93,8 @@
    "bed": "ground",
    "base": 1.0,
    "foot": [
-    0.108,
-    0.861
+    0.154,
+    0.65
    ],
    "role": "big",
    "ground": [
@@ -112,8 +112,8 @@
    "bed": "ground",
    "base": 1.0,
    "foot": [
-    0.176,
-    0.917
+    0.067,
+    0.878
    ],
    "kind": "rock"
   },
@@ -152,12 +152,11 @@
     0.9
    ],
    "bed": "ground",
-   "from": "../stage/nature/forest",
    "kind": "log",
-   "base": 0.9427,
+   "base": 1.0,
    "foot": [
-    0.382,
-    0.934
+    0.086,
+    0.489
    ]
   },
   "rottenlog": {
@@ -197,12 +196,11 @@
     1
    ],
    "bed": "ground",
-   "from": "../stage/nature/forest",
    "kind": "branch",
-   "base": 0.9505,
+   "base": 1.0,
    "foot": [
-    0.06,
-    0.915
+    0.258,
+    0.508
    ]
   },
   "mossrock": {
@@ -212,12 +210,11 @@
     1.2
    ],
    "bed": "ground",
-   "from": "../stage/nature/forest",
    "kind": "rock",
-   "base": 0.9589,
+   "base": 1.0,
    "foot": [
-    0.161,
-    0.826
+    0.192,
+    0.64
    ]
   },
   "mushrooms": {
@@ -238,41 +235,39 @@
   "fallengiant": {
    "name": "쓰러진 큰 나무",
    "real": [
-    2,
-    3
+    1.2,
+    2
    ],
    "bed": "ground",
-   "from": "../stage/nature/forest",
    "kind": "log",
    "role": "big",
    "ground": [
     0,
-    0.5
+    0.8
    ],
-   "base": 0.9617,
+   "base": 1.0,
    "foot": [
-    0.425,
-    0.976
+    0.236,
+    0.459
    ]
   },
   "bigboulder": {
    "name": "큰 이끼 바위",
    "real": [
-    2,
-    3
+    1.5,
+    2.5
    ],
    "bed": "ground",
-   "from": "../stage/nature/forest",
    "kind": "rock",
    "role": "big",
    "ground": [
     0,
-    0.5
+    0.7
    ],
-   "base": 0.9633,
+   "base": 1.0,
    "foot": [
-    0.051,
-    0.961
+    0.261,
+    0.505
    ]
   },
   "item-01-2": {
@@ -335,10 +330,10 @@
    ],
    "bed": "ground",
    "kind": "fern",
-   "base": 1.0,
+   "base": 0.9991,
    "foot": [
-    0.223,
-    0.663
+    0.137,
+    0.676
    ]
   },
   "item-05-2": {
@@ -356,8 +351,8 @@
    ],
    "base": 1.0,
    "foot": [
-    0.049,
-    0.955
+    0.0,
+    1.0
    ]
   },
   "item-06-2": {
@@ -370,8 +365,8 @@
    "kind": "rock",
    "base": 1.0,
    "foot": [
-    0.208,
-    0.78
+    0.211,
+    0.613
    ]
   },
   "item-07-2": {
@@ -448,10 +443,10 @@
    ],
    "bed": "ground",
    "kind": "tallfern",
-   "base": 0.9973,
+   "base": 0.9991,
    "foot": [
-    0.095,
-    0.898
+    0.011,
+    1.0
    ]
   },
   "azalea": {
@@ -462,10 +457,10 @@
    ],
    "bed": "ground",
    "kind": "azalea",
-   "base": 1.0,
+   "base": 0.999,
    "foot": [
-    0.128,
-    0.828
+    0.072,
+    0.927
    ]
   },
   "wildflowers": {
@@ -490,10 +485,10 @@
    ],
    "bed": "ground",
    "kind": "raspberry",
-   "base": 0.9939,
+   "base": 1.0,
    "foot": [
-    0.077,
-    0.889
+    0.111,
+    0.893
    ]
   },
   "mossmound": {
@@ -562,6 +557,20 @@
    "foot": [
     0.206,
     0.658
+   ]
+  },
+  "raspberry-2": {
+   "name": "산딸기 덤불 2(검은 열매)",
+   "real": [
+    0.8,
+    1.4
+   ],
+   "bed": "ground",
+   "kind": "raspberry",
+   "base": 0.9987,
+   "foot": [
+    0.111,
+    0.893
    ]
   }
  },

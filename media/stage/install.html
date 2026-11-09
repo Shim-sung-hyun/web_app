@@ -403,7 +403,10 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
         let q;
         if (nearPool.length && kn < kRoot && t < k * 15 && rx1 > rx0) {
           const it2 = pick(nearPool), y = clamp(p.sortY + R() * (Math.min(.995, p.y + .03) - p.sortY), pl.beds[it2.bed].y[0], .995);
-          const qx = rx0 + R() * (rx1 - rx0), qr = .55 + R() * .45, qf = R() < .5; q = place(pl, it2, qx, y, qr, qf); if (clash(q)) continue;
+          const qx = rx0 + R() * (rx1 - rx0), qr = .55 + R() * .45, qf = R() < .5; q = place(pl, it2, qx, y, qr, qf);
+          /* 작은 것이 아니면 줄기 맨 아래 끝 바로 앞에 세워 그 끝을 가림(원리 19-2) */
+          if (realMax(it2) > (pl.nestSmall ?? .6)) for (let k = 0; k < 2; k++) { const b = barkBottom(p, q.x - q.w * .55, q.x + q.w * .55); if (b < 0) break; q = place(pl, it2, qx, Math.min(.997, b + .003 + R() * .01), qr, qf); }
+          if (clash(q)) continue;
           /* 움푹한 곳의 앞 끝까지 내려앉기(2026-11-09 선생님: 들풀은 흙 맨 앞까지 내려와 조금 크게): 밑동이 설 땅에 있는 동안 아래로 — 앞이라 원근으로 커짐 */
           for (let yy = q.y + .004; yy < .997; yy += .004) { const q2 = place(pl, it2, qx, yy, qr, qf); if (clash(q2)) break; q = q2; }
           out.push(q); j++; kn++; continue;
