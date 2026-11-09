@@ -1,31 +1,23 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>무대 시험</title>
+<title>무대 보기</title>
 <style>
  :root{--bg:#f6f3ec;--ink:#3a3328;--line:#d8d0c0}
  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#22201c;--ink:#ece6da;--line:#4a4438}}
  :root[data-theme="dark"]{--bg:#22201c;--ink:#ece6da;--line:#4a4438}
  body{margin:0;padding:16px;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
- header{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:12px}
+ header{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:8px}
  h1{font-size:17px;margin:0 8px 0 0}
  select,button,label{font:inherit}
  button{padding:4px 12px;border:1px solid var(--line);background:transparent;color:inherit;border-radius:6px;cursor:pointer}
+ #rule{font-size:13px;opacity:.8;margin:0 0 12px;max-width:70em}
  #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:12px}
- figure{margin:0} figcaption{font-size:13px;opacity:.75;margin-top:4px;line-height:1.6}
- .no{position:absolute;z-index:9500;transform:translate(-50%,-100%);min-width:20px;height:20px;padding:0 4px;border-radius:10px;background:#fff;color:#7a2e1f;border:1.5px solid #7a2e1f;font:600 12px/17px system-ui,sans-serif;text-align:center;pointer-events:none}
- .no.sel{background:#7a2e1f;color:#fff}
- .no.sk{color:#2f5f2a;border-color:#2f5f2a;border-style:dashed}
- #grid.moving .no{pointer-events:auto;cursor:grab}
- .hideNo .no{display:none}
- textarea{width:100%;box-sizing:border-box;margin-top:6px;font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:transparent;color:inherit;min-height:52px}
- #placeNote{margin:0 0 12px}
- #copyBtn{font-weight:600}
- #copied{font-size:13px;opacity:.75}
- .st{border-radius:4px;background:#ddd;touch-action:none}
+ figure{margin:0} figcaption{font-size:13px;opacity:.7;margin-top:2px}
+ .st{border-radius:4px;background:#ddd}
  #msg{font-size:14px;opacity:.8}
 </style></head><body>
 <header>
- <h1>무대 시험</h1>
+ <h1>무대 보기</h1>
  <a id="rootLink" style="font-size:13px;color:inherit"></a>
  <select id="pl"></select>
  <button id="again">새 판</button>
@@ -33,13 +25,10 @@
  <label>먼 것 흐림 <input id="hz" type="range" min="0" max="1" step="0.05" value="0.3"></label>
  <label><input id="fr" type="checkbox" checked> 앞가림 띠</label>
  <label><input id="bd" type="checkbox"> 자리 보기</label>
- <label><input id="nb" type="checkbox" checked> 번호</label>
- <label title="끌어 옮기기 · 바퀴로 고른 요소 크기 · 두 번 누름 소품 뒤집기 · K 덮개 바꾸기 · N 덮개 없애기 · Delete 빼기"><input id="mv" type="checkbox"> 옮기기</label>
- <button id="copyBtn">대화에 보낼 글 복사</button> <span id="copied"></span>
  <span id="msg"></span>
 </header>
-<textarea id="placeNote" placeholder="이 곳 전체에 대한 멘트(배경·먼 띠·어울리지 않는 요소 등)"></textarea>
-<p id="mvHelp" style="display:none;font-size:13px;margin:0 0 10px;opacity:.85">옮기기: 소품과 덮개(점선 번호)를 각각 끌어 옮겨요(화면 밖으로도 이동 가능) · 바퀴 = 고른 요소 크기 · 그냥 위아래로 끌면 소품 크기가 원근대로 바뀌고, Control/Command를 누르고 위아래로 끌면 크기 변화 없이 자리가 바뀌어요 · 두 번 누르기 = 소품 좌우 뒤집기 · K = 덮개 바꾸기, N = 덮개 없애기, Delete = 고른 요소 빼기. 화면 밖으로 나간 요소는 가장자리 번호를 눌러 다시 끌어올 수 있어요. 옮긴 것은 '멘트 모아 복사'에 함께 들어가요(새 판을 누르면 사라지니 그 전에 복사).</p>
+<p id="rule">무대가 <b>장면의 원리</b>(땅·바닥에 닿기, 제 자리에만, 멀수록 작고 옅게, 밑동이 아래인 것이 앞, 덩어리와 빈 땅, 같은 소품 2번까지, 화면 안에 다 들어오기 — media/stage/README.txt)대로 판마다 새로 놓아요.
+판 하나하나를 고치지 않아요. 어긋난 장면이 보이면 <b>어떤 원리가 어긋났는지</b>를 판 번호와 함께 말해 주세요(예: "판 123: 멀리 있는 나무가 앞 덤불보다 커 보임"). 원리를 고치면 모든 판이 함께 바뀌어요.</p>
 <div id="grid"></div>
 <script id="stagekit">
 /* 무대(stage) 공통 모듈 stagekit — 원본은 common/stagekit.js 한 곳. 앱 안의 이 칸은 손으로 고치지 말고 python3 tools/sync-modules.py
@@ -129,7 +118,11 @@
       }
       return null;
     };
-    const clash = p => out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * .3 && Math.abs(o.y - p.y) < .04);
+    /* 놓으면 안 되는 경우(장면의 원리, media/stage/README.txt '장면의 원리'):
+       ⑦ 같은 소품은 한 장면에 2번까지 · ⑧ 화면 안에 다 들어옴(가장자리에서 잘려도 되는 것은 가까운 줄기 frame뿐) · 같은 자리에서 너무 겹침 */
+    const clash = p => out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
+      || p.x - p.w / 2 < 0 || p.x + p.w / 2 > 1 || p.y - p.h * p.base < 0
+      || out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * .3 && Math.abs(o.y - p.y) < .04);
     const n = opt.clusters ?? (2 + Math.floor(R() * 3));
     for (let c = 0; c < n; c++) {
       const b = pick(beds.filter(k => pl.beds[k].persp !== false || pl.beds[k].y[1] - pl.beds[k].y[0] > .1)) || pick(beds);
@@ -160,7 +153,7 @@
     const frame = items.filter(i => i.role === 'frame');   // 가까운 줄기: 화면 가장자리, 위는 화면 밖
     if (frame.length && R() < (opt.frame ?? .5)) {
       const it = pick(frame), left = R() < .5, p = place(pl, it, 0, .9 + R() * .08, R(), !left);
-      p.h = 1.08 + R() * .12; p.w = p.h * (it.w / it.h) * .75; p.x = left ? -p.w * .15 : 1 + p.w * .15; out.push(p);
+      p.h = 1.08 + R() * .12; p.w = p.h * (it.w / it.h) * .75; p.x = left ? -p.w * .15 : 1 + p.w * .15; p.skirt = null; out.push(p);   // 가까운 줄기에는 덮개를 붙이지 않음(덮개는 폐기, 2026-11-09)
     }
     if (opt.avoid && opt.avoid.length) {
       const hit = o => opt.avoid.some(r => o.x + o.w / 2 > r[0] && o.x - o.w / 2 < r[2] && o.y > r[1] && o.y - o.h * o.base < r[3]);
@@ -232,136 +225,34 @@
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>
-/* 무작위 네 판을 나란히 그려 본다. 판 아래 번호(seed)를 적어 두면 같은 장면을 다시 볼 수 있음: test.html#nature/desert/123 */
-/* ?root=stage-beta: 무대 베타(설치도구로 다시 만드는 새 무대, 2026-11-09) */
+/* 무대 보기(2026-11-09 다시 씀 — 번호·멘트·옮기기는 없앰, 선생님: 판 하나하나가 아니라 원리로).
+   ?root=stage-beta: 설치도구로 다시 만드는 새 무대(media/stage-beta). #nature/forest/123: 그 곳의 그 판 하나만 */
 const ROOT=new URLSearchParams(location.search).get('root')==='stage-beta'?'../stage-beta/':'./';
 const $=id=>document.getElementById(id); let pl=null, seeds=[];
 async function start(){
-  $('rootLink').textContent=ROOT==='./'?'베타 무대 보기 →':'← 기존 무대 보기'; $('rootLink').href=ROOT==='./'?'?root=stage-beta':'?'; if(ROOT!=='./') document.querySelector('h1').textContent='무대 시험 (베타)';
-  const idx=await fetch(ROOT+'index.json',{cache:'no-cache'}).then(r=>r.json());
-  for(const [k,v] of Object.entries(idx)) $('pl').add(new Option(v.name+' · '+k+(v.ready?'':' (그림 기다림)'),k));
-  if(!$('pl').options.length){ $('msg').textContent='아직 베타 무대가 없어요 — 무대 설치도구로 만들어 media/stage-beta 에 넣어 주세요.'; return; }
-  const h=location.hash.slice(1).split('/'); if(h.length>=2) $('pl').value=h[0]+'/'+h[1];
+  const beta=ROOT!=='./';
+  $('rootLink').textContent=beta?'← 기존 무대 보기':'베타 무대 보기 →'; $('rootLink').href=beta?'?':'?root=stage-beta';
+  if(beta) document.querySelector('h1').textContent='무대 보기 (베타)';
+  let idx={}; try{ idx=await fetch(ROOT+'index.json',{cache:'no-cache'}).then(r=>r.json()); }catch(e){}
+  for(const [k,v] of Object.entries(idx)) $('pl').add(new Option((v.name||k)+' · '+k,k));
+  if(!$('pl').options.length){ $('msg').textContent=beta?'아직 베타 무대가 없어요 — 무대 설치도구로 만들어 media/stage-beta 에 넣어 주세요.':'무대가 없어요'; return; }
+  const h=location.hash.slice(1).split('/'); if(h.length>=2&&idx[h[0]+'/'+h[1]]) $('pl').value=h[0]+'/'+h[1];
   if(h[2]) seeds=[+h[2]];
-  $('pl').onchange=()=>{seeds=[];open()};
-  $('mv').oninput=()=>{ $('mvHelp').style.display=$('mv').checked?'':'none'; $('grid').style.cursor=$('mv').checked?'grab':''; $('grid').classList.toggle('moving',$('mv').checked); };
-  $('nb').oninput=()=>$('grid').classList.toggle('hideNo',!$('nb').checked);
-  $('placeNote').oninput=()=>note($('pl').value+'/all',$('placeNote').value);
-  $('copyBtn').onclick=async()=>{ const t=gather(); if(!t){ $('copied').textContent='쓴 멘트가 없어요'; return; }
-    try{ await navigator.clipboard.writeText(t); $('copied').textContent='복사했어요 — 이 대화에 붙여 넣으세요'; }
-    catch(e){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); $('copied').textContent='복사했어요 — 이 대화에 붙여 넣으세요'; } }; $('again').onclick=()=>{seeds=[];draw()};
+  $('pl').onchange=()=>{ seeds=[]; open(); }; $('again').onclick=()=>{ seeds=[]; draw(); };
   for(const id of ['sh','hz','fr','bd']) $(id).oninput=()=>draw(true);
   open();
 }
-async function open(){ $('msg').textContent='읽는 중…'; $('placeNote').value=note($('pl').value+'/all'); pl=await Stage.load($('pl').value,{base:ROOT}); draw(); }
-const LEG={};
-function note(k,v){ try{ const all=JSON.parse(localStorage.getItem('stageNotes')||'{}'); if(v===undefined) return all[k]||''; if(v) all[k]=v; else delete all[k]; localStorage.setItem('stageNotes',JSON.stringify(all)); }catch(e){ return ''; } }
-/* 멘트 모아 복사: 이 대화(Claude)에 붙여 넣을 글 — 장소·판 번호·번호표·멘트. 판 번호로 같은 장면을 다시 띄워 고침 */
-function gather(){ let out=[];
-  let all={}; try{ all=JSON.parse(localStorage.getItem('stageNotes')||'{}'); }catch(e){}
-  Object.keys(all).sort().forEach(k=>{ const [g,place,seed]=k.split('/'); const id=g+'/'+place;
-    if(seed==='all') out.push(`■ ${id} 전체: ${all[k]}`);
-    else out.push(`■ ${id} 판 ${seed}${LEG[seed]?'\n  번호표: '+LEG[seed].join(' · '):''}\n  멘트: ${all[k]}`); });
-  Object.values(FIG).forEach(F=>{ const ch=changes(F.s); if(!ch.length) return;
-    out.push(`■ ${pl.id} 판 ${F.s} — 선생님이 옮긴 것\n  번호표: ${LEG[F.s].join(' · ')}\n  `+ch.join('\n  ')); });
-  return out.length?'[무대 시험 멘트]\n※ 위치 이동은 멘트에 따로 적용 요청이 있을 때만 반영해 주세요. 위치 수치는 측정 참고용입니다.\n'+out.join('\n'):''; }
-/* 옮기기: 소품과 밑동 덮개를 독립된 요소로 재고, 옮긴 값은 복사 멘트에 함께 넣음. */
-const FIG={};
-const look=()=>({shadow:+$('sh').value,haze:+$('hz').value,front:$('fr').checked,showBeds:$('bd').checked});
-const nm=o=>(pl.items[o.id]||{}).name||o.id, skn=k=>((pl.skirtMeta||{})[k]||{}).name||k, f2=v=>v.toFixed(2);
-function makeSkirt(owner,key,no){
-  const img=pl.skirtImg[key]; if(!img) return null;
-  const m=(pl.skirtMeta||{})[key]||{base:1,foot:[0,1]}, vis=Math.max(.2,m.foot[1]-m.foot[0]);
-  const fx=f=>owner.x+(owner.flip?-1:1)*owner.w*(f-.5);
-  const footL=Math.min(fx(owner.foot[0]),fx(owner.foot[1])), footR=Math.max(fx(owner.foot[0]),fx(owner.foot[1]));
-  const scale=owner.skirtScale||1, span=footR-footL, mid=(footL+footR)/2, margin=owner.skirtMargin||[.05,.05];
-  const left=mid-span*(.5+margin[0])*scale, right=mid+span*(.5+margin[1])*scale, w=(right-left)/vis;
-  const naturalH=w*(img.naturalHeight/img.naturalWidth)*4/3, cap=owner.h*owner.base*.08*scale;
-  const h=Math.min(naturalH,Math.max(naturalH*.5,cap/m.base))*(owner.skirtHeightScale??1), offset=owner.skirtOffset||[0,0];
-  const skirt={kind:'skirt',no,owner,key,img,x:left-w*m.foot[0]+w/2+offset[0],y:owner.y+owner.h*.004+offset[1],w,h,base:m.base,gone:false};
-  skirt.orig={x:skirt.x,y:skirt.y,w:skirt.w,h:skirt.h,key};
-  return skirt;
-}
-function setSkirt(F,owner,key){
-  owner.skirt=key;
-  let skirt=F.skirts.find(o=>o.owner===owner&&!o.gone);
-  if(!key){ if(skirt) skirt.gone=true; return; }
-  if(skirt) skirt.gone=true;
-  skirt=makeSkirt(owner,key,F.lay.length+F.skirts.length+1);
-  if(skirt) F.skirts.push(skirt);
-}
-function paint(s){ const F=FIG[s], d=F.d, lay=F.lay.filter(o=>!o.gone);
-  const skirts=F.skirts.filter(o=>!o.gone), all=[...lay,...skirts].sort((a,b)=>a.y-b.y), rank=new Map(all.map((o,i)=>[o,20+i*4]));
-  Stage.render(d,pl,lay,{...look(),skirt:false,zOf:o=>rank.get(o)});
-  all.filter(o=>o.kind==='skirt').forEach(o=>{
-    const img=document.createElement('img'); img.className='st-cover'; img.src=o.img.src; img.alt='';
-    const bed=pl.beds[o.owner.bed]||{}, far=bed.persp===false?0:Math.max(0,Math.min(1,1-(o.y-pl.horizon)/(1-pl.horizon))), hz=+$('hz').value;
-    img.style.cssText=`position:absolute;left:${(o.x-o.w/2)*100}%;top:${(o.y-o.h*o.base)*100}%;width:${o.w*100}%;height:${o.h*100}%;z-index:${rank.get(o)+2};filter:saturate(${1-.4*hz*far}) brightness(${1+.12*hz*far}) contrast(${1-.25*hz*far});pointer-events:none`;
-    d.appendChild(img);
-  });
-  all.forEach(o=>{ const b=document.createElement('div'); b.className='no'+(o.kind==='skirt'?' sk':'')+(F.sel===o?' sel':''); b.dataset.no=o.no; b.textContent=o.no;
-    b.style.left=Math.max(2,Math.min(98,o.x*100))+'%'; b.style.top=Math.max(4,Math.min(96,(o.y-o.h*o.base*.92)*100))+'%'; d.appendChild(b); });
-  LEG[s]=lay.map(o=>`${o.no} ${nm(o)}(${o.id}·${(pl.beds[o.bed]||{}).name||o.bed})`).concat(skirts.map(o=>`${o.no} 덮개 ${skn(o.key)}(${o.key}·처음 ${o.owner.no}번 밑)`));
-  F.c.innerHTML=`판 <a href="#${pl.id}/${s}" style="color:inherit">${s}</a> · `+LEG[s].join(' · ');
-  const ch=changes(s); if(ch.length) F.c.innerHTML+=`<br><b>옮긴 것</b>: `+ch.join(' · '); }
-function changes(s){ const F=FIG[s]; if(!F) return []; const out=[];
-  F.lay.forEach(o=>{ const g=o.orig, w=[];
-    if(o.gone){ out.push(`${o.no} ${nm(o)}: 뺌`); return; }
-    if(Math.abs(o.x-g.x)>.005||Math.abs(o.y-g.y)>.005) w.push(`자리 (${f2(g.x)}, ${f2(g.y)}) → (${f2(o.x)}, ${f2(o.y)})`);
-    if(Math.abs((o.kk||1)-1)>.01) w.push(`크기 ×${f2(o.kk)}(원근과 따로)`);
-    if(o.flip!==g.flip) w.push('좌우 뒤집음');
-    if(o.skirt!==g.skirt) w.push(`덮개 종류 ${g.skirt?skn(g.skirt):'없음'} → ${o.skirt?skn(o.skirt):'없음'}`);
-    if(w.length) out.push(`${o.no} ${nm(o)}: `+w.join(', ')); });
-  F.skirts.forEach(o=>{ const g=o.orig, w=[];
-    if(o.gone){ if(!g.gone) out.push(`${o.no} 덮개 ${skn(g.key)}: 뺌`); return; }
-    if(Math.abs(o.x-g.x)>.005||Math.abs(o.y-g.y)>.005) w.push(`자리 (${f2(g.x)}, ${f2(g.y)}) → (${f2(o.x)}, ${f2(o.y)})`);
-    const scale=o.w/g.w; if(Math.abs(scale-1)>.01) w.push(`크기 ×${f2(scale)}`);
-    if(o.key!==g.key) w.push(`종류 ${skn(g.key)} → ${skn(o.key)}`);
-    if(w.length) out.push(`${o.no} 덮개 ${skn(o.key)}: `+w.join(', ')); });
-  return out; }
-/* 그 깊이의 원근 크기 × 선생님이 바꾼 배율 */
-function resize(o){ if(!o.k0){ o.k0=o.orig.h/Stage.perM(pl,o.orig.y,o.bed); o.ar=o.w/o.h; }
-  o.h=o.k0*(o.kk||1)*Stage.perM(pl,o.y,o.bed); o.w=o.h*o.ar; }
-function hit(F,fx,fy){ const L=[...F.lay.filter(o=>!o.gone),...F.skirts.filter(o=>!o.gone)].sort((a,b)=>b.y-a.y);
-  return L.find(o=>fx>=o.x-o.w/2&&fx<=o.x+o.w/2&&fy>=o.y-o.h*o.base&&fy<=o.y+.01); }
-function wire(s){ const F=FIG[s], d=F.d; let drag=null;
-  const at=e=>{ const r=d.getBoundingClientRect(); return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height]; };
-  d.addEventListener('pointerdown',e=>{ if(!$('mv').checked) return; const [fx,fy]=at(e), label=e.target.closest('.no');
-    const o=label?[...F.lay,...F.skirts].find(x=>x.no===+label.dataset.no):hit(F,fx,fy); SEL=F.sel=o||null; Object.values(FIG).forEach(G=>{ if(G!==F&&G.sel){ G.sel=null; paint(G.s); } });
-    if(o){ const now=Date.now(); if(o.kind!=='skirt'&&F.last&&F.last.o===o&&now-F.last.t<380){ o.flip=!o.flip; F.last=null; paint(s); return; } F.last={o,t:now};   /* 두 번 누름 = 뒤집기(다시 그려도 알아채게 직접 셈) */
-      drag={o,dx:fx-o.x,dy:fy-o.y}; d.setPointerCapture(e.pointerId); e.preventDefault(); } paint(s); });
-  d.addEventListener('pointermove',e=>{ if(!drag) return; const [fx,fy]=at(e), o=drag.o; o.x=Math.max(-o.w,Math.min(1+o.w,fx-drag.dx)); o.y=Math.max(-o.h,Math.min(1+o.h,fy-drag.dy)); if(o.kind!=='skirt'&&!e.ctrlKey&&!e.metaKey) resize(o); paint(s); });
-  d.addEventListener('pointerup',()=>{ drag=null; });
-  d.addEventListener('wheel',e=>{ if(!$('mv').checked) return; const [fx,fy]=at(e), label=e.target.closest('.no');
-    const o=label?[...F.lay,...F.skirts].find(x=>x.no===+label.dataset.no):hit(F,fx,fy)||F.sel; if(!o) return; e.preventDefault();
-    const k=e.deltaY<0?1.06:1/1.06;
-    if(o.kind==='skirt'){ o.w*=k; o.h*=k; }
-    else { o.kk=(o.kk||1)*k; resize(o); }
-    paint(s); },{passive:false});
-}
-let SEL=null;
-document.addEventListener('keydown',e=>{ if(!SEL||!$('mv').checked||/TEXTAREA|INPUT|SELECT/.test(e.target.tagName)) return;
-  const F=Object.values(FIG).find(G=>G.sel===SEL); if(!F) return; const o=SEL;
-  if(e.key==='Delete'||e.key==='Backspace'){ o.gone=true; SEL=F.sel=null; }
-  else if(e.key==='k'||e.key==='K'){ const owner=o.kind==='skirt'?o.owner:o, L=((pl.beds[owner.bed]||{}).skirt||[]).filter(k=>pl.skirtImg[k]); if(L.length) setSkirt(F,owner,L[(L.indexOf(owner.skirt)+1)%L.length]); }
-  else if(e.key==='n'||e.key==='N'){ if(o.kind==='skirt'){ o.gone=true; o.owner.skirt=null; } else setSkirt(F,o,null); }
-  else return;
-  e.preventDefault(); paint(F.s); });
+async function open(){ $('msg').textContent='읽는 중…'; pl=await Stage.load($('pl').value,{base:ROOT}); draw(); }
 function draw(keep){
   const n=Object.keys(pl.items||{}).length;
-  $('msg').textContent=(pl.bgImg?'':'배경 없음 · ')+'요소 '+n+'개'+(n?'':' — 아직 그림을 받기 전');
+  $('msg').textContent=(pl.bgImg?'':'배경 없음 · ')+'소품 '+n+'가지';
   if(!keep||!seeds.length) seeds=seeds.length===1?seeds:[...Array(4)].map(()=>Math.floor(Math.random()*1e5));
-  if(keep&&seeds.every(s=>FIG[s])){ seeds.forEach(paint); return; }   /* 그림자·띠 등만 바꿀 때는 옮긴 것을 지키며 다시 그림 */
-  $('grid').innerHTML=''; for(const k in FIG) delete FIG[k]; SEL=null;
+  $('grid').innerHTML='';
   for(const s of seeds){
     const f=document.createElement('figure'), d=document.createElement('div'), c=document.createElement('figcaption');
     d.className='st'; f.append(d,c); $('grid').append(f);
-    const lay=Stage.compose(pl,{seed:s}).sort((a,b)=>a.x-b.x), skirts=[];   /* 번호는 왼쪽부터, 옮겨도 그대로 */
-    lay.forEach((o,i)=>{ o.no=i+1; o.orig={x:o.x,y:o.y,h:o.h,flip:o.flip,skirt:o.skirt}; });
-    lay.forEach(o=>{ if(o.skirt){ const skirt=makeSkirt(o,o.skirt,lay.length+skirts.length+1); if(skirt) skirts.push(skirt); } });
-    FIG[s]={s,d,c,lay,skirts,sel:null}; wire(s); paint(s);
-    const t=document.createElement('textarea'); t.placeholder='이 판에 대한 멘트(번호로: 예) 3번이 너무 큼, 5번은 물가에 있어야 함)'; t.value=note(pl.id+'/'+s);
-    t.oninput=()=>note(pl.id+'/'+s,t.value); f.append(t);
+    Stage.render(d,pl,Stage.compose(pl,{seed:s}),{shadow:+$('sh').value,haze:+$('hz').value,front:$('fr').checked,showBeds:$('bd').checked});
+    c.innerHTML=`판 <a href="#${pl.id}/${s}" style="color:inherit">${s}</a>`;
   }
 }
 start();

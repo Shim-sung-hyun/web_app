@@ -534,7 +534,11 @@ body.setup #adminBtn{display:none}
       }
       return null;
     };
-    const clash = p => out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * .3 && Math.abs(o.y - p.y) < .04);
+    /* 놓으면 안 되는 경우(장면의 원리, media/stage/README.txt '장면의 원리'):
+       ⑦ 같은 소품은 한 장면에 2번까지 · ⑧ 화면 안에 다 들어옴(가장자리에서 잘려도 되는 것은 가까운 줄기 frame뿐) · 같은 자리에서 너무 겹침 */
+    const clash = p => out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
+      || p.x - p.w / 2 < 0 || p.x + p.w / 2 > 1 || p.y - p.h * p.base < 0
+      || out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * .3 && Math.abs(o.y - p.y) < .04);
     const n = opt.clusters ?? (2 + Math.floor(R() * 3));
     for (let c = 0; c < n; c++) {
       const b = pick(beds.filter(k => pl.beds[k].persp !== false || pl.beds[k].y[1] - pl.beds[k].y[0] > .1)) || pick(beds);
@@ -565,7 +569,7 @@ body.setup #adminBtn{display:none}
     const frame = items.filter(i => i.role === 'frame');   // 가까운 줄기: 화면 가장자리, 위는 화면 밖
     if (frame.length && R() < (opt.frame ?? .5)) {
       const it = pick(frame), left = R() < .5, p = place(pl, it, 0, .9 + R() * .08, R(), !left);
-      p.h = 1.08 + R() * .12; p.w = p.h * (it.w / it.h) * .75; p.x = left ? -p.w * .15 : 1 + p.w * .15; out.push(p);
+      p.h = 1.08 + R() * .12; p.w = p.h * (it.w / it.h) * .75; p.x = left ? -p.w * .15 : 1 + p.w * .15; p.skirt = null; out.push(p);   // 가까운 줄기에는 덮개를 붙이지 않음(덮개는 폐기, 2026-11-09)
     }
     if (opt.avoid && opt.avoid.length) {
       const hit = o => opt.avoid.some(r => o.x + o.w / 2 > r[0] && o.x - o.w / 2 < r[2] && o.y > r[1] && o.y - o.h * o.base < r[3]);
