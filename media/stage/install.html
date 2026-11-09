@@ -126,7 +126,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   <h2>배경과 소품 그림을 불러와요</h2>
   <p class="intro">배경은 한 장, 소품은 흰 바탕의 3×3 판 한 장을 선택해요. 원본 파일은 바뀌지 않습니다.</p>
   <div class="row">
-   <div class="file-pick"><label for="bgFile">빈 배경 그림</label><input id="bgFile" type="file" accept="image/*"><p id="bgInfo" class="hint">무대 배경은 4:3 가로 그림이어야 해요.</p></div>
+   <div class="file-pick"><label for="bgFile">빈 배경 그림</label><input id="bgFile" type="file" accept="image/*"><p id="bgInfo" class="hint">무대 배경은 4:3 가로 그림이어야 해요.</p><div class="toolbar" style="margin:8px 0 0"><button id="unstar" class="secondary" type="button">배경 별 표시 지우기</button></div><canvas id="starPeek" class="hidden" style="max-width:100%;border-radius:6px;margin-top:6px"></canvas><p id="starInfo" class="hint"></p></div>
    <div class="file-pick"><label for="stdFile">표준 장면 (참고 — 다음 곳의 그림풍 본보기)</label><input id="stdFile" type="file" accept="image/*"><p id="stdInfo" class="hint">확정 묶음에 standard.jpg로 함께 넣어요. 숲의 표준 장면은 다른 곳을 만들 때 본보기로 붙여요.</p></div>
    <div class="file-pick"><label for="sheetFile">소품 3×3 그림판</label><input id="sheetFile" type="file" accept="image/*"><p id="sheetInfo" class="hint">이름 순서대로 왼쪽 위부터 채워 주세요. 오른쪽 아래는 비워 둬요.</p></div>
   </div>
@@ -482,6 +482,30 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    renderBigFiles();renderPropCards();renderLayoutCards();drawScene();showStep(Math.min(4,Math.max(0,Number(s.step)||0)));setStatus($('#loadStatus'),'저장한 작업을 열었어요.');
   }catch(err){alert(`작업 파일을 열지 못했어요: ${err.message}`)}finally{e.target.value=''}
  });
+ /* 배경 별 표시 지우기(2026-11-09): 그림 서비스가 오른쪽 아래에 남기는 밝은 별 모양을 찾아(둘레보다 밝은 덩어리 중 가장 큰 것)
+    그 자리만 둘레 색으로 안쪽까지 메움. 원본 파일은 그대로, 이 도구 안의 배경만 바뀜. 지운 앞뒤를 작게 보여 줌 */
+ function findStar(c){   /* 4갈래 별(astroid) 모양 틀을 오른쪽 아래에서 맞춰 봄: 틀 안이 둘레 띠보다 가장 밝은 자리(2026-11-09 — 7장 모두 같은 자리 W 90%·H 87%, 반지름 W 2%) */
+  const W=c.width,H=c.height,X0=Math.floor(W*.8),Y0=Math.floor(H*.74),w=W-X0,h=H-Y0,ctx=c.getContext('2d',{willReadFrequently:true}),im=ctx.getImageData(X0,Y0,w,h),d=im.data,L=new Float32Array(w*h);
+  for(let i=0;i<w*h;i++)L[i]=.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2];
+  const tmpl=rad=>{const ins=[],ring=[],R=rad+6,a=r=>Math.pow(r,2/3);for(let y=-R;y<=R;y++)for(let x=-R;x<=R;x++){const v=a(Math.abs(x))+a(Math.abs(y));if(v<=a(rad))ins.push(y*w+x);else if(Math.hypot(x,y)<=R&&v>a(rad+2))ring.push(y*w+x)}return {rad,R,ins,ring}};
+  const score=(T,cx,cy)=>{if(cx-T.R<0||cy-T.R<0||cx+T.R>=w||cy+T.R>=h)return -1e9;const o=cy*w+cx;let si=0,sr=0;for(const k of T.ins)si+=L[o+k];for(const k of T.ring)sr+=L[o+k];return si/T.ins.length-sr/T.ring.length};
+  /* 별은 늘 같은 자리(가로 90%·세로 86.6%)에 찍힘 — 그 둘레 작은 창에서만 찾아, 땅 무늬(낙엽 등)를 별로 잘못 보지 않게 */
+  const cxa=Math.round(W*.875)-X0,cxb=Math.round(W*.925)-X0,cya=Math.round(H*.835)-Y0,cyb=Math.round(H*.895)-Y0;
+  let best=null;for(const f of [.018,.02,.022]){const T=tmpl(Math.round(W*f));for(let cy=Math.max(T.R,cya);cy<=Math.min(h-T.R-1,cyb);cy+=2)for(let cx=Math.max(T.R,cxa);cx<=Math.min(w-T.R-1,cxb);cx+=2){const sc=score(T,cx,cy);if(!best||sc>best.sc)best={sc,T,cx,cy}}}
+  if(!best)return null;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const sc=score(best.T,best.cx+dx,best.cy+dy);if(sc>best.sc)best={...best,sc,cx:best.cx+dx,cy:best.cy+dy}}
+  if(best.sc<3)return null;   /* 둘레보다 3 넘게 밝지 않으면 별이 없는 것으로 */
+  return {X0,Y0,w,h,im,cx:best.cx,cy:best.cy,rad:best.T.rad,score:best.sc}}
+ $('#unstar').addEventListener('click',async()=>{if(!state.bg){$('#starInfo').textContent='먼저 배경 그림을 불러와 주세요.';return}
+  const c=document.createElement('canvas');c.width=state.bg.naturalWidth;c.height=state.bg.naturalHeight;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(state.bg,0,0);
+  const f=findStar(c);if(!f){$('#starInfo').textContent='별 표시를 찾지 못했어요. 이미 없거나 모양이 달라요 — 그대로 두셔도 되고, 확정 ZIP을 Claude에게 주면 지워 넣어요.';return}
+  const {X0:x0,Y0:y0,w,h,im,cx,cy,rad}=f,d=im.data,mask=new Uint8Array(w*h),rr=Math.round(rad*1.25)+Math.max(3,Math.round(c.width/300)),pw=r=>Math.pow(r,2/3);
+  for(let y=Math.max(0,cy-rr);y<=Math.min(h-1,cy+rr);y++)for(let x=Math.max(0,cx-rr);x<=Math.min(w-1,cx+rr);x++)if(pw(Math.abs(x-cx))+pw(Math.abs(y-cy))<=pw(rr)||Math.hypot(x-cx,y-cy)<=rad*.6)mask[y*w+x]=1;   /* 별보다 조금 넓게(뾰족한 끝의 옅은 테두리까지) */
+  const best={minx:cx-rr,maxx:cx+rr,miny:cy-rr,maxy:cy+rr};
+  const peek=$('#starPeek'),bx=Math.max(0,best.minx-40),by=Math.max(0,best.miny-40),bw2=Math.min(w-bx,best.maxx-best.minx+80),bh2=Math.min(h-by,best.maxy-best.miny+80),before=ctx.getImageData(x0+bx,y0+by,bw2,bh2);
+  for(let it=0;it<400;it++){let left=0;const add=[];for(let k=0;k<w*h;k++){if(!mask[k])continue;left++;const x=k%w,y=(k/w)|0;let r=0,g=0,b=0,n=0;for(const t of [x?k-1:-1,x<w-1?k+1:-1,y?k-w:-1,y<h-1?k+w:-1])if(t>=0&&!mask[t]){r+=d[t*4];g+=d[t*4+1];b+=d[t*4+2];n++}if(n)add.push([k,r/n,g/n,b/n])}if(!left)break;for(const [k,r,g,b] of add){d[k*4]=r;d[k*4+1]=g;d[k*4+2]=b;mask[k]=0}}
+  ctx.putImageData(im,x0,y0);const after=ctx.getImageData(x0+bx,y0+by,bw2,bh2);
+  peek.width=bw2*2+10;peek.height=bh2;const pc=peek.getContext('2d');pc.fillStyle='#fff';pc.fillRect(0,0,peek.width,peek.height);pc.putImageData(before,0,0);pc.putImageData(after,bw2+10,0);peek.classList.remove('hidden');
+  state.bg=await imageFromUrl(c.toDataURL('image/png'));drawScene();$('#starInfo').textContent='별 표시를 지웠어요(왼쪽 지우기 전 · 오른쪽 지운 뒤). 자국이 남으면 배경을 다시 불러와 다시 눌러 주세요.'});
  $('#bgFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{state.bg=await readImage(f);state.bgName=f.name;$('#bgInfo').textContent=bgDescription(state.bg,f.name);drawScene();setStatus($('#loadStatus'),isFourThree(state.bg)?'배경 그림을 불러왔어요.':'배경은 무대 규격인 4:3이 아니에요. 비율을 맞춘 뒤 다시 올려 주세요.',!isFourThree(state.bg))}catch(err){setStatus($('#loadStatus'),err.message,true)}});
  $('#stdFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{state.std=await readImage(f);$('#stdInfo').textContent=`${f.name} · ${state.std.naturalWidth}×${state.std.naturalHeight} — 확정 묶음에 standard.jpg로 넣어요`}catch(err){$('#stdInfo').textContent=err.message}});
  $('#sheetFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{state.sheet=await readImage(f);state.sheetName=f.name;$('#sheetInfo').textContent=`${f.name} · ${state.sheet.naturalWidth}×${state.sheet.naturalHeight}`;setStatus($('#loadStatus'),'소품 판을 불러왔어요.')}catch(err){setStatus($('#loadStatus'),err.message,true)}});
