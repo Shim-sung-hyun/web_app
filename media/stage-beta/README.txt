@@ -9,3 +9,8 @@
   https://shim-sung-hyun.github.io/web_app/media/stage/test.html?root=stage-beta
 - 12곳이 다 되면 기존 media/stage/nature/ 를 새 것으로 완전히 바꾸고(덮개 없는 판), 기존 소품을 더 쓸지는 그때 선생님이 정한다.
   바꿀 때 앱(008 베타 등)이 부르는 주소·hide-index.json 도 함께 고친다.
+
+■ 지금 들어 있는 것
+- nature/new-forest 숲(2026-11-09, 선생님이 설치도구로 만든 첫 견본): 배경·표준 장면·소품 8개. 별 표시는 Claude가 지움.
+  지평선은 ZIP 기본값(.36)이 배경과 맞지 않아 빈 땅이 시작하는 줄에 맞춰 .64·땅 시작 .66으로 고침(설치도구 '이 배치에서 익히기'로 다시 맞추면 됨).
+  standard.jpg = 숲 표준 장면 → 다른 곳을 만들 때 그림풍 본보기로 붙임(설치도구 1단계 ① 안내의 forest 대신 new-forest 폴더).
