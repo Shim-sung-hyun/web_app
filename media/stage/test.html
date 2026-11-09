@@ -93,7 +93,8 @@
   function footOnGround(pl, o) {   // 밑동 줄을 따라 다섯 점 중 넷 이상이 빈 땅이면 됨(낙엽 몇 장 정도는 괜찮게)
     const B = pl.beds[o.bed] || {}; if (!pl.ground || B.persp === false || B.groundCheck === false) return true;
     const fx = f => o.x + (o.flip ? -1 : 1) * o.w * (f - .5), L = Math.min(fx(o.foot[0]), fx(o.foot[1])), Rr = Math.max(fx(o.foot[0]), fx(o.foot[1]));
-    let n = 0; for (let k = 0; k < 5; k++) if (isGround(pl, L + (Rr - L) * k / 4, Math.min(.999, o.y + .004))) n++; return n >= 4;
+    /* 밑동 전체가 빈 땅 위(2026-11-09 다시 — 넷만 보면 넓은 밑동의 한쪽이 배경 뿌리에 걸쳐도 통과했음): 밑동 줄과 그 조금 아래 두 줄, 9점 모두 */
+    for (const dy of [.004, .014]) for (let k = 0; k < 9; k++) if (!isGround(pl, L + (Rr - L) * k / 8, Math.min(.999, o.y + dy))) return false; return true;
   }
   /* 그 자리에서 1m가 장면 높이의 몇 몫인가. 원근 자리(땅·바닥)는 지평선에서 내려온 만큼에 비례, 아니면(물낯·흙 속·하늘) 어디서나 같음 */
   const perM = (pl, y, bed) => {
@@ -294,7 +295,15 @@
     const minLong = opt.minLong ?? .07;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
     const tryAt = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x - A.w * .45 < 0 || A.x + A.w * .45 > 1) return;
       if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;
-      if (!footOnGround(pl, A)) return;   // 동물 발도 빈 땅 위에   // 동물끼리 몰리지 않게(한 소품 뒤에 여럿 겹치던 것)
+      if (!footOnGround(pl, A)) return;   // 동물 발도 빈 땅 위에
+      /* 깔린 것처럼 보이지 않게(2026-11-09 선생님: 곰·너구리가 뿌리에 깔림): 가까운 줄기(frame)와는 겹치지 않고,
+         앞 소품의 땅에 퍼진 밑동(아래 18%)이 동물의 발(아래 25%)을 덮지 않게 — 가리는 것은 소품의 몸통 */
+      const Abox = [A.x - A.w * .4, A.y - A.h * A.base, A.x + A.w * .4, A.y];
+      const frontAll = lay.concat(extra ? [extra] : []).filter(o => o !== A && o.y > A.y);
+      if (frontAll.some(o => o.role === 'frame' || (pl.items[o.id] || {}).role === 'frame') && frontAll.some(o => ((pl.items[o.id] || {}).role === 'frame' || o.role === 'frame') && o.x - o.w / 2 < Abox[2] && o.x + o.w / 2 > Abox[0])) return;
+      const feetTop = A.y - A.h * A.base * .25;
+      for (const o of frontAll) { const it = pl.items[o.id] || {}; if (!it.img) continue; const baseTop = o.y - o.h * o.base * .18;
+        for (let k = 0; k < 7; k++) { const fx = Abox[0] + (Abox[2] - Abox[0]) * k / 6; for (const fy of [feetTop, (feetTop + A.y) / 2]) if (fy > baseTop && solidAt(o, it.img, fx, fy) && solidAt(A, A.img, fx, fy)) return; } }   // 동물끼리 몰리지 않게(한 소품 뒤에 여럿 겹치던 것)
       lay.push(A); if (extra) lay.push(extra); const v = visibleOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
       const floor = Math.max(.04, want[0] * .5);
       if (v < floor) return;   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
@@ -302,7 +311,7 @@
       const hurt = lay.some(o => o.animal && o !== A && visibleOf(pl, lay, o) < Math.max(.04, (o.want || want)[0] * .5)); lay.pop(); if (extra) lay.pop(); if (hurt) return;
       const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0); if (!best || sc < best.sc) best = {sc, A, v, extra}; };
     const flip0 = () => R() < .5;
-    for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03)) {   // 놓인 소품 바로 뒤
+    for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03 && (pl.items[o.id] || {}).role !== 'frame')) {   // 놓인 소품 바로 뒤(가까운 줄기 뒤엔 안 숨음)
       for (let t = 0; t < 10; t++) { const y = Math.max(B.y[0], o.y - .004 - R() * .03), x = o.x + (R() - .5) * o.w * .9; tryAt(x, y, flip0()); }
     }
     if (!best || best.sc > .5) {      // 맞는 소품이 없으면 가릴 소품을 새로 앞에
