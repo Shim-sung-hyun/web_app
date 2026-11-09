@@ -521,6 +521,9 @@ body.setup #adminBtn{display:none}
   function compose(pl, opt = {}) {
     if (opt.fixed) return opt.fixed.map(f => place(pl, pl.items[f.id], f.x, f.y, f.r ?? .5, f.flip));
     const R = rnd(opt.seed ?? Math.floor(Math.random() * 1e9)), pick = a => a[Math.floor(R() * a.length)];
+    /* 빽빽함(2026-11-09): stage.json "compose" — clusters·perCluster·loose:[적게,많이], maxSame(같은 소품 몇 번까지), overlap(겹침 허용, 작을수록 촘촘) */
+    const C = Object.assign({clusters: [2, 4], perCluster: [0, 2], loose: [1, 3], maxSame: 2, overlap: .3}, pl.compose || {}), rng = a => a[0] + Math.floor(R() * (a[1] - a[0] + 1));
+    opt = Object.assign({maxSame: C.maxSame}, opt);
     const items = Object.values(pl.items || {}), out = [];
     const byBed = {}; items.forEach(i => { if (i.role !== 'frame') (byBed[i.bed] = byBed[i.bed] || []).push(i); });
     const beds = Object.keys(byBed);
@@ -538,21 +541,21 @@ body.setup #adminBtn{display:none}
        ⑦ 같은 소품은 한 장면에 2번까지 · ⑧ 좌우는 화면 안에 다 들어옴(좌우 가장자리에서 잘려도 되는 것은 가까운 줄기 frame뿐, 위로는 넘어가도 됨) · 같은 자리에서 너무 겹침 */
     const clash = p => out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
       || p.x - p.w / 2 < 0 || p.x + p.w / 2 > 1   // 좌우는 화면 안(위로는 키 큰 나무가 화면 위로 넘어가도 됨)
-      || out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * .3 && Math.abs(o.y - p.y) < .04);
-    const n = opt.clusters ?? (2 + Math.floor(R() * 3));
+      || out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * C.overlap && Math.abs(o.y - p.y) < .04);
+    const n = opt.clusters ?? rng(C.clusters);
     for (let c = 0; c < n; c++) {
       const b = pick(beds.filter(k => pl.beds[k].persp !== false || pl.beds[k].y[1] - pl.beds[k].y[0] > .1)) || pick(beds);
       const list = byBed[b], big = list.filter(i => i.role === 'big'), small = list.filter(i => i.role !== 'big');
       const lead = big.length && R() < .75 ? pick(big) : pick(small.length ? small : big);
       const s = spot(b, lead); if (!s) continue;
       const L = place(pl, lead, s.x, s.y, R(), lead.flip !== false && R() < .5); if (clash(L)) continue; out.push(L);
-      for (let j = 0, k = Math.floor(R() * 3); j < k && small.length; j++) {
+      for (let j = 0, k = rng(C.perCluster); j < k && small.length; j++) {
         const it = pick(small), s2 = spot(b, it, L); if (!s2) continue;
         const p = place(pl, it, s2.x, s2.y, R() * .7, it.flip !== false && R() < .5); if (!clash(p)) out.push(p);
       }
     }
-    const loose = opt.loose ?? (1 + Math.floor(R() * 3));   // 덩어리 밖 작은 것, 물낯·하늘 같은 얇은 자리의 것도 여기서
-    for (let j = 0, t = 0; j < loose && t < 30; t++) {
+    const loose = opt.loose ?? rng(C.loose);   // 덩어리 밖 작은 것, 물낯·하늘 같은 얇은 자리의 것도 여기서
+    for (let j = 0, t = 0; j < loose && t < loose * 8 + 20; t++) {
       const b = pick(beds), it = pick(byBed[b].filter(i => i.role !== 'big').length ? byBed[b].filter(i => i.role !== 'big') : byBed[b]), s = spot(b, it);
       if (!s) continue; const p = place(pl, it, s.x, s.y, R() * .6, R() < .5); if (!clash(p)) { out.push(p); j++; }
     }
@@ -637,7 +640,71 @@ body.setup #adminBtn{display:none}
     return order;
   }
 
-  G.Stage = {load, compose, add, render, perM, place, BASE};
+  /* ── 숨기기(2026-11-09 시작, 무대 위에서 새로 짬) ─────────────────────────────────────────
+     동물은 무대의 원근을 그대로 따름: 그려진 몸의 가장 긴 쪽 = 실제 크기(m) × 그 깊이의 1m. 그래서 멀리 숨으면 작고 가까우면 큼.
+     숨는 자리 = 같은 자리(bed)에 놓인 소품 바로 뒤(밑동이 소품보다 조금 위 = 조금 멀리). 보이는 몫은 그림 모양(알파)으로 셈해 목표 범위에 맞춤.
+     맞는 소품이 없으면 그 동물을 가릴 만한 소품을 바로 앞에 하나 더 놓음. */
+  const MASK = new WeakMap();
+  function maskOf(img, n = 64) {   // 그림을 가장 긴 쪽 n칸으로 — 칸마다 칠해졌는지
+    if (MASK.has(img)) return MASK.get(img);
+    const W = img.naturalWidth || img.width, H = img.naturalHeight || img.height, k = n / Math.max(W, H), w = Math.max(1, Math.round(W * k)), h = Math.max(1, Math.round(H * k));
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', {willReadFrequently: true});
+    let m = null; try { x.drawImage(img, 0, 0, w, h); const d = x.getImageData(0, 0, w, h).data; m = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) m[i] = d[i * 4 + 3] > 110 ? 1 : 0; } catch (e) { m = null; }
+    let x0 = w, y0 = h, x1 = -1, y1 = -1; if (m) for (let y = 0; y < h; y++) for (let i = 0; i < w; i++) if (m[y * w + i]) { if (i < x0) x0 = i; if (i > x1) x1 = i; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    const r = {w, h, m, box: x1 < 0 ? [0, 0, w, h] : [x0, y0, x1 + 1, y1 + 1]}; MASK.set(img, r); return r;
+  }
+  const solidAt = (o, img, fx, fy) => {   // 장면 좌표(0~1)에 o의 그림이 칠해져 있나
+    const M = maskOf(img); if (!M.m) return false;
+    let u = (fx - (o.x - o.w / 2)) / o.w; const v = (fy - (o.y - o.h * o.base)) / o.h;
+    if (u < 0 || u >= 1 || v < 0 || v >= 1) return false; if (o.flip) u = 1 - u;
+    return M.m[Math.floor(v * M.h) * M.w + Math.floor(u * M.w)] === 1;
+  };
+  function visibleOf(pl, lay, A) {   // 동물 A의 칠해진 칸 중 앞(밑동이 더 아래)의 것에 가려지지 않은 몫
+    const M = maskOf(A.img), front = lay.filter(o => o !== A && o.y > A.y && (o.img || (pl.items[o.id] || {}).img));
+    let tot = 0, vis = 0;
+    for (let j = 0; j < M.h; j++) for (let i = 0; i < M.w; i++) {
+      if (!M.m || !M.m[j * M.w + i]) continue; tot++;
+      const u = (A.flip ? M.w - 1 - i : i) + .5, fx = A.x - A.w / 2 + A.w * u / M.w, fy = A.y - A.h * A.base + A.h * (j + .5) / M.h;
+      if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue;
+      if (!front.some(o => solidAt(o, o.img || pl.items[o.id].img, fx, fy))) vis++;
+    }
+    return tot ? vis / tot : 0;
+  }
+  function hide(pl, lay, a, opt = {}) {
+    const R = rnd(opt.seed ?? Math.floor(Math.random() * 1e9)), want = opt.visible || [.25, .4], mid = (want[0] + want[1]) / 2;
+    const M = maskOf(a.img), bw = (M.box[2] - M.box[0]) / M.w, bh = (M.box[3] - M.box[1]) / M.h, long = Math.max(bw * (M.w / Math.max(M.w, M.h)) * .75 / .75, bh * (M.h / Math.max(M.w, M.h)));
+    const bed = a.bed || Object.keys(pl.beds)[0], B = pl.beds[bed], baseFrac = M.box[3] / M.h;
+    const make = (x, y, flip) => {   // 그 깊이의 크기로 동물 놓기: 몸의 가장 긴 쪽 = real × 1m (가로는 4:3 장면이라 0.75)
+      const m1 = perM(pl, y, bed), bodyLong = a.real * m1, Mw = M.w / Math.max(M.w, M.h), Mh = M.h / Math.max(M.w, M.h);
+      const bodyW = bw * Mw, bodyH = bh * Mh, k = bodyLong / Math.max(bodyW * .75, bodyH), h = k * Mh, w = k * Mw * .75;
+      return {id: a.name, src: a.src, img: a.img, bed, x, y, w, h, base: baseFrac, flip, foot: [M.box[0] / M.w, M.box[2] / M.w], actor: true, skirt: null, animal: a.name};
+    };
+    let best = null;
+    const minLong = opt.minLong ?? .07;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
+    const tryAt = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x - A.w * .45 < 0 || A.x + A.w * .45 > 1) return;
+      lay.push(A); if (extra) lay.push(extra); const v = visibleOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
+      const floor = Math.max(.04, want[0] * .5);
+      if (v < floor) return;   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
+      lay.push(A); if (extra) lay.push(extra);   // 먼저 숨긴 동물을 이 동물·새 소품이 앞에서 덮지 않게
+      const hurt = lay.some(o => o.animal && o !== A && visibleOf(pl, lay, o) < Math.max(.04, (o.want || want)[0] * .5)); lay.pop(); if (extra) lay.pop(); if (hurt) return;
+      const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0); if (!best || sc < best.sc) best = {sc, A, v, extra}; };
+    const flip0 = () => R() < .5;
+    for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03)) {   // 놓인 소품 바로 뒤
+      for (let t = 0; t < 10; t++) { const y = Math.max(B.y[0], o.y - .004 - R() * .03), x = o.x + (R() - .5) * o.w * .9; tryAt(x, y, flip0()); }
+    }
+    if (!best || best.sc > .5) {      // 맞는 소품이 없으면 가릴 소품을 새로 앞에
+      const pool = Object.values(pl.items).filter(i => i.bed === bed && i.role !== 'frame');
+      for (let t = 0; t < 80; t++) {
+        const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), it = pool[Math.floor(R() * pool.length)];
+        if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), R(), R() < .5); P.skirt = null;
+        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1) continue; tryAt(x, g, flip0(), P);
+      }
+    }
+    if (!best) return null;
+    if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
+  }
+
+  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, maskOf, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>

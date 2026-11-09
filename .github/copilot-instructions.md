@@ -33,3 +33,4 @@
 - 보기: `media/stage/test.html?root=stage-beta`(무대 보기 — 번호·멘트·옮기기는 없앰).
 - 설치도구 4단계 **'이 배치에서 익히기'**: 선생님이 맞춘 배치에서 원근(지평선·unit)·실제 높이·놓일 깊이를 셈해 stage.json에 남김(좌표를 외우지 않음). 셈 방법은 `media/stage/README.txt` '이 배치에서 익히기'.
 - 크게 쓰일 소품은 판에서 자르지 말고 한 장에 하나씩 큰 그림으로 받는다(설치도구가 셈해 알려 줌). 좌우 끝이 세로로 잘린 그림·네모 받침은 쓰지 않는다.
+- 숨기기 시험대 `media/stage/hide-test.html`(무대 베타 숲 + `Stage.hide`). 곳마다 빽빽함은 stage.json `compose`. 자세한 것은 무대 README '빽빽함·숨기기'.
