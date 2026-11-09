@@ -18,3 +18,6 @@
   통나무 log · 버섯 핀 통나무 rottenlog · 그루터기 stump · 나뭇가지 더미 branchpile · 이끼 바위 mossrock · 버섯 mushrooms · 쓰러진 큰 나무 fallengiant · 큰 이끼 바위 bigboulder(뒤 둘은 300점 그림이라 먼 쪽 절반에만).
   안 쓴 것: 참나무·소나무·전나무(작은 그림·밑동이 가늘게 끊김), 덤불·진달래 숲(밑이 반듯하게 잘림), 고사리·키 큰 고사리·가시덤불(줄기 끝이 맨 땅에 떠 보임), 가까운 줄기 2개(밑이 네모로 잘림).
 - 소품마다 kind(종류: oak·fir·log·fern·bush·rock·mushroom·leaves·stump·branch) — 3판(한 종류 3가지 모양)을 받으면 같은 종류끼리 묶임.
+- 판 2·3(2026-11-09, Claude가 잘라 넣음 — 원본 그림만 받음): 판 2 = 같은 종류 다른 모양 item-01-2…item-08-2(참나무 2·전나무 2는 큰 그림),
+  판 3 = 새 종류 maple 어린 단풍나무·smallpine 작은 소나무(둘 다 큰 그림)·tallferns·azalea·wildflowers·raspberry·mossmound·rootmass. 칸 글자는 작은 조각으로 지움.
+  안 쓴 것: 단풍잎이 달린 소나무 큰 그림 1장(두 나무가 섞임). 전나무 2 큰 그림 밑의 가로 땅 줄은 지움. 숲 소품 모두 32가지.
