@@ -808,13 +808,18 @@ body.setup #adminBtn{display:none}
     }
     if (!best || best.sc > .5) {      // 맞는 소품이 없으면 가릴 소품을 새로 앞에
       const pool = Object.values(pl.items).filter(i => i.bed === bed && i.role !== 'frame');
-      for (let t = 0; t < 80; t++) {
-        const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), it = pool[Math.floor(R() * pool.length)];
-        if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), R(), R() < .5); P.skirt = null;
-        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
+      /* 많이 가려야 하면(어려움) 동물보다 크게 그려질 수 있는 소품만(2026-11-09 선생님: 어려움인데 곰·호랑이가 다 보임) */
+      const needH = want[1] < .3 ? .85 : want[1] < .5 ? .6 : .45;
+      const big = pool.filter(i => realMax(i) * (i.base ? 1 / i.base : 1) >= a.real * .55 * needH);
+      for (let t = 0; t < 200; t++) {
+        const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), src = big.length && R() < .8 ? big : pool, it = src[Math.floor(R() * src.length)];
+        if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), .5 + R() * .5, R() < .5); P.skirt = null;
+        if (P.h < A0.h * needH || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
       }
     }
     if (!best) return null;
+    /* 단계를 지킴: 정한 몫보다 많이 보이면 숨기지 않음(null) — 부르는 쪽이 다른 동물로 */
+    if (opt.strict !== false && best.v > want[1] + .04) return null;
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 

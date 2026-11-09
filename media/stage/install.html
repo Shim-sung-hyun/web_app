@@ -584,13 +584,18 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     }
     if (!best || best.sc > .5) {      // 맞는 소품이 없으면 가릴 소품을 새로 앞에
       const pool = Object.values(pl.items).filter(i => i.bed === bed && i.role !== 'frame');
-      for (let t = 0; t < 80; t++) {
-        const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), it = pool[Math.floor(R() * pool.length)];
-        if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), R(), R() < .5); P.skirt = null;
-        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
+      /* 많이 가려야 하면(어려움) 동물보다 크게 그려질 수 있는 소품만(2026-11-09 선생님: 어려움인데 곰·호랑이가 다 보임) */
+      const needH = want[1] < .3 ? .85 : want[1] < .5 ? .6 : .45;
+      const big = pool.filter(i => realMax(i) * (i.base ? 1 / i.base : 1) >= a.real * .55 * needH);
+      for (let t = 0; t < 200; t++) {
+        const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), src = big.length && R() < .8 ? big : pool, it = src[Math.floor(R() * src.length)];
+        if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), .5 + R() * .5, R() < .5); P.skirt = null;
+        if (P.h < A0.h * needH || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
       }
     }
     if (!best) return null;
+    /* 단계를 지킴: 정한 몫보다 많이 보이면 숨기지 않음(null) — 부르는 쪽이 다른 동물로 */
+    if (opt.strict !== false && best.v > want[1] + .04) return null;
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 
@@ -798,9 +803,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   if(state.sheet.naturalWidth<3||state.sheet.naturalHeight<3){setStatus($('#loadStatus'),'3×3으로 나눌 수 있는 크기의 그림을 선택해 주세요.',true);return}
   const margin=Math.max(0,Math.min(30,Number($('#cellMargin').value)||0)),max=Math.min(8,ns.length);
   const sheets=[state.sheet,...(state.sheets||[]).slice(1,sheetCount())];for(let v=sheets.length;v<sheetCount();v++)sheets.push(null);const miss=sheets.findIndex(x=>!x);if(miss>0){setStatus($('#loadStatus'),`소품 판 ${miss+1}을 불러와 주세요(판 수를 줄여도 돼요).`,true);return}
-  saveSheetCfg();state.props=[];for(let v=0;v<sheets.length;v++)for(let i=0,mv=Math.min(8,specsOf(v).length||max);i<mv;i++){const pr=cropObject(sheets[v],i,Number($('#threshold').value),Number($('#neutral').value),margin,v);pr.x=Math.min(.92,pr.x+v*.03);removeSpecks(pr);defringe(pr,2);fitProp(pr);state.props.push(pr)}
+  saveSheetCfg();state.props=[];for(let v=0;v<sheets.length;v++)for(let i=0,mv=Math.min(8,specsOf(v).length||max);i<mv;i++){const pr=cropObject(sheets[v],i,Number($('#threshold').value),Number($('#neutral').value),margin,v);pr.x=Math.min(.92,pr.x+v*.03);removeSpecks(pr);dropGroundLine(pr);defringe(pr,2);fitProp(pr);state.props.push(pr)}
   frameNames().forEach((n,j)=>{const img=state.big['frame-'+j];if(!img)return;state.big['Fr'+j+'-0']=img;const pr=cropObject(img,0,Number($('#threshold').value),Number($('#neutral').value),margin,'Fr'+j);
-   Object.assign(pr,{name:`가장자리 ${j+1}`,kind:'frame',kindName:'가장자리',slug:`edge-${j+1}`,role:'frame',height:[4,6],x:j%2?.9:.1,y:.98});defringe(pr,2);fitProp(pr);state.props.push(pr)});
+   Object.assign(pr,{name:`가장자리 ${j+1}`,kind:'frame',kindName:'가장자리',slug:`edge-${j+1}`,role:'frame',height:[4,6],x:j%2?.9:.1,y:.98});dropGroundLine(pr);defringe(pr,2);fitProp(pr);state.props.push(pr)});
   state.selected=0;renderPropCards();setStatus($('#loadStatus'),`${state.props.length}개 칸을 나눴어요. 흰색으로 된 실제 소품 부분이 투명해지지 않았는지 꼭 살펴봐 주세요.`);
  });
  function paint(canvas,im){canvas.width=im.width;canvas.height=im.height;canvas.getContext('2d').putImageData(im,0,0)}
@@ -877,6 +882,8 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   return removed}
  /* 테두리 흰 기 정리(2026-11-09 선생님: 흰 바탕 기준을 낮추면 연한 색까지 지워짐 — 흰색만 지워져야 함):
     투명한 바깥과 붙은 테두리 점 가운데 색이 거의 없고(채도 낮음) 밝은 점만, 흰색과 섞인 비율만큼 투명하게. 한 겹씩 n번 */
+ /* 땅 높이의 가는 가로줄 지우기(2026-11-09 숲 큰 그림에서 배움): 그림이 밑에 땅 선을 그어 양옆으로 삐져나오면, 칠해진 높이가 그림 높이의 1.3% 이하인 세로줄은 투명 */
+ function dropGroundLine(p){const {width:w,height:h,data:d}=p.image,lim=Math.max(3,Math.round(h*.013));let n=0;for(let x=0;x<w;x++){let c=0;for(let y=0;y<h;y++)if(d[(y*w+x)*4+3]>100)c++;if(c&&c<=lim){n++;for(let y=0;y<h;y++)d[(y*w+x)*4+3]=0}}return n}
  function defringe(p,n=2){const {width:w,height:h,data:d}=p.image;let changed=0;
   for(let pass=0;pass<n;pass++){const edge=[];for(let y=0;y<h;y++)for(let x=0;x<w;x++){const k=y*w+x;if(d[k*4+3]<=8)continue;
      let out=false;for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy;if(xx<0||yy<0||xx>=w||yy>=h||d[(yy*w+xx)*4+3]<=8){out=true;break}}if(!out)continue;

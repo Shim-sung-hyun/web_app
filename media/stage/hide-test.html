@@ -19,11 +19,11 @@
 </style></head><body>
 <header>
  <h1>숨기기 시험 (무대 베타 · 숲)</h1>
- <label>단계 <select id="lv"><option value="1">쉬움</option><option value="2" selected>보통</option><option value="3">어려움</option></select></label>
+ <label>단계 <select id="lv"><option value="1">하</option><option value="2" selected>중</option><option value="3">상</option><option value="4">스페셜</option></select></label>
  <button id="again">새 판</button>
  <label><input id="ans" type="checkbox" checked> 숨은 자리 보기</label>
 </header>
-<p id="note">무대가 장면을 원리대로 놓고, 동물을 <b>그 깊이의 원근 크기</b>로 같은 땅의 소품 <b>바로 뒤</b>에 숨겨요(가릴 소품이 없으면 하나를 앞에 더 놓음). 보이는 몫은 그림 모양으로 셈해 단계마다 맞춰요 — 쉬움 50~70% · 보통 25~40% · 어려움 8~18%.
+<p id="note">무대가 장면을 원리대로 놓고, 동물을 <b>그 깊이의 원근 크기</b>로 같은 땅의 소품 <b>바로 뒤</b>에 숨겨요(가릴 소품이 없으면 하나를 앞에 더 놓음). 보이는 몫은 그림 모양으로 셈해 단계마다 맞춰요 — 하 50~70% · 중 25~40% · 상 8~18% · 스페셜 상만큼 6마리.
 어긋난 장면은 판 번호와 함께 어떤 원리가 어긋났는지 말해 주세요.</p>
 <div id="grid"></div>
 <script id="stagekit">
@@ -388,13 +388,18 @@
     }
     if (!best || best.sc > .5) {      // 맞는 소품이 없으면 가릴 소품을 새로 앞에
       const pool = Object.values(pl.items).filter(i => i.bed === bed && i.role !== 'frame');
-      for (let t = 0; t < 80; t++) {
-        const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), it = pool[Math.floor(R() * pool.length)];
-        if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), R(), R() < .5); P.skirt = null;
-        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
+      /* 많이 가려야 하면(어려움) 동물보다 크게 그려질 수 있는 소품만(2026-11-09 선생님: 어려움인데 곰·호랑이가 다 보임) */
+      const needH = want[1] < .3 ? .85 : want[1] < .5 ? .6 : .45;
+      const big = pool.filter(i => realMax(i) * (i.base ? 1 / i.base : 1) >= a.real * .55 * needH);
+      for (let t = 0; t < 200; t++) {
+        const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), src = big.length && R() < .8 ? big : pool, it = src[Math.floor(R() * src.length)];
+        if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), .5 + R() * .5, R() < .5); P.skirt = null;
+        if (P.h < A0.h * needH || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
       }
     }
     if (!best) return null;
+    /* 단계를 지킴: 정한 몫보다 많이 보이면 숨기지 않음(null) — 부르는 쪽이 다른 동물로 */
+    if (opt.strict !== false && best.v > want[1] + .04) return null;
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 
@@ -406,7 +411,8 @@
 const GH='https://shim-sung-hyun.github.io/web_app/';
 const ANIMALS=[['다람쥐','words/daramjwi.webp',.38],['너구리','words/neoguri.webp',.6],['토끼','words/tokki.webp',.45],['멧돼지','animals/metdwaeji.webp',1.5],
  ['사슴','animals/saseum.webp',1.9],['산양','animals/sanyang.webp',1.3],['곰','animals/gom.webp',2],['호랑이','animals/horangi.webp',2.6]];
-const LV={1:[.5,.7],2:[.25,.4],3:[.08,.18]};
+const LV={1:[.5,.7],2:[.25,.4],3:[.08,.18],4:[.08,.18]};   // 하·중·상, 스페셜 = 상만큼 숨긴 동물 여러 마리(008 스페셜과 같음)
+const COUNT={1:3,2:3,3:3,4:6};
 const $=id=>document.getElementById(id);
 const img=src=>new Promise(ok=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>ok(i);i.onerror=()=>ok(null);i.src=src;});
 let pl=null, AN=[];
@@ -423,8 +429,8 @@ function draw(){
     const seed=Math.floor(Math.random()*1e5), f=document.createElement('figure'), d=document.createElement('div'), c=document.createElement('figcaption');
     d.className='st'; f.append(d,c); $('grid').append(f);
     const lay=Stage.compose(pl,{seed}); let R=seed; const rnd=()=>((R=R*16807%2147483647)/2147483647);
-    const pick=[...AN].sort(()=>rnd()-.5).slice(0,3), out=[];
-    pick.forEach((a,i)=>{ const A=Stage.hide(pl,lay,a,{visible:LV[$('lv').value],seed:seed+i*7}); if(A) out.push(A); });
+    const lv=$('lv').value, pick=[...AN].sort(()=>rnd()-.5), out=[];   /* 단계를 못 지키는 동물은 건너뛰고 다음 동물로 */
+    for(let i=0;i<pick.length&&out.length<COUNT[lv];i++){ const A=Stage.hide(pl,lay,pick[i],{visible:LV[lv],seed:seed+i*7}); if(A) out.push(A); }
     Stage.render(d,pl,lay,{shadow:.25,haze:.3});
     out.forEach(A=>{ const r=document.createElement('div'), s=Math.max(A.w,A.h*.75)*1.1; r.className='ring';
       r.style.cssText+=`;left:${(A.x-s/2)*100}%;top:${(A.y-A.h*A.base/2)*100-s*66}%;width:${s*100}%;height:${s*133}%`; d.appendChild(r); });
