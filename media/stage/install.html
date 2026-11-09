@@ -514,7 +514,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  $('#sheetFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{state.sheet=await readImage(f);state.sheetName=f.name;$('#sheetInfo').textContent=`${f.name} · ${state.sheet.naturalWidth}×${state.sheet.naturalHeight}`;setStatus($('#loadStatus'),'소품 판을 불러왔어요.')}catch(err){setStatus($('#loadStatus'),err.message,true)}});
  $('#threshold').addEventListener('input',e=>$('#thresholdValue').value=e.target.value);
  $('#neutral').addEventListener('input',e=>$('#neutralValue').value=e.target.value);
- $('#brushSize').addEventListener('input',e=>$('#brushValue').value=e.target.value);
+ $('#brushSize').addEventListener('input',e=>{$('#brushValue').value=e.target.value;const c=$('#editCanvas'),r=c.getBoundingClientRect();if(state.props[state.selected])drawBrush({clientX:r.left+r.width/2,clientY:r.top+r.height/2})});
  /* 칸 나누는 줄(2026-11-09): 1/3·2/3 자리에 딱 자르지 않고, 그 둘레(±12%)에서 그림이 가장 적게 지나가는 줄(빈 틈)을 찾음 —
     소품의 밑동·가지가 칸 밖으로 조금 넘어가도 잘리지 않고, 옆 칸에 조각이 따라가지 않게 */
  let GUT=null;
@@ -617,7 +617,12 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    else if(D.m==='move'){const dx=Math.max(-O.x0,Math.min(c.width-O.x1,px-D.px)),dy=Math.max(-O.y0,Math.min(c.height-O.y1,py-D.py));R.x0=O.x0+dx;R.x1=O.x1+dx;R.y0=O.y0+dy;R.y1=O.y1+dy}
    else{if(D.m.includes('l'))R.x0=Math.min(px,R.x1-4);if(D.m.includes('r'))R.x1=Math.max(px,R.x0+4);if(D.m.includes('t'))R.y0=Math.min(py,R.y1-4);if(D.m.includes('b'))R.y1=Math.max(py,R.y0+4)}
    showKeep();return}
-  if(painting)editAt(e)});
+  if(painting)editAt(e);drawBrush(e)});
+ /* 붓 범위 보이기(2026-11-09 선생님): 칠하는 방법(지우기·복구·흰색만)일 때 붓 둘레를 원으로 — 밝은 곳·어두운 곳 모두 보이게 흰 줄+검은 줄 */
+ function drawBrush(e){const m=$('#brushMode').value;if(!['erase','restore','white'].includes(m))return;const p=state.props[state.selected];if(!p)return;
+  const c=$('#editCanvas'),x=c.getContext('2d'),[px,py]=editXY(e),r=Math.max(1,Number($('#brushSize').value)/2);x.putImageData(p.image,0,0);
+  x.save();x.beginPath();x.arc(px,py,r,0,Math.PI*2);x.lineWidth=Math.max(1.5,c.width/400);x.strokeStyle='rgba(0,0,0,.85)';x.stroke();x.beginPath();x.arc(px,py,r+Math.max(1.5,c.width/400),0,Math.PI*2);x.strokeStyle='rgba(255,255,255,.95)';x.stroke();x.restore()}
+ $('#editCanvas').addEventListener('pointerleave',()=>{const p=state.props[state.selected];if(p&&!keepRect)paint($('#editCanvas'),p.image)});
  $('#editCanvas').addEventListener('pointerup',()=>{if(keepDrag){keepDrag=null;if(keepRect&&(keepRect.x1-keepRect.x0<4||keepRect.y1-keepRect.y0<4))startKeep();else $('#keepBar').classList.remove('hidden')}painting=false});
  $('#editCanvas').addEventListener('pointercancel',()=>{painting=false;keepDrag=null});
  $('#heightMin').addEventListener('input',()=>{if(state.props[state.selected])state.props[state.selected].height[0]=Number($('#heightMin').value)||.1});
