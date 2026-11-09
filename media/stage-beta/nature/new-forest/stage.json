@@ -635,5 +635,48 @@
   "maxSame": 4,
   "overlap": 0.12
  },
- "skirtMeta": {}
+ "skirtMeta": {},
+ "blocks": [
+  {
+   "name": "바위와 나무",
+   "n": [
+    0,
+    1
+   ],
+   "back": {
+    "kinds": [
+     "oak",
+     "maple",
+     "smallpine",
+     "fir"
+    ],
+    "n": [
+     3,
+     4
+    ]
+   },
+   "front": {
+    "kinds": [
+     "rock"
+    ],
+    "n": [
+     1,
+     1
+    ]
+   },
+   "small": {
+    "kinds": [
+     "rock"
+    ],
+    "n": [
+     1,
+     3
+    ],
+    "scale": [
+     0.3,
+     0.5
+    ]
+   }
+  }
+ ]
 }

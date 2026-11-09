@@ -602,17 +602,33 @@ body.setup #adminBtn{display:none}
     }
     /* 군락(2026-11-09 선생님): 같은 종류(나무·꽃·고사리…)를 여럿 겹쳐 덩어리로 — 그 뒤에 동물이 숨기도, 비어 있기도(늘 숨어 있으면 눈치챔).
        소품은 소품이라 복제해 겹쳐 씀: 같은 kind의 그림들을 크기·뒤집기를 달리해 thicketSize개, 가로로 촘촘히·앞뒤는 조금씩. compose.thickets(기본 1~3) */
+    /* 변형(2026-11-09 선생님: 그대로 복제가 아니라 전체 크기·세로로·가로로 늘이기·뒤집기로 다양하게): 가로·세로를 따로 0.8~1.2배 */
+    const vary = q => { const sx = .8 + R() * .4, sy = .8 + R() * .4; q.w *= sx; q.h *= sy; return q; };
     const kinds = {}; items.forEach(i => { if (i.role !== 'frame' && i.kind) (kinds[i.kind] = kinds[i.kind] || []).push(i); });
     const kindList = Object.values(kinds);
     for (let g = 0, nT = opt.thickets ?? rng(C.thickets || [1, 3]), tg = 0; g < nT && kindList.length && tg < nT * 8; tg++) {
       const members = pick(kindList), it0 = pick(members), s0 = spot(it0.bed, it0); if (!s0) continue;
-      const bigK = members.some(i => i.role === 'big'), k = bigK ? rng([2, 3]) : rng(C.thicketSize || [3, 6]), lead = place(pl, it0, s0.x, s0.y, .5 + R() * .5, R() < .5);
+      const bigK = members.some(i => i.role === 'big'), k = bigK ? rng([2, 3]) : rng(C.thicketSize || [3, 6]), lead = vary(place(pl, it0, s0.x, s0.y, .5 + R() * .5, R() < .5));
       if (clash(lead, true)) continue; const grp = [lead];
       for (let j = 1, t = 0; j < k && t < k * 6; t++) {
-        const it = pick(members), side = (j % 2 ? 1 : -1) * Math.ceil(j / 2), q = place(pl, it, lead.x + side * lead.w * (.32 + R() * .2), clamp(lead.y + (R() - .5) * .025, pl.beds[it.bed].y[0], 1), .35 + R() * .65, R() < .5);
+        const it = pick(members), side = (j % 2 ? 1 : -1) * Math.ceil(j / 2), q = place(pl, it, lead.x + side * lead.w * (.32 + R() * .2), clamp(lead.y + (R() - .5) * .025, pl.beds[it.bed].y[0], 1), .35 + R() * .65, R() < .5); vary(q);
         if (!clash(q, true)) { grp.push(q); j++; }
       }
       if (grp.length >= 2) { grp.forEach(q => { q.grove = true; out.push(q); }); g++; }
+    }
+    /* 블록 소품(2026-11-09 선생님: 큰 바위·작은 바위·돌·참나무 서너 그루를 엮어 하나의 블록으로): stage.json "blocks" 차림
+       [{name, n:[적게,많이], back:{kinds,n,...}, front:{...}, small:{...}}] — back은 밑동이 조금 뒤(위), front·small은 앞(아래)·옆에. 각 칸 scale:[a,b](작은 바위를 돌로 쓰듯 크기 바꾸기)
+       동물은 블록 사이·뒤에 숨기 좋음(곰도 멀리 두면 작아짐). 블록 안은 같은 소품 횟수·겹침 제한 없음 */
+    for (const bk of opt.blocks || pl.blocks || []) for (let b = 0, nb = rng(bk.n || [0, 1]), tb = 0; b < nb && tb < nb * 10; tb++) {
+      const role = r => items.filter(i => i.role !== "frame" && (r.kinds || []).includes(i.kind));
+      const backPool = role(bk.back || {}), frontPool = role(bk.front || {}), smallPool = role(bk.small || {}); if (!backPool.length && !frontPool.length) break;
+      const anc = pick(backPool.length ? backPool : frontPool), s0 = spot(anc.bed, anc); if (!s0) continue;
+      const grp = [], put = (pool, part, dy, spread) => { if (!pool.length) return; for (let j = 0, k = rng(part.n || [1, 1]), t = 0; j < k && t < k * 8; t++) {
+        const it = pick(pool), y = clamp(s0.y + dy[0] + R() * (dy[1] - dy[0]), pl.beds[it.bed].y[0], 1.02), q = place(pl, it, s0.x + (R() - .5) * spread, y, R(), R() < .5);
+        if (part.scale) { const k2 = part.scale[0] + R() * (part.scale[1] - part.scale[0]); q.w *= k2; q.h *= k2; }
+        vary(q); if (!clash(q, true)) { grp.push(q); j++; } } };
+      put(backPool, bk.back || {}, [-.03, 0], .22); put(frontPool, bk.front || {}, [.015, .04], .12); put(smallPool, bk.small || {}, [.03, .06], .2);
+      if (grp.length >= 3) { grp.forEach(q => { q.block = bk.name || true; out.push(q); }); b++; }
     }
     const loose = opt.loose ?? rng(C.loose);   // 덩어리 밖 작은 것, 물낯·하늘 같은 얇은 자리의 것도 여기서
     for (let j = 0, t = 0; j < loose && t < loose * 8 + 20; t++) {
