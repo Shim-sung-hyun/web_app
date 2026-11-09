@@ -488,9 +488,29 @@ body.setup #adminBtn{display:none}
     }
     await Promise.all(jobs);
     for (const k of Object.keys(pl.items || {})) if (!pl.items[k].img) delete pl.items[k];
+    groundMap(pl);
     return pl;
   }
 
+  /* 빈 땅 지도(2026-11-09 선생님: 배경에 그려진 나무뿌리 위에 소품이 서면 떠 보임 — 밑동은 배경의 빈 땅 위에만, 아니면 그 앞으로).
+     배경 맨 아래 띠의 가운데 색을 '빈 땅 색'으로 보고, 160×120 칸마다 그 색과 가까운지(groundTol, 기본 48) 적어 둠 */
+  function groundMap(pl) {
+    if (!pl.bgImg || pl.groundCheck === false) return;
+    try {
+      const W = 160, H = 120, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d', {willReadFrequently: true}); x.drawImage(pl.bgImg, 0, 0, W, H);
+      const d = x.getImageData(0, 0, W, H).data, ref = [[], [], []];
+      for (let y = Math.floor(H * .86); y < H; y++) for (let i = Math.floor(W * .3); i < Math.floor(W * .7); i++) { const k = (y * W + i) * 4; ref[0].push(d[k]); ref[1].push(d[k + 1]); ref[2].push(d[k + 2]); }
+      const med = a => a.sort((p, q) => p - q)[a.length >> 1], R0 = med(ref[0]), G0 = med(ref[1]), B0 = med(ref[2]), tol = pl.groundTol || 48, g = new Uint8Array(W * H);
+      for (let k = 0; k < W * H; k++) g[k] = Math.hypot(d[k * 4] - R0, d[k * 4 + 1] - G0, d[k * 4 + 2] - B0) < tol ? 1 : 0;
+      pl.ground = {W, H, g};
+    } catch (e) { pl.ground = null; }
+  }
+  const isGround = (pl, x, y) => { const G = pl.ground; if (!G) return true; const i = Math.floor(x * G.W), j = Math.floor(y * G.H); if (i < 0 || j < 0 || i >= G.W || j >= G.H) return true; return G.g[j * G.W + i] === 1; };
+  function footOnGround(pl, o) {   // 밑동 줄을 따라 다섯 점 중 넷 이상이 빈 땅이면 됨(낙엽 몇 장 정도는 괜찮게)
+    const B = pl.beds[o.bed] || {}; if (!pl.ground || B.persp === false || B.groundCheck === false) return true;
+    const fx = f => o.x + (o.flip ? -1 : 1) * o.w * (f - .5), L = Math.min(fx(o.foot[0]), fx(o.foot[1])), Rr = Math.max(fx(o.foot[0]), fx(o.foot[1]));
+    let n = 0; for (let k = 0; k < 5; k++) if (isGround(pl, L + (Rr - L) * k / 4, Math.min(.999, o.y + .004))) n++; return n >= 4;
+  }
   /* 그 자리에서 1m가 장면 높이의 몇 몫인가. 원근 자리(땅·바닥)는 지평선에서 내려온 만큼에 비례, 아니면(물낯·흙 속·하늘) 어디서나 같음 */
   const perM = (pl, y, bed) => {
     const b = typeof bed === 'string' ? pl.beds[bed] : bed;
@@ -539,19 +559,19 @@ body.setup #adminBtn{display:none}
     };
     /* 놓으면 안 되는 경우(장면의 원리, media/stage/README.txt '장면의 원리'):
        ⑦ 같은 소품은 한 장면에 2번까지 · ⑧ 좌우는 화면 안에 다 들어옴(좌우 가장자리에서 잘려도 되는 것은 가까운 줄기 frame뿐, 위로는 넘어가도 됨) · 같은 자리에서 너무 겹침 */
-    const clash = p => out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
+    const clash = p => !footOnGround(pl, p) || out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
       || p.x - p.w / 2 < 0 || p.x + p.w / 2 > 1   // 좌우는 화면 안(위로는 키 큰 나무가 화면 위로 넘어가도 됨)
       || out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * C.overlap && Math.abs(o.y - p.y) < .04);
     const n = opt.clusters ?? rng(C.clusters);
-    for (let c = 0; c < n; c++) {
+    for (let c = 0, tries = 0; c < n && tries < n * 6; tries++) {   // 빈 땅에 맞는 자리를 못 찾으면 다시(건너뛰면 휑해짐)
       const b = pick(beds.filter(k => pl.beds[k].persp !== false || pl.beds[k].y[1] - pl.beds[k].y[0] > .1)) || pick(beds);
       const list = byBed[b], big = list.filter(i => i.role === 'big'), small = list.filter(i => i.role !== 'big');
       const lead = big.length && R() < .75 ? pick(big) : pick(small.length ? small : big);
       const s = spot(b, lead); if (!s) continue;
-      const L = place(pl, lead, s.x, s.y, R(), lead.flip !== false && R() < .5); if (clash(L)) continue; out.push(L);
-      for (let j = 0, k = rng(C.perCluster); j < k && small.length; j++) {
+      const L = place(pl, lead, s.x, s.y, R(), lead.flip !== false && R() < .5); if (clash(L)) continue; out.push(L); c++;
+      for (let j = 0, k = rng(C.perCluster), t2 = 0; j < k && small.length && t2 < k * 5; t2++) {
         const it = pick(small), s2 = spot(b, it, L); if (!s2) continue;
-        const p = place(pl, it, s2.x, s2.y, R() * .7, it.flip !== false && R() < .5); if (!clash(p)) out.push(p);
+        const p = place(pl, it, s2.x, s2.y, R() * .7, it.flip !== false && R() < .5); if (!clash(p)) { out.push(p); j++; }
       }
     }
     const loose = opt.loose ?? rng(C.loose);   // 덩어리 밖 작은 것, 물낯·하늘 같은 얇은 자리의 것도 여기서
@@ -689,7 +709,8 @@ body.setup #adminBtn{display:none}
     let best = null;
     const minLong = opt.minLong ?? .07;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
     const tryAt = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x - A.w * .45 < 0 || A.x + A.w * .45 > 1) return;
-      if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;   // 동물끼리 몰리지 않게(한 소품 뒤에 여럿 겹치던 것)
+      if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;
+      if (!footOnGround(pl, A)) return;   // 동물 발도 빈 땅 위에   // 동물끼리 몰리지 않게(한 소품 뒤에 여럿 겹치던 것)
       lay.push(A); if (extra) lay.push(extra); const v = visibleOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
       const floor = Math.max(.04, want[0] * .5);
       if (v < floor) return;   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
@@ -705,14 +726,14 @@ body.setup #adminBtn{display:none}
       for (let t = 0; t < 80; t++) {
         const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), it = pool[Math.floor(R() * pool.length)];
         if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), R(), R() < .5); P.skirt = null;
-        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1) continue; tryAt(x, g, flip0(), P);
+        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P)) continue; tryAt(x, g, flip0(), P);
       }
     }
     if (!best) return null;
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 
-  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, maskOf, BASE};
+  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, maskOf, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>
