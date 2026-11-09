@@ -124,6 +124,13 @@
     if (frame.length && R() < (opt.frame ?? .5)) {
       const it = pick(frame), left = R() < .5, p = place(pl, it, 0, it.frameY ? it.frameY[0] + R() * (it.frameY[1] - it.frameY[0]) : .9 + R() * .08, R(), !left);
       p.h = 1.08 + R() * .12; p.w = p.h * (it.w / it.h) * .75; const sh = it.frameShow ?? .35; p.x = left ? -p.w * (.5 - sh) : 1 + p.w * (.5 - sh); p.skirt = null; out.push(p);   // frameShow: 그림 폭 중 화면 안에 보일 몫(기본 .35) · 가까운 줄기에는 덮개 없음
+      /* 줄기가 선 판엔 소품을 더(2026-11-09 선생님): 줄기가 가린 만큼 나머지 땅이 비어 보이지 않게 — 줄기 쪽은 피해 frameExtra개 */
+      const edge = left ? p.x + p.w / 2 : p.x - p.w / 2, small2 = items.filter(i => i.role !== 'big' && i.role !== 'frame');
+      for (let j = 0, t = 0, k = rng(C.frameExtra || [3, 5]); j < k && small2.length && t < k * 10; t++) {
+        const it2 = pick(small2), b2 = it2.bed, s2 = spot(b2, it2); if (!s2) continue;
+        if (left ? s2.x < edge + .04 : s2.x > edge - .04) continue;
+        const q = place(pl, it2, s2.x, s2.y, R() * .7, R() < .5); if (!clash(q)) { out.push(q); j++; }
+      }
     }
     if (opt.avoid && opt.avoid.length) {
       const hit = o => opt.avoid.some(r => o.x + o.w / 2 > r[0] && o.x - o.w / 2 < r[2] && o.y > r[1] && o.y - o.h * o.base < r[3]);
@@ -233,6 +240,7 @@
     let best = null;
     const minLong = opt.minLong ?? .07;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
     const tryAt = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x - A.w * .45 < 0 || A.x + A.w * .45 > 1) return;
+      if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;   // 동물끼리 몰리지 않게(한 소품 뒤에 여럿 겹치던 것)
       lay.push(A); if (extra) lay.push(extra); const v = visibleOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
       const floor = Math.max(.04, want[0] * .5);
       if (v < floor) return;   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
