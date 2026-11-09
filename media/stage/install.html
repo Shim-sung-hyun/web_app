@@ -333,9 +333,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     if (!beds.length) return out;
     /* 원리 20(2026-11-09 선생님 '들꽃은 작으니 자세히 보이려면 전경에, 크게'): 작은 것(실제 높이 smallFront m 미만)은 원근 자리의 앞쪽 절반에 — 앞이라 크게 그려지고 다른 것에 가리지 않음 */
     const spot = (b, it, near) => {   // 그 자리 안의 x·y (it.ground: 자리 위아래 범위 중 놓일 몫)
-      const B = pl.beds[b], g = it.ground || (B.persp !== false && realMax(it) < (pl.smallFront ?? .7) ? [.45, 1] : [0, 1]), y0 = B.y[0] + (B.y[1] - B.y[0]) * g[0], y1 = B.y[0] + (B.y[1] - B.y[0]) * g[1];
+      const B = pl.beds[b], g = it.ground || (B.persp !== false && realMax(it) < (pl.smallFront ?? .7) ? [.45, 1] : [0, 1]), y0 = B.y[0] + (B.y[1] - B.y[0]) * g[0], y1 = B.y[0] + (B.y[1] - B.y[0]) * g[1] + (B.persp !== false && g[1] >= 1 && B.y[1] >= 1 ? .03 : 0);   // 맨 앞은 밑동이 화면 아래로 조금 나가도 됨(원리 8)
       for (let t = 0; t < 20; t++) {
-        const x = near ? clamp(near.x + (R() - .5) * near.w * 1.4, .03, .97) : (B.x ? (r => r[0] + (r[1] - r[0]) * R())(pick(B.x)) : .04 + R() * .92);
+        const x = near ? clamp(near.x + (R() - .5) * near.w * 1.4, .03, .97) : (B.x ? (r => r[0] + (r[1] - r[0]) * R())(pick(B.x)) : -.02 + R() * 1.04);
         const y = near ? clamp(near.y + .01 + R() * .05, y0, y1) : y0 + (y1 - y0) * R();
         if (inX(B, x) && !inAvoid(pl, x, y)) return {x, y};
       }
@@ -349,7 +349,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       || tooSoft(pl, pl.items[p.id] || {}, p)
       || (fr && realMax(pl.items[p.id] || {}) > (pl.nestSmall ?? .6) && !coversRoots(fr, p))   // 움푹한 곳에 들어가는 것은 들풀·버섯·낙엽처럼 작은 것(nestSmall m 이하)만, 나머지는 뿌리 끝을 가리며 앞에
       || out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
-      || p.x - p.w / 2 < 0 || p.x + p.w / 2 > 1   // 좌우는 화면 안(위로는 키 큰 나무가 화면 위로 넘어가도 됨)
+      || p.x - p.w / 2 < -p.w * .35 || p.x + p.w / 2 > 1 + p.w * .35   // 원리 8(2026-11-09 선생님 고침): 자연스러우면 좌우·위아래로 화면을 벗어나도 됨 — 폭의 35%까지
       || out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * C.overlap && Math.abs(o.y - p.y) < .04)
 ;
     /* 가까운 줄기(frame)를 먼저 정함 — 다른 소품이 그 뿌리 위에 떠 있지 않게(원리 19) */
@@ -560,8 +560,8 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     };
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
-    const minLong = opt.minLong ?? .07;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
-    const tryAt = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x - A.w * .45 < 0 || A.x + A.w * .45 > 1) return;
+    const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
+    const tryAt = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x + A.w * .3 < 0 || A.x - A.w * .3 > 1) return;   // 화면 가장자리로 코·꼬리만 내밀어도 됨(선생님 2026-11-09) — 화면 밖은 가려진 것으로 셈
       if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;
       if (!footOnGround(pl, A, covers) || covers.some(f => !coversRoots(f, A))) return;   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
       /* 깔린 것처럼 보이지 않게(2026-11-09 선생님: 곰·너구리가 뿌리에 깔림): 가까운 줄기(frame)와는 겹치지 않고,
@@ -581,6 +581,12 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     const flip0 = () => R() < .5;
     for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03 && (pl.items[o.id] || {}).role !== 'frame')) {   // 놓인 소품 바로 뒤(가까운 줄기 뒤엔 안 숨음)
       for (let t = 0; t < 10; t++) { const y = Math.max(B.y[0], o.y - .004 - R() * .03), x = o.x + (R() - .5) * o.w * .9; tryAt(x, y, flip0()); }
+    }
+    /* 여럿이 함께 가리는 자리(2026-11-09 선생님: 곰도 멀리 두면 작아짐 — 나무 두세 그루 뒤, 앞 바위 + 뒤 나무 묶음 뒤, 화면 가장자리):
+       한 소품 바로 뒤만이 아니라 자리 전체(먼 곳·좌우 가장자리 포함)를 고루 찾아 앞의 모든 것이 함께 가린 몫으로 셈 */
+    if (!best || best.sc > .2) for (let t = 0; t < 120; t++) {
+      const y = B.y[0] + (B.y[1] - B.y[0]) * Math.pow(R(), 1.6), x = R() < .2 ? (R() < .5 ? -.02 + R() * .06 : .96 + R() * .06) : .05 + R() * .9;   // 먼 쪽을 더 자주
+      tryAt(x, y, flip0());
     }
     if (!best || best.sc > .5) {      // 맞는 소품이 없으면 가릴 소품을 새로 앞에
       const pool = Object.values(pl.items).filter(i => i.bed === bed && i.role !== 'frame');
