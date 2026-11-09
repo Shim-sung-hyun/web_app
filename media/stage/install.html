@@ -132,7 +132,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   </div>
   <div id="bigPick" class="hidden"><h3>큰 그림 (가까이 크게 놓일 소품 — 한 장에 하나)</h3><p class="hint">1단계의 '큰 그림 프롬프트'로 받은 그림을 소품마다 불러와요. 불러온 소품은 판의 칸 대신 이 그림을 써요. 아직 없으면 비워 둬도 판에서 잘라 쓰고, 배치 시안에서 흐려질 수 있다고 알려 줘요.</p><div id="bigFiles" class="prop-list"></div></div>
   <div class="row three">
-   <div><label for="threshold">흰 바탕 기준 밝기: <output id="thresholdValue">238</output></label><input id="threshold" type="range" min="190" max="252" value="238"><p class="hint">밝은 회색을 소품으로 남기려면 값을 낮춰 보세요.</p></div>
+   <div><label for="threshold">흰 바탕 기준 밝기: <output id="thresholdValue">238</output></label><input id="threshold" type="range" min="100" max="252" value="238"><p class="hint">밝은 회색을 소품으로 남기려면 값을 낮춰 보세요.</p></div>
    <div><label for="neutral">흰 바탕 색 범위: <output id="neutralValue">32</output></label><input id="neutral" type="range" min="10" max="80" value="32"><p class="hint">색이 있는 소품까지 지워지면 값을 낮춰요.</p></div>
    <div><label for="cellMargin">칸 안쪽 여백 (점)</label><input id="cellMargin" type="number" min="0" max="30" value="4"><p class="hint">칸 사이 선이 있다면 여백을 늘려요.</p></div>
   </div>
@@ -153,10 +153,11 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <aside class="edit-controls">
     <strong id="editName">소품을 먼저 골라 주세요</strong>
     <label for="brushSize">붓 크기 <output id="brushValue">16</output>점</label><input id="brushSize" type="range" min="2" max="60" value="16">
-    <label for="brushMode">손질 방법</label><select id="brushMode"><option value="erase">지우기 (투명하게)</option><option value="restore">복구하기 (원본 그림으로)</option><option value="keep">구역 남기기 (끌어서 네모 — 밖은 지움)</option></select>
+    <label for="brushMode">손질 방법</label><select id="brushMode"><option value="erase">지우기 (투명하게)</option><option value="restore">복구하기 (원본 그림으로)</option><option value="keep">구역 남기기 (네모를 맞춘 뒤 적용 — 밖은 잘라 냄)</option></select>
+    <div id="keepBar" class="toolbar hidden" style="margin:8px 0"><button id="keepApply" class="primary" type="button">구역 적용 (밖을 잘라 냄)</button><button id="keepCancel" class="secondary" type="button">취소</button></div>
     <p class="hint">그림은 크게 보여요. '구역 남기기'는 소품의 실제 폭·높이만 네모로 끌어 남기고 밖(옆 칸의 글자·티끌)을 지워요. 그림 위를 누르거나 끌어 칠해요. 잘못 손질하면 ‘이 소품 다시 자르기’로 자동 분리부터 다시 할 수 있어요.</p>
     <button id="specks" class="secondary">작은 조각 지우기 (글자·티끌)</button>
-    <label for="itemThreshold">이 소품 흰 바탕 기준: <output id="itemThresholdValue">238</output></label><input id="itemThreshold" type="range" min="190" max="252" value="238"><p class="hint">흰 테두리가 남으면 낮추고, 소품의 밝은 부분까지 지워지면 높여요. 움직이면 이 소품만 다시 잘라요.</p>
+    <label for="itemThreshold">이 소품 흰 바탕 기준: <output id="itemThresholdValue">238</output></label><input id="itemThreshold" type="range" min="100" max="252" value="238"><p class="hint">흰 테두리가 남으면 낮추고, 소품의 밝은 부분까지 지워지면 높여요. 움직이면 이 소품만 다시 잘라요.</p>
     <button id="recut" class="secondary">이 소품 다시 자르기</button>
     <label for="objectHeight">실제 높이 (미터, 대략)</label><div class="row"><input id="heightMin" type="number" min="0.01" step="0.1" value="0.5" aria-label="최소 높이"><input id="heightMax" type="number" min="0.01" step="0.1" value="1" aria-label="최대 높이"></div>
    </aside>
@@ -512,10 +513,27 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  $('#threshold').addEventListener('input',e=>$('#thresholdValue').value=e.target.value);
  $('#neutral').addEventListener('input',e=>$('#neutralValue').value=e.target.value);
  $('#brushSize').addEventListener('input',e=>$('#brushValue').value=e.target.value);
+ /* 칸 나누는 줄(2026-11-09): 1/3·2/3 자리에 딱 자르지 않고, 그 둘레(±12%)에서 그림이 가장 적게 지나가는 줄(빈 틈)을 찾음 —
+    소품의 밑동·가지가 칸 밖으로 조금 넘어가도 잘리지 않고, 옆 칸에 조각이 따라가지 않게 */
+ let GUT=null;
+ function gutters(sheet,threshold,neutral){const key=sheet.src+'|'+threshold+'|'+neutral;if(GUT&&GUT.key===key)return GUT.g;
+  const W=sheet.naturalWidth,H=sheet.naturalHeight,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(sheet,0,0);const d=x.getImageData(0,0,W,H).data;
+  const rows=new Float64Array(H),cols=new Float64Array(W);for(let y=0;y<H;y++)for(let i=0;i<W;i++){const k=(y*W+i)*4,r=d[k],g=d[k+1],b=d[k+2];if(!((r+g+b)/3>=threshold&&Math.max(r,g,b)-Math.min(r,g,b)<=neutral)){rows[y]++;cols[i]++}}
+  const cut=(arr,n,f)=>{const c0=Math.round(n*f),band=Math.round(n*.12);let best=c0,bv=Infinity;for(let i=Math.max(1,c0-band);i<=Math.min(n-2,c0+band);i++){const v=arr[i]+Math.abs(i-c0)*.01;if(v<bv){bv=v;best=i}}return best};
+  const g={xs:[0,cut(cols,W,1/3),cut(cols,W,2/3),W],ys:[0,cut(rows,H,1/3),cut(rows,H,2/3),H]};GUT={key,g};return g}
+ /* 소품 그림 영역을 잘라 그 크기로(2026-11-09 — 잘라 낸 만큼 영역도 줄어듦). 이미 놓은 소품은 화면에서 같은 자리·크기로 보이게 맞춤 */
+ function cropProp(p,x0,y0,x1,y1){x0=Math.max(0,Math.floor(x0));y0=Math.max(0,Math.floor(y0));x1=Math.min(p.image.width,Math.ceil(x1));y1=Math.min(p.image.height,Math.ceil(y1));if(x1-x0<2||y1-y0<2)return;
+  const cut=im=>{const out=new ImageData(x1-x0,y1-y0);for(let y=y0;y<y1;y++)out.data.set(im.data.subarray((y*im.width+x0)*4,(y*im.width+x1)*4),(y-y0)*(x1-x0)*4);return out};
+  const W0=p.image.width,H0=p.image.height,c=canvas,scale=c&&c.width?c.width*p.width/W0:0;
+  if(scale){p.x+=(((x0+x1)/2)-W0/2)*scale/c.width;p.y-=(H0-y1)*scale/c.height;p.width=p.width*(x1-x0)/W0}
+  p.image=cut(p.image);p.source=cut(p.source)}
+ function inkBox(p,pad=2){const {width:w,height:h,data:d}=p.image;let x0=w,y0=h,x1=-1,y1=-1;for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4+3]>8){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}return x1<0?null:[x0-pad,y0-pad,x1+1+pad,y1+1+pad]}
+ function fitProp(p){const b=inkBox(p);if(b)cropProp(p,...b)}
  function cropObject(sheet,index,threshold,neutral,margin){
   const one=state.big[index];if(one)sheet=one;   /* 큰 그림을 불러온 소품은 그 그림 전체 */
-  const sw=sheet.naturalWidth,sh=sheet.naturalHeight,cw=one?sw:Math.floor(sw/3),ch=one?sh:Math.floor(sh/3),col=one?0:index%3,row=one?0:Math.floor(index/3);
-  const x=col*cw+margin,y=row*ch+margin,w=cw-margin*2,h=ch-margin*2;
+  const sw=sheet.naturalWidth,sh=sheet.naturalHeight,col=one?0:index%3,row=one?0:Math.floor(index/3);
+  const G=one?{xs:[0,sw],ys:[0,sh]}:gutters(sheet,threshold,neutral),gx=one?[0,sw]:G.xs,gy=one?[0,sh]:G.ys;
+  const x=gx[col]+margin,y=gy[row]+margin,w=gx[col+1]-gx[col]-margin*2,h=gy[row+1]-gy[row]-margin*2;
   const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(sheet,x,y,w,h,0,0,w,h);
   const im=cx.getImageData(0,0,w,h),d=im.data,n=w*h,allow=new Uint8Array(n),seen=new Uint8Array(n),q=new Int32Array(n);let head=0,tail=0;
   for(let p=0,j=0;p<n;p++,j+=4){const r=d[j],g=d[j+1],b=d[j+2],hi=Math.max(r,g,b),lo=Math.min(r,g,b);if((r+g+b)/3>=threshold&&hi-lo<=neutral)allow[p]=1}
@@ -538,7 +556,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   const ns=names();if(!ns.length){setStatus($('#loadStatus'),'소품 이름을 한 개 이상 적어 주세요.',true);return}
   if(state.sheet.naturalWidth<3||state.sheet.naturalHeight<3){setStatus($('#loadStatus'),'3×3으로 나눌 수 있는 크기의 그림을 선택해 주세요.',true);return}
   const margin=Math.max(0,Math.min(30,Number($('#cellMargin').value)||0)),max=Math.min(8,ns.length);
-  state.props=[];for(let i=0;i<max;i++){const pr=cropObject(state.sheet,i,Number($('#threshold').value),Number($('#neutral').value),margin);removeSpecks(pr);state.props.push(pr)}
+  state.props=[];for(let i=0;i<max;i++){const pr=cropObject(state.sheet,i,Number($('#threshold').value),Number($('#neutral').value),margin);removeSpecks(pr);fitProp(pr);state.props.push(pr)}
   state.selected=0;renderPropCards();setStatus($('#loadStatus'),`${state.props.length}개 칸을 나눴어요. 흰색으로 된 실제 소품 부분이 투명해지지 않았는지 꼭 살펴봐 주세요.`);
  });
  function paint(canvas,im){canvas.width=im.width;canvas.height=im.height;canvas.getContext('2d').putImageData(im,0,0)}
@@ -550,7 +568,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   });
   if(state.props.length)selectProp(Math.min(state.selected,state.props.length-1));
  }
- function selectProp(i){state.selected=i;const p=state.props[i];if(!p)return;keepRect=null;$('#itemThreshold').value=p.threshold||$('#threshold').value;$('#itemThresholdValue').value=$('#itemThreshold').value;$('#editName').textContent=p.name;paint($('#editCanvas'),p.image);$('#heightMin').value=p.height[0];$('#heightMax').value=p.height[1];$$('#propCards .prop-card').forEach((c,j)=>c.classList.toggle('selected',j===i));}
+ function selectProp(i){state.selected=i;const p=state.props[i];if(!p)return;keepRect=null;$('#keepBar').classList.add('hidden');if($('#brushMode').value==='keep')$('#brushMode').value='erase';$('#itemThreshold').value=p.threshold||$('#threshold').value;$('#itemThresholdValue').value=$('#itemThreshold').value;$('#editName').textContent=p.name;paint($('#editCanvas'),p.image);$('#heightMin').value=p.height[0];$('#heightMax').value=p.height[1];$$('#propCards .prop-card').forEach((c,j)=>c.classList.toggle('selected',j===i));}
  function editAt(e){
   const p=state.props[state.selected],canvas=$('#editCanvas');if(!p)return;
   const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height,x=Math.floor((e.clientX-r.left)*sx),y=Math.floor((e.clientY-r.top)*sy),rad=Math.max(1,Number($('#brushSize').value)/2);
@@ -559,20 +577,43 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   $('#editCanvas').getContext('2d').putImageData(p.image,0,0);drawScene();
  }
  /* 구역 남기기(2026-11-09 선생님): 네모를 끌어 소품의 실제 폭·높이만 남기고 밖은 지움 — 옆 칸 글자·티끌이 따라오지 않고, 밑동·크기 셈의 오차가 줄어듦 */
- let keepRect=null;const editXY=e=>{const c=$('#editCanvas'),r=c.getBoundingClientRect();return [Math.max(0,Math.min(c.width,(e.clientX-r.left)*c.width/r.width)),Math.max(0,Math.min(c.height,(e.clientY-r.top)*c.height/r.height))]};
- function showKeep(){const p=state.props[state.selected],c=$('#editCanvas'),x=c.getContext('2d');x.putImageData(p.image,0,0);if(!keepRect)return;const [a,b]=keepRect.s,[cx,cy]=keepRect.e;x.save();x.fillStyle='rgba(0,0,0,.45)';x.fillRect(0,0,c.width,c.height);x.putImageData(p.image,0,0,Math.min(a,cx),Math.min(b,cy),Math.abs(cx-a),Math.abs(cy-b));x.strokeStyle='#ffcb59';x.lineWidth=Math.max(2,c.width/250);x.setLineDash([8,5]);x.strokeRect(Math.min(a,cx),Math.min(b,cy),Math.abs(cx-a),Math.abs(cy-b));x.restore()}
- function applyKeep(){const p=state.props[state.selected];if(!p||!keepRect)return;const [a,b]=keepRect.s,[cx,cy]=keepRect.e,x0=Math.floor(Math.min(a,cx)),x1=Math.ceil(Math.max(a,cx)),y0=Math.floor(Math.min(b,cy)),y1=Math.ceil(Math.max(b,cy));keepRect=null;
-  if(x1-x0<4||y1-y0<4){paint($('#editCanvas'),p.image);return}const {width:w,height:h,data:d}=p.image;for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(x<x0||x>=x1||y<y0||y>=y1)d[(y*w+x)*4+3]=0;paint($('#editCanvas'),p.image);renderPropCards();drawScene()}
- let painting=false;$('#editCanvas').addEventListener('pointerdown',e=>{$('#editCanvas').setPointerCapture(e.pointerId);if($('#brushMode').value==='keep'){const pt=editXY(e);keepRect={s:pt,e:pt};return}painting=true;editAt(e)});$('#editCanvas').addEventListener('pointermove',e=>{if(keepRect){keepRect.e=editXY(e);showKeep();return}if(painting)editAt(e)});$('#editCanvas').addEventListener('pointerup',()=>{if(keepRect)applyKeep();painting=false});$('#editCanvas').addEventListener('pointercancel',()=>painting=false);
+ /* 구역 남기기(2026-11-09, 김프처럼): '구역 남기기'를 고르면 소품 둘레에 네모가 잡혀 나옴 → 모서리·변을 끌어 늘이고 줄이고, 안쪽을 끌어 옮기고,
+    바깥을 끌면 새로 그림 → '구역 적용'을 눌러야 밖을 잘라 내고 그림 영역도 그 크기로 줄어듦 */
+ let keepRect=null,keepDrag=null;const editXY=e=>{const c=$('#editCanvas'),r=c.getBoundingClientRect();return [Math.max(0,Math.min(c.width,(e.clientX-r.left)*c.width/r.width)),Math.max(0,Math.min(c.height,(e.clientY-r.top)*c.height/r.height))]};
+ function startKeep(){const p=state.props[state.selected];if(!p)return;const b=inkBox(p,4)||[0,0,p.image.width,p.image.height];keepRect={x0:Math.max(0,b[0]),y0:Math.max(0,b[1]),x1:Math.min(p.image.width,b[2]),y1:Math.min(p.image.height,b[3])};$('#keepBar').classList.remove('hidden');showKeep()}
+ function showKeep(){const p=state.props[state.selected],c=$('#editCanvas'),x=c.getContext('2d');paint(c,p.image);if(!keepRect)return;const R=keepRect,hs=Math.max(6,c.width/45);
+  x.save();x.fillStyle='rgba(0,0,0,.5)';x.fillRect(0,0,c.width,R.y0);x.fillRect(0,R.y1,c.width,c.height-R.y1);x.fillRect(0,R.y0,R.x0,R.y1-R.y0);x.fillRect(R.x1,R.y0,c.width-R.x1,R.y1-R.y0);
+  x.strokeStyle='#ffcb59';x.lineWidth=Math.max(2,c.width/300);x.setLineDash([8,5]);x.strokeRect(R.x0,R.y0,R.x1-R.x0,R.y1-R.y0);x.setLineDash([]);x.fillStyle='#ffcb59';
+  for(const [hx,hy] of [[R.x0,R.y0],[R.x1,R.y0],[R.x0,R.y1],[R.x1,R.y1],[(R.x0+R.x1)/2,R.y0],[(R.x0+R.x1)/2,R.y1],[R.x0,(R.y0+R.y1)/2],[R.x1,(R.y0+R.y1)/2]])x.fillRect(hx-hs/2,hy-hs/2,hs,hs);x.restore()}
+ function keepHit(px,py){const R=keepRect,c=$('#editCanvas'),t=Math.max(8,c.width/30);if(!R)return 'new';const nl=Math.abs(px-R.x0)<t,nr=Math.abs(px-R.x1)<t,nt=Math.abs(py-R.y0)<t,nb=Math.abs(py-R.y1)<t,inX=px>R.x0-t&&px<R.x1+t,inY=py>R.y0-t&&py<R.y1+t;
+  if(inX&&inY){let m='';if(nt)m+='t';else if(nb)m+='b';if(nl)m+='l';else if(nr)m+='r';if(m)return m;if(px>R.x0&&px<R.x1&&py>R.y0&&py<R.y1)return 'move'}return 'new'}
+ function applyKeep(){const p=state.props[state.selected];if(!p||!keepRect)return;const R=keepRect;keepRect=null;$('#keepBar').classList.add('hidden');
+  const {width:w,height:h,data:d}=p.image;for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(x<R.x0||x>=R.x1||y<R.y0||y>=R.y1)d[(y*w+x)*4+3]=0;
+  cropProp(p,R.x0,R.y0,R.x1,R.y1);paint($('#editCanvas'),p.image);renderPropCards();drawScene();$('#brushMode').value='erase'}
+ $('#keepApply').addEventListener('click',applyKeep);
+ $('#keepCancel').addEventListener('click',()=>{keepRect=null;$('#keepBar').classList.add('hidden');$('#brushMode').value='erase';const p=state.props[state.selected];if(p)paint($('#editCanvas'),p.image)});
+ $('#brushMode').addEventListener('change',e=>{if(e.target.value==='keep')startKeep();else{keepRect=null;$('#keepBar').classList.add('hidden');const p=state.props[state.selected];if(p)paint($('#editCanvas'),p.image)}});
+ let painting=false;
+ $('#editCanvas').addEventListener('pointerdown',e=>{$('#editCanvas').setPointerCapture(e.pointerId);
+  if($('#brushMode').value==='keep'){const [px,py]=editXY(e),m=keepHit(px,py);keepDrag={m,px,py,R:keepRect?{...keepRect}:null};if(m==='new')keepRect={x0:px,y0:py,x1:px,y1:py};return}
+  painting=true;editAt(e)});
+ $('#editCanvas').addEventListener('pointermove',e=>{if(keepDrag){const [px,py]=editXY(e),D=keepDrag,c=$('#editCanvas'),R=keepRect,O=D.R;
+   if(D.m==='new'){R.x0=Math.min(D.px,px);R.x1=Math.max(D.px,px);R.y0=Math.min(D.py,py);R.y1=Math.max(D.py,py)}
+   else if(D.m==='move'){const dx=Math.max(-O.x0,Math.min(c.width-O.x1,px-D.px)),dy=Math.max(-O.y0,Math.min(c.height-O.y1,py-D.py));R.x0=O.x0+dx;R.x1=O.x1+dx;R.y0=O.y0+dy;R.y1=O.y1+dy}
+   else{if(D.m.includes('l'))R.x0=Math.min(px,R.x1-4);if(D.m.includes('r'))R.x1=Math.max(px,R.x0+4);if(D.m.includes('t'))R.y0=Math.min(py,R.y1-4);if(D.m.includes('b'))R.y1=Math.max(py,R.y0+4)}
+   showKeep();return}
+  if(painting)editAt(e)});
+ $('#editCanvas').addEventListener('pointerup',()=>{if(keepDrag){keepDrag=null;if(keepRect&&(keepRect.x1-keepRect.x0<4||keepRect.y1-keepRect.y0<4))startKeep();else $('#keepBar').classList.remove('hidden')}painting=false});
+ $('#editCanvas').addEventListener('pointercancel',()=>{painting=false;keepDrag=null});
  $('#heightMin').addEventListener('input',()=>{if(state.props[state.selected])state.props[state.selected].height[0]=Number($('#heightMin').value)||.1});
  $('#heightMax').addEventListener('input',()=>{if(state.props[state.selected])state.props[state.selected].height[1]=Number($('#heightMax').value)||.1});
- $('#recut').addEventListener('click',()=>{if(!state.sheet)return;const p=state.props[state.selected],i=state.selected;state.props[i]=cropObject(state.sheet,i,p.threshold||Number($('#threshold').value),Number($('#neutral').value),Math.max(0,Number($('#cellMargin').value)||0));state.props[i].name=p.name;state.props[i].slug=p.slug;state.props[i].x=p.x;state.props[i].y=p.y;state.props[i].width=p.width;state.props[i].height=p.height;state.props[i].threshold=p.threshold;state.props[i].ground=p.ground;removeSpecks(state.props[i]);selectProp(i);renderPropCards();drawScene()});
+ $('#recut').addEventListener('click',()=>{if(!state.sheet)return;const p=state.props[state.selected],i=state.selected;state.props[i]=cropObject(state.sheet,i,p.threshold||Number($('#threshold').value),Number($('#neutral').value),Math.max(0,Number($('#cellMargin').value)||0));state.props[i].name=p.name;state.props[i].slug=p.slug;state.props[i].x=p.x;state.props[i].y=p.y;state.props[i].width=p.width;state.props[i].height=p.height;state.props[i].threshold=p.threshold;state.props[i].ground=p.ground;removeSpecks(state.props[i]);{const q=state.props[i];fitProp(q);if(canvas.width){const sc=canvas.width*p.width/p.image.width;q.width=sc*q.image.width/canvas.width;q.x=p.x;q.y=p.y}/* 다시 자른 그림도 화면의 눈금(그림 1점이 화면 몇 점)·자리를 지킴 */}selectProp(i);renderPropCards();drawScene()});
  /* 작은 조각 지우기: 붙어 있는 덩어리 중 가장 큰 것의 4%보다 작은 덩어리(옆 칸 글자·티끌)를 지움. 칸을 나눌 때 저절로 한 번 함 */
  function removeSpecks(p,keep=.04){const {width:w,height:h,data:d}=p.image,n=w*h,lab=new Int32Array(n),q=new Int32Array(n),sizes=[0];let id=0;
   for(let s0=0;s0<n;s0++){if(lab[s0]||d[s0*4+3]<=100)continue;id++;let hd=0,tl=0,cnt=0;q[tl++]=s0;lab[s0]=id;while(hd<tl){const s1=q[hd++];cnt++;const x=s1%w,y=(s1/w)|0;for(const t of [x?s1-1:-1,x<w-1?s1+1:-1,y?s1-w:-1,y<h-1?s1+w:-1])if(t>=0&&!lab[t]&&d[t*4+3]>100){lab[t]=id;q[tl++]=t}}sizes.push(cnt)}
   const big=Math.max(0,...sizes);let removed=0;for(let s1=0;s1<n;s1++){const L=lab[s1];if(L&&sizes[L]<big*keep){d[s1*4+3]=0;removed++}else if(!L&&d[s1*4+3]>0&&d[s1*4+3]<=100){/* 덩어리에 붙지 않은 옅은 점 */const x=s1%w,y=(s1/w)|0;let near=false;for(let dy=-2;dy<=2&&!near;dy++)for(let dx=-2;dx<=2;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&yy>=0&&xx<w&&yy<h){const L2=lab[yy*w+xx];if(L2&&sizes[L2]>=big*keep){near=true;break}}}if(!near){d[s1*4+3]=0;removed++}}}
   return removed}
- $('#specks').addEventListener('click',()=>{const p=state.props[state.selected];if(!p)return;removeSpecks(p);paint($('#editCanvas'),p.image);renderPropCards();drawScene()});
+ $('#specks').addEventListener('click',()=>{const p=state.props[state.selected];if(!p)return;removeSpecks(p);fitProp(p);paint($('#editCanvas'),p.image);renderPropCards();drawScene()});
  $('#itemThreshold').addEventListener('input',e=>$('#itemThresholdValue').value=e.target.value);
  $('#itemThreshold').addEventListener('change',e=>{const p=state.props[state.selected];if(!p)return;p.threshold=Number(e.target.value);$('#recut').click()});
  const canvas=$('#sceneCanvas');
