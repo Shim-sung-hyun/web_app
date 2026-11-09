@@ -101,6 +101,7 @@
   }
   /* 앞뒤를 정하는 높이(원리 4·18): 보통은 밑동 y, 가장자리 큰 줄기는 퍼진 뿌리를 땅처럼 뒤에 깔고 줄기가 올라오는 곳 */
   const depthY = o => o.sortY ?? o.y;
+  const realMax = it => Array.isArray(it.real) ? it.real[1] : (it.real || 1);
   /* 그 자리에서 1m가 장면 높이의 몇 몫인가. 원근 자리(땅·바닥)는 지평선에서 내려온 만큼에 비례, 아니면(물낯·흙 속·하늘) 어디서나 같음 */
   const perM = (pl, y, bed) => {
     const b = typeof bed === 'string' ? pl.beds[bed] : bed;
@@ -139,7 +140,6 @@
     const beds = Object.keys(byBed);
     if (!beds.length) return out;
     /* 원리 20(2026-11-09 선생님 '들꽃은 작으니 자세히 보이려면 전경에, 크게'): 작은 것(실제 높이 smallFront m 미만)은 원근 자리의 앞쪽 절반에 — 앞이라 크게 그려지고 다른 것에 가리지 않음 */
-    const realMax = it => Array.isArray(it.real) ? it.real[1] : (it.real || 1);
     const spot = (b, it, near) => {   // 그 자리 안의 x·y (it.ground: 자리 위아래 범위 중 놓일 몫)
       const B = pl.beds[b], g = it.ground || (B.persp !== false && realMax(it) < (pl.smallFront ?? .7) ? [.45, 1] : [0, 1]), y0 = B.y[0] + (B.y[1] - B.y[0]) * g[0], y1 = B.y[0] + (B.y[1] - B.y[0]) * g[1];
       for (let t = 0; t < 20; t++) {
@@ -153,7 +153,10 @@
        ⑦ 같은 소품은 한 장면에 2번까지 · ⑧ 좌우는 화면 안에 다 들어옴(좌우 가장자리에서 잘려도 되는 것은 가까운 줄기 frame뿐, 위로는 넘어가도 됨) · 같은 자리에서 너무 겹침 */
     /* 줄기 그림 안의 설 땅에는 작은 것(실제 rootSmall m 이하)만 — 나무·덤불이 남의 뿌리 흙에서 자라지 않게 */
     const inFrame = p => fr && [0, .5, 1].some(k => { const fx = p.x + (p.flip ? -1 : 1) * p.w * (p.foot[0] + (p.foot[1] - p.foot[0]) * k - .5); return solidAt(fr, fr.img, fx, Math.min(.999, p.y + .004), 256); });
-    const clash = p => !footOnGround(pl, p, fr && [fr]) || (inFrame(p) && realMax(pl.items[p.id] || {}) > (pl.rootSmall ?? 1.2)) || out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
+    const clash = p => !footOnGround(pl, p, fr && [fr]) || (inFrame(p) && realMax(pl.items[p.id] || {}) > (pl.rootSmall ?? 1.2))
+      || tooSoft(pl, pl.items[p.id] || {}, p)
+      || (fr && realMax(pl.items[p.id] || {}) > (pl.nestSmall ?? .6) && !coversRoots(fr, p))   // 움푹한 곳에 들어가는 것은 들풀·버섯·낙엽처럼 작은 것(nestSmall m 이하)만, 나머지는 뿌리 끝을 가리며 앞에
+      || out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
       || p.x - p.w / 2 < 0 || p.x + p.w / 2 > 1   // 좌우는 화면 안(위로는 키 큰 나무가 화면 위로 넘어가도 됨)
       || out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * C.overlap && Math.abs(o.y - p.y) < .04)
 ;
@@ -323,6 +326,17 @@
     if (u < 0 || u >= 1 || v < 0 || v >= 1) return false; if (o.flip) u = 1 - u;
     const j = Math.floor(v * N.h) * N.w + Math.floor(u * N.w); return N.solid[j] === 1 && N.nest[j] !== 1;
   };
+  /* 원리 19-2(2026-11-09 선생님: 이끼 바위가 뿌리를 타고 올라감): 큰 줄기 앞의 것은 제 폭 안에서 줄기 그림의 맨 아래 끝(뿌리 끝·흙 띠)보다 앞(아래)에 서서 그 끝을 가림.
+     색으로는 뿌리 끝과 흙이 잘 갈리지 않아 그림의 맨 아래 끝으로 셈. 움푹한 곳·흙 띠에는 작은 것(nestSmall)만. [x0,x1] 안에서 칠해진 가장 아래 y(없으면 -1) */
+  const barkBottom = (o, x0, x1) => {
+    const N = nestOf(o.img); if (!N) return -1; let best = -1;
+    for (let k = 0; k <= 12; k++) { const fx = x0 + (x1 - x0) * k / 12; let u = (fx - (o.x - o.w / 2)) / o.w; if (u < 0 || u >= 1) continue; if (o.flip) u = 1 - u;
+      const i = Math.floor(u * N.w); for (let r = N.h - 1; r >= 0; r--) { const j = r * N.w + i; if (N.solid[j]) { best = Math.max(best, o.y - o.h * o.base + (r + 1) / N.h * o.h); break; } } }
+    return best;
+  };
+  /* 원리 21(2026-11-09 선생님: 가까운데 흐린 이끼 바위): 그려질 높이가 그림의 점 수보다 크면 흐려 보임 — 장면을 sharpPx(기본 1200점) 높이로 볼 때 늘어나지 않는 깊이까지만 */
+  const tooSoft = (pl, it, p) => it.role !== 'frame' && it.h > 0 && p.h * (pl.sharpPx ?? 1200) > it.h;
+  const coversRoots = (fr, p) => { const b = barkBottom(fr, p.x - p.w * .55, p.x + p.w * .55);   /* 제 폭보다 조금 넓게 — 바로 옆으로 뻗어 내려온 뿌리도 */ return b < 0 || p.y >= b - .004; };
   const solidAt = (o, img, fx, fy, n) => {   // 장면 좌표(0~1)에 o의 그림이 칠해져 있나
     const M = maskOf(img, n); if (!M.m) return false;
     let u = (fx - (o.x - o.w / 2)) / o.w; const v = (fy - (o.y - o.h * o.base)) / o.h;
@@ -354,7 +368,7 @@
     const minLong = opt.minLong ?? .07;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
     const tryAt = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x - A.w * .45 < 0 || A.x + A.w * .45 > 1) return;
       if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;
-      if (!footOnGround(pl, A, covers)) return;   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
+      if (!footOnGround(pl, A, covers) || covers.some(f => !coversRoots(f, A))) return;   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
       /* 깔린 것처럼 보이지 않게(2026-11-09 선생님: 곰·너구리가 뿌리에 깔림): 가까운 줄기(frame)와는 겹치지 않고,
          앞 소품의 땅에 퍼진 밑동(아래 18%)이 동물의 발(아래 25%)을 덮지 않게 — 가리는 것은 소품의 몸통 */
       const Abox = [A.x - A.w * .4, A.y - A.h * A.base, A.x + A.w * .4, A.y];
@@ -378,7 +392,7 @@
       for (let t = 0; t < 80; t++) {
         const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), it = pool[Math.floor(R() * pool.length)];
         if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), R(), R() < .5); P.skirt = null;
-        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers)) continue; tryAt(x, g, flip0(), P);
+        if (P.h < A0.h * .45 || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
       }
     }
     if (!best) return null;

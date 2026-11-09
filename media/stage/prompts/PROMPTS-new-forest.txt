@@ -62,3 +62,105 @@ Use the attached picture only as a style reference; do not copy its objects. Dra
 Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): 작은 소나무. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference. If an object sheet is attached, draw exactly the object in cell 2 of that sheet (the same individual shape), only much larger and more detailed.
 ▲
 
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+가까이 올 소품 큰 그림(2026-11-09, 무대 원리 21 — 가까운 그림은 작아도 해상도를 높게)
+지금 그림은 놓일 수 있는 가장 앞자리에서 흐려서, 무대가 흐리지 않은 깊이까지만 놓아요. 한 장에 하나씩 크게 받으면 앞에도 와요.
+받은 그림은 Claude 대화에 올리면 같은 이름으로 바꿔 넣음(kind·높이는 그대로).
+
+━━━━━━━━ 큰 그림 — 통나무 (item-03) · 지금 154점 → 168점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a fallen log lying on its side. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 고사리 (item-04) · 지금 179점 → 240점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a green forest fern. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 덤불 (item-05) · 지금 183점 → 371점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a round green forest bush. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 이끼 바위 (item-06) · 지금 173점 → 288점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a grey rock partly covered with green moss. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 통나무 (log) · 지금 157점 → 229점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a fallen log lying on its side. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 나뭇가지 더미 (branchpile) · 지금 182점 → 252점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a small pile of fallen branches. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 이끼 바위 (mossrock) · 지금 219점 → 300점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a large rock covered with thick green moss. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 쓰러진 큰 나무 (fallengiant) · 지금 235점 → 395점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a big fallen tree trunk with its roots hidden in moss and leaves. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 큰 이끼 바위 (bigboulder) · 지금 218점 → 394점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a big boulder covered with moss. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 통나무 2 (item-03-2) · 지금 161점 → 168점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a fallen log lying on its side (a different shape). The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 고사리 2 (item-04-2) · 지금 173점 → 240점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a green forest fern (a different shape). The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 덤불 2 (item-05-2) · 지금 167점 → 371점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a green forest bush (a different shape). The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 이끼 바위 2 (item-06-2) · 지금 167점 → 288점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a grey rock partly covered with green moss (a different shape). The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 키 큰 고사리 무리 (tallferns) · 지금 370점 → 385점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a clump of tall ferns. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 산철쭉 덤불 (azalea) · 지금 172점 → 384점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a Korean royal azalea bush with pink flowers. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
+
+━━━━━━━━ 큰 그림 — 산딸기 덤불 (raspberry) · 지금 163점 → 338점 넘게
+붙일 그림: 숲 표준 장면(media/stage-beta/nature/new-forest/standard.jpg)
+▼
+Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): a wild raspberry bush with red berries. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section. Draw fine detail: this picture will be shown very large in the foreground. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.
+▲
