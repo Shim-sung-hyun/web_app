@@ -632,7 +632,6 @@
    8,
    14
   ],
-  "maxSame": 4,
   "overlap": 0.12
  },
  "skirtMeta": {},
@@ -730,42 +729,50 @@
   {
    "name": "다람쥐",
    "src": "words/daramjwi.webp",
-   "real": 0.38
+   "real": 0.38,
+   "face": "L"
   },
   {
    "name": "너구리",
    "src": "words/neoguri.webp",
-   "real": 0.6
+   "real": 0.6,
+   "face": "R"
   },
   {
    "name": "토끼",
    "src": "words/tokki.webp",
-   "real": 0.45
+   "real": 0.45,
+   "face": "R"
   },
   {
    "name": "멧돼지",
    "src": "animals/metdwaeji.webp",
-   "real": 1.5
+   "real": 1.5,
+   "face": "L"
   },
   {
    "name": "사슴",
    "src": "animals/saseum.webp",
-   "real": 1.9
+   "real": 1.9,
+   "face": "L"
   },
   {
    "name": "산양",
    "src": "animals/sanyang.webp",
-   "real": 1.3
+   "real": 1.3,
+   "face": "L"
   },
   {
    "name": "곰",
    "src": "animals/gom.webp",
-   "real": 2.0
+   "real": 2.0,
+   "face": "R"
   },
   {
    "name": "호랑이",
    "src": "animals/horangi.webp",
-   "real": 2.6
+   "real": 2.6,
+   "face": "R"
   }
  ]
 }

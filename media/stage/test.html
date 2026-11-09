@@ -133,7 +133,7 @@
     if (opt.fixed) return opt.fixed.map(f => place(pl, pl.items[f.id], f.x, f.y, f.r ?? .5, f.flip));
     const R = rnd(opt.seed ?? Math.floor(Math.random() * 1e9)), pick = a => a[Math.floor(R() * a.length)];
     /* 빽빽함(2026-11-09): stage.json "compose" — clusters·perCluster·loose:[적게,많이], maxSame(같은 소품 몇 번까지), overlap(겹침 허용, 작을수록 촘촘) */
-    const C = Object.assign({clusters: [2, 4], perCluster: [0, 2], loose: [1, 3], maxSame: 2, overlap: .3}, pl.compose || {}), rng = a => a[0] + Math.floor(R() * (a[1] - a[0] + 1));
+    const C = Object.assign({clusters: [2, 4], perCluster: [0, 2], loose: [1, 3], maxSame: 99, overlap: .3}, pl.compose || {})   /* 원리 7(같은 소품 2번까지)은 2026-11-09 폐기 — 되풀이는 변형으로 다르게 */, rng = a => a[0] + Math.floor(R() * (a[1] - a[0] + 1));
     opt = Object.assign({maxSame: C.maxSame}, opt);
     const items = Object.values(pl.items || {}), out = [];
     const byBed = {}; items.forEach(i => { if (i.role !== 'frame') (byBed[i.bed] = byBed[i.bed] || []).push(i); });
@@ -155,6 +155,7 @@
     const inFrame = p => fr && [0, .5, 1].some(k => { const fx = p.x + (p.flip ? -1 : 1) * p.w * (p.foot[0] + (p.foot[1] - p.foot[0]) * k - .5); return solidAt(fr, fr.img, fx, Math.min(.999, p.y + .004), 256); });
     const clash = (p, grove) => !footOnGround(pl, p, fr && [fr]) || (inFrame(p) && realMax(pl.items[p.id] || {}) > (pl.rootSmall ?? 1.2))
       || tooSoft(pl, pl.items[p.id] || {}, p)
+      || ((it => it.cut && !((it.cut === 'left') !== p.flip ? p.x - p.w / 2 < -.005 : p.x + p.w / 2 > 1.005))(pl.items[p.id] || {}))   // 잘린 끝은 화면 밖으로
       || (fr && realMax(pl.items[p.id] || {}) > (pl.nestSmall ?? .6) && !coversRoots(fr, p))   // 움푹한 곳에 들어가는 것은 들풀·버섯·낙엽처럼 작은 것(nestSmall m 이하)만, 나머지는 뿌리 끝을 가리며 앞에
       || (!grove && out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2))   // 군락은 같은 소품을 여럿 겹쳐도 됨
       || p.x - p.w / 2 < -p.w * .35 || p.x + p.w / 2 > 1 + p.w * .35   // 원리 8(2026-11-09 선생님 고침): 자연스러우면 좌우·위아래로 화면을 벗어나도 됨 — 폭의 35%까지
@@ -191,7 +192,7 @@
     /* 군락(2026-11-09 선생님): 같은 종류(나무·꽃·고사리…)를 여럿 겹쳐 덩어리로 — 그 뒤에 동물이 숨기도, 비어 있기도(늘 숨어 있으면 눈치챔).
        소품은 소품이라 복제해 겹쳐 씀: 같은 kind의 그림들을 크기·뒤집기를 달리해 thicketSize개, 가로로 촘촘히·앞뒤는 조금씩. compose.thickets(기본 1~3) */
     /* 변형(2026-11-09 선생님: 그대로 복제가 아니라 전체 크기·세로로·가로로 늘이기·뒤집기로 다양하게): 가로·세로를 따로 0.8~1.2배 */
-    const vary = q => { const sx = .8 + R() * .4, sy = .8 + R() * .4; q.w *= sx; q.h *= sy; return q; };
+    const vary = q => { if (q.varied) return q; const sx = .8 + R() * .4, sy = .8 + R() * .4; q.w *= sx; q.h *= sy; q.varied = true; return q; };
     const kinds = {}; items.forEach(i => { if (i.role !== 'frame' && i.kind) (kinds[i.kind] = kinds[i.kind] || []).push(i); });
     const kindList = Object.values(kinds);
     for (let g = 0, nT = opt.thickets ?? rng(C.thickets || [1, 3]), tg = 0; g < nT && kindList.length && tg < nT * 8; tg++) {
@@ -218,6 +219,10 @@
       put(backPool, bk.back || {}, [-.03, 0], .22); put(frontPool, bk.front || {}, [.015, .04], .12); put(smallPool, bk.small || {}, [.03, .06], .2);
       if (grp.length >= 3) { grp.forEach(q => { q.block = bk.name || true; out.push(q); }); b++; }
     }
+    /* 잘린 끝 소품(2026-11-09): 그림 한쪽이 세로로 잘렸으면(items.cut 'left'|'right') 그 쪽이 화면 밖으로 나갈 때만 — 화면 가장자리에 반쯤 걸쳐 놓음 */
+    for (const it of items.filter(i => i.cut && i.role !== 'frame')) for (let t = 0; t < 6; t++) { if (R() > .6) break;
+      const s1 = spot(it.bed, it); if (!s1) continue; const fl = R() < .5, q = place(pl, it, 0, s1.y, R(), fl), side = (it.cut === 'left') !== fl ? 'L' : 'R', off = q.w * (.1 + R() * .25);
+      q.x = side === 'L' ? q.w / 2 - off : 1 - q.w / 2 + off; vary(q); if (!clash(q)) { out.push(q); break; } }
     const loose = opt.loose ?? rng(C.loose);   // 덩어리 밖 작은 것, 물낯·하늘 같은 얇은 자리의 것도 여기서
     for (let j = 0, t = 0; j < loose && t < loose * 8 + 20; t++) {
       const b = pick(beds), it = pick(byBed[b].filter(i => i.role !== 'big').length ? byBed[b].filter(i => i.role !== 'big') : byBed[b]), s = spot(b, it);
@@ -262,6 +267,8 @@
       for (let i = out.length - 1; i >= 0; i--) if (hit(out[i])) out.splice(i, 1);
       if (opt.min === 0) return out;
     }
+    /* 같은 소품이 또 나오면 두 번째부터 변형(가로·세로 0.8~1.2배) — 찍어 붙인 티가 안 나게 */
+    { const seen = {}; out.forEach(o => { if (o.role === 'frame' || o.sortY != null) return; if (seen[o.id]) vary(o); seen[o.id] = 1; }); }
     if ((opt._t || 0) < 5 && out.filter(o => o.h > .06).length < 2)
       return compose(pl, Object.assign({}, opt, {seed: (opt.seed ?? Math.floor(R() * 1e9)) + 1, _t: (opt._t || 0) + 1}));
     return out;
@@ -379,11 +386,11 @@
     if (u < 0 || u >= 1 || v < 0 || v >= 1) return false; if (o.flip) u = 1 - u;
     return M.m[Math.floor(v * M.h) * M.w + Math.floor(u * M.w)] === 1;
   };
-  function visibleOf(pl, lay, A) {   // 동물 A의 칠해진 칸 중 앞(밑동이 더 아래)의 것에 가려지지 않은 몫
+  function visibleOf(pl, lay, A, reg) {   /* reg: [u0,u1,v0,v1] — 그림의 칠해진 네모 안에서 이 몫만 셈(얼굴 자리 등, 뒤집기 전 그림 기준) */   // 동물 A의 칠해진 칸 중 앞(밑동이 더 아래)의 것에 가려지지 않은 몫
     const M = maskOf(A.img), front = lay.filter(o => o !== A && depthY(o) > depthY(A) && (o.img || (pl.items[o.id] || {}).img));
     let tot = 0, vis = 0;
     for (let j = 0; j < M.h; j++) for (let i = 0; i < M.w; i++) {
-      if (!M.m || !M.m[j * M.w + i]) continue; tot++;
+      if (!M.m || !M.m[j * M.w + i]) continue; if (reg) { const bu = (i + .5 - M.box[0]) / (M.box[2] - M.box[0]), bv = (j + .5 - M.box[1]) / (M.box[3] - M.box[1]); if (bu < reg[0] || bu > reg[1] || bv < reg[2] || bv > reg[3]) continue; } tot++;
       const u = (A.flip ? M.w - 1 - i : i) + .5, fx = A.x - A.w / 2 + A.w * u / M.w, fy = A.y - A.h * A.base + A.h * (j + .5) / M.h;
       if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue;
       if (!front.some(o => solidAt(o, o.img || pl.items[o.id].img, fx, fy))) vis++;
@@ -409,7 +416,7 @@
          앞 소품의 땅에 퍼진 밑동(아래 18%)이 동물의 발(아래 25%)을 덮지 않게 — 가리는 것은 소품의 몸통 */
       const Abox = [A.x - A.w * .4, A.y - A.h * A.base, A.x + A.w * .4, A.y];
       const frontAll = lay.concat(extra ? [extra] : []).filter(o => o !== A && depthY(o) > depthY(A));
-      if (frontAll.some(o => o.role === 'frame' || (pl.items[o.id] || {}).role === 'frame') && frontAll.some(o => ((pl.items[o.id] || {}).role === 'frame' || o.role === 'frame') && o.x - o.w / 2 < Abox[2] && o.x + o.w / 2 > Abox[0])) return;
+      /* (2026-11-09 선생님) 큰 줄기 뒤에서 몸 일부가 가려져도 됨 — 뿌리 위에 서는 것은 19번이 막음 */
       const feetTop = A.y - A.h * A.base * .25;
       for (const o of frontAll) { const it = pl.items[o.id] || {}; if (!it.img) continue; const baseTop = o.y - o.h * o.base * .18;
         for (let k = 0; k < 7; k++) { const fx = Abox[0] + (Abox[2] - Abox[0]) * k / 6; for (const fy of [feetTop, (feetTop + A.y) / 2]) if (fy > baseTop && solidAt(o, it.img, fx, fy) && solidAt(A, A.img, fx, fy)) return; } }   // 동물끼리 몰리지 않게(한 소품 뒤에 여럿 겹치던 것)
@@ -418,6 +425,9 @@
       if (v < floor) return;   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
       lay.push(A); if (extra) lay.push(extra);   // 먼저 숨긴 동물을 이 동물·새 소품이 앞에서 덮지 않게
       const hurt = lay.some(o => o.animal && o !== A && visibleOf(pl, lay, o) < Math.max(.04, (o.want || want)[0] * .5)); lay.pop(); if (extra) lay.pop(); if (hurt) return;
+      /* 얼굴(2026-11-09): 상·스페셜(opt.face 'hide')은 얼굴이 대부분 가려지고 등·꼬리·귀 같은 단서만, 하('show')는 얼굴이 잘 보이게 — 얼굴 = 머리 쪽(008 FACE) 앞 40%·위 65% */
+      if (opt.face && a.face) { const reg = a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]; lay.push(A); if (extra) lay.push(extra); const fv = visibleOf(pl, lay, A, reg); lay.pop(); if (extra) lay.pop();
+        if (opt.face === 'hide' && fv > .35) return; if (opt.face === 'show' && fv < .6) return; }
       const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0); if (!best || sc < best.sc) best = {sc, A, v, extra}; };
     const flip0 = () => R() < .5;
     for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03 && (pl.items[o.id] || {}).role !== 'frame')) {   // 놓인 소품 바로 뒤(가까운 줄기 뒤엔 안 숨음)
