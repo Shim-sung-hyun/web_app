@@ -36,3 +36,4 @@
 - 숨기기 시험대 `media/stage/hide-test.html`(무대 베타 숲 + `Stage.hide`). 곳마다 빽빽함은 stage.json `compose`. 자세한 것은 무대 README '빽빽함·숨기기'.
 - 무대 하나를 완성하는 순서(설치도구 → 그림 받기 → 기존 소품 고르기 → 잘라 넣기 → 확인)는 `media/stage-beta/README.txt` 맨 위. 숲 견본이 본보기.
 - 그림을 넣을 때: 사람의 신체가 훼손된 듯한 모양(잘린 손 같은 뿌리 등)이나 사람 얼굴이 무섭게 보이는 모양은 지운다(지침 4절).
+- 맥북·윈도 VS Code 함께 쓰는 법은 `docs/vscode-mac.md`(시작 전 git pull, 끝나면 커밋·push, 옮기기 전 꼭 올리기).
