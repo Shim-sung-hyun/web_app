@@ -185,8 +185,8 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <label><input type="checkbox" class="finalCheck">이 시안과 이름을 최종 자료로 내보낼 준비가 되었어요.</label>
   </div>
   <label for="reviewNotes">검토 메모 (다음 수정이나 만든 사람에게 전할 내용)</label><textarea id="reviewNotes" placeholder="예: 덤불을 조금 더 앞으로, 전나무 밑동은 땅에 붙이기"></textarea>
-  <p class="notice">지원되는 브라우저에서는 `media/stage` 폴더를 골라 직접 저장할 수 있어요. 이미 있는 무대 자료를 바꿀 때는 한 번 더 확인해요. 직접 저장을 지원하지 않는 브라우저에서는 기존 파일을 덮어쓰지 않는 ZIP으로 내보내고, `index-entry.json`을 차림표에 합쳐 주세요.</p>
-  <div class="toolbar"><button id="directSave" class="secondary hidden">media/stage에 직접 저장</button><button id="confirm" class="primary" disabled>확정 ZIP 받기</button><span id="finalStatus" class="status" role="status"></span></div>
+  <p class="notice">지금은 새 무대를 <b>베타 자리 `media/stage-beta`</b>에 모아요(기존 무대는 그대로, 2026-11-09). 지원되는 브라우저에서는 `media/stage-beta` 폴더를 골라 직접 저장할 수 있어요. 이미 있는 무대 자료를 바꿀 때는 한 번 더 확인해요. 직접 저장을 지원하지 않는 브라우저에서는 기존 파일을 덮어쓰지 않는 ZIP으로 내보내고, `index-entry.json`을 차림표에 합쳐 주세요.</p>
+  <div class="toolbar"><button id="directSave" class="secondary hidden">media/stage-beta에 직접 저장</button><button id="confirm" class="primary" disabled>확정 ZIP 받기</button><span id="finalStatus" class="status" role="status"></span></div>
   <div class="nav"><button class="secondary back">← 배치 시안</button><span></span></div>
  </section>
 </main>
@@ -415,7 +415,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   const buttons=[directSave,confirmButton];buttons.forEach(b=>b.disabled=true);setStatus($('#finalStatus'),'확정 파일을 준비하고 있어요…');
   try{
    const files=await packageFiles();
-   download(await makeZip(files),`${state.slug}-stage.zip`);setStatus($('#finalStatus'),'확정 묶음을 내려받았어요. ZIP을 풀어 media/stage/의 해당 갈래에 넣고, index-entry.json 내용을 index.json에 합쳐 주세요.');
+   download(await makeZip(files),`${state.slug}-stage.zip`);setStatus($('#finalStatus'),'확정 묶음을 내려받았어요. ZIP을 풀어 media/stage-beta/에 넣고, index-entry.json 내용을 index.json에 합쳐 주세요.');
   }catch(err){setStatus($('#finalStatus'),err.message||'파일을 만드는 중 문제가 생겼어요.',true)}finally{buttons.forEach(b=>b.disabled=!canConfirm())}
  });
  function validProps(){
