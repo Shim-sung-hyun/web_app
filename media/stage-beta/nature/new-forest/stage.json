@@ -25,7 +25,7 @@
     16
    ],
    "bed": "ground",
-   "base": 1,
+   "base": 1.0,
    "foot": [
     0.038,
     0.967
@@ -34,7 +34,8 @@
    "ground": [
     0,
     0.3
-   ]
+   ],
+   "kind": "oak"
   },
   "item-02": {
    "name": "전나무",
@@ -45,14 +46,15 @@
    "bed": "ground",
    "base": 0.999,
    "foot": [
-    0,
+    0.0,
     0.999
    ],
    "role": "big",
    "ground": [
     0,
     0.45
-   ]
+   ],
+   "kind": "fir"
   },
   "item-03": {
    "name": "통나무",
@@ -61,11 +63,12 @@
     0.7
    ],
    "bed": "ground",
-   "base": 1,
+   "base": 1.0,
    "foot": [
     0.032,
     0.367
-   ]
+   ],
+   "kind": "log"
   },
   "item-04": {
    "name": "고사리",
@@ -74,11 +77,12 @@
     1
    ],
    "bed": "ground",
-   "base": 1,
+   "base": 1.0,
    "foot": [
     0.067,
     0.914
-   ]
+   ],
+   "kind": "fern"
   },
   "item-05": {
    "name": "덤불",
@@ -87,16 +91,17 @@
     1.8
    ],
    "bed": "ground",
-   "base": 1,
+   "base": 1.0,
    "foot": [
-    0.081,
-    0.877
+    0.108,
+    0.861
    ],
    "role": "big",
    "ground": [
     0,
     0.85
-   ]
+   ],
+   "kind": "bush"
   },
   "item-06": {
    "name": "이끼 바위",
@@ -105,11 +110,12 @@
     1.2
    ],
    "bed": "ground",
-   "base": 1,
+   "base": 1.0,
    "foot": [
     0.176,
     0.917
-   ]
+   ],
+   "kind": "rock"
   },
   "item-07": {
    "name": "버섯",
@@ -118,11 +124,12 @@
     0.25
    ],
    "bed": "ground",
-   "base": 1,
+   "base": 1.0,
    "foot": [
     0.01,
     0.918
-   ]
+   ],
+   "kind": "mushroom"
   },
   "item-08": {
    "name": "낙엽 더미",
@@ -131,10 +138,141 @@
     0.4
    ],
    "bed": "ground",
-   "base": 1,
+   "base": 1.0,
    "foot": [
     0.124,
     0.849
+   ],
+   "kind": "leaves"
+  },
+  "log": {
+   "name": "통나무",
+   "real": [
+    0.5,
+    0.9
+   ],
+   "bed": "ground",
+   "from": "../stage/nature/forest",
+   "kind": "log",
+   "base": 0.9427,
+   "foot": [
+    0.382,
+    0.934
+   ]
+  },
+  "rottenlog": {
+   "name": "버섯 핀 통나무",
+   "real": [
+    0.4,
+    0.7
+   ],
+   "bed": "ground",
+   "from": "../stage/nature/forest",
+   "kind": "log",
+   "base": 0.9503,
+   "foot": [
+    0.076,
+    0.529
+   ]
+  },
+  "stump": {
+   "name": "그루터기",
+   "real": [
+    0.5,
+    0.8
+   ],
+   "bed": "ground",
+   "from": "../stage/nature/forest",
+   "kind": "stump",
+   "base": 0.9561,
+   "foot": [
+    0.197,
+    0.806
+   ]
+  },
+  "branchpile": {
+   "name": "나뭇가지 더미",
+   "real": [
+    0.6,
+    1
+   ],
+   "bed": "ground",
+   "from": "../stage/nature/forest",
+   "kind": "branch",
+   "base": 0.9505,
+   "foot": [
+    0.06,
+    0.915
+   ]
+  },
+  "mossrock": {
+   "name": "이끼 바위",
+   "real": [
+    0.5,
+    1.2
+   ],
+   "bed": "ground",
+   "from": "../stage/nature/forest",
+   "kind": "rock",
+   "base": 0.9589,
+   "foot": [
+    0.161,
+    0.826
+   ]
+  },
+  "mushrooms": {
+   "name": "버섯",
+   "real": [
+    0.1,
+    0.25
+   ],
+   "bed": "ground",
+   "from": "../stage/nature/forest",
+   "kind": "mushroom",
+   "base": 0.9625,
+   "foot": [
+    0.154,
+    0.866
+   ]
+  },
+  "fallengiant": {
+   "name": "쓰러진 큰 나무",
+   "real": [
+    2,
+    3
+   ],
+   "bed": "ground",
+   "from": "../stage/nature/forest",
+   "kind": "log",
+   "role": "big",
+   "ground": [
+    0,
+    0.5
+   ],
+   "base": 0.9617,
+   "foot": [
+    0.425,
+    0.976
+   ]
+  },
+  "bigboulder": {
+   "name": "큰 이끼 바위",
+   "real": [
+    2,
+    3
+   ],
+   "bed": "ground",
+   "from": "../stage/nature/forest",
+   "kind": "rock",
+   "role": "big",
+   "ground": [
+    0,
+    0.5
+   ],
+   "base": 0.9633,
+   "foot": [
+    0.051,
+    0.961
    ]
   }
  },
@@ -182,7 +320,7 @@
    }
   }
  },
- "note": "2026-11-09 Claude: 배경에서 빈 땅이 시작하는 줄(가운데 0.66~0.68)에 맞춰 지평선 .64·땅 시작 .66으로 고침(ZIP은 기본값 .36). unit .2는 그대로 — 설치도구 익히기로 다시 맞추면 됨 / compose: 숲은 빽빽하게(선생님 본보기 그림 2026-11-09) / 큰 나무는 먼 쪽에만(ground: 참나무 0~.3, 전나무 0~.45 — 앞에 오면 화면을 다 가림)",
+ "note": "2026-11-09 Claude: 배경에서 빈 땅이 시작하는 줄(가운데 0.66~0.68)에 맞춰 지평선 .64·땅 시작 .66으로 고침(ZIP은 기본값 .36). unit .2는 그대로 — 설치도구 익히기로 다시 맞추면 됨 / compose: 숲은 빽빽하게(선생님 본보기 그림 2026-11-09) / 큰 나무는 먼 쪽에만(ground: 참나무 0~.3, 전나무 0~.45 — 앞에 오면 화면을 다 가림) / 2026-11-09 기존 숲 소품 중 밑동이 자연스러운 10개를 빌려 씀(from nature/forest — 이름은 원래 이름 그대로 — 복사 안 함) / 가까운 줄기(oaktrunk·pinetrunk)는 뺌 — 배경 양끝에 이미 큰 줄기가 있고, 밑이 네모로 잘려 오려 붙인 티",
  "compose": {
   "clusters": [
    5,
@@ -198,5 +336,6 @@
   ],
   "maxSame": 4,
   "overlap": 0.12
- }
+ },
+ "skirtMeta": {}
 }

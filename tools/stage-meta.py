@@ -26,7 +26,8 @@ def meta(path):
 
 
 n = 0
-for sj in sorted(glob.glob(os.path.join(ST, '*', '*', 'stage.json'))):
+BETA = os.path.join(os.path.dirname(ST), 'stage-beta')
+for sj in sorted(glob.glob(os.path.join(ST, '*', '*', 'stage.json')) + glob.glob(os.path.join(BETA, '*', '*', 'stage.json'))):
     d = os.path.dirname(sj)
     c = json.load(open(sj, encoding='utf-8'))
     for k, it in c.get('items', {}).items():

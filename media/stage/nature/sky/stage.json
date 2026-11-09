@@ -182,24 +182,7 @@
   "grasstuft": "nature/ground",
   "clover": "nature/ground"
  },
- "skirtMeta": {
-  "grasstuft": {
-   "base": 0.9403,
-   "foot": [
-    0.091,
-    0.928
-   ],
-   "name": "풀포기"
-  },
-  "clover": {
-   "base": 0.9338,
-   "foot": [
-    0.068,
-    0.922
-   ],
-   "name": "토끼풀"
-  }
- },
+ "skirtMeta": {},
  "beds": {
   "air": {
    "name": "하늘",

@@ -14,7 +14,15 @@
    "item-05",
    "item-06",
    "item-07",
-   "item-08"
+   "item-08",
+   "log",
+   "rottenlog",
+   "stump",
+   "branchpile",
+   "mossrock",
+   "mushrooms",
+   "fallengiant",
+   "bigboulder"
   ],
   "used_by": [],
   "ready": false,
