@@ -153,7 +153,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <aside class="edit-controls">
     <strong id="editName">소품을 먼저 골라 주세요</strong>
     <label for="brushSize">붓 크기 <output id="brushValue">16</output>점</label><input id="brushSize" type="range" min="2" max="60" value="16">
-    <label for="brushMode">손질 방법</label><select id="brushMode"><option value="erase">지우기 (투명하게)</option><option value="restore">복구하기 (원본 그림으로)</option><option value="keep">구역 남기기 (네모를 맞춘 뒤 적용 — 밖은 잘라 냄)</option></select>
+    <label for="brushMode">손질 방법</label><select id="brushMode"><option value="erase">지우기 (투명하게)</option><option value="restore">복구하기 (원본 그림으로)</option><option value="keep">구역 남기기 (네모를 맞춘 뒤 적용 — 밖은 잘라 냄)</option><option value="hole">흰 틈 지우기 (누른 곳의 막힌 흰 틈만)</option></select>
+    <div id="holeBar" class="hidden" style="margin:8px 0"><label for="holeTol">틈 흰색 기준: <output id="holeTolValue">200</output></label><input id="holeTol" type="range" min="100" max="252" value="200"><p class="hint">가지·다리 사이에 갇힌 흰 틈을 누르면 그 틈만 투명해져요. 덜 지워지면 기준을 낮추고 다시 누르고, 소품까지 지워지면 되돌린 뒤 기준을 높여요.</p></div>
+    <div class="toolbar" style="margin:6px 0"><button id="undoEdit" class="secondary" type="button">되돌리기</button></div>
     <div id="keepBar" class="toolbar hidden" style="margin:8px 0"><button id="keepApply" class="primary" type="button">구역 적용 (밖을 잘라 냄)</button><button id="keepCancel" class="secondary" type="button">취소</button></div>
     <p class="hint">그림은 크게 보여요. '구역 남기기'는 소품의 실제 폭·높이만 네모로 끌어 남기고 밖(옆 칸의 글자·티끌)을 지워요. 그림 위를 누르거나 끌어 칠해요. 잘못 손질하면 ‘이 소품 다시 자르기’로 자동 분리부터 다시 할 수 있어요.</p>
     <button id="specks" class="secondary">작은 조각 지우기 (글자·티끌)</button>
@@ -569,6 +571,18 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   if(state.props.length)selectProp(Math.min(state.selected,state.props.length-1));
  }
  function selectProp(i){state.selected=i;const p=state.props[i];if(!p)return;keepRect=null;$('#keepBar').classList.add('hidden');if($('#brushMode').value==='keep')$('#brushMode').value='erase';$('#itemThreshold').value=p.threshold||$('#threshold').value;$('#itemThresholdValue').value=$('#itemThreshold').value;$('#editName').textContent=p.name;paint($('#editCanvas'),p.image);$('#heightMin').value=p.height[0];$('#heightMax').value=p.height[1];$$('#propCards .prop-card').forEach((c,j)=>c.classList.toggle('selected',j===i));}
+ /* 되돌리기(2026-11-09): 손질(칠하기·흰 틈·구역·조각 지우기) 바로 전 그림을 소품마다 10번까지 */
+ function pushUndo(p){(p.undo=p.undo||[]).push(new ImageData(new Uint8ClampedArray(p.image.data),p.image.width,p.image.height));if(p.undo.length>10)p.undo.shift()}
+ $('#undoEdit').addEventListener('click',()=>{const p=state.props[state.selected];if(!p||!p.undo||!p.undo.length)return;const im=p.undo.pop();if(im.width!==p.image.width||im.height!==p.image.height){p.image=im;p.source=new ImageData(new Uint8ClampedArray(im.data),im.width,im.height)}else p.image=im;paint($('#editCanvas'),p.image);renderPropCards();drawScene()});
+ /* 흰 틈 지우기(2026-11-09 선생님): 누른 곳에서 이어진 밝고 무채색인 점들만 투명하게 — 둘레가 막혀 바깥에서 지우는 방식이 닿지 않는 가지 사이 흰 바탕.
+    가장자리는 칸 나누기 때와 같이 '흰색과 섞인 정도'만큼 반투명으로 남겨 계단이 지지 않게 */
+ function fillHole(p,x,y,thr){const {width:w,height:h,data:d}=p.image,n=w*h,s0=y*w+x;if(x<0||y<0||x>=w||y>=h)return 0;const neutral=Number($('#neutral').value)||32;
+  const ok=k=>{const j=k*4,r=d[j],g=d[j+1],b=d[j+2];return d[j+3]>8&&(r+g+b)/3>=thr&&Math.max(r,g,b)-Math.min(r,g,b)<=neutral+20};
+  if(!ok(s0))return 0;pushUndo(p);const seen=new Uint8Array(n),q=new Int32Array(n);let hd=0,tl=0;seen[s0]=1;q[tl++]=s0;
+  while(hd<tl){const k=q[hd++],xx=k%w,yy=(k/w)|0;for(const t of [xx?k-1:-1,xx<w-1?k+1:-1,yy?k-w:-1,yy<h-1?k+w:-1])if(t>=0&&!seen[t]&&ok(t)){seen[t]=1;q[tl++]=t}}
+  for(let i=0;i<tl;i++){const j=q[i]*4,r=d[j],g=d[j+1],b=d[j+2],a=1-Math.min(r,g,b)/255;if(a<.12){d[j+3]=0;continue}const aa=Math.max(.12,a);d[j]=Math.max(0,Math.min(255,(r-255*(1-aa))/aa));d[j+1]=Math.max(0,Math.min(255,(g-255*(1-aa))/aa));d[j+2]=Math.max(0,Math.min(255,(b-255*(1-aa))/aa));d[j+3]=Math.round(aa*255)}
+  return tl}
+ $('#holeTol').addEventListener('input',e=>$('#holeTolValue').value=e.target.value);
  function editAt(e){
   const p=state.props[state.selected],canvas=$('#editCanvas');if(!p)return;
   const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height,x=Math.floor((e.clientX-r.left)*sx),y=Math.floor((e.clientY-r.top)*sy),rad=Math.max(1,Number($('#brushSize').value)/2);
@@ -587,16 +601,17 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   for(const [hx,hy] of [[R.x0,R.y0],[R.x1,R.y0],[R.x0,R.y1],[R.x1,R.y1],[(R.x0+R.x1)/2,R.y0],[(R.x0+R.x1)/2,R.y1],[R.x0,(R.y0+R.y1)/2],[R.x1,(R.y0+R.y1)/2]])x.fillRect(hx-hs/2,hy-hs/2,hs,hs);x.restore()}
  function keepHit(px,py){const R=keepRect,c=$('#editCanvas'),t=Math.max(8,c.width/30);if(!R)return 'new';const nl=Math.abs(px-R.x0)<t,nr=Math.abs(px-R.x1)<t,nt=Math.abs(py-R.y0)<t,nb=Math.abs(py-R.y1)<t,inX=px>R.x0-t&&px<R.x1+t,inY=py>R.y0-t&&py<R.y1+t;
   if(inX&&inY){let m='';if(nt)m+='t';else if(nb)m+='b';if(nl)m+='l';else if(nr)m+='r';if(m)return m;if(px>R.x0&&px<R.x1&&py>R.y0&&py<R.y1)return 'move'}return 'new'}
- function applyKeep(){const p=state.props[state.selected];if(!p||!keepRect)return;const R=keepRect;keepRect=null;$('#keepBar').classList.add('hidden');
+ function applyKeep(){const p=state.props[state.selected];if(!p||!keepRect)return;pushUndo(p);const R=keepRect;keepRect=null;$('#keepBar').classList.add('hidden');
   const {width:w,height:h,data:d}=p.image;for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(x<R.x0||x>=R.x1||y<R.y0||y>=R.y1)d[(y*w+x)*4+3]=0;
   cropProp(p,R.x0,R.y0,R.x1,R.y1);paint($('#editCanvas'),p.image);renderPropCards();drawScene();$('#brushMode').value='erase'}
  $('#keepApply').addEventListener('click',applyKeep);
  $('#keepCancel').addEventListener('click',()=>{keepRect=null;$('#keepBar').classList.add('hidden');$('#brushMode').value='erase';const p=state.props[state.selected];if(p)paint($('#editCanvas'),p.image)});
- $('#brushMode').addEventListener('change',e=>{if(e.target.value==='keep')startKeep();else{keepRect=null;$('#keepBar').classList.add('hidden');const p=state.props[state.selected];if(p)paint($('#editCanvas'),p.image)}});
+ $('#brushMode').addEventListener('change',e=>{$('#holeBar').classList.toggle('hidden',e.target.value!=='hole');if(e.target.value==='keep')startKeep();else{keepRect=null;$('#keepBar').classList.add('hidden');const p=state.props[state.selected];if(p)paint($('#editCanvas'),p.image)}});
  let painting=false;
  $('#editCanvas').addEventListener('pointerdown',e=>{$('#editCanvas').setPointerCapture(e.pointerId);
   if($('#brushMode').value==='keep'){const [px,py]=editXY(e),m=keepHit(px,py);keepDrag={m,px,py,R:keepRect?{...keepRect}:null};if(m==='new')keepRect={x0:px,y0:py,x1:px,y1:py};return}
-  painting=true;editAt(e)});
+  if($('#brushMode').value==='hole'){const [px,py]=editXY(e),p=state.props[state.selected];if(p){const n=fillHole(p,Math.floor(px),Math.floor(py),Number($('#holeTol').value));paint($('#editCanvas'),p.image);if(n){renderPropCards();drawScene()}}return}
+  {const p=state.props[state.selected];if(p)pushUndo(p)}painting=true;editAt(e)});
  $('#editCanvas').addEventListener('pointermove',e=>{if(keepDrag){const [px,py]=editXY(e),D=keepDrag,c=$('#editCanvas'),R=keepRect,O=D.R;
    if(D.m==='new'){R.x0=Math.min(D.px,px);R.x1=Math.max(D.px,px);R.y0=Math.min(D.py,py);R.y1=Math.max(D.py,py)}
    else if(D.m==='move'){const dx=Math.max(-O.x0,Math.min(c.width-O.x1,px-D.px)),dy=Math.max(-O.y0,Math.min(c.height-O.y1,py-D.py));R.x0=O.x0+dx;R.x1=O.x1+dx;R.y0=O.y0+dy;R.y1=O.y1+dy}
@@ -613,7 +628,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   for(let s0=0;s0<n;s0++){if(lab[s0]||d[s0*4+3]<=100)continue;id++;let hd=0,tl=0,cnt=0;q[tl++]=s0;lab[s0]=id;while(hd<tl){const s1=q[hd++];cnt++;const x=s1%w,y=(s1/w)|0;for(const t of [x?s1-1:-1,x<w-1?s1+1:-1,y?s1-w:-1,y<h-1?s1+w:-1])if(t>=0&&!lab[t]&&d[t*4+3]>100){lab[t]=id;q[tl++]=t}}sizes.push(cnt)}
   const big=Math.max(0,...sizes);let removed=0;for(let s1=0;s1<n;s1++){const L=lab[s1];if(L&&sizes[L]<big*keep){d[s1*4+3]=0;removed++}else if(!L&&d[s1*4+3]>0&&d[s1*4+3]<=100){/* 덩어리에 붙지 않은 옅은 점 */const x=s1%w,y=(s1/w)|0;let near=false;for(let dy=-2;dy<=2&&!near;dy++)for(let dx=-2;dx<=2;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&yy>=0&&xx<w&&yy<h){const L2=lab[yy*w+xx];if(L2&&sizes[L2]>=big*keep){near=true;break}}}if(!near){d[s1*4+3]=0;removed++}}}
   return removed}
- $('#specks').addEventListener('click',()=>{const p=state.props[state.selected];if(!p)return;removeSpecks(p);fitProp(p);paint($('#editCanvas'),p.image);renderPropCards();drawScene()});
+ $('#specks').addEventListener('click',()=>{const p=state.props[state.selected];if(!p)return;pushUndo(p);removeSpecks(p);fitProp(p);paint($('#editCanvas'),p.image);renderPropCards();drawScene()});
  $('#itemThreshold').addEventListener('input',e=>$('#itemThresholdValue').value=e.target.value);
  $('#itemThreshold').addEventListener('change',e=>{const p=state.props[state.selected];if(!p)return;p.threshold=Number(e.target.value);$('#recut').click()});
  const canvas=$('#sceneCanvas');
