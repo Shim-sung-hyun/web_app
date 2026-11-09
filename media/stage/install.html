@@ -153,8 +153,8 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <aside class="edit-controls">
     <strong id="editName">소품을 먼저 골라 주세요</strong>
     <label for="brushSize">붓 크기 <output id="brushValue">16</output>점</label><input id="brushSize" type="range" min="2" max="60" value="16">
-    <label for="brushMode">손질 방법</label><select id="brushMode"><option value="erase">지우기 (투명하게)</option><option value="restore">복구하기 (원본 그림으로)</option><option value="keep">구역 남기기 (네모를 맞춘 뒤 적용 — 밖은 잘라 냄)</option><option value="hole">흰 틈 지우기 (누른 곳의 막힌 흰 틈만)</option></select>
-    <div id="holeBar" class="hidden" style="margin:8px 0"><label for="holeTol">틈 흰색 기준: <output id="holeTolValue">200</output></label><input id="holeTol" type="range" min="100" max="252" value="200"><p class="hint">가지·다리 사이에 갇힌 흰 틈을 누르면 그 틈만 투명해져요. 덜 지워지면 기준을 낮추고 다시 누르고, 소품까지 지워지면 되돌린 뒤 기준을 높여요.</p></div>
+    <label for="brushMode">손질 방법</label><select id="brushMode"><option value="erase">지우기 (투명하게)</option><option value="restore">복구하기 (원본 그림으로)</option><option value="keep">구역 남기기 (네모를 맞춘 뒤 적용 — 밖은 잘라 냄)</option><option value="hole">흰 틈 지우기 (누른 곳의 막힌 흰 틈만)</option><option value="white">흰색만 지우는 붓 (문지른 곳의 흰 점만 — 가지·잎은 남김)</option></select>
+    <div id="holeBar" class="hidden" style="margin:8px 0"><label for="holeTol">틈 흰색 기준: <output id="holeTolValue">200</output></label><input id="holeTol" type="range" min="100" max="252" value="200"><p class="hint">흰 틈 지우기: 가지·다리 사이에 갇힌 흰 틈을 누르면 그 틈만 투명해져요. 흰색만 지우는 붓: 틈 가장자리나 작은 흰 조각 둘레를 문지르면 흰 점만 지워져요. 덜 지워지면 기준을 낮추고 다시 누르고, 소품까지 지워지면 되돌린 뒤 기준을 높여요.</p></div>
     <div class="toolbar" style="margin:6px 0"><button id="undoEdit" class="secondary" type="button">되돌리기</button></div>
     <div id="keepBar" class="toolbar hidden" style="margin:8px 0"><button id="keepApply" class="primary" type="button">구역 적용 (밖을 잘라 냄)</button><button id="keepCancel" class="secondary" type="button">취소</button></div>
     <p class="hint">그림은 크게 보여요. '구역 남기기'는 소품의 실제 폭·높이만 네모로 끌어 남기고 밖(옆 칸의 글자·티끌)을 지워요. 그림 위를 누르거나 끌어 칠해요. 잘못 손질하면 ‘이 소품 다시 자르기’로 자동 분리부터 다시 할 수 있어요.</p>
@@ -586,8 +586,8 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function editAt(e){
   const p=state.props[state.selected],canvas=$('#editCanvas');if(!p)return;
   const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height,x=Math.floor((e.clientX-r.left)*sx),y=Math.floor((e.clientY-r.top)*sy),rad=Math.max(1,Number($('#brushSize').value)/2);
-  const d=p.image.data,src=p.source.data,restore=$('#brushMode').value==='restore';
-  for(let yy=Math.max(0,Math.floor(y-rad));yy<Math.min(p.image.height,Math.ceil(y+rad));yy++)for(let xx=Math.max(0,Math.floor(x-rad));xx<Math.min(p.image.width,Math.ceil(x+rad));xx++){if((xx-x)**2+(yy-y)**2>rad*rad)continue;const k=(yy*p.image.width+xx)*4;if(restore){d[k]=src[k];d[k+1]=src[k+1];d[k+2]=src[k+2];d[k+3]=src[k+3]}else d[k+3]=0}
+  const d=p.image.data,src=p.source.data,restore=$('#brushMode').value==='restore',whiteOnly=$('#brushMode').value==='white',thr=Number($('#holeTol').value),neu=(Number($('#neutral').value)||32)+20;
+  for(let yy=Math.max(0,Math.floor(y-rad));yy<Math.min(p.image.height,Math.ceil(y+rad));yy++)for(let xx=Math.max(0,Math.floor(x-rad));xx<Math.min(p.image.width,Math.ceil(x+rad));xx++){if((xx-x)**2+(yy-y)**2>rad*rad)continue;const k=(yy*p.image.width+xx)*4;if(restore){d[k]=src[k];d[k+1]=src[k+1];d[k+2]=src[k+2];d[k+3]=src[k+3]}else if(whiteOnly){const r=d[k],g=d[k+1],b=d[k+2];if(d[k+3]>8&&(r+g+b)/3>=thr&&Math.max(r,g,b)-Math.min(r,g,b)<=neu){/* 흰색과 섞인 만큼만 투명하게(테두리 계단 없이) */const a=1-Math.min(r,g,b)/255;if(a<.12)d[k+3]=0;else{const aa=a;d[k]=Math.max(0,Math.min(255,(r-255*(1-aa))/aa));d[k+1]=Math.max(0,Math.min(255,(g-255*(1-aa))/aa));d[k+2]=Math.max(0,Math.min(255,(b-255*(1-aa))/aa));d[k+3]=Math.min(d[k+3],Math.round(aa*255))}}}else d[k+3]=0}
   $('#editCanvas').getContext('2d').putImageData(p.image,0,0);drawScene();
  }
  /* 구역 남기기(2026-11-09 선생님): 네모를 끌어 소품의 실제 폭·높이만 남기고 밖은 지움 — 옆 칸 글자·티끌이 따라오지 않고, 밑동·크기 셈의 오차가 줄어듦 */
@@ -606,7 +606,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   cropProp(p,R.x0,R.y0,R.x1,R.y1);paint($('#editCanvas'),p.image);renderPropCards();drawScene();$('#brushMode').value='erase'}
  $('#keepApply').addEventListener('click',applyKeep);
  $('#keepCancel').addEventListener('click',()=>{keepRect=null;$('#keepBar').classList.add('hidden');$('#brushMode').value='erase';const p=state.props[state.selected];if(p)paint($('#editCanvas'),p.image)});
- $('#brushMode').addEventListener('change',e=>{$('#holeBar').classList.toggle('hidden',e.target.value!=='hole');if(e.target.value==='keep')startKeep();else{keepRect=null;$('#keepBar').classList.add('hidden');const p=state.props[state.selected];if(p)paint($('#editCanvas'),p.image)}});
+ $('#brushMode').addEventListener('change',e=>{$('#holeBar').classList.toggle('hidden',!['hole','white'].includes(e.target.value));if(e.target.value==='keep')startKeep();else{keepRect=null;$('#keepBar').classList.add('hidden');const p=state.props[state.selected];if(p)paint($('#editCanvas'),p.image)}});
  let painting=false;
  $('#editCanvas').addEventListener('pointerdown',e=>{$('#editCanvas').setPointerCapture(e.pointerId);
   if($('#brushMode').value==='keep'){const [px,py]=editXY(e),m=keepHit(px,py);keepDrag={m,px,py,R:keepRect?{...keepRect}:null};if(m==='new')keepRect={x0:px,y0:py,x1:px,y1:py};return}
