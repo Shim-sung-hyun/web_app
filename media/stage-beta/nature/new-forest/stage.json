@@ -510,20 +510,6 @@
     0.767
    ]
   },
-  "rootmass": {
-   "name": "굵은 나무뿌리 덩이",
-   "real": [
-    0.6,
-    1.2
-   ],
-   "bed": "ground",
-   "kind": "roots",
-   "base": 0.9936,
-   "foot": [
-    0.122,
-    0.791
-   ]
-  },
   "neartrunk-oak": {
    "name": "가까운 참나무 줄기",
    "real": [
