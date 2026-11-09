@@ -97,7 +97,12 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   </div>
   <div class="row">
    <div><label for="sceneGroup">갈래</label><select id="sceneGroup"><option value="nature">자연 (nature)</option><option value="town">마을 (town)</option><option value="school">학교 (school)</option><option value="home">집 (home)</option><option value="public">가게·기관 (public)</option></select></div>
-   <div><label for="sceneSetting">장소와 배경 설명</label><input id="sceneSetting" type="text" placeholder="예: 먼 산과 빈 숲 바닥, 지평선은 위에서 36%"></div>
+   <div><label for="placePreset">자연 장소 고르기</label><select id="placePreset"><option value="">직접 적기</option></select></div>
+  </div>
+  <p class="hint">장소를 고르면 이름·폴더·배경 설명·지평선·소품(판 1·3)·가장자리 큰 것·그곳 동물·블록 소품이 미리 들어가요(media/stage/places.json). 고친 뒤 써도 돼요.</p>
+  <div id="hidePlan" class="notice hidden"></div>
+  <div class="row">
+   <div style="flex:1"><label for="sceneSetting">장소와 배경 설명</label><input id="sceneSetting" type="text" placeholder="예: 먼 산과 빈 숲 바닥, 지평선은 위에서 36%"></div>
   </div>
   <label for="objectNames">소품 이름과 실제 높이 (한 줄에 하나: <code>이름 높이m</code> 또는 <code>이름 낮게~높게</code>, 3×3 판의 1~8번 칸)</label>
   <textarea id="objectNames">참나무 10~16
@@ -219,6 +224,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   <label for="reviewNotes">검토 메모 (다음 수정이나 만든 사람에게 전할 내용)</label><textarea id="reviewNotes" placeholder="예: 덤불을 조금 더 앞으로, 전나무 밑동은 땅에 붙이기"></textarea>
   <p class="notice">지금은 새 무대를 <b>베타 자리 `media/stage-beta`</b>에 모아요(기존 무대는 그대로, 2026-11-09). 지원되는 브라우저에서는 `media/stage-beta` 폴더를 골라 직접 저장할 수 있어요. 이미 있는 무대 자료를 바꿀 때는 한 번 더 확인해요. 직접 저장을 지원하지 않는 브라우저에서는 기존 파일을 덮어쓰지 않는 ZIP으로 내보내고, `index-entry.json`을 차림표에 합쳐 주세요.</p>
   <div class="toolbar"><button id="directSave" class="secondary hidden">media/stage-beta에 직접 저장</button><button id="confirm" class="primary" disabled>확정 ZIP 받기</button><span id="finalStatus" class="status" role="status"></span></div>
+  <p id="viewLinks" class="hint"></p>
   <div class="nav"><button class="secondary back">← 배치 시안</button><span></span></div>
  </section>
 </main>
@@ -371,6 +377,10 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       const lead = big.length && R() < .75 ? pick(big) : pick(small.length ? small : big);
       const s = spot(b, lead); if (!s) continue;
       const L = place(pl, lead, s.x, s.y, R(), lead.flip !== false && R() < .5); if (clash(L)) continue; out.push(L); c++;
+      /* 나무가 한 그루만 덩그러니 서면 빈약(2026-11-09 선생님: 작은 전나무 두 그루) — 같은 종류를 크기를 달리해(큰 그림을 줄여 중간 크기로도) 1~2그루 곁에·조금 뒤에 */
+      if (lead.role === 'big' && R() < .75) { const same = items.filter(i => i.role === 'big' && i.kind && i.kind === lead.kind);
+        for (let j = 0, k = 1 + (R() < .5), t = 0; j < k && same.length && t < 8; t++) { const it = pick(same), q = place(pl, it, L.x + (R() < .5 ? -1 : 1) * L.w * (.3 + R() * .35), clamp(L.y - R() * .03, pl.beds[it.bed].y[0], 1), R(), R() < .5);
+          const k2 = .55 + R() * .55; q.w *= k2; q.h *= k2; if (!clash(q, true)) { out.push(q); j++; } } }
       for (let j = 0, k = rng(C.perCluster), t2 = 0; j < k && small.length && t2 < k * 5; t2++) {
         const it = pick(small), s2 = spot(b, it, L); if (!s2) continue;
         const p = place(pl, it, s2.x, s2.y, R() * .7, it.flip !== false && R() < .5); if (!clash(p)) { out.push(p); j++; }
@@ -396,7 +406,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
        [{name, n:[적게,많이], back:{kinds,n,...}, front:{...}, small:{...}}] — back은 밑동이 조금 뒤(위), front·small은 앞(아래)·옆에. 각 칸 scale:[a,b](작은 바위를 돌로 쓰듯 크기 바꾸기)
        동물은 블록 사이·뒤에 숨기 좋음(곰도 멀리 두면 작아짐). 블록 안은 같은 소품 횟수·겹침 제한 없음 */
     for (const bk of opt.blocks || pl.blocks || []) for (let b = 0, nb = rng(bk.n || [0, 1]), tb = 0; b < nb && tb < nb * 10; tb++) {
-      const role = r => items.filter(i => i.role !== "frame" && (r.kinds || []).includes(i.kind));
+      const nm = i => (i.name || "").replace(/ \d+$/, ""), role = r => items.filter(i => i.role !== "frame" && (r.kinds || []).some(k => k === i.kind || k === i.kindName || k === nm(i)));   // 종류는 kind·kindName·이름(끝 번호 뺌)으로
       const backPool = role(bk.back || {}), frontPool = role(bk.front || {}), smallPool = role(bk.small || {}); if (!backPool.length && !frontPool.length) break;
       const anc = pick(backPool.length ? backPool : frontPool), s0 = spot(anc.bed, anc); if (!s0) continue;
       const grp = [], put = (pool, part, dy, spread) => { if (!pool.length) return; for (let j = 0, k = rng(part.n || [1, 1]), t = 0; j < k && t < k * 8; t++) {
@@ -559,7 +569,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     return best;
   };
   /* 원리 21(2026-11-09 선생님: 가까운데 흐린 이끼 바위): 그려질 높이가 그림의 점 수보다 크면 흐려 보임 — 장면을 sharpPx(기본 1200점) 높이로 볼 때 늘어나지 않는 깊이까지만 */
-  const tooSoft = (pl, it, p) => it.role !== 'frame' && it.h > 0 && p.h * (pl.sharpPx ?? 1200) > it.h;
+  const tooSoft = (pl, it, p) => it.role !== 'frame' && it.h > 0 && p.h * (pl.sharpPx ?? 1200) > it.h * (pl.maxStretch ?? 1.2);   // 2026-11-09 선생님 (가): 늘리기는 1.2배까지(넘으면 다시 그림), 줄이기는 자유
   const coversRoots = (fr, p) => { const b = barkBottom(fr, p.x - p.w * .55, p.x + p.w * .55);   /* 제 폭보다 조금 넓게 — 바로 옆으로 뻗어 내려온 뿌리도 */ return b < 0 || p.y >= b - .004; };
   const solidAt = (o, img, fx, fy, n) => {   // 장면 좌표(0~1)에 o의 그림이 칠해져 있나
     const M = maskOf(img, n); if (!M.m) return false;
@@ -664,7 +674,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   if(n===1){renderSheetPicks();renderBigFiles();threshPreview()}
   if(n===2)renderPropCards();
   if(n===3){renderLayoutCards();drawScene();setStatus($('#layoutStatus'),state.props.length?'소품을 눌러 고르거나 시안에서 직접 끌어 옮겨요.':'소품이 없어요. 2단계로 돌아가 소품 판을 불러와 주세요.',!state.props.length);const sr=stretchReport();if(sr)setStatus($('#layoutStatus'),sr,true)}
-  if(n===4){const ce=cutEdges(),sr=stretchReport();setStatus($('#finalStatus'),[ce.length?'끝이 세로로 잘린 그림이 있어요: '+ce.join(' · ')+' (통나무처럼 원래 반듯한 것이 아니면 다시 받아 주세요)':'',sr].filter(Boolean).join(' / '),Boolean(ce.length||sr));drawScene($('#finalCanvas'));$('#confirm').disabled=!canConfirm();$('#directSave').disabled=!canConfirm()}
+  if(n===4){const key=$('#sceneGroup').value+'/'+$('#sceneSlug').value,G='https://shim-sung-hyun.github.io/web_app/media/stage/';$('#viewLinks').innerHTML=`저장해 올린 뒤(1~2분) 보기: <a href="${G}test.html?root=stage-beta#${key}" target="_blank">무대 보기</a> · <a href="${G}hide-test.html?place=${key}" target="_blank">숨기기 시험</a>${state.preset&&!state.preset.hide?' (이 곳은 숨기기 시험이 아직 안 맞을 수 있어요 — 물·하늘·땅속 자리는 다음에)':''}`;const ce=cutEdges(),sr=stretchReport();setStatus($('#finalStatus'),[ce.length?'끝이 세로로 잘린 그림이 있어요: '+ce.join(' · ')+' (통나무처럼 원래 반듯한 것이 아니면 다시 받아 주세요)':'',sr].filter(Boolean).join(' / '),Boolean(ce.length||sr));drawScene($('#finalCanvas'));$('#confirm').disabled=!canConfirm();$('#directSave').disabled=!canConfirm()}
  }
  $$('.step').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.step))));
  $$('.next').forEach((b,i)=>b.addEventListener('click',()=>{if(i===0&&$('#prompts').classList.contains('hidden'))$('#makePrompts').click();showStep(i+1)}));
@@ -678,6 +688,20 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  const bgBase = () => `Create a clean 4:3 landscape background for a gentle educational picture-book scene for children with developmental disabilities. Use a consistent flat cartoon style, clear dark-brown outlines, soft simple shading, muted natural colours, and light from the upper left. This must be an EMPTY stage: do not draw foreground trees, bushes, rocks, plants, buildings, animals, people, words, labels, borders, or cast shadows. Leave calm open ground across the lower part and keep the bottom-right corner plain. Place the horizon about ${Math.round(state.horizon*100)}% from the top. Scene: ${state.setting||state.name||'describe the place and distant scenery here'}. Keep distant scenery simple and quiet.`;
  $('#frameNames').addEventListener('change',renderFrames);
  $('#sheetCount').addEventListener('change',()=>{if(!$('#prompts').classList.contains('hidden'))$('#makePrompts').click();renderSheetPicks();renderBigFiles()});
+ /* 자연 장소 프리셋(2026-11-09 선생님: 장면을 풀다운으로, 그곳 동물에 맞는 소품·배경 설명을 박아 두기) */
+ let PLACES={};
+ (async()=>{for(const u of ['places.json','https://shim-sung-hyun.github.io/web_app/media/stage/places.json']){try{PLACES=await fetch(u,{cache:'no-cache'}).then(r=>r.json());break}catch(e){}}
+  for(const [k,v] of Object.entries(PLACES))$('#placePreset').add(new Option(v.name+(v.hide?'':' (숨기기 시험은 아직 땅 무대만)'),k))})();
+ function hidePlan(P){if(!P||!P.animals||!P.animals.length){$('#hidePlan').classList.add('hidden');return}
+  const big=P.animals.reduce((a,b)=>b.real>a.real?b:a),need=big.real*.85,ok=parseSpecs(P.props).concat(parseSpecs(P.sheet3||'')).filter(x=>x.h&&x.h[1]>=need).map(x=>x.name);
+  $('#hidePlan').innerHTML=`<b>숨길 동물</b> ${P.animals.map(a=>a.name+' '+a.real+'m').join(' · ')}<br><b>가장 큰 동물</b> ${big.name} ${big.real}m — 이 동물을 상 단계로 가리려면 키 ${need.toFixed(1)}m 넘는 소품이 있어야 해요: ${ok.length?ok.join(' · '):'<b style="color:#b03a2e">없음 — 큰 소품(바위 언덕·큰 나무·풀숲 등)을 더 넣어 주세요</b>'}. 블록 소품 ${(P.blocks||[]).map(b=>b.name).join(' · ')||'없음'}.`;$('#hidePlan').classList.remove('hidden')}
+ $('#placePreset').addEventListener('change',()=>{const P=PLACES[$('#placePreset').value];state.preset=P||null;if(!P){hidePlan(null);return}
+  $('#sceneGroup').value='nature';$('#sceneName').value=P.name;$('#sceneSlug').value=P.slug;$('#sceneSetting').value=P.setting;$('#objectNames').value=P.props;
+  if(P.horizon){$('#horizon').value=P.horizon;state.horizon=P.horizon/100}
+  if($('#frameNames'))$('#frameNames').value=P.frames||'';
+  state.sheetCfg={1:{mode:'same',text:''},2:P.sheet3?{mode:'new',text:P.sheet3}:{mode:'same',text:''}};$('#sheetCount').value=P.sheet3?'3':'2';
+  if($('#density'))$('#density').value=['nature/forest','nature/grassland'].includes($('#placePreset').value)?'dense':'normal';
+  ['sceneName','sceneSlug','sceneSetting'].forEach(id=>$('#'+id).dispatchEvent(new Event('input')));hidePlan(P);$('#makePrompts').click()});
  $('#makePrompts').addEventListener('click',()=>{
   state.name=$('#sceneName').value.trim();state.slug=$('#sceneSlug').value.trim();state.group=$('#sceneGroup').value;state.setting=$('#sceneSetting').value.trim();
   const ns=names();if(!state.name||!state.slug||!/^[a-z0-9-]+$/.test(state.slug)||!ns.length){alert('장면 이름, 영문 폴더 이름, 소품 이름을 확인해 주세요.');return}
@@ -732,7 +756,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function canvasDataUrl(im){const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);return c.toDataURL('image/png')}
  async function saveDraft(){
   const props=state.props.map(p=>({name:p.name,slug:p.slug,width:p.width,x:p.x,y:p.y,height:p.height,image:imageDataUrl(p.image),source:imageDataUrl(p.source)}));
-  const draft={version:1,scene:{name:$('#sceneName').value,slug:$('#sceneSlug').value,group:$('#sceneGroup').value,setting:$('#sceneSetting').value,objectNames:$('#objectNames').value,horizon:$('#horizon').value,threshold:$('#threshold').value,neutral:$('#neutral').value,cellMargin:$('#cellMargin').value,brushSize:$('#brushSize').value,brushMode:$('#brushMode').value,step:state.step,notes:$('#reviewNotes').value,checks:$$('.finalCheck').map(c=>c.checked),bgPrompt:$('#bgPrompt').value,frameNames:$('#frameNames').value,density:$('#density').value,stdPrompt:$('#stdPrompt').value,propsPrompt:$('#propsPrompt').value},bg:state.bg?canvasDataUrl(state.bg):null,bgName:state.bgName,sheet:state.sheet?canvasDataUrl(state.sheet):null,sheetName:state.sheetName,props,sheets:(state.sheets||[]).map(x=>x?canvasDataUrl(x):null),sheetCount:sheetCount(),sheetCfg:(saveSheetCfg(),state.sheetCfg||{}),std:state.std?canvasDataUrl(state.std):null,big:Object.fromEntries(Object.entries(state.big).map(([k,im])=>[k,canvasDataUrl(im)]))};
+  const draft={version:1,scene:{name:$('#sceneName').value,slug:$('#sceneSlug').value,group:$('#sceneGroup').value,setting:$('#sceneSetting').value,objectNames:$('#objectNames').value,horizon:$('#horizon').value,threshold:$('#threshold').value,neutral:$('#neutral').value,cellMargin:$('#cellMargin').value,brushSize:$('#brushSize').value,brushMode:$('#brushMode').value,step:state.step,notes:$('#reviewNotes').value,checks:$$('.finalCheck').map(c=>c.checked),bgPrompt:$('#bgPrompt').value,preset:$('#placePreset').value,frameNames:$('#frameNames').value,density:$('#density').value,stdPrompt:$('#stdPrompt').value,propsPrompt:$('#propsPrompt').value},bg:state.bg?canvasDataUrl(state.bg):null,bgName:state.bgName,sheet:state.sheet?canvasDataUrl(state.sheet):null,sheetName:state.sheetName,props,sheets:(state.sheets||[]).map(x=>x?canvasDataUrl(x):null),sheetCount:sheetCount(),sheetCfg:(saveSheetCfg(),state.sheetCfg||{}),std:state.std?canvasDataUrl(state.std):null,big:Object.fromEntries(Object.entries(state.big).map(([k,im])=>[k,canvasDataUrl(im)]))};
   download(new Blob([JSON.stringify(draft)],{type:'application/json'}),`${state.slug||'stage'}-work.json`);
  }
  $('#saveDraft').addEventListener('click',async()=>{try{await saveDraft()}catch(err){alert(`작업을 저장하지 못했어요: ${err.message}`)}});
@@ -745,7 +769,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    state.name=s.name||'';state.slug=s.slug||'new-stage';state.group=s.group||'nature';state.setting=s.setting||'';state.horizon=(Number(s.horizon)||36)/100;state.bg=d.bg?await imageFromUrl(d.bg):null;state.bgName=d.bgName||'';state.sheet=d.sheet?await imageFromUrl(d.sheet):null;state.sheetName=d.sheetName||'';state.std=d.std?await imageFromUrl(d.std):null;state.sheets=[];for(const [k,u] of (d.sheets||[]).entries())state.sheets[k]=u?await imageFromUrl(u):null;if(d.sheetCount)$('#sheetCount').value=d.sheetCount;state.sheetCfg=d.sheetCfg||{};state.big={};for(const [k,u] of Object.entries(d.big||{}))state.big[k]=await imageFromUrl(u);
    state.props=[];for(const p of d.props){const im=await imageFromUrl(p.image),src=await imageFromUrl(p.source),c=document.createElement('canvas'),cx=c.getContext('2d',{willReadFrequently:true});c.width=im.naturalWidth;c.height=im.naturalHeight;cx.drawImage(im,0,0);const image=cx.getImageData(0,0,c.width,c.height),sc=document.createElement('canvas'),sx=sc.getContext('2d',{willReadFrequently:true});sc.width=src.naturalWidth;sc.height=src.naturalHeight;sx.drawImage(src,0,0);const source=sx.getImageData(0,0,sc.width,sc.height);state.props.push({...p,image,source,height:p.height||[.5,1]})}
    state.selected=0;state.drag=null;$('#bgInfo').textContent=state.bg?bgDescription(state.bg,state.bgName):'무대 배경은 4:3 가로 그림이어야 해요.';$('#sheetInfo').textContent=state.sheet?`${state.sheetName} · ${state.sheet.naturalWidth}×${state.sheet.naturalHeight}`:'이름 순서대로 왼쪽 위부터 채워 주세요. 오른쪽 아래는 비워 둬요.';
-   $('#bgPrompt').value=s.bgPrompt||'';$('#frameNames').value=s.frameNames||'';$('#density').value=s.density||'normal';$('#stdPrompt').value=s.stdPrompt||'';$('#propsPrompt').value=s.propsPrompt||'';$('#prompts').classList.toggle('hidden',!s.bgPrompt&&!s.propsPrompt);$$('.finalCheck').forEach((c,i)=>c.checked=Boolean(s.checks&&s.checks[i]));
+   $('#bgPrompt').value=s.bgPrompt||'';if(s.preset){$('#placePreset').value=s.preset;state.preset=PLACES[s.preset]||null;hidePlan(state.preset)}$('#frameNames').value=s.frameNames||'';$('#density').value=s.density||'normal';$('#stdPrompt').value=s.stdPrompt||'';$('#propsPrompt').value=s.propsPrompt||'';$('#prompts').classList.toggle('hidden',!s.bgPrompt&&!s.propsPrompt);$$('.finalCheck').forEach((c,i)=>c.checked=Boolean(s.checks&&s.checks[i]));
    renderBigFiles();renderPropCards();renderLayoutCards();drawScene();showStep(Math.min(4,Math.max(0,Number(s.step)||0)));setStatus($('#loadStatus'),'저장한 작업을 열었어요.');
   }catch(err){alert(`작업 파일을 열지 못했어요: ${err.message}`)}finally{e.target.value=''}
  });
@@ -976,7 +1000,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  }
  function stageConfig(){
   const items={};for(const p of state.props){const t=trim(p),slug=p.slug;const real=p.height.map(v=>Math.max(.01,Number(v)||.1));items[slug]=Object.assign({name:p.name,real,bed:'ground',base:t.base,foot:t.foot},p.kind?{kind:p.kind,kindName:p.kindName}:{},p.role==='frame'?{role:'frame',frameShow:.55,frameY:[.96,1]}:{},(real[1]>=1.5&&p.role!=='frame')?{role:'big'}:{},p.ground?{ground:p.ground}:{})   /* 큰 요소(덩어리의 중심)는 1.5m 넘는 것만 — 모두 big이면 무대가 큰 것·작은 것으로 덩어리를 못 지음 */}
-  return {name:state.name,view:'ground',horizon:state.horizon,groundTop:Number((state.horizon+.01).toFixed(3)),unit:Number(state.unit.toFixed(3)),learned:state.learned||undefined,avoid:[],beds:{ground:{name:'땅',y:[state.horizon,1],persp:true,skirt:[]}},noSkirt:true,compose:({sparse:{clusters:[2,3],perCluster:[0,2],loose:[2,4],maxSame:2,overlap:.3},normal:{clusters:[3,5],perCluster:[1,3],loose:[4,8],maxSame:3,overlap:.2},dense:{clusters:[5,7],perCluster:[2,4],loose:[8,14],maxSame:4,overlap:.12}})[$('#density').value],items,installation:{placements:Object.fromEntries(state.props.map(p=>[p.slug,{x:Number(p.x.toFixed(4)),y:Number(p.y.toFixed(4)),width:Number(p.width.toFixed(4))}]))}};
+  return {name:state.name,view:'ground',horizon:state.horizon,groundTop:Number((state.horizon+.01).toFixed(3)),unit:Number(state.unit.toFixed(3)),learned:state.learned||undefined,avoid:[],beds:{ground:{name:'땅',y:[state.horizon,1],persp:true,skirt:[]}},noSkirt:true,blocks:(state.preset&&state.preset.blocks)||undefined,animals:(state.preset&&state.preset.animals)||undefined,compose:({sparse:{clusters:[2,3],perCluster:[0,2],loose:[2,4],maxSame:2,overlap:.3},normal:{clusters:[3,5],perCluster:[1,3],loose:[4,8],maxSame:3,overlap:.2},dense:{clusters:[5,7],perCluster:[2,4],loose:[8,14],maxSame:4,overlap:.12}})[$('#density').value],items,installation:{placements:Object.fromEntries(state.props.map(p=>[p.slug,{x:Number(p.x.toFixed(4)),y:Number(p.y.toFixed(4)),width:Number(p.width.toFixed(4))}]))}};
  }
  function indexEntry(){return {[`${state.group}/${state.slug}`]:{name:state.name,group:state.group,view:'ground',bg:['bg'],items:state.props.map(p=>p.slug),used_by:[],ready:false,far:[],front:[],missing:[],skirt:[]}}}
  function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),30000)}

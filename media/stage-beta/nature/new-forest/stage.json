@@ -645,19 +645,23 @@
    ],
    "back": {
     "kinds": [
-     "oak",
-     "maple",
-     "smallpine",
-     "fir"
+     "참나무",
+     "전나무",
+     "어린 단풍나무",
+     "작은 소나무"
     ],
     "n": [
      3,
      4
+    ],
+    "scale": [
+     0.6,
+     1.1
     ]
    },
    "front": {
     "kinds": [
-     "rock"
+     "이끼 바위"
     ],
     "n": [
      1,
@@ -666,7 +670,7 @@
    },
    "small": {
     "kinds": [
-     "rock"
+     "이끼 바위"
     ],
     "n": [
      1,
@@ -677,6 +681,91 @@
      0.5
     ]
    }
+  },
+  {
+   "name": "덤불 무리",
+   "n": [
+    0,
+    1
+   ],
+   "back": {
+    "kinds": [
+     "덤불",
+     "산철쭉 덤불",
+     "산딸기 덤불"
+    ],
+    "n": [
+     2,
+     3
+    ],
+    "scale": [
+     0.7,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "고사리",
+     "키 큰 고사리 무리"
+    ],
+    "n": [
+     1,
+     2
+    ]
+   },
+   "small": {
+    "kinds": [
+     "들꽃",
+     "들꽃 무리",
+     "버섯"
+    ],
+    "n": [
+     1,
+     2
+    ]
+   }
+  }
+ ],
+ "animals": [
+  {
+   "name": "다람쥐",
+   "src": "words/daramjwi.webp",
+   "real": 0.38
+  },
+  {
+   "name": "너구리",
+   "src": "words/neoguri.webp",
+   "real": 0.6
+  },
+  {
+   "name": "토끼",
+   "src": "words/tokki.webp",
+   "real": 0.45
+  },
+  {
+   "name": "멧돼지",
+   "src": "animals/metdwaeji.webp",
+   "real": 1.5
+  },
+  {
+   "name": "사슴",
+   "src": "animals/saseum.webp",
+   "real": 1.9
+  },
+  {
+   "name": "산양",
+   "src": "animals/sanyang.webp",
+   "real": 1.3
+  },
+  {
+   "name": "곰",
+   "src": "animals/gom.webp",
+   "real": 2.0
+  },
+  {
+   "name": "호랑이",
+   "src": "animals/horangi.webp",
+   "real": 2.6
   }
  ]
 }

@@ -1,0 +1,1003 @@
+{
+ "nature/forest": {
+  "name": "숲(산)",
+  "slug": "new-forest",
+  "horizon": 36,
+  "setting": "a Korean mountain forest: tall trees and thick green bushes far away, soft misty light between the trunks, and an open, empty forest floor of light-brown soil in the front half",
+  "animals": [
+   {
+    "name": "다람쥐",
+    "src": "words/daramjwi.webp",
+    "real": 0.38
+   },
+   {
+    "name": "너구리",
+    "src": "words/neoguri.webp",
+    "real": 0.6
+   },
+   {
+    "name": "토끼",
+    "src": "words/tokki.webp",
+    "real": 0.45
+   },
+   {
+    "name": "멧돼지",
+    "src": "animals/metdwaeji.webp",
+    "real": 1.5
+   },
+   {
+    "name": "사슴",
+    "src": "animals/saseum.webp",
+    "real": 1.9
+   },
+   {
+    "name": "산양",
+    "src": "animals/sanyang.webp",
+    "real": 1.3
+   },
+   {
+    "name": "곰",
+    "src": "animals/gom.webp",
+    "real": 2.0
+   },
+   {
+    "name": "호랑이",
+    "src": "animals/horangi.webp",
+    "real": 2.6
+   }
+  ],
+  "props": "참나무 10~16\n전나무 6~10\n통나무 0.4~0.7\n고사리 0.5~1\n덤불 1~1.8\n이끼 바위 0.5~1.2\n버섯 0.1~0.25\n낙엽 더미 0.2~0.4",
+  "sheet3": "어린 단풍나무 2~4\n작은 소나무 3~5\n키 큰 고사리 무리 1~1.6\n산철쭉 덤불 1~1.6\n들꽃 0.3~0.6\n산딸기 덤불 0.8~1.4\n이끼 덮인 흙 둔덕 0.3~0.6\n이끼 덮인 넓은 그루터기 0.6~1",
+  "blocks": [
+   {
+    "name": "바위와 나무",
+    "n": [
+     0,
+     1
+    ],
+    "back": {
+     "kinds": [
+      "참나무",
+      "전나무",
+      "어린 단풍나무",
+      "작은 소나무"
+     ],
+     "n": [
+      3,
+      4
+     ],
+     "scale": [
+      0.6,
+      1.1
+     ]
+    },
+    "front": {
+     "kinds": [
+      "이끼 바위"
+     ],
+     "n": [
+      1,
+      1
+     ]
+    },
+    "small": {
+     "kinds": [
+      "이끼 바위"
+     ],
+     "n": [
+      1,
+      3
+     ],
+     "scale": [
+      0.3,
+      0.5
+     ]
+    }
+   },
+   {
+    "name": "덤불 무리",
+    "n": [
+     0,
+     1
+    ],
+    "back": {
+     "kinds": [
+      "덤불",
+      "산철쭉 덤불",
+      "산딸기 덤불"
+     ],
+     "n": [
+      2,
+      3
+     ],
+     "scale": [
+      0.7,
+      1.1
+     ]
+    },
+    "front": {
+     "kinds": [
+      "고사리",
+      "키 큰 고사리 무리"
+     ],
+     "n": [
+      1,
+      2
+     ]
+    },
+    "small": {
+     "kinds": [
+      "들꽃",
+      "들꽃 무리",
+      "버섯"
+     ],
+     "n": [
+      1,
+      2
+     ]
+    }
+   }
+  ],
+  "frames": "a huge old oak tree trunk\na big Korean red pine trunk",
+  "hide": true
+ },
+ "nature/grassland": {
+  "name": "초원",
+  "slug": "new-grassland",
+  "horizon": 40,
+  "setting": "a wide African savanna: flat golden grassland, a few low hills and flat-topped trees very far away, and open, empty dry ground with short grass in the front half",
+  "animals": [
+   {
+    "name": "사자",
+    "src": "animals/saja.webp",
+    "real": 2.4
+   },
+   {
+    "name": "얼룩말",
+    "src": "animals/eollukmal.webp",
+    "real": 2.4
+   },
+   {
+    "name": "기린",
+    "src": "animals/girin.webp",
+    "real": 5.0
+   },
+   {
+    "name": "코끼리",
+    "src": "animals/kokkiri.webp",
+    "real": 6.0
+   },
+   {
+    "name": "치타",
+    "src": "animals/chita.webp",
+    "real": 2.0
+   },
+   {
+    "name": "하이에나",
+    "src": "animals/haiena.webp",
+    "real": 1.5
+   },
+   {
+    "name": "가젤",
+    "src": "animals/gajel.webp",
+    "real": 1.2
+   },
+   {
+    "name": "물소",
+    "src": "animals/mulso.webp",
+    "real": 3.0
+   },
+   {
+    "name": "코뿔소",
+    "src": "animals/koppulso.webp",
+    "real": 4.0
+   },
+   {
+    "name": "타조",
+    "src": "animals/tajo.webp",
+    "real": 2.5
+   }
+  ],
+  "props": "아카시아 나무 5~8\n바오바브 나무 10~15\n키 큰 풀 무리 1.2~2\n흰개미 둔덕 2~4\n바위 언덕 2~4\n덤불 1~2\n바위 0.4~1\n마른 풀 포기 0.3~0.6",
+  "sheet3": "부채꼴 덤불 1.5~2.5\n쓰러진 마른 나무 0.8~1.5\n큰 둥근 바위 2~3.5\n키 큰 풀 덤불 1.5~2.5\n작은 아카시아 2~4\n흙 둔덕 0.5~1\n들꽃 포기 0.2~0.4\n작은 돌무더기 0.3~0.6",
+  "blocks": [
+   {
+    "name": "바위 언덕과 나무",
+    "n": [
+     0,
+     1
+    ],
+    "back": {
+     "kinds": [
+      "아카시아 나무",
+      "작은 아카시아",
+      "바오바브 나무"
+     ],
+     "n": [
+      2,
+      3
+     ],
+     "scale": [
+      0.6,
+      1.1
+     ]
+    },
+    "front": {
+     "kinds": [
+      "바위 언덕",
+      "큰 둥근 바위"
+     ],
+     "n": [
+      1,
+      2
+     ]
+    },
+    "small": {
+     "kinds": [
+      "바위",
+      "마른 풀 포기"
+     ],
+     "n": [
+      1,
+      3
+     ],
+     "scale": [
+      0.4,
+      0.8
+     ]
+    }
+   },
+   {
+    "name": "풀숲",
+    "n": [
+     1,
+     1
+    ],
+    "back": {
+     "kinds": [
+      "키 큰 풀 무리",
+      "키 큰 풀 덤불"
+     ],
+     "n": [
+      3,
+      4
+     ],
+     "scale": [
+      0.8,
+      1.2
+     ]
+    },
+    "front": {
+     "kinds": [
+      "덤불",
+      "부채꼴 덤불"
+     ],
+     "n": [
+      1,
+      1
+     ]
+    },
+    "small": {
+     "kinds": [
+      "마른 풀 포기",
+      "들꽃 포기"
+     ],
+     "n": [
+      1,
+      3
+     ]
+    }
+   }
+  ],
+  "frames": "a huge baobab tree trunk",
+  "hide": true
+ },
+ "nature/desert": {
+  "name": "사막",
+  "slug": "new-desert",
+  "horizon": 40,
+  "setting": "a hot sand desert: soft orange dunes and tall red rock towers very far away, pale sky, and open, empty flat sand in the front half",
+  "animals": [
+   {
+    "name": "낙타",
+    "src": "animals/nakta.webp",
+    "real": 3.0
+   },
+   {
+    "name": "사막여우",
+    "src": "animals/sangmagyeou.webp",
+    "real": 0.4
+   },
+   {
+    "name": "미어캣",
+    "src": "animals/mieokaet.webp",
+    "real": 0.3
+   },
+   {
+    "name": "도마뱀",
+    "src": "animals/domabaem.webp",
+    "real": 0.25
+   },
+   {
+    "name": "사막거북",
+    "src": "animals/samakgeobuk.webp",
+    "real": 0.35
+   },
+   {
+    "name": "전갈",
+    "src": "animals/jeongal.webp",
+    "real": 0.12
+   },
+   {
+    "name": "방울뱀",
+    "src": "animals/bangulbaem.webp",
+    "real": 0.5
+   },
+   {
+    "name": "사막쥐",
+    "src": "animals/samakjwi.webp",
+    "real": 0.25
+   },
+   {
+    "name": "오릭스",
+    "src": "animals/oriks.webp",
+    "real": 2.0
+   }
+  ],
+  "props": "바위 기둥 4~8\n바위 언덕 2~4\n대추야자 나무 6~10\n마른 덤불 0.8~1.5\n모래 둔덕 1~2.5\n큰 둥근 바위 1.5~3\n작은 바위 0.3~0.8\n마른 나뭇가지 0.3~0.6",
+  "sheet3": "갈라진 큰 바위 2~4\n가시덤불 1~2\n쓰러진 마른 나무 0.6~1.2\n돌무더기 0.5~1\n모래에 반쯤 묻힌 바위 0.6~1.4\n작은 대추야자 2~4\n마른 풀 포기 0.3~0.6\n모래 위 자갈 0.1~0.3",
+  "blocks": [
+   {
+    "name": "바위 무리",
+    "n": [
+     1,
+     1
+    ],
+    "back": {
+     "kinds": [
+      "바위 언덕",
+      "갈라진 큰 바위",
+      "바위 기둥"
+     ],
+     "n": [
+      2,
+      3
+     ],
+     "scale": [
+      0.6,
+      1.1
+     ]
+    },
+    "front": {
+     "kinds": [
+      "큰 둥근 바위",
+      "모래에 반쯤 묻힌 바위"
+     ],
+     "n": [
+      1,
+      2
+     ]
+    },
+    "small": {
+     "kinds": [
+      "작은 바위",
+      "돌무더기"
+     ],
+     "n": [
+      1,
+      3
+     ],
+     "scale": [
+      0.5,
+      0.9
+     ]
+    }
+   },
+   {
+    "name": "오아시스 나무",
+    "n": [
+     0,
+     1
+    ],
+    "back": {
+     "kinds": [
+      "대추야자 나무",
+      "작은 대추야자"
+     ],
+     "n": [
+      2,
+      3
+     ],
+     "scale": [
+      0.6,
+      1.1
+     ]
+    },
+    "front": {
+     "kinds": [
+      "마른 덤불",
+      "가시덤불"
+     ],
+     "n": [
+      1,
+      2
+     ]
+    },
+    "small": {
+     "kinds": [
+      "마른 풀 포기"
+     ],
+     "n": [
+      1,
+      2
+     ]
+    }
+   }
+  ],
+  "frames": "a huge red sandstone rock pillar",
+  "hide": true
+ },
+ "nature/polar": {
+  "name": "극지방",
+  "slug": "new-polar",
+  "horizon": 40,
+  "setting": "an Arctic snow field: white snowy plains and pale blue ice cliffs very far away, a cold light sky, and open, empty flat snow in the front half",
+  "animals": [
+   {
+    "name": "북극곰",
+    "src": "animals/bukgeukgom.webp",
+    "real": 2.5
+   },
+   {
+    "name": "바다표범",
+    "src": "animals/badapyobeom.webp",
+    "real": 1.7
+   },
+   {
+    "name": "펭귄",
+    "src": "words/penggwin.webp",
+    "real": 1.0
+   },
+   {
+    "name": "북극여우",
+    "src": "animals/bukgeukyeou.webp",
+    "real": 0.9
+   },
+   {
+    "name": "바다코끼리",
+    "src": "animals/badakokkiri.webp",
+    "real": 3.0
+   },
+   {
+    "name": "순록",
+    "src": "animals/sullok.webp",
+    "real": 2.0
+   },
+   {
+    "name": "흰올빼미",
+    "src": "animals/huinolppaemi.webp",
+    "real": 0.6
+   },
+   {
+    "name": "북극토끼",
+    "src": "animals/bukgeuktokki.webp",
+    "real": 0.6
+   },
+   {
+    "name": "사향소",
+    "src": "animals/sahyangso.webp",
+    "real": 2.3
+   },
+   {
+    "name": "북극늑대",
+    "src": "animals/bukgeuknukdae.webp",
+    "real": 1.6
+   }
+  ],
+  "props": "얼음 언덕 2~4\n눈 덮인 큰 바위 1.5~3\n얼음 덩어리 무리 1~2\n눈 더미 0.6~1.5\n눈 덮인 작은 바위 0.3~0.8\n얼음 조각 0.2~0.5\n툰드라 풀 포기 0.1~0.3\n눈 쌓인 마른 덤불 0.5~1",
+  "sheet3": "펑퍼짐한 눈 언덕 2~3.5\n얼음 바위 무리 1.5~3\n눈 덮인 쓰러진 나무 0.6~1.2\n눈 덮인 돌무더기 0.5~1\n작은 얼음 언덕 0.8~1.5\n이끼 낀 바위 0.4~0.9\n눈 위 조약돌 0.1~0.3\n작은 눈 더미 0.3~0.6",
+  "blocks": [
+   {
+    "name": "얼음 언덕 무리",
+    "n": [
+     1,
+     1
+    ],
+    "back": {
+     "kinds": [
+      "얼음 언덕",
+      "펑퍼짐한 눈 언덕"
+     ],
+     "n": [
+      2,
+      3
+     ],
+     "scale": [
+      0.6,
+      1.1
+     ]
+    },
+    "front": {
+     "kinds": [
+      "눈 덮인 큰 바위",
+      "얼음 바위 무리"
+     ],
+     "n": [
+      1,
+      2
+     ]
+    },
+    "small": {
+     "kinds": [
+      "얼음 조각",
+      "눈 덮인 작은 바위"
+     ],
+     "n": [
+      1,
+      3
+     ]
+    }
+   }
+  ],
+  "frames": "",
+  "hide": true
+ },
+ "nature/mudflat": {
+  "name": "갯벌",
+  "slug": "new-mudflat",
+  "horizon": 40,
+  "setting": "a wide Korean tidal mudflat: shiny grey-brown mud with shallow water pools, a low green island and calm sea far away, and open, empty wet mud in the front half",
+  "animals": [
+   {
+    "name": "칠게",
+    "src": "animals/chilge.webp",
+    "real": 0.04
+   },
+   {
+    "name": "농게",
+    "src": "animals/nongge.webp",
+    "real": 0.04
+   },
+   {
+    "name": "조개",
+    "src": "words/jogae.webp",
+    "real": 0.12
+   },
+   {
+    "name": "짱뚱어",
+    "src": "animals/jjangttungeo.webp",
+    "real": 0.15
+   },
+   {
+    "name": "낙지",
+    "src": "animals/nakji.webp",
+    "real": 0.5
+   },
+   {
+    "name": "갯지렁이",
+    "src": "animals/gaetjireongi.webp",
+    "real": 0.15
+   },
+   {
+    "name": "갯우렁이",
+    "src": "animals/gaeturengi.webp",
+    "real": 0.06
+   },
+   {
+    "name": "맛조개",
+    "src": "animals/matjogae.webp",
+    "real": 0.12
+   },
+   {
+    "name": "도요새",
+    "src": "animals/doyosae.webp",
+    "real": 0.25
+   },
+   {
+    "name": "방게",
+    "src": "animals/bangge.webp",
+    "real": 0.05
+   }
+  ],
+  "props": "갈대 무리 1.5~2.5\n칠면초 군락 0.3~0.6\n갯바위 1~2\n작은 갯바위 0.3~0.8\n나무 말뚝 1~1.5\n진흙 둔덕 0.2~0.5\n조개껍데기 더미 0.1~0.2\n해초 더미 0.1~0.3",
+  "sheet3": "해홍나물 군락 0.3~0.6\n큰 갯바위 무리 1.5~3\n물 빠진 작은 배 1~1.5\n그물 걸린 말뚝 줄 1~1.6\n굴 껍데기 붙은 바위 0.4~1\n갯잔디 포기 0.2~0.4\n돌무더기 0.3~0.6\n게 구멍 많은 진흙 둔덕 0.2~0.4",
+  "blocks": [
+   {
+    "name": "갯바위와 갈대",
+    "n": [
+     1,
+     1
+    ],
+    "back": {
+     "kinds": [
+      "갈대 무리"
+     ],
+     "n": [
+      2,
+      3
+     ],
+     "scale": [
+      0.7,
+      1.1
+     ]
+    },
+    "front": {
+     "kinds": [
+      "갯바위",
+      "큰 갯바위 무리"
+     ],
+     "n": [
+      1,
+      1
+     ]
+    },
+    "small": {
+     "kinds": [
+      "칠면초 군락",
+      "해홍나물 군락",
+      "조개껍데기 더미"
+     ],
+     "n": [
+      1,
+      3
+     ]
+    }
+   }
+  ],
+  "frames": "",
+  "hide": true
+ },
+ "nature/ground": {
+  "name": "땅 위(들판)",
+  "slug": "new-ground",
+  "horizon": 38,
+  "setting": "a gentle Korean countryside field: green hills and a few trees far away, and open, empty light-brown ground with short grass in the front half",
+  "animals": [
+   {
+    "name": "개",
+    "src": "words/gae.webp",
+    "real": 0.9
+   },
+   {
+    "name": "고양이",
+    "src": "words/goyangi.webp",
+    "real": 0.7
+   },
+   {
+    "name": "토끼",
+    "src": "words/tokki.webp",
+    "real": 0.45
+   },
+   {
+    "name": "닭",
+    "src": "words/dak.webp",
+    "real": 0.5
+   },
+   {
+    "name": "너구리",
+    "src": "words/neoguri.webp",
+    "real": 0.6
+   },
+   {
+    "name": "소",
+    "src": "animals/so.webp",
+    "real": 2.4
+   },
+   {
+    "name": "달팽이",
+    "src": "words/dalpaengi.webp",
+    "real": 0.06
+   },
+   {
+    "name": "거미",
+    "src": "words/geomi.webp",
+    "real": 0.05
+   }
+  ],
+  "props": "느티나무 8~12\n덤불 1~1.8\n키 큰 풀 1~1.5\n바위 0.5~1.2\n들꽃 0.3~0.6\n그루터기 0.4~0.8\n돌무더기 0.3~0.8\n풀 포기 0.2~0.4",
+  "sheet3": "감나무 4~7\n짚더미 1.5~2.5\n나무 울타리 1~1.3\n쑥부쟁이 무리 0.4~0.8\n큰 바위 1.5~2.5\n장작 더미 0.8~1.4\n클로버 포기 0.1~0.2\n토끼풀 꽃 0.1~0.2",
+  "blocks": [
+   {
+    "name": "나무와 짚더미",
+    "n": [
+     0,
+     1
+    ],
+    "back": {
+     "kinds": [
+      "느티나무",
+      "감나무"
+     ],
+     "n": [
+      2,
+      3
+     ],
+     "scale": [
+      0.6,
+      1.1
+     ]
+    },
+    "front": {
+     "kinds": [
+      "짚더미",
+      "큰 바위"
+     ],
+     "n": [
+      1,
+      1
+     ]
+    },
+    "small": {
+     "kinds": [
+      "들꽃",
+      "풀 포기"
+     ],
+     "n": [
+      1,
+      3
+     ]
+    }
+   }
+  ],
+  "frames": "",
+  "hide": true
+ },
+ "nature/wetland": {
+  "name": "논·습지",
+  "slug": "new-wetland",
+  "horizon": 40,
+  "setting": "a Korean rice paddy and wetland: low hills far away, flat green rice fields with thin earth paths between them, and shallow still water",
+  "animals": [
+   {
+    "name": "개구리",
+    "src": "words/gaeguri.webp",
+    "real": 0.12
+   },
+   {
+    "name": "백로",
+    "src": "animals/baengno.webp",
+    "real": 0.9
+   },
+   {
+    "name": "미꾸라지",
+    "src": "animals/mikkuraji.webp",
+    "real": 0.15
+   },
+   {
+    "name": "우렁이",
+    "src": "animals/ureongi.webp",
+    "real": 0.06
+   },
+   {
+    "name": "소금쟁이",
+    "src": "animals/sogeumjaengi.webp",
+    "real": 0.02
+   },
+   {
+    "name": "물방개",
+    "src": "animals/mulbanggae.webp",
+    "real": 0.03
+   }
+  ],
+  "props": "부들 무리 1.5~2.5\n갈대 무리 1.5~3\n버드나무 6~10\n벼 포기 0.6~1\n논두렁 풀 0.3~0.6\n연잎 무리 0.2~0.5\n물가 돌 0.3~0.8\n개구리밥 무리 0.05~0.1",
+  "sheet3": "",
+  "blocks": [],
+  "frames": "",
+  "hide": false
+ },
+ "nature/pond": {
+  "name": "강·호수",
+  "slug": "new-pond",
+  "horizon": 40,
+  "setting": "a calm Korean river and lake: soft green hills and trees far away, a wide still lake, and a sandy grassy shore in front",
+  "animals": [
+   {
+    "name": "백로",
+    "src": "animals/baengno.webp",
+    "real": 0.9
+   },
+   {
+    "name": "수달",
+    "src": "animals/sudal.webp",
+    "real": 1.1
+   },
+   {
+    "name": "하마",
+    "src": "animals/hama.webp",
+    "real": 4.0
+   },
+   {
+    "name": "개구리",
+    "src": "words/gaeguri.webp",
+    "real": 0.12
+   }
+  ],
+  "props": "버드나무 6~10\n갈대 무리 1.5~3\n부들 무리 1.5~2.5\n물가 바위 1~2\n연잎 무리 0.2~0.5\n물가 풀 0.4~0.8\n작은 돌 0.2~0.5\n쓰러진 나무 0.6~1.2",
+  "sheet3": "",
+  "blocks": [],
+  "frames": "",
+  "hide": false
+ },
+ "nature/sea": {
+  "name": "바닷속",
+  "slug": "new-sea",
+  "horizon": 0,
+  "setting": "under the sea: blue water fading darker far away, soft light rays from above, and an open, empty sandy sea floor in the front half",
+  "animals": [
+   {
+    "name": "고래",
+    "src": "animals/gorae.webp",
+    "real": 12.0
+   },
+   {
+    "name": "상어",
+    "src": "animals/sangeo.webp",
+    "real": 4.0
+   },
+   {
+    "name": "문어",
+    "src": "animals/muneo.webp",
+    "real": 1.0
+   },
+   {
+    "name": "고등어",
+    "src": "animals/godeungeo.webp",
+    "real": 0.35
+   },
+   {
+    "name": "불가사리",
+    "src": "animals/bulgasari.webp",
+    "real": 0.25
+   },
+   {
+    "name": "소라",
+    "src": "animals/sora.webp",
+    "real": 0.12
+   },
+   {
+    "name": "해파리",
+    "src": "animals/haepari.webp",
+    "real": 0.4
+   },
+   {
+    "name": "오징어",
+    "src": "animals/ojingeo.webp",
+    "real": 0.6
+   },
+   {
+    "name": "바다거북",
+    "src": "animals/badageobuk.webp",
+    "real": 1.1
+   },
+   {
+    "name": "돌고래",
+    "src": "animals/dolgorae.webp",
+    "real": 2.8
+   }
+  ],
+  "props": "바위 암초 2~4\n다시마 숲 3~8\n산호 무리 0.5~1.5\n해초 0.5~1.5\n말미잘 0.1~0.3\n큰 조개 0.2~0.5\n작은 바위 0.3~0.8\n모래 위 조개껍데기 0.05~0.15",
+  "sheet3": "",
+  "blocks": [],
+  "frames": "",
+  "hide": false
+ },
+ "nature/water": {
+  "name": "물속",
+  "slug": "new-water",
+  "horizon": 0,
+  "setting": "under fresh water in a river: green-blue water fading far away, soft light from above, and an open, empty pebbly river bed in the front half",
+  "animals": [
+   {
+    "name": "붕어",
+    "src": "words/bungeo.webp",
+    "real": 0.28
+   },
+   {
+    "name": "메기",
+    "src": "animals/megi.webp",
+    "real": 0.6
+   },
+   {
+    "name": "송사리",
+    "src": "animals/songsari.webp",
+    "real": 0.04
+   },
+   {
+    "name": "다슬기",
+    "src": "animals/daseulgi.webp",
+    "real": 0.03
+   },
+   {
+    "name": "미꾸라지",
+    "src": "animals/mikkuraji.webp",
+    "real": 0.15
+   }
+  ],
+  "props": "물풀 무리 0.5~1.5\n큰 돌 0.5~1.2\n가라앉은 나뭇가지 0.6~1.2\n자갈 더미 0.1~0.3\n갈대 줄기 1~2\n작은 돌 0.1~0.3\n수초 0.3~0.8\n모래 둔덕 0.1~0.3",
+  "sheet3": "",
+  "blocks": [],
+  "frames": "",
+  "hide": false
+ },
+ "nature/underground": {
+  "name": "땅속",
+  "slug": "new-underground",
+  "horizon": 0,
+  "setting": "a cut-away view of soil underground: layers of brown earth with small stones, a thin strip of grass and sky at the very top",
+  "animals": [
+   {
+    "name": "두더지",
+    "src": "animals/dudeoji.webp",
+    "real": 0.17
+   },
+   {
+    "name": "지렁이",
+    "src": "animals/jireongi.webp",
+    "real": 0.15
+   },
+   {
+    "name": "땅강아지",
+    "src": "animals/ttanggangaji.webp",
+    "real": 0.04
+   }
+  ],
+  "props": "큰 돌 0.3~0.6\n작은 돌 무리 0.05~0.15\n흙 굴 입구 0.2~0.4\n풀뿌리 줄기(손가락처럼 보이지 않게) 0.2~0.5\n낙엽 더미 0.1~0.2\n버섯 0.05~0.15\n도토리 0.02~0.04\n자갈 띠 0.05~0.1",
+  "sheet3": "",
+  "blocks": [],
+  "frames": "",
+  "hide": false
+ },
+ "nature/sky": {
+  "name": "하늘",
+  "slug": "new-sky",
+  "horizon": 90,
+  "setting": "a bright open sky: soft white clouds, a far green treeline and rooftops at the very bottom",
+  "animals": [
+   {
+    "name": "참새",
+    "src": "words/chamsae.webp",
+    "real": 0.15
+   },
+   {
+    "name": "까치",
+    "src": "words/kkachi.webp",
+    "real": 0.45
+   },
+   {
+    "name": "제비",
+    "src": "animals/jebi.webp",
+    "real": 0.18
+   },
+   {
+    "name": "비둘기",
+    "src": "animals/bidulgi.webp",
+    "real": 0.33
+   },
+   {
+    "name": "독수리",
+    "src": "words/doksuri.webp",
+    "real": 0.9
+   },
+   {
+    "name": "나비",
+    "src": "words/nabi.webp",
+    "real": 0.08
+   },
+   {
+    "name": "잠자리",
+    "src": "words/jamjari.webp",
+    "real": 0.08
+   },
+   {
+    "name": "벌",
+    "src": "animals/beol.webp",
+    "real": 0.02
+   }
+  ],
+  "props": "큰 뭉게구름 3~6\n작은 구름 1~2\n나무 꼭대기 3~5\n전깃줄과 전봇대 6~10\n꽃 핀 나뭇가지 1~2\n연 1~1.5\n새집 달린 나뭇가지 1~2\n풍선 0.4~0.6",
+  "sheet3": "",
+  "blocks": [],
+  "frames": "",
+  "hide": false
+ }
+}

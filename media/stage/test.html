@@ -27,7 +27,7 @@
  <label><input id="bd" type="checkbox"> 자리 보기</label>
  <span id="msg"></span>
 </header>
-<p id="rule">무대가 <b>장면의 원리</b>(땅·바닥에 닿기, 제 자리에만, 멀수록 작고 옅게, 밑동이 아래인 것이 앞, 덩어리와 빈 땅, 같은 소품 2번까지, 화면 안에 다 들어오기 — media/stage/README.txt)대로 판마다 새로 놓아요.
+<p id="rule">무대가 <b>장면의 원리</b>(땅·바닥에 닿기, 제 자리에만, 멀수록 작고 옅게, 밑동이 아래인 것이 앞, 덩어리·군락·블록과 빈 땅, 화면 밖으로 조금 나가도 됨 — media/stage/README.txt)대로 판마다 새로 놓아요.
 판 하나하나를 고치지 않아요. 어긋난 장면이 보이면 <b>어떤 원리가 어긋났는지</b>를 판 번호와 함께 말해 주세요(예: "판 123: 멀리 있는 나무가 앞 덤불보다 커 보임"). 원리를 고치면 모든 판이 함께 바뀌어요.</p>
 <div id="grid"></div>
 <script id="stagekit">
@@ -179,6 +179,10 @@
       const lead = big.length && R() < .75 ? pick(big) : pick(small.length ? small : big);
       const s = spot(b, lead); if (!s) continue;
       const L = place(pl, lead, s.x, s.y, R(), lead.flip !== false && R() < .5); if (clash(L)) continue; out.push(L); c++;
+      /* 나무가 한 그루만 덩그러니 서면 빈약(2026-11-09 선생님: 작은 전나무 두 그루) — 같은 종류를 크기를 달리해(큰 그림을 줄여 중간 크기로도) 1~2그루 곁에·조금 뒤에 */
+      if (lead.role === 'big' && R() < .75) { const same = items.filter(i => i.role === 'big' && i.kind && i.kind === lead.kind);
+        for (let j = 0, k = 1 + (R() < .5), t = 0; j < k && same.length && t < 8; t++) { const it = pick(same), q = place(pl, it, L.x + (R() < .5 ? -1 : 1) * L.w * (.3 + R() * .35), clamp(L.y - R() * .03, pl.beds[it.bed].y[0], 1), R(), R() < .5);
+          const k2 = .55 + R() * .55; q.w *= k2; q.h *= k2; if (!clash(q, true)) { out.push(q); j++; } } }
       for (let j = 0, k = rng(C.perCluster), t2 = 0; j < k && small.length && t2 < k * 5; t2++) {
         const it = pick(small), s2 = spot(b, it, L); if (!s2) continue;
         const p = place(pl, it, s2.x, s2.y, R() * .7, it.flip !== false && R() < .5); if (!clash(p)) { out.push(p); j++; }
@@ -204,7 +208,7 @@
        [{name, n:[적게,많이], back:{kinds,n,...}, front:{...}, small:{...}}] — back은 밑동이 조금 뒤(위), front·small은 앞(아래)·옆에. 각 칸 scale:[a,b](작은 바위를 돌로 쓰듯 크기 바꾸기)
        동물은 블록 사이·뒤에 숨기 좋음(곰도 멀리 두면 작아짐). 블록 안은 같은 소품 횟수·겹침 제한 없음 */
     for (const bk of opt.blocks || pl.blocks || []) for (let b = 0, nb = rng(bk.n || [0, 1]), tb = 0; b < nb && tb < nb * 10; tb++) {
-      const role = r => items.filter(i => i.role !== "frame" && (r.kinds || []).includes(i.kind));
+      const nm = i => (i.name || "").replace(/ \d+$/, ""), role = r => items.filter(i => i.role !== "frame" && (r.kinds || []).some(k => k === i.kind || k === i.kindName || k === nm(i)));   // 종류는 kind·kindName·이름(끝 번호 뺌)으로
       const backPool = role(bk.back || {}), frontPool = role(bk.front || {}), smallPool = role(bk.small || {}); if (!backPool.length && !frontPool.length) break;
       const anc = pick(backPool.length ? backPool : frontPool), s0 = spot(anc.bed, anc); if (!s0) continue;
       const grp = [], put = (pool, part, dy, spread) => { if (!pool.length) return; for (let j = 0, k = rng(part.n || [1, 1]), t = 0; j < k && t < k * 8; t++) {
@@ -367,7 +371,7 @@
     return best;
   };
   /* 원리 21(2026-11-09 선생님: 가까운데 흐린 이끼 바위): 그려질 높이가 그림의 점 수보다 크면 흐려 보임 — 장면을 sharpPx(기본 1200점) 높이로 볼 때 늘어나지 않는 깊이까지만 */
-  const tooSoft = (pl, it, p) => it.role !== 'frame' && it.h > 0 && p.h * (pl.sharpPx ?? 1200) > it.h;
+  const tooSoft = (pl, it, p) => it.role !== 'frame' && it.h > 0 && p.h * (pl.sharpPx ?? 1200) > it.h * (pl.maxStretch ?? 1.2);   // 2026-11-09 선생님 (가): 늘리기는 1.2배까지(넘으면 다시 그림), 줄이기는 자유
   const coversRoots = (fr, p) => { const b = barkBottom(fr, p.x - p.w * .55, p.x + p.w * .55);   /* 제 폭보다 조금 넓게 — 바로 옆으로 뻗어 내려온 뿌리도 */ return b < 0 || p.y >= b - .004; };
   const solidAt = (o, img, fx, fy, n) => {   // 장면 좌표(0~1)에 o의 그림이 칠해져 있나
     const M = maskOf(img, n); if (!M.m) return false;
