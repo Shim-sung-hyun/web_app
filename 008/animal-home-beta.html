@@ -535,9 +535,9 @@ body.setup #adminBtn{display:none}
       return null;
     };
     /* 놓으면 안 되는 경우(장면의 원리, media/stage/README.txt '장면의 원리'):
-       ⑦ 같은 소품은 한 장면에 2번까지 · ⑧ 화면 안에 다 들어옴(가장자리에서 잘려도 되는 것은 가까운 줄기 frame뿐) · 같은 자리에서 너무 겹침 */
+       ⑦ 같은 소품은 한 장면에 2번까지 · ⑧ 좌우는 화면 안에 다 들어옴(좌우 가장자리에서 잘려도 되는 것은 가까운 줄기 frame뿐, 위로는 넘어가도 됨) · 같은 자리에서 너무 겹침 */
     const clash = p => out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2)
-      || p.x - p.w / 2 < 0 || p.x + p.w / 2 > 1 || p.y - p.h * p.base < 0
+      || p.x - p.w / 2 < 0 || p.x + p.w / 2 > 1   // 좌우는 화면 안(위로는 키 큰 나무가 화면 위로 넘어가도 됨)
       || out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * .3 && Math.abs(o.y - p.y) < .04);
     const n = opt.clusters ?? (2 + Math.floor(R() * 3));
     for (let c = 0; c < n; c++) {
