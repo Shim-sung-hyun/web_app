@@ -21,3 +21,5 @@
 - 판 2·3(2026-11-09, Claude가 잘라 넣음 — 원본 그림만 받음): 판 2 = 같은 종류 다른 모양 item-01-2…item-08-2(참나무 2·전나무 2는 큰 그림),
   판 3 = 새 종류 maple 어린 단풍나무·smallpine 작은 소나무(둘 다 큰 그림)·tallferns·azalea·wildflowers·raspberry·mossmound·rootmass. 칸 글자는 작은 조각으로 지움.
   안 쓴 것: 단풍잎이 달린 소나무 큰 그림 1장(두 나무가 섞임). 전나무 2 큰 그림 밑의 가로 땅 줄은 지움. 숲 소품 모두 32가지.
+- 가까운 줄기 2(2026-11-09): neartrunk-oak·neartrunk-pine(뿌리가 흙·이끼로 스며드는 고해상도, role frame). 화면 좌우 가장자리에, 위는 화면 밖, 판마다 반쯤.
+  stage.json frameShow(그림 폭 중 화면 안에 보일 몫, .55)·frameY(밑동 높이 [.96,1]) — 기본값(.35, .9~.98)은 옛 줄기용. 땅 높이의 가는 가로줄은 지움.

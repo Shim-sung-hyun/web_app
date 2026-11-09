@@ -146,7 +146,7 @@ stage.json 꼴(장소마다)
   skirt:[이름…] 밑동 덮개(skirt/*.webp — 낙엽·흙더미·모래·눈·물결. 요소 밑동 앞에 덮어 땅에 박힌 듯, 밑동 폭·좌우 여백을 기준으로 크기를 정함.
         요소마다 skirt:[…] 로 바꾸거나 skirt:false 로 끔. 동물은 Stage.add(…,{skirt:true}) 일 때만)
   far:[{src,name,h}] 먼 띠(far/*.webp — 지평선에 세워 모든 요소 뒤, 먼 것처럼 옅게)
-  items:{id:{name, real:[낮은,높은 m], role:'big'(덩어리의 중심)|'frame'(화면 가장자리의 가까운 줄기, 위가 화면 밖으로 — 판마다 반쯤), ground:[0~1 범위, 땅 위 어디까지], float(구름처럼 뜸), from(빌려 옴),
+  items:{id:{name, real:[낮은,높은 m], role:'big'(덩어리의 중심)|'frame'(화면 가장자리의 가까운 줄기, 위가 화면 밖으로 — 판마다 반쯤, frameShow 보일 폭 몫·frameY 밑동 높이), ground:[0~1 범위, 땅 위 어디까지], float(구름처럼 뜸), from(빌려 옴),
             base(그림 중 밑동 줄의 몫, 기본 1), foot:[왼,오른](그림자 폭, 기본 .2~.8), flip:false(뒤집으면 안 됨), scale,
             skirtMargin(덮개 좌우 여백, 기본 각 3~7% 무작위), skirtHeightScale(덮개 높이 배율), skirtScale(덮개 전체 크기), skirtOffset:[x,y](덮개 위치 보정)}}
   그림을 받아 넣은 뒤 지평선(horizon)·unit을 그림에 맞게 고치고 index.json의 bg·ready를 고친다.
