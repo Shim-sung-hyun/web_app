@@ -549,6 +549,20 @@
     0.96,
     1.0
    ]
+  },
+  "mossstump": {
+   "name": "이끼 덮인 넓은 그루터기",
+   "real": [
+    0.6,
+    1.0
+   ],
+   "bed": "ground",
+   "kind": "stump",
+   "base": 1.0,
+   "foot": [
+    0.206,
+    0.658
+   ]
   }
  },
  "installation": {
