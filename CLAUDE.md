@@ -8,6 +8,11 @@
 - **비밀**: API 키·`$REVIEW_TOKEN`·`$ADMIN_TOKEN`·GitHub 토큰을 코드·저장소·대화에 넣지 않는다. `server/charum-api/donate-config.php`는 서버에만 있다(저장소에는 `.sample`만).
 - 사용량이 넉넉하지 않다. 큰 파일은 필요한 부분만 읽고(Grep으로 자리를 찾은 뒤 offset/limit), 확인도 고친 부분만.
 
+## Copilot과 함께 (2026-11-09)
+- 선생님은 VS Code의 GitHub Copilot도 쓴다. **주 조정자는 Claude**다. Copilot은 `.github/copilot-instructions.md`를 읽고 같은 규칙(이 파일·지침·README 기록)을 따른다.
+- 규칙을 바꾸면 이 파일과 `.github/copilot-instructions.md`를 함께 맞춘다(무대 등 지금 하는 일 요약도 그 파일 끝을 고쳐 둔다).
+- 세션을 시작하면 `git log`로 Copilot(선생님 컴퓨터)이 올린 커밋이 있는지 보고, 그 앱 README에 남긴 기록을 읽고 이어 간다.
+
 ## 저장소 지도
 - `NNN/` 앱 하나씩(001~010). `앱.html`이 앱, `앱_manual.html`이 게시판 본문, `앱_guide.html`이 자세한 설명, `앱01.jpg~`가 캡처, `README.txt`가 그 앱의 세부.
 - `media/` 여러 앱이 함께 쓰는 자료는 모두 여기 한곳에(사진 `photos/`, 목소리 `voice/`, 낱말 그림 `words/`, 놀이 그림 `play/`, 동물 `animals/`, 서식지 `habitats/`, 무대 `stage/`, 글꼴 `fonts/` — 지도는 `media/README.txt`). 앱 폴더에는 그 앱의 html·캡처·설명서만 두고, 그림·소리는 media/에서 GitHub 절대 주소로 가져다 쓴다.
