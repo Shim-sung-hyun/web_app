@@ -160,7 +160,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;margin-top:8px"><div class="thumb" style="height:auto;padding:6px"><canvas id="cellPeek" style="max-width:260px;max-height:220px"></canvas></div><p id="peekInfo" class="small" style="max-width:360px"></p></div></div>
   </div>
   <button id="extract" class="primary">소품 칸 나누고 바깥 흰 바탕 지우기</button>
-  <p class="notice">자동 분리는 그림 인식 AI가 아니에요. 칸의 바깥과 이어진 밝은 색만 지우므로, 안에 갇힌 흰 점은 남을 수 있어요. 칸 바깥 가장자리 여백은 잘라내지 않아요. 그림이 칸 끝에 닿으면 원본 그림 자체가 잘렸을 수 있으니 크게 확대해 확인해 주세요.</p>
+  <p class="notice">자동 분리는 그림 인식 AI가 아니에요. 칸의 바깥과 이어진 밝은 색만 지우므로, 안에 갇힌 흰 점은 남을 수 있어요. 실제 그림을 확대해 확인하고 다음 단계에서 손질해 주세요.</p>
   <div id="loadStatus" class="status" role="status"></div>
   <div class="nav"><button class="secondary back">← 장면 구상</button><button class="primary next">소품 손질로 →</button></div>
  </section>
@@ -168,7 +168,6 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  <section class="panel" data-panel="2">
   <h2>소품 가장자리를 살펴요</h2>
   <p class="intro">각 그림을 골라 확대해 보고, 남은 흰 점은 지우개로, 잘못 지워진 부분은 복구 붓으로 칠해요. 투명한 바탕은 체크 무늬로 보여요.</p>
-  <p id="editorEdgeWarning" class="hint hidden" role="status"></p>
   <div class="edit-layout">
    <div>
     <div class="canvas-zoom"><span>Ctrl+마우스 휠로 확대·축소</span><button id="resetEditZoom" class="secondary" type="button">확대 초기화</button><output id="editZoomValue">100%</output></div>
@@ -769,7 +768,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function imageDataUrl(im){const c=document.createElement('canvas');c.width=im.width;c.height=im.height;c.getContext('2d').putImageData(im,0,0);return c.toDataURL('image/png')}
  function canvasDataUrl(im){const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);return c.toDataURL('image/png')}
  async function saveDraft(){
-  const props=state.props.map(p=>({name:p.name,slug:p.slug,width:p.width,x:p.x,y:p.y,height:p.height,touchesEdge:p.touchesEdge,image:imageDataUrl(p.image),source:imageDataUrl(p.source)}));
+  const props=state.props.map(p=>({name:p.name,slug:p.slug,width:p.width,x:p.x,y:p.y,height:p.height,image:imageDataUrl(p.image),source:imageDataUrl(p.source)}));
   const draft={version:1,scene:{name:$('#sceneName').value,slug:$('#sceneSlug').value,group:$('#sceneGroup').value,setting:$('#sceneSetting').value,objectNames:$('#objectNames').value,horizon:$('#horizon').value,threshold:$('#threshold').value,neutral:$('#neutral').value,cellMargin:$('#cellMargin').value,brushSize:$('#brushSize').value,brushMode:$('#brushMode').value,step:state.step,notes:$('#reviewNotes').value,checks:$$('.finalCheck').map(c=>c.checked),bgPrompt:$('#bgPrompt').value,preset:$('#placePreset').value,frameNames:$('#frameNames').value,density:$('#density').value,stdPrompt:$('#stdPrompt').value,propsPrompt:$('#propsPrompt').value},bg:state.bg?canvasDataUrl(state.bg):null,bgName:state.bgName,sheet:state.sheet?canvasDataUrl(state.sheet):null,sheetName:state.sheetName,props,sheets:(state.sheets||[]).map(x=>x?canvasDataUrl(x):null),sheetCount:sheetCount(),sheetCfg:(saveSheetCfg(),state.sheetCfg||{}),std:state.std?canvasDataUrl(state.std):null,big:Object.fromEntries(Object.entries(state.big).map(([k,im])=>[k,canvasDataUrl(im)]))};
   download(new Blob([JSON.stringify(draft)],{type:'application/json'}),`${state.slug||'stage'}-work.json`);
  }
@@ -852,8 +851,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   const one=state.big[bigKey(v,index)];if(one)sheet=one;   /* 큰 그림을 불러온 소품은 그 그림 전체 */
   const sw=sheet.naturalWidth,sh=sheet.naturalHeight,col=one?0:index%3,row=one?0:Math.floor(index/3);
   const G=one?{xs:[0,sw],ys:[0,sh]}:gutters(sheet,threshold,neutral),gx=one?[0,sw]:G.xs,gy=one?[0,sh]:G.ys;
-  const left=col===0?0:margin,right=col===2?0:margin,top=row===0?0:margin,bottom=row===2?0:margin;
-  const x=gx[col]+left,y=gy[row]+top,w=gx[col+1]-gx[col]-left-right,h=gy[row+1]-gy[row]-top-bottom;
+  const x=gx[col]+margin,y=gy[row]+margin,w=gx[col+1]-gx[col]-margin*2,h=gy[row+1]-gy[row]-margin*2;
   const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(sheet,x,y,w,h,0,0,w,h);
   const im=cx.getImageData(0,0,w,h),d=im.data,n=w*h,allow=new Uint8Array(n),seen=new Uint8Array(n),q=new Int32Array(n);let head=0,tail=0;
   for(let p=0,j=0;p<n;p++,j+=4){const r=d[j],g=d[j+1],b=d[j+2],hi=Math.max(r,g,b),lo=Math.min(r,g,b);if((r+g+b)/3>=threshold&&hi-lo<=neutral)allow[p]=1}
@@ -866,16 +864,10 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    if(a<.12){d[j+3]=0;continue}
    const aa=Math.max(.12,a);d[j]=Math.max(0,Math.min(255,(r-255*(1-aa))/aa));d[j+1]=Math.max(0,Math.min(255,(g-255*(1-aa))/aa));d[j+2]=Math.max(0,Math.min(255,(b-255*(1-aa))/aa));d[j+3]=Math.round(aa*255);
   }
-  const atEdge=(x,y)=>d[(y*w+x)*4+3]>100,touchesEdge={
-   top:Array.from({length:w},(_,x)=>atEdge(x,0)).some(Boolean),
-   bottom:Array.from({length:w},(_,x)=>atEdge(x,h-1)).some(Boolean),
-   left:Array.from({length:h},(_,y)=>atEdge(0,y)).some(Boolean),
-   right:Array.from({length:h},(_,y)=>atEdge(w-1,y)).some(Boolean)
-  };
   cx.putImageData(im,0,0);
   const sp=specsOf(v)[index]||{},name=sp.name||`소품 ${index+1}`,isNew=v&&sheetCfg(v).mode==='new';
   const N=sheetCount();
-  return {name:N>1&&!isNew?`${name} ${v+1}`:name,kind:isNew?`k${v+1}-${index+1}`:`k${index+1}`,kindName:name,v,cell:index,big:Boolean(one),slug:N>1?`item-${String(index+1).padStart(2,'0')}-${v+1}`:`item-${String(index+1).padStart(2,'0')}`,source:new ImageData(new Uint8ClampedArray(im.data),w,h),image:im,touchesEdge,width:.18,x:.15+(index%4)*.22,y:.9-Math.floor(index/4)*.2,height:sp.h?[...sp.h]:[.5,1]};
+  return {name:N>1&&!isNew?`${name} ${v+1}`:name,kind:isNew?`k${v+1}-${index+1}`:`k${index+1}`,kindName:name,v,cell:index,big:Boolean(one),slug:N>1?`item-${String(index+1).padStart(2,'0')}-${v+1}`:`item-${String(index+1).padStart(2,'0')}`,source:new ImageData(new Uint8ClampedArray(im.data),w,h),image:im,width:.18,x:.15+(index%4)*.22,y:.9-Math.floor(index/4)*.2,height:sp.h?[...sp.h]:[.5,1]};
  }
  $('#extract').addEventListener('click',()=>{
   if(!state.sheet){setStatus($('#loadStatus'),'먼저 소품 판 그림을 불러와 주세요.',true);return}
@@ -886,7 +878,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   saveSheetCfg();state.props=[];for(let v=0;v<sheets.length;v++)for(let i=0,mv=Math.min(8,specsOf(v).length||max);i<mv;i++){const pr=cropObject(sheets[v],i,Number($('#threshold').value),Number($('#neutral').value),margin,v);pr.x=Math.min(.92,pr.x+v*.03);removeSpecks(pr);dropGroundLine(pr);defringe(pr,2);fitProp(pr);state.props.push(pr)}
   frameNames().forEach((n,j)=>{const img=state.big['frame-'+j];if(!img)return;state.big['Fr'+j+'-0']=img;const pr=cropObject(img,0,Number($('#threshold').value),Number($('#neutral').value),margin,'Fr'+j);
    Object.assign(pr,{name:`가장자리 ${j+1}`,kind:'frame',kindName:'가장자리',slug:`edge-${j+1}`,role:'frame',height:[4,6],x:j%2?.9:.1,y:.98});dropGroundLine(pr);defringe(pr,2);fitProp(pr);state.props.push(pr)});
-  state.selected=0;renderPropCards();const edgeItems=state.props.filter(p=>Object.values(p.touchesEdge||{}).some(Boolean)).map(p=>p.name);setStatus($('#loadStatus'),`${state.props.length}개 칸을 나눴어요. 흰색으로 된 실제 소품 부분이 투명해지지 않았는지 꼭 살펴봐 주세요.${edgeItems.length?` 칸 끝에 그림이 닿는 소품: ${edgeItems.join(' · ')}. 원본에서 잘렸을 수 있으니 확대해 확인해 주세요.`:''}`,edgeItems.length>0);
+  state.selected=0;renderPropCards();setStatus($('#loadStatus'),`${state.props.length}개 칸을 나눴어요. 흰색으로 된 실제 소품 부분이 투명해지지 않았는지 꼭 살펴봐 주세요.`);
  });
  let editZoom=1;
  const editViewport=$('#editViewport'),editCanvas=$('#editCanvas');
@@ -904,7 +896,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   });
   if(state.props.length)selectProp(Math.min(state.selected,state.props.length-1));
  }
- function selectProp(i){state.selected=i;const p=state.props[i];if(!p)return;keepRect=null;$('#keepBar').classList.add('hidden');if($('#brushMode').value==='keep')$('#brushMode').value='erase';$('#itemThreshold').value=p.threshold||$('#threshold').value;$('#itemThresholdValue').value=$('#itemThreshold').value;$('#editName').textContent=p.name;const edgeNames=Object.entries(p.touchesEdge||{}).filter(([,hit])=>hit).map(([edge])=>({top:'위',bottom:'아래',left:'왼쪽',right:'오른쪽'}[edge]));const edgeWarning=$('#editorEdgeWarning');edgeWarning.classList.toggle('hidden',!edgeNames.length);edgeWarning.textContent=edgeNames.length?`${p.name} 그림이 칸 ${edgeNames.join('·')} 끝에 닿아요. 원본에서 잘렸을 수 있으니 크게 확대해 확인해 주세요.`:'';paint($('#editCanvas'),p.image);$('#heightMin').value=p.height[0];$('#heightMax').value=p.height[1];$$('#propCards .prop-card').forEach((c,j)=>c.classList.toggle('selected',j===i));}
+ function selectProp(i){state.selected=i;const p=state.props[i];if(!p)return;keepRect=null;$('#keepBar').classList.add('hidden');if($('#brushMode').value==='keep')$('#brushMode').value='erase';$('#itemThreshold').value=p.threshold||$('#threshold').value;$('#itemThresholdValue').value=$('#itemThreshold').value;$('#editName').textContent=p.name;paint($('#editCanvas'),p.image);$('#heightMin').value=p.height[0];$('#heightMax').value=p.height[1];$$('#propCards .prop-card').forEach((c,j)=>c.classList.toggle('selected',j===i));}
  /* 되돌리기(2026-11-09): 손질(칠하기·흰 틈·구역·조각 지우기) 바로 전 그림을 소품마다 10번까지 */
  function pushUndo(p){(p.undo=p.undo||[]).push(new ImageData(new Uint8ClampedArray(p.image.data),p.image.width,p.image.height));if(p.undo.length>10)p.undo.shift()}
  $('#undoEdit').addEventListener('click',()=>{const p=state.props[state.selected];if(!p||!p.undo||!p.undo.length)return;const im=p.undo.pop();if(im.width!==p.image.width||im.height!==p.image.height){p.image=im;p.source=new ImageData(new Uint8ClampedArray(im.data),im.width,im.height)}else p.image=im;paint($('#editCanvas'),p.image);renderPropCards();drawScene()});
