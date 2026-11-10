@@ -1,0 +1,33 @@
+사막 베타 — 빙(Bing Image Creator) 소품 프롬프트(2026-11-10, 실제로 쓴 것)
+빛: 해는 그림 밖, 보는 사람 등 뒤 왼쪽 위 → 그림자는 오른쪽 안쪽(지평선 쪽). 제미나이는 이 빛을 거듭 반대로 그려 빙으로 받음.
+빙은 한 번에 4판 — 고른 것만 저장소에. 받은 그림 → python3 tools/shadow-split.py 로 물체·그림자 가르기(stage.json ownShadow·flip:false).
+그림마다 통째로(▼~▲). 붙일 그림은 각 프롬프트 위에 적음.
+
+━━━━━━━━ 판 1 — 8종류
+붙일 그림: 선인장·통나무 본보기(그림자 모양) 또는 없이
+▼
+A 3×3 grid sheet on a pure white background, flat-cartoon style with dark-brown outlines and muted natural colours, like the attached picture. One object per cell, in this order: 1 big rounded desert boulder, 2 low dense dry desert shrub, 3 dead tree trunk lying flat on the ground with a few broken branches, 4 small pile of desert stones, 5 large cracked sandstone rock, 6 thorny dry bush, 7 small young date palm, 8 dry branch lying flat on the ground. The bottom-right cell stays completely empty and white.
+Draw only the object and its cast shadow on white — no sand, soil, grass, pebbles or ground patch. The sun is in the upper-left, behind the viewer, so each shadow is a soft, flat, neutral grey shape (no colour, no outline) that points diagonally UP and to the RIGHT, like a clock hand at 2 o'clock, about as long as the object is tall. The shadow starts exactly where the object touches the ground, darker near the object and lighter farther away. Lying objects get a shadow along their right side. No shadow on the left or toward the viewer. Every object and shadow stays fully inside its own cell with a white margin. No text, numbers or watermark.
+▲
+
+━━━━━━━━ 판 3 — 새 종류(큰 것 포함)
+붙일 그림: 판 1에서 고른 것 한 장
+▼
+Draw a new 3×3 grid sheet on a pure white background in exactly the same style as the attached sheet: same flat-cartoon look, thin dark-brown outlines, calm muted desert colours, soft shading, and the same kind of soft neutral grey shadows. Do not copy its objects. One object per cell, in this order: 1 a tall reddish sandstone rock pillar, 2 a wide, low rounded rock mound, 3 a tall date palm with fruit, 4 a big tuft of tall dry desert grass, 5 a low flat slab-like rock lying on the ground, 6 a dry tumbleweed, 7 a small group of three round stones, 8 a dry broken bush with a few green leaves. The bottom-right cell stays completely empty and white.
+Draw only the object and its cast shadow on white — no sand, soil, grass, pebbles or ground patch. Like the attached sheet, each shadow is a soft, flat, neutral grey shape shaped like the object lying down, starting exactly where the object touches the ground and stretching to the RIGHT and slightly UP toward the back, about as long as the object is tall, darker near the object and lighter farther away. Lying objects have their shadow along their right side. No shadow on the left or toward the viewer. Every object and shadow stays fully inside its own cell with a white margin. No text, numbers or watermark.
+▲
+
+━━━━━━━━ 큰 그림 1 — 큰 둥근 바위 (붙일 그림: 판 1)
+▼
+On a pure white background, draw ONE object as large as possible in a wide picture, in exactly the same style as the attached sheet (flat-cartoon, thin dark-brown outlines, calm muted desert colours, soft shading, soft neutral grey shadow); do not copy its objects: a big rounded sandstone boulder, wider than it is tall. Draw only the object and its cast shadow — no sand, soil, grass or ground patch. The shadow is a soft, flat, neutral grey shape shaped like the object lying down, starting exactly where the object touches the ground and stretching to the RIGHT and slightly UP toward the back, about as long as the object is tall, darker near the object and lighter farther away; no shadow on the left or toward the viewer. The object and its shadow fit fully inside the picture with a clear white margin. Fine detail. No text or watermark.
+▲
+
+━━━━━━━━ 큰 그림 2 — 키 큰 대추야자 두 그루 (붙일 그림: 판 1)
+▼
+On a pure white background, draw ONE object as large as possible in a tall picture, in exactly the same style as the attached sheet (flat-cartoon, thin dark-brown outlines, calm muted desert colours, soft shading, soft neutral grey shadow); do not copy its objects: a group of two tall date palms growing side by side. Draw only the object and its cast shadow — no sand, soil, grass or ground patch. The shadow is a soft, flat, neutral grey shape shaped like the palms lying down, starting exactly where the trunks touch the ground and stretching to the RIGHT and slightly UP toward the back, about as long as the palms are tall, darker near the trunks and lighter farther away; no shadow on the left or toward the viewer. The palms and their shadow fit fully inside the picture with a clear white margin. Fine detail. No text or watermark.
+▲
+
+━━━━━━━━ 큰 그림 3 — 큰 붉은 바위 언덕 (붙일 그림: 판 1)
+▼
+On a pure white background, draw ONE object as large as possible in a wide picture, in exactly the same style as the attached sheet (flat-cartoon, thin dark-brown outlines, calm muted desert colours, soft shading, soft neutral grey shadow); do not copy its objects: a large, wide reddish sandstone rock mound with a few cracks, spreading out gently at its base. Draw only the object and its cast shadow — no sand, soil, grass or ground patch. The shadow is a soft, flat, neutral grey shape shaped like the object lying down, starting exactly where the object touches the ground and stretching to the RIGHT and slightly UP toward the back, about as long as the object is tall, darker near the object and lighter farther away; no shadow on the left or toward the viewer. The object and its shadow fit fully inside the picture with a clear white margin. Fine detail. No text or watermark.
+▲
