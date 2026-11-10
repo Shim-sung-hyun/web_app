@@ -32,7 +32,7 @@ for sj in sorted(glob.glob(os.path.join(ST, '*', '*', 'stage.json')) + glob.glob
     c = json.load(open(sj, encoding='utf-8'))
     for k, it in c.get('items', {}).items():
         src = os.path.join(ST, it['from'], 'items', k + '.webp') if it.get('from') else os.path.join(d, 'items', k + '.webp')
-        if os.path.exists(src):
+        if os.path.exists(src) and not it.get('soak'):   # 밑동 스며들기 한 것은 스며들기 전에 잰 밑동을 지킴(tools/soak-base.py)
             it.update(meta(src)); n += 1
     for key, sub in (('skirtMeta', 'skirt'),):
         old = c.get(key, {})

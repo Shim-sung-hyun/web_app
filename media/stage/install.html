@@ -232,6 +232,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   </div>
   <label for="reviewNotes">검토 메모 (다음 수정이나 만든 사람에게 전할 내용)</label><textarea id="reviewNotes" placeholder="예: 덤불을 조금 더 앞으로, 전나무 밑동은 땅에 붙이기"></textarea>
   <p class="notice">지금은 새 무대를 <b>베타 자리 `media/stage-beta`</b>에 모아요(기존 무대는 그대로, 2026-11-09). 지원되는 브라우저에서는 `media/stage-beta` 폴더를 골라 직접 저장할 수 있어요. 이미 있는 무대 자료를 바꿀 때는 한 번 더 확인해요. 직접 저장을 지원하지 않는 브라우저에서는 기존 파일을 덮어쓰지 않는 ZIP으로 내보내고, `index-entry.json`을 차림표에 합쳐 주세요.</p>
+  <p><label style="display:inline;font-weight:400"><input type="checkbox" id="soak" checked> 밑동 스며들기 — 밑동 흙·모래를 그라데이션으로 바닥에 스며들게(가장자리 큰 것은 빼고)</label> · 띠 높이 <input id="soakBand" type="number" min="4" max="40" value="16" style="width:4em">% <span class="hint">(배치 시안에도 보임)</span></p>
   <div class="toolbar"><button id="directSave" class="secondary hidden">media/stage-beta에 직접 저장</button><button id="confirm" class="primary" disabled>확정 ZIP 받기</button><span id="finalStatus" class="status" role="status"></span></div>
   <p id="viewLinks" class="hint"></p>
   <div class="nav"><button class="secondary back">← 배치 시안</button><span></span></div>
@@ -1023,6 +1024,19 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  canvas.addEventListener('pointerdown',e=>{if(!state.bg)return;const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;for(let i=state.props.length-1;i>=0;i--){const p=state.props[i],w=p.width,h=w*p.image.height/p.image.width;if(x>=p.x-w/2&&x<=p.x+w/2&&y>=p.y-h&&y<=p.y){state.selected=i;state.drag={x:p.x,y:p.y,px:x,py:y};selectLayout(i);renderLayoutCards();canvas.setPointerCapture(e.pointerId);break}}});
  canvas.addEventListener('pointermove',e=>{if(!state.drag)return;const r=canvas.getBoundingClientRect(),p=state.props[state.selected];p.x=Math.max(-.25,Math.min(1.25,state.drag.x+(e.clientX-r.left)/r.width-state.drag.px));p.y=Math.max(0,Math.min(1.2,state.drag.y+(e.clientY-r.top)/r.height-state.drag.py));selectLayout(state.selected);drawScene()});
  canvas.addEventListener('pointerup',()=>state.drag=null);canvas.addEventListener('pointercancel',()=>state.drag=null);
+ /* 밑동 스며들기(2026-11-10 선생님 — '밑동의 일정 부분까지 그라데이션 지우기'): 맨 아래 5%에서 밑동 흙 색을 재고, 그 색과 비슷한 점만
+    아래로 갈수록·가장자리에 가까울수록 투명하게(몸통은 그대로), 밑동 끝 가는 선도 옅게. tools/soak-base.py와 같은 셈. 밑동 높이는 스며들기 전에 잰 값을 씀 */
+ const soakOn=p=>$('#soak')&&$('#soak').checked&&p.role!=='frame', soakBand=()=>Math.max(.04,Math.min(.4,Number(($('#soakBand')||{}).value||16)/100));
+ function soakBase(c,band=.16,feat=.05,tol=70){const x=c.getContext('2d'),W=c.width,H=c.height,im=x.getImageData(0,0,W,H),d=im.data,n=W*H,op=new Uint8Array(n);let yt=H,yb=-1;
+  for(let i=0;i<n;i++)if(d[i*4+3]>102){op[i]=1;const y=(i/W)|0;if(y<yt)yt=y;if(y>yb)yb=y}if(yb<0)return;
+  const hh=yb-yt+1,lo=Math.max(yt,yb-Math.floor(hh*.05)),R=[],G=[],Bl=[];for(let y=lo;y<=yb;y++)for(let i=0;i<W;i++){const j=y*W+i;if(op[j]){R.push(d[j*4]);G.push(d[j*4+1]);Bl.push(d[j*4+2])}}
+  const med=a=>a.sort((p,q)=>p-q)[a.length>>1]||0,r0=med(R),g0=med(G),b0=med(Bl),sd=j=>Math.max(0,Math.min(1,1-Math.hypot(d[j*4]-r0,d[j*4+1]-g0,d[j*4+2]-b0)/tol));
+  let top=yb;for(;top>yt;top--){let o=0,k=0;for(let i=0;i<W;i++){const j=top*W+i;if(op[j]){o++;if(sd(j)>.5)k++}}if(!o||k/o<=.5)break}   /* 납작한 소품처럼 흙이 더 높이 퍼졌으면 띠를 그 높이까지(45%까지) */
+  const B=Math.min(hh*.45,Math.max(hh*band,(yb-top)*1.15)),N=Math.max(3,Math.floor(W*feat)),e=new Float32Array(n);let cur=op.slice();
+  for(let k=0;k<N;k++){const nx=new Uint8Array(n);for(let j=0;j<n;j++){if(!cur[j])continue;e[j]++;const y=(j/W)|0,i=j-y*W;if(y>0&&y<H-1&&i>0&&i<W-1&&cur[j-1]&&cur[j+1]&&cur[j-W]&&cur[j+W])nx[j]=1}cur=nx}
+  for(let j=0;j<n;j++){if(!d[j*4+3])continue;const y=(j/W)|0,v=Math.max(0,Math.min(1,(y-(yb-B))/B)),vb=y>=yb-B?1:0,ee=Math.min(1,e[j]/N),
+   s=Math.max(0,Math.min(1,1-Math.hypot(d[j*4]-r0,d[j*4+1]-g0,d[j*4+2]-b0)/tol)),fade=Math.max(0,Math.min(1,s*(.95*v+.85*(1-ee)*vb)+(1-s)*(1-ee)*Math.max(v,.9*vb)));d[j*4+3]=Math.round(d[j*4+3]*(1-fade))}
+  x.putImageData(im,0,0)}
  function trim(p){
   const {width:w,height:h,data}=p.image;let x0=w,y0=h,x1=-1,y1=-1,bottom=-1;
   for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(data[(y*w+x)*4+3]>8){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;if(data[(y*w+x)*4+3]>100&&y>bottom)bottom=y}
@@ -1031,6 +1045,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   if(bottom<0)bottom=y1;
   const bandTop=Math.max(0,bottom-Math.floor(h*.06)),foot=[];for(let x=0;x<w;x++)for(let y=bandTop;y<=bottom;y++)if(data[(y*w+x)*4+3]>100){foot.push(x);break}
   const fx0=foot.length?Math.min(...foot):x0,fx1=foot.length?Math.max(...foot)+1:x1+1;
+  if(soakOn(p))soakBase(c,soakBand());
   return {canvas:c,base:Number(((bottom+1-y0)/c.height).toFixed(4)),foot:[Number(((fx0-x0)/c.width).toFixed(3)),Number(((fx1-x0)/c.width).toFixed(3))]};
  }
  function blob(c,type,quality){return new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error('그림 파일을 만들지 못했어요.')),type,quality))}
@@ -1044,7 +1059,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   return new Blob([...chunks,...central,...end],{type:'application/zip'});
  }
  function stageConfig(){
-  const items={};for(const p of state.props){const t=trim(p),slug=p.slug;const real=p.height.map(v=>Math.max(.01,Number(v)||.1));items[slug]=Object.assign({name:p.name,real,bed:'ground',base:t.base,foot:t.foot},p.kind?{kind:p.kind,kindName:p.kindName}:{},p.role==='frame'?{role:'frame',frameShow:.55,frameY:[.96,1]}:{},(real[1]>=1.5&&p.role!=='frame')?{role:'big'}:{},p.ground?{ground:p.ground}:{})   /* 큰 요소(덩어리의 중심)는 1.5m 넘는 것만 — 모두 big이면 무대가 큰 것·작은 것으로 덩어리를 못 지음 */}
+  const items={};for(const p of state.props){const t=trim(p),slug=p.slug;const real=p.height.map(v=>Math.max(.01,Number(v)||.1));items[slug]=Object.assign({name:p.name,real,bed:'ground',base:t.base,foot:t.foot},p.kind?{kind:p.kind,kindName:p.kindName}:{},soakOn(p)?{soak:soakBand()}:{},p.role==='frame'?{role:'frame',frameShow:.55,frameY:[.96,1]}:{},(real[1]>=1.5&&p.role!=='frame')?{role:'big'}:{},p.ground?{ground:p.ground}:{})   /* 큰 요소(덩어리의 중심)는 1.5m 넘는 것만 — 모두 big이면 무대가 큰 것·작은 것으로 덩어리를 못 지음 */}
   return {name:state.name,view:'ground',horizon:state.horizon,groundTop:Number((state.horizon+.01).toFixed(3)),unit:Number(state.unit.toFixed(3)),learned:state.learned||undefined,avoid:[],beds:{ground:{name:'땅',y:[state.horizon,1],persp:true,skirt:[]}},noSkirt:true,blocks:(state.preset&&state.preset.blocks)||undefined,animals:(state.preset&&state.preset.animals)||undefined,compose:({sparse:{clusters:[2,3],perCluster:[0,2],loose:[2,4],maxSame:2,overlap:.3},normal:{clusters:[3,5],perCluster:[1,3],loose:[4,8],maxSame:3,overlap:.2},dense:{clusters:[5,7],perCluster:[2,4],loose:[8,14],maxSame:4,overlap:.12}})[$('#density').value],items,installation:{placements:Object.fromEntries(state.props.map(p=>[p.slug,{x:Number(p.x.toFixed(4)),y:Number(p.y.toFixed(4)),width:Number(p.width.toFixed(4))}]))}};
  }
  function indexEntry(){return {[`${state.group}/${state.slug}`]:{name:state.name,group:state.group,view:'ground',bg:['bg'],items:state.props.map(p=>p.slug),used_by:[],ready:false,far:[],front:[],missing:[],skirt:[]}}}

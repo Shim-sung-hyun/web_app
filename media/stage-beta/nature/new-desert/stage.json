@@ -191,7 +191,12 @@
    ],
    "kind": "k1",
    "kindName": "바위 기둥",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.35
+   ],
+   "soak": 0.16
   },
   "item-02-1": {
    "name": "바위 언덕 1",
@@ -207,7 +212,12 @@
    ],
    "kind": "k2",
    "kindName": "바위 언덕",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.6
+   ],
+   "soak": 0.16
   },
   "item-03-1": {
    "name": "대추야자 나무 1",
@@ -223,7 +233,12 @@
    ],
    "kind": "k3",
    "kindName": "대추야자 나무",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.4
+   ],
+   "soak": 0.16
   },
   "item-04-1": {
    "name": "마른 덤불 1",
@@ -239,7 +254,8 @@
    ],
    "kind": "k4",
    "kindName": "마른 덤불",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-05-1": {
    "name": "모래 둔덕 1",
@@ -255,7 +271,12 @@
    ],
    "kind": "k5",
    "kindName": "모래 둔덕",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.7
+   ],
+   "soak": 0.16
   },
   "item-06-1": {
    "name": "큰 둥근 바위 1",
@@ -271,7 +292,12 @@
    ],
    "kind": "k6",
    "kindName": "큰 둥근 바위",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0.1,
+    0.8
+   ],
+   "soak": 0.16
   },
   "item-07-1": {
    "name": "작은 바위 1",
@@ -286,7 +312,8 @@
     0.633
    ],
    "kind": "k7",
-   "kindName": "작은 바위"
+   "kindName": "작은 바위",
+   "soak": 0.16
   },
   "item-08-1": {
    "name": "마른 나뭇가지 1",
@@ -301,7 +328,8 @@
     0.829
    ],
    "kind": "k8",
-   "kindName": "마른 나뭇가지"
+   "kindName": "마른 나뭇가지",
+   "soak": 0.16
   },
   "item-01-2": {
    "name": "바위 기둥 2",
@@ -317,7 +345,12 @@
    ],
    "kind": "k1",
    "kindName": "바위 기둥",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.35
+   ],
+   "soak": 0.16
   },
   "item-02-2": {
    "name": "바위 언덕 2",
@@ -333,7 +366,12 @@
    ],
    "kind": "k2",
    "kindName": "바위 언덕",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.6
+   ],
+   "soak": 0.16
   },
   "item-03-2": {
    "name": "대추야자 나무 2",
@@ -349,7 +387,12 @@
    ],
    "kind": "k3",
    "kindName": "대추야자 나무",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.4
+   ],
+   "soak": 0.16
   },
   "item-04-2": {
    "name": "마른 덤불 2",
@@ -365,7 +408,8 @@
    ],
    "kind": "k4",
    "kindName": "마른 덤불",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-05-2": {
    "name": "모래 둔덕 2",
@@ -381,7 +425,12 @@
    ],
    "kind": "k5",
    "kindName": "모래 둔덕",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.7
+   ],
+   "soak": 0.16
   },
   "item-06-2": {
    "name": "큰 둥근 바위 2",
@@ -397,7 +446,12 @@
    ],
    "kind": "k6",
    "kindName": "큰 둥근 바위",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0.1,
+    0.8
+   ],
+   "soak": 0.16
   },
   "item-07-2": {
    "name": "작은 바위 2",
@@ -412,7 +466,8 @@
     0.672
    ],
    "kind": "k7",
-   "kindName": "작은 바위"
+   "kindName": "작은 바위",
+   "soak": 0.16
   },
   "item-08-2": {
    "name": "마른 나뭇가지 2",
@@ -427,7 +482,8 @@
     0.828
    ],
    "kind": "k8",
-   "kindName": "마른 나뭇가지"
+   "kindName": "마른 나뭇가지",
+   "soak": 0.16
   },
   "item-01-3": {
    "name": "갈라진 큰 바위",
@@ -443,7 +499,12 @@
    ],
    "kind": "k3-1",
    "kindName": "갈라진 큰 바위",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.65
+   ],
+   "soak": 0.16
   },
   "item-02-3": {
    "name": "가시덤불",
@@ -459,7 +520,8 @@
    ],
    "kind": "k3-2",
    "kindName": "가시덤불",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-03-3": {
    "name": "쓰러진 마른 나무",
@@ -474,7 +536,8 @@
     0.548
    ],
    "kind": "k3-3",
-   "kindName": "쓰러진 마른 나무"
+   "kindName": "쓰러진 마른 나무",
+   "soak": 0.16
   },
   "item-04-3": {
    "name": "돌무더기",
@@ -489,7 +552,8 @@
     0.803
    ],
    "kind": "k3-4",
-   "kindName": "돌무더기"
+   "kindName": "돌무더기",
+   "soak": 0.16
   },
   "item-05-3": {
    "name": "모래에 반쯤 묻힌 바위",
@@ -504,7 +568,8 @@
     0.802
    ],
    "kind": "k3-5",
-   "kindName": "모래에 반쯤 묻힌 바위"
+   "kindName": "모래에 반쯤 묻힌 바위",
+   "soak": 0.16
   },
   "item-06-3": {
    "name": "작은 대추야자",
@@ -520,7 +585,12 @@
    ],
    "kind": "k3-6",
    "kindName": "작은 대추야자",
-   "role": "big"
+   "role": "big",
+   "ground": [
+    0,
+    0.6
+   ],
+   "soak": 0.16
   },
   "item-07-3": {
    "name": "마른 풀 포기",
@@ -535,7 +605,8 @@
     0.84
    ],
    "kind": "k3-7",
-   "kindName": "마른 풀 포기"
+   "kindName": "마른 풀 포기",
+   "soak": 0.16
   },
   "item-08-3": {
    "name": "모래 위 자갈",
@@ -550,7 +621,8 @@
     0.687
    ],
    "kind": "k3-8",
-   "kindName": "모래 위 자갈"
+   "kindName": "모래 위 자갈",
+   "soak": 0.16
   },
   "shrub-c": {
    "name": "마른 덤불(배경색)",
@@ -569,7 +641,8 @@
    "foot": [
     0.058,
     0.866
-   ]
+   ],
+   "soak": 0.16
   },
   "boulder-c": {
    "name": "큰 둥근 바위(배경색)",
@@ -581,14 +654,15 @@
    "kind": "k6",
    "kindName": "큰 둥근 바위",
    "ground": [
-    0.35,
-    1
+    0.1,
+    0.8
    ],
    "base": 0.9981,
    "foot": [
     0.0,
     1.0
-   ]
+   ],
+   "soak": 0.16
   }
  },
  "installation": {
