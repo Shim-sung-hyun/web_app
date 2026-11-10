@@ -172,6 +172,12 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <div>
     <div class="canvas-zoom"><span>Ctrl+마우스 휠로 확대·축소</span><button id="resetEditZoom" class="secondary" type="button">확대 초기화</button><output id="editZoomValue">100%</output></div>
     <div class="canvas-wrap" id="editViewport"><canvas id="editCanvas" aria-label="고른 소품 그림 손질"></canvas></div>
+    <div class="toolbar" style="margin:8px 0">
+     <button id="replaceProp" class="secondary" type="button" disabled>선택한 소품 그림 바꾸기</button>
+     <input id="replacePropFile" class="hidden" type="file" accept="image/*">
+    </div>
+    <p class="hint">새 그림 파일을 고르면 이 소품만 바뀌어요. 바깥과 이어진 흰 바탕은 자동으로 지워요. 바꾼 뒤에는 '되돌리기'로 이전 그림을 다시 쓸 수 있어요.</p>
+    <p id="replaceStatus" class="status" role="status"></p>
     <div id="propCards" class="prop-list"></div>
    </div>
    <aside class="edit-controls">
@@ -847,13 +853,8 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   p.image=cut(p.image);p.source=cut(p.source)}
  function inkBox(p,pad=2){const {width:w,height:h,data:d}=p.image;let x0=w,y0=h,x1=-1,y1=-1;for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4+3]>8){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}return x1<0?null:[x0-pad,y0-pad,x1+1+pad,y1+1+pad]}
  function fitProp(p){const b=inkBox(p);if(b)cropProp(p,...b)}
- function cropObject(sheet,index,threshold,neutral,margin,v=0){
-  const one=state.big[bigKey(v,index)];if(one)sheet=one;   /* 큰 그림을 불러온 소품은 그 그림 전체 */
-  const sw=sheet.naturalWidth,sh=sheet.naturalHeight,col=one?0:index%3,row=one?0:Math.floor(index/3);
-  const G=one?{xs:[0,sw],ys:[0,sh]}:gutters(sheet,threshold,neutral),gx=one?[0,sw]:G.xs,gy=one?[0,sh]:G.ys;
-  const x=gx[col]+margin,y=gy[row]+margin,w=gx[col+1]-gx[col]-margin*2,h=gy[row+1]-gy[row]-margin*2;
-  const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(sheet,x,y,w,h,0,0,w,h);
-  const im=cx.getImageData(0,0,w,h),d=im.data,n=w*h,allow=new Uint8Array(n),seen=new Uint8Array(n),q=new Int32Array(n);let head=0,tail=0;
+ function removeWhiteBackground(im,threshold,neutral){
+  const {width:w,height:h,data:d}=im,n=w*h,allow=new Uint8Array(n),seen=new Uint8Array(n),q=new Int32Array(n);let head=0,tail=0;
   for(let p=0,j=0;p<n;p++,j+=4){const r=d[j],g=d[j+1],b=d[j+2],hi=Math.max(r,g,b),lo=Math.min(r,g,b);if((r+g+b)/3>=threshold&&hi-lo<=neutral)allow[p]=1}
   const seed=p=>{if(p>=0&&p<n&&allow[p]&&!seen[p]){seen[p]=1;q[tail++]=p}};
   for(let xx=0;xx<w;xx++){seed(xx);seed((h-1)*w+xx)}
@@ -864,6 +865,15 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    if(a<.12){d[j+3]=0;continue}
    const aa=Math.max(.12,a);d[j]=Math.max(0,Math.min(255,(r-255*(1-aa))/aa));d[j+1]=Math.max(0,Math.min(255,(g-255*(1-aa))/aa));d[j+2]=Math.max(0,Math.min(255,(b-255*(1-aa))/aa));d[j+3]=Math.round(aa*255);
   }
+  return im;
+ }
+ function cropObject(sheet,index,threshold,neutral,margin,v=0){
+  const one=state.big[bigKey(v,index)];if(one)sheet=one;   /* 큰 그림을 불러온 소품은 그 그림 전체 */
+  const sw=sheet.naturalWidth,sh=sheet.naturalHeight,col=one?0:index%3,row=one?0:Math.floor(index/3);
+  const G=one?{xs:[0,sw],ys:[0,sh]}:gutters(sheet,threshold,neutral),gx=one?[0,sw]:G.xs,gy=one?[0,sh]:G.ys;
+  const x=gx[col]+margin,y=gy[row]+margin,w=gx[col+1]-gx[col]-margin*2,h=gy[row+1]-gy[row]-margin*2;
+  const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(sheet,x,y,w,h,0,0,w,h);
+  const im=removeWhiteBackground(cx.getImageData(0,0,w,h),threshold,neutral);
   cx.putImageData(im,0,0);
   const sp=specsOf(v)[index]||{},name=sp.name||`소품 ${index+1}`,isNew=v&&sheetCfg(v).mode==='new';
   const N=sheetCount();
@@ -896,10 +906,25 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   });
   if(state.props.length)selectProp(Math.min(state.selected,state.props.length-1));
  }
- function selectProp(i){state.selected=i;const p=state.props[i];if(!p)return;keepRect=null;$('#keepBar').classList.add('hidden');if($('#brushMode').value==='keep')$('#brushMode').value='erase';$('#itemThreshold').value=p.threshold||$('#threshold').value;$('#itemThresholdValue').value=$('#itemThreshold').value;$('#editName').textContent=p.name;paint($('#editCanvas'),p.image);$('#heightMin').value=p.height[0];$('#heightMax').value=p.height[1];$$('#propCards .prop-card').forEach((c,j)=>c.classList.toggle('selected',j===i));}
+ function selectProp(i){state.selected=i;const p=state.props[i];if(!p)return;$('#replaceProp').disabled=false;keepRect=null;$('#keepBar').classList.add('hidden');if($('#brushMode').value==='keep')$('#brushMode').value='erase';$('#itemThreshold').value=p.threshold||$('#threshold').value;$('#itemThresholdValue').value=$('#itemThreshold').value;$('#editName').textContent=p.name;paint($('#editCanvas'),p.image);$('#heightMin').value=p.height[0];$('#heightMax').value=p.height[1];$$('#propCards .prop-card').forEach((c,j)=>c.classList.toggle('selected',j===i));}
  /* 되돌리기(2026-11-09): 손질(칠하기·흰 틈·구역·조각 지우기) 바로 전 그림을 소품마다 10번까지 */
- function pushUndo(p){(p.undo=p.undo||[]).push(new ImageData(new Uint8ClampedArray(p.image.data),p.image.width,p.image.height));if(p.undo.length>10)p.undo.shift()}
- $('#undoEdit').addEventListener('click',()=>{const p=state.props[state.selected];if(!p||!p.undo||!p.undo.length)return;const im=p.undo.pop();if(im.width!==p.image.width||im.height!==p.image.height){p.image=im;p.source=new ImageData(new Uint8ClampedArray(im.data),im.width,im.height)}else p.image=im;paint($('#editCanvas'),p.image);renderPropCards();drawScene()});
+ function copyImageData(im){return new ImageData(new Uint8ClampedArray(im.data),im.width,im.height)}
+ function pushUndo(p){(p.undo=p.undo||[]).push({image:copyImageData(p.image),source:copyImageData(p.source)});if(p.undo.length>10)p.undo.shift()}
+ $('#undoEdit').addEventListener('click',()=>{const p=state.props[state.selected];if(!p||!p.undo||!p.undo.length)return;const previous=p.undo.pop();p.image=previous.image;p.source=previous.source;paint($('#editCanvas'),p.image);renderPropCards();drawScene()});
+ $('#replaceProp').addEventListener('click',()=>{if(!state.props[state.selected])return;$('#replacePropFile').click()});
+ $('#replacePropFile').addEventListener('change',async e=>{
+  const file=e.target.files[0],p=state.props[state.selected];if(!file||!p){e.target.value='';return}
+  try{
+   const img=await readImage(file),c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+   const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0);const replacement=cx.getImageData(0,0,c.width,c.height);
+   const threshold=Number($('#itemThreshold').value);removeWhiteBackground(replacement,threshold,Number($('#neutral').value));
+   if(!replacement.data.some((value,index)=>index%4===3&&value>8))throw new Error('흰 바탕을 지운 뒤 남는 그림이 없어요. 흰 바탕 기준을 낮추거나 다른 그림을 골라 주세요.');
+   pushUndo(p);p.threshold=threshold;p.source=copyImageData(replacement);p.image=copyImageData(replacement);defringe(p,2);
+   $('#replaceStatus').textContent=`${p.name} 그림을 바꿨어요. 마음에 들지 않으면 '되돌리기'를 누르세요.`;
+   renderPropCards();drawScene();
+  }catch(err){$('#replaceStatus').textContent=`그림을 바꾸지 못했어요: ${err.message}`}
+  finally{e.target.value=''}
+ });
  /* 흰 틈 지우기(2026-11-09 선생님): 누른 곳에서 이어진 밝고 무채색인 점들만 투명하게 — 둘레가 막혀 바깥에서 지우는 방식이 닿지 않는 가지 사이 흰 바탕.
     가장자리는 칸 나누기 때와 같이 '흰색과 섞인 정도'만큼 반투명으로 남겨 계단이 지지 않게 */
  function fillHole(p,x,y,thr){const {width:w,height:h,data:d}=p.image,n=w*h,s0=y*w+x;if(x<0||y<0||x>=w||y>=h)return 0;const neutral=Number($('#neutral').value)||32;
