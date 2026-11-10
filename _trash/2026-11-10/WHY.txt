@@ -1,0 +1,27 @@
+media/stage-beta/nature/new-desert/items/boulder-c.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-01-1.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-01-2.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-01-3.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-02-1.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-02-2.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-02-3.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-03-1.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-03-2.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-03-3.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-04-1.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-04-2.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-04-3.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-05-1.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-05-2.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-05-3.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-06-1.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-06-2.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-06-3.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-07-1.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-07-2.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-07-3.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-08-1.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-08-2.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/item-08-3.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/items/shrub-c.webp — 사막 베타: 빙 소품(그림자 포함, 해 방향 맞춤)으로 모두 바꿈
+media/stage-beta/nature/new-desert/standard.jpg — 사막 표준 장면: 해 방향(그림자)이 정한 빛과 반대라 바꿈

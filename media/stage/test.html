@@ -119,6 +119,7 @@
 
   /* 하나 놓기: 실제 높이(m)와 밑동 자리로 크기를 셈. base = 그림 높이 중 밑동 줄의 몫(그 아래는 투명 여백) */
   function place(pl, it, x, y, r, flip, extra) {
+    if (it.flip === false || it.ownShadow) flip = false;   // 그림자가 그림에 든 소품(빙, 2026-11-10)은 뒤집으면 해 방향이 거꾸로 됨
     const realH = Array.isArray(it.real) ? it.real[0] + (it.real[1] - it.real[0]) * r : (it.real || 1);
     const base = it.base ?? 1;
     const h = realH * perM(pl, y, it.bed) / base * (it.scale || 1);
@@ -300,7 +301,7 @@
       const B = pl.beds[o.bed] || {}, far = B.persp === false ? 0 : clamp(1 - (o.y - pl.horizon) / (1 - pl.horizon), 0, 1);
       const top = o.y - o.h * o.base, left = o.x - o.w / 2, fx = f => o.x + (o.flip ? -1 : 1) * o.w * (f - .5);
       const footL = Math.min(fx(o.foot[0]), fx(o.foot[1])), footR = Math.max(fx(o.foot[0]), fx(o.foot[1]));
-      if (B.persp !== false && sh > 0 && !o.noShadow && !(pl.items[o.id] || {}).soak) {   // 땅에 닿는 옅은 그림자(같은 방향·진하기) — 밑동 스며들기 한 소품은 안 그림(2026-11-10: 지운 모래 끝에 그림자만 남아 떠 보였음)
+      if (B.persp !== false && sh > 0 && !o.noShadow && !(pl.items[o.id] || {}).soak && !(pl.items[o.id] || {}).ownShadow) {   // 땅에 닿는 옅은 그림자(같은 방향·진하기) — 밑동 스며들기 한 소품은 안 그림(2026-11-10: 지운 모래 끝에 그림자만 남아 떠 보였음)
         const fw = (footR - footL) * 1.1, fh = Math.max(.006, fw * .16);
         mk('div', `left:${((footL + footR) / 2 - fw / 2) * 100}%;top:${(o.y - fh * .55) * 100}%;width:${fw * 100}%;height:${fh * 100}%;z-index:${z - 1};border-radius:50%;background:radial-gradient(closest-side,rgba(40,28,14,${sh}),rgba(40,28,14,0))`);
       }
