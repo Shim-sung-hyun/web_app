@@ -14,11 +14,17 @@ import numpy as np
 from PIL import Image
 
 
-def soak(path, band=.16, feat=.05, tol=70):
+def soak(path, band=.16, feat=.05, tol=100, ground=None):
     a = np.array(Image.open(path).convert('RGBA')).astype(float)
     al = a[..., 3] / 255; op = al > .4; H, W = op.shape
     ys = np.nonzero(op.any(1))[0]; yt, yb = ys[0], ys[-1]; hh = yb - yt + 1
-    lo = max(yt, yb - int(hh * .05)); ref = np.median(a[lo:yb + 1][..., :3][op[lo:yb + 1]], 0)
+    # 밑동 흙 색: 아래 20% 줄에서 투명한 바깥에 맞닿은 점들(흙 받침의 가장자리 — 몸통이 섞이지 않게)의 가운데 색
+    lo = max(yt, yb - int(hh * .2)); edge = op.copy(); inner = op.copy()
+    inner[1:] &= op[:-1]; inner[:-1] &= op[1:]; inner[:, 1:] &= op[:, :-1]; inner[:, :-1] &= op[:, 1:]; edge &= ~inner
+    for _ in range(3): g = edge.copy(); g[1:] |= edge[:-1]; g[:-1] |= edge[1:]; g[:, 1:] |= edge[:, :-1]; g[:, :-1] |= edge[:, 1:]; edge = g & op
+    sel = edge.copy(); sel[:lo] = False
+    px = a[..., :3][sel]; px = px[px.max(1) - px.min(1) > 25] if (px.max(1) - px.min(1) > 25).sum() > 50 else px   # 테두리 선(어두운 무채색)은 빼고
+    ref = np.median(px[px.sum(1) > np.percentile(px.sum(1), 40)], 0)   # 어두운 선을 덜 타게 밝은 쪽 60%
     s = np.clip(1 - np.sqrt(((a[..., :3] - ref) ** 2).sum(-1)) / tol, 0, 1)      # 밑동 흙다움
     # 밑동 띠: 기본 band, 납작한 소품처럼 흙이 더 높이 퍼졌으면 그 높이까지(아래에서 줄마다 흙다운 점이 절반 넘는 데까지, 그림 높이의 45%까지)
     top = yb
@@ -31,7 +37,11 @@ def soak(path, band=.16, feat=.05, tol=70):
         e += cur; n = cur.copy(); n[1:] &= cur[:-1]; n[:-1] &= cur[1:]; n[:, 1:] &= cur[:, :-1]; n[:, :-1] &= cur[:, 1:]; cur = n
     e = np.clip(e / N, 0, 1)
     fade = np.clip(s * (.95 * v + .85 * (1 - e) * vb) + (1 - s) * (1 - e) * np.maximum(v, .9 * vb), 0, 1)
+    rim = (e * N < 2.5) & (y > yt + hh * .5)   # 아래쪽 절반의 바깥 2~3점 — 흰 바탕을 지울 때 남은 밝은 테두리가 얇은 선으로 떠 보이지 않게
+    fade = np.where(rim, np.maximum(fade, .85), fade)
     a[..., 3] = al * (1 - fade) * 255
+    if ground is not None:   # 남는 밑동 흙의 색을 그 곳 배경 땅 색 쪽으로 옮김(명암은 그대로) — 반쯤 투명한 곳이 연한 얼룩으로 보이지 않게
+        a[..., :3] += (s * np.clip(v * 1.5 + (1 - e), 0, 1))[..., None] * (np.asarray(ground, float) - ref)
     Image.fromarray(a.clip(0, 255).astype(np.uint8), 'RGBA').save(path, 'WEBP', quality=95, alpha_quality=100, method=6)
 
 
@@ -40,6 +50,9 @@ if __name__ == '__main__':
     band = float(sys.argv[sys.argv.index('--band') + 1]) if '--band' in sys.argv else .16
     if '--band' in sys.argv: args.remove(sys.argv[sys.argv.index('--band') + 1])
     place = args[0]; sj = os.path.join(place, 'stage.json'); c = json.load(open(sj, encoding='utf-8'))
+    bgf = os.path.join(place, 'bg.jpg'); ground = None
+    if os.path.exists(bgf):   # 배경 맨 아래 15%의 가운데 색 = 그 곳 앞쪽 땅 색
+        g = np.array(Image.open(bgf).convert('RGB')).astype(float); ground = np.median(g[int(g.shape[0] * .85):].reshape(-1, 3), 0)
     names = args[1:] or list(c['items'])
     done = 0
     for k in names:
@@ -48,6 +61,6 @@ if __name__ == '__main__':
             continue
         f = os.path.join(place, 'items', k + '.webp')
         if os.path.exists(f):
-            soak(f, band); it['soak'] = band; done += 1
+            soak(f, band, ground=ground); it['soak'] = band; done += 1
     open(sj, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False, indent=1) + '\n')
     print('밑동 스며들기', done, '개 —', place)
