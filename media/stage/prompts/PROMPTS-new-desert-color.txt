@@ -1,0 +1,19 @@
+사막 베타 — 배경 색에 맞춘 소품 시범 프롬프트(2026-11-10)
+까닭: 판에서 받은 소품의 밑동 모래가 연노랑이라 배경의 주황 모래(#DA9E67)와 따로 놀았음. 밑동만 나중에 칠하면 어색해서, 처음부터 배경을 붙이고 그 색으로 받음.
+쓰는 법: Gemini 새 창 → 그림 두 장 붙이기 ① media/stage-beta/nature/new-desert/bg.jpg(사막 빈 배경) ② media/stage-beta/nature/new-desert/standard.jpg(그림풍)
+        → ▼~▲ 글을 통째로 붙여 넣기. 받은 그림은 대화에 올리면 Claude가 잘라 같은 이름 자리에 넣음.
+배경에서 잰 색: 모래 #DA9E67 (밝은 곳 #DDA169, 그늘 #C98A55) · 먼 바위 기둥 #B37A62 (그늘 #9A6958)
+
+━━━━━━━━ 시범 1 — 큰 둥근 바위 (item-06, 실제 1.5~3m)
+붙일 그림: ① 사막 빈 배경 bg.jpg ② 사막 표준 장면 standard.jpg
+▼
+The first attached picture is the empty desert background where this object will stand; the second shows the drawing style. Draw ONE object on a pure white background, as large as possible, in a wide picture: a big, rounded desert boulder, wider than it is tall, made of the SAME reddish-brown sandstone as the tall rock towers in the first picture (lit side about #B37A62, shaded side about #9A6958, with a few soft horizontal layer lines and small cracks). It must look as if it belongs in that exact desert: at its foot, warm orange sand in exactly the background's ground colour (#DA9E67, slightly darker #C98A55 right against the rock) has drifted up against the bottom of the boulder and thins out softly to the left and right, meeting the ground on ONE flat, level line. Do not use pale yellow, beige or grey sand. Never end the base with a vertical cut, a slab, a box-shaped base or a soil cross-section. The whole object must be visible with a clear white margin on all four sides. Seen from the front at eye level, light from the upper left like the background. No cast shadow, no background scenery, animals, people, faces in the rock, text, logo or watermark. Leave the bottom-right corner empty and white. Same flat-cartoon style, dark-brown outlines, muted colours and soft shading as the attached pictures. Draw fine detail: this picture will be shown large in the foreground.
+▲
+
+━━━━━━━━ 시범 2 — 마른 덤불 (item-04, 실제 0.8~1.5m)
+붙일 그림: ① 사막 빈 배경 bg.jpg ② 사막 표준 장면 standard.jpg
+▼
+The first attached picture is the empty desert background where this object will stand; the second shows the drawing style. Draw ONE object on a pure white background, as large as possible, in a wide picture: a low, dense dry desert shrub, a rounded mound of thin twisting twigs with a few small dusty olive-green leaves, wider than it is tall. Colour the twigs in warm greyish browns that sit well on the first picture's orange sand (about #8C6A4E and #A7845F, not pale straw yellow). It must look as if it grows in that exact desert: at its foot, warm orange sand in exactly the background's ground colour (#DA9E67, slightly darker #C98A55 in the shade under the shrub) with a few small reddish-brown pebbles gathers around the base and thins out softly to the left and right, meeting the ground on ONE flat, level line. Do not use pale yellow, beige or grey sand. Never end the base with a vertical cut, a slab, a box-shaped base or a soil cross-section, and no finger-like or claw-like twigs. The whole object must be visible with a clear white margin on all four sides. Seen from the front at eye level, light from the upper left like the background. No cast shadow, no background scenery, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Same flat-cartoon style, dark-brown outlines, muted colours and soft shading as the attached pictures. Draw fine detail: this picture will be shown large in the foreground.
+▲
+
+시범이 잘 되면: 같은 꼴(배경 붙이기 + 배경에서 잰 모래·바위 색 + '연노랑·베이지·회색 모래 쓰지 않기')을 설치도구 프롬프트에 넣어 모든 곳에 씀.
