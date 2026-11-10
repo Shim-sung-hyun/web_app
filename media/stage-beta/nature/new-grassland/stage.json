@@ -199,7 +199,8 @@
    ],
    "kind": "k1",
    "kindName": "아카시아 나무",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-02-1": {
    "name": "바오바브 나무 1",
@@ -215,7 +216,8 @@
    ],
    "kind": "k2",
    "kindName": "바오바브 나무",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-03-1": {
    "name": "키 큰 풀 무리 1",
@@ -231,7 +233,8 @@
    ],
    "kind": "k3",
    "kindName": "키 큰 풀 무리",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-04-1": {
    "name": "흰개미 둔덕 1",
@@ -247,7 +250,8 @@
    ],
    "kind": "k4",
    "kindName": "흰개미 둔덕",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-05-1": {
    "name": "바위 언덕 1",
@@ -263,7 +267,8 @@
    ],
    "kind": "k5",
    "kindName": "바위 언덕",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-06-1": {
    "name": "덤불 1",
@@ -279,7 +284,8 @@
    ],
    "kind": "k6",
    "kindName": "덤불",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-07-1": {
    "name": "바위 1",
@@ -294,7 +300,8 @@
     0.767
    ],
    "kind": "k7",
-   "kindName": "바위"
+   "kindName": "바위",
+   "soak": 0.16
   },
   "item-08-1": {
    "name": "마른 풀 포기 1",
@@ -309,7 +316,8 @@
     0.81
    ],
    "kind": "k8",
-   "kindName": "마른 풀 포기"
+   "kindName": "마른 풀 포기",
+   "soak": 0.16
   },
   "item-01-2": {
    "name": "아카시아 나무 2",
@@ -325,7 +333,8 @@
    ],
    "kind": "k1",
    "kindName": "아카시아 나무",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-02-2": {
    "name": "바오바브 나무 2",
@@ -341,7 +350,8 @@
    ],
    "kind": "k2",
    "kindName": "바오바브 나무",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-03-2": {
    "name": "키 큰 풀 무리 2",
@@ -357,7 +367,8 @@
    ],
    "kind": "k3",
    "kindName": "키 큰 풀 무리",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-04-2": {
    "name": "흰개미 둔덕 2",
@@ -373,7 +384,8 @@
    ],
    "kind": "k4",
    "kindName": "흰개미 둔덕",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-05-2": {
    "name": "바위 언덕 2",
@@ -389,7 +401,8 @@
    ],
    "kind": "k5",
    "kindName": "바위 언덕",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-06-2": {
    "name": "덤불 2",
@@ -405,7 +418,8 @@
    ],
    "kind": "k6",
    "kindName": "덤불",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-07-2": {
    "name": "바위 2",
@@ -420,7 +434,8 @@
     0.859
    ],
    "kind": "k7",
-   "kindName": "바위"
+   "kindName": "바위",
+   "soak": 0.16
   },
   "item-08-2": {
    "name": "마른 풀 포기 2",
@@ -435,7 +450,8 @@
     0.857
    ],
    "kind": "k8",
-   "kindName": "마른 풀 포기"
+   "kindName": "마른 풀 포기",
+   "soak": 0.16
   },
   "item-01-3": {
    "name": "부채꼴 덤불",
@@ -451,7 +467,8 @@
    ],
    "kind": "k3-1",
    "kindName": "부채꼴 덤불",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-02-3": {
    "name": "쓰러진 마른 나무",
@@ -467,7 +484,8 @@
    ],
    "kind": "k3-2",
    "kindName": "쓰러진 마른 나무",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-03-3": {
    "name": "큰 둥근 바위",
@@ -483,7 +501,8 @@
    ],
    "kind": "k3-3",
    "kindName": "큰 둥근 바위",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-04-3": {
    "name": "키 큰 풀 덤불",
@@ -499,7 +518,8 @@
    ],
    "kind": "k3-4",
    "kindName": "키 큰 풀 덤불",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-05-3": {
    "name": "작은 아카시아",
@@ -515,7 +535,8 @@
    ],
    "kind": "k3-5",
    "kindName": "작은 아카시아",
-   "role": "big"
+   "role": "big",
+   "soak": 0.16
   },
   "item-06-3": {
    "name": "흙 둔덕",
@@ -530,7 +551,8 @@
     0.874
    ],
    "kind": "k3-6",
-   "kindName": "흙 둔덕"
+   "kindName": "흙 둔덕",
+   "soak": 0.16
   },
   "item-07-3": {
    "name": "들꽃 포기",
@@ -545,7 +567,8 @@
     0.865
    ],
    "kind": "k3-7",
-   "kindName": "들꽃 포기"
+   "kindName": "들꽃 포기",
+   "soak": 0.16
   },
   "item-08-3": {
    "name": "작은 돌무더기",
@@ -560,7 +583,8 @@
     0.82
    ],
    "kind": "k3-8",
-   "kindName": "작은 돌무더기"
+   "kindName": "작은 돌무더기",
+   "soak": 0.16
   },
   "edge-1": {
    "name": "사막가장자리줄기",
