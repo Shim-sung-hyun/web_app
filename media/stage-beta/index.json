@@ -128,5 +128,41 @@
   "front": [],
   "missing": [],
   "skirt": []
+ },
+ "nature/new-polar": {
+  "name": "극지방",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "iceberg",
+   "iceberg-tall",
+   "icefield",
+   "snowridge",
+   "iceridge",
+   "iceridge-wide",
+   "snowrock-large",
+   "ice-rock",
+   "snowmound",
+   "lowmound",
+   "snowrock",
+   "snowboulder",
+   "icyrock",
+   "iceslab",
+   "iceblocks",
+   "icechunks",
+   "icepieces",
+   "floes",
+   "icedrift",
+   "icepile"
+  ],
+  "used_by": [],
+  "ready": false,
+  "far": [],
+  "front": [],
+  "missing": [],
+  "skirt": []
  }
 }

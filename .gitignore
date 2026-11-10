@@ -10,3 +10,9 @@ __pycache__/
 zz-*.html
 shots/
 node_modules/
+dist/
+dist-ssr/
+.vite/
+*.tsbuildinfo
+*.local
+

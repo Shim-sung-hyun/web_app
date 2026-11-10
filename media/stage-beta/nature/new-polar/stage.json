@@ -1,0 +1,465 @@
+{
+ "name": "극지방",
+ "view": "ground",
+ "horizon": 0.4,
+ "groundTop": 0.41,
+ "unit": 0.2,
+ "avoid": [],
+ "beds": {
+  "ground": {
+   "name": "땅",
+   "y": [
+    0.41,
+    1
+   ],
+   "persp": true,
+   "skirt": []
+  }
+ },
+ "noSkirt": true,
+ "compose": {
+  "clusters": [
+   3,
+   5
+  ],
+  "perCluster": [
+   1,
+   3
+  ],
+  "loose": [
+   4,
+   8
+  ],
+  "maxSame": 3,
+  "overlap": 0.2
+ },
+ "blocks": [
+  {
+   "name": "얼음 언덕 무리",
+   "n": [
+    1,
+    1
+   ],
+   "back": {
+    "kinds": [
+     "빙산",
+     "우뚝 솟은 빙산",
+     "얼음 벌판",
+     "넓은 얼음 언덕"
+    ],
+    "n": [
+     2,
+     3
+    ],
+    "scale": [
+     0.6,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "눈 덮인 큰 바위",
+     "얼음 바위",
+     "얼음 언덕"
+    ],
+    "n": [
+     1,
+     2
+    ]
+   },
+   "small": {
+    "kinds": [
+     "작은 얼음 조각",
+     "얼음 덩어리",
+     "눈 더미"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ],
+ "animals": [
+  {
+   "name": "북극곰",
+   "src": "animals/bukgeukgom.webp",
+   "real": 2.5,
+   "face": "R"
+  },
+  {
+   "name": "바다표범",
+   "src": "animals/badapyobeom.webp",
+   "real": 1.7,
+   "face": "R"
+  },
+  {
+   "name": "펭귄",
+   "src": "words/penggwin.webp",
+   "real": 1.0,
+   "face": "R"
+  },
+  {
+   "name": "북극여우",
+   "src": "animals/bukgeukyeou.webp",
+   "real": 0.9,
+   "face": "R"
+  },
+  {
+   "name": "바다코끼리",
+   "src": "animals/badakokkiri.webp",
+   "real": 3.0,
+   "face": "L"
+  },
+  {
+   "name": "순록",
+   "src": "animals/sullok.webp",
+   "real": 2.0,
+   "face": "L"
+  },
+  {
+   "name": "흰올빼미",
+   "src": "animals/huinolppaemi.webp",
+   "real": 0.6
+  },
+  {
+   "name": "북극토끼",
+   "src": "animals/bukgeuktokki.webp",
+   "real": 0.6,
+   "face": "R"
+  },
+  {
+   "name": "사향소",
+   "src": "animals/sahyangso.webp",
+   "real": 2.3,
+   "face": "R"
+  },
+  {
+   "name": "북극늑대",
+   "src": "animals/bukgeuknukdae.webp",
+   "real": 1.6,
+   "face": "R"
+  }
+ ],
+ "items": {
+  "iceberg": {
+   "name": "빙산",
+   "real": [
+    4,
+    10
+   ],
+   "role": "big",
+   "bed": "ground",
+   "kind": "iceberg",
+   "ground": [
+    0,
+    0.6
+   ],
+   "base": 0.9821,
+   "foot": [
+    0.006,
+    0.994
+   ],
+   "soak": 0.12
+  },
+  "iceberg-tall": {
+   "name": "우뚝 솟은 빙산",
+   "real": [
+    6,
+    12
+   ],
+   "role": "big",
+   "bed": "ground",
+   "kind": "iceberg",
+   "ground": [
+    0,
+    0.6
+   ],
+   "base": 0.9752,
+   "foot": [
+    0.037,
+    0.908
+   ],
+   "soak": 0.12
+  },
+  "icefield": {
+   "name": "얼음 벌판",
+   "real": [
+    3,
+    6
+   ],
+   "role": "big",
+   "bed": "ground",
+   "kind": "iceridge",
+   "ground": [
+    0,
+    0.7
+   ],
+   "base": 0.9826,
+   "foot": [
+    0.291,
+    0.679
+   ],
+   "soak": 0.12
+  },
+  "snowridge": {
+   "name": "눈 언덕",
+   "real": [
+    2,
+    4
+   ],
+   "role": "big",
+   "bed": "ground",
+   "kind": "snowridge",
+   "base": 0.9252,
+   "foot": [
+    0.021,
+    0.979
+   ],
+   "soak": 0.12
+  },
+  "iceridge": {
+   "name": "얼음 언덕",
+   "real": [
+    1.2,
+    2.5
+   ],
+   "bed": "ground",
+   "kind": "iceridge",
+   "base": 0.9451,
+   "foot": [
+    0.025,
+    0.975
+   ],
+   "soak": 0.12
+  },
+  "iceridge-wide": {
+   "name": "넓은 얼음 언덕",
+   "real": [
+    1.5,
+    3
+   ],
+   "role": "big",
+   "bed": "ground",
+   "kind": "iceridge",
+   "base": 0.9837,
+   "foot": [
+    0.01,
+    0.992
+   ],
+   "soak": 0.12
+  },
+  "snowrock-large": {
+   "name": "눈 덮인 큰 바위",
+   "real": [
+    1.5,
+    3
+   ],
+   "role": "big",
+   "bed": "ground",
+   "kind": "snowrock",
+   "base": 0.9877,
+   "foot": [
+    0.023,
+    0.961
+   ],
+   "soak": 0.12
+  },
+  "ice-rock": {
+   "name": "얼음 바위",
+   "real": [
+    1.2,
+    2.2
+   ],
+   "bed": "ground",
+   "kind": "icyrock",
+   "base": 0.9886,
+   "foot": [
+    0.036,
+    0.941
+   ],
+   "soak": 0.12
+  },
+  "snowmound": {
+   "name": "눈 더미",
+   "real": [
+    0.6,
+    1.5
+   ],
+   "bed": "ground",
+   "kind": "snowmound",
+   "base": 0.9548,
+   "foot": [
+    0.074,
+    0.933
+   ],
+   "soak": 0.12
+  },
+  "lowmound": {
+   "name": "낮은 눈 언덕",
+   "real": [
+    0.4,
+    1.0
+   ],
+   "bed": "ground",
+   "kind": "snowmound",
+   "base": 0.9474,
+   "foot": [
+    0.092,
+    0.844
+   ],
+   "soak": 0.12
+  },
+  "snowrock": {
+   "name": "눈 덮인 바위",
+   "real": [
+    0.6,
+    1.5
+   ],
+   "bed": "ground",
+   "kind": "snowrock",
+   "base": 0.9579,
+   "foot": [
+    0.168,
+    0.841
+   ],
+   "soak": 0.12
+  },
+  "snowboulder": {
+   "name": "눈 덮인 둥근 바위",
+   "real": [
+    0.7,
+    1.6
+   ],
+   "bed": "ground",
+   "kind": "snowrock",
+   "base": 0.964,
+   "foot": [
+    0.143,
+    0.851
+   ],
+   "soak": 0.12
+  },
+  "icyrock": {
+   "name": "얼음 바위 무리",
+   "real": [
+    0.6,
+    1.4
+   ],
+   "bed": "ground",
+   "kind": "icyrock",
+   "base": 0.9667,
+   "foot": [
+    0.129,
+    0.719
+   ],
+   "soak": 0.12
+  },
+  "iceslab": {
+   "name": "기운 얼음판",
+   "real": [
+    0.8,
+    1.8
+   ],
+   "bed": "ground",
+   "kind": "iceslab",
+   "base": 0.9688,
+   "foot": [
+    0.042,
+    0.833
+   ],
+   "soak": 0.12
+  },
+  "iceblocks": {
+   "name": "얼음 덩어리",
+   "real": [
+    0.8,
+    1.6
+   ],
+   "bed": "ground",
+   "kind": "icechunks",
+   "base": 0.9474,
+   "foot": [
+    0.242,
+    0.824
+   ],
+   "soak": 0.12
+  },
+  "icechunks": {
+   "name": "작은 얼음 조각",
+   "real": [
+    0.2,
+    0.5
+   ],
+   "bed": "ground",
+   "kind": "icechunks",
+   "base": 0.9455,
+   "foot": [
+    0.484,
+    0.651
+   ],
+   "soak": 0.12
+  },
+  "icepieces": {
+   "name": "얼음 파편들",
+   "real": [
+    0.4,
+    1.0
+   ],
+   "bed": "ground",
+   "kind": "icechunks",
+   "base": 0.98,
+   "foot": [
+    0.011,
+    0.824
+   ],
+   "soak": 0.12
+  },
+  "floes": {
+   "name": "유빙 조각",
+   "real": [
+    0.4,
+    1.0
+   ],
+   "bed": "ground",
+   "kind": "floes",
+   "base": 0.9614,
+   "foot": [
+    0.547,
+    0.711
+   ],
+   "soak": 0.12
+  },
+  "icedrift": {
+   "name": "눈 덮인 얼음 둔덕",
+   "real": [
+    1.0,
+    2.0
+   ],
+   "bed": "ground",
+   "kind": "snowridge",
+   "base": 0.9703,
+   "foot": [
+    0.01,
+    0.991
+   ],
+   "soak": 0.12
+  },
+  "icepile": {
+   "name": "얼음 더미",
+   "real": [
+    1.0,
+    1.8
+   ],
+   "bed": "ground",
+   "kind": "icechunks",
+   "base": 0.9863,
+   "foot": [
+    0.008,
+    0.991
+   ],
+   "soak": 0.12
+  }
+ },
+ "skirtMeta": {}
+}
