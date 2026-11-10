@@ -1,0 +1,716 @@
+{
+ "name": "초원",
+ "view": "ground",
+ "horizon": 0.4,
+ "groundTop": 0.41,
+ "unit": 0.2,
+ "avoid": [],
+ "beds": {
+  "ground": {
+   "name": "땅",
+   "y": [
+    0.4,
+    1
+   ],
+   "persp": true,
+   "skirt": []
+  }
+ },
+ "noSkirt": true,
+ "blocks": [
+  {
+   "name": "바위 언덕과 나무",
+   "n": [
+    0,
+    1
+   ],
+   "back": {
+    "kinds": [
+     "아카시아 나무",
+     "작은 아카시아",
+     "바오바브 나무"
+    ],
+    "n": [
+     2,
+     3
+    ],
+    "scale": [
+     0.6,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "바위 언덕",
+     "큰 둥근 바위"
+    ],
+    "n": [
+     1,
+     2
+    ]
+   },
+   "small": {
+    "kinds": [
+     "바위",
+     "마른 풀 포기"
+    ],
+    "n": [
+     1,
+     3
+    ],
+    "scale": [
+     0.4,
+     0.8
+    ]
+   }
+  },
+  {
+   "name": "풀숲",
+   "n": [
+    1,
+    1
+   ],
+   "back": {
+    "kinds": [
+     "키 큰 풀 무리",
+     "키 큰 풀 덤불"
+    ],
+    "n": [
+     3,
+     4
+    ],
+    "scale": [
+     0.8,
+     1.2
+    ]
+   },
+   "front": {
+    "kinds": [
+     "덤불",
+     "부채꼴 덤불"
+    ],
+    "n": [
+     1,
+     1
+    ]
+   },
+   "small": {
+    "kinds": [
+     "마른 풀 포기",
+     "들꽃 포기"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ],
+ "animals": [
+  {
+   "name": "사자",
+   "src": "animals/saja.webp",
+   "real": 2.4,
+   "face": "L"
+  },
+  {
+   "name": "얼룩말",
+   "src": "animals/eollukmal.webp",
+   "real": 2.4,
+   "face": "R"
+  },
+  {
+   "name": "기린",
+   "src": "animals/girin.webp",
+   "real": 5,
+   "face": "R"
+  },
+  {
+   "name": "코끼리",
+   "src": "animals/kokkiri.webp",
+   "real": 6,
+   "face": "L"
+  },
+  {
+   "name": "치타",
+   "src": "animals/chita.webp",
+   "real": 2,
+   "face": "R"
+  },
+  {
+   "name": "하이에나",
+   "src": "animals/haiena.webp",
+   "real": 1.5,
+   "face": "R"
+  },
+  {
+   "name": "가젤",
+   "src": "animals/gajel.webp",
+   "real": 1.2,
+   "face": "R"
+  },
+  {
+   "name": "물소",
+   "src": "animals/mulso.webp",
+   "real": 3,
+   "face": "L"
+  },
+  {
+   "name": "코뿔소",
+   "src": "animals/koppulso.webp",
+   "real": 4,
+   "face": "R"
+  },
+  {
+   "name": "타조",
+   "src": "animals/tajo.webp",
+   "real": 2.5,
+   "face": "R"
+  }
+ ],
+ "compose": {
+  "clusters": [
+   3,
+   5
+  ],
+  "perCluster": [
+   1,
+   3
+  ],
+  "loose": [
+   4,
+   8
+  ],
+  "maxSame": 3,
+  "overlap": 0.2
+ },
+ "items": {
+  "item-01-1": {
+   "name": "아카시아 나무 1",
+   "real": [
+    5,
+    8
+   ],
+   "bed": "ground",
+   "base": 1,
+   "foot": [
+    0.174,
+    0.83
+   ],
+   "kind": "k1",
+   "kindName": "아카시아 나무",
+   "role": "big"
+  },
+  "item-02-1": {
+   "name": "바오바브 나무 1",
+   "real": [
+    10,
+    15
+   ],
+   "bed": "ground",
+   "base": 0.9988,
+   "foot": [
+    0.153,
+    0.858
+   ],
+   "kind": "k2",
+   "kindName": "바오바브 나무",
+   "role": "big"
+  },
+  "item-03-1": {
+   "name": "키 큰 풀 무리 1",
+   "real": [
+    1.2,
+    2
+   ],
+   "bed": "ground",
+   "base": 0.9989,
+   "foot": [
+    0.038,
+    0.959
+   ],
+   "kind": "k3",
+   "kindName": "키 큰 풀 무리",
+   "role": "big"
+  },
+  "item-04-1": {
+   "name": "흰개미 둔덕 1",
+   "real": [
+    2,
+    4
+   ],
+   "bed": "ground",
+   "base": 1,
+   "foot": [
+    0.053,
+    0.967
+   ],
+   "kind": "k4",
+   "kindName": "흰개미 둔덕",
+   "role": "big"
+  },
+  "item-05-1": {
+   "name": "바위 언덕 1",
+   "real": [
+    2,
+    4
+   ],
+   "bed": "ground",
+   "base": 0.9971,
+   "foot": [
+    0,
+    0.993
+   ],
+   "kind": "k5",
+   "kindName": "바위 언덕",
+   "role": "big"
+  },
+  "item-06-1": {
+   "name": "덤불 1",
+   "real": [
+    1,
+    2
+   ],
+   "bed": "ground",
+   "base": 0.9987,
+   "foot": [
+    0,
+    0.992
+   ],
+   "kind": "k6",
+   "kindName": "덤불",
+   "role": "big"
+  },
+  "item-07-1": {
+   "name": "바위 1",
+   "real": [
+    0.4,
+    1
+   ],
+   "bed": "ground",
+   "base": 0.9942,
+   "foot": [
+    0.21,
+    0.767
+   ],
+   "kind": "k7",
+   "kindName": "바위"
+  },
+  "item-08-1": {
+   "name": "마른 풀 포기 1",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "bed": "ground",
+   "base": 0.9932,
+   "foot": [
+    0.165,
+    0.829
+   ],
+   "kind": "k8",
+   "kindName": "마른 풀 포기"
+  },
+  "item-01-2": {
+   "name": "아카시아 나무 2",
+   "real": [
+    5,
+    8
+   ],
+   "bed": "ground",
+   "base": 0.998,
+   "foot": [
+    0.134,
+    0.872
+   ],
+   "kind": "k1",
+   "kindName": "아카시아 나무",
+   "role": "big"
+  },
+  "item-02-2": {
+   "name": "바오바브 나무 2",
+   "real": [
+    10,
+    15
+   ],
+   "bed": "ground",
+   "base": 0.999,
+   "foot": [
+    0.058,
+    0.964
+   ],
+   "kind": "k2",
+   "kindName": "바오바브 나무",
+   "role": "big"
+  },
+  "item-03-2": {
+   "name": "키 큰 풀 무리 2",
+   "real": [
+    1.2,
+    2
+   ],
+   "bed": "ground",
+   "base": 1,
+   "foot": [
+    0.03,
+    0.977
+   ],
+   "kind": "k3",
+   "kindName": "키 큰 풀 무리",
+   "role": "big"
+  },
+  "item-04-2": {
+   "name": "흰개미 둔덕 2",
+   "real": [
+    2,
+    4
+   ],
+   "bed": "ground",
+   "base": 1,
+   "foot": [
+    0,
+    0.948
+   ],
+   "kind": "k4",
+   "kindName": "흰개미 둔덕",
+   "role": "big"
+  },
+  "item-05-2": {
+   "name": "바위 언덕 2",
+   "real": [
+    2,
+    4
+   ],
+   "bed": "ground",
+   "base": 0.9982,
+   "foot": [
+    0.015,
+    1
+   ],
+   "kind": "k5",
+   "kindName": "바위 언덕",
+   "role": "big"
+  },
+  "item-06-2": {
+   "name": "덤불 2",
+   "real": [
+    1,
+    2
+   ],
+   "bed": "ground",
+   "base": 0.9983,
+   "foot": [
+    0.054,
+    1
+   ],
+   "kind": "k6",
+   "kindName": "덤불",
+   "role": "big"
+  },
+  "item-07-2": {
+   "name": "바위 2",
+   "real": [
+    0.4,
+    1
+   ],
+   "bed": "ground",
+   "base": 0.9948,
+   "foot": [
+    0.231,
+    0.859
+   ],
+   "kind": "k7",
+   "kindName": "바위"
+  },
+  "item-08-2": {
+   "name": "마른 풀 포기 2",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "bed": "ground",
+   "base": 0.9951,
+   "foot": [
+    0.114,
+    0.857
+   ],
+   "kind": "k8",
+   "kindName": "마른 풀 포기"
+  },
+  "item-01-3": {
+   "name": "부채꼴 덤불",
+   "real": [
+    1.5,
+    2.5
+   ],
+   "bed": "ground",
+   "base": 1,
+   "foot": [
+    0.041,
+    0.961
+   ],
+   "kind": "k3-1",
+   "kindName": "부채꼴 덤불",
+   "role": "big"
+  },
+  "item-02-3": {
+   "name": "쓰러진 마른 나무",
+   "real": [
+    0.8,
+    1.5
+   ],
+   "bed": "ground",
+   "base": 0.9971,
+   "foot": [
+    0.082,
+    0.749
+   ],
+   "kind": "k3-2",
+   "kindName": "쓰러진 마른 나무",
+   "role": "big"
+  },
+  "item-03-3": {
+   "name": "큰 둥근 바위",
+   "real": [
+    2,
+    3.5
+   ],
+   "bed": "ground",
+   "base": 0.997,
+   "foot": [
+    0.009,
+    0.943
+   ],
+   "kind": "k3-3",
+   "kindName": "큰 둥근 바위",
+   "role": "big"
+  },
+  "item-04-3": {
+   "name": "키 큰 풀 덤불",
+   "real": [
+    1.5,
+    2.5
+   ],
+   "bed": "ground",
+   "base": 0.9976,
+   "foot": [
+    0.01,
+    0.991
+   ],
+   "kind": "k3-4",
+   "kindName": "키 큰 풀 덤불",
+   "role": "big"
+  },
+  "item-05-3": {
+   "name": "작은 아카시아",
+   "real": [
+    2,
+    4
+   ],
+   "bed": "ground",
+   "base": 0.9974,
+   "foot": [
+    0.016,
+    0.951
+   ],
+   "kind": "k3-5",
+   "kindName": "작은 아카시아",
+   "role": "big"
+  },
+  "item-06-3": {
+   "name": "흙 둔덕",
+   "real": [
+    0.5,
+    1
+   ],
+   "bed": "ground",
+   "base": 0.9946,
+   "foot": [
+    0.115,
+    0.874
+   ],
+   "kind": "k3-6",
+   "kindName": "흙 둔덕"
+  },
+  "item-07-3": {
+   "name": "들꽃 포기",
+   "real": [
+    0.2,
+    0.4
+   ],
+   "bed": "ground",
+   "base": 0.9955,
+   "foot": [
+    0.231,
+    0.865
+   ],
+   "kind": "k3-7",
+   "kindName": "들꽃 포기"
+  },
+  "item-08-3": {
+   "name": "작은 돌무더기",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "bed": "ground",
+   "base": 0.9951,
+   "foot": [
+    0.115,
+    0.82
+   ],
+   "kind": "k3-8",
+   "kindName": "작은 돌무더기"
+  },
+  "edge-1": {
+   "name": "사막가장자리줄기",
+   "real": [
+    4,
+    6
+   ],
+   "bed": "ground",
+   "base": 0.999,
+   "foot": [
+    0.093,
+    0.936
+   ],
+   "kind": "frame",
+   "kindName": "가장자리",
+   "role": "frame",
+   "frameShow": 0.55,
+   "frameY": [
+    0.96,
+    1
+   ]
+  }
+ },
+ "installation": {
+  "placements": {
+   "item-01-1": {
+    "x": 0.0932,
+    "y": 0.9778,
+    "width": 0.1737
+   },
+   "item-02-1": {
+    "x": 0.2951,
+    "y": 0.5526,
+    "width": 0.47
+   },
+   "item-03-1": {
+    "x": 0.5977,
+    "y": 0.9049,
+    "width": 0.1346
+   },
+   "item-04-1": {
+    "x": 0.7846,
+    "y": 0.5306,
+    "width": 0.12
+   },
+   "item-05-1": {
+    "x": 0.1642,
+    "y": 0.754,
+    "width": 0.1737
+   },
+   "item-06-1": {
+    "x": 0.3216,
+    "y": 0.7642,
+    "width": 0.1738
+   },
+   "item-07-1": {
+    "x": 0.5959,
+    "y": 0.6599,
+    "width": 0.1394
+   },
+   "item-08-1": {
+    "x": 0.8135,
+    "y": 0.6613,
+    "width": 0.1729
+   },
+   "item-01-2": {
+    "x": 0.5358,
+    "y": 0.4972,
+    "width": 0.1747
+   },
+   "item-02-2": {
+    "x": 0.1901,
+    "y": 0.5912,
+    "width": 0.35
+   },
+   "item-03-2": {
+    "x": 0.5398,
+    "y": 0.9143,
+    "width": 0.1561
+   },
+   "item-04-2": {
+    "x": 0.7148,
+    "y": 0.5807,
+    "width": 0.1
+   },
+   "item-05-2": {
+    "x": 0.0891,
+    "y": 0.7339,
+    "width": 0.1737
+   },
+   "item-06-2": {
+    "x": 0.4816,
+    "y": 0.5711,
+    "width": 0.1602
+   },
+   "item-07-2": {
+    "x": 0.6239,
+    "y": 0.669,
+    "width": 0.1723
+   },
+   "item-08-2": {
+    "x": 0.8387,
+    "y": 0.6692,
+    "width": 0.1517
+   },
+   "item-01-3": {
+    "x": 0.2101,
+    "y": 0.878,
+    "width": 0.1614
+   },
+   "item-02-3": {
+    "x": 0.3628,
+    "y": 0.6146,
+    "width": 0.18
+   },
+   "item-03-3": {
+    "x": 0.6859,
+    "y": 0.9606,
+    "width": 0.1546
+   },
+   "item-04-3": {
+    "x": 0.8957,
+    "y": 0.7576,
+    "width": 0.1563
+   },
+   "item-05-3": {
+    "x": 0.6176,
+    "y": 0.5256,
+    "width": 0.1664
+   },
+   "item-06-3": {
+    "x": 0.4232,
+    "y": 0.7394,
+    "width": 0.1529
+   },
+   "item-07-3": {
+    "x": 0.6538,
+    "y": 0.6691,
+    "width": 0.1723
+   },
+   "item-08-3": {
+    "x": 0.8711,
+    "y": 0.6692,
+    "width": 0.1597
+   },
+   "edge-1": {
+    "x": 1.15,
+    "y": 1.0545,
+    "width": 0.59
+   }
+  }
+ }
+}
