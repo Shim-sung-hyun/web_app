@@ -25,6 +25,7 @@
 
 ■ nature/new-grassland 초원(설치도구 첫 적용, 2026-11-10)
 - stage-beta에 배경·표준 장면·소품 25가지, blocks 2종, 동물 10종을 적용. 무대 보기와 숨기기 시험에서 확인.
+- 가장자리 큰 줄기(edge-1.webp)를 뿌리·풀 사이 흰 공간을 지운 그림으로 교체하고 판 5078·296에서 확인(2026-11-10).
 - 보기: test.html?root=stage-beta#nature/new-grassland · hide-test.html?place=nature/new-grassland
 
 ■ 다음
