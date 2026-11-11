@@ -471,56 +471,68 @@
   "animals": [
    {
     "name": "북극곰",
-    "src": "animals/bukgeukgom.webp",
+    "src": "animals/bukgeukgom-sk.webp",
     "real": 2.5,
     "face": "L"
    },
    {
     "name": "바다표범",
-    "src": "animals/badapyobeom.webp",
+    "src": "animals/badapyobeom-sk.webp",
     "real": 1.7,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "북극여우",
-    "src": "animals/bukgeukyeou.webp",
+    "src": "animals/bukgeukyeou-sk.webp",
     "real": 0.9,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "바다코끼리",
-    "src": "animals/badakokkiri.webp",
-    "real": 3.0,
+    "src": "animals/badakokkiri-sk.webp",
+    "real": 3,
     "face": "L"
    },
    {
     "name": "순록",
-    "src": "animals/sullok.webp",
-    "real": 2.0,
+    "src": "animals/sullok-sk.webp",
+    "real": 2,
     "face": "L"
    },
    {
     "name": "흰올빼미",
-    "src": "animals/huinolppaemi.webp",
+    "src": "animals/huinolppaemi-sk.webp",
     "real": 0.6
    },
    {
     "name": "북극토끼",
-    "src": "animals/bukgeuktokki.webp",
+    "src": "animals/bukgeuktokki-sk.webp",
     "real": 0.6,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "사향소",
-    "src": "animals/sahyangso.webp",
+    "src": "animals/sahyangso-sk.webp",
     "real": 2.3,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "북극늑대",
-    "src": "animals/bukgeuknukdae.webp",
+    "src": "animals/bukgeuknukdae-sk.webp",
     "real": 1.6,
-    "face": "R"
+    "face": "L"
+   },
+   {
+    "name": "퍼핀",
+    "src": "animals/peopin.webp",
+    "real": 0.3,
+    "face": "L"
+   },
+   {
+    "name": "뇌조",
+    "src": "animals/noejo.webp",
+    "real": 0.38,
+    "face": "L"
    }
   ],
   "props": "얼음 언덕 2~4\n눈 덮인 큰 바위 1.5~3\n얼음 덩어리 무리 1~2\n눈 더미 0.6~1.5\n눈 덮인 작은 바위 0.3~0.8\n얼음 조각 0.2~0.5\n툰드라 풀 포기 0.1~0.3\n눈 쌓인 마른 덤불 0.5~1",
