@@ -18,3 +18,4 @@ media/stage-beta/nature/new-polar/items/snowmound.webp — 극지 베타: 가는
 media/stage-beta/nature/new-polar/items/snowridge.webp — 극지 베타: 가는 선·밑동 눈이 녹아드는 새 그림으로 바꿈(원본 그대로 쓰기, 선생님)
 media/stage-beta/nature/new-polar/items/snowrock-large.webp — 극지 베타: 가는 선·밑동 눈이 녹아드는 새 그림으로 바꿈(원본 그대로 쓰기, 선생님)
 media/stage-beta/nature/new-polar/items/snowrock.webp — 극지 베타: 가는 선·밑동 눈이 녹아드는 새 그림으로 바꿈(원본 그대로 쓰기, 선생님)
+media/animals/bukgeukgom.webp — 북극곰 그림 바꿈(선생님: 예전 것이 극지 장면에서 튐 — 새 그림은 흰 털·가는 선)
