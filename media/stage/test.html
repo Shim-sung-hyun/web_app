@@ -301,7 +301,7 @@
       const B = pl.beds[o.bed] || {}, far = B.persp === false ? 0 : clamp(1 - (o.y - pl.horizon) / (1 - pl.horizon), 0, 1);
       const top = o.y - o.h * o.base, left = o.x - o.w / 2, fx = f => o.x + (o.flip ? -1 : 1) * o.w * (f - .5);
       const footL = Math.min(fx(o.foot[0]), fx(o.foot[1])), footR = Math.max(fx(o.foot[0]), fx(o.foot[1]));
-      if (B.persp !== false && sh > 0 && !o.noShadow && !(pl.items[o.id] || {}).soak && !(pl.items[o.id] || {}).ownShadow) {   // 땅에 닿는 옅은 그림자(같은 방향·진하기) — 밑동 스며들기 한 소품은 안 그림(2026-11-10: 지운 모래 끝에 그림자만 남아 떠 보였음)
+      if (B.persp !== false && sh > 0 && !o.noShadow && !pl.noShadow && !(pl.items[o.id] || {}).soak && !(pl.items[o.id] || {}).ownShadow) {   // 땅에 닿는 옅은 그림자(같은 방향·진하기) — 밑동 스며들기 한 소품은 안 그림(2026-11-10: 지운 모래 끝에 그림자만 남아 떠 보였음)
         const fw = (footR - footL) * 1.1, fh = Math.max(.006, fw * .16);
         mk('div', `left:${((footL + footR) / 2 - fw / 2) * 100}%;top:${(o.y - fh * .55) * 100}%;width:${fw * 100}%;height:${fh * 100}%;z-index:${z - 1};border-radius:50%;background:radial-gradient(closest-side,rgba(40,28,14,${sh}),rgba(40,28,14,0))`);
       }

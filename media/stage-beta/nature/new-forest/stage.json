@@ -774,5 +774,6 @@
    "real": 2.6,
    "face": "R"
   }
- ]
+ ],
+ "noShadow": true
 }
