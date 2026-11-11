@@ -37,11 +37,11 @@ def soak(path, band=.16, feat=.05, tol=100, ground=None):
         e += cur; n = cur.copy(); n[1:] &= cur[:-1]; n[:-1] &= cur[1:]; n[:, 1:] &= cur[:, :-1]; n[:, :-1] &= cur[:, 1:]; cur = n
     e = np.clip(e / N, 0, 1)
     fade = np.clip(s * (.95 * v + .85 * (1 - e) * vb) + (1 - s) * (1 - e) * np.maximum(v, .9 * vb), 0, 1)
-    rim = (e * N < 2.5) & (y > yt + hh * .5)   # 아래쪽 절반의 바깥 2~3점 — 흰 바탕을 지울 때 남은 밝은 테두리가 얇은 선으로 떠 보이지 않게
+    rim = (e * N < 2.5) & (y > yb - B)   # 스며들기 띠 안의 바깥 2~3점만(2026-11-11: 아래쪽 절반 전체로 하면 원래 진한 테두리 선까지 지워짐)
     fade = np.where(rim, np.maximum(fade, .85), fade)
     a[..., 3] = al * (1 - fade) * 255
     if ground is not None:   # 남는 밑동 흙의 색을 그 곳 배경 땅 색 쪽으로 옮김(명암은 그대로) — 반쯤 투명한 곳이 연한 얼룩으로 보이지 않게
-        a[..., :3] += (s * np.clip(v * 1.5 + (1 - e), 0, 1))[..., None] * (np.asarray(ground, float) - ref)
+        a[..., :3] += (s * np.clip(v * 1.5 + (1 - e), 0, 1) * vb)[..., None] * (np.asarray(ground, float) - ref)   # 스며들기 띠 안에서만(2026-11-11: 띠 밖 테두리 선까지 땅 색이 되던 것)
     Image.fromarray(a.clip(0, 255).astype(np.uint8), 'RGBA').save(path, 'WEBP', quality=95, alpha_quality=100, method=6)
 
 
