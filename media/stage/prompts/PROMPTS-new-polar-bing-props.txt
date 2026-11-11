@@ -1,0 +1,164 @@
+북극 베타 — 소품 23개를 빙 연필풍으로(2026-11-11, 선생님: 배경을 빙 연필풍으로 바꿨으니 소품도)
+붙일 그림: media/stage-beta/nature/new-polar/bg.jpg(새 연필풍 배경) 한 장. 빙은 한 번에 4판 — 좋은 것 하나만 골라 이름(영어 id)과 함께 올림.
+받으면 Claude가 같은 이름으로 바꿔 넣음(흰 바탕은 선을 벽 삼아 바깥부터 지움, 다른 규칙은 적용 안 함 — 북극은 원본 그대로). 예전 만화풍은 _trash.
+
+━━━━━━━━ 1. 우뚝 솟은 빙산 (iceberg-tall, 실제 6~12m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a tall, jagged iceberg with two or three sharp peaks and smooth blue-white faces.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 2. 빙산 (iceberg, 실제 4~10m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a wide, flat-topped iceberg with steep cracked sides, much wider than it is tall.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 3. 얼음 벌판 (icefield, 실제 3~6m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a wide, low field of broken pack ice: many flat, irregular ice slabs tilted against each other, spreading out gently and much wider than it is tall.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 4. 눈 언덕 (snowridge, 실제 2~4m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a long, low, smooth snow ridge with soft rounded curves, much wider than it is tall.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 5. 넓은 얼음 언덕 (iceridge-wide, 실제 1.5~3m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a broad, gently sloping hill of jumbled pale blue ice plates and snow, spreading out widely at its base.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 6. 눈 덮인 큰 바위 (snowrock-large, 실제 1.5~3m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a big grey rock, wider than it is tall, with a thick cap of snow on top and a little snow in its cracks.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 7. 얼음 언덕 (iceridge, 실제 1.2~2.5m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a low ridge of pale blue ice with soft, rounded, melted-looking edges, wider than it is tall.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 8. 얼음 바위 (ice-rock, 실제 1.2~2.2m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a big rounded lump of clear pale-blue glacier ice with a few soft cracks and a thin layer of snow on top.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 9. 얼음 바위 2 (ice-rock-2, 실제 1.2~2.2m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a tall, chunky block of glacier ice with smooth faces, sharp edges and a little snow on top.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 10. 눈 덮인 얼음 둔덕 (icedrift, 실제 1~2m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a low, wide mound of blue ice mostly covered by a thick, smooth blanket of snow.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 11. 기운 얼음판 (iceslab, 실제 0.8~1.8m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a single thick slab of clear blue ice standing upright and leaning a little to one side, with a few cracks.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 12. 얼음 더미 (icepile, 실제 1~1.8m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a rough heap of broken ice blocks with uneven edges and a little snow between them, spreading out gently at the base.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 13. 기운 얼음판 2 (iceslab-2, 실제 0.8~1.8m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: two thick slabs of clear ice leaning against each other, with a few cracks.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 14. 눈 덮인 둥근 바위 (snowboulder, 실제 0.7~1.6m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a round, smooth grey boulder, half covered with snow.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 15. 얼음 덩어리 (iceblocks, 실제 0.8~1.6m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a small pile of irregular, rounded ice chunks of different sizes, spreading out gently at the base (not neat cubes or bricks).
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 16. 눈 더미 (snowmound, 실제 0.6~1.5m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a soft, rounded heap of fresh snow, a little wider than it is tall.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 17. 눈 덮인 바위 (snowrock, 실제 0.6~1.5m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a medium-sized grey rock with a soft cap of snow on top.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 18. 얼음 바위 무리 (icyrock, 실제 0.6~1.4m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a small group of two or three grey rocks close together, with patches of ice and snow on them.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 19. 낮은 눈 언덕 2 (lowmound-2, 실제 0.5~1.2m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a very low, long mound of snow with two soft humps, much wider than it is tall.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 20. 낮은 눈 언덕 (lowmound, 실제 0.4~1m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a very low, gently rounded mound of snow, much wider than it is tall.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 21. 얼음 파편들 (icepieces, 실제 0.4~1m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a low scatter of broken flat ice pieces and small ice shards lying close together, much wider than it is tall.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 22. 유빙 조각 (floes, 실제 0.4~1m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: two or three flat, rounded floating ice floes stranded on the snow, overlapping a little, much wider than they are tall.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 23. 작은 얼음 조각 (icechunks, 실제 0.2~0.5m)
+▼
+The attached picture is the empty Arctic background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, almost no colour (only a very pale blue-grey tint on ice and a light grey on rock), white paper look. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: three or four small, irregular pieces of pale blue ice lying close together.
+Draw the outline of the object closed all the way around, so it is clearly separated from the white paper. It rests on snow: just under it there are only a few short, faint horizontal pencil strokes that fade into the white paper — no ground patch, no slab, no box-shaped base, no outline under it. The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. Soft daylight from the upper left behind the viewer; do not draw the sun, no cast shadow. No sea, no background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
