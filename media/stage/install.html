@@ -606,6 +606,24 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     }
     return tot ? vis / tot : 0;
   }
+  /* 깔림(2026-11-11 선생님: 사향소·흰올빼미가 소품에 깔림): 동물 몸의 같은 세로줄에서 위는 앞 소품에 가려지고 그 아래가 보이면 소품이 동물을 누르는 것처럼 보임.
+     그런 세로줄이 보이는 세로줄의 몫(0~1). 위가 보이고 아래가 가려짐(소품 위로 나옴)·줄 전체 보임/가림(옆으로 나옴)은 괜찮음. 화면 밖은 셈하지 않음 */
+  function crushOf(pl, lay, A) {
+    const M = maskOf(A.img), front = lay.filter(o => o !== A && depthY(o) > depthY(A) && (o.img || (pl.items[o.id] || {}).img));
+    let cols = 0, bad = 0;
+    for (let i = 0; i < M.w; i++) {
+      let covered = false, seenVis = false, crushed = false;
+      for (let j = 0; j < M.h; j++) {
+        if (!M.m || !M.m[j * M.w + i]) continue;
+        const u = (A.flip ? M.w - 1 - i : i) + .5, fx = A.x - A.w / 2 + A.w * u / M.w, fy = A.y - A.h * A.base + A.h * (j + .5) / M.h;
+        if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue;
+        const hid = front.some(o => solidAt(o, o.img || pl.items[o.id].img, fx, fy));
+        if (hid) covered = true; else { if (covered) crushed = true; seenVis = true; }
+      }
+      if (seenVis) { cols++; if (crushed) bad++; }
+    }
+    return cols ? bad / cols : 0;
+  }
   function hide(pl, lay, a, opt = {}) {
     const R = rnd(opt.seed ?? Math.floor(Math.random() * 1e9)), want = opt.visible || [.25, .4], mid = (want[0] + want[1]) / 2;
     const M = maskOf(a.img), bw = (M.box[2] - M.box[0]) / M.w, bh = (M.box[3] - M.box[1]) / M.h, long = Math.max(bw * (M.w / Math.max(M.w, M.h)) * .75 / .75, bh * (M.h / Math.max(M.w, M.h)));
@@ -618,7 +636,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
     const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
-    const tryAt = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x + A.w * .3 < 0 || A.x - A.w * .3 > 1) return;   // 화면 가장자리로 코·꼬리만 내밀어도 됨(선생님 2026-11-09) — 화면 밖은 가려진 것으로 셈
+    const tryAt0 = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x + A.w * .3 < 0 || A.x - A.w * .3 > 1) return;   // 화면 가장자리로 코·꼬리만 내밀어도 됨(선생님 2026-11-09) — 화면 밖은 가려진 것으로 셈
       if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;
       if (!footOnGround(pl, A, covers) || covers.some(f => !coversRoots(f, A))) return;   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
       /* 깔린 것처럼 보이지 않게(2026-11-09 선생님: 곰·너구리가 뿌리에 깔림): 가까운 줄기(frame)와는 겹치지 않고,
@@ -632,12 +650,15 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       lay.push(A); if (extra) lay.push(extra); const v = visibleOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
       const floor = Math.max(.04, want[0] * .5);
       if (v < floor) return;   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
+      lay.push(A); if (extra) lay.push(extra); const cr = crushOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
+      if (cr > (opt.crush ?? .08)) return 'crush';   // 깔린 자리는 버림(좌우를 뒤집어 다시 해 봄 — 아래 tryAt)
       lay.push(A); if (extra) lay.push(extra);   // 먼저 숨긴 동물을 이 동물·새 소품이 앞에서 덮지 않게
       const hurt = lay.some(o => o.animal && o !== A && visibleOf(pl, lay, o) < Math.max(.04, (o.want || want)[0] * .5)); lay.pop(); if (extra) lay.pop(); if (hurt) return;
       /* 얼굴(2026-11-09): 상·스페셜(opt.face 'hide')은 얼굴이 대부분 가려지고 등·꼬리·귀 같은 단서만, 하('show')는 얼굴이 잘 보이게 — 얼굴 = 머리 쪽(008 FACE) 앞 40%·위 65% */
       if (opt.face && a.face) { const reg = a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]; lay.push(A); if (extra) lay.push(extra); const fv = visibleOf(pl, lay, A, reg); lay.pop(); if (extra) lay.pop();
         if (opt.face === 'hide' && fv > .35) return; if (opt.face === 'show' && fv < .6) return; }
       const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0); if (!best || sc < best.sc) best = {sc, A, v, extra}; };
+    const tryAt = (x, y, flip, extra) => { if (tryAt0(x, y, flip, extra) === 'crush') tryAt0(x, y, !flip, extra); };   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
     const flip0 = () => R() < .5;
     for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03 && (pl.items[o.id] || {}).role !== 'frame')) {   // 놓인 소품 바로 뒤(가까운 줄기 뒤엔 안 숨음)
       for (let t = 0; t < 10; t++) { const y = Math.max(B.y[0], o.y - .004 - R() * .03), x = o.x + (R() - .5) * o.w * .9; tryAt(x, y, flip0()); }
@@ -665,7 +686,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 
-  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, maskOf, footOnGround, BASE};
+  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, crushOf, maskOf, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>
