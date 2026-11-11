@@ -33,3 +33,8 @@
 - 수학 영역 색: 청록 #1B6E87, 연한 모눈 바탕, 흰 카드 왼쪽 띠, 제목 옆 1·0·0 네모. 숫자는 늘 한 색(자리마다 색을 바꾸지 않음).
 - 한 수업은 한 목소리(소리 조각을 하나라도 못 받으면 처음 화면으로 갈 때까지 기기 목소리 + 아래에 알림).
 - http 주소에서도 내장 목소리(SHA-1 직접 계산). 전자칠판 터치(수 화면은 닿는 순간, 단추는 60px·취소도 누름). 휴대폰 위 줄 좌우 밀기.
+
+학생 명단(2026-11-11)
+  학생 넣기·빼기는 공통 모듈 roster(common/roster.js, 앱 안 <script id="roster"> — 손으로 고치지 않음, tools/sync-modules.py).
+  명단 webapp.students(다른 앱과 함께), 뺀 학생은 webapp.students.out, 이 앱 기록(placeValue.log)은 6개월 보관 뒤 Roster.purge로 지움. 캡처 05가 기록 창.
+  place-value-beta.html은 옮기지 않았음(예전 명단 코드 그대로).

@@ -19,4 +19,6 @@ GitHub 주소:          https://shim-sung-hyun.github.io/web_app/006/place-count
   16개 모두 소리 모음에 있음(억·조·십조·백조·천조 5개는 2026-10-23 voice-maker로 만들어 넣고 페이지는 지움).
 
 저장 칸: placeCount.unit · target · snd · log, 학생 명단 webapp.students (다른 앱과 함께)
+  2026-11-11부터 학생 넣기·빼기는 공통 모듈 roster(common/roster.js, 앱 안 <script id="roster"> — 손으로 고치지 않음, tools/sync-modules.py).
+  뺀 학생은 webapp.students.out, 이 앱 기록(placeCount.log)은 6개월 보관 뒤 Roster.purge로 지움. 캡처 05가 기록 창.
 기록은 그 기기 브라우저에만. 서버에는 아무것도 저장하지 않음. 앱 안의 자료는 GitHub 절대 주소로.

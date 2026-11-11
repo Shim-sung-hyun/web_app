@@ -44,3 +44,4 @@ media/stage-beta/nature/new-polar/items/lowmound-2.webp — 빙 연필풍으로 
 007/words-step2-grade1.txt — 007 예전 판 자료·옛 베타 홍보 그림 — 버전 1과 설명서 어디서도 부르지 않음(2026-11-11 전체 점검)
 007/words-step3-grade2.txt — 007 예전 판 자료·옛 베타 홍보 그림 — 버전 1과 설명서 어디서도 부르지 않음(2026-11-11 전체 점검)
 007/word-learn-beta-promo.jpg — 007 예전 판 자료·옛 베타 홍보 그림 — 버전 1과 설명서 어디서도 부르지 않음(2026-11-11 전체 점검)
+008/find_hidden_animals_game.html — 어디서도 부르지 않는 시험 파일(총괄 점검, 선생님 확인)
