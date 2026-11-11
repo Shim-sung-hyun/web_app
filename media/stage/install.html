@@ -702,13 +702,13 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       if (r === 'crush') r = tryAt0(x, y, (flip = !flip), extra);   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
       for (let k = 1; r === 'see' && k <= 6; k++) r = tryAt0(x, Math.max(B.y[0], y - .006 * k), flip, extra);   // 비치면 조금씩 뒤로(원근으로 작아지고 발이 소품 몸통 뒤로)
     };   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
-    const flip0 = () => R() < .5;
+    const flip0 = () => R() < .5, good = () => best && best.sc < (opt.enough ?? .03);   // 빠르게(2026-11-11): 몫 가운데에 충분히 가까운 자리를 찾으면 그만 찾음
     for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03 && (pl.items[o.id] || {}).role !== 'frame')) {   // 놓인 소품 바로 뒤(가까운 줄기 뒤엔 안 숨음)
-      for (let t = 0; t < 10; t++) { const y = Math.max(B.y[0], o.y - .004 - R() * .03), x = o.x + (R() - .5) * o.w * .9; tryAt(x, y, flip0()); }
+      if (good()) break; for (let t = 0; t < 10; t++) { const y = Math.max(B.y[0], o.y - .004 - R() * .03), x = o.x + (R() - .5) * o.w * .9; tryAt(x, y, flip0()); }
     }
     /* 여럿이 함께 가리는 자리(2026-11-09 선생님: 곰도 멀리 두면 작아짐 — 나무 두세 그루 뒤, 앞 바위 + 뒤 나무 묶음 뒤, 화면 가장자리):
        한 소품 바로 뒤만이 아니라 자리 전체(먼 곳·좌우 가장자리 포함)를 고루 찾아 앞의 모든 것이 함께 가린 몫으로 셈 */
-    if (!best || best.sc > .2) for (let t = 0; t < 120; t++) {
+    if (!best || best.sc > .2) for (let t = 0; t < 120 && !good(); t++) {
       const y = B.y[0] + (B.y[1] - B.y[0]) * Math.pow(R(), 1.6), x = R() < .2 ? (R() < .5 ? -.02 + R() * .06 : .96 + R() * .06) : .05 + R() * .9;   // 먼 쪽을 더 자주
       tryAt(x, y, flip0());
     }
@@ -717,7 +717,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       /* 많이 가려야 하면(어려움) 동물보다 크게 그려질 수 있는 소품만(2026-11-09 선생님: 어려움인데 곰·호랑이가 다 보임) */
       const needH = want[1] < .3 ? .85 : want[1] < .5 ? .6 : .45;
       const big = pool.filter(i => realMax(i) * (i.base ? 1 / i.base : 1) >= a.real * .55 * needH);
-      for (let t = 0; t < 200; t++) {
+      for (let t = 0; t < 200 && !good(); t++) {
         const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), src = big.length && R() < .8 ? big : pool, it = src[Math.floor(R() * src.length)];
         if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), .5 + R() * .5, R() < .5); P.skirt = null;
         if (P.h < A0.h * needH || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
@@ -732,11 +732,11 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   /* 여러 마리 숨기기(2026-11-11 선생님: 스페셜은 6마리가 꼭 되게): 동물을 차례로 숨기고(못 지키는 동물은 건너뜀), n마리가 안 되면
      판(소품 배치)을 새로 짜서 다시 — tries번까지, 가장 많이 숨긴 판을 돌려줌. compose 옵션은 opt.compose, 판마다 숨기기 옵션은 opt.hide(seed는 판마다 바뀜) */
   function hideMany(pl, animals, n, opt = {}) {
-    const seed0 = opt.seed ?? Math.floor(Math.random() * 1e9), tries = opt.tries ?? 12; let best = null;
+    const seed0 = opt.seed ?? Math.floor(Math.random() * 1e9), tries = opt.tries ?? 12, miss = new Map(); let best = null;
     for (let t = 0; t < tries; t++) {
       const seed = seed0 + t * 7919, lay = compose(pl, Object.assign({}, opt.compose, {seed})), R = rnd(seed), out = [];
-      const pick = animals.slice().sort(() => R() - .5);
-      for (let i = 0; i < pick.length && out.length < n; i++) { const A = hide(pl, lay, pick[i], Object.assign({}, opt.hide, {seed: seed + i * 7})); if (A) out.push(A); }
+      const pick = animals.slice().sort(() => R() - .5).sort((p, q) => (miss.get(p) || 0) - (miss.get(q) || 0));   // 앞 판에서 못 숨긴 동물은 뒤로(빠르게)
+      for (let i = 0; i < pick.length && out.length < n; i++) { const A = hide(pl, lay, pick[i], Object.assign({}, opt.hide, {seed: seed + i * 7})); if (A) out.push(A); else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
       if (!best || out.length > best.out.length) best = {lay, out, seed};
       if (out.length >= n) break;
     }
