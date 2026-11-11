@@ -51,8 +51,10 @@ def cut(src, dst, white=253, wall_lum=200, fill_lum=238, soft=40, heavy=17):
     a = np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1))) / 255.0
     a[a < 0.03] = 0
     out = Image.fromarray(np.dstack([wb, a * 255]).astype(np.uint8), 'RGBA')
-    bb = out.split()[-1].point(lambda v: 255 if v > 20 else 0).getbbox()
-    out = out.crop((max(0, bb[0] - 4), max(0, bb[1] - 4), min(w, bb[2] + 4), min(h, bb[3] + 4)))
+    # 둘레는 확실히 칠해진 곳(알파>128)으로 재고 조금(긴 변의 3%) 넓힘 — 종이 결·흐린 점이 멀리 있어도 그림이 커지지 않게
+    bb = out.split()[-1].point(lambda v: 255 if v > 128 else 0).getbbox()
+    pad = int(0.03 * max(bb[2] - bb[0], bb[3] - bb[1]))
+    out = out.crop((max(0, bb[0] - pad), max(0, bb[1] - pad), min(w, bb[2] + pad), min(h, bb[3] + pad)))
     out.save(dst, quality=92)
     return paper, out.size, bg.mean()
 

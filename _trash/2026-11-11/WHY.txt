@@ -33,3 +33,6 @@ media/stage-beta/nature/new-polar/items/iceberg-tall.webp — 빙 연필풍으�
 media/stage-beta/nature/new-polar/items/iceberg.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)
 media/stage-beta/nature/new-polar/items/icefield.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)
 media/stage-beta/nature/new-polar/items/snowridge.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)
+media/stage-beta/nature/new-polar/items/ice-rock-2.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)
+media/stage-beta/nature/new-polar/items/iceslab-2.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)
+media/stage-beta/nature/new-polar/items/lowmound-2.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)

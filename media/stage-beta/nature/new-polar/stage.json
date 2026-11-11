@@ -161,10 +161,10 @@
     0,
     0.6
    ],
-   "base": 0.99,
+   "base": 0.951,
    "foot": [
-    0.32,
-    0.734
+    0.237,
+    0.739
    ]
   },
   "iceberg-tall": {
@@ -180,10 +180,10 @@
     0,
     0.6
    ],
-   "base": 0.9905,
+   "base": 0.9463,
    "foot": [
-    0.202,
-    0.726
+    0.2,
+    0.716
    ]
   },
   "icefield": {
@@ -199,10 +199,10 @@
     0,
     0.7
    ],
-   "base": 0.7027,
+   "base": 0.9336,
    "foot": [
-    0.132,
-    0.788
+    0.138,
+    0.783
    ]
   },
   "snowridge": {
@@ -214,10 +214,10 @@
    "role": "big",
    "bed": "ground",
    "kind": "snowridge",
-   "base": 0.7251,
+   "base": 0.9848,
    "foot": [
-    0.31,
-    0.75
+    0.315,
+    0.752
    ]
   },
   "iceridge": {
@@ -228,10 +228,10 @@
    ],
    "bed": "ground",
    "kind": "iceridge",
-   "base": 0.971,
+   "base": 0.942,
    "foot": [
-    0.328,
-    0.56
+    0.188,
+    0.825
    ]
   },
   "iceridge-wide": {
@@ -243,10 +243,10 @@
    "role": "big",
    "bed": "ground",
    "kind": "iceridge",
-   "base": 0.9984,
+   "base": 0.9566,
    "foot": [
-    0.175,
-    0.718
+    0.248,
+    0.596
    ]
   },
   "snowrock-large": {
@@ -258,10 +258,10 @@
    "role": "big",
    "bed": "ground",
    "kind": "snowrock",
-   "base": 0.98,
+   "base": 0.9624,
    "foot": [
-    0.201,
-    0.71
+    0.276,
+    0.673
    ]
   },
   "ice-rock": {
@@ -272,10 +272,10 @@
    ],
    "bed": "ground",
    "kind": "icyrock",
-   "base": 0.9731,
+   "base": 0.9576,
    "foot": [
-    0.214,
-    0.71
+    0.146,
+    0.864
    ]
   },
   "snowmound": {
@@ -286,10 +286,10 @@
    ],
    "bed": "ground",
    "kind": "snowmound",
-   "base": 0.9661,
+   "base": 0.9682,
    "foot": [
-    0.193,
-    0.722
+    0.284,
+    0.792
    ]
   },
   "lowmound": {
@@ -300,10 +300,10 @@
    ],
    "bed": "ground",
    "kind": "snowmound",
-   "base": 0.9834,
+   "base": 0.9348,
    "foot": [
-    0.336,
-    0.686
+    0.227,
+    0.748
    ]
   },
   "snowrock": {
@@ -314,10 +314,10 @@
    ],
    "bed": "ground",
    "kind": "snowrock",
-   "base": 0.9815,
+   "base": 0.9576,
    "foot": [
-    0.245,
-    0.753
+    0.237,
+    0.655
    ]
   },
   "snowboulder": {
@@ -328,10 +328,10 @@
    ],
    "bed": "ground",
    "kind": "snowrock",
-   "base": 0.9774,
+   "base": 0.9574,
    "foot": [
-    0.178,
-    0.719
+    0.197,
+    0.9
    ]
   },
   "icyrock": {
@@ -342,10 +342,10 @@
    ],
    "bed": "ground",
    "kind": "icyrock",
-   "base": 0.9742,
+   "base": 0.9474,
    "foot": [
-    0.231,
-    0.772
+    0.23,
+    0.795
    ]
   },
   "iceslab": {
@@ -356,10 +356,10 @@
    ],
    "bed": "ground",
    "kind": "iceslab",
-   "base": 0.9807,
+   "base": 0.9688,
    "foot": [
-    0.233,
-    0.817
+    0.113,
+    0.93
    ]
   },
   "iceblocks": {
@@ -370,10 +370,10 @@
    ],
    "bed": "ground",
    "kind": "icechunks",
-   "base": 0.9782,
+   "base": 0.9424,
    "foot": [
-    0.252,
-    0.736
+    0.219,
+    0.637
    ]
   },
   "icechunks": {
@@ -384,10 +384,10 @@
    ],
    "bed": "ground",
    "kind": "icechunks",
-   "base": 0.9802,
+   "base": 0.9454,
    "foot": [
-    0.256,
-    0.734
+    0.247,
+    0.575
    ]
   },
   "icepieces": {
@@ -398,10 +398,10 @@
    ],
    "bed": "ground",
    "kind": "icechunks",
-   "base": 0.9977,
+   "base": 0.9363,
    "foot": [
-    0.217,
-    0.786
+    0.379,
+    0.534
    ]
   },
   "floes": {
@@ -412,10 +412,10 @@
    ],
    "bed": "ground",
    "kind": "floes",
-   "base": 1.0,
+   "base": 0.9401,
    "foot": [
-    0.162,
-    0.826
+    0.22,
+    0.598
    ]
   },
   "icedrift": {
@@ -426,10 +426,10 @@
    ],
    "bed": "ground",
    "kind": "snowridge",
-   "base": 0.9978,
+   "base": 0.9401,
    "foot": [
-    0.207,
-    0.791
+    0.217,
+    0.753
    ]
   },
   "icepile": {
@@ -440,10 +440,10 @@
    ],
    "bed": "ground",
    "kind": "icechunks",
-   "base": 0.9983,
+   "base": 0.9535,
    "foot": [
-    0.174,
-    0.815
+    0.253,
+    0.536
    ]
   },
   "lowmound-2": {
@@ -454,10 +454,10 @@
    ],
    "bed": "ground",
    "kind": "snowmound",
-   "base": 0.9853,
+   "base": 0.936,
    "foot": [
-    0.221,
-    0.748
+    0.171,
+    0.815
    ]
   },
   "iceslab-2": {
@@ -468,10 +468,10 @@
    ],
    "bed": "ground",
    "kind": "iceslab",
-   "base": 0.9986,
+   "base": 0.9595,
    "foot": [
-    0.211,
-    0.836
+    0.119,
+    0.887
    ]
   },
   "ice-rock-2": {
@@ -482,10 +482,10 @@
    ],
    "bed": "ground",
    "kind": "icyrock",
-   "base": 0.973,
+   "base": 0.9599,
    "foot": [
-    0.252,
-    0.738
+    0.102,
+    0.67
    ]
   }
  },
