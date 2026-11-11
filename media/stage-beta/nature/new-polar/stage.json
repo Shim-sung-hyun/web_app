@@ -160,7 +160,8 @@
     0.006,
     0.994
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "iceberg-tall": {
    "name": "우뚝 솟은 빙산",
@@ -180,7 +181,8 @@
     0.037,
     0.908
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "icefield": {
    "name": "얼음 벌판",
@@ -200,7 +202,8 @@
     0.291,
     0.679
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "snowridge": {
    "name": "눈 언덕",
@@ -216,7 +219,8 @@
     0.021,
     0.979
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "iceridge": {
    "name": "얼음 언덕",
@@ -231,7 +235,8 @@
     0.025,
     0.975
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "iceridge-wide": {
    "name": "넓은 얼음 언덕",
@@ -247,7 +252,8 @@
     0.01,
     0.992
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "snowrock-large": {
    "name": "눈 덮인 큰 바위",
@@ -263,7 +269,9 @@
     0.023,
     0.961
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true,
+   "buried": 0.16
   },
   "ice-rock": {
    "name": "얼음 바위",
@@ -278,7 +286,8 @@
     0.036,
     0.941
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "snowmound": {
    "name": "눈 더미",
@@ -293,7 +302,8 @@
     0.074,
     0.933
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "lowmound": {
    "name": "낮은 눈 언덕",
@@ -308,7 +318,8 @@
     0.092,
     0.844
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "snowrock": {
    "name": "눈 덮인 바위",
@@ -323,7 +334,9 @@
     0.168,
     0.841
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true,
+   "buried": 0.16
   },
   "snowboulder": {
    "name": "눈 덮인 둥근 바위",
@@ -338,7 +351,9 @@
     0.143,
     0.851
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true,
+   "buried": 0.16
   },
   "icyrock": {
    "name": "얼음 바위 무리",
@@ -353,7 +368,9 @@
     0.129,
     0.719
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true,
+   "buried": 0.16
   },
   "iceslab": {
    "name": "기운 얼음판",
@@ -368,7 +385,8 @@
     0.042,
     0.833
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "iceblocks": {
    "name": "얼음 덩어리",
@@ -383,7 +401,8 @@
     0.242,
     0.824
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "icechunks": {
    "name": "작은 얼음 조각",
@@ -398,7 +417,8 @@
     0.484,
     0.651
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "icepieces": {
    "name": "얼음 파편들",
@@ -413,7 +433,8 @@
     0.011,
     0.824
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "floes": {
    "name": "유빙 조각",
@@ -428,7 +449,8 @@
     0.547,
     0.711
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "icedrift": {
    "name": "눈 덮인 얼음 둔덕",
@@ -443,7 +465,8 @@
     0.01,
     0.991
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   },
   "icepile": {
    "name": "얼음 더미",
@@ -458,8 +481,14 @@
     0.008,
     0.991
    ],
-   "soak": 0.12
+   "soak": 0.12,
+   "lined": true
   }
  },
- "skirtMeta": {}
+ "skirtMeta": {},
+ "lineColor": [
+  74,
+  57,
+  49
+ ]
 }
