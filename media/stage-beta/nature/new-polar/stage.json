@@ -83,54 +83,54 @@
  "animals": [
   {
    "name": "북극곰",
-   "src": "animals/bukgeukgom-sk.webp",
+   "src": "animals/bukgeukgom.webp",
    "real": 2.5,
    "face": "L"
   },
   {
    "name": "바다표범",
-   "src": "animals/badapyobeom-sk.webp",
+   "src": "animals/badapyobeom.webp",
    "real": 1.7,
    "face": "L"
   },
   {
    "name": "북극여우",
-   "src": "animals/bukgeukyeou-sk.webp",
+   "src": "animals/bukgeukyeou.webp",
    "real": 0.9,
    "face": "L"
   },
   {
    "name": "바다코끼리",
-   "src": "animals/badakokkiri-sk.webp",
+   "src": "animals/badakokkiri.webp",
    "real": 3,
    "face": "L"
   },
   {
    "name": "순록",
-   "src": "animals/sullok-sk.webp",
+   "src": "animals/sullok.webp",
    "real": 2,
    "face": "L"
   },
   {
    "name": "흰올빼미",
-   "src": "animals/huinolppaemi-sk.webp",
+   "src": "animals/huinolppaemi.webp",
    "real": 0.6
   },
   {
    "name": "북극토끼",
-   "src": "animals/bukgeuktokki-sk.webp",
+   "src": "animals/bukgeuktokki.webp",
    "real": 0.6,
    "face": "L"
   },
   {
    "name": "사향소",
-   "src": "animals/sahyangso-sk.webp",
+   "src": "animals/sahyangso.webp",
    "real": 2.3,
    "face": "L"
   },
   {
    "name": "북극늑대",
-   "src": "animals/bukgeuknukdae-sk.webp",
+   "src": "animals/bukgeuknukdae.webp",
    "real": 1.6,
    "face": "L"
   },
