@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+"""빙 연필풍 소품 그림을 무대 요소로 자름(2026-11-11)
+
+    python3 tools/pencil-cut.py 받은그림.jpg 나갈.webp
+
+빙이 주는 종이는 미색(베이지)이라 새 북극 배경 눈(거의 253 흰색)과 다름 →
+  1) 종이색(테두리 중앙값)을 253으로 맞추는 색 보정(그림 전체 — 안쪽 흰 면도 배경 눈과 같아짐)
+  2) 진한 선(밝기<200)을 굵혀 벽으로 삼고, 테두리부터 밝은 종이를 채워 바깥 종이를 찾음(선 안쪽 흰 면은 안 지움)
+  3) 바깥 종이는 밝기만큼 반투명(흐린 바닥 연필 줄은 옅게 남음)
+  3-1) 눈 언덕처럼 선이 흐리거나 끊긴 그림은 채우기가 몸 안으로 새어 몸이 비침 → 흐린 선(밝기<228)을 크게 굵혀
+       다시 채워 몸 모양을 구하고, 굵힌 만큼 줄인 안쪽은 모두 불투명(뒤 동물이 비치지 않게)
+  4) 칠해진 둘레로 잘라 webp. 다른 규칙(스며들기·묻기 등)은 적용하지 않음
+"""
+import sys
+from collections import deque
+import numpy as np
+from PIL import Image, ImageFilter
+
+def flood(L, wall, fill_lum):
+    h, w = L.shape
+    bg = np.zeros((h, w), bool)
+    q = deque([(y, x) for x in range(w) for y in (0, h - 1)] + [(y, x) for y in range(h) for x in (0, w - 1)])
+    while q:
+        y, x = q.popleft()
+        if bg[y, x] or wall[y, x] or L[y, x] < fill_lum:
+            continue
+        bg[y, x] = True
+        if y > 0: q.append((y - 1, x))
+        if y < h - 1: q.append((y + 1, x))
+        if x > 0: q.append((y, x - 1))
+        if x < w - 1: q.append((y, x + 1))
+    return bg
+
+def grow(m, k, shrink=False):
+    im = Image.fromarray(m.astype(np.uint8) * 255)
+    return np.asarray(im.filter(ImageFilter.MinFilter(k) if shrink else ImageFilter.MaxFilter(k))) > 0
+
+def cut(src, dst, white=253, wall_lum=200, fill_lum=238, soft=40, heavy=17):
+    im = np.asarray(Image.open(src).convert('RGB')).astype(float)
+    h, w, _ = im.shape
+    b = np.concatenate([im[:8].reshape(-1, 3), im[-8:].reshape(-1, 3), im[:, :8].reshape(-1, 3), im[:, -8:].reshape(-1, 3)])
+    paper = np.median(b, 0)
+    wb = np.clip(im * (white / paper), 0, 255)
+    L = wb.mean(2)
+    wall = grow(L < wall_lum, 5)
+    bg = flood(L, wall, fill_lum)
+    body = ~flood(L, grow(L < 228, heavy), fill_lum)          # 몸 모양(흐린 선까지 크게 굵혀 막음)
+    inner = grow(body, heavy + 4, shrink=True)                 # 굵힌 만큼 줄임 → 확실한 안쪽
+    a = np.where(bg, np.clip((white - L) / soft, 0, 1), 1.0)
+    a = np.maximum(a, inner.astype(float))
+    a = np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1))) / 255.0
+    a[a < 0.03] = 0
+    out = Image.fromarray(np.dstack([wb, a * 255]).astype(np.uint8), 'RGBA')
+    bb = out.split()[-1].point(lambda v: 255 if v > 20 else 0).getbbox()
+    out = out.crop((max(0, bb[0] - 4), max(0, bb[1] - 4), min(w, bb[2] + 4), min(h, bb[3] + 4)))
+    out.save(dst, quality=92)
+    return paper, out.size, bg.mean()
+
+if __name__ == '__main__':
+    print(cut(sys.argv[1], sys.argv[2]))

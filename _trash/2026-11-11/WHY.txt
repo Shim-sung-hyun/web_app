@@ -29,3 +29,7 @@ media/animals/sahyangso.webp — 북극 동물을 가는 연필풍 새 그림으
 media/animals/bukgeuknukdae.webp — 북극 동물을 가는 연필풍 새 그림으로 바꿈(008·009·무대 함께, 선생님 — 덜 유아스러움)
 media/animals/bukgeukgom-cartoon.webp  (2026-11-11) 북극곰 그림을 가는 연필풍으로 다시 바꿈(오늘 낮에 넣은 흰 만화풍 곰)
 media/stage-beta/nature/new-polar/bg.jpg — 빙 연필풍 배경으로 바꿈(2026-11-11, 예전 만화풍 배경)
+media/stage-beta/nature/new-polar/items/iceberg-tall.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)
+media/stage-beta/nature/new-polar/items/iceberg.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)
+media/stage-beta/nature/new-polar/items/icefield.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)
+media/stage-beta/nature/new-polar/items/snowridge.webp — 빙 연필풍으로 다시 받음(2026-11-11, 예전 만화풍)
