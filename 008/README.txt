@@ -155,4 +155,4 @@
 - 북극곰 그림 바꿈(2026-11-11, 무대 극지에서 튀어서 — 흰 털·가는 선): media/animals/bukgeukgom.webp, 머리 왼쪽이라 FACE 'L', BB [0.91,0.56], masks.json 다시. 예전 그림은 _trash.
 - 북극 동물 9마리 그림을 가는 연필풍으로 바꿈(2026-11-11, 선생님 — 덜 유아스러움, 무대 북극과 같은 그림): 북극곰·바다표범·북극여우·바다코끼리·순록·흰올빼미·북극토끼·사향소·북극늑대.
   같은 파일 이름(media/animals/*.webp)이라 008·009·무대가 함께 바뀜. BB 새로 잼, FACE는 모두 'L'(흰올빼미는 정면이라 없음), masks.json 다시. 예전 그림은 _trash.
-  다른 곳 동물도 이 그림풍으로 천천히 바꿀 생각(선생님). 베타는 '극지방'→'북극', 수준 3 펭귄→북극여우(2026-11-11). 목소리: 앞에 ElevenLabs 묶음(media/voice/elevenlabs-roger/, 북극 21문장만 있음)을 두고, 앱 말이 다 있으면 그걸, 아니면 Azure(섞지 않음). 지금은 Azure에도 북극 새 문장 5개가 없어 베타는 기기 목소리 — ElevenLabs 나머지 317문장을 만들지, Azure 5문장을 보충할지 선생님이 고름. 남은 일 전체는 media/stage-beta/README.txt 끝.
+  다른 곳 동물도 이 그림풍으로 천천히 바꿀 생각(선생님). 베타는 '극지방'→'북극', 수준 3 펭귄→북극여우(2026-11-11). 목소리: 앞에 ElevenLabs 묶음(media/voice/elevenlabs-roger/, 북극 21문장만 있음)을 두고, 앱 말이 다 있으면 그걸, 아니면 Azure(섞지 않음). 지금은 Azure에도 북극 새 문장 5개가 없어 베타는 기기 목소리 — 선생님이 ElevenLabs로 전부 만들기로 정함(2026-11-11) → 나머지 317문장 다섯 묶음 008/voice-el-all.txt. 묶음 mp3를 받으면 잘라서 듣기 페이지로 확인 → media/voice/elevenlabs-roger/에 넣음. 다 들어가면 베타가 저절로 ElevenLabs로 나옴. 남은 일 전체는 media/stage-beta/README.txt 끝.
