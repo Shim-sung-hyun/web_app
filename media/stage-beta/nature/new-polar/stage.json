@@ -155,13 +155,11 @@
     0,
     0.6
    ],
-   "base": 0.9821,
+   "base": 0.9661,
    "foot": [
-    0.006,
-    0.994
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.259,
+    0.536
+   ]
   },
   "iceberg-tall": {
    "name": "우뚝 솟은 빙산",
@@ -176,13 +174,11 @@
     0,
     0.6
    ],
-   "base": 0.9752,
+   "base": 0.9843,
    "foot": [
-    0.037,
-    0.908
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.066,
+    0.926
+   ]
   },
   "icefield": {
    "name": "얼음 벌판",
@@ -197,13 +193,11 @@
     0,
     0.7
    ],
-   "base": 0.9826,
+   "base": 0.9819,
    "foot": [
-    0.291,
-    0.679
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.156,
+    0.853
+   ]
   },
   "snowridge": {
    "name": "눈 언덕",
@@ -214,13 +208,11 @@
    "role": "big",
    "bed": "ground",
    "kind": "snowridge",
-   "base": 0.9252,
+   "base": 0.96,
    "foot": [
-    0.021,
-    0.979
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.248,
+    0.441
+   ]
   },
   "iceridge": {
    "name": "얼음 언덕",
@@ -230,13 +222,11 @@
    ],
    "bed": "ground",
    "kind": "iceridge",
-   "base": 0.9451,
+   "base": 0.971,
    "foot": [
-    0.025,
-    0.975
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.328,
+    0.56
+   ]
   },
   "iceridge-wide": {
    "name": "넓은 얼음 언덕",
@@ -247,13 +237,11 @@
    "role": "big",
    "bed": "ground",
    "kind": "iceridge",
-   "base": 0.9837,
+   "base": 0.9984,
    "foot": [
-    0.01,
-    0.992
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.175,
+    0.718
+   ]
   },
   "snowrock-large": {
    "name": "눈 덮인 큰 바위",
@@ -264,14 +252,11 @@
    "role": "big",
    "bed": "ground",
    "kind": "snowrock",
-   "base": 0.9877,
+   "base": 0.98,
    "foot": [
-    0.023,
-    0.961
-   ],
-   "soak": 0.12,
-   "lined": true,
-   "buried": 0.16
+    0.201,
+    0.71
+   ]
   },
   "ice-rock": {
    "name": "얼음 바위",
@@ -281,13 +266,11 @@
    ],
    "bed": "ground",
    "kind": "icyrock",
-   "base": 0.9886,
+   "base": 0.9731,
    "foot": [
-    0.036,
-    0.941
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.214,
+    0.71
+   ]
   },
   "snowmound": {
    "name": "눈 더미",
@@ -297,13 +280,11 @@
    ],
    "bed": "ground",
    "kind": "snowmound",
-   "base": 0.9548,
+   "base": 0.9661,
    "foot": [
-    0.074,
-    0.933
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.193,
+    0.722
+   ]
   },
   "lowmound": {
    "name": "낮은 눈 언덕",
@@ -313,13 +294,11 @@
    ],
    "bed": "ground",
    "kind": "snowmound",
-   "base": 0.9474,
+   "base": 0.9834,
    "foot": [
-    0.092,
-    0.844
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.336,
+    0.686
+   ]
   },
   "snowrock": {
    "name": "눈 덮인 바위",
@@ -329,14 +308,11 @@
    ],
    "bed": "ground",
    "kind": "snowrock",
-   "base": 0.9579,
+   "base": 0.9815,
    "foot": [
-    0.168,
-    0.841
-   ],
-   "soak": 0.12,
-   "lined": true,
-   "buried": 0.16
+    0.245,
+    0.753
+   ]
   },
   "snowboulder": {
    "name": "눈 덮인 둥근 바위",
@@ -346,14 +322,11 @@
    ],
    "bed": "ground",
    "kind": "snowrock",
-   "base": 0.964,
+   "base": 0.9774,
    "foot": [
-    0.143,
-    0.851
-   ],
-   "soak": 0.12,
-   "lined": true,
-   "buried": 0.16
+    0.178,
+    0.719
+   ]
   },
   "icyrock": {
    "name": "얼음 바위 무리",
@@ -363,14 +336,11 @@
    ],
    "bed": "ground",
    "kind": "icyrock",
-   "base": 0.9667,
+   "base": 0.9742,
    "foot": [
-    0.129,
-    0.719
-   ],
-   "soak": 0.12,
-   "lined": true,
-   "buried": 0.16
+    0.231,
+    0.772
+   ]
   },
   "iceslab": {
    "name": "기운 얼음판",
@@ -380,13 +350,11 @@
    ],
    "bed": "ground",
    "kind": "iceslab",
-   "base": 0.9688,
+   "base": 0.9807,
    "foot": [
-    0.042,
-    0.833
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.233,
+    0.817
+   ]
   },
   "iceblocks": {
    "name": "얼음 덩어리",
@@ -396,13 +364,11 @@
    ],
    "bed": "ground",
    "kind": "icechunks",
-   "base": 0.9474,
+   "base": 0.9782,
    "foot": [
-    0.242,
-    0.824
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.252,
+    0.736
+   ]
   },
   "icechunks": {
    "name": "작은 얼음 조각",
@@ -412,13 +378,11 @@
    ],
    "bed": "ground",
    "kind": "icechunks",
-   "base": 0.9455,
+   "base": 0.9802,
    "foot": [
-    0.484,
-    0.651
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.256,
+    0.734
+   ]
   },
   "icepieces": {
    "name": "얼음 파편들",
@@ -428,13 +392,11 @@
    ],
    "bed": "ground",
    "kind": "icechunks",
-   "base": 0.98,
+   "base": 0.9977,
    "foot": [
-    0.011,
-    0.824
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.217,
+    0.786
+   ]
   },
   "floes": {
    "name": "유빙 조각",
@@ -444,13 +406,11 @@
    ],
    "bed": "ground",
    "kind": "floes",
-   "base": 0.9614,
+   "base": 1.0,
    "foot": [
-    0.547,
-    0.711
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.162,
+    0.826
+   ]
   },
   "icedrift": {
    "name": "눈 덮인 얼음 둔덕",
@@ -460,13 +420,11 @@
    ],
    "bed": "ground",
    "kind": "snowridge",
-   "base": 0.9703,
+   "base": 0.9978,
    "foot": [
-    0.01,
-    0.991
-   ],
-   "soak": 0.12,
-   "lined": true
+    0.207,
+    0.791
+   ]
   },
   "icepile": {
    "name": "얼음 더미",
@@ -476,19 +434,55 @@
    ],
    "bed": "ground",
    "kind": "icechunks",
-   "base": 0.9863,
+   "base": 0.9983,
    "foot": [
-    0.008,
-    0.991
+    0.174,
+    0.815
+   ]
+  },
+  "lowmound-2": {
+   "name": "낮은 눈 언덕 2",
+   "real": [
+    0.5,
+    1.2
    ],
-   "soak": 0.12,
-   "lined": true
+   "bed": "ground",
+   "kind": "snowmound",
+   "base": 0.9853,
+   "foot": [
+    0.221,
+    0.748
+   ]
+  },
+  "iceslab-2": {
+   "name": "기운 얼음판 2",
+   "real": [
+    0.8,
+    1.8
+   ],
+   "bed": "ground",
+   "kind": "iceslab",
+   "base": 0.9986,
+   "foot": [
+    0.211,
+    0.836
+   ]
+  },
+  "ice-rock-2": {
+   "name": "얼음 바위 2",
+   "real": [
+    1.2,
+    2.2
+   ],
+   "bed": "ground",
+   "kind": "icyrock",
+   "base": 0.973,
+   "foot": [
+    0.252,
+    0.738
+   ]
   }
  },
  "skirtMeta": {},
- "lineColor": [
-  74,
-  57,
-  49
- ]
+ "noShadow": true
 }
