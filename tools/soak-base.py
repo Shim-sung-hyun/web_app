@@ -24,7 +24,9 @@ def soak(path, band=.16, feat=.05, tol=100, ground=None):
     for _ in range(3): g = edge.copy(); g[1:] |= edge[:-1]; g[:-1] |= edge[1:]; g[:, 1:] |= edge[:, :-1]; g[:, :-1] |= edge[:, 1:]; edge = g & op
     sel = edge.copy(); sel[:lo] = False
     px = a[..., :3][sel]; px = px[px.max(1) - px.min(1) > 25] if (px.max(1) - px.min(1) > 25).sum() > 50 else px   # 테두리 선(어두운 무채색)은 빼고
-    ref = np.median(px[px.sum(1) > np.percentile(px.sum(1), 40)], 0)   # 어두운 선을 덜 타게 밝은 쪽 60%
+    if len(px) < 20: px = a[lo:yb + 1, :, :3][op[lo:yb + 1]]   # 받침 가장자리가 거의 없으면(밑동이 이미 반투명) 아래 띠 전체에서
+    if len(px) < 20: return False                              # 잴 밑동이 없으면 그대로 둠
+    ref = np.median(px[px.sum(1) >= np.percentile(px.sum(1), 40)], 0)   # 어두운 선을 덜 타게 밝은 쪽 60%
     s = np.clip(1 - np.sqrt(((a[..., :3] - ref) ** 2).sum(-1)) / tol, 0, 1)      # 밑동 흙다움
     # 밑동 띠: 기본 band, 납작한 소품처럼 흙이 더 높이 퍼졌으면 그 높이까지(아래에서 줄마다 흙다운 점이 절반 넘는 데까지, 그림 높이의 45%까지)
     top = yb
@@ -43,6 +45,7 @@ def soak(path, band=.16, feat=.05, tol=100, ground=None):
     if ground is not None:   # 남는 밑동 흙의 색을 그 곳 배경 땅 색 쪽으로 옮김(명암은 그대로) — 반쯤 투명한 곳이 연한 얼룩으로 보이지 않게
         a[..., :3] += (s * np.clip(v * 1.5 + (1 - e), 0, 1) * vb)[..., None] * (np.asarray(ground, float) - ref)   # 스며들기 띠 안에서만(2026-11-11: 띠 밖 테두리 선까지 땅 색이 되던 것)
     Image.fromarray(a.clip(0, 255).astype(np.uint8), 'RGBA').save(path, 'WEBP', quality=95, alpha_quality=100, method=6)
+    return True
 
 
 if __name__ == '__main__':
@@ -61,6 +64,6 @@ if __name__ == '__main__':
             continue
         f = os.path.join(place, 'items', k + '.webp')
         if os.path.exists(f):
-            soak(f, band, ground=ground); it['soak'] = band; done += 1
+            if soak(f, band, ground=ground): it['soak'] = band; done += 1
     open(sj, 'w', encoding='utf-8').write(json.dumps(c, ensure_ascii=False, indent=1) + '\n')
     print('밑동 스며들기', done, '개 —', place)
