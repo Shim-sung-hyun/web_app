@@ -1,0 +1,233 @@
+사막 베타 — 빙 연필풍 프롬프트(2026-11-11, 선생님: 북극처럼 연필풍으로, 사막은 그림자를 넣어 땅에 붙임)
+순서: 배경 → 적용해 보고 → 소품 → (나중에) 동물. 빛은 원리 1-2(해는 등 뒤 왼쪽 위, 그림자는 오른쪽 안쪽 2시 방향).
+그림자는 테두리·빗금 없는 매끈한 회색 → tools/shadow-split.py 로 물체와 가름(빙 종이가 미색이면 도구를 맞춤). 한 장에 하나씩(판 나누기 없음).
+
+━━━━━━━━ 배경 — 먼저 이것부터
+붙일 그림: media/stage-beta/nature/new-polar/bg.jpg (북극 연필풍 배경 — 그림풍 기준)
+
+■ 빈 사막 배경 (bg.jpg · 4:3)
+▼
+Use the attached picture ONLY as a style reference (do not copy its place, ice, sea or clouds): the same fine, thin dark-grey pencil-and-ink line art with short, light hatching strokes, very little colour and a clean white paper look. In that style, draw an EMPTY hot desert as a wide 4:3 picture. The horizon is a straight line a little above the middle, about two-fifths from the top. Above it, a pale, clear sky: very light blue-grey hatching that becomes brighter toward the upper-left corner, and one or two thin, small clouds. On the horizon on the left, a row of low, smooth sand dunes, drawn small and light. On the far right, a group of three or four tall, distant sandstone rock pillars, drawn simple and light, lit from the upper left, with their shaded sides on the right. Below the horizon, the whole lower part is one wide, flat, smooth plain of sand: a very pale sand-beige wash, a few faint, sparse, horizontal hatching strokes, slightly lighter toward the bottom. Keep the sand plain empty and calm, with no stones, pebbles, plants, tracks, ripples, cracks, shadows or objects on it, so things can be placed on it later. Lines in the distance are thinner and lighter than lines nearer the viewer. Bright daylight from the upper left behind the viewer; do not draw the sun. No animals, people, buildings, text, logo or watermark.
+▲
+
+━━━━━━━━ 소품 18가지
+붙일 그림: 새로 받은 사막 배경 한 장. 빙이 주는 4판 가운데 잘 잘리고 여백 있는 것을 1~3장 골라 영어 이름과 함께 올림(같은 종류 모양 2·3으로 씀).
+
+■ 큰 둥근 바위 (boulder · 실제 1~2.5m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a big rounded desert boulder of sandy-beige stone with a few cracks and worn, smooth sides.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+■ 갈라진 큰 바위 (crackrock · 실제 1~2.5m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a large, blocky sandstone rock split in two by one deep vertical crack.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+■ 바위 기둥 (pillar · 실제 4~7m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a tall, narrow reddish sandstone rock pillar with horizontal layers, much taller than it is wide.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+■ 바위 언덕 (mound · 실제 1.5~3m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a wide, low, rounded rock mound of layered sandstone, much wider than it is tall.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+■ 붉은 바위 언덕 (mound-red · 실제 2~4m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a big, wide reddish rock hill with layered sides and a rounded top, much wider than it is tall.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+■ 대추야자 나무 (palm · 실제 6~10m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a tall date palm tree: a slim, slightly curved trunk with a diamond bark pattern, a crown of long feathery leaves and hanging clusters of dates.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+■ 대추야자 두 그루 (palms-big · 실제 6~10m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: two tall date palm trees growing close together from one spot, one taller than the other, slim trunks with a diamond bark pattern and crowns of long feathery leaves.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+■ 작은 대추야자 (palm-s · 실제 2~4m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a small young date palm: a short, thick trunk and a wide fan of long feathery leaves.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+■ 마른 덤불 (shrub · 실제 0.8~1.5m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a low, dense, dry desert shrub with many thin twigs and a few small olive-green leaves.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+■ 가시덤불 (thornbush · 실제 1~1.8m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a thorny dry bush with spiky, crooked branches and a few tiny leaves.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+■ 부러진 덤불 (brokenbush · 실제 0.6~1.2m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a dry, half-broken bush with a few bent branches and a few green leaves.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+■ 마른 풀 포기 (grass · 실제 0.5~1m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a big tuft of tall, dry desert grass, thin blades bending outward.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+■ 회전초 (tumble · 실제 0.5~0.9m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a dry tumbleweed: a round ball of tangled thin twigs resting on the ground.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+■ 쓰러진 마른 나무 (trunk · 실제 0.5~0.9m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a dead tree trunk lying flat on the ground, with a few broken branches, much longer than it is tall.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. Because the object lies on the ground, its shadow is a band along its right and back side. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+■ 마른 나뭇가지 (branch · 실제 0.2~0.4m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a dry, forked branch lying flat on the ground.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. Because the object lies on the ground, its shadow is a band along its right and back side. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+■ 돌무더기 (stones · 실제 0.5~1m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a small pile of desert stones of different sizes.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+■ 납작한 바위 (slab · 실제 0.3~0.6m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a low, flat, slab-like rock lying on the ground, much wider than it is tall.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. Because the object lies on the ground, its shadow is a band along its right and back side. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+■ 작은 바위 (pebbles · 실제 0.3~0.6m)
+▼
+The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour (soft sand-beige and light ochre on sand and stone, a little reddish on sandstone, a muted olive green on plants), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: a small group of three round stones close together.
+Draw the outline of the object closed all the way around with a continuous, darker grey line, so it is clearly separated from the white paper. Do not draw sand, soil, pebbles, grass or any ground patch under it, and no lines on the paper except the object.
+Light: the sun is high in the upper left, behind the viewer (do not draw the sun). So the object casts ONE shadow on the ground that points diagonally up and to the right, toward the back, like a clock hand at 2 o'clock, a little longer than the object is tall. The shadow is a soft, smooth, flat cool-grey tone, like a light grey watercolour wash: no outline, no hatching lines, no texture. It starts exactly where the object touches the ground, with no gap, darker near the object and lighter farther away. No shadow on the left or toward the viewer, and no grey on the paper anywhere else.
+Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
+▲
+
+━━━━━━━━ 동물 9마리 — 나중에
+붙일 그림: media/animals/bukgeukgom.webp (연필풍 북극곰). 같은 파일 이름으로 바꾸면 008·009에서도 함께 바뀜 — 소품까지 본 뒤에.
+
+■ 낙타 (nakta.webp)
+▼
+Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a Bactrian camel standing, two humps, shaggy light-brown coat, long legs.
+▲
+
+■ 사막여우 (sangmagyeou.webp)
+▼
+Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a fennec fox standing, very large ears, pale cream fur, bushy tail with a dark tip.
+▲
+
+■ 미어캣 (mieokaet.webp)
+▼
+Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a meerkat standing upright on its hind legs, dark eye patches, thin tail touching the ground (body turned so the head points left).
+▲
+
+■ 도마뱀 (domabaem.webp)
+▼
+Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a desert lizard on all four legs, long tail, sandy-beige scales with faint spots.
+▲
+
+■ 사막거북 (samakgeobuk.webp)
+▼
+Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a desert tortoise walking, high domed shell with clear plates, thick scaly legs.
+▲
+
+■ 전갈 (jeongal.webp)
+▼
+Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a desert scorpion, two big pincers in front, segmented tail curled up over its back, pale yellow-brown.
+▲
+
+■ 방울뱀 (bangulbaem.webp)
+▼
+Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a rattlesnake, body in a loose S-curve, diamond pattern, rattle at the tail tip raised a little.
+▲
+
+■ 사막쥐 (samakjwi.webp)
+▼
+Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a desert jerboa: small round body, very long hind legs, long thin tail with a tuft at the end, big ears.
+▲
+
+■ 오릭스 (oriks.webp)
+▼
+Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: an Arabian oryx standing, white coat, dark legs, very long straight horns.
+▲
