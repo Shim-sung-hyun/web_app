@@ -1817,7 +1817,8 @@ const stgReady=gameReady0.then(()=>fetch(STG+'hide-index.json',{cache:'no-cache'
 const gameReady=Promise.all([gameReady0,amaskReady,stgReady]);
 const GAMELV_NAME={1:'쉬움',2:'보통',3:'어려움'};
 /* 놀이 첫 화면: 큰 제목 + 아래 "시작"(학생이 누름). 제목을 눌러도 시작 */
-function gameIntro(tok){ stageIntro('game',tok,()=>{ unlockAudio(); playGame(tok); }); }
+function gameIntro(tok){ { const R=hideRounds(); preHide(R[0].p,RUN.forceMode||S.gameLv||1,R[0].t,{},300); }   /* 첫 화면을 보는 동안 첫 판을 미리 짬 */
+  stageIntro('game',tok,()=>{ unlockAudio(); playGame(tok); }); }
 /* 단계 알림(2026-11-03): 단계마다 시작 전에 한 장 — 큰 제목 · 그 단계를 보여 주는 작은 그림 · 단계 표(지금 몇 번째인지) · 시작.
    보기만 하다가 누르기로 바뀌는 것처럼 할 일이 바뀌는 때를 알려 주어 전환을 예측하게(시각적 일과표). 효과·칭찬 소리 없이 매번 같게.
    제목은 한 번 들려줌(내장 목소리에 그 소리가 있을 때만 — 없으면 말 없이). 학생이 시작(또는 제목)을 누르면 시작. 설정 '단계 알림'으로 끔(놀이 알림은 늘) */
@@ -1839,22 +1840,24 @@ function stageIntro(k,tok,go){
 async function playGame(tok){
   await gameReady; if(!alive(tok)) return;
   const lvG=RUN.forceMode||S.gameLv||1;
-  for(const p of RUN.bd.places){
-    /* 같은 곳에 사는 찾을 동물은 한 화면에서 함께 찾음(2026-11-02 — 크기가 크게 다르다고 화면을 나누던 것을 없앰). 4마리 넘으면 고르게 나눔 */
-    const all=shuffle(RUN.bd.items.filter(x=>x.p===p).map(x=>x.a)), n=Math.ceil(all.length/4);
-    for(let i=0;i<n;i++){ const part=all.slice(Math.round(i*all.length/n),Math.round((i+1)*all.length/n));
-      await playHide(p,lvG,part,tok); if(!alive(tok)) return; await wait(700); if(!alive(tok)) return; } }
+  /* 같은 곳에 사는 찾을 동물은 한 화면에서 함께 찾음(2026-11-02 — 크기가 크게 다르다고 화면을 나누던 것을 없앰). 4마리 넘으면 고르게 나눔(hideRounds) */
+  const R=hideRounds();
+  for(let i=0;i<R.length;i++){ const nx=R[i+1];
+    await playHide(R[i].p,lvG,R[i].t,tok,{next:nx?()=>preHide(nx.p,lvG,nx.t):null}); if(!alive(tok)) return; await wait(700); if(!alive(tok)) return; }
+  RUN.hr=null;
   await speak('다 찾았어요.'); if(!alive(tok)) return; await wait(800); if(!alive(tok)) return;
   RUN.gameDone=true; startEnd();
 }
-function gameCard(src,wmax,hmax){
-  clearStage(); const st=$('stage'), A=area();
+function gameCard(src,wmax,hmax,off){   /* off: 화면에 붙이지 않고 만듦(다음 판 미리 짜기) */
+  if(!off) clearStage(); const st=$('stage'), A=area();
   const h=Math.min(A.h*0.9,hmax||1e9,Math.min(A.w*0.94,wmax||1e9)*3/4), w=h*4/3;
   const card=document.createElement('div'); card.className='showCard hideCard'; card.style.width=w+'px'; card.style.height=h+'px'; card.style.touchAction='none';
   card.style.cursor='pointer';   /* 장면 어디서나 같은 손가락 커서 — 동물 위에서만 바뀌면 커서가 숨은 자리를 알려 줌(자극 통제) */
   card.innerHTML='<img class="bg" src="'+src+'" alt="" draggable="false" style="object-fit:fill">';
   card.style.opacity=0; card.style.transition='opacity .45s ease';   /* 동물·소품을 다 놓고 그림을 다 받은 뒤에 보여 줌 */
-  st.appendChild(card); return {card,w,h};
+  if(off){ let hd=document.getElementById('hidePre'); if(!hd){ hd=document.createElement('div'); hd.id='hidePre'; hd.style.cssText='position:fixed;left:-30000px;top:0;visibility:hidden;pointer-events:none'; document.body.appendChild(hd); }
+    hd.appendChild(card); }   /* 화면 밖 숨은 상자(무대 꾸밈이 크기를 잴 수 있게 문서에는 붙임) */
+  else st.appendChild(card); return {card,w,h};
 }
 /* 장면의 그림을 모두 받은 뒤(최대 5초) 한 번에 보여 줌 → 숨기기 전에 동물 자리가 보이지 않게 */
 function revealCard(card){
@@ -2006,10 +2009,24 @@ function unhide(groups,items){
 /* 나는 동물(새·벌레·나무 위)도 다른 동물처럼 소품 뒤에서 나와 가운데로(2026-11-02 선생님: 날아다니는 것이 요란함). 다시 날게 하려면 true */
 const FLY_SHOW=false;
 const XF=(dx,dy,k,fl)=>'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) scale('+k+') scaleX('+(fl?-1:1)+')';
-async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wmax, onReady·onCall·onFound) */
+/* 다음 판 미리 짜기(2026-11-11 선생님): 장면 짜기(동물·소품 자리 셈 + 그림 받기)가 길면 판 사이 기다림이 생기므로,
+   학생이 앞 판을 하는(또는 놀이 첫 화면을 보는) 동안 다음 판을 화면 밖에서 짜 두었다가 차례가 오면 붙이기만 함.
+   열쇠는 곳·어렵기·찾을 동물·장면 크기 — 화면을 돌렸거나 선생님이 어렵기를 바꿔 맞지 않으면 버리고 그 자리에서 새로 짬 */
+const HPRE=new Map();
+const hideKey=(p,lvG,targets,o)=>{ const A=area(); return [p,lvG,targets.join(','),Math.round(o.wmax||0),Math.round(o.hmax||0),Math.round(A.w),Math.round(A.h)].join('|'); };
+function preHide(p,lvG,targets,o={},ms){ const k=hideKey(p,lvG,targets,o); if(HPRE.has(k)) return;
+  while(HPRE.size>=4){ const k0=HPRE.keys().next().value; HPRE.get(k0).then(B=>B&&B.card.remove()); HPRE.delete(k0); }   /* 안 쓰게 된 판은 숨은 상자에서도 지움 */
+  HPRE.set(k,new Promise(res=>setTimeout(()=>gameReady.then(()=>buildHide(p,lvG,targets,o)).then(B=>res(hideKey(p,lvG,targets,o)===k?B:null),()=>res(null)),ms==null?900:ms))); }
+async function takeHide(p,lvG,targets,o){ const k=hideKey(p,lvG,targets,o), pr=HPRE.get(k); HPRE.delete(k); return pr?await pr:null; }
+/* 수업 놀이의 판 나누기(곳마다, 4마리 넘으면 고르게 나눔) — 미리 짜려면 판을 먼저 정해 둠. 놀이를 마치면 지워 다음엔 새로 섞음 */
+function hideRounds(){ if(RUN.hr) return RUN.hr; const R=[];
+  for(const p of RUN.bd.places){ const all=shuffle(RUN.bd.items.filter(x=>x.p===p).map(x=>x.a)), n=Math.ceil(all.length/4);
+    for(let i=0;i<n;i++) R.push({p,t:all.slice(Math.round(i*all.length/n),Math.round((i+1)*all.length/n))}); }
+  return RUN.hr=R; }
+async function buildHide(p,lvG,targets,o={}){   /* 장면 짜기: 화면에 붙이지 않은 카드에 동물·소품을 놓아 돌려줌 */
   STGCUR=stgOn(p)?await stgLoad(p):null;
   const L=GLV[lvG], m=MOVE[p], wlP=STGCUR&&STGCUR.waterline?STGCUR.waterline:WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
-  const {card,w:W,h:H}=gameCard(STGCUR?STG+STGCUR.id+'/bg.jpg':HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg',o.wmax,o.hmax);
+  const {card,w:W,h:H}=gameCard(STGCUR?STG+STGCUR.id+'/bg.jpg':HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg',o.wmax,o.hmax,true);
   const g=DEXG(p), pool=[]; Object.keys(BUN).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ if(DEXG(x.p)===g&&!targets.includes(x.a)&&!pool.includes(x.a)&&!PAIRS.some(pr=>pr.includes(x.a)&&targets.some(t=>pr.includes(t)))) pool.push(x.a); })));
   /* 함께 숨는 다른 동물도 찾을 동물과 실제 크기가 10배 넘게 다르지 않은 것만 */
   const rmin=Math.min(...targets.map(realOf)), rmax=Math.max(...targets.map(realOf));
@@ -2162,7 +2179,14 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
       return [(r.left-cr.left-8)/cr.width,(r.top-cr.top-8)/cr.height,(r.right-cr.left+8)/cr.width,(r.bottom-cr.top+8)/cr.height]; });
     const ly=document.createElement('div'); ly.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none'; card.appendChild(ly);
     Stage.render(ly,STGCUR,Stage.compose(STGCUR,{avoid:av,min:0,clusters:lvG===1?2:3,loose:2}),{layer:true,bg:false,front:false,zOf:q=>100+Math.round(q.y*H),farZ:3,shadow:.24,haze:.3}); }
+  return {card,W,H,items};
+}
+async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wmax, onReady·onCall·onFound) · next(이 판이 보이면 미리 짤 다음 판) */
+  const L=GLV[lvG];
+  const B=await takeHide(p,lvG,targets,o)||await buildHide(p,lvG,targets,o); if(!alive(tok)) return;
+  clearStage(); $('stage').appendChild(B.card); const {card,W,H,items}=B;
   await revealCard(card); if(!alive(tok)) return; if(o.onReady) o.onReady(items.length);
+  if(o.next) o.next();
   const move=(t,f,dx,dy,k)=>{ t.im.style.transform=XF(t.ox*f+(dx||0),t.oy*f+(dy||0),k||1,t.flip);
     if(t.sh){ t.sh.style.transform='translate(-50%,-50%) translate('+(t.ox*f)+'px,'+(t.oy*f)+'px)'; t.sh.style.opacity=dx||dy?0:1; } };
   /* 찾으면: 소품 뒤에서 나옴 → 가운데로 와서 크게 보여 주며 문장 → 제 자리(나온 자리)로 돌아감 */
@@ -2263,8 +2287,10 @@ const spWho=()=>S.stu||'_';
 const spTime=ms=>{ const s=Math.round(ms/1000); return s<60?s+'초':Math.floor(s/60)+'분 '+String(s%60).padStart(2,'0')+'초'; };
 let SP_LAST='';
 function startSpecial(p){ unlockAudio(); const ps=spPlaces(); if(!ps.length) return;
-  if(!p||!ps.includes(p)){ const q=ps.length>1?ps.filter(x=>x!==SP_LAST):ps; p=pick1(q); } SP_LAST=p;
-  RUN={special:true,p,lv:3,bd:{places:[p],items:[],label:'스페셜 · '+PL[p].label},plan:[],idx:0,phases:[],pi:0,ii:0,token:(TOKBASE+=1e5),ending:true,gameDone:false,placed:{}};
+  if(!p||!ps.includes(p)){ const q=ps.length>1?ps.filter(x=>x!==SP_LAST):ps; p=SP_NEXT&&q.includes(SP_NEXT)?SP_NEXT:pick1(q); } SP_LAST=p;
+  const names=SP_PRE[p]||null; SP_PRE={}; SP_NEXT='';
+  HPRE.forEach((pr,k)=>{ if(!k.startsWith(p+'|4|')){ pr.then(B=>B&&B.card.remove()); HPRE.delete(k); } });   /* 고르지 않은 쪽 판은 버림 */
+  RUN={special:true,p,names,lv:3,bd:{places:[p],items:[],label:'스페셜 · '+PL[p].label},plan:[],idx:0,phases:[],pi:0,ii:0,token:(TOKBASE+=1e5),ending:true,gameDone:false,placed:{}};
   document.body.classList.remove('setup'); goFull(); setTimeout(()=>{ if(RUN&&RUN.special) runSpecial(); },350); }
 /* 이 놀이에서 할 말이 내장 목소리에 다 있으면 내장, 아니면 이 판은 기기 목소리(섞지 않음) */
 async function spEngine(names){ await voiceReady; const hs=await Promise.all(names.map(a=>sha16(nameLine(a))).concat([sha16('다 찾았어요.')]));
@@ -2275,21 +2301,27 @@ const spTB=()=>{ const A=area(); return A.w<A.h*1.15; };
 function spSideStyle(d,tb){ const pw=+d.dataset.pw, fs=+d.dataset.fs, top=d.classList.contains('l')||d.classList.contains('t');
   d.classList.remove('l','r','t','b'); d.classList.add(tb?(top?'t':'b'):(top?'l':'r'));
   d.style.width=tb?'':pw+'px'; d.style.fontSize=(tb?Math.min(fs,20):fs)+'px'; }
+/* 스페셜 장면 크기(이름 칸 폭·줄 수에 따라) — 미리 짤 때도 같은 크기로 */
+function spGeom(names){ const A=area(), half=Math.ceil(names.length/2);
+  const pw=Math.max(124,Math.min(210,A.w*.15)), fs=Math.max(16,Math.min(30,(pw-74)/Math.max(...names.map(x=>x.length))));   /* 가장 긴 이름이 한 줄에 */
+  const tb=spTB(), nRows=Math.ceil(half/Math.max(1,Math.floor((A.w-24)/118)));   /* 세로 화면: 위·아래 줄 수 */
+  return {half,pw,fs,tb,nRows,wmax:tb?A.w*.96:A.w-2*pw-28,hmax:tb?A.h-2*nRows*50-30:0}; }
+/* 스페셜 판 미리 짜기: 곳과 동물을 먼저 정해 두고(SP_PRE) 그 판을 짬 */
+let SP_PRE={}, SP_NEXT='';
+function spPre(p){ const names=shuffle(spPool(p)).slice(0,SP_MAX), G=spGeom(names); SP_PRE[p]=names; preHide(p,4,names,{special:true,wmax:G.wmax,hmax:G.hmax},1200); }
 async function runSpecial(){
   if(!RUN||!RUN.special) return;
   RUN.token++; const tok=RUN.token; clearTimers(); stopVoice(); clearStage(); renderProg();
   await gameReady; if(!alive(tok)) return;
-  const p=RUN.p, names=shuffle(spPool(p)).slice(0,SP_MAX); await spEngine(names); if(!alive(tok)) return;
-  const st=$('stage'), A=area(), half=Math.ceil(names.length/2);
-  const pw=Math.max(124,Math.min(210,A.w*.15)), fs=Math.max(16,Math.min(30,(pw-74)/Math.max(...names.map(x=>x.length))));   /* 가장 긴 이름이 한 줄에 */
-  const tb=spTB(), mk=(side,list)=>{ const d=document.createElement('div'); d.className='spSide '+side; d.dataset.pw=pw; d.dataset.fs=fs; st.appendChild(d); spSideStyle(d,tb);
+  const p=RUN.p, names=RUN.names||shuffle(spPool(p)).slice(0,SP_MAX); await spEngine(names); if(!alive(tok)) return;
+  const st=$('stage'), G=spGeom(names), {half,pw,fs,tb,nRows}=G;
+  const mk=(side,list)=>{ const d=document.createElement('div'); d.className='spSide '+side; d.dataset.pw=pw; d.dataset.fs=fs; st.appendChild(d); spSideStyle(d,tb);
     list.forEach(a=>{ const w=document.createElement('div'); w.className='spW'; w.dataset.a=a; w.innerHTML='<span class="t">'+esc(a)+'</span><img alt="" src="'+pic(a)+'">'; d.appendChild(w); }); };
   const clock=document.createElement('div'); clock.className='spClock'; clock.textContent='0:00';
   const W=a=>st.querySelector('.spW[data-a="'+a+'"]');
   let t0=0, nf=0;
   let iv=0; const tick=()=>{ if(!alive(tok)||!t0||!clock.isConnected){ clearInterval(iv); return; } const s=Math.floor((Date.now()-t0)/1000); clock.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };   /* 찾을 때마다 clearTimers가 돌아 later는 못 씀 */
-  const nRows=Math.ceil(half/Math.max(1,Math.floor((A.w-24)/118)));   /* 세로 화면: 위·아래 줄 수 */
-  await playHide(p,4,names,tok,{special:true,wmax:tb?A.w*.96:A.w-2*pw-28,hmax:tb?A.h-2*nRows*50-30:0,
+  await playHide(p,4,names,tok,{special:true,wmax:G.wmax,hmax:G.hmax,
     onReady:()=>{ mk(tb?'t':'l',names.slice(0,half)); mk(tb?'b':'r',names.slice(half)); st.appendChild(clock); t0=Date.now(); tick(); iv=setInterval(tick,500); },
     onCall:a=>{ st.querySelectorAll('.spW.now').forEach(x=>x.classList.remove('now')); const w=W(a); if(!w) return; w.classList.add('now');
       if(w.animate) w.animate([{transform:'scale(1)'},{transform:'scale(1.16)',offset:.4},{transform:'scale(1)'}],{duration:800,easing:'ease-in-out'}); },
@@ -2310,6 +2342,7 @@ function spResult(tok,rec,prev){
     +'<div class="row"><button class="chip on" id="spAgain">다른 곳에서 또</button><button class="chip" id="spSame">같은 곳 다시</button><button class="chip" id="spHome">그만하기</button></div>';
   st.appendChild(d);
   $('spAgain').onclick=()=>startSpecial(); $('spSame').onclick=()=>startSpecial(rec.p);
+  { const q=spPlaces().filter(x=>x!==rec.p); if(q.length){ SP_NEXT=pick1(q); spPre(SP_NEXT); } spPre(rec.p); }   /* 결과를 보는 동안 다음 판을 미리 짬 */
   $('spHome').onclick=()=>{ RUN=null; clearTimers(); stopVoice(); clearStage(); document.body.classList.add('setup'); renderSetup(); window.scrollTo(0,0); };
   if(rec.nick) spPush().then(()=>spLoad(rec.p,$('spRankNow'),rec.key));
 }
