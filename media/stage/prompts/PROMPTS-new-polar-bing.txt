@@ -1,0 +1,17 @@
+북극 베타 — 빙 그림풍 시험: 빈 배경(2026-11-11, 선생님: 빙에 배경을 부탁, 새 동물 그림풍에 맞게)
+동물 그림풍(media/animals/bukgeukgom.webp 등): 가는 검은 연필·잉크 선, 털은 짧은 결 선과 옅은 회색 빗금, 색은 거의 없이 흰 바탕 위 아주 옅은 칠.
+배경은 동물보다 더 옅고 단순하게(동물이 또렷이 보이게). 짜임은 지금 bg.jpg와 같게: 4:3, 지평선은 위에서 3분의 1쯤, 그 아래는 비어 있는 눈 벌판(소품·동물은 무대가 얹음).
+빛: 해는 그림 밖, 보는 사람 등 뒤 왼쪽 위 — 해를 그리지 않음.
+받은 그림은 대화에 올리면 Claude가 1200×900으로 맞춰 시험 무대에 얹어 보여 드림(정하기 전에는 bg.jpg를 바꾸지 않음).
+
+━━━━━━━━ 배경 1 — 지금 짜임 그대로(바다 띠 + 오른쪽 먼 얼음 절벽)
+붙일 그림: media/animals/bukgeukgom.webp(북극곰 — 그림풍 기준)
+▼
+Use the attached polar bear drawing ONLY as a style reference (do not draw any animal): the same fine, thin black pencil-and-ink line art with short, light hatching strokes, almost no colour, white paper look. In that style, draw an EMPTY Arctic landscape as a wide 4:3 picture. The horizon is a straight line about one third from the top. Above it, a pale sky with a few soft clouds drawn with thin lines and very light blue-grey hatching. Along the horizon, a narrow band of calm dark-blue-grey sea, and on the far right a low, distant flat-topped ice shelf with a few vertical cracks. Below the horizon, the whole lower two-thirds is one wide, flat, smooth field of snow: almost pure white, with only a few very faint, sparse hatching strokes and very gentle pale blue-grey shading that gets slightly lighter toward the bottom. Keep the snow field empty and calm, with no rocks, ice blocks, footprints, plants, objects or lines across it, so things can be placed on it later. Lines in the distance are thinner and lighter than lines nearer the viewer. Soft daylight from the upper left behind the viewer; do not draw the sun, no strong shadows. No animals, people, buildings, text, logo or watermark.
+▲
+
+━━━━━━━━ 배경 2 — 바다 없이 눈 벌판과 먼 산(바다 동물이 덜 어울릴 때 견줘 보기)
+붙일 그림: media/animals/bukgeukgom.webp
+▼
+Use the attached polar bear drawing ONLY as a style reference (do not draw any animal): the same fine, thin black pencil-and-ink line art with short, light hatching strokes, almost no colour, white paper look. In that style, draw an EMPTY Arctic tundra in winter as a wide 4:3 picture. The horizon is about one third from the top. Above it, a pale sky with a few soft clouds drawn with thin lines and very light blue-grey hatching. On the horizon, a row of low, distant snowy hills and gentle mountains, drawn small, light and simple. Below the horizon, the whole lower two-thirds is one wide, flat, smooth field of snow: almost pure white, with only a few very faint, sparse hatching strokes and very gentle pale blue-grey shading that gets slightly lighter toward the bottom. Keep the snow field empty and calm, with no rocks, ice blocks, footprints, plants, objects or lines across it, so things can be placed on it later. Lines in the distance are thinner and lighter than lines nearer the viewer. Soft daylight from the upper left behind the viewer; do not draw the sun, no strong shadows. No animals, people, buildings, text, logo or watermark.
+▲

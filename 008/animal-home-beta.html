@@ -959,7 +959,7 @@ const PL={
   forest:{label:'산',scene:'forest',live:'산에 살아요',find:'산에 사는 동물을',y:[.55,.86]},
   grassland:{label:'초원',scene:'grassland',live:'초원에 살아요',find:'초원에 사는 동물을',y:[.55,.86]},
   desert:{label:'사막',scene:'desert',live:'사막에 살아요',find:'사막에 사는 동물을',y:[.58,.86]},
-  polar:{label:'극지방',scene:'polar',live:'극지방에 살아요',find:'극지방에 사는 동물을',y:[.5,.84]},
+  polar:{label:'북극',scene:'polar',live:'북극에 살아요',find:'북극에 사는 동물을',y:[.5,.84]},
   sea:{label:'바다',scene:'sea',live:'바다에 살아요',find:'바다에 사는 동물을',y:[.35,.78]},
   pond:{label:'강·호수',scene:'pond',live:'강이나 호수에 살아요',find:'강이나 호수에 사는 동물을',y:[.5,.85]},
   mudflat:{label:'갯벌',scene:'mudflat',live:'갯벌에 살아요',find:'갯벌에 사는 동물을',y:[.5,.86]},
@@ -976,10 +976,10 @@ const LV={
   'ground:개|underground:두더지,지렁이|water:붕어|sky:참새,나비','ground:토끼,달팽이|underground:땅강아지|water:상어|sky:까치,잠자리',
   'ground:고양이,거미|underground:두더지,땅강아지|water:메기|sky:제비,벌','ground:너구리,닭|underground:지렁이|water:고등어|sky:비둘기,딱따구리',
   'ground:다람쥐|underground:땅강아지,지렁이|water:문어|sky:박새,독수리','ground:소,코끼리|underground:두더지|water:조개|sky:까치,잠자리']},
- 3:{name:'수준 3',desc:'산 · 초원 · 사막 · 극지방 · 강·호수 · 바다 · 갯벌',opts:3,bundles:[
-  'forest:다람쥐,부엉이,곰,사슴|desert:낙타,전갈,도마뱀,미어캣|sea:고래,문어,상어,소라','grassland:사자,얼룩말,기린,코끼리|polar:펭귄,북극곰,바다표범|pond:송사리,미꾸라지,붕어,백로',
-  'forest:딱따구리,산양,호랑이,너구리|polar:바다표범,펭귄,북극곰|mudflat:칠게,조개,짱뚱어,농게','grassland:기린,코끼리,얼룩말,사자|mudflat:짱뚱어,낙지,갯지렁이,칠게|pond:소금쟁이,수달,메기,다슬기',
-  'desert:사막여우,미어캣,사막거북,낙타|pond:하마,메기,백로,미꾸라지|forest:호랑이,너구리,부엉이,다람쥐','desert:도마뱀,사막거북,전갈,사막여우|sea:상어,소라,고등어,불가사리|polar:북극곰,바다표범,펭귄',
+ 3:{name:'수준 3',desc:'산 · 초원 · 사막 · 북극 · 강·호수 · 바다 · 갯벌',opts:3,bundles:[
+  'forest:다람쥐,부엉이,곰,사슴|desert:낙타,전갈,도마뱀,미어캣|sea:고래,문어,상어,소라','grassland:사자,얼룩말,기린,코끼리|polar:북극여우,북극곰,바다표범|pond:송사리,미꾸라지,붕어,백로',
+  'forest:딱따구리,산양,호랑이,너구리|polar:바다표범,북극여우,북극곰|mudflat:칠게,조개,짱뚱어,농게','grassland:기린,코끼리,얼룩말,사자|mudflat:짱뚱어,낙지,갯지렁이,칠게|pond:소금쟁이,수달,메기,다슬기',
+  'desert:사막여우,미어캣,사막거북,낙타|pond:하마,메기,백로,미꾸라지|forest:호랑이,너구리,부엉이,다람쥐','desert:도마뱀,사막거북,전갈,사막여우|sea:상어,소라,고등어,불가사리|polar:북극곰,바다표범,북극여우',
   'mudflat:농게,갯지렁이,조개,낙지|forest:곰,사슴,산양,딱따구리|pond:다슬기,백로,송사리,소금쟁이',
   'sea:불가사리,고등어,문어,고래|mudflat:조개,칠게,낙지,짱뚱어|pond:붕어,개구리,메기,수달','forest:다람쥐,산양,곰,부엉이|grassland:사자,얼룩말,코끼리,기린|desert:전갈,사막여우,낙타,미어캣']}
 };
@@ -995,7 +995,7 @@ const PAIRS=[['여우','사막여우'],['곰','북극곰'],['물고기','붕어'
 function parseB(s){ const places=[], items=[]; s.split('|').forEach(g=>{ const [p,as]=g.split(':'); places.push(p); as.split(',').forEach(a=>items.push({a,p})); }); return {places,items}; }
 const BUN={}; Object.keys(LV).forEach(l=>{ BUN[l]=LV[l].bundles.map(parseB); });
 /* 수준 3 묶음은 곳마다 4마리까지 적어 두고, 앞에서부터 S.per마리(기본 3, 선생님이 4로 고름)만 씀(2026-11-02).
-   앞의 3마리에 수준 1·2에서 익힌 동물을 하나 넘게 넣음(아는 동물 섞기). 극지방은 3마리뿐이라 4로 골라도 3 */
+   앞의 3마리에 수준 1·2에서 익힌 동물을 하나 넘게 넣음(아는 동물 섞기). 북극은 3마리뿐이라 4로 골라도 3(2026-11-11 극지방→북극, 펭귄은 남극에만 살아 빼고 북극여우로) */
 const PERLV=3;
 function trimB(lv,bd){ if(+lv!==PERLV) return bd.items; const c={}; return bd.items.filter(x=>(c[x.p]=(c[x.p]||0)+1)<=S.per); }
 
@@ -1079,9 +1079,14 @@ function stopVoice(){ try{speechSynthesis.cancel();}catch(e){}
   if(curSrc){ const {src,g,res}=curSrc; curSrc=null; try{ src.onended=null; const t=actx.currentTime; g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+0.05); src.stop(t+0.06); }catch(e){} if(res) res(); } }
 /* 내장 목소리: 차름 소리 모음 media/voice/azure-sunhi-0.92/ (Azure ko-KR-SunHiNeural, 빠르기 -8% — 2026-11-02 베타부터. 이름 = 문장 조각 SHA-1 앞 16자리)
    media/voice/voice-maker.html로 만들고 tools/voice-add.py로 넣음. 하나라도 없으면 그 수업은 기기 목소리(섞지 않음) */
-const VBASE=GH+'media/voice/azure-sunhi-0.92/';
-let VSET=null;
-const voiceReady=fetch(VBASE+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>{ VSET=new Set(j.files||[]); }).catch(()=>{ VSET=new Set(); });
+/* 2026-11-11: ElevenLabs 묶음(media/voice/elevenlabs-roger/)을 앞에 둠. 앱 말이 그 묶음에 다 있으면 ElevenLabs, 아니면 Azure — 한 앱 안에서 두 목소리를 섞지 않음 */
+const VBUNDLES=[{id:'elevenlabs-roger',credit:'목소리: ElevenLabs'},{id:'azure-sunhi-0.92',credit:''}];
+let VBASE=GH+'media/voice/azure-sunhi-0.92/', VSET=null, VCREDIT='';
+const voiceReady=Promise.all(VBUNDLES.map(b=>fetch(GH+'media/voice/'+b.id+'/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set())))
+  .then(async sets=>{ const hs=await Promise.all(lessonParts().map(sha16));
+    let i=sets.findIndex(st=>hs.length>0&&hs.every(h=>st.has(h))); if(i<0) i=VBUNDLES.length-1;
+    VBASE=GH+'media/voice/'+VBUNDLES[i].id+'/'; VSET=sets[i]; VCREDIT=VBUNDLES[i].credit; })
+  .catch(()=>{ VSET=new Set(); });
 function sha1Bytes(msg){
   const l=msg.length, w=[], H=[0x67452301,0xEFCDAB89,0x98BADCFE,0x10325476,0xC3D2E1F0];
   const m=new Uint8Array(((l+9+63)>>6)<<6); m.set(msg); m[l]=0x80; const bl=l*8; const dv=new DataView(m.buffer); dv.setUint32(m.length-4,bl>>>0); dv.setUint32(m.length-8,Math.floor(bl/4294967296));
@@ -1263,7 +1268,7 @@ function renderPick(){
     if(+lv===PERLV){ const r=document.createElement('div'); r.className='row perRow'; r.innerHTML='<span class="perLab">곳마다 동물</span>'; A.appendChild(r);
       [[3,'3마리'],[4,'4마리']].forEach(([v,n])=>{ const b=document.createElement('button'); b.className='chip sm'+(S.per===v?' on':''); b.textContent=n;
         b.onclick=()=>{ S.per=v; saveS(); renderSetup(); flash('c3'); }; r.appendChild(b); });
-      note('처음에는 3마리로 하고, 익숙해지면 4마리로 늘려요(극지방은 3마리).'); }
+      note('처음에는 3마리로 하고, 익숙해지면 4마리로 늘려요(북극은 3마리).'); }
     const g=document.createElement('div'); g.className='bundles'; A.appendChild(g);
     const done=(DONE[S.stu||'_']||{});
     BUN[lv].forEach((bd,i)=>{ const k=S.bsel.indexOf(i), b=document.createElement('button'); b.className='bd'+(k>=0?' on':'');
@@ -1308,6 +1313,7 @@ function renderVoiceRow(){
   const vr=$('voiceRow'); if(!vr) return; vr.innerHTML='';
   [['내장 목소리','builtin'],['기기 목소리','device']].forEach(([n,v])=>{ const b=document.createElement('button'); b.className='chip sm'+(S.engine===v?' on':''); b.textContent=n; b.onclick=()=>{ S.engine=v; saveS(); renderVoiceRow(); }; vr.appendChild(b); });
   if(VSET&&!BUILTIN_OK&&S.engine==='builtin'){ const s=document.createElement('span'); s.style.cssText='font-size:13px;color:#8A5A12'; s.textContent='내장 목소리를 준비하는 중이라 지금은 기기 목소리로 해요.'; vr.appendChild(s); }
+  if(BUILTIN_OK&&VCREDIT&&S.engine==='builtin'){ const s=document.createElement('span'); s.style.cssText='font-size:12px;color:#6b7785'; s.textContent=VCREDIT; vr.appendChild(s); }   /* 저작권 표시(2026-11-11) */
 }
 function flash(id){ const c=$(id); if(!c) return; c.scrollIntoView({behavior:'smooth',block:'nearest'}); c.classList.add('flash'); setTimeout(()=>c.classList.remove('flash'),900); }
 $('startBtn').onclick=()=>{ unlockAudio(); const plan=makePlan(); if(!planOk(plan)){ flash('c2'); renderSetup(); return; } photosReady.then(()=>startLesson(null)); };
