@@ -50,7 +50,9 @@ media/stage/ (기존) · media/stage-beta/ (새로 만드는 중, 구조 같음)
      · 해 방향 그림자(오른쪽 안쪽으로 눕는 것, 이 원리) — 지금 사막만(빙 그림 속 그림자, ownShadow).
      · 옛 타원 그림자 — 무대 모듈이 소품 밑동 아래 한가운데 깔던 옅은 타원(2026-11-04부터, 해 방향과 무관). 원리와 안 맞아 끔:
        stage.json noShadow:true 인 곳(숲·초원), 스며들기 한 소품(soak), 그림자가 든 소품(ownShadow)은 안 그림. 기존 media/stage(008 베타가 씀)는 그대로.
-     · 곳마다 특징(2026-11-11 선생님 확정): 숲·초원 = 원본 그림 그대로(스며들기·그림자 없음, noShadow), 사막 = 해 방향 그림자, 극지방 = 스며들기·묻기(정리 중).
+     · 곳마다 특징(2026-11-11 선생님 확정): 사막만 해 방향 그림자, 나머지(숲·초원·극지방)는 원본 그림 그대로 — 규칙(스며들기·묻기·선 맞추기·그림자) 적용 안 함, noShadow.
+       극지방은 소품 20개를 '가는 선 + 밑동 눈이 흰 바탕으로 녹아드는' 그림으로 다시 받아 그대로 씀(바위 4개 받음, 16개 프롬프트 media/stage/prompts/PROMPTS-new-polar.txt).
+     · 보관: tools/soak-base.py·bury-base.py·line-unify.py·cast-shadow.py·shadow-split.py 는 다른 장면에서 쓸 수 있으니 12곳 작업이 끝날 때까지 지우지 않음(선생님).
    → 적용 범위(2026-11-10 선생님): 그림자는 지금 사막만. 다른 곳은 밑동 스며들기(1번)만 하고, 그림자는 필요할 때 아래 도구를 가져와 씀.
      · 그려 받은 그림자(사막 방식): 빙에 '물체 + 회색 그림자, 흰 바탕'으로 받음(media/stage/prompts/PROMPTS-new-desert-bing.txt) → python3 tools/shadow-split.py 로
        물체와 그림자를 갈라 한 장(그림자 반투명, 알파 92까지)으로 → stage.json ownShadow:true·flip:false — 무대는 뒤집지 않고 그림자를 따로 그리지 않음.

@@ -1,0 +1,132 @@
+극지방 베타 — 다시 받을 소품 16개(2026-11-11, 선생님: 원본 그대로 쓰되 새 바위 4개처럼 다시 그려서, 규칙 적용 안 함)
+모두 같은 꼴: 정사각형 그림, 물체는 위쪽 3분의 2 안에(오른쪽 아래 별 표식 피하기), 가는 선, 밑동 눈은 선 없이 흰 바탕으로 녹아듦(#DEECF1).
+붙일 그림 두 장: ① media/stage-beta/nature/new-polar/bg.jpg(눈 색) ② 새로 받은 큰 바위 그림(눈 덮인 회색 바위 — 선 굵기·그림풍 기준)
+받은 그림은 대화에 올리면 Claude가 같은 이름으로 넣음(밑동 눈은 반투명하게 남김, 다른 처리 없음).
+
+━━━━━━━━ 1. 빙산 (iceberg, 실제 4~10m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a wide, flat-topped iceberg with steep cracked sides, much wider than it is tall. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 2. 우뚝 솟은 빙산 (iceberg-tall, 실제 6~12m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a tall, jagged iceberg with two or three sharp peaks and smooth blue-white faces. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 3. 얼음 벌판 (icefield, 실제 3~6m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a wide, low field of broken pack ice: many flat, irregular ice slabs tilted against each other, spreading out gently and much wider than it is tall. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 4. 눈 언덕 (snowridge, 실제 2~4m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a long, low, smooth snow ridge with soft rounded curves, much wider than it is tall. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 5. 얼음 언덕 (iceridge, 실제 1.2~2.5m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a low ridge of pale blue ice with soft, rounded, melted-looking edges, wider than it is tall. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 6. 넓은 얼음 언덕 (iceridge-wide, 실제 1.5~3m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a broad, gently sloping hill of jumbled pale blue ice plates and snow, spreading out widely at its base. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 7. 얼음 바위 (ice-rock, 실제 1.2~2.2m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a big rounded lump of clear pale-blue glacier ice with a few soft cracks and a thin layer of snow on top. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 8. 눈 더미 (snowmound, 실제 0.6~1.5m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a soft, rounded heap of fresh snow, a little wider than it is tall. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 9. 낮은 눈 언덕 (lowmound, 실제 0.4~1m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a very low, gently rounded mound of snow, much wider than it is tall. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 10. 기운 얼음판 (iceslab, 실제 0.8~1.8m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a single thick slab of clear blue ice standing upright and leaning a little to one side, with a few cracks. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 11. 얼음 덩어리 (iceblocks, 실제 0.8~1.6m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a small pile of irregular, rounded ice chunks of different sizes, spreading out gently at the base (not neat cubes or bricks). Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 12. 작은 얼음 조각 (icechunks, 실제 0.2~0.5m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: three or four small, irregular pieces of pale blue ice lying close together. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 13. 얼음 파편들 (icepieces, 실제 0.4~1m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a low scatter of broken flat ice pieces and small ice shards lying close together, much wider than it is tall. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 14. 유빙 조각 (floes, 실제 0.4~1m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: two or three flat, rounded floating ice floes stranded on the snow, overlapping a little, much wider than they are tall. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 15. 눈 덮인 얼음 둔덕 (icedrift, 실제 1~2m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a low, wide mound of blue ice mostly covered by a thick, smooth blanket of snow. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
+
+━━━━━━━━ 16. 얼음 더미 (icepile, 실제 1~1.8m)
+▼
+The first attached picture is the empty Arctic background where this object will stand; the second picture shows the drawing style and line weight I want (thin, even dark-brown outlines, calm cool colours, soft simple shading, light from the upper left) — use its style, not its object. Draw ONE object on a pure white background in a SQUARE picture. Place the object in the UPPER two-thirds of the picture only; the whole lower third, and especially the bottom-right corner, stays completely empty and white.
+The object: a rough heap of broken ice blocks with uneven edges and a little snow between them, spreading out gently at the base. Use THIN, even dark-brown outlines, as thin as in the second picture.
+At the bottom, the object sinks into soft snow. This snow at the base has NO outline at all: it is pale blue-white (#DEECF1) right against the object and gently fades into the pure white paper at its lower and side edges, like a soft airbrushed glow, so there is no visible border. The bottom edge of this snow is a low, irregular, softly wavy line that is a little wider than the object — never a straight horizontal cut, never a flat slab or a box-shaped base, never a separate ground patch.
+The whole object fits inside the upper part of the picture with a clear white margin on the left, right and top. Seen from the front at eye level. No cast shadow, no sea, no background scenery, animals, people, faces, text, logo or watermark. Flat-cartoon style. Draw fine detail: this picture may be shown large in the foreground.
+▲
