@@ -1,0 +1,14 @@
+북극 무대(무대 베타 new-polar)에 더할 동물 2(2026-11-11, 선생님: 펭귄은 남극에만 살아서 빼고 무대 이름을 '북극'으로 — 대신 퍼핀·뇌조).
+들꿩은 우리나라 숲새라 북극 새가 아님 → 북극의 같은 무리 새인 뇌조(겨울에 하얀 흰뇌조)로.
+그림마다 Gemini 새 대화창 하나. 붙일 그림: media/animals/bukgeukgom.webp(새 북극곰 — 그림풍·가는 선 기준). 받은 그림은 Claude에게 주면 잘라 넣음.
+(008·009 동물과 같은 꼴: 흰 바탕, 옆모습 전신, 배경·땅·그림자 없음 — 머리 방향은 상관없음, 앱이 뒤집음)
+
+━━━━━━━━ 1. 퍼핀(대서양퍼핀, 실제 몸길이 약 0.3m)
+▼
+Use the attached polar bear picture ONLY as a style reference (do not draw a bear): the same cute but not babyish flat cartoon style for a school learning app, THIN clean dark-brown outlines, flat natural colours with soft simple shading, friendly face with a small round eye. On a PURE WHITE square picture, draw ONE Atlantic puffin standing upright, seen from the side, the whole bird from head to feet, filling most of the picture with a clear white margin on all sides: black back and wings, white chest and belly, pale grey-white face, a large triangular bill striped orange, yellow and blue-grey, bright orange legs and webbed feet. NO background, NO ground, NO rocks, NO water, NO shadow, NO text — only the bird on pure white. Leave the bottom-right corner empty and white.
+▲
+
+━━━━━━━━ 2. 뇌조(흰뇌조 겨울깃, 실제 몸길이 약 0.38m)
+▼
+Use the attached polar bear picture ONLY as a style reference (do not draw a bear): the same cute but not babyish flat cartoon style for a school learning app, THIN clean dark-brown outlines, flat natural colours with soft simple shading, friendly face with a small round eye. On a PURE WHITE square picture, draw ONE willow ptarmigan in its white winter plumage, standing on the ground, seen from the side, the whole bird from head to feet, filling most of the picture with a clear white margin on all sides: a plump round grouse-like bird, almost all white feathers with very soft pale blue-grey shading, a small black tail edge, a short dark bill, a small red comb above the eye, and fluffy white feathered feet. Keep the outline clearly drawn so the white bird does not disappear on white. NO background, NO ground, NO snow, NO rocks, NO shadow, NO text — only the bird on pure white. Leave the bottom-right corner empty and white.
+▲

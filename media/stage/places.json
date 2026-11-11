@@ -464,10 +464,10 @@
   "hide": true
  },
  "nature/polar": {
-  "name": "극지방",
+  "name": "북극",
   "slug": "new-polar",
   "horizon": 40,
-  "setting": "an Arctic snow field: white snowy plains and pale blue ice cliffs very far away, a cold light sky, and open, empty flat snow in the front half",
+  "setting": "an Arctic snow field (the North Pole region): white snowy plains and pale blue ice cliffs very far away, a cold light sky, and open, empty flat snow in the front half",
   "animals": [
    {
     "name": "북극곰",
@@ -479,12 +479,6 @@
     "name": "바다표범",
     "src": "animals/badapyobeom.webp",
     "real": 1.7,
-    "face": "R"
-   },
-   {
-    "name": "펭귄",
-    "src": "words/penggwin.webp",
-    "real": 1.0,
     "face": "R"
    },
    {

@@ -1,5 +1,5 @@
 {
- "name": "극지방",
+ "name": "북극",
  "view": "ground",
  "horizon": 0.4,
  "groundTop": 0.41,
@@ -91,12 +91,6 @@
    "name": "바다표범",
    "src": "animals/badapyobeom.webp",
    "real": 1.7,
-   "face": "R"
-  },
-  {
-   "name": "펭귄",
-   "src": "words/penggwin.webp",
-   "real": 1.0,
    "face": "R"
   },
   {
