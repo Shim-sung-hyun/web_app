@@ -23,7 +23,7 @@ GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-find
   donate-review.html         (제작자) 기증 사진 확인(donate.php 맨 위 확인 글자)
   cloud-key.html             Google 음성 키 만드는 법
 
-서버(charum.org 루트): key-relay.php · photo-relay.php · donate.php
+서버(charum.org 의 charum-api/ 폴더 — 원본은 저장소 server/charum-api/): key-relay.php · photo-relay.php · donate.php
   받는 주소: https://shim-sung-hyun.github.io, https://www.charum.org, https://charum.org
 
 예시 사진을 늘릴 때

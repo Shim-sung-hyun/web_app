@@ -12,6 +12,7 @@
 - 선생님은 VS Code의 GitHub Copilot도 쓴다. **주 조정자는 Claude**다. Copilot은 `.github/copilot-instructions.md`를 읽고 같은 규칙(이 파일·지침·README 기록)을 따른다.
 - 규칙을 바꾸면 이 파일과 `.github/copilot-instructions.md`를 함께 맞춘다(무대 등 지금 하는 일 요약도 그 파일 끝을 고쳐 둔다).
 - 세션을 시작하면 `git log`로 Copilot(선생님 컴퓨터)이 올린 커밋이 있는지 보고, 그 앱 README에 남긴 기록을 읽고 이어 간다.
+- **총괄 세션**(2026-11-11): Claude 세션 가운데 하나가 총괄을 맡는다 — 여러 앱에 걸친 일(공통 모듈·공용 자료·지침·README 정리·전체 점검)은 총괄이, 앱 하나의 일은 그 앱 세션이. 총괄이 할 일은 `docs/guidelines.md` 맨 끝 "총괄 할 일".
 
 ## 저장소 지도
 - `NNN/` 앱 하나씩(001~010). `앱.html`이 앱, `앱_manual.html`이 게시판 본문, `앱_guide.html`이 자세한 설명, `앱01.jpg~`가 캡처, `README.txt`가 그 앱의 세부.

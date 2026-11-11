@@ -1,9 +1,10 @@
-005 · [차름 수학] 큰 수 읽기 (예전 이름 숫자 익히기 — 자릿값 읽기, 1편은 006 · 파일 이름·주소·저장 칸은 그대로)
+005 · [차름 수학] 큰 수 읽기 (예전 이름 숫자 익히기 — 자릿값 읽기, 전 단계는 006 자리 이름 익히기 · 파일 이름·주소·저장 칸은 그대로)
 
 [GitHub에 올리기]  web_app 저장소 → Add file → Upload files
   → 이 005 폴더를 통째로 끌어다 놓기 → Commit changes
 
-  앱 주소:   https://shim-sung-hyun.github.io/web_app/005/place-value.html
+  앱 주소:   https://www.charum.org/study/005/place-value.html  (학생·선생님 — 게시판 app_url도 이 주소)
+  GitHub 원본: https://shim-sung-hyun.github.io/web_app/005/place-value.html
   그림 주소: https://shim-sung-hyun.github.io/web_app/005/place-value01.jpg (02~06 같은 방식)
 
 [게시판 글]  차름 갤러리 · webapp 게시판

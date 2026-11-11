@@ -27,7 +27,7 @@
 - 기본 목소리(Google Leda, 빠르기 0.90, 3,339개)는 차름 소리 모음 ../media/voice/leda-0.90/ 에서 읽음(2026-10-22부터)
   (mp3 + index.json, 고쳐 만든 소리 기록 fixes.json 도 거기에)
 - 옛 voice/leda/ · voice/fixes.json 은 2026-10-23 지움(fixes.json 은 media/voice/leda-0.90/ 에)
-- words-*.txt, words-frequency.csv   예전 판 자료(버전 1에서는 쓰지 않음)
+- (2026-11-11 _trash로) words-*.txt, words-frequency.csv, word-learn-beta-promo.jpg — 예전 판 자료, 어디서도 부르지 않음
   (예전 판 word-learn-v0.html·word-games.html은 2026-10-22에 지움 — 미리 만든 소리를 쓰지 않던 판)
 
 [주소]

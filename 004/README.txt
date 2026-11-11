@@ -3,7 +3,8 @@
 [GitHub에 올리기]  web_app 저장소 → Add file → Upload files
   → 이 004 폴더를 통째로 끌어다 놓기 → Commit changes
 
-  앱 주소:   https://shim-sung-hyun.github.io/web_app/004/poem-recite.html
+  앱 주소:   https://www.charum.org/study/004/poem-recite.html  (학생·선생님 — 게시판 app_url도 이 주소)
+  GitHub 원본: https://shim-sung-hyun.github.io/web_app/004/poem-recite.html
   그림 주소: https://shim-sung-hyun.github.io/web_app/004/poem-recite01.jpg (02~10 같은 방식)
 
 [게시판 글]  차름 갤러리 · webapp 게시판
@@ -28,7 +29,7 @@
 
 휴대폰으로 키 받기
   키 칸 옆 "📱 휴대폰으로 받기" 단추는 중계 서버 https://charum.org/charum-api/key-relay.php 를 씁니다.
-  중계 서버와 보내기 페이지는 key-relay.zip을 보세요.
+  보내기 페이지는 저장소 맨 위 key-send.html. 중계 서버 key-relay.php는 서버 charum-api/에만 있음(원본은 아직 저장소에 없음 — 지침 끝 "선생님 할 일" ②).
 
 [내 도메인에서 열기] (2026-10-21)
 - 주소: https://www.charum.org/study/004/poem-recite.html (게시판 app_url도 이 주소로)

@@ -3,13 +3,16 @@
 [GitHub에 올리기]  web_app 저장소 → Add file → Upload files
   → 이 002 폴더를 통째로 끌어다 놓기 → Commit changes
 
-  앱 주소:   https://shim-sung-hyun.github.io/web_app/002/picture-puzzle.html
+  앱 주소:   https://www.charum.org/study/002/picture-puzzle.html  (학생·선생님 — 게시판 app_url도 이 주소)
+  GitHub 원본: https://shim-sung-hyun.github.io/web_app/002/picture-puzzle.html
   그림 주소: https://shim-sung-hyun.github.io/web_app/002/picture-puzzle01.jpg (02~11 같은 방식)
 
 [게시판 글]  차름 갤러리 · webapp 게시판
   - 웹앱주소(app_url): 위 앱 주소
   - 본문: picture-puzzle_manual.html 내용을 '소스' 모드에 붙여 넣기 (그림은 GitHub에서 불러옴)
-  - 썸네일: picture-puzzle-promo.jpg 한 장만 첨부 (갤러리 카드파일 (2026-10-22 정식판: 설정 ①누구와 ②어떤 그림 ③오늘 할 단계, 오늘 할 그림 10장, 학생 기록)
+  - 썸네일: picture-puzzle-promo.jpg 한 장만 첨부 (갤러리 카드용)
+
+파일 (2026-10-22 정식판: 설정 ①누구와 ②어떤 그림 ③오늘 할 단계, 오늘 할 그림 10장, 학생 기록)
   picture-puzzle.html          웹앱
   picture-puzzle-beta.html     예전 베타 주소 → 정식판으로 넘겨 줌
   picture-puzzle01~11.jpg      화면 그림 (10 S+단계, 11 S·S+ 다 맞춤 · 초시계, 01 설정, 02 오늘 할 그림, 03 그림 고르기 창, 04 조각 맞추기, 05 다 맞춤,
@@ -23,7 +26,6 @@
   휴대폰 사진은 photo-send.html + photo-relay.php(001과 같음). 002에서 열면 안내 문장이 퍼즐용으로 바뀜(#app=puzzle).
   저장 칸: picturePuzzle.*(설정·list·log), webapp.students(명단), IndexedDB picturePuzzleMine(보관한 사진 60장).
 
-명서
 
 [내 도메인에서 열기] (2026-10-21)
 - 주소: https://www.charum.org/study/002/picture-puzzle.html (게시판 app_url도 이 주소로)
