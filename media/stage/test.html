@@ -387,6 +387,14 @@
     if (u < 0 || u >= 1 || v < 0 || v >= 1) return false; if (o.flip) u = 1 - u;
     return M.m[Math.floor(v * M.h) * M.w + Math.floor(u * M.w)] === 1;
   };
+  /* 화면 끝에 걸친 몫(2026-11-11): 동물의 칠해진 칸 중 화면 왼쪽·오른쪽 밖의 몫(off)과 화면 안에 남은 조각의 폭(onW, 장면 폭에 대한 몫) */
+  const EDGE = .02, EDGE_PEN = .08, EDGE2_PEN = .45;
+  function edgeOf(A) {
+    const M = maskOf(A.img); let t = 0, o = 0, a = 2, b = -1; if (!M.m) return {off: 0, onW: 1};
+    for (let j = 0; j < M.h; j++) for (let i = 0; i < M.w; i++) { if (!M.m[j * M.w + i]) continue; t++;
+      const fx = A.x - A.w / 2 + A.w * ((A.flip ? M.w - 1 - i : i) + .5) / M.w; if (fx < 0 || fx > 1) o++; else { if (fx < a) a = fx; if (fx > b) b = fx; } }
+    return {off: t ? o / t : 0, onW: b < a ? 0 : b - a};
+  }
   function visibleOf(pl, lay, A, reg) {   /* reg: [u0,u1,v0,v1] — 그림의 칠해진 네모 안에서 이 몫만 셈(얼굴 자리 등, 뒤집기 전 그림 기준) */   // 동물 A의 칠해진 칸 중 앞(밑동이 더 아래)의 것에 가려지지 않은 몫
     const M = maskOf(A.img), front = lay.filter(o => o !== A && depthY(o) > depthY(A) && (o.img || (pl.items[o.id] || {}).img));
     let tot = 0, vis = 0;
@@ -451,7 +459,13 @@
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
     const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
-    const tryAt0 = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x + A.w * .3 < 0 || A.x - A.w * .3 > 1) return;   // 화면 가장자리로 코·꼬리만 내밀어도 됨(선생님 2026-11-09) — 화면 밖은 가려진 것으로 셈
+    const tryAt0 = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
+      /* 화면 끝(2026-11-11 선생님): 코·꼬리만 내밀어도 됨(화면 밖은 가려진 것으로 셈). 화면 밖 몫의 한도는 단계마다 opt.offMax(하 .5·중 .7·상 .8·스페셜 .9, 기본 .7).
+         끝에 걸친 동물은 한 장면에 하나만(둘째는 가운데로 단계를 못 지킬 때만), 화면 안에 남은 조각 폭이 장면의 opt.edgeMin(기본 3%)은 되게 — 점수에도 작은 벌점(EDGE_PEN)을 줘 가운데와 비슷하면 가운데로 */
+      const E = edgeOf(A); A.off = E.off;
+      if (E.off > (opt.offMax ?? .7)) return;
+      const edge2 = E.off > EDGE && lay.some(o => o.animal && (o.off || 0) > EDGE);   // 이미 끝에 걸친 동물이 있음 — 가운데로는 단계를 못 지킬 때만(벌점 EDGE2_PEN < 단계 벗어남 .5)
+      if (E.off > EDGE && E.onW < (opt.edgeMin ?? .03)) return;
       if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;
       if (!footOnGround(pl, A, covers) || covers.some(f => !coversRoots(f, A))) return;   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
       /* 깔린 것처럼 보이지 않게(2026-11-09 선생님: 곰·너구리가 뿌리에 깔림): 가까운 줄기(frame)와는 겹치지 않고,
@@ -474,7 +488,7 @@
       /* 얼굴(2026-11-09): 상·스페셜(opt.face 'hide')은 얼굴이 대부분 가려지고 등·꼬리·귀 같은 단서만, 하('show')는 얼굴이 잘 보이게 — 얼굴 = 머리 쪽(008 FACE) 앞 40%·위 65% */
       if (opt.face && a.face) { const reg = a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]; lay.push(A); if (extra) lay.push(extra); const fv = visibleOf(pl, lay, A, reg); lay.pop(); if (extra) lay.pop();
         if (opt.face === 'hide' && fv > .35) return; if (opt.face === 'show' && fv < .6) return; }
-      const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0); if (!best || sc < best.sc) best = {sc, A, v, extra}; };
+      const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0); if (!best || sc < best.sc) best = {sc, A, v, extra}; };
     const tryAt = (x, y, flip, extra) => {
       let r = tryAt0(x, y, flip, extra);
       if (r === 'crush') r = tryAt0(x, y, (flip = !flip), extra);   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
@@ -507,7 +521,7 @@
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 
-  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, maskOf, footOnGround, BASE};
+  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, maskOf, edgeOf, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>
