@@ -367,8 +367,31 @@
   }
   /* 깔림(2026-11-11 선생님: 사향소·흰올빼미가 소품에 깔림): 동물 몸의 같은 세로줄에서 위는 앞 소품에 가려지고 그 아래가 보이면 소품이 동물을 누르는 것처럼 보임.
      그런 세로줄이 보이는 세로줄의 몫(0~1). 위가 보이고 아래가 가려짐(소품 위로 나옴)·줄 전체 보임/가림(옆으로 나옴)은 괜찮음. 화면 밖은 셈하지 않음 */
+  /* 비침(2026-11-11 선생님: 늑대 다리가 소품 밑동의 반투명한 눈으로 비침): 동물 몸 중 앞 소품의 반투명한 곳(알파 25~230)에만 걸린 몫 */
+  const AMAP = new WeakMap();
+  function alphaOf(img, n = 128) {
+    if (AMAP.has(img)) return AMAP.get(img);
+    const W = img.naturalWidth || img.width, H = img.naturalHeight || img.height, k = n / Math.max(W, H), w = Math.max(1, Math.round(W * k)), h = Math.max(1, Math.round(H * k));
+    let r = null; try { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', {willReadFrequently: true}); x.drawImage(img, 0, 0, w, h);
+      const d = x.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) m[i] = d[i * 4 + 3]; r = {w, h, m}; } catch (e) { r = null; }
+    AMAP.set(img, r); return r;
+  }
+  const alphaAt = (o, img, fx, fy) => { const M = alphaOf(img); if (!M) return 0; let u = (fx - (o.x - o.w / 2)) / o.w; const v = (fy - (o.y - o.h * o.base)) / o.h;
+    if (u < 0 || u >= 1 || v < 0 || v >= 1) return 0; if (o.flip) u = 1 - u; return M.m[Math.floor(v * M.h) * M.w + Math.floor(u * M.w)]; };
+  function seeOf(pl, lay, A) {
+    const M = maskOf(A.img), front = lay.filter(o => o !== A && !o.actor && depthY(o) > depthY(A) && (o.img || (pl.items[o.id] || {}).img));   // 소품만(동물 가장자리의 반투명은 빼고)
+    let tot = 0, see = 0;
+    for (let j = 0; j < M.h; j++) for (let i = 0; i < M.w; i++) {
+      if (!M.m || !M.m[j * M.w + i]) continue;
+      const u = (A.flip ? M.w - 1 - i : i) + .5, fx = A.x - A.w / 2 + A.w * u / M.w, fy = A.y - A.h * A.base + A.h * (j + .5) / M.h;
+      if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue; tot++;
+      let mx = 0; for (const o of front) { const al = alphaAt(o, o.img || pl.items[o.id].img, fx, fy); if (al > mx) mx = al; if (mx > 230) break; }
+      if (mx > 25 && mx <= 230) see++;
+    }
+    return tot ? see / tot : 0;
+  }
   function crushOf(pl, lay, A) {
-    const M = maskOf(A.img), front = lay.filter(o => o !== A && depthY(o) > depthY(A) && (o.img || (pl.items[o.id] || {}).img));
+    const M = maskOf(A.img), front = lay.filter(o => o !== A && !o.actor && depthY(o) > depthY(A) && (o.img || (pl.items[o.id] || {}).img));
     let cols = 0, bad = 0;
     for (let i = 0; i < M.w; i++) {
       let covered = false, seenVis = false, crushed = false;
@@ -410,14 +433,20 @@
       const floor = Math.max(.04, want[0] * .5);
       if (v < floor) return;   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
       lay.push(A); if (extra) lay.push(extra); const cr = crushOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
-      if (cr > (opt.crush ?? .08)) return 'crush';   // 깔린 자리는 버림(좌우를 뒤집어 다시 해 봄 — 아래 tryAt)
+      if (cr > (opt.crush ?? .08)) return 'crush';
+      lay.push(A); if (extra) lay.push(extra); const se = seeOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
+      if (se > (opt.see ?? .015)) return 'see';   // 반투명한 밑동 뒤로 비치면 더 뒤(작게)로 — 아래 tryAt   // 깔린 자리는 버림(좌우를 뒤집어 다시 해 봄 — 아래 tryAt)
       lay.push(A); if (extra) lay.push(extra);   // 먼저 숨긴 동물을 이 동물·새 소품이 앞에서 덮지 않게
-      const hurt = lay.some(o => o.animal && o !== A && visibleOf(pl, lay, o) < Math.max(.04, (o.want || want)[0] * .5)); lay.pop(); if (extra) lay.pop(); if (hurt) return;
+      const hurt = lay.some(o => o.animal && o !== A && (visibleOf(pl, lay, o) < Math.max(.04, (o.want || want)[0] * .5) || crushOf(pl, lay, o) > (opt.crush ?? .08) || seeOf(pl, lay, o) > (opt.see ?? .015))); lay.pop(); if (extra) lay.pop(); if (hurt) return;   // 먼저 숨긴 동물이 덮이거나 깔리거나 비치게 되는 자리는 버림
       /* 얼굴(2026-11-09): 상·스페셜(opt.face 'hide')은 얼굴이 대부분 가려지고 등·꼬리·귀 같은 단서만, 하('show')는 얼굴이 잘 보이게 — 얼굴 = 머리 쪽(008 FACE) 앞 40%·위 65% */
       if (opt.face && a.face) { const reg = a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]; lay.push(A); if (extra) lay.push(extra); const fv = visibleOf(pl, lay, A, reg); lay.pop(); if (extra) lay.pop();
         if (opt.face === 'hide' && fv > .35) return; if (opt.face === 'show' && fv < .6) return; }
       const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0); if (!best || sc < best.sc) best = {sc, A, v, extra}; };
-    const tryAt = (x, y, flip, extra) => { if (tryAt0(x, y, flip, extra) === 'crush') tryAt0(x, y, !flip, extra); };   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
+    const tryAt = (x, y, flip, extra) => {
+      let r = tryAt0(x, y, flip, extra);
+      if (r === 'crush') r = tryAt0(x, y, (flip = !flip), extra);   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
+      for (let k = 1; r === 'see' && k <= 6; k++) r = tryAt0(x, Math.max(B.y[0], y - .006 * k), flip, extra);   // 비치면 조금씩 뒤로(원근으로 작아지고 발이 소품 몸통 뒤로)
+    };   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
     const flip0 = () => R() < .5;
     for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03 && (pl.items[o.id] || {}).role !== 'frame')) {   // 놓인 소품 바로 뒤(가까운 줄기 뒤엔 안 숨음)
       for (let t = 0; t < 10; t++) { const y = Math.max(B.y[0], o.y - .004 - R() * .03), x = o.x + (R() - .5) * o.w * .9; tryAt(x, y, flip0()); }
@@ -445,5 +474,5 @@
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 
-  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, crushOf, maskOf, footOnGround, BASE};
+  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, maskOf, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
