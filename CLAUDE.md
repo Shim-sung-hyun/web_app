@@ -17,7 +17,7 @@
 ## 저장소 지도
 - `NNN/` 앱 하나씩(001~010). `앱.html`이 앱, `앱_manual.html`이 게시판 본문, `앱_guide.html`이 자세한 설명, `앱01.jpg~`가 캡처, `README.txt`가 그 앱의 세부.
 - `media/` 여러 앱이 함께 쓰는 자료는 모두 여기 한곳에(사진 `photos/`, 목소리 `voice/`, 낱말 그림 `words/`, 놀이 그림 `play/`, 동물 `animals/`, 서식지 `habitats/`, 무대 `stage/`, 글꼴 `fonts/` — 지도는 `media/README.txt`). 앱 폴더에는 그 앱의 html·캡처·설명서만 두고, 그림·소리는 media/에서 GitHub 절대 주소로 가져다 쓴다.
-- `common/` 공통 모듈 원본(`roster.js` 학생 명단, `keyRelay.js` 휴대폰으로 키 받기, `photoRelay.js` 휴대폰에서 사진 받기, `stagekit.js` 무대, `adminHold.js` 관리 버튼 누르기). 고친 뒤 `python3 tools/sync-modules.py`로 앱마다 넣는다. 앱 안의 모듈 칸은 손으로 고치지 않는다.
+- `common/` 공통 모듈 원본(`roster.js` 학생 명단, `keyRelay.js` 휴대폰으로 키 받기, `photoRelay.js` 휴대폰에서 사진 받기, `stagekit.js` 무대, `adminHold.js`·`adminGate.js`·`holdBubble.js` 관리 버튼). 고친 뒤 `python3 tools/sync-modules.py`로 앱마다 넣는다. 앱 안의 모듈 칸은 손으로 고치지 않는다.
 - `server/` charum.org 서버에 올리는 파일의 원본(토큰 칸은 비움). `relay/` 사진 다리.
 - `교과-과학/` 과학 교과서·지도서 정리(기본교육과정: 초5, 중·고 과학② Ⅲ단원 / 공통교육과정: 초3-1 2단원). 폴더 이름으로 기본/공통교육과정을 나눈다. 앱 내용을 교과와 맞출 때 `README.md` 색인부터 본다.
 - `media/stage/` 무대(빈 배경·요소를 장소별로, 차림표 `index.json`, 모듈 `common/stagekit.js`). `_trash/` 버릴 자료 상자(3개월 뒤 비움, `tools/trash.py`) — 세션 시작 때 `python3 tools/trash.py`로 비울 때가 됐는지 본다.

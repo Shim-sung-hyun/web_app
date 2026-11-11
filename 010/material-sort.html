@@ -1315,7 +1315,8 @@ window.addEventListener('resize',()=>{ if(performance.now()-fullTapAt<1500) retu
 renderSetup();
 </script>
 <script id="holdBubble">
-/* 관리 버튼을 3초 누르는 동안: (휴대폰·태블릿을 손가락으로 누를 때만) 버튼 조금 위에 투명한 아쿠아 원이 세 번. 전자칠판·PC는 버튼 둘레 고리만 */
+/* 차름 공통 모듈: 관리 버튼 — 누르는 동안 표시(holdBubble). 원본은 common/holdBubble.js. 앱 안의 <script id="holdBubble">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다. */
+/* 관리 버튼을 3초 누르는 동안: (휴대폰·태블릿을 손가락으로 누를 때만) 버튼 조금 위(손가락에 가리지 않는 곳)에 투명한 아쿠아 원이 1초에 한 번씩 부드럽게 세 번 깜빡. 전자칠판·PC는 버튼 둘레 고리만. 손을 떼면 바로 사라짐 */
 (function(){
   const btn = document.querySelector('#adminBtn, #aqua'); if (!btn) return;
   const st = document.createElement('style');
@@ -1336,7 +1337,7 @@ renderSetup();
       dot.style.top = Math.max(4, r.top - S - 34) + 'px';
       btn.style.opacity = '.75';
       if (!useDot) return void (raf = requestAnimationFrame(loop));
-      dot.style.opacity = (0.9 * Math.sin(Math.PI * ((p * 3) % 1))).toFixed(3);
+      dot.style.opacity = (0.9 * Math.sin(Math.PI * ((p * 3) % 1))).toFixed(3);   /* 1초마다 한 번: 천천히 나타났다 사라짐 */
     } else hide();
     if (down) raf = requestAnimationFrame(loop); else hide();
   };
@@ -1346,7 +1347,8 @@ renderSetup();
 })();
 </script>
 <script id="adminGate">
-/* 관리 메뉴 열기 2단계: 관리 버튼을 3초 누른 뒤, 왼쪽 위에 3초 동안 나타나는 작은 점을 눌러야 열림 */
+/* 차름 공통 모듈: 관리 버튼 — 왼쪽 위 점(adminGate). 원본은 common/adminGate.js. 앱 안의 <script id="adminGate">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다. */
+/* 관리 메뉴 열기 2단계: 관리 버튼을 3초 누른 뒤, 왼쪽 위에 3초 동안 나타나는 작은 점을 눌러야 열림(학생이 보고 따라 하기 어렵게) */
 window.AdminGate = (function () {
   const st = document.createElement('style');
   st.textContent = '#agDot{position:fixed;left:18px;top:18px;width:62px;height:62px;border-radius:50%;z-index:2147483600;display:none;cursor:pointer;touch-action:none;'
@@ -1365,7 +1367,7 @@ window.AdminGate = (function () {
   let armed = false;
   dot.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (!cb) return; armed = true; cancelAnimationFrame(raf); try { dot.setPointerCapture(e.pointerId); } catch (x) {} });
   const done = e => { e.preventDefault(); e.stopPropagation(); if (!armed) return; armed = false; const f = cb; cb = null; setTimeout(() => { dot.style.display = 'none'; }, 60); if (f) f(); };
-  dot.addEventListener('pointerup', done); dot.addEventListener('pointercancel', done);
+  dot.addEventListener('pointerup', done); dot.addEventListener('pointercancel', done);   /* 전자칠판은 손을 뗄 때 pointercancel이 오기도 함 */
   dot.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); });
   return { ask(fn) { cb = fn; t0 = performance.now(); ring.style.strokeDashoffset = 0; dot.style.display = 'block'; cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); }, cancel: hide };
 })();
