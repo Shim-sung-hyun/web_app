@@ -521,7 +521,20 @@
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 
-  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, maskOf, edgeOf, footOnGround, BASE};
+  /* 여러 마리 숨기기(2026-11-11 선생님: 스페셜은 6마리가 꼭 되게): 동물을 차례로 숨기고(못 지키는 동물은 건너뜀), n마리가 안 되면
+     판(소품 배치)을 새로 짜서 다시 — tries번까지, 가장 많이 숨긴 판을 돌려줌. compose 옵션은 opt.compose, 판마다 숨기기 옵션은 opt.hide(seed는 판마다 바뀜) */
+  function hideMany(pl, animals, n, opt = {}) {
+    const seed0 = opt.seed ?? Math.floor(Math.random() * 1e9), tries = opt.tries ?? 12; let best = null;
+    for (let t = 0; t < tries; t++) {
+      const seed = seed0 + t * 7919, lay = compose(pl, Object.assign({}, opt.compose, {seed})), R = rnd(seed), out = [];
+      const pick = animals.slice().sort(() => R() - .5);
+      for (let i = 0; i < pick.length && out.length < n; i++) { const A = hide(pl, lay, pick[i], Object.assign({}, opt.hide, {seed: seed + i * 7})); if (A) out.push(A); }
+      if (!best || out.length > best.out.length) best = {lay, out, seed};
+      if (out.length >= n) break;
+    }
+    return best;
+  }
+  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>
