@@ -93,3 +93,7 @@
 - 2편 공개(OPEN_BOOKS = [1, 2]) — 선생님 확인 뒤
 - (끝남 2026-11-04) 공용 그림 옮기기: 007/pics → media/words, 007/game → media/play, 007/fonts → media/fonts.
   007·008·009·010 주소 바꿈, check-files "없는 파일 0". 그림 주소는 이제 늘 GitHub 절대 주소(MEDIA)
+
+관리 버튼(2026-11-11)
+  누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
+  눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리는 이 앱 CSS 그대로.

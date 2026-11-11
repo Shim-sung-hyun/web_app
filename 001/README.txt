@@ -35,3 +35,7 @@ GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-find
   내장 목소리 → 차름 소리 모음 media/voice/leda-0.92/
   옛 001/samples/ · 001/voice/leda/ 는 2026-10-23 지움
   만들기 화면 sample-maker·art-maker·line-maker 도 사진 모음(photos.json)을 읽고 그 꼴로 내보냄(2026-10-23)
+
+관리 버튼(2026-11-11)
+  누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
+  눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리는 이 앱 CSS 그대로.

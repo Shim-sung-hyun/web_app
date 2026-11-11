@@ -38,3 +38,7 @@
 - 앱이 읽는 자료(목소리·예시 사진·cloud-key.html 등)는 GitHub 절대 주소로 읽는다. 상대 주소를 새로 쓰지 말 것.
 - 기록·키는 그 기기 브라우저에 주소(도메인)별로 저장된다. 서버에는 아무것도 저장되지 않는다.
 - 휴대폰으로 키 받기(key-relay.php)·사진 보내기·AI 중계는 받는 주소 목록에 https://www.charum.org 가 있어야 한다.
+
+관리 버튼(2026-11-11)
+  누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
+  눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리는 이 앱 CSS 그대로.

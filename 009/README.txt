@@ -58,3 +58,7 @@
 3. (2026-11-01 만듦) 캡처 animal-riddle01~14.jpg(1366×768: 01 설정 02~05 하 학습·카드 퀴즈·다섯 고개·특징 정리 06·07 중 열 고개·맞힘 08·09 상 학습·스무고개 10 정리하기 11 같은 동물 찾기 12 선생님 메뉴 13 기록 예시 14 활동지),
    animal-riddle_manual.html(게시판 본문)·animal-riddle_guide.html·animal-riddle-promo.jpg → 선생님이 게시판 글 → 글 번호를 reportLink·endLesson 주소에 넣기
 4. (생각해 볼 것) 동물 더 넣기 — 넣을 때 AD(그림에서 보기에도 다른지)·RID 20개·ALIAS·REAL·BB를 함께, 그림은 흰 바탕을 지운 직후 tools/clean-edges.py로 정리 → 어두운 배경에서 확대해 확인(갇힌 흰 바탕은 HOLES에)
+
+관리 버튼(2026-11-11)
+  누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
+  눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리는 이 앱 CSS 그대로.

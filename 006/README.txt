@@ -22,3 +22,7 @@ GitHub 주소:          https://shim-sung-hyun.github.io/web_app/006/place-count
   2026-11-11부터 학생 넣기·빼기는 공통 모듈 roster(common/roster.js, 앱 안 <script id="roster"> — 손으로 고치지 않음, tools/sync-modules.py).
   뺀 학생은 webapp.students.out, 이 앱 기록(placeCount.log)은 6개월 보관 뒤 Roster.purge로 지움. 캡처 05가 기록 창.
 기록은 그 기기 브라우저에만. 서버에는 아무것도 저장하지 않음. 앱 안의 자료는 GitHub 절대 주소로.
+
+관리 버튼(2026-11-11)
+  누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
+  눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리는 이 앱 CSS 그대로.
