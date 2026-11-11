@@ -63,7 +63,7 @@ body.home #play{display:none}
 .tiles.lv .tile span b{font-family:var(--f-display);font-weight:400;font-size:28px;line-height:1}
 /* ① 누구와 */
 .who{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.who select,.who input{font:inherit;font-size:17px;min-height:48px;border-radius:12px;border:2px solid var(--gline);padding:6px 12px;background:#fff;color:var(--ink)}
+.who select,.who input,.rs-add input{font:inherit;font-size:17px;min-height:48px;border-radius:12px;border:2px solid var(--gline);padding:6px 12px;background:#fff;color:var(--ink)}
 .who select{min-width:220px;font-weight:700}
 .who select.on{border-color:var(--g);background:var(--gsoft)}
 .mini{font:inherit;font-size:14px;font-weight:700;min-height:40px;padding:6px 14px;border-radius:999px;border:1.5px solid var(--gline);background:#fff;color:var(--g2);cursor:pointer;white-space:nowrap}
@@ -319,10 +319,8 @@ body.home #home{overflow-y:auto;align-items:flex-start;-webkit-overflow-scrollin
 .rdet{margin-top:16px;border-top:1px solid var(--gline);padding-top:10px}
 .rdet>summary{cursor:pointer;font-weight:700;color:var(--g2);font-size:15px}
 .rman{display:flex;flex-direction:column;gap:10px;margin-top:10px}
-.roster{display:flex;flex-wrap:wrap;gap:8px}
-.roster span{display:inline-flex;align-items:center;gap:4px;background:var(--gsoft);border-radius:999px;padding:4px 6px 4px 12px;font-weight:700;font-size:14px}
-.roster span button{border:0;background:#fff;border-radius:50%;width:26px;height:26px;color:#8A2D17;font-weight:700}
-.roster .empty{background:none;font-weight:500;color:#7A8A94}
+#rvRoster{--rs-line:var(--gline);--rs-soft:var(--gsoft)}
+#rvRoster .rs{margin-top:0}
 .rhelp{margin-top:16px;padding:10px 14px;border-radius:12px;background:#FBF7EF;font-size:13.5px;color:#5B5246;line-height:1.6}
 .demobar{margin:0 0 10px;padding:8px 12px;border-radius:10px;background:#FFF4D6;color:#6A4B00;font-size:14px}
 @media (max-width:640px){ .rsum .big{grid-template-columns:1fr} }
@@ -583,6 +581,127 @@ function close(){
 }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
 window.PhotoRelay={receive,close};
+})();
+</script>
+<script id="roster">
+/* 차름 공통 모듈: 학생 명단(roster) — 원본은 common/roster.js. 앱 안의 <script id="roster">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   명단은 같은 기기의 모든 차름 앱이 함께 쓴다(webapp.students). 뺀 학생은 webapp.students.out에 뺀 날과 함께 옮긴다.
+   뺀 학생의 기록은 KEEP_DAYS(6개월) 동안 남겨 두고, 그동안 같은 이름으로 다시 넣으면 같은 학생으로 되살아나 기록이 이어진다.
+   6개월이 지나면 앱마다 Roster.purge(기록)로 그 학생의 줄을 지운다. 빼낸 표시는 다른 앱도 지울 수 있게 3년 동안 남긴다.
+
+   쓰는 법(앱):
+     Roster.list()            지금 명단 [{id,name}]
+     Roster.nameOf(id)        이름(뺀 학생도)
+     Roster.has(id)           지금 명단에 있는지
+     Roster.add(이름)         넣은(또는 되살린) 학생을 돌려줌
+     Roster.remove(id)        명단에서 뺌(기록은 앱이 6개월 보관)
+     Roster.kept()            기록을 보관 중인 뺀 학생 [{id,name,at,until}]
+     Roster.purge(log, row=>row.s)   보관 기간이 지난 학생의 줄을 뺀 새 배열
+     Roster.mount(칸, {btn, on, input, onChange})   넣기·빼기 화면을 칸 안에 그림
+       btn·on·input: 그 앱의 단추·눌림·입력 칸 class(얼굴은 앱마다). onChange({type:'add'|'remove'|'restore', id})
+*/
+(function () {
+  'use strict';
+  var KEY = 'webapp.students', OUT = 'webapp.students.out', DAY = 864e5, KEEP_DAYS = 183, MARK_DAYS = 1100;
+  function get(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return Array.isArray(v) ? v : d; } catch (e) { return d; } }
+  function put(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function clean(n) { return String(n || '').trim().replace(/\s+/g, ' ').slice(0, 20); }
+  function newId() { return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  function list() { return get(KEY, []).filter(function (s) { return s && s.id && s.name; }); }
+  function outs() {
+    var now = Date.now(), all = get(OUT, []), live = all.filter(function (o) { return o && o.id && now - (o.at || 0) < MARK_DAYS * DAY; });
+    if (live.length !== all.length) put(OUT, live);
+    return live;
+  }
+  function kept() {
+    var now = Date.now(), ids = {};
+    list().forEach(function (s) { ids[s.id] = 1; });
+    return outs().filter(function (o) { return !ids[o.id] && now - o.at < KEEP_DAYS * DAY; })
+      .map(function (o) { return { id: o.id, name: o.name, at: o.at, until: o.at + KEEP_DAYS * DAY }; });
+  }
+  function nameOf(id) {
+    var s = list().filter(function (x) { return x.id === id; })[0] || outs().filter(function (x) { return x.id === id; })[0];
+    return s ? s.name : '';
+  }
+  function has(id) { return list().some(function (s) { return s.id === id; }); }
+  function add(name) {
+    var n = clean(name); if (!n) return null;
+    var L = list(), same = L.filter(function (s) { return s.name === n; })[0];
+    if (same) return same;
+    var back = kept().filter(function (o) { return o.name === n; }).sort(function (a, b) { return b.at - a.at; })[0];
+    var st = back ? { id: back.id, name: n } : { id: newId(), name: n };
+    L.push(st); put(KEY, L);
+    if (back) put(OUT, outs().filter(function (o) { return o.id !== back.id; }));
+    return st;
+  }
+  function remove(id) {
+    var L = list(), st = L.filter(function (s) { return s.id === id; })[0]; if (!st) return;
+    put(KEY, L.filter(function (s) { return s.id !== id; }));
+    put(OUT, outs().filter(function (o) { return o.id !== id; }).concat([{ id: st.id, name: st.name, at: Date.now() }]));
+  }
+  function purge(log, idOf) {
+    if (!Array.isArray(log)) return log;
+    var now = Date.now(), gone = {};
+    outs().forEach(function (o) { if (now - o.at >= KEEP_DAYS * DAY) gone[o.id] = 1; });
+    list().forEach(function (s) { delete gone[s.id]; });
+    return log.filter(function (r) { return !gone[idOf ? idOf(r) : r.s]; });
+  }
+  function md(t) { var d = new Date(t); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일'; }
+
+  /* 기본 꼴: 자리·간격만. 색·글꼴·둥글기는 앱의 단추 class와 CSS 변수(--rs-line, --rs-soft)로 앱마다 */
+  var CSS = ':where(.rs){display:grid;gap:10px;margin-top:10px}'
+    + ':where(.rs-add){display:flex;gap:8px;flex-wrap:wrap}'
+    + ':where(.rs-add input){flex:1;min-width:140px;max-width:260px}'
+    + ':where(.rs-names){display:flex;flex-wrap:wrap;gap:6px 8px;margin:0;padding:0;list-style:none}'
+    + ':where(.rs-names li){display:inline-flex;align-items:center;gap:2px;padding:2px 2px 2px 12px;border:1.5px solid var(--rs-line,#d6d2cb);border-radius:999px;min-height:40px}'
+    + ':where(.rs-x){border:0;background:none;font:inherit;font-size:20px;line-height:1;width:40px;height:40px;border-radius:50%;cursor:pointer;color:inherit;opacity:.55}'
+    + ':where(.rs-x:hover,.rs-x:focus-visible){opacity:1;background:var(--rs-soft,rgba(0,0,0,.06))}'
+    + ':where(.rs-none,.rs-out){font-size:14px;opacity:.8;margin:0}'
+    + ':where(.rs-out summary){cursor:pointer}'
+    + ':where(.rs-out ul){margin:6px 0 0;padding:0;list-style:none;display:grid;gap:6px}'
+    + ':where(.rs-out li){display:flex;align-items:center;gap:10px;flex-wrap:wrap}';
+  function style() {
+    if (document.getElementById('rsStyle')) return;
+    var s = document.createElement('style'); s.id = 'rsStyle'; s.textContent = CSS;
+    (document.head || document.documentElement).insertBefore(s, (document.head || document.documentElement).firstChild);
+  }
+
+  function mount(box, opt) {
+    opt = opt || {}; style();
+    var btn = opt.btn || '', on = opt.on || '', inp = opt.input || '', tell = opt.onChange || function () {};
+    function draw() {
+      var L = list(), K = kept(), h = '<div class="rs">';
+      h += '<div class="rs-add"><input class="' + inp + '" maxlength="20" placeholder="학생 이름" aria-label="넣을 학생 이름" autocomplete="off">'
+        + '<button type="button" class="' + btn + ' ' + on + '" data-rs="add">넣기</button></div>';
+      h += L.length ? '<ul class="rs-names">' + L.map(function (s) {
+        return '<li><span>' + esc(s.name) + '</span><button type="button" class="rs-x" data-rs="del" data-id="' + esc(s.id) + '" aria-label="' + esc(s.name) + ' 빼기">×</button></li>';
+      }).join('') + '</ul>' : '<p class="rs-none">아직 넣은 학생이 없어요.</p>';
+      if (K.length) h += '<details class="rs-out"><summary>뺀 학생 ' + K.length + '명 — 기록은 보관 중</summary><ul>' + K.map(function (o) {
+        return '<li><span>' + esc(o.name) + ' · ' + md(o.until) + '까지 보관</span><button type="button" class="' + btn + '" data-rs="back" data-id="' + esc(o.id) + '">다시 넣기</button></li>';
+      }).join('') + '</ul></details>';
+      box.innerHTML = h + '</div>';
+      var input = box.querySelector('input');
+      function doAdd() { var st = add(input.value); if (!st) { input.focus(); return; } draw(); tell({ type: 'add', id: st.id }); }
+      box.querySelector('[data-rs=add]').onclick = doAdd;
+      input.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); doAdd(); } };
+      Array.prototype.forEach.call(box.querySelectorAll('[data-rs=del]'), function (b) {
+        b.onclick = function () {
+          var id = b.getAttribute('data-id'), n = nameOf(id);
+          if (!confirm(n + ' 학생을 명단에서 뺄까요?\n\n이 기기의 다른 차름 앱 명단에서도 함께 빠져요.\n기록은 6개월 동안 남아 있다가, 그동안 다시 넣지 않으면 지워져요.')) return;
+          remove(id); draw(); tell({ type: 'remove', id: id });
+        };
+      });
+      Array.prototype.forEach.call(box.querySelectorAll('[data-rs=back]'), function (b) {
+        b.onclick = function () { var st = add(nameOf(b.getAttribute('data-id'))); draw(); if (st) tell({ type: 'restore', id: st.id }); };
+      });
+    }
+    draw();
+    return { refresh: draw, focus: function () { var i = box.querySelector('input'); if (i) i.focus(); } };
+  }
+
+  window.Roster = { list: list, nameOf: nameOf, has: has, add: add, remove: remove, kept: kept, purge: purge, mount: mount, KEEP_DAYS: KEEP_DAYS };
 })();
 </script>
 <script>
@@ -912,19 +1031,18 @@ function pickAnother(){
 }
 
 /* ================= 학생 기록 =================
-   명단은 같은 사이트의 다른 앱과 함께 씀(webapp.students). 기록은 이 기기 브라우저에만.
+   명단은 같은 기기의 다른 차름 앱과 함께 씀(webapp.students) — 넣기·빼기는 공통 모듈 Roster. 뺀 학생의 기록은 6개월 남겨 두었다가 Roster.purge로 지움. 기록은 이 기기 브라우저에만.
    한 줄 = 다 맞춘 판 하나: {s:학생, t:시각, pic:그림 이름, src:출처, lv:단계, n:조각 수, sh:모양, gh:밑그림(1~4), em:다른 자리 방식, first:바로 맞힘, helped:도움 받아 맞힘, ms:걸린 시간, mode:교사와/혼자} */
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
 let students=[], LOG=[], recId='';
 function loadRec(){
-  try{ students=JSON.parse(ls.get('webapp.students')||'[]')||[]; }catch(e){ students=[]; }
+  students=Roster.list();
   try{ LOG=JSON.parse(store.get('log')||'[]')||[]; }catch(e){ LOG=[]; }
+  const kept=Roster.purge(LOG,r=>r.s); if(kept.length!==LOG.length){ LOG=kept; store.set('log',JSON.stringify(LOG)); }
 }
-const saveStudents=()=>ls.set('webapp.students',JSON.stringify(students));
 const saveLog=()=>store.set('log',JSON.stringify(LOG));
 loadRec();
-const newSid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-const nameOf=id=>(students.find(s=>s.id===id)||{}).name||'';
+const nameOf=id=>Roster.nameOf(id);
 const dayOf=t=>{ const d=new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
 const SOLO=0.8; /* 바로 맞힘이 80% 이상이면 "혼자 맞춤" */
 const isSolo=r=>r.n>0&&r.first/r.n>=SOLO;
@@ -1008,14 +1126,14 @@ function importCSV(text){
   let added=0, skipped=0;
   rows.forEach(c=>{
     const name=(c[ix('학생')]||'').trim(); if(!name) return;
-    let st=students.find(x=>x.name===name); if(!st){ st={id:newSid(),name}; students.push(st); }
+    const st=Roster.add(name); if(!st) return;
     const t=new Date(c[ix('날짜')]+'T'+(c[ix('시각')]||'00:00:00')).getTime(); if(!t) return;
     const key=st.id+'|'+Math.round(t/1000); if(have.has(key)){ skipped++; return; }
     const lv=LV_OF(c[ix('단계')]), n=+c[ix('조각 수')];
     LOG.push({s:st.id,t,pic:c[ix('그림')]||'',src:back(SRC_NAME,c[ix('출처')])||'',lv,n,sh:back(SHAPES,c[ix('모양')])||'jig',gh:+back(GH_SHORT,c[ix('밑그림')])||1,em:back(EM_NAME,c[ix('다른 자리')])||'show',first:+c[ix('바로 맞힘')]||0,helped:+c[ix('도움 받아 맞힘')]||0,ms:(+c[ix('걸린 시간(초)')]||0)*1000,mode:c[ix('방식')]==='학생 혼자'?'solo':'teacher'});
     have.add(key); added++;
   });
-  LOG.sort((a,b)=>a.t-b.t); saveStudents(); saveLog(); return {added,skipped};
+  LOG.sort((a,b)=>a.t-b.t); students=Roster.list(); saveLog(); return {added,skipped};
 }
 
 /* ================= 교사용 기록 창 ================= */
@@ -1070,8 +1188,7 @@ function renderRecords(){
       <div class="rhelp"><b>기록 읽는 법</b> — 난이도는 조각 수가 먼저이고, 같은 조각 수에서는 밑그림이 흐릴수록 어려워요(진하게 → 흐리게 → 더 흐리게 → 없음 → 다음 단계). 다른 자리에 한 번 이상 놓았거나 제자리 표시를 본 조각은 "도움 받아 맞힘"이에요. 앱은 제안만 하고, 단계는 선생님이 정해요.</div>
       <details class="rdet"><summary>학생 관리 · 내보내기</summary>
         <div class="rman">
-          <div class="roster">${students.map(s=>`<span>${esc(s.name)}<button type="button" data-del="${esc(s.id)}" aria-label="${esc(s.name)} 지우기">×</button></span>`).join('')||'<span class="empty">아직 넣은 학생이 없어요.</span>'}</div>
-          <div class="who"><input id="rvName" placeholder="학생 이름 (실명)" autocomplete="off"><button class="mini pri" type="button" id="rvAdd">넣기</button></div>
+          <div id="rvRoster"></div>
           <div class="who"><button class="mini" type="button" id="rvCsv">CSV 내보내기</button><label class="mini" style="cursor:pointer">불러오기<input type="file" id="rvImp" accept=".csv,text/csv" hidden></label><button class="mini" type="button" id="rvWipe">이 학생 기록 지우기</button><span id="rvMsg" class="hint" style="margin:0"></span></div>
           <p class="hint">학생 이름과 기록은 이 기기(브라우저)에만 저장되고 바깥으로 보내지 않아요. 다른 기기로 옮길 때는 CSV로 내보내고 불러와요. 실명이 든 파일은 학교 개인정보 기준대로 보관해 주세요.</p>
         </div></details>
@@ -1082,11 +1199,11 @@ function renderRecords(){
   R.querySelector('#rvPrint').onclick=()=>printRecords(list,name);
   const sel=R.querySelector('#rvStu'); if(sel){ sel.value=RV.student; sel.onchange=()=>{ RV.student=sel.value; renderRecords(); }; }
   R.querySelectorAll('[data-rung]').forEach(b=>b.onclick=()=>{ const {lv,gh}=rungAt(+b.dataset.rung); S.level=lv; S.ghost=gh; store.set('level',lv); store.set('ghost2',gh); closeRecords(); if(document.body.classList.contains('setup')) showSetup(); else renderDocks(); });
-  R.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ const st=students.find(x=>x.id===b.dataset.del); if(!st) return;
-    if(!confirm(`${st.name} 학생을 명단에서 지울까요? (다른 앱에서도 함께 지워져요. 이 앱의 기록도 지워요.)`)) return;
-    students=students.filter(x=>x.id!==st.id); LOG=LOG.filter(r=>r.s!==st.id); saveStudents(); saveLog(); if(recId===st.id) setRecording(''); renderRecords(); refreshWho(); });
-  R.querySelector('#rvAdd').onclick=()=>{ const n=R.querySelector('#rvName').value.trim(); if(!n){ spotlight('#rvName','학생 이름을 넣어 주세요.'); return; }
-    if(!students.some(s=>s.name===n)){ students.push({id:newSid(),name:n}); saveStudents(); } RV.student=students.find(s=>s.name===n).id; renderRecords(); refreshWho(); };
+  Roster.mount(R.querySelector('#rvRoster'),{btn:'mini',on:'pri',onChange:ch=>{
+    students=Roster.list();
+    if(ch.type==='remove'){ if(recId===ch.id) setRecording(''); } else RV.student=ch.id;
+    renderRecords(); refreshWho(); const d=$('recBox').querySelector('#rvRoster'); if(d&&d.closest('details')) d.closest('details').open=true;
+  }});
   R.querySelector('#rvCsv').onclick=()=>{ const all=LOG.slice().sort((a,b)=>a.t-b.t); const b=new Blob([toCSV(all)],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='그림조각맞추기_기록_'+dayOf(Date.now())+'.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); };
   R.querySelector('#rvImp').onchange=async e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; const r=importCSV(await f.text()); renderRecords(); refreshWho(); $('rvMsg').textContent=`${r.added}판을 불러왔어요${r.skipped?` (이미 있는 ${r.skipped}판은 건너뜀)`:''}.`; };
   R.querySelector('#rvWipe').onclick=()=>{ if(!RV.student) return; if(!confirm(`${nameOf(RV.student)} 학생의 이 앱 기록을 모두 지울까요?`)) return; LOG=LOG.filter(r=>r.s!==RV.student); saveLog(); renderRecords(); };
@@ -1192,7 +1309,7 @@ function showSetup(){
   $('stuSel').onchange=e=>{ setRecording(e.target.value); refreshWho(); };
   $('stuAddBtn').onclick=()=>{ $('addRow').hidden=!$('addRow').hidden; if(!$('addRow').hidden) $('stuName').focus(); };
   const addStu=()=>{ const n=$('stuName').value.trim(); if(!n){ spotlight('#stuName','학생 이름을 넣어 주세요.'); return; }
-    loadRec(); let st=students.find(s=>s.name===n); if(!st){ st={id:newSid(),name:n}; students.push(st); saveStudents(); }
+    const st=Roster.add(n); if(!st) return; loadRec();
     $('stuName').value=''; $('addRow').hidden=true; setRecording(st.id); refreshWho(); };
   $('stuAddOk').onclick=addStu; $('stuName').onkeydown=e=>{ if(e.key==='Enter') addStu(); };
   $('recOpen').onclick=()=>openRecords(recId);

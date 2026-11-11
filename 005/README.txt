@@ -37,4 +37,3 @@
 학생 명단(2026-11-11)
   학생 넣기·빼기는 공통 모듈 roster(common/roster.js, 앱 안 <script id="roster"> — 손으로 고치지 않음, tools/sync-modules.py).
   명단 webapp.students(다른 앱과 함께), 뺀 학생은 webapp.students.out, 이 앱 기록(placeValue.log)은 6개월 보관 뒤 Roster.purge로 지움. 캡처 05가 기록 창.
-  place-value-beta.html은 옮기지 않았음(예전 명단 코드 그대로).

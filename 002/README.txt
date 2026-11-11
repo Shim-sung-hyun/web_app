@@ -26,6 +26,8 @@
   휴대폰 사진은 photo-send.html + photo-relay.php(001과 같음). 002에서 열면 안내 문장이 퍼즐용으로 바뀜(#app=puzzle).
   앱 안 <script id="photoRelay">는 2026-11-11부터 공통 모듈(원본 common/) — 손으로 고치지 않고 원본을 고친 뒤 tools/sync-modules.py. 번호·단추 색은 :root의 --relay-accent.
   저장 칸: picturePuzzle.*(설정·list·log), webapp.students(명단), IndexedDB picturePuzzleMine(보관한 사진 60장).
+  2026-11-11부터 학생 넣기·빼기는 공통 모듈 roster(common/roster.js, 앱 안 <script id="roster"> — 손으로 고치지 않음, tools/sync-modules.py).
+  기록 화면 "학생 관리 · 내보내기"에서 넣고 뺌(설정 ①의 "+ 학생 넣기"는 그대로, Roster.add를 씀). 뺀 학생은 webapp.students.out, 이 앱 기록은 6개월 보관 뒤 Roster.purge로 지움.
 
 
 [내 도메인에서 열기] (2026-10-21)
