@@ -495,6 +495,7 @@ body.admin #main{pointer-events:none}
 <div id="printArea"></div>
 
 <script id="keyRelay">
+/* 차름 공통 모듈: 휴대폰으로 키 받기(keyRelay) — 원본은 common/keyRelay.js. 앱 안의 <script id="keyRelay">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다. */
 /* ===== 휴대폰으로 키 받기 (전자칠판 쪽) — 공통 모듈 ===== */
 (function(){
 const RELAY='https://charum.org/charum-api/key-relay.php';
@@ -699,12 +700,16 @@ function close(){
   me.box.remove();
 }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
-window.KeyRelay={receive,close,QR,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
+/* 모든 앱이 함께 쓰는 키 자리(webapp.cloudKey·webapp.geminiKey): 앱이 키를 저장하거나 지울 때 같이 맞춤 */
+function share(kind,val){ const k=kind==='gemini'?'webapp.geminiKey':'webapp.cloudKey'; try{ val?localStorage.setItem(k,val):localStorage.removeItem(k); }catch(e){} return val; }
+window.KeyRelay={receive,close,QR,share,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
 ensureCss();
 if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
 })();
 </script>
 <script id="photoRelay">
+/* 차름 공통 모듈: 휴대폰에서 사진 받기(photoRelay) — 원본은 common/photoRelay.js. 앱 안의 <script id="photoRelay">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   번호·단추 색은 앱이 :root에 --relay-accent 로 넘겨 준다(없으면 청록 #17766F). */
 /* ===== 휴대폰으로 사진 받기 (전자칠판 쪽) — key-relay와 같은 방식 =====
    전자칠판이 번호 4자리 + 공개 열쇠를 맡기면, 휴대폰(photo-send.html)이 사진을 잠가서 보내고,
    전자칠판이 받는 순간 서버에서 지워짐. 서버는 사진을 볼 수 없음.
@@ -798,9 +803,10 @@ const CSS=`
 #prBox .pr-card{background:#fff;border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:26px 30px 22px;width:min(660px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;box-sizing:border-box}
 #prBox h2{margin:0 0 4px;font-size:22px}
 #prBox .pr-sub{margin:0 0 18px;color:#56666E;font-size:15px;line-height:1.55}
+#prBox .pr-note{margin:-8px 0 16px;padding:10px 14px;border-radius:12px;background:#EEF3F6;color:#2F4556;font-size:15px;line-height:1.55}
 #prBox .pr-main{display:flex;gap:26px;align-items:center;justify-content:center;flex-wrap:wrap}
 #prBox .pr-qr{background:#fff;border:1px solid #dde5e7;border-radius:14px;padding:6px;line-height:0;width:196px;height:196px;box-sizing:content-box}
-#prBox .pr-code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:78px;letter-spacing:.14em;line-height:1;color:#17766F;text-align:center;padding-left:.14em}
+#prBox .pr-code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:78px;letter-spacing:.14em;line-height:1;color:var(--relay-accent,#17766F);text-align:center;padding-left:.14em}
 #prBox .pr-codebox{display:flex;flex-direction:column;align-items:center;gap:10px}
 #prBox .pr-steps{margin:0;padding-left:20px;font-size:15px;line-height:1.7;color:#30404a}
 #prBox .pr-url{font-size:13px;color:#56666E;word-break:break-all}
@@ -808,7 +814,7 @@ const CSS=`
 #prBox .pr-state.err{color:#c62828;font-weight:700}
 #prBox .pr-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
 #prBox button{font:inherit;font-size:16px;padding:10px 22px;border-radius:12px;border:1px solid #c9d4d8;background:#f4f7f8;color:#1C2A31;cursor:pointer;min-height:44px}
-#prBox button.pr-pri{background:#17766F;border-color:#17766F;color:#fff}
+#prBox button.pr-pri{background:var(--relay-accent,#17766F);border-color:var(--relay-accent,#17766F);color:#fff}
 `;
 function ensureCss(){ if(document.getElementById('prCss')) return; const s=document.createElement('style'); s.id='prCss'; s.textContent=CSS; document.head.appendChild(s); }
 let active=null;
@@ -817,7 +823,7 @@ async function receive(opts){
   const MAX=Math.max(1,Math.min(12,opts.max||1));   /* 번호 하나로 받을 장 수(2026-10-26 여러 장) */
   const box=document.createElement('div'); box.id='prBox'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true');
   box.innerHTML=`<div class="pr-card"><h2>휴대폰에서 사진 받기</h2>
-    <p class="pr-sub">휴대폰으로 찍은 사진을 이 화면으로 보냅니다. 사진은 잠가서 보내고, 중계 서버도 사진을 볼 수 없습니다.</p>
+    <p class="pr-sub">휴대폰으로 찍은 사진을 이 화면으로 보냅니다. 사진은 잠가서 보내고, 중계 서버도 사진을 볼 수 없습니다.</p>${opts.note?'<p class="pr-note">'+opts.note+'</p>':''}
     <div class="pr-main"><div class="pr-qr" id="prQr"></div>
       <div class="pr-codebox"><div class="pr-code" id="prCode">····</div>
         <ol class="pr-steps"><li>휴대폰 카메라로 QR을 찍어요.</li><li>사진을 찍거나 골라요.<br><small>잘 나온 사진은 <b>기증(선택)</b>에도 체크해 주세요.</small></li>${(opts.want||[]).includes('gemini')?'<li>처음 한 번은 <b>Gemini 키</b>도 넣어요.<br><small>키가 없으면 그 화면의 "키 받는 법"(1~2분)</small></li>':''}<li><b>보내기</b>를 눌러요.${MAX>1?"<br><small>"+MAX+"장까지 한 번에 보낼 수 있어요.</small>":""}</li></ol></div></div>

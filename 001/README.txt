@@ -25,6 +25,7 @@ GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-find
 
 서버(charum.org 의 charum-api/ 폴더 — 원본은 저장소 server/charum-api/): key-relay.php · photo-relay.php · donate.php
   받는 주소: https://shim-sung-hyun.github.io, https://www.charum.org, https://charum.org
+  앱 안 <script id="keyRelay">·<script id="photoRelay">는 2026-11-11부터 공통 모듈(원본 common/) — 손으로 고치지 않고 원본을 고친 뒤 tools/sync-modules.py.
 
 예시 사진을 늘릴 때
   sample-maker → photos.json → 새 말 목소리(만들기 화면, 쓰고 지움, media/voice/leda-0.92 에 넣음) → 끝 그림(art-maker) → 색칠 도안(line-maker) — 모두 차름 사진 모음 꼴

@@ -30,6 +30,7 @@
 휴대폰으로 키 받기
   키 칸 옆 "📱 휴대폰으로 받기" 단추는 중계 서버 https://charum.org/charum-api/key-relay.php 를 씁니다.
   보내기 페이지는 저장소 맨 위 key-send.html. 중계 서버 key-relay.php는 서버 charum-api/에만 있음(원본은 아직 저장소에 없음 — 지침 끝 "선생님 할 일" ②).
+  앱 안 <script id="keyRelay">는 2026-11-11부터 공통 모듈(원본 common/) — 손으로 고치지 않고 원본을 고친 뒤 tools/sync-modules.py.
 
 [내 도메인에서 열기] (2026-10-21)
 - 주소: https://www.charum.org/study/004/poem-recite.html (게시판 app_url도 이 주소로)

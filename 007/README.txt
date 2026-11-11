@@ -42,6 +42,7 @@
 [저장 칸]
 - 학생 명단: webapp.students (다른 앱과 함께 씀, 학생 칸 wl = 수준)
   2026-11-04부터 넣기·빼기는 공통 모듈 roster(common/roster.js, 앱 안 <script id="roster"> — 손으로 고치지 않음, tools/sync-modules.py).
+  휴대폰으로 키 받기 <script id="keyRelay">도 2026-11-11부터 공통 모듈(원본 common/keyRelay.js).
   설정 ①의 "학생 넣기·빼기"로 엶. 뺀 학생은 webapp.students.out, 이 앱 기록(wl007b_log)은 6개월 보관 뒤 Roster.purge로 지움.
   교사용 기록에서 "(뺀 학생)"으로 볼 수 있음. 그동안 다시 넣으면 기록이 이어짐(수준 wl은 1로 돌아감).
   앱은 명단을 들고 있지 않고 그때그때 Roster.list()로 읽음(Rec.students), 수준은 Rec.setWl로 그 학생 칸만 바꿈.

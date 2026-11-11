@@ -24,6 +24,7 @@
   server-loader.html           내 도메인용 불러오기 파일
   일상 그림은 차름 사진 모음 media/photos/photos.json 의 끝 그림(uses.puzzle)을 GitHub 절대 주소로 불러옴.
   휴대폰 사진은 photo-send.html + photo-relay.php(001과 같음). 002에서 열면 안내 문장이 퍼즐용으로 바뀜(#app=puzzle).
+  앱 안 <script id="photoRelay">는 2026-11-11부터 공통 모듈(원본 common/) — 손으로 고치지 않고 원본을 고친 뒤 tools/sync-modules.py. 번호·단추 색은 :root의 --relay-accent.
   저장 칸: picturePuzzle.*(설정·list·log), webapp.students(명단), IndexedDB picturePuzzleMine(보관한 사진 60장).
 
 

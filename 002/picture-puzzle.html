@@ -26,7 +26,7 @@ button:focus-visible,input:focus-visible+span,a:focus-visible{outline:3px solid 
 svg.ic{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- 교사 설정: 회청색(기타 영역) 바탕 + 퍼즐 모서리 카드 ---------- */
-:root{--g:#4E6A80;--g2:#3B5366;--gbg:#E8EEF2;--gline:#CBD7DF;--gsoft:#F3F6F8}
+:root{--relay-accent:#4E6A80;--g:#4E6A80;--g2:#3B5366;--gbg:#E8EEF2;--gline:#CBD7DF;--gsoft:#F3F6F8}
 #setup{position:fixed;inset:0;overflow:auto;display:none;color:var(--ink);color-scheme:light;
   background-color:var(--gbg);
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88'%3E%3Cpath d='M0 44h30a7 7 0 1 1 14 0h44M44 0v30a7 7 0 1 0 0 14v44' fill='none' stroke='%234E6A80' stroke-opacity='.07' stroke-width='2'/%3E%3C/svg%3E")}
@@ -386,6 +386,8 @@ body.admin #play{pointer-events:none}
 <div id="printArea"></div>
 
 <script id="photoRelay">
+/* 차름 공통 모듈: 휴대폰에서 사진 받기(photoRelay) — 원본은 common/photoRelay.js. 앱 안의 <script id="photoRelay">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   번호·단추 색은 앱이 :root에 --relay-accent 로 넘겨 준다(없으면 청록 #17766F). */
 /* ===== 휴대폰으로 사진 받기 (전자칠판 쪽) — key-relay와 같은 방식 =====
    전자칠판이 번호 4자리 + 공개 열쇠를 맡기면, 휴대폰(photo-send.html)이 사진을 잠가서 보내고,
    전자칠판이 받는 순간 서버에서 지워짐. 서버는 사진을 볼 수 없음.
@@ -482,7 +484,7 @@ const CSS=`
 #prBox .pr-note{margin:-8px 0 16px;padding:10px 14px;border-radius:12px;background:#EEF3F6;color:#2F4556;font-size:15px;line-height:1.55}
 #prBox .pr-main{display:flex;gap:26px;align-items:center;justify-content:center;flex-wrap:wrap}
 #prBox .pr-qr{background:#fff;border:1px solid #dde5e7;border-radius:14px;padding:6px;line-height:0;width:196px;height:196px;box-sizing:content-box}
-#prBox .pr-code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:78px;letter-spacing:.14em;line-height:1;color:#4E6A80;text-align:center;padding-left:.14em}
+#prBox .pr-code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:78px;letter-spacing:.14em;line-height:1;color:var(--relay-accent,#17766F);text-align:center;padding-left:.14em}
 #prBox .pr-codebox{display:flex;flex-direction:column;align-items:center;gap:10px}
 #prBox .pr-steps{margin:0;padding-left:20px;font-size:15px;line-height:1.7;color:#30404a}
 #prBox .pr-url{font-size:13px;color:#56666E;word-break:break-all}
@@ -490,7 +492,7 @@ const CSS=`
 #prBox .pr-state.err{color:#c62828;font-weight:700}
 #prBox .pr-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
 #prBox button{font:inherit;font-size:16px;padding:10px 22px;border-radius:12px;border:1px solid #c9d4d8;background:#f4f7f8;color:#1C2A31;cursor:pointer;min-height:44px}
-#prBox button.pr-pri{background:#4E6A80;border-color:#4E6A80;color:#fff}
+#prBox button.pr-pri{background:var(--relay-accent,#17766F);border-color:var(--relay-accent,#17766F);color:#fff}
 `;
 function ensureCss(){ if(document.getElementById('prCss')) return; const s=document.createElement('style'); s.id='prCss'; s.textContent=CSS; document.head.appendChild(s); }
 let active=null;

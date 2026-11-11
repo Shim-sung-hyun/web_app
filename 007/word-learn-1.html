@@ -718,6 +718,7 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
 <div id="printArea"></div>
 
 <script id="keyRelay">
+/* 차름 공통 모듈: 휴대폰으로 키 받기(keyRelay) — 원본은 common/keyRelay.js. 앱 안의 <script id="keyRelay">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다. */
 /* ===== 휴대폰으로 키 받기 (전자칠판 쪽) — 공통 모듈 ===== */
 (function(){
 const RELAY='https://charum.org/charum-api/key-relay.php';
@@ -922,7 +923,9 @@ function close(){
   me.box.remove();
 }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
-window.KeyRelay={receive,close,QR,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
+/* 모든 앱이 함께 쓰는 키 자리(webapp.cloudKey·webapp.geminiKey): 앱이 키를 저장하거나 지울 때 같이 맞춤 */
+function share(kind,val){ const k=kind==='gemini'?'webapp.geminiKey':'webapp.cloudKey'; try{ val?localStorage.setItem(k,val):localStorage.removeItem(k); }catch(e){} return val; }
+window.KeyRelay={receive,close,QR,share,button:(label)=>`<button type="button" class="kr-open" data-kr="1">${label||'📱 휴대폰으로 받기'}</button>`};
 ensureCss();
 if(READY) document.documentElement.classList.add('kr-ready'); /* body 클래스를 통째로 바꾸는 앱이 있어 html에 붙임 */
 })();
