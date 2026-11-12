@@ -874,7 +874,7 @@ body.setup #adminBtn{display:none}
     };
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
-    const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
+    const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 이만큼은 되는 깊이에만 — 단계마다(hide-test MINLONG 하 .10·중 .07·상 .05, 2026-11-12). 어디서도 못 미치는 작은 동물은 그 단계에서 빠짐
     const tryAt0 = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
       /* 화면 끝(2026-11-11 선생님): 코·꼬리만 내밀어도 됨(화면 밖은 가려진 것으로 셈). 화면 밖 몫의 한도는 단계마다 opt.offMax(하 .5·중 .7·상 .8·스페셜 .9, 기본 .7).
          끝에 걸친 동물은 한 장면에 하나만(둘째는 가운데로 단계를 못 지킬 때만), 화면 안에 남은 조각 폭이 장면의 opt.edgeMin(기본 3%)은 되게 — 점수에도 작은 벌점(EDGE_PEN)을 줘 가운데와 비슷하면 가운데로 */
@@ -933,7 +933,7 @@ body.setup #adminBtn{display:none}
     }
     if (!best) return null;
     /* 단계를 지킴: 정한 몫보다 많이 보이면 숨기지 않음(null) — 부르는 쪽이 다른 동물로 */
-    if (opt.strict !== false && best.v > want[1] + .04) return null;
+    if (opt.strict !== false && (best.v > want[1] + .04 || best.v < want[0] - .04)) return null;   // 너무 많이 가려져도(2026-11-12 선생님: 하인데 28%) 숨기지 않음 — hideMany가 다른 동물·판으로
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 

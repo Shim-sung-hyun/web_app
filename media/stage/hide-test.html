@@ -454,7 +454,7 @@
     };
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
-    const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 7%는 되는 깊이에만(지평선 가까이에선 너무 작음)
+    const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 이만큼은 되는 깊이에만 — 단계마다(hide-test MINLONG 하 .10·중 .07·상 .05, 2026-11-12). 어디서도 못 미치는 작은 동물은 그 단계에서 빠짐
     const tryAt0 = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
       /* 화면 끝(2026-11-11 선생님): 코·꼬리만 내밀어도 됨(화면 밖은 가려진 것으로 셈). 화면 밖 몫의 한도는 단계마다 opt.offMax(하 .5·중 .7·상 .8·스페셜 .9, 기본 .7).
          끝에 걸친 동물은 한 장면에 하나만(둘째는 가운데로 단계를 못 지킬 때만), 화면 안에 남은 조각 폭이 장면의 opt.edgeMin(기본 3%)은 되게 — 점수에도 작은 벌점(EDGE_PEN)을 줘 가운데와 비슷하면 가운데로 */
@@ -513,7 +513,7 @@
     }
     if (!best) return null;
     /* 단계를 지킴: 정한 몫보다 많이 보이면 숨기지 않음(null) — 부르는 쪽이 다른 동물로 */
-    if (opt.strict !== false && best.v > want[1] + .04) return null;
+    if (opt.strict !== false && (best.v > want[1] + .04 || best.v < want[0] - .04)) return null;   // 너무 많이 가려져도(2026-11-12 선생님: 하인데 28%) 숨기지 않음 — hideMany가 다른 동물·판으로
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
   }
 
@@ -540,6 +540,7 @@ const ANIMALS=[['다람쥐','words/daramjwi.webp',.38],['너구리','words/neogu
  ['사슴','animals/saseum.webp',1.9],['산양','animals/sanyang.webp',1.3],['곰','animals/gom.webp',2],['호랑이','animals/horangi.webp',2.6]];
 const LV={1:[.5,.7],2:[.25,.4],3:[.08,.18],4:[.08,.18]};   // 하·중·상, 스페셜 = 상만큼 숨긴 동물 여러 마리(008 스페셜과 같음)
 const COUNT={1:3,2:3,3:3,4:6}, FACEV={1:'show',3:'hide',4:'hide'};
+const MINLONG={1:.10,2:.07,3:.05,4:.05};   // 몸의 가장 긴 쪽이 장면 높이의 이만큼은(2026-11-12 선생님: 하인데 작은 동물이 구석에 아주 작게)
 const OFFMAX={1:.5,2:.7,3:.8,4:.9};   // 화면 밖으로 나가도 되는 몸의 몫 한도(2026-11-11 선생님) — 하 50·중 70·상 80·스페셜 90%   // 하는 얼굴이 잘 보이게, 상·스페셜은 얼굴을 가리고 단서만
 const $=id=>document.getElementById(id);
 const img=src=>new Promise(ok=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>ok(i);i.onerror=()=>ok(null);i.src=src;});
@@ -563,7 +564,7 @@ async function draw(){   /* 판을 하나씩 그려 보여 줌(스페셜은 판�
     const seed=Math.floor(Math.random()*1e5), f=document.createElement('figure'), d=document.createElement('div'), c=document.createElement('figcaption');
     d.className='st'; f.append(d,c); $('grid').append(f);
     const lv=$('lv').value;   /* 단계를 못 지키는 동물은 건너뛰고, 마릿수가 모자라면 판을 새로 짜서 다시(Stage.hideMany) */
-    const {lay,out}=Stage.hideMany(pl,AN,COUNT[lv],{seed,hide:{visible:LV[lv],face:FACEV[lv],offMax:OFFMAX[lv]}});
+    const {lay,out}=Stage.hideMany(pl,AN,COUNT[lv],{seed,hide:{visible:LV[lv],face:FACEV[lv],offMax:OFFMAX[lv],minLong:MINLONG[lv]}});
     Stage.render(d,pl,lay,{shadow:.25,haze:.3});
     out.forEach(A=>{ const r=document.createElement('div'), s=Math.max(A.w,A.h*.75)*1.1; r.className='ring';
       r.style.cssText+=`;left:${(A.x-s/2)*100}%;top:${(A.y-A.h*A.base/2)*100-s*66}%;width:${s*100}%;height:${s*133}%`; d.appendChild(r); });
