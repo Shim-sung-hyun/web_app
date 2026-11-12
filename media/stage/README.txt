@@ -15,6 +15,10 @@
 - 기존 media/stage/nature/<12곳>(덮개 방식, 2026-11-04~06)은 다 될 때까지 건드리지 않는다. 다 되면 새 판으로 바꾸고, 기존 소품을 더 쓸지는 그때 정함.
 - 다음: 설치도구에서 장소를 골라(풀다운) 한 번에 만들기 → 12곳이 다 되면 008 숨은 동물 찾기를 이 무대(Stage.compose + Stage.hide) 위에서 새로 짬.
 - 배치 고치기(2026-11-12): media/stage/arrange.html?place=nature/new-desert&seed=판번호 — 무대가 짠 판에서 선생님이 소품을 끌어 옮기고(깊이 따라 크기도)·크게/작게·빼기·더하기, 까닭과 함께 저장 → '모두 내려받기' JSON(before·after·changes·why)을 대화에 올리면 Claude가 견줘 원리(모듈·stage.json)로 바꿈. 무대 보기의 판 번호를 넣으면 같은 판.
+  익힌 원리(2026-11-12, 사막 32판 — stagekit settle·compose, stage.json compose):
+   ① 앞뒤 분명히: 큰 소품 둘의 밑동이 가로로 30% 넘게 겹치면 밑동 높이 차이 stackGap(.04) 이상 — 같은 줄에 겹치면 앞의 것이 떠 보임(고치기 전 .00~.03 → 고친 뒤 .03~.08). 200판에서 842 → 26.
+   ② 그림자는 하늘로 안 감: ownShadow 소품은 그림자 꼭대기(stage.json shadowTop — stage-meta가 잼)가 지평선 아래. 원근상 옮겨도 안 바뀌니 크기만 줄임(바위 기둥이 3m쯤으로 작아짐).
+   ③ 군락: compose.noThicket(사막 branch·trunk·slab — 마른 가지가 줄줄이 늘어섬), thicketWeights(사막 grass 3 — 풀은 가끔 모여도 됨).
 - 보기: 무대 보기 media/stage/test.html?root=stage-beta · 숨기기 시험 media/stage/hide-test.html?place=nature/new-forest
   (GitHub 주소 https://shim-sung-hyun.github.io/web_app/media/stage/… — 올린 뒤 1~2분)
 

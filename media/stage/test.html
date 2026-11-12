@@ -130,6 +130,28 @@
   }
 
   /* 무작위 배치: 자리마다 그 자리의 요소만. 고르게 흩뿌리지 않고 2~4 덩어리(큰 것 하나 + 앞쪽 작은 것) + 빈 땅 */
+  /* 배치 고치기에서 익힌 원리(2026-11-12, 선생님이 사막 32판을 고친 것 — media/stage/arrange.html):
+     ① 앞뒤 분명히: 큰 소품(role big) 둘의 밑동이 가로로 30% 넘게 겹치면 밑동 높이 차이가 stackGap(기본 .04, 장면 높이 대비) 이상 — 거의 같은 줄에 겹쳐 서면 앞의 것이 뒤의 것 위에 떠 보임.
+        고친 판들: 고치기 전 차이 .00~.03 → 고친 뒤 .03~.08. 뒤의 것을 뒤로 물림(원근으로 작아짐), 자리 끝이면 앞의 것을 앞으로.
+     ② 그림자는 하늘로 안 감: 그림자가 그려진 소품(ownShadow)은 그림 속 그림자 꼭대기(stage.json shadowTop, stage-meta가 잼)가 지평선 아래.
+        원근에서는 앞뒤로 옮겨도 지평선 위로 나온 몫의 비율이 같아서(키가 눈높이를 넘으면 어디서나 넘음) 크기만 줄임 — 선생님도 대부분 '작게'로 고침 */
+  const footSpan = o => { const f = o.foot || [.2, .8], a = o.flip ? 1 - f[1] : f[0], b = o.flip ? 1 - f[0] : f[1]; return [o.x - o.w / 2 + o.w * a, o.x - o.w / 2 + o.w * b]; };
+  function settle(pl, out) {
+    const gap = (pl.compose || {}).stackGap ?? .04, big = o => (pl.items[o.id] || {}).role === 'big' && o.sortY == null;
+    const moveY = (o, y) => { const B = pl.beds[o.bed] || {y: [pl.horizon, 1]}; y = Math.max(B.y[0], Math.min(1.02, y)); const k = perM(pl, y, o.bed) / perM(pl, o.y, o.bed); o.w *= k; o.h *= k; o.y = y; };
+    for (let pass = 0; pass < 3; pass++) for (let i = 0; i < out.length; i++) for (let j = 0; j < out.length; j++) {
+      const p = out[i], q = out[j]; if (i === j || !big(p) || !big(q) || p.y > q.y) continue;   // p 뒤(밑동이 위), q 앞
+      if (q.y - p.y >= gap) continue;
+      const A = footSpan(p), C = footSpan(q), ov = Math.min(A[1], C[1]) - Math.max(A[0], C[0]);
+      if (ov <= .3 * Math.min(A[1] - A[0], C[1] - C[0])) continue;
+      const B = pl.beds[p.bed] || {y: [pl.horizon, 1]};
+      if (q.y - gap >= B.y[0]) moveY(p, q.y - gap); else moveY(q, p.y + gap);
+    }
+    const tol = (pl.compose || {}).shadowSky ?? .005;
+    for (const o of out) { const it = pl.items[o.id] || {}; if (it.shadowTop == null) continue;
+      const base = o.base || 1, top = o.y - o.h * (base - it.shadowTop);
+      if (top < pl.horizon - tol) { const s = Math.max(.3, (o.y - pl.horizon + tol) / (o.h * (base - it.shadowTop))); o.w *= s; o.h *= s; } }
+  }
   function compose(pl, opt = {}) {
     if (opt.fixed) return opt.fixed.map(f => place(pl, pl.items[f.id], f.x, f.y, f.r ?? .5, f.flip));
     const R = rnd(opt.seed ?? Math.floor(Math.random() * 1e9)), pick = a => a[Math.floor(R() * a.length)];
@@ -195,7 +217,9 @@
     /* 변형(2026-11-09 선생님: 그대로 복제가 아니라 전체 크기·세로로·가로로 늘이기·뒤집기로 다양하게): 가로·세로를 따로 0.8~1.2배 */
     const vary = q => { if (q.varied) return q; const sx = .8 + R() * .4, sy = .8 + R() * .4; q.w *= sx; q.h *= sy; q.varied = true; return q; };
     const kinds = {}; items.forEach(i => { if (i.role !== 'frame' && i.kind) (kinds[i.kind] = kinds[i.kind] || []).push(i); });
-    const kindList = Object.values(kinds);
+    /* 군락에 쓸 종류(2026-11-12 선생님: 마른 가지가 줄줄이 늘어서 어색함, 풀은 가끔 모아도 됨): compose.noThicket 종류는 빼고, thicketWeights로 자주 나올 종류 */
+    const noT = new Set(C.noThicket || []), TW = C.thicketWeights || {};
+    const kindList = []; Object.entries(kinds).forEach(([k, v]) => { if (!noT.has(k)) for (let w = 0; w < (TW[k] ?? 1); w++) kindList.push(v); });
     for (let g = 0, nT = opt.thickets ?? rng(C.thickets || [1, 3]), tg = 0; g < nT && kindList.length && tg < nT * 8; tg++) {
       const members = pick(kindList), it0 = pick(members), s0 = spot(it0.bed, it0); if (!s0) continue;
       const bigK = members.some(i => i.role === 'big'), k = bigK ? rng([2, 3]) : rng(C.thicketSize || [3, 6]), lead = vary(place(pl, it0, s0.x, s0.y, .5 + R() * .5, R() < .5));
@@ -270,6 +294,7 @@
     }
     /* 같은 소품이 또 나오면 두 번째부터 변형(가로·세로 0.8~1.2배) — 찍어 붙인 티가 안 나게 */
     { const seen = {}; out.forEach(o => { if (o.role === 'frame' || o.sortY != null) return; if (seen[o.id]) vary(o); seen[o.id] = 1; }); }
+    settle(pl, out);
     if ((opt._t || 0) < 5 && out.filter(o => o.h > .06).length < 2)
       return compose(pl, Object.assign({}, opt, {seed: (opt.seed ?? Math.floor(R() * 1e9)) + 1, _t: (opt._t || 0) + 1}));
     return out;
