@@ -458,21 +458,60 @@
   const EDGE = .02, EDGE_PEN = .08, EDGE2_PEN = .45;
   function edgeOf(A) {
     const M = maskOf(A.img); let t = 0, o = 0, a = 2, b = -1; if (!M.m) return {off: 0, onW: 1};
-    for (let j = 0; j < M.h; j++) for (let i = 0; i < M.w; i++) { if (!M.m[j * M.w + i]) continue; t++;
-      const fx = A.x - A.w / 2 + A.w * ((A.flip ? M.w - 1 - i : i) + .5) / M.w; if (fx < 0 || fx > 1) o++; else { if (fx < a) a = fx; if (fx > b) b = fx; } }
+    if (!M.cols) { M.cols = new Int32Array(M.w); for (let j = 0; j < M.h; j++) for (let i = 0; i < M.w; i++) if (M.m[j * M.w + i]) M.cols[i]++; }   // 세로줄마다 칠해진 칸 수(빠르게, 2026-11-12)
+    for (let i = 0; i < M.w; i++) { const c = M.cols[i]; if (!c) continue; t += c;
+      const fx = A.x - A.w / 2 + A.w * ((A.flip ? M.w - 1 - i : i) + .5) / M.w; if (fx < 0 || fx > 1) o += c; else { if (fx < a) a = fx; if (fx > b) b = fx; } }
     return {off: t ? o / t : 0, onW: b < a ? 0 : b - a};
   }
-  function visibleOf(pl, lay, A, reg) {   /* reg: [u0,u1,v0,v1] — 그림의 칠해진 네모 안에서 이 몫만 셈(얼굴 자리 등, 뒤집기 전 그림 기준) */   // 동물 A의 칠해진 칸 중 앞(밑동이 더 아래)의 것에 가려지지 않은 몫
-    const M = maskOf(A.img), front = lay.filter(o => o !== A && depthY(o) > depthY(A) && (o.img || (pl.items[o.id] || {}).img));
+  /* 빠르게(2026-11-12): 동물 그림의 네모와 겹치는 앞 소품만 미리 골라 그 마스크를 붙여 둠 — 겹치지 않는 소품은 solidAt이 어차피 false라 결과는 같음 */
+  function frontOf(pl, lay, A, actors) {
+    const ax0 = A.x - A.w / 2, ax1 = A.x + A.w / 2, ay0 = A.y - A.h * A.base, ay1 = ay0 + A.h, e = 1e-9, out = [];
+    for (const o of lay) { if (o === A || (!actors && o.actor) || !(depthY(o) > depthY(A))) continue; const im = o.img || (pl.items[o.id] || {}).img; if (!im) continue;
+      const L = o.x - o.w / 2, T = o.y - o.h * o.base; if (L > ax1 + e || L + o.w < ax0 - e || T > ay1 + e || T + o.h < ay0 - e) continue;   // NaN이면 남겨 둠(아래에서 원래대로 셈)
+      out.push({L, T, w: o.w, h: o.h, flip: o.flip, im, actor: !!o.actor}); }
+    return out;
+  }
+  /* 동물 칸마다 장면 좌표(세로줄 fx·가로줄 fy — 예전과 같은 셈)와, 앞 소품들이 덮은 칸 지도(alpha면 가장 진한 알파). 소품마다 겹친 칸만 봄 */
+  function gridOf(A, M) {
+    const FX = new Float64Array(M.w), FY = new Float64Array(M.h);
+    for (let i = 0; i < M.w; i++) { const u = (A.flip ? M.w - 1 - i : i) + .5; FX[i] = A.x - A.w / 2 + A.w * u / M.w; }
+    for (let j = 0; j < M.h; j++) FY[j] = A.y - A.h * A.base + A.h * (j + .5) / M.h;
+    return {FX, FY};
+  }
+  function hidMap(M, G, front, alpha) {
+    const H = new Uint8Array(M.w * M.h), col = new Float64Array(M.w); if (!M.m) return H;
+    for (const f of front) {
+      const N = alpha ? alphaOf(f.im) : maskOf(f.im); if (!N || !N.m) continue;
+      let i0 = M.w, i1 = -1;
+      for (let i = M.box[0]; i < M.box[2]; i++) { let u = (G.FX[i] - f.L) / f.w; if (!(u >= 0 && u < 1)) { col[i] = -1; continue; } if (f.flip) u = 1 - u; col[i] = Math.floor(u * N.w); if (i < i0) i0 = i; i1 = i; }
+      if (i1 < 0) continue;
+      for (let j = M.box[1]; j < M.box[3]; j++) { const v = (G.FY[j] - f.T) / f.h; if (!(v >= 0 && v < 1)) continue; const r = Math.floor(v * N.h) * N.w, jw = j * M.w;
+        for (let i = i0; i <= i1; i++) { if (col[i] < 0 || !M.m[jw + i]) continue; const val = N.m[r + col[i]];
+          if (alpha) { if (val > H[jw + i]) H[jw + i] = val; } else if (val === 1) H[jw + i] = 1; } }
+    }
+    return H;
+  }
+  /* 한 동물 자리를 여러 번 셈할 때(보이는 몫·깔림·비침·얼굴) 앞 소품 고르기와 덮은 칸 지도를 한 번만 — probe(pl, lay, A) */
+  function probe(pl, lay, A) {
+    const M = maskOf(A.img), G = gridOf(A, M), P = {M, G, fp: frontOf(pl, lay, A, false)};
+    P.fa = frontOf(pl, lay, A, true).filter(f => f.actor);
+    P.prop = () => P.hp || (P.hp = hidMap(M, G, P.fp));
+    P.all = () => { if (P.ha) return P.ha; const H = P.prop(); if (!P.fa.length) return (P.ha = H); const Ha = hidMap(M, G, P.fa), R = new Uint8Array(H.length); for (let k = 0; k < H.length; k++) R[k] = H[k] | Ha[k]; return (P.ha = R); };
+    P.alpha = () => P.hal || (P.hal = hidMap(M, G, P.fp, true));
+    return P;
+  }
+  function visOf(P, reg) {
+    const M = P.M, G = P.G, H = P.all();
     let tot = 0, vis = 0;
-    for (let j = 0; j < M.h; j++) for (let i = 0; i < M.w; i++) {
+    for (let j = M.box[1]; j < M.box[3]; j++) for (let i = M.box[0]; i < M.box[2]; i++) {
       if (!M.m || !M.m[j * M.w + i]) continue; if (reg) { const bu = (i + .5 - M.box[0]) / (M.box[2] - M.box[0]), bv = (j + .5 - M.box[1]) / (M.box[3] - M.box[1]); if (bu < reg[0] || bu > reg[1] || bv < reg[2] || bv > reg[3]) continue; } tot++;
-      const u = (A.flip ? M.w - 1 - i : i) + .5, fx = A.x - A.w / 2 + A.w * u / M.w, fy = A.y - A.h * A.base + A.h * (j + .5) / M.h;
+      const fx = G.FX[i], fy = G.FY[j];
       if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue;
-      if (!front.some(o => solidAt(o, o.img || pl.items[o.id].img, fx, fy))) vis++;
+      if (!H[j * M.w + i]) vis++;
     }
     return tot ? vis / tot : 0;
   }
+  const visibleOf = (pl, lay, A, reg) => visOf(probe(pl, lay, A), reg);   /* reg: [u0,u1,v0,v1] — 그림의 칠해진 네모 안에서 이 몫만 셈(얼굴 자리 등, 뒤집기 전 그림 기준) */   // 동물 A의 칠해진 칸 중 앞(밑동이 더 아래)의 것에 가려지지 않은 몫
   /* 깔림(2026-11-11 선생님: 사향소·흰올빼미가 소품에 깔림): 동물 몸의 같은 세로줄에서 위는 앞 소품에 가려지고 그 아래가 보이면 소품이 동물을 누르는 것처럼 보임.
      그런 세로줄이 보이는 세로줄의 몫(0~1). 위가 보이고 아래가 가려짐(소품 위로 나옴)·줄 전체 보임/가림(옆으로 나옴)은 괜찮음. 화면 밖은 셈하지 않음 */
   /* 비침(2026-11-11 선생님: 늑대 다리가 소품 밑동의 반투명한 눈으로 비침): 동물 몸 중 앞 소품의 반투명한 곳(알파 25~230)에만 걸린 몫 */
@@ -484,36 +523,34 @@
       const d = x.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) m[i] = d[i * 4 + 3]; r = {w, h, m}; } catch (e) { r = null; }
     AMAP.set(img, r); return r;
   }
-  const alphaAt = (o, img, fx, fy) => { const M = alphaOf(img); if (!M) return 0; let u = (fx - (o.x - o.w / 2)) / o.w; const v = (fy - (o.y - o.h * o.base)) / o.h;
-    if (u < 0 || u >= 1 || v < 0 || v >= 1) return 0; if (o.flip) u = 1 - u; return M.m[Math.floor(v * M.h) * M.w + Math.floor(u * M.w)]; };
-  function seeOf(pl, lay, A) {
-    const M = maskOf(A.img), front = lay.filter(o => o !== A && !o.actor && depthY(o) > depthY(A) && (o.img || (pl.items[o.id] || {}).img));   // 소품만(동물 가장자리의 반투명은 빼고)
+  function seeP(P) {
+    const M = P.M, G = P.G, H = P.alpha();   // 소품만(동물 가장자리의 반투명은 빼고)
     let tot = 0, see = 0;
-    for (let j = 0; j < M.h; j++) for (let i = 0; i < M.w; i++) {
+    for (let j = M.box[1]; j < M.box[3]; j++) for (let i = M.box[0]; i < M.box[2]; i++) {
       if (!M.m || !M.m[j * M.w + i]) continue;
-      const u = (A.flip ? M.w - 1 - i : i) + .5, fx = A.x - A.w / 2 + A.w * u / M.w, fy = A.y - A.h * A.base + A.h * (j + .5) / M.h;
+      const fx = G.FX[i], fy = G.FY[j];
       if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue; tot++;
-      let mx = 0; for (const o of front) { const al = alphaAt(o, o.img || pl.items[o.id].img, fx, fy); if (al > mx) mx = al; if (mx > 230) break; }
-      if (mx > 25 && mx <= 230) see++;
+      const mx = H[j * M.w + i]; if (mx > 25 && mx <= 230) see++;
     }
     return tot ? see / tot : 0;
   }
-  function crushOf(pl, lay, A) {
-    const M = maskOf(A.img), front = lay.filter(o => o !== A && !o.actor && depthY(o) > depthY(A) && (o.img || (pl.items[o.id] || {}).img));
+  const seeOf = (pl, lay, A) => seeP(probe(pl, lay, A));
+  function crushP(P) {
+    const M = P.M, G = P.G, H = P.prop();
     let cols = 0, bad = 0;
-    for (let i = 0; i < M.w; i++) {
+    for (let i = M.box[0]; i < M.box[2]; i++) {
       let covered = false, seenVis = false, crushed = false;
-      for (let j = 0; j < M.h; j++) {
+      for (let j = M.box[1]; j < M.box[3]; j++) {
         if (!M.m || !M.m[j * M.w + i]) continue;
-        const u = (A.flip ? M.w - 1 - i : i) + .5, fx = A.x - A.w / 2 + A.w * u / M.w, fy = A.y - A.h * A.base + A.h * (j + .5) / M.h;
+        const fx = G.FX[i], fy = G.FY[j];
         if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue;
-        const hid = front.some(o => solidAt(o, o.img || pl.items[o.id].img, fx, fy));
-        if (hid) covered = true; else { if (covered) crushed = true; seenVis = true; }
+        if (H[j * M.w + i]) covered = true; else { if (covered) crushed = true; seenVis = true; }
       }
       if (seenVis) { cols++; if (crushed) bad++; }
     }
     return cols ? bad / cols : 0;
   }
+  const crushOf = (pl, lay, A) => crushP(probe(pl, lay, A));
   function hide(pl, lay, a, opt = {}) {
     const R = rnd(opt.seed ?? Math.floor(Math.random() * 1e9)), want = opt.visible || [.25, .4], mid = (want[0] + want[1]) / 2;
     const M = maskOf(a.img), bw = (M.box[2] - M.box[0]) / M.w, bh = (M.box[3] - M.box[1]) / M.h, long = Math.max(bw * (M.w / Math.max(M.w, M.h)) * .75 / .75, bh * (M.h / Math.max(M.w, M.h)));
@@ -549,19 +586,18 @@
       const feetTop = A.y - A.h * A.base * .25;
       for (const o of frontAll) { const it = pl.items[o.id] || {}; if (!it.img) continue; const baseTop = o.y - o.h * o.base * .18;
         for (let k = 0; k < 7; k++) { const fx = Abox[0] + (Abox[2] - Abox[0]) * k / 6; for (const fy of [feetTop, (feetTop + A.y) / 2]) if (fy > baseTop && solidAt(o, it.img, fx, fy) && solidAt(A, A.img, fx, fy)) return; } }   // 동물끼리 몰리지 않게(한 소품 뒤에 여럿 겹치던 것)
-      lay.push(A); if (extra) lay.push(extra); const v = visibleOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
+      lay.push(A); if (extra) lay.push(extra); const P = probe(pl, lay, A), v = visOf(P);
       const floor = Math.max(.04, want[0] * .5);
-      if (v < floor) return;   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
-      lay.push(A); if (extra) lay.push(extra); const cr = crushOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
-      if (cr > (opt.crush ?? .08)) return 'crush';
-      lay.push(A); if (extra) lay.push(extra); const se = seeOf(pl, lay, A); lay.pop(); if (extra) lay.pop();
-      if (se > (opt.see ?? .015)) return 'see';   // 반투명한 밑동 뒤로 비치면 더 뒤(작게)로 — 아래 tryAt   // 깔린 자리는 버림(좌우를 뒤집어 다시 해 봄 — 아래 tryAt)
-      lay.push(A); if (extra) lay.push(extra);   // 먼저 숨긴 동물을 이 동물·새 소품이 앞에서 덮지 않게
-      const hurt = lay.some(o => o.animal && o !== A && (visibleOf(pl, lay, o) < Math.max(.04, (o.want || want)[0] * .5) || crushOf(pl, lay, o) > (opt.crush ?? .08) || seeOf(pl, lay, o) > (opt.see ?? .015))); lay.pop(); if (extra) lay.pop(); if (hurt) return;   // 먼저 숨긴 동물이 덮이거나 깔리거나 비치게 되는 자리는 버림
+      if (v < floor) { lay.pop(); if (extra) lay.pop(); return; }   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
+      if (crushP(P) > (opt.crush ?? .08)) { lay.pop(); if (extra) lay.pop(); return 'crush'; }   // 깔린 자리는 버림(좌우를 뒤집어 다시 해 봄 — 아래 tryAt)
+      if (seeP(P) > (opt.see ?? .015)) { lay.pop(); if (extra) lay.pop(); return 'see'; }   // 반투명한 밑동 뒤로 비치면 더 뒤(작게)로 — 아래 tryAt
+      const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);
+      if (best && sc >= best.sc) { lay.pop(); if (extra) lay.pop(); return; }   // 빠르게(2026-11-12): 지금 가장 좋은 자리보다 못하면 아래 검사는 안 해도 결과가 같음
       /* 얼굴(2026-11-09): 상·스페셜(opt.face 'hide')은 얼굴이 대부분 가려지고 등·꼬리·귀 같은 단서만, 하('show')는 얼굴이 잘 보이게 — 얼굴 = 머리 쪽(008 FACE) 앞 40%·위 65% */
-      if (opt.face && a.face) { const reg = a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]; lay.push(A); if (extra) lay.push(extra); const fv = visibleOf(pl, lay, A, reg); lay.pop(); if (extra) lay.pop();
-        if (opt.face === 'hide' && fv > .35) return; if (opt.face === 'show' && fv < .6) return; }
-      const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0); if (!best || sc < best.sc) best = {sc, A, v, extra}; };
+      if (opt.face && a.face) { const fv = visOf(P, a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]); if ((opt.face === 'hide' && fv > .35) || (opt.face === 'show' && fv < .6)) { lay.pop(); if (extra) lay.pop(); return; } }
+      // 먼저 숨긴 동물을 이 동물·새 소품이 앞에서 덮지 않게 — 먼저 숨긴 동물이 덮이거나 깔리거나 비치게 되는 자리는 버림
+      const hurt = lay.some(o => { if (!o.animal || o === A) return false; const Q = probe(pl, lay, o); return visOf(Q) < Math.max(.04, (o.want || want)[0] * .5) || crushP(Q) > (opt.crush ?? .08) || seeP(Q) > (opt.see ?? .015); }); lay.pop(); if (extra) lay.pop(); if (hurt) return;
+      if (!best || sc < best.sc) best = {sc, A, v, extra}; };
     const tryAt = (x, y, flip, extra) => {
       let r = tryAt0(x, y, flip, extra);
       if (r === 'crush') r = tryAt0(x, y, (flip = !flip), extra);   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
