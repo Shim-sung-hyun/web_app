@@ -548,7 +548,7 @@
       if (!M.m || !M.m[j * M.w + i]) continue;
       const fx = G.FX[i], fy = G.FY[j];
       if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue; tot++;
-      const mx = H[j * M.w + i]; if (mx > 25 && mx <= 230) see++;
+      const mx = H[j * M.w + i]; if (mx > 100 && mx <= 230) see++;   // 40%보다 옅은 잎 끝·빗금은 비침으로 안 셈(2026-11-12 선생님) — 눈 밑동처럼 진한 반투명만
     }
     return tot ? see / tot : 0;
   }
