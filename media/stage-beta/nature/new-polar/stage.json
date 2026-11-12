@@ -490,5 +490,11 @@
   }
  },
  "skirtMeta": {},
- "noShadow": true
+ "noShadow": true,
+ "scalefree": [
+  "icechunks",
+  "snowmound",
+  "floes",
+  "icyrock"
+ ]
 }

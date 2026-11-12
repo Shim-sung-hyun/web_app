@@ -160,6 +160,18 @@
    "src": "animals/oriks.webp",
    "real": 2.0,
    "face": "L"
+  },
+  {
+   "name": "타조",
+   "src": "animals/tajo.webp",
+   "real": 2.5,
+   "face": "L"
+  },
+  {
+   "name": "가젤",
+   "src": "animals/gajel.webp",
+   "real": 1.2,
+   "face": "L"
   }
  ],
  "compose": {
@@ -935,5 +947,16 @@
    ]
   }
  },
- "skirtMeta": {}
+ "skirtMeta": {},
+ "scalefree": [
+  "stones",
+  "pebbles",
+  "slab",
+  "grass",
+  "shrub",
+  "thornbush",
+  "brokenbush",
+  "tumble",
+  "branch"
+ ]
 }

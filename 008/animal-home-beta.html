@@ -867,15 +867,18 @@ body.setup #adminBtn{display:none}
     const R = rnd(opt.seed ?? Math.floor(Math.random() * 1e9)), want = opt.visible || [.25, .4], mid = (want[0] + want[1]) / 2;
     const M = maskOf(a.img), bw = (M.box[2] - M.box[0]) / M.w, bh = (M.box[3] - M.box[1]) / M.h, long = Math.max(bw * (M.w / Math.max(M.w, M.h)) * .75 / .75, bh * (M.h / Math.max(M.w, M.h)));
     const bed = a.bed || Object.keys(pl.beds)[0], B = pl.beds[bed], baseFrac = M.box[3] / M.h;
+    const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 이만큼은 되는 깊이에만 — 단계마다(hide-test MINLONG 하 .10·중 .07·상 .05, 2026-11-12). 어디서도 못 미치는 작은 동물은 그 단계에서 빠짐
+    /* 작은 동물 키우기(2026-11-12 선생님 '가'): 그 깊이의 실제 크기가 minLong에 못 미치면 minLong까지 키움(growMax배까지, 기본 5).
+       키운 동물은 크기를 드러내지 않는 소품(stage.json scalefree 종류 — 돌·풀·덤불 등) 뒤에만 — 소품보다 커 보이지 않게. opt.grow:false면 안 키움 */
+    const SF = new Set(pl.scalefree || []);
     const make = (x, y, flip) => {   // 그 깊이의 크기로 동물 놓기: 몸의 가장 긴 쪽 = real × 1m (가로는 4:3 장면이라 0.75)
-      const m1 = perM(pl, y, bed), bodyLong = a.real * m1, Mw = M.w / Math.max(M.w, M.h), Mh = M.h / Math.max(M.w, M.h);
+      const m1 = perM(pl, y, bed), real0 = a.real * m1, bodyLong = opt.grow === false ? real0 : Math.max(real0, minLong), Mw = M.w / Math.max(M.w, M.h), Mh = M.h / Math.max(M.w, M.h);
       const bodyW = bw * Mw, bodyH = bh * Mh, k = bodyLong / Math.max(bodyW * .75, bodyH), h = k * Mh, w = k * Mw * .75;
-      return {id: a.name, src: a.src, img: a.img, bed, x, y, w, h, base: baseFrac, flip, foot: [M.box[0] / M.w, M.box[2] / M.w], actor: true, skirt: null, animal: a.name};
+      return {id: a.name, src: a.src, img: a.img, bed, x, y, w, h, base: baseFrac, flip, foot: [M.box[0] / M.w, M.box[2] / M.w], actor: true, skirt: null, animal: a.name, grow: bodyLong / real0};
     };
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
-    const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 이만큼은 되는 깊이에만 — 단계마다(hide-test MINLONG 하 .10·중 .07·상 .05, 2026-11-12). 어디서도 못 미치는 작은 동물은 그 단계에서 빠짐
-    const tryAt0 = (x, y, flip, extra) => { if (a.real * perM(pl, y, bed) < minLong) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
+    const tryAt0 = (x, y, flip, extra) => { const g0 = minLong / (a.real * perM(pl, y, bed)); if (g0 > 1 && (opt.grow === false || !SF.size || g0 > (opt.growMax ?? 5))) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
       /* 화면 끝(2026-11-11 선생님): 코·꼬리만 내밀어도 됨(화면 밖은 가려진 것으로 셈). 화면 밖 몫의 한도는 단계마다 opt.offMax(하 .5·중 .7·상 .8·스페셜 .9, 기본 .7).
          끝에 걸친 동물은 한 장면에 하나만(둘째는 가운데로 단계를 못 지킬 때만), 화면 안에 남은 조각 폭이 장면의 opt.edgeMin(기본 3%)은 되게 — 점수에도 작은 벌점(EDGE_PEN)을 줘 가운데와 비슷하면 가운데로 */
       const E = edgeOf(A); A.off = E.off;
@@ -888,6 +891,9 @@ body.setup #adminBtn{display:none}
          앞 소품의 땅에 퍼진 밑동(아래 18%)이 동물의 발(아래 25%)을 덮지 않게 — 가리는 것은 소품의 몸통 */
       const Abox = [A.x - A.w * .4, A.y - A.h * A.base, A.x + A.w * .4, A.y];
       const frontAll = lay.concat(extra ? [extra] : []).filter(o => o !== A && depthY(o) > depthY(A));
+      if (A.grow > 1.01) for (const o of frontAll) {   // 키운 동물을 가리는 소품은 모두 크기를 드러내지 않는 것
+        if (o.animal) continue; const ob = [o.x - o.w / 2, o.y - o.h * (o.base || 1), o.x + o.w / 2, o.y];
+        if (ob[0] < Abox[2] && ob[2] > Abox[0] && ob[1] < Abox[3] && ob[3] > Abox[1] && !SF.has((pl.items[o.id] || {}).kind)) return; }
       /* (2026-11-09 선생님) 큰 줄기 뒤에서 몸 일부가 가려져도 됨 — 뿌리 위에 서는 것은 19번이 막음 */
       const feetTop = A.y - A.h * A.base * .25;
       for (const o of frontAll) { const it = pl.items[o.id] || {}; if (!it.img) continue; const baseTop = o.y - o.h * o.base * .18;
@@ -926,7 +932,7 @@ body.setup #adminBtn{display:none}
       const needH = want[1] < .3 ? .85 : want[1] < .5 ? .6 : .45;
       const big = pool.filter(i => realMax(i) * (i.base ? 1 / i.base : 1) >= a.real * .55 * needH);
       for (let t = 0; t < 200 && !good(); t++) {
-        const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), src = big.length && R() < .8 ? big : pool, it = src[Math.floor(R() * src.length)];
+        const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), sfPool = pool.filter(i => SF.has(i.kind)), src = A0.grow > 1.01 ? sfPool : big.length && R() < .8 ? big : pool, it = src[Math.floor(R() * src.length)];
         if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), .5 + R() * .5, R() < .5); P.skirt = null;
         if (P.h < A0.h * needH || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
       }

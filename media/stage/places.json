@@ -369,6 +369,18 @@
     "src": "animals/oriks.webp",
     "real": 2.0,
     "face": "L"
+   },
+   {
+    "name": "타조",
+    "src": "animals/tajo.webp",
+    "real": 2.5,
+    "face": "L"
+   },
+   {
+    "name": "가젤",
+    "src": "animals/gajel.webp",
+    "real": 1.2,
+    "face": "L"
    }
   ],
   "props": "바위 기둥 4~8\n바위 언덕 2~4\n대추야자 나무 6~10\n마른 덤불 0.8~1.5\n모래 둔덕 1~2.5\n큰 둥근 바위 1.5~3\n작은 바위 0.3~0.8\n마른 나뭇가지 0.3~0.6",
