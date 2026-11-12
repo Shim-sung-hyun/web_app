@@ -1,0 +1,78 @@
+그림자 색 나눠 받기 — 프롬프트 틀과 자르는 법(2026-11-12 선생님 방식, 그림자 세션에서 시험해 세팅)
+읽을 사람: 무대배경 세션. 이 글대로 소품을 다시 받아 자르면 된다. 도구는 tools/flat-shadow.py.
+
+━━━━━━━━ 왜
+빙이 그린 회색 그림자를 그대로 반투명으로 쓰면 그림자 속 종이 결·얼룩·흰 점·푸른 연필 자국이 따라와 아무리 손질해도 지저분했다.
+→ 그림자는 '모양'만 쓴다. 받을 때부터 그림자를 물체·테두리와 다른 한 가지 색으로 받아, 그 색인 곳만 떼어 내고
+  그 자리에 검정을 한 가지 진하기(기본 20%)로 고르게 채운다. 소품마다 그림자 진하기가 같아진다.
+
+━━━━━━━━ 그림자 색: 파랑이 기본, 검정은 차선
+시험(바위·덤불·야자 각 2장, 모두 6장):
+  · 파랑(#0000FF 주문 — 빙은 조금 옅은 하늘빛 파랑으로 줌): 3장 모두 지킴. 선(회색·검정)과 색 자체가 달라 헷갈릴 일이 없음.
+    그림자 위에 걸친 가는 가지에 파란 기가 번지지만 도구가 색을 빼 줌.
+  · 검정(테두리는 진한 회색 #3f3f3f, 그림자만 #000000): 바위·덤불은 지킴(선 밝기 63~115, 그림자 0~4라 갈림).
+    야자는 빙이 검정 대신 옛 회색 연필 그림자를 그림 → 못 씀(도구가 "그 색으로 안 그린 그림"이라고 알려 주고 멈춤 — 다시 받아야 함).
+    테두리까지 검정으로 나오면(첫 시험) 색으로 못 가르고 굵기로 어림해야 함(--black, 닿는 쪽 선이 끊겨 보임).
+→ 파랑으로 받는다. 선생님이 검정으로 정하시면 아래 '검정으로 받을 때' 두 문단으로 바꿔 끼운다. (어느 쪽으로 통일할지는 선생님이 아직 안 정하심 — 무대배경 세션에서 여쭐 것)
+
+━━━━━━━━ 프롬프트 틀 (파랑) — 붙일 그림: 그 곳의 빈 배경 한 장, 한 장에 소품 하나
+[색] [물체] [그림자 자리] 세 곳만 소품에 맞게 바꾼다. 물체 설명은 PROMPTS-new-desert-pencil.txt 의 'The object:' 줄을 그대로 가져다 쓴다.
+
+■ 단단한 것(바위·돌·기둥·나무토막 — 닫힌 테두리가 있는 것)
+▼
+The background of this picture is plain pure white. The attached picture is the empty desert background where this object will stand. Draw in exactly the same style: fine, thin dark-grey pencil-and-ink lines, short light hatching strokes, and only very pale washes of colour ([색: soft sand-beige and light ochre on sand and stone]), white paper look. Draw ONE object and its shadow on a pure white background (white paper, not cream). Keep the object and its whole shadow inside the middle two-thirds of the picture width, with an empty white margin of at least one sixth on the left and on the right, and a white margin at the top and the bottom.
+The object: [물체: a big rounded desert boulder of sandy-beige stone with a few cracks and worn, smooth sides.]
+Draw the outline of the object closed all the way around with one continuous dark-grey line, including the part where the object touches its shadow, so the dark outline is clearly visible between the object and the shadow. Do not draw sand, soil, pebbles, grass or any ground patch under it. Do not draw any blue or grey pencil shading on the paper around the bottom of the object.
+SHADOW (important): the sun is high in the upper LEFT, behind the viewer (do not draw the sun), so the object's one shadow falls ONLY on its RIGHT side. The shadow starts at the bottom-right of the object, exactly where it touches the ground, and stretches away toward the UPPER RIGHT of the picture, like a clock hand pointing at 2 o'clock, a little longer than the object is tall. The LEFT side and the FRONT (bottom edge) of the object have NO shadow at all: the white paper there touches the outline directly.
+The shadow is NOT drawn in the pencil style and is NOT grey or black. It is one single flat shape filled with solid pure bright blue (#0000FF), like a cut-out piece of blue paper lying on the ground: the same bright blue everywhere, with a clean sharp edge, no gradient, no fading, no soft edge, no hatching, no texture, no outline. The shadow is the ONLY blue thing in the picture: no blue tint on the object, on its lines or on the paper. The object itself keeps its normal pale colours and is not darkened.
+▲
+
+■ 가지 사이가 비치는 것(덤불·가시덤불·풀·회전초·나뭇가지) — 위 틀에서 셋째 문단과 마지막 문단만 아래로
+▼ (셋째 문단)
+Draw every twig and leaf with a clear dark-grey outline. Between the twigs the pure white paper shows through. Do not draw sand, soil, pebbles, grass or any ground patch under it. Do not draw any blue or grey pencil shading on the paper around the bottom of the object.
+▼ (마지막 문단 — 가운데 두 문장이 더해짐)
+The shadow is NOT drawn in the pencil style and is NOT grey or black. It is one single flat shape filled with solid pure bright blue (#0000FF), like a cut-out piece of blue paper lying on the ground: the same bright blue everywhere, with a clean sharp edge, no gradient, no fading, no soft edge, no hatching, no texture, no outline. The shadow is one simple solid shape of the whole shrub, not separate thin shadows of single twigs. The shadow lies on the ground beside the object: do not fill the gaps between the twigs with blue. The shadow is the ONLY blue thing in the picture: no blue tint on the object, on its lines or on the paper. The object itself keeps its normal pale colours and is not darkened.
+▲
+색은 (soft sand-beige on dry wood, a muted olive green on leaves).
+
+■ 키 큰 나무(대추야자) — 셋째 문단과 그림자 자리 문단을 아래로(마지막 문단은 단단한 것과 같되 object → tree, "on its green leaves" 더함)
+▼ (셋째 문단)
+Draw the trunk, every leaf and the dates with a clear dark-grey outline. Between the leaves the pure white paper shows through. Do not draw sand, soil, pebbles, grass or any ground patch under it. Do not draw any blue or grey pencil shading on the paper around the bottom of the trunk.
+▼ (그림자 자리)
+SHADOW (important): the sun is high in the upper LEFT, behind the viewer (do not draw the sun), so the tree's one shadow lies on the ground ONLY on its RIGHT side. The shadow starts at the foot of the trunk, exactly where it touches the ground, and stretches away toward the UPPER RIGHT of the picture, like a clock hand pointing at 2 o'clock: first a narrow band (the shadow of the trunk), then a wider leafy shape at its far end (the shadow of the crown). The whole shadow is short and low, no higher than the lower third of the trunk, and it does not touch the crown of the tree. The LEFT side and the FRONT of the trunk have NO shadow at all.
+▲
+색은 (soft sand-beige on the trunk, a muted olive green on leaves, a little reddish brown on the dates).
+
+━━━━━━━━ 검정으로 받을 때(차선) — 파랑 틀에서 두 군데를 바꿈
+① 첫 문단 "fine, thin dark-grey pencil-and-ink lines" → "fine, thin pencil-and-ink lines", 셋째 문단 맨 앞에:
+LINE COLOUR (important): every line of the object, both the outline and the lines inside it, is drawn in a medium-dark GREY (#3f3f3f, like a soft graphite pencil), never in black. No line of the object is pure black, even where lines are thick or cross each other.
+② 마지막 문단:
+The shadow is NOT drawn in the pencil style. It is one single flat shape filled with solid pure black (#000000), like a cut-out piece of black paper lying on the ground: the same pure black everywhere, with a clean sharp edge, no gradient, no fading, no soft edge, no hatching, no texture, no outline. The shadow is the ONLY pure black thing in the picture: the black shadow and the grey lines of the object are two clearly different colours. The object itself keeps its normal pale colours and is not darkened.
+
+━━━━━━━━ 받은 그림에서 볼 것(자르기 전에)
+1. 그림자가 정말 한 가지 색인가(끝이 흐려지거나 회색 연필 그늘로 바뀌지 않았나) — 아니면 다시 받음.
+2. 그림자가 오른쪽 안쪽(2시)으로 갔나, 물체 왼쪽·앞에는 없나.
+3. 물체 밑에 푸른·회색 연필 자국이 없나. 덤불 가지 사이를 그림자 색으로 메우지 않았나.
+4. 선 굵기·색 진하기가 그 곳 다른 소품·동물과 어울리나(첫 시험에서 한 장은 선이 굵고 진한 만화풍으로 나옴).
+
+━━━━━━━━ 자르는 법 — tools/flat-shadow.py (numpy·Pillow·scipy: 없으면 pip install scipy)
+  python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key blue            # 단단한 것
+  python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key blue --plant    # 덤불·풀·야자(가지 사이 종이는 투명, 그림자 위에 걸친 가지는 남김)
+  python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key black [--plant] # 검정으로 받은 것
+  … --alpha .15                                                         # 그림자 진하기(기본 .2, .39까지 — 알파 100 아래여야 stage-meta가 밑동을 물체로만 잼)
+나온 webp = 투명 바탕에 아래는 검정 반투명 그림자, 위는 물체(둘레 6점 여백으로 잘림). bing-cut.py 로 자른 것과 같은 꼴이라
+stage.json 은 그대로 ownShadow:true · flip:false, 넣은 뒤 stage-meta 로 base·foot 을 다시 잰다.
+동물은 그림자 없이 받으니 이 도구가 아니라 bing-cut.py --animal 그대로.
+
+그 밖의 길:
+  python3 tools/flat-shadow.py 소품.webp 나갈.webp                 # 이미 bing-cut.py 로 자른 소품(회색 그림자)을 다시 받지 않고 고르게만 — 얼룩·흰 점은 사라지지만
+                                                                  # 밑동의 푸른 연필 자국은 남음(물체 선과 붙어 있어서). 다시 받기 어려운 것에만.
+  python3 tools/flat-shadow.py 폴더/items --all                    # 위를 폴더 통째로(제자리에서)
+  python3 tools/flat-shadow.py 소품.webp 나갈.webp --mask 칠한.png  # 자동이 틀릴 때: 김프에서 그림자 자리를 검게 칠한 그림(소품과 같은 크기) — 아직 실제 그림으로 시험 안 함
+  python3 tools/flat-shadow.py 받은.jpg 나갈.webp --black          # 테두리까지 검정으로 나온 그림(굵기로 어림 — 되도록 다시 받음)
+
+━━━━━━━━ 남은 것(무대배경 세션에서)
+· 파랑·검정 가운데 통일할 색, 그림자 진하기(20% / 15%), 끝을 살짝 흐리게 할지 — 선생님께 여쭘(무대에 놓고 동물보다 그림자가 먼저 눈에 띄지 않는지 봄).
+· 그림자 가장자리에 가는 진한 점선이 군데군데, 물체 둘레에 옅은 흰 테가 살짝 남음(무대 크기에서는 거의 안 보임) — 많이 받아 보고 거슬리면 도구를 다듬음.
+· 사막 소품 49개는 아직 옛 방식 그대로(이 세션은 세팅만). 다시 받아 바꾸는 일은 무대배경 세션.
+· 시험은 6장뿐 — 돌무더기(여러 덩어리)·회전초·풀은 아직 안 받아 봄. 여러 덩어리 소품은 단단한 것 모드가 '가장 큰 덩어리'만 물체로 보니 --plant 로 자르는 편이 안전.

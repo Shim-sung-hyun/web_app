@@ -12,6 +12,7 @@
 
 셈: 물체 = 불투명한 큰 덩어리. 그림자 모양 = 반투명 그림자 점 + 그 안에 박힌 작은 불투명 점(빙 그림자의 결이 '선'으로 잡힌 것)
   + 물체 밑동에 붙은 푸른 회색 줄 → 틈을 메우고 가장자리를 매끈하게 → 물체 자리는 뺌. 가장자리만 2점쯤 부드럽게.
+받는 프롬프트·시험 결과는 media/stage/prompts/PROMPTS-shadow-key.txt. numpy·Pillow·scipy 필요(pip install scipy).
 그림자 알파는 100 아래여야 함(stage-meta가 밑동을 물체로만 잼) — 진하기 .39 넘게는 못 줌.
 """
 import sys, os, glob
