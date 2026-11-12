@@ -42,3 +42,4 @@
 - 보기: `media/stage/test.html?root=stage-beta`, 숨기기 시험 `media/stage/hide-test.html?place=nature/new-forest`. 만드는 순서는 `media/stage-beta/README.txt` 맨 위.
 - 맥북·윈도 VS Code 함께 쓰는 법은 `docs/vscode-mac.md`(시작 전 git pull, 끝나면 커밋·push, 옮기기 전 꼭 올리기).
 - 사막(2026-11-12 끝): 배경·소품·동물 모두 빙 연필풍, 소품 그림자는 파랑으로 받아 `tools/flat-shadow.py --key blue`(검정 20%), 동물은 `tools/bing-cut.py --animal`. 배치 원리는 선생님이 `media/stage/arrange.html`(배치 고치기)로 고친 JSON에서 익힘 — 무대 README '배치 고치기' ①~⑦(언덕 모서리·그림자 지평선 아래·숨은 작은 소품 빼기 등). 다른 곳도 같은 순서(stage-beta README '사막 끝').
+- 초원(2026-11-12 시작): 사막 순서로 연필풍 — 프롬프트 `media/stage/prompts/PROMPTS-new-grassland-pencil.txt`, 다음은 배경 받기.
