@@ -45,3 +45,14 @@ media/stage-beta/nature/new-desert/items/trunk-2.webp — 사막 베타를 빙 �
 media/stage-beta/nature/new-desert/items/trunk-3.webp — 사막 베타를 빙 연필풍으로 바꿈(2026-11-12 선생님) — 예전 빙 만화풍 배경·소품
 media/stage-beta/nature/new-desert/items/tumble-1.webp — 사막 베타를 빙 연필풍으로 바꿈(2026-11-12 선생님) — 예전 빙 만화풍 배경·소품
 media/stage-beta/nature/new-desert/items/tumble-2.webp — 사막 베타를 빙 연필풍으로 바꿈(2026-11-12 선생님) — 예전 빙 만화풍 배경·소품
+media/animals/gajel.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/tajo.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/oriks.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/samakjwi.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/bangulbaem.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/jeongal.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/samakgeobuk.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/domabaem.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/mieokaet.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/sangmagyeou.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/animals/nakta.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍

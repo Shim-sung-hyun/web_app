@@ -195,7 +195,7 @@
     "name": "가젤",
     "src": "animals/gajel.webp",
     "real": 1.2,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "물소",
@@ -213,7 +213,7 @@
     "name": "타조",
     "src": "animals/tajo.webp",
     "real": 2.5,
-    "face": "R"
+    "face": "L"
    }
   ],
   "props": "아카시아 나무 5~8\n바오바브 나무 10~15\n키 큰 풀 무리 1.2~2\n흰개미 둔덕 2~4\n바위 언덕 2~4\n덤불 1~2\n바위 0.4~1\n마른 풀 포기 0.3~0.6",
@@ -326,24 +326,25 @@
     "name": "사막여우",
     "src": "animals/sangmagyeou.webp",
     "real": 0.4,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "미어캣",
     "src": "animals/mieokaet.webp",
-    "real": 0.3
+    "real": 0.3,
+    "face": "L"
    },
    {
     "name": "도마뱀",
     "src": "animals/domabaem.webp",
     "real": 0.25,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "사막거북",
     "src": "animals/samakgeobuk.webp",
     "real": 0.35,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "전갈",
@@ -355,7 +356,7 @@
     "name": "방울뱀",
     "src": "animals/bangulbaem.webp",
     "real": 0.5,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "사막쥐",
