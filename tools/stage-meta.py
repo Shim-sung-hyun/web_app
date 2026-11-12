@@ -37,7 +37,9 @@ def bottom_line(path, n=48):
 def shadow_top(path):
     """그림자(검정 반투명, flat-shadow.py 알파 .2쯤)가 처음 나오는 줄의 몫(0~1). 물체 테두리의 반투명 점은 빼려고 한 줄에 폭의 1%(6점) 넘게 있는 줄만"""
     p = np.array(Image.open(path).convert('RGBA')).astype(int); a = p[..., 3]; L = p[..., :3].max(-1)
-    sh = (a > 35) & (a < 70) & (L < 40); rows = np.where(sh.sum(1) >= max(6, a.shape[1] * .01))[0]
+    sh = (a > 35) & (a < 70) & (L < 40)
+    from scipy import ndimage as ndi   # 테두리 반투명 점(바오바브 잎 끝처럼 진한 선 둘레)은 가늘게 흩어져 있어 열기로 뺌 — 그림자 덩어리만 남김(2026-11-12 초원)
+    sh = ndi.binary_opening(sh, iterations=2); rows = np.where(sh.sum(1) >= max(6, a.shape[1] * .01))[0]
     return round(float(rows[0]) / a.shape[0], 4) if len(rows) else None
 
 

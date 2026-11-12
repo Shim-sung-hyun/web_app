@@ -56,3 +56,6 @@ media/animals/domabaem.webp — 사막 동물 11마리를 빙 연필풍으로(20
 media/animals/mieokaet.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
 media/animals/sangmagyeou.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
 media/animals/nakta.webp — 사막 동물 11마리를 빙 연필풍으로(2026-11-12 선생님) — 예전 만화풍
+media/stage-beta/nature/new-grassland/items — 초원을 빙 연필풍으로 다시 만듦(2026-11-12) — 예전 설치도구 그림(배경·표준 장면·소품 25)
+media/stage-beta/nature/new-grassland/standard.jpg — 초원을 빙 연필풍으로 다시 만듦(2026-11-12) — 예전 설치도구 그림(배경·표준 장면·소품 25)
+media/stage-beta/nature/new-grassland/bg.jpg — 초원을 빙 연필풍으로 다시 만듦(2026-11-12) — 예전 설치도구 그림(배경·표준 장면·소품 25)
