@@ -87,9 +87,13 @@ def from_key(src, dst, key='black', alpha=.2, plant=False):
     if not plant: shadow = ndi.binary_fill_holes(shadow)
     # 그림자 가장자리의 섞인 점(종이·선과 섞여 옅어진 그림자 색) — 물체에 남으면 파란·검은 테가 됨
     if key == 'blue' and plant: halo = ndi.binary_dilation(shadow, iterations=2) & (B - R > 28) & (B - G > 10)   # 가는 가지에 번진 파랑 기는 가지 것(아래에서 색만 뺌)
-    elif key == 'blue': halo = ndi.binary_dilation(shadow, iterations=5) & (B - R > 10) & (B - G > 3)
+    elif key == 'blue':   # 그림자와 닿은 쪽 테두리선(파랑보다 뚜렷이 어두운 점)은 물체 것 — 그림자로 먹히면 선이 잘림(2026-11-12 선생님이 찾음)
+        Lsh = np.median(L[shadow])
+        halo = ndi.binary_dilation(shadow, iterations=5) & (B - R > 10) & (B - G > 3) & (L > Lsh - 25)
     elif plant: halo = ndi.binary_dilation(shadow, iterations=2) & (L < 60)
-    else: halo = ndi.binary_dilation(shadow, iterations=3) & wide
+    else:   # 검정: 회색 테두리선도 '섞인 회색'과 같은 색이라, 색 있는 몸 곁(4점 안)의 것은 선으로 남김
+        body = ndi.binary_dilation((sat >= 14) & (L < 245) & ~shadow, iterations=4)
+        halo = ndi.binary_dilation(shadow, iterations=3) & wide & ~(body & (L >= 40))
     shadow |= halo
     paper = (L > 236) & (sat < 14)
     S8 = np.ones((3, 3), bool)
