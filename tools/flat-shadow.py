@@ -4,9 +4,9 @@
 
     python3 tools/flat-shadow.py 소품.webp 나갈.webp                 # 그림자 모양을 스스로 찾음
     python3 tools/flat-shadow.py 소품.webp 나갈.webp --alpha .25     # 진하기(0~1, 기본 .2)
-    python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key black      # 빙에게 그림자만 다른 색으로 받아 온 그림(흰 바탕): 테두리는 진한 회색·그림자만 검정
-    python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key blue       # 그림자만 파랑 — 그 색인 곳만 그림자로(색으로 가름, 어림 없음). 덤불·풀·야자는 --plant 를 붙임
-    python3 tools/flat-shadow.py 받은.jpg 나갈.webp --black          # 테두리도 그림자도 검정으로 나온 그림(굵기로 어림해 가름)
+    python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key blue          # 빙에게 그림자만 파랑으로 받아 온 그림(흰 바탕): 그 색인 곳만 그림자로
+    python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key blue --plant  # 덤불·풀·야자처럼 가지 사이가 비치는 것
+    python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key red           # 소품이 파란색이면 그림자를 빨강으로 받아서(2026-11-12 선생님)
     python3 tools/flat-shadow.py 폴더/items --all                    # 폴더 안 모두 제자리에서(이미 한 것은 다시 해도 같음)
 
 셈: 물체 = 불투명한 큰 덩어리. 그림자 모양 = 반투명 그림자 점 + 그 안에 박힌 작은 불투명 점(빙 그림자의 결이 '선'으로 잡힌 것)
@@ -64,36 +64,31 @@ def flat(src, dst, alpha=.2):
     Image.fromarray(out, 'RGBA').save(dst, 'WEBP', quality=93, alpha_quality=100, method=6)
 
 
-def from_key(src, dst, key='black', alpha=.2, plant=False):
+def from_key(src, dst, key='blue', alpha=.2, plant=False):
     """받을 때부터 테두리 색과 그림자 색을 나눈 그림(2026-11-12 선생님). 그림자 = 그 색인 곳, 물체 = 종이도 그림자도 아닌 곳.
     plant: 덤불·풀·야자처럼 가지 사이로 종이가 비치는 것 — 속을 메우지 않고, 그림자 위에 걸친 가지도 물체로 남김."""
     px = np.asarray(Image.open(src).convert('RGB')).astype(float); H, W = px.shape[:2]
     b = np.concatenate([px[:6].reshape(-1, 3), px[-6:].reshape(-1, 3), px[:, :6].reshape(-1, 3), px[:, -6:].reshape(-1, 3)])
     px = np.clip(px * (252 / np.median(b, 0)), 0, 255)        # 종이를 흰색으로
+    assert key in ('blue', 'red'), '그림자 색은 blue(기본) 또는 red(소품이 파랄 때)'
+    swap = key == 'red'
+    if swap: px = px[..., ::-1]; key = 'blue'                 # 빨강 그림자: 빨강·파랑 자리를 바꿔 파랑과 똑같이 셈하고 끝에서 되돌림
     R, G, B = px[..., 0], px[..., 1], px[..., 2]; L = px.mean(2); sat = px.max(2) - px.min(2)
-    if key == 'blue':
-        raw = (B - R > 45) & (B - G > 20) & (B > 110); wide = (B - R > 18) & (B - G > 8)   # wide = 가장자리의 옅은 파랑(종이·선과 섞인 점)
-    else:
-        raw = L < 40; wide = (L < 150) & (sat < 25)
+    raw = (B - R > 45) & (B - G > 20) & (B > 110)             # 그림자 색(빙은 주문보다 조금 옅게 줌)
     k = ndi.binary_opening(raw, iterations=2)                  # 가는 선 속의 우연한 점은 버림
     lab, n = ndi.label(k); sz = ndi.sum(k, lab, np.arange(n + 1)); big = sz >= max(sz.max() * .03, 1); big[0] = False
     shadow = big[lab]
     if sz.max() < H * W * .004: raise SystemExit(f'그림자 색({key})인 곳을 못 찾음 — 빙이 그 색으로 안 그린 그림: {src}')
     # 가지 사이로 비치는 그림자 조각: 파랑은 그림에서 그림자뿐이니 모두, 검정은 좀 큰 조각이거나 그림자 곁의 것만
     rl, rn = ndi.label(raw); rs = ndi.sum(raw, rl, np.arange(rn + 1))
-    near = ndi.sum(raw & ndi.binary_dilation(shadow, iterations=12), rl, np.arange(rn + 1)) > 0
-    ok = (rs >= 6) if key == 'blue' else ((rs >= 25) | near); ok[0] = False
+    ok = rs >= 6; ok[0] = False
     shadow |= ok[rl]
     if not plant: shadow = ndi.binary_fill_holes(shadow)
     # 그림자 가장자리의 섞인 점(종이·선과 섞여 옅어진 그림자 색) — 물체에 남으면 파란·검은 테가 됨
-    if key == 'blue' and plant: halo = ndi.binary_dilation(shadow, iterations=2) & (B - R > 28) & (B - G > 10)   # 가는 가지에 번진 파랑 기는 가지 것(아래에서 색만 뺌)
-    elif key == 'blue':   # 그림자와 닿은 쪽 테두리선(파랑보다 뚜렷이 어두운 점)은 물체 것 — 그림자로 먹히면 선이 잘림(2026-11-12 선생님이 찾음)
+    if plant: halo = ndi.binary_dilation(shadow, iterations=2) & (B - R > 28) & (B - G > 10)   # 가는 가지에 번진 그림자 색 기는 가지 것(아래에서 색만 뺌)
+    else:   # 그림자와 닿은 쪽 테두리선(그림자보다 뚜렷이 어두운 점)은 물체 것 — 그림자로 먹히면 선이 잘림(2026-11-12 선생님이 찾음)
         Lsh = np.median(L[shadow])
         halo = ndi.binary_dilation(shadow, iterations=5) & (B - R > 10) & (B - G > 3) & (L > Lsh - 25)
-    elif plant: halo = ndi.binary_dilation(shadow, iterations=2) & (L < 60)
-    else:   # 검정: 회색 테두리선도 '섞인 회색'과 같은 색이라, 색 있는 몸 곁(4점 안)의 것은 선으로 남김
-        body = ndi.binary_dilation((sat >= 14) & (L < 245) & ~shadow, iterations=4)
-        halo = ndi.binary_dilation(shadow, iterations=3) & wide & ~(body & (L >= 40))
     shadow |= halo
     paper = (L > 236) & (sat < 14)
     S8 = np.ones((3, 3), bool)
@@ -103,8 +98,7 @@ def from_key(src, dst, key='black', alpha=.2, plant=False):
         # 곁(2점 안)에 물체다운 점(가지 속 색·잎·진한 선)이 없으면 그림자 테두리의 찌꺼기 — 가지가 그림자를 건너는 곳은 곁에 가지 속이 있어 남음
         closed = ndi.binary_closing(np.pad(shadow, 10), iterations=6)[10:-10, 10:-10]
         band = ndi.binary_dilation(closed, iterations=4) & ~ndi.binary_erosion(closed, iterations=3)
-        if key == 'blue': mix = (B - R > 25) | ((B - R > 4) & (L > 125)) | ((sat < 14) & (L > 150))   # 진한 파랑 테두리·옅은 파랑·밝은 무채색(압축 번짐)
-        else: mix = sat < 14
+        mix = (B - R > 25) | ((B - R > 4) & (L > 125)) | ((sat < 14) & (L > 150))   # 진한 그림자 색 테두리·옅은 그림자 색·밝은 무채색(압축 번짐)
         sure = obj & ~mix
         obj &= ~(band & mix & ~ndi.binary_dilation(sure, S8, iterations=1))
         lab, n = ndi.label(obj, S8); sz = ndi.sum(obj, lab, np.arange(n + 1)); keep = sz >= 30; keep[0] = False
@@ -142,38 +136,12 @@ def from_key(src, dst, key='black', alpha=.2, plant=False):
         shape = (blur(shadow | obj, 2) > .5) & ~obj & ndi.binary_dilation(shadow, iterations=4)
         sa = blur(shape | obj, 1.6) * alpha
     a = oa + sa * (1 - oa)
-    if key == 'blue':   # 물체 가장자리에 번진 파랑 기는 빼 줌
-        Rc, Gc, Bc = col[..., 0], col[..., 1], col[..., 2]
-        tint = (oa > 0) & ndi.binary_dilation(shadow, iterations=5) & (Bc - Rc > 6)
-        col[tint] = np.minimum(Rc, Gc)[tint, None] * np.array([1., .98, .93])   # 파랑을 빼고 따뜻한 회색으로
+    Rc, Gc, Bc = col[..., 0], col[..., 1], col[..., 2]          # 물체 가장자리에 번진 그림자 색 기는 빼고 따뜻한 회색으로
+    tint = (oa > 0) & ndi.binary_dilation(shadow, iterations=5) & (Bc - Rc > 6)
+    warm = np.array([.93, .98, 1.]) if swap else np.array([1., .98, .93])
+    col[tint] = np.minimum(Rc, Gc)[tint, None] * warm
+    if swap: col = col[..., ::-1]
     col = col * (oa / np.maximum(a, 1e-6))[..., None]
-    out = np.dstack([col, a * 255]).clip(0, 255).astype(np.uint8); out[a < .012] = 0
-    im = Image.fromarray(out, 'RGBA'); bb = im.getbbox(); pad = 6
-    im.crop((max(0, bb[0] - pad), max(0, bb[1] - pad), min(W, bb[2] + pad), min(H, bb[3] + pad))).save(dst, 'WEBP', quality=93, alpha_quality=100, method=6)
-
-
-def from_black(src, dst, alpha=.2):
-    """흰 바탕 + 물체 + 검정 그림자. 그림자 = 굵은 검정 덩어리(테두리선은 가늘어서 빠짐), 물체 = 색 있는 속 + 둘레 선."""
-    px = np.asarray(Image.open(src).convert('RGB')).astype(float); H, W = px.shape[:2]
-    L = px.mean(2); sat = px.max(2) - px.min(2)
-    black = L < 60
-    t = max(4, round(min(H, W) * .008))                       # 테두리선보다 굵은 것만 그림자
-    blob = ndi.binary_dilation(ndi.binary_opening(black, iterations=t), iterations=t + 2) & black
-    body = (L < 243) & ~blob | (sat > 14)                     # 색 있는 속·속의 가는 선
-    body = ndi.binary_fill_holes(ndi.binary_closing(np.pad(body, 8), iterations=3)[8:-8, 8:-8])
-    lab, n = ndi.label(body); sz = ndi.sum(body, lab, np.arange(n + 1)); sz[0] = 0
-    body = lab == sz.argmax()                                 # 가장 큰 덩어리 = 물체
-    body &= ~ndi.binary_dilation(blob, iterations=1)
-    line = max(2, round(min(H, W) * .003))                    # 테두리선 굵기쯤
-    obj = ndi.binary_dilation(body, iterations=line) & (L < 200) | body   # 그림자와 닿은 쪽 테두리선은 물체 것으로 되찾음(선 굵기만큼만)
-    shape = ndi.binary_fill_holes(blob | obj) & ~obj & ndi.binary_dilation(blob, iterations=3)
-    shape = (blur(shape | obj, 2) > .5) & ~obj
-    oa = blur(obj, .7); oa = np.where(ndi.binary_erosion(obj, iterations=2), 1, oa)
-    sa = blur(shape | obj, 1.6) * alpha
-    a = oa + sa * (1 - oa)
-    col = px * (oa / np.maximum(a, 1e-6))[..., None]
-    edge = obj & ~ndi.binary_erosion(obj, iterations=2)       # 둘레는 선 색으로(흰 줄 안 남게)
-    dark = np.dstack([ndi.minimum_filter(px[..., c], 3) for c in range(3)]); col[edge] = dark[edge] * (oa / np.maximum(a, 1e-6))[edge][..., None]
     out = np.dstack([col, a * 255]).clip(0, 255).astype(np.uint8); out[a < .012] = 0
     im = Image.fromarray(out, 'RGBA'); bb = im.getbbox(); pad = 6
     im.crop((max(0, bb[0] - pad), max(0, bb[1] - pad), min(W, bb[2] + pad), min(H, bb[3] + pad))).save(dst, 'WEBP', quality=93, alpha_quality=100, method=6)
@@ -184,7 +152,6 @@ if __name__ == '__main__':
     opt = lambda k, d=None: args[args.index(k) + 1] if k in args else d
     alpha = float(opt('--alpha', .2)); assert alpha <= .39, '그림자 진하기는 .39까지'
     if '--key' in args: from_key(args[0], args[1], opt('--key'), alpha, '--plant' in args)
-    elif '--black' in args: from_black(args[0], args[1], alpha)
     elif '--all' in args:
         for f in sorted(glob.glob(os.path.join(args[0], '*.webp'))): flat(f, f, alpha); print(f)
     else:

@@ -41,4 +41,4 @@
 - 숨김 단계 하 50~70% · 중 25~40% · 상 8~18% · 스페셜(22). 화면 밖 한도 하 50·중 70·상 80·스페셜 90%, 끝 동물은 한 장면에 하나(21). 군락(23)·블록 소품(24)은 변형(가로·세로 0.8~1.2배·뒤집기)해 다양하게.
 - 보기: `media/stage/test.html?root=stage-beta`, 숨기기 시험 `media/stage/hide-test.html?place=nature/new-forest`. 만드는 순서는 `media/stage-beta/README.txt` 맨 위.
 - 맥북·윈도 VS Code 함께 쓰는 법은 `docs/vscode-mac.md`(시작 전 git pull, 끝나면 커밋·push, 옮기기 전 꼭 올리기).
-- 사막 소품 그림자(2026-11-12): 그림자만 한 가지 색(파랑)으로 받아 `tools/flat-shadow.py --key blue`로 잘라 검정 20% 고른 그림자로 바꾸는 중 — 받는 법·자르는 법은 `media/stage/prompts/PROMPTS-shadow-key.txt`.
+- 사막 소품 그림자(2026-11-12): 그림자만 파랑(소품이 파랗면 빨강)으로 받아 `tools/flat-shadow.py --key blue`로 잘라 검정 20% 고른 그림자로 바꾸는 중 — 받는 법·자르는 법은 `media/stage/prompts/PROMPTS-shadow-key.txt`.
