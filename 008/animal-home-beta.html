@@ -488,10 +488,25 @@ body.setup #adminBtn{display:none}
     }
     await Promise.all(jobs);
     for (const k of Object.keys(pl.items || {})) if (!pl.items[k].img) delete pl.items[k];
+    await Promise.all(Object.values(pl.items || {}).filter(it => it.ownShadow).map(splitShadow));
     groundMap(pl);
     return pl;
   }
 
+  /* 그림자 땅 층(2026-11-12 선생님): 그림에 그림자가 든 소품(ownShadow)은 몸과 그림자를 나눠 그림자를 모든 소품·동물 아래(땅)에 깖 —
+     뒤에 숨은 동물 몸 위로 그림자가 덮이지 않아, 소품 바로 뒤(그림자 쪽)에도 숨을 수 있음. 그림자 점 = 검고(밝기 40 아래) 반투명(알파 110 이하) */
+  const isShade = (r, g, b, a) => a > 0 && a <= 110 && r < 40 && g < 40 && b < 40;
+  async function splitShadow(it) {
+    try {
+      const W = it.img.naturalWidth, H = it.img.naturalHeight, c = document.createElement('canvas'); c.width = W; c.height = H;
+      const x = c.getContext('2d', {willReadFrequently: true}); x.drawImage(it.img, 0, 0); const D = x.getImageData(0, 0, W, H), d = D.data, S = x.createImageData(W, H), s = S.data; let n = 0;
+      for (let i = 0; i < d.length; i += 4) if (isShade(d[i], d[i + 1], d[i + 2], d[i + 3])) { s[i + 3] = d[i + 3]; d[i + 3] = 0; n++; }
+      if (!n) return;
+      const url = async img => { const k = document.createElement('canvas'); k.width = W; k.height = H; k.getContext('2d').putImageData(img, 0, 0);
+        const b = await new Promise(ok => k.toBlob(ok, 'image/webp', .9)); return b ? URL.createObjectURL(b) : k.toDataURL(); };
+      [it.bodySrc, it.shadowSrc] = await Promise.all([url(D), url(S)]);
+    } catch (e) { /* 그림을 못 읽으면(다른 곳 그림) 예전처럼 한 장으로 */ }
+  }
   /* 빈 땅 지도(2026-11-09 선생님: 배경에 그려진 나무뿌리 위에 소품이 서면 떠 보임 — 밑동은 배경의 빈 땅 위에만, 아니면 그 앞으로).
      배경 맨 아래 띠의 가운데 색을 '빈 땅 색'으로 보고, 160×120 칸마다 그 색과 가까운지(groundTol, 기본 48) 적어 둠 */
   function groundMap(pl) {
@@ -788,10 +803,13 @@ body.setup #adminBtn{display:none}
         const fw = (footR - footL) * 1.1, fh = Math.max(.006, fw * .16);
         mk('div', `left:${((footL + footR) / 2 - fw / 2) * 100}%;top:${(o.y - fh * .55) * 100}%;width:${fw * 100}%;height:${fh * 100}%;z-index:${z - 1};border-radius:50%;background:radial-gradient(closest-side,rgba(40,28,14,${sh}),rgba(40,28,14,0))`);
       }
+      const it = pl.items[o.id] || {}, split = !o.el && !o.actor && it.shadowSrc && look.groundShadow !== false;
       const e = o.el || document.createElement('img');
-      if (!o.el) { e.src = o.src; e.alt = ''; e.draggable = false; }
-      e.style.cssText += `;position:absolute;left:${left * 100}%;top:${top * 100}%;width:${o.w * 100}%;height:${o.h * 100}%;z-index:${z};transform:${o.flip ? 'scaleX(-1)' : 'none'};` + (o.actor ? '' : `filter:${fog(far)};pointer-events:none;`);
+      if (!o.el) { e.src = split ? it.bodySrc : o.src; e.alt = ''; e.draggable = false; }
+      const pos = `;position:absolute;left:${left * 100}%;top:${top * 100}%;width:${o.w * 100}%;height:${o.h * 100}%;transform:${o.flip ? 'scaleX(-1)' : 'none'};`;
+      e.style.cssText += pos + `z-index:${z};` + (o.actor ? '' : `filter:${fog(far)};pointer-events:none;`);
       box.appendChild(e); o.z = z;
+      if (split) { const g = mk('img', pos + `z-index:${look.shadowZ ?? 5};filter:${fog(far)}`); g.src = it.shadowSrc; g.alt = ''; }   // 그림자는 땅 층(원리: 그림자 땅 층)
       const si = o.skirt && pl.skirtImg[o.skirt];
       if (si && look.skirt !== false && o.h > .05) {   // 밑동 덮개: 덮개의 밑동 줄을 요소의 밑동 줄에 맞춰 땅에 붙임
         const m = (pl.skirtMeta || {})[o.skirt] || {base: 1, foot: [0, 1]}, vis = Math.max(.2, m.foot[1] - m.foot[0]);
@@ -936,7 +954,7 @@ body.setup #adminBtn{display:none}
     if (AMAP.has(img)) return AMAP.get(img);
     const W = img.naturalWidth || img.width, H = img.naturalHeight || img.height, k = n / Math.max(W, H), w = Math.max(1, Math.round(W * k)), h = Math.max(1, Math.round(H * k));
     let r = null; try { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', {willReadFrequently: true}); x.drawImage(img, 0, 0, w, h);
-      const d = x.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) m[i] = d[i * 4 + 3]; r = {w, h, m}; } catch (e) { r = null; }
+      const d = x.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) m[i] = isShade(d[i * 4], d[i * 4 + 1], d[i * 4 + 2], d[i * 4 + 3]) ? 0 : d[i * 4 + 3]; r = {w, h, m}; } catch (e) { r = null; }   // 그림자 점은 땅 층에 그려지니 비침에서 뺌(2026-11-12)
     AMAP.set(img, r); return r;
   }
   function seeP(P) {
