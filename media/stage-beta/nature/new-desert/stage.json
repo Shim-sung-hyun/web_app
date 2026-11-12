@@ -200,7 +200,10 @@
   },
   "baseMatch": [
    "mound",
-   "mound-red"
+   "mound-red",
+   "boulder",
+   "crackrock",
+   "pillar"
   ]
  },
  "items": {

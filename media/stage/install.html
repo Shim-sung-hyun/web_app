@@ -371,7 +371,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     const BM = new Set((pl.compose || {}).baseMatch || []), btol = (pl.compose || {}).baseTol ?? .01;
     const botAt = (o, x, full) => { const L = (pl.items[o.id] || {}).bottom; if (!L) return null; let u = (x - (o.x - o.w / 2)) / o.w; if (o.flip) u = 1 - u; const f = full ? [0, 1] : o.foot || [0, 1]; if (u < f[0] || u >= f[1]) return null;   // 보통은 땅에 닿은 너비(foot) 안만(야자 잎 아래는 밑동이 아님), 언덕끼리는 그림 폭 전체(옆면이 끝나는 모서리까지)
       const v = L[Math.min(L.length - 1, Math.floor(u * L.length))]; return v < 0 ? null : o.y - o.h * (o.base || 1) + o.h * v; };
-    /* 앞 언덕(q)의 모서리 점(2026-11-12 3차, 선생님 그림: 옆면이 끝나고 바닥이 시작하는 빨간 점)이 뒤 언덕(p)의 밑동 선(파란 점) 위에 놓여야 — 양쪽 모두.
+    /* 앞 소품(q)의 모서리 점(2026-11-12 3차, 선생님 그림: 옆면이 끝나고 바닥이 시작하는 빨간 점 — 각진 것이면 바닥 꼭짓점)이 뒤 소품(p)의 밑동 선(파란 점) 위에 놓여야 — 양쪽 모두.
        모서리 점 = 앞 언덕 밑동 선의 맨 왼쪽·맨 오른쪽 칸. 겹친 칸 전체와 두 모서리에서 '앞 밑동 − 뒤 밑동'의 가장 작은 값 */
     const edgeXs = o => { const L = (pl.items[o.id] || {}).bottom || []; let a = -1, b = -1; L.forEach((v, i) => { if (v >= 0) { if (a < 0) a = i; b = i; } }); if (a < 0) return [];
       const ux = i => (i + .5) / L.length, X = u => o.x - o.w / 2 + o.w * (o.flip ? 1 - u : u); return [X(ux(a)), X(ux(b))]; };
@@ -380,7 +380,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       for (const x of xs) { const a = botAt(p, x, true), b = botAt(q, x, true); if (a != null && b != null) { m = Math.min(m, b - a); n++; } } return n >= 2 ? m : Infinity; };
     if (BM.size) for (let pass = 0; pass < 4; pass++) for (const p of out) for (const q of out) {
       if (p === q || !big(p) || !big(q) || p.y > q.y) continue; const kp = (pl.items[p.id] || {}).kind, kq = (pl.items[q.id] || {}).kind;
-      if (!BM.has(kp) || !BM.has(kq)) continue;   // 둘 다 바닥이 둥근 언덕일 때(선생님이 고친 것은 모두 언덕끼리)
+      if (!BM.has(kp) || !BM.has(kq)) continue;   // 둘 다 땅에 앉은 단단한 큰 소품(compose.baseMatch — 사막: 언덕·둥근 바위·갈라진 바위·기둥)일 때. 야자·덤불은 빼고
       const m = gapMin(p, q); if (m >= -btol) continue;
       const B = pl.beds[p.bed] || {y: [pl.horizon, 1]}, d = -m + .005;
       if (p.y - d >= B.y[0]) moveY(p, p.y - d); else moveY(q, q.y + d);
