@@ -175,7 +175,7 @@ SHADOW (important): the sun is high in the upper LEFT, behind the viewer (do not
 Seen from the front at eye level. No background scenery, animals, people, faces, text, logo or watermark.
 ▲
 
-━━━━━━━━ 동물 9마리 — 나중에
+━━━━━━━━ 동물 11마리 — 나중에
 붙일 그림: media/animals/bukgeukgom.webp (연필풍 북극곰). 같은 파일 이름으로 바꾸면 008·009에서도 함께 바뀜 — 소품까지 본 뒤에.
 
 ■ 낙타 (nakta.webp)
@@ -230,4 +230,16 @@ The animal: a desert jerboa: small round body, very long hind legs, long thin ta
 ▼
 The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
 The animal: an Arabian oryx standing, white coat, dark legs, very long straight horns.
+▲
+
+■ 타조 (tajo.webp)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: an ostrich standing on its two long bare legs, long thin neck, small head, fluffy black-and-white body feathers, the whole bird from head to toes.
+▲
+
+■ 가젤 (gajel.webp)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a dorcas gazelle standing, slender body, sandy-beige back, white belly, a soft dark stripe along its side, thin legs, short curved horns.
 ▲
