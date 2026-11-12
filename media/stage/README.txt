@@ -19,6 +19,12 @@
    ① 앞뒤 분명히: 큰 소품 둘의 밑동이 가로로 30% 넘게 겹치면 밑동 높이 차이 stackGap(.04) 이상 — 같은 줄에 겹치면 앞의 것이 떠 보임(고치기 전 .00~.03 → 고친 뒤 .03~.08). 200판에서 842 → 26.
    ② 그림자는 하늘로 안 감: ownShadow 소품은 그림자 꼭대기(stage.json shadowTop — stage-meta가 잼)가 지평선 아래. 원근상 옮겨도 안 바뀌니 크기만 줄임(바위 기둥이 3m쯤으로 작아짐).
    ③ 군락: compose.noThicket(사막 branch·trunk·slab — 마른 가지가 줄줄이 늘어섬), thicketWeights(사막 grass 3 — 풀은 가끔 모여도 됨).
+   ④ 밑동 맞추기(2차 12판): 바닥이 둥근 언덕(compose.baseMatch 사막 mound·mound-red)끼리 겹치면, 겹친 칸마다 앞 언덕 밑동 선 ≥ 뒤 언덕 밑동 선 − .01 — 끝이 들린 앞 언덕이 뒤 언덕에 올라앉아 떠 보이지 않게.
+      고친 판들: 고치기 전 −.02~−.10 → 고친 뒤 −.015~+.02. 밑동 선은 stage.json bottom(가로 24칸, stage-meta가 잼), 땅에 닿은 너비(foot) 안만 셈.
+   ⑤ 깔고 앉지 않게: 큰 소품 바로 뒤 작은 소품은 밑동이 큰 소품 밑동 선보다 위(완전히 뒤)로 물림, 자리 끝이면 뺌.
+   ⑥ 같은 종류가 가까이(가로 .2·밑동 .08 안) 비슷한 크기(15% 안)면 하나를 .78배나 1.25배로.
+   ② 고침: 그림자 꼭대기는 지평선보다 밑동 깊이(y−지평선)의 10%만큼 아래(compose.shadowSky .1) — 2차에서 선생님이 .013~.024 아래까지 줄임. 크기 정하기(⑥·②) → 자리 맞추기(①④⑤)를 3번 되풀이, 끝에 ② 한 번 더.
+   무작위 200판: 언덕 밑동 뜸 0 · 그림자 하늘 0 · 깔고 앉음 0.
 - 보기: 무대 보기 media/stage/test.html?root=stage-beta · 숨기기 시험 media/stage/hide-test.html?place=nature/new-forest
   (GitHub 주소 https://shim-sung-hyun.github.io/web_app/media/stage/… — 올린 뒤 1~2분)
 

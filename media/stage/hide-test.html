@@ -135,6 +135,16 @@
   function settle(pl, out) {
     const gap = (pl.compose || {}).stackGap ?? .04, big = o => (pl.items[o.id] || {}).role === 'big' && o.sortY == null;
     const moveY = (o, y) => { const B = pl.beds[o.bed] || {y: [pl.horizon, 1]}; y = Math.max(B.y[0], Math.min(1.02, y)); const k = perM(pl, y, o.bed) / perM(pl, o.y, o.bed); o.w *= k; o.h *= k; o.y = y; };
+    /* ⑥ 같은 종류는 크기를 달리(2026-11-12 2차, 선생님: '비슷한 것 여러 개가 같은 크기면 단순해 보임'): 가까이(가로 .2·밑동 .08 안) 있는 같은 종류가 크기 차이 15% 안이면 뒤의 것을 줄이거나 키움 */
+    { let t = 0; for (const p of out) for (const q of out) { if (p === q || p.y > q.y || p.sortY != null || q.sortY != null) continue; const ip = pl.items[p.id] || {}, iq = pl.items[q.id] || {};
+      if (!ip.kind || ip.kind !== iq.kind || Math.abs(p.x - q.x) > .2 || q.y - p.y > .08) continue; const r = q.h / p.h; if (r < .87 || r > 1.15) continue;
+      const k = (t++ % 2) ? 1.25 : .78; p.w *= k; p.h *= k; } }
+    const tol = (pl.compose || {}).shadowSky ?? .1;   // 2026-11-12 2차: 선생님은 그림자 꼭대기를 지평선보다 .013~.024 아래까지(밑동 깊이 .19쯤에서) 줄임 → 밑동 깊이(y−지평선)의 10%만큼 아래 — 앞뒤로 옮겨도 그대로인 비율
+    const sky = () => {
+    for (const o of out) { const it = pl.items[o.id] || {}; if (it.shadowTop == null) continue;
+      const base = o.base || 1, top = o.y - o.h * (base - it.shadowTop);
+      if (top - pl.horizon < tol * (o.y - pl.horizon)) { const s = Math.max(.3, (1 - tol) * (o.y - pl.horizon) / (o.h * (base - it.shadowTop))); o.w *= s; o.h *= s; } } };
+    for (let round = 0; round < 3; round++) { sky();   // 크기를 먼저 정하고(⑥·②) 자리를 맞춤(①④⑤) — 앞뒤로 옮겨도 그림자가 지평선 위로 나오는 비율은 같음
     for (let pass = 0; pass < 3; pass++) for (let i = 0; i < out.length; i++) for (let j = 0; j < out.length; j++) {
       const p = out[i], q = out[j]; if (i === j || !big(p) || !big(q) || p.y > q.y) continue;   // p 뒤(밑동이 위), q 앞
       if (q.y - p.y >= gap) continue;
@@ -143,10 +153,30 @@
       const B = pl.beds[p.bed] || {y: [pl.horizon, 1]};
       if (q.y - gap >= B.y[0]) moveY(p, q.y - gap); else moveY(q, p.y + gap);
     }
-    const tol = (pl.compose || {}).shadowSky ?? .005;
-    for (const o of out) { const it = pl.items[o.id] || {}; if (it.shadowTop == null) continue;
-      const base = o.base || 1, top = o.y - o.h * (base - it.shadowTop);
-      if (top < pl.horizon - tol) { const s = Math.max(.3, (o.y - pl.horizon + tol) / (o.h * (base - it.shadowTop))); o.w *= s; o.h *= s; } }
+    /* ④ 밑동 맞추기(2026-11-12 2차, 선생님: '앞 언덕 밑동 끝이 뒤 언덕 밑동 선에 맞아야'): 바닥이 둥근 언덕(compose.baseMatch 종류)은 끝이 들려 있어,
+       가운데가 앞이어도 겹친 쪽 끝이 뒤 언덕 밑동보다 위면 올라앉아 떠 보임. 겹친 칸마다 앞 밑동 ≥ 뒤 밑동 − baseTol(.01) 이 되게 뒤의 것을 물리거나 앞의 것을 당김.
+       고친 판들: 고치기 전 −.02 ~ −.10 → 고친 뒤 −.015 ~ +.02(거의 맞닿음) */
+    const BM = new Set((pl.compose || {}).baseMatch || []), btol = (pl.compose || {}).baseTol ?? .01;
+    const botAt = (o, x) => { const L = (pl.items[o.id] || {}).bottom; if (!L) return null; let u = (x - (o.x - o.w / 2)) / o.w; if (o.flip) u = 1 - u; const f = o.foot || [0, 1]; if (u < f[0] || u > f[1]) return null;   // 땅에 닿은 너비(foot) 안만 — 야자 잎 아래는 밑동이 아님
+      const v = L[Math.min(L.length - 1, Math.floor(u * L.length))]; return v < 0 ? null : o.y - o.h * (o.base || 1) + o.h * v; };
+    const gapMin = (p, q) => { const x0 = Math.max(p.x - p.w / 2, q.x - q.w / 2), x1 = Math.min(p.x + p.w / 2, q.x + q.w / 2); let m = Infinity, n = 0;
+      for (let k = 0; k <= 20; k++) { const x = x0 + (x1 - x0) * k / 20, a = botAt(p, x), b = botAt(q, x); if (a != null && b != null) { m = Math.min(m, b - a); n++; } } return n >= 3 ? m : Infinity; };
+    if (BM.size) for (let pass = 0; pass < 4; pass++) for (const p of out) for (const q of out) {
+      if (p === q || !big(p) || !big(q) || p.y > q.y) continue; const kp = (pl.items[p.id] || {}).kind, kq = (pl.items[q.id] || {}).kind;
+      if (!BM.has(kp) || !BM.has(kq)) continue;   // 둘 다 바닥이 둥근 언덕일 때(선생님이 고친 것은 모두 언덕끼리)
+      const m = gapMin(p, q); if (m >= -btol) continue;
+      const B = pl.beds[p.bed] || {y: [pl.horizon, 1]}, d = -m + .005;
+      if (p.y - d >= B.y[0]) moveY(p, p.y - d); else moveY(q, q.y + d);
+    }
+    /* ⑤ 깔고 앉지 않게(2026-11-12 2차, 선생님: '붉은 바위 언덕2는 풀을 깔고 앉음'): 큰 소품 바로 뒤의 작은 소품은 밑동이 큰 소품의 밑동 선보다 위(완전히 뒤)에 —
+       아니면 큰 소품 아래로 비져나와 깔린 듯 보임. 그런 것은 큰 소품 밑동 선 뒤로 물리고, 자리 끝이면 뺌 */
+    for (let i = out.length - 1; i >= 0; i--) { const s = out[i]; if (big(s) || s.sortY != null) continue;
+      for (const o of out) { if (!big(o) || o === s || s.y > o.y + .002) continue; const b = botAt(o, s.x); if (b == null || s.y <= b - .004) continue;
+        const B = pl.beds[s.bed] || {y: [pl.horizon, 1]}, ny = b - .012; if (ny < B.y[0]) { out.splice(i, 1); break; } moveY(s, ny); } }
+    }
+    sky();
+
+
   }
   function compose(pl, opt = {}) {
     if (opt.fixed) return opt.fixed.map(f => place(pl, pl.items[f.id], f.x, f.y, f.r ?? .5, f.flip));
