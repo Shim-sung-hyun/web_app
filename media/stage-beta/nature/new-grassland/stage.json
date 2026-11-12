@@ -21,7 +21,7 @@
   {
    "name": "바위 언덕과 나무",
    "n": [
-    0,
+    1,
     1
    ],
    "back": {
@@ -216,7 +216,7 @@
    "role": "big",
    "ground": [
     0,
-    0.55
+    0.4
    ],
    "base": 0.9984,
    "foot": [
@@ -289,7 +289,7 @@
    "role": "big",
    "ground": [
     0,
-    0.55
+    0.4
    ],
    "base": 0.9899,
    "foot": [
@@ -362,7 +362,7 @@
    "role": "big",
    "ground": [
     0,
-    0.55
+    0.4
    ],
    "base": 0.9911,
    "foot": [
@@ -435,7 +435,7 @@
    "role": "big",
    "ground": [
     0,
-    0.7
+    0.75
    ],
    "base": 0.9875,
    "foot": [
@@ -508,7 +508,7 @@
    "role": "big",
    "ground": [
     0,
-    0.7
+    0.75
    ],
    "base": 0.9904,
    "foot": [
@@ -581,7 +581,7 @@
    "role": "big",
    "ground": [
     0,
-    0.7
+    0.75
    ],
    "base": 0.991,
    "foot": [
@@ -654,7 +654,7 @@
    "role": "big",
    "ground": [
     0,
-    0.5
+    0.35
    ],
    "base": 0.9533,
    "foot": [
@@ -727,7 +727,7 @@
    "role": "big",
    "ground": [
     0,
-    0.5
+    0.35
    ],
    "base": 0.9718,
    "foot": [
@@ -800,7 +800,7 @@
    "role": "big",
    "ground": [
     0,
-    0.5
+    0.35
    ],
    "base": 0.987,
    "foot": [
@@ -873,7 +873,7 @@
    "role": "big",
    "ground": [
     0,
-    0.35
+    0.22
    ],
    "base": 0.9903,
    "foot": [
@@ -946,7 +946,7 @@
    "role": "big",
    "ground": [
     0,
-    0.35
+    0.22
    ],
    "base": 0.9902,
    "foot": [
@@ -1428,7 +1428,6 @@
    "kindName": "부채꼴 덤불",
    "flip": false,
    "ownShadow": true,
-   "role": "big",
    "base": 0.9887,
    "foot": [
     0.366,
@@ -1497,7 +1496,6 @@
    "kindName": "부채꼴 덤불",
    "flip": false,
    "ownShadow": true,
-   "role": "big",
    "base": 0.9875,
    "foot": [
     0.386,
@@ -1702,7 +1700,6 @@
    "kindName": "키 큰 풀 덤불",
    "flip": false,
    "ownShadow": true,
-   "role": "big",
    "base": 0.9909,
    "foot": [
     0.18,
@@ -1771,7 +1768,6 @@
    "kindName": "키 큰 풀 덤불",
    "flip": false,
    "ownShadow": true,
-   "role": "big",
    "base": 0.9896,
    "foot": [
     0.16,
@@ -1840,7 +1836,6 @@
    "kindName": "키 큰 풀 덤불",
    "flip": false,
    "ownShadow": true,
-   "role": "big",
    "base": 0.9896,
    "foot": [
     0.1,
@@ -1912,7 +1907,7 @@
    "role": "big",
    "ground": [
     0,
-    0.7
+    0.55
    ],
    "base": 0.9568,
    "foot": [
@@ -1985,7 +1980,7 @@
    "role": "big",
    "ground": [
     0,
-    0.7
+    0.55
    ],
    "base": 0.9434,
    "foot": [
@@ -2463,7 +2458,6 @@
    "kindName": "키 큰 풀 무리",
    "flip": false,
    "ownShadow": true,
-   "role": "big",
    "base": 0.9878,
    "foot": [
     0.228,
@@ -2532,7 +2526,6 @@
    "kindName": "키 큰 풀 무리",
    "flip": false,
    "ownShadow": true,
-   "role": "big",
    "base": 0.9883,
    "foot": [
     0.131,
@@ -2604,7 +2597,7 @@
    "role": "big",
    "ground": [
     0,
-    0.75
+    0.8
    ],
    "base": 0.989,
    "foot": [
@@ -2677,7 +2670,7 @@
    "role": "big",
    "ground": [
     0,
-    0.75
+    0.8
    ],
    "base": 0.9886,
    "foot": [
@@ -2885,5 +2878,6 @@
   "tuft",
   "flowers",
   "log"
- ]
+ ],
+ "groundTol": 100
 }
