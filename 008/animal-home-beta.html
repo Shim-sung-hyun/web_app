@@ -601,6 +601,12 @@ body.setup #adminBtn{display:none}
         const B = pl.beds[s.bed] || {y: [pl.horizon, 1]}, ny = b - .012; if (ny < B.y[0]) { out.splice(i, 1); break; } moveY(s, ny); } }
     }
     sky();
+    /* ⑦ 큰 소품 뒤에 숨은 작은 소품은 뺌(2026-11-12 6차, 선생님: '큰 소품 뒤에 작은 소품이 그대로 있는 경우가 많음 — 아예 없애면 그림자가 삐져나오는 일도 없음'):
+       앞의 큰 소품들에 가려 보이는 몫이 compose.hiddenKeep(기본 .7) 아래면 뺌. 동물 숨기기는 앞 소품만 쓰니 상관없음 */
+    { const keep = (pl.compose || {}).hiddenKeep ?? .7, bigs = out.filter(big);
+      for (let i = out.length - 1; i >= 0; i--) { const o = out[i], it = pl.items[o.id] || {}; if (big(o) || o.sortY != null || !it.img) continue;
+        const fr = bigs.filter(b => depthY(b) > depthY(o) && b.x - b.w / 2 < o.x + o.w / 2 && b.x + b.w / 2 > o.x - o.w / 2); if (!fr.length) continue;
+        const A = Object.assign({}, o, {img: it.img}); if (visibleOf(pl, fr.concat([A]), A) < keep) out.splice(i, 1); } }
 
 
   }
