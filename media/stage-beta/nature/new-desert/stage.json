@@ -191,10 +191,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9209,
+   "base": 0.99,
    "foot": [
-    0.154,
-    0.66
+    0.266,
+    0.906
    ]
   },
   "boulder-2": {
@@ -209,10 +209,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.8426,
+   "base": 0.9915,
    "foot": [
-    0.147,
-    0.609
+    0.182,
+    0.183
    ]
   },
   "crackrock-1": {
@@ -227,10 +227,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9584,
+   "base": 0.9899,
    "foot": [
-    0.111,
-    0.621
+    0.126,
+    0.808
    ]
   },
   "crackrock-2": {
@@ -245,10 +245,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.8793,
+   "base": 0.9902,
    "foot": [
-    0.069,
-    0.69
+    0.366,
+    0.881
    ]
   },
   "pillar-1": {
@@ -267,10 +267,10 @@
     0.35
    ],
    "role": "big",
-   "base": 0.982,
+   "base": 0.9902,
    "foot": [
-    0.032,
-    0.463
+    0.013,
+    0.624
    ]
   },
   "pillar-2": {
@@ -289,10 +289,10 @@
     0.35
    ],
    "role": "big",
-   "base": 0.9807,
+   "base": 0.9916,
    "foot": [
-    0.034,
-    0.458
+    0.03,
+    0.657
    ]
   },
   "pillar-3": {
@@ -311,10 +311,10 @@
     0.35
    ],
    "role": "big",
-   "base": 0.982,
+   "base": 0.9902,
    "foot": [
-    0.032,
-    0.463
+    0.013,
+    0.624
    ]
   },
   "mound-1": {
@@ -333,10 +333,10 @@
     0.7
    ],
    "role": "big",
-   "base": 0.9474,
+   "base": 0.9877,
    "foot": [
-    0.116,
-    0.682
+    0.18,
+    0.848
    ]
   },
   "mound-2": {
@@ -355,10 +355,10 @@
     0.7
    ],
    "role": "big",
-   "base": 0.9624,
+   "base": 0.9873,
    "foot": [
-    0.123,
-    0.659
+    0.148,
+    0.83
    ]
   },
   "mound-3": {
@@ -377,10 +377,10 @@
     0.7
    ],
    "role": "big",
-   "base": 0.963,
+   "base": 0.9854,
    "foot": [
-    0.092,
-    0.707
+    0.109,
+    0.866
    ]
   },
   "mound-4": {
@@ -399,10 +399,10 @@
     0.7
    ],
    "role": "big",
-   "base": 0.8893,
+   "base": 0.9891,
    "foot": [
-    0.123,
-    0.741
+    0.373,
+    0.837
    ]
   },
   "mound-red-1": {
@@ -421,10 +421,10 @@
     0.7
    ],
    "role": "big",
-   "base": 0.7762,
+   "base": 0.9891,
    "foot": [
-    0.098,
-    0.735
+    0.713,
+    0.924
    ]
   },
   "mound-red-2": {
@@ -443,10 +443,10 @@
     0.7
    ],
    "role": "big",
-   "base": 0.8579,
+   "base": 0.988,
    "foot": [
-    0.036,
-    0.801
+    0.465,
+    0.854
    ]
   },
   "palm-1": {
@@ -465,10 +465,10 @@
     0.45
    ],
    "role": "big",
-   "base": 0.9742,
+   "base": 0.9909,
    "foot": [
-    0.359,
-    0.435
+    0.351,
+    0.631
    ]
   },
   "palm-2": {
@@ -487,10 +487,10 @@
     0.45
    ],
    "role": "big",
-   "base": 0.977,
+   "base": 0.9923,
    "foot": [
-    0.213,
-    0.337
+    0.179,
+    0.757
    ]
   },
   "palms-big-1": {
@@ -509,10 +509,10 @@
     0.45
    ],
    "role": "big",
-   "base": 0.9769,
+   "base": 0.9922,
    "foot": [
-    0.308,
-    0.415
+    0.276,
+    0.776
    ]
   },
   "palms-big-2": {
@@ -531,10 +531,10 @@
     0.45
    ],
    "role": "big",
-   "base": 0.9764,
+   "base": 0.992,
    "foot": [
-    0.334,
-    0.441
+    0.333,
+    0.74
    ]
   },
   "palm-s-1": {
@@ -553,10 +553,10 @@
     0.6
    ],
    "role": "big",
-   "base": 0.9771,
+   "base": 0.9905,
    "foot": [
-    0.345,
-    0.466
+    0.306,
+    0.728
    ]
   },
   "palm-s-2": {
@@ -575,10 +575,10 @@
     0.6
    ],
    "role": "big",
-   "base": 0.9792,
+   "base": 0.9921,
    "foot": [
-    0.365,
-    0.516
+    0.334,
+    0.719
    ]
   },
   "palm-s-3": {
@@ -597,10 +597,10 @@
     0.6
    ],
    "role": "big",
-   "base": 0.9681,
+   "base": 0.9901,
    "foot": [
-    0.321,
-    0.421
+    0.329,
+    0.777
    ]
   },
   "shrub-1": {
@@ -615,10 +615,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9658,
+   "base": 0.9878,
    "foot": [
-    0.112,
-    0.564
+    0.11,
+    0.824
    ]
   },
   "shrub-2": {
@@ -633,10 +633,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9582,
+   "base": 0.9898,
    "foot": [
-    0.167,
-    0.614
+    0.122,
+    0.861
    ]
   },
   "shrub-3": {
@@ -651,10 +651,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9476,
+   "base": 0.9891,
    "foot": [
-    0.173,
-    0.627
+    0.183,
+    0.9
    ]
   },
   "thornbush-1": {
@@ -669,10 +669,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9395,
+   "base": 0.9896,
    "foot": [
-    0.145,
-    0.567
+    0.272,
+    0.74
    ]
   },
   "thornbush-2": {
@@ -687,10 +687,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9599,
+   "base": 0.9887,
    "foot": [
-    0.211,
-    0.69
+    0.231,
+    0.874
    ]
   },
   "thornbush-3": {
@@ -705,10 +705,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9763,
+   "base": 0.9901,
    "foot": [
-    0.18,
-    0.548
+    0.188,
+    0.728
    ]
   },
   "brokenbush-1": {
@@ -722,10 +722,10 @@
    "kindName": "부러진 덤불",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9536,
+   "base": 0.9908,
    "foot": [
-    0.213,
-    0.519
+    0.228,
+    0.788
    ]
   },
   "brokenbush-2": {
@@ -739,10 +739,10 @@
    "kindName": "부러진 덤불",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9775,
+   "base": 0.9894,
    "foot": [
-    0.336,
-    0.533
+    0.304,
+    0.807
    ]
   },
   "brokenbush-3": {
@@ -756,10 +756,10 @@
    "kindName": "부러진 덤불",
    "flip": false,
    "ownShadow": true,
-   "base": 0.893,
+   "base": 0.9903,
    "foot": [
-    0.228,
-    0.502
+    0.574,
+    0.991
    ]
   },
   "grass-1": {
@@ -773,10 +773,10 @@
    "kindName": "마른 풀 포기",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9588,
+   "base": 0.9903,
    "foot": [
     0.189,
-    0.531
+    0.879
    ]
   },
   "grass-2": {
@@ -790,10 +790,10 @@
    "kindName": "마른 풀 포기",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9385,
+   "base": 0.9908,
    "foot": [
-    0.093,
-    0.8
+    0.16,
+    0.849
    ]
   },
   "grass-3": {
@@ -807,10 +807,10 @@
    "kindName": "마른 풀 포기",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9726,
+   "base": 0.9903,
    "foot": [
-    0.276,
-    0.515
+    0.182,
+    0.83
    ]
   },
   "tumble-1": {
@@ -824,10 +824,10 @@
    "kindName": "회전초",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9592,
+   "base": 0.9889,
    "foot": [
     0.178,
-    0.578
+    0.772
    ]
   },
   "tumble-2": {
@@ -841,10 +841,10 @@
    "kindName": "회전초",
    "flip": false,
    "ownShadow": true,
-   "base": 0.8201,
+   "base": 0.9908,
    "foot": [
-    0.147,
-    0.634
+    0.225,
+    0.808
    ]
   },
   "trunk-1": {
@@ -858,10 +858,10 @@
    "kindName": "쓰러진 마른 나무",
    "flip": false,
    "ownShadow": true,
-   "base": 0.948,
+   "base": 0.9855,
    "foot": [
-    0.561,
-    0.696
+    0.558,
+    0.75
    ]
   },
   "trunk-2": {
@@ -875,10 +875,10 @@
    "kindName": "쓰러진 마른 나무",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9669,
+   "base": 0.9855,
    "foot": [
-    0.065,
-    0.659
+    0.055,
+    0.718
    ]
   },
   "trunk-3": {
@@ -892,10 +892,10 @@
    "kindName": "쓰러진 마른 나무",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9621,
+   "base": 0.9858,
    "foot": [
-    0.025,
-    0.608
+    0.027,
+    0.688
    ]
   },
   "branch-1": {
@@ -909,10 +909,10 @@
    "kindName": "마른 나뭇가지",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9609,
+   "base": 0.9905,
    "foot": [
-    0.015,
-    0.127
+    0.024,
+    0.197
    ]
   },
   "branch-2": {
@@ -926,10 +926,10 @@
    "kindName": "마른 나뭇가지",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9358,
+   "base": 0.988,
    "foot": [
-    0.018,
-    0.807
+    0.026,
+    0.973
    ]
   },
   "branch-3": {
@@ -943,10 +943,10 @@
    "kindName": "마른 나뭇가지",
    "flip": false,
    "ownShadow": true,
-   "base": 0.6995,
+   "base": 0.9893,
    "foot": [
-    0.028,
-    0.876
+    0.915,
+    0.916
    ]
   },
   "stones-1": {
@@ -960,10 +960,10 @@
    "kindName": "돌무더기",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9455,
+   "base": 0.99,
    "foot": [
-    0.192,
-    0.539
+    0.233,
+    0.726
    ]
   },
   "stones-2": {
@@ -977,10 +977,10 @@
    "kindName": "돌무더기",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9624,
+   "base": 0.9869,
    "foot": [
-    0.023,
-    0.679
+    0.007,
+    0.856
    ]
   },
   "stones-3": {
@@ -994,10 +994,10 @@
    "kindName": "돌무더기",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9514,
+   "base": 0.9894,
    "foot": [
-    0.06,
-    0.645
+    0.084,
+    0.779
    ]
   },
   "slab-1": {
@@ -1011,10 +1011,10 @@
    "kindName": "납작한 바위",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9416,
+   "base": 0.9851,
    "foot": [
-    0.218,
-    0.574
+    0.254,
+    0.774
    ]
   },
   "slab-2": {
@@ -1028,10 +1028,10 @@
    "kindName": "납작한 바위",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9361,
+   "base": 0.9838,
    "foot": [
-    0.106,
-    0.681
+    0.126,
+    0.813
    ]
   },
   "slab-3": {
@@ -1045,10 +1045,10 @@
    "kindName": "납작한 바위",
    "flip": false,
    "ownShadow": true,
-   "base": 0.939,
+   "base": 0.9833,
    "foot": [
-    0.131,
-    0.672
+    0.147,
+    0.84
    ]
   },
   "pebbles-1": {
@@ -1062,10 +1062,10 @@
    "kindName": "작은 바위",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9453,
+   "base": 0.985,
    "foot": [
-    0.249,
-    0.481
+    0.283,
+    0.68
    ]
   },
   "pebbles-2": {
@@ -1079,10 +1079,10 @@
    "kindName": "작은 바위",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9412,
+   "base": 0.9898,
    "foot": [
-    0.211,
-    0.446
+    0.249,
+    0.696
    ]
   },
   "pebbles-3": {
@@ -1096,10 +1096,10 @@
    "kindName": "작은 바위",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9396,
+   "base": 0.9877,
    "foot": [
-    0.325,
-    0.547
+    0.362,
+    0.681
    ]
   }
  },

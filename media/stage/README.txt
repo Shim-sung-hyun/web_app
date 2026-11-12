@@ -56,7 +56,11 @@ media/stage/ (기존) · media/stage-beta/ (새로 만드는 중, 구조 같음)
        밑동을 그림에서부터 땅 색으로 녹아들게 받으면 규칙이 필요 없음 — 다음 곳도 이렇게 받는 게 좋음. 빙 프롬프트에는 "가로 3분의 2까지, 좌우 여백 6분의 1"(잘림 방지)을 넣음.
      · 보관: tools/soak-base.py·bury-base.py·line-unify.py·cast-shadow.py·shadow-split.py 는 다른 장면에서 쓸 수 있으니 12곳 작업이 끝날 때까지 지우지 않음(선생님).
    → 적용 범위(2026-11-10 선생님): 그림자는 지금 사막만. 다른 곳은 밑동 스며들기(1번)만 하고, 그림자는 필요할 때 아래 도구를 가져와 씀.
-     · 그려 받은 그림자(사막 방식): 빙에 '물체 + 회색 그림자, 흰 바탕'으로 받음(media/stage/prompts/PROMPTS-new-desert-bing.txt) → python3 tools/shadow-split.py 로
+     · 빙 그림 자르기(2026-11-12 선생님: 원본 모양·테두리는 그대로, 그림자는 소품만·동물엔 없음): python3 tools/bing-cut.py 받은.jpg 나갈.webp [--plant | --animal [--holes]]
+       — 진한 테두리선 안은 모두 불투명(돌 테두리 원본 그대로), 가는 선·잎은 물체, 테두리 밖 매끈한 면만 그림자(알파 92까지, 계단 없이), 둘레에 흰 줄 남기지 않음.
+       --plant 가지·잎 사이 종이도 투명, --animal 그림자·바닥 자국 없이(다리 사이처럼 진한 선으로 둘러싸인 흰 틈만 뚫음 — 흰 털은 남음), --holes 뱀 똬리 안.
+       shadow-split.py·pencil-cut.py는 옅은 잎·가지·돌 그늘을 그림자로 봐서 반투명해지고 낙타에 흰 줄·그림자가 남았음 → 연필풍은 bing-cut.py로.
+     · (예전) 그려 받은 그림자(사막 만화풍): 빙에 '물체 + 회색 그림자, 흰 바탕'으로 받음(media/stage/prompts/PROMPTS-new-desert-bing.txt) → python3 tools/shadow-split.py 로
        물체와 그림자를 갈라 한 장(그림자 반투명, 알파 92까지)으로 → stage.json ownShadow:true·flip:false — 무대는 뒤집지 않고 그림자를 따로 그리지 않음.
        제미나이는 이 빛(해가 등 뒤)을 거듭 반대로 그려서 빙을 씀. 식물 밑의 연한 모래 자국은 따로 지움(stage-beta README 사막 절).
      · 셈한 그림자(선생님 방식, 보관): python3 tools/cast-shadow.py — 실루엣의 땅에 닿는 줄은 제자리, 위만 오른쪽 안쪽으로 눕힌 그림자 레이어 위에 물체.
