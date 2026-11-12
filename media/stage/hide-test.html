@@ -530,11 +530,19 @@
      그런 세로줄이 보이는 세로줄의 몫(0~1). 위가 보이고 아래가 가려짐(소품 위로 나옴)·줄 전체 보임/가림(옆으로 나옴)은 괜찮음. 화면 밖은 셈하지 않음 */
   /* 비침(2026-11-11 선생님: 늑대 다리가 소품 밑동의 반투명한 눈으로 비침): 동물 몸 중 앞 소품의 반투명한 곳(알파 25~230)에만 걸린 몫 */
   const AMAP = new WeakMap();
+  /* 몸체 안쪽의 반투명은 몸체로(2026-11-12 선생님: 풀·나무는 잎 사이가 반투명해 늘 비침으로 버려짐): 그림 바깥(테두리)에서
+     불투명(알파 230 넘게)을 건너지 않고 닿는 반투명만 비침으로 셈. 몸체에 둘러싸인 잎 사이 틈은 불투명으로 침 — 바깥과 이어진 눈 밑동 띠 등은 그대로 */
+  function inner(m, w, h) {
+    const out = new Uint8Array(w * h), q = []; const go = i => { if (!out[i] && m[i] <= 230) { out[i] = 1; q.push(i); } };
+    for (let i = 0; i < w; i++) { go(i); go((h - 1) * w + i); } for (let j = 0; j < h; j++) { go(j * w); go(j * w + w - 1); }
+    while (q.length) { const i = q.pop(), x = i % w; if (x > 0) go(i - 1); if (x < w - 1) go(i + 1); if (i >= w) go(i - w); if (i < (h - 1) * w) go(i + w); }
+    for (let i = 0; i < w * h; i++) if (!out[i] && m[i] > 0 && m[i] <= 230) m[i] = 255;
+  }
   function alphaOf(img, n = 128) {
     if (AMAP.has(img)) return AMAP.get(img);
     const W = img.naturalWidth || img.width, H = img.naturalHeight || img.height, k = n / Math.max(W, H), w = Math.max(1, Math.round(W * k)), h = Math.max(1, Math.round(H * k));
     let r = null; try { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', {willReadFrequently: true}); x.drawImage(img, 0, 0, w, h);
-      const d = x.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) m[i] = isShade(d[i * 4], d[i * 4 + 1], d[i * 4 + 2], d[i * 4 + 3]) ? 0 : d[i * 4 + 3]; r = {w, h, m}; } catch (e) { r = null; }   // 그림자 점은 땅 층에 그려지니 비침에서 뺌(2026-11-12)
+      const d = x.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) m[i] = isShade(d[i * 4], d[i * 4 + 1], d[i * 4 + 2], d[i * 4 + 3]) ? 0 : d[i * 4 + 3]; inner(m, w, h); r = {w, h, m}; } catch (e) { r = null; }   // 그림자 점은 땅 층에 그려지니 비침에서 뺌(2026-11-12)
     AMAP.set(img, r); return r;
   }
   function seeP(P) {
