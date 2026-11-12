@@ -14,6 +14,7 @@
 - 12곳을 무대 설치도구(media/stage/install.html)로 새로 만들어 media/stage-beta/ 에 모은다. 숲(nature/new-forest)이 견본 — 끝남.
 - 기존 media/stage/nature/<12곳>(덮개 방식, 2026-11-04~06)은 다 될 때까지 건드리지 않는다. 다 되면 새 판으로 바꾸고, 기존 소품을 더 쓸지는 그때 정함.
 - 다음: 설치도구에서 장소를 골라(풀다운) 한 번에 만들기 → 12곳이 다 되면 008 숨은 동물 찾기를 이 무대(Stage.compose + Stage.hide) 위에서 새로 짬.
+- 배치 고치기(2026-11-12): media/stage/arrange.html?place=nature/new-desert&seed=판번호 — 무대가 짠 판에서 선생님이 소품을 끌어 옮기고(깊이 따라 크기도)·크게/작게·빼기·더하기, 까닭과 함께 저장 → '모두 내려받기' JSON(before·after·changes·why)을 대화에 올리면 Claude가 견줘 원리(모듈·stage.json)로 바꿈. 무대 보기의 판 번호를 넣으면 같은 판.
 - 보기: 무대 보기 media/stage/test.html?root=stage-beta · 숨기기 시험 media/stage/hide-test.html?place=nature/new-forest
   (GitHub 주소 https://shim-sung-hyun.github.io/web_app/media/stage/… — 올린 뒤 1~2분)
 
