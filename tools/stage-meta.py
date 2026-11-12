@@ -50,8 +50,7 @@ for sj in sorted(glob.glob(os.path.join(ST, '*', '*', 'stage.json')) + glob.glob
         src = os.path.join(ST, it['from'], 'items', k + '.webp') if it.get('from') else os.path.join(d, 'items', k + '.webp')
         if os.path.exists(src) and not it.get('soak'):   # 밑동 스며들기 한 것은 스며들기 전에 잰 밑동을 지킴(tools/soak-base.py)
             it.update(meta(src)); n += 1
-            if it.get('role') == 'big':   # 밑동 선(2026-11-12): 가로 48칸마다 가장 아래 불투명 줄의 몫 — 무대가 겹친 큰 소품의 밑동을 맞춤(stagekit settle)
-                it['bottom'] = bottom_line(src)
+            it['bottom'] = bottom_line(src)   # 밑동 선(2026-11-12): 가로 48칸마다 가장 아래 불투명 줄의 몫 — 무대가 앞 바위 모서리와 뒤 소품 바닥을 맞춤(stagekit settle). 모든 소품(뒤에 서는 나무·쓰러진 나무도)
             if it.get('ownShadow'):   # 그림자 꼭대기(2026-11-12): 그림 속 그림자가 시작하는 높이 몫 — 무대가 그림자를 지평선 아래로(stagekit settle)
                 st = shadow_top(src)
                 if st is None: it.pop('shadowTop', None)

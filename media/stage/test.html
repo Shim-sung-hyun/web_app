@@ -170,13 +170,14 @@
     const gapMin = (p, q) => { const x0 = Math.max(p.x - p.w / 2, q.x - q.w / 2), x1 = Math.min(p.x + p.w / 2, q.x + q.w / 2); let m = Infinity, n = 0;
       const xs = []; for (let k = 0; k <= 40; k++) xs.push(x0 + (x1 - x0) * k / 40); xs.push(...edgeXs(q).filter(x => x >= x0 && x <= x1));
       for (const x of xs) { const a = botAt(p, x, true), b = botAt(q, x, true); if (a != null && b != null) { m = Math.min(m, b - a); n++; } } return n >= 2 ? m : Infinity; };
-    if (BM.size) for (let pass = 0; pass < 4; pass++) for (const p of out) for (const q of out) {
-      if (p === q || !big(p) || !big(q) || p.y > q.y) continue; const kp = (pl.items[p.id] || {}).kind, kq = (pl.items[q.id] || {}).kind;
-      if (!BM.has(kp) || !BM.has(kq)) continue;   // 둘 다 땅에 앉은 단단한 큰 소품(compose.baseMatch — 사막: 언덕·둥근 바위·갈라진 바위·기둥)일 때. 야자·덤불은 빼고
+    if (BM.size) for (let pass = 0; pass < 6; pass++) for (const p of out) for (const q of out) {
+      if (p === q || p.gone || p.y > q.y || p.sortY != null || q.sortY != null || !big(q)) continue; const kq = (pl.items[q.id] || {}).kind;
+      if (!BM.has(kq)) continue;   // 앞(q)이 땅에 앉은 단단한 큰 소품(compose.baseMatch — 사막: 언덕·둥근 바위·갈라진 바위·기둥)이면 뒤(p)는 무엇이든(2026-11-12 4차, 선생님: 바위 뒤 야자·쓰러진 나무도 — 뒤의 바닥 선이 앞 모서리보다 내려오면 깔린 것처럼 보임)
       const m = gapMin(p, q); if (m >= -btol) continue;
       const B = pl.beds[p.bed] || {y: [pl.horizon, 1]}, d = -m + .005;
-      if (p.y - d >= B.y[0]) moveY(p, p.y - d); else moveY(q, q.y + d);
+      if (p.y - d >= B.y[0]) moveY(p, p.y - d); else if (!big(p)) p.gone = true; else moveY(q, q.y + d);
     }
+    for (let i = out.length - 1; i >= 0; i--) if (out[i].gone) out.splice(i, 1);
     /* ⑤ 깔고 앉지 않게(2026-11-12 2차, 선생님: '붉은 바위 언덕2는 풀을 깔고 앉음'): 큰 소품 바로 뒤의 작은 소품은 밑동이 큰 소품의 밑동 선보다 위(완전히 뒤)에 —
        아니면 큰 소품 아래로 비져나와 깔린 듯 보임. 그런 것은 큰 소품 밑동 선 뒤로 물리고, 자리 끝이면 뺌 */
     for (let i = out.length - 1; i >= 0; i--) { const s = out[i]; if (big(s) || s.sortY != null) continue;
