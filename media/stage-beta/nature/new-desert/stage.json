@@ -1,15 +1,15 @@
 {
  "name": "사막",
  "view": "ground",
- "horizon": 0.4,
- "groundTop": 0.41,
+ "horizon": 0.41,
+ "groundTop": 0.42,
  "unit": 0.2,
  "avoid": [],
  "beds": {
   "ground": {
    "name": "땅",
    "y": [
-    0.4,
+    0.42,
     1
    ],
    "persp": true,
@@ -28,7 +28,8 @@
     "kinds": [
      "바위 언덕",
      "갈라진 큰 바위",
-     "바위 기둥"
+     "바위 기둥",
+     "붉은 바위 언덕"
     ],
     "n": [
      2,
@@ -41,8 +42,7 @@
    },
    "front": {
     "kinds": [
-     "큰 둥근 바위",
-     "모래에 반쯤 묻힌 바위"
+     "큰 둥근 바위"
     ],
     "n": [
      1,
@@ -73,7 +73,8 @@
    "back": {
     "kinds": [
      "대추야자 나무",
-     "작은 대추야자"
+     "작은 대추야자",
+     "대추야자 두 그루"
     ],
     "n": [
      2,
@@ -189,62 +190,28 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9028,
+   "base": 0.9209,
    "foot": [
-    0.177,
-    0.662
+    0.154,
+    0.66
    ]
   },
-  "shrub-1": {
-   "name": "마른 덤불",
+  "boulder-2": {
+   "name": "큰 둥근 바위 2",
    "real": [
-    0.8,
-    1.5
+    1,
+    2
    ],
    "bed": "ground",
-   "kind": "shrub",
-   "kindName": "마른 덤불",
+   "kind": "boulder",
+   "kindName": "큰 둥근 바위",
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9303,
+   "base": 0.8426,
    "foot": [
-    0.182,
-    0.749
-   ]
-  },
-  "trunk-1": {
-   "name": "쓰러진 마른 나무",
-   "real": [
-    0.5,
-    0.9
-   ],
-   "bed": "ground",
-   "kind": "trunk",
-   "kindName": "쓰러진 마른 나무",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.9198,
-   "foot": [
-    0.088,
-    0.808
-   ]
-  },
-  "stones-1": {
-   "name": "돌무더기",
-   "real": [
-    0.5,
-    1
-   ],
-   "bed": "ground",
-   "kind": "stones",
-   "kindName": "돌무더기",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.9212,
-   "foot": [
-    0.264,
-    0.643
+    0.147,
+    0.609
    ]
   },
   "crackrock-1": {
@@ -259,137 +226,10 @@
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.8982,
+   "base": 0.9584,
    "foot": [
-    0.18,
-    0.679
-   ]
-  },
-  "thornbush-1": {
-   "name": "가시덤불",
-   "real": [
-    1,
-    1.8
-   ],
-   "bed": "ground",
-   "kind": "thornbush",
-   "kindName": "가시덤불",
-   "flip": false,
-   "ownShadow": true,
-   "role": "big",
-   "base": 0.917,
-   "foot": [
-    0.216,
-    0.639
-   ]
-  },
-  "palm-s-1": {
-   "name": "작은 대추야자",
-   "real": [
-    2,
-    4
-   ],
-   "bed": "ground",
-   "kind": "palm-s",
-   "kindName": "작은 대추야자",
-   "flip": false,
-   "ownShadow": true,
-   "ground": [
-    0,
-    0.6
-   ],
-   "role": "big",
-   "base": 0.8583,
-   "foot": [
-    0.33,
-    0.539
-   ]
-  },
-  "branch-1": {
-   "name": "마른 나뭇가지",
-   "real": [
-    0.2,
-    0.4
-   ],
-   "bed": "ground",
-   "kind": "branch",
-   "kindName": "마른 나뭇가지",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.9274,
-   "foot": [
-    0.688,
-    0.711
-   ]
-  },
-  "boulder-2": {
-   "name": "큰 둥근 바위 2",
-   "real": [
-    1,
-    2
-   ],
-   "bed": "ground",
-   "kind": "boulder",
-   "kindName": "큰 둥근 바위 2",
-   "flip": false,
-   "ownShadow": true,
-   "role": "big",
-   "base": 0.9202,
-   "foot": [
-    0.18,
-    0.655
-   ]
-  },
-  "shrub-2": {
-   "name": "마른 덤불 2",
-   "real": [
-    0.8,
-    1.5
-   ],
-   "bed": "ground",
-   "kind": "shrub",
-   "kindName": "마른 덤불 2",
-   "flip": false,
-   "ownShadow": true,
-   "role": "big",
-   "base": 0.9378,
-   "foot": [
-    0.249,
-    0.693
-   ]
-  },
-  "trunk-2": {
-   "name": "쓰러진 마른 나무 2",
-   "real": [
-    0.5,
-    0.9
-   ],
-   "bed": "ground",
-   "kind": "trunk",
-   "kindName": "쓰러진 마른 나무 2",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.9096,
-   "foot": [
-    0.057,
-    0.835
-   ]
-  },
-  "stones-2": {
-   "name": "돌무더기 2",
-   "real": [
-    0.5,
-    1
-   ],
-   "bed": "ground",
-   "kind": "stones",
-   "kindName": "돌무더기 2",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.9368,
-   "foot": [
-    0.239,
-    0.755
+    0.111,
+    0.621
    ]
   },
   "crackrock-2": {
@@ -400,216 +240,14 @@
    ],
    "bed": "ground",
    "kind": "crackrock",
-   "kindName": "갈라진 큰 바위 2",
+   "kindName": "갈라진 큰 바위",
    "flip": false,
    "ownShadow": true,
    "role": "big",
-   "base": 0.9368,
+   "base": 0.8793,
    "foot": [
-    0.107,
-    0.633
-   ]
-  },
-  "thornbush-2": {
-   "name": "가시덤불 2",
-   "real": [
-    1,
-    1.8
-   ],
-   "bed": "ground",
-   "kind": "thornbush",
-   "kindName": "가시덤불 2",
-   "flip": false,
-   "ownShadow": true,
-   "role": "big",
-   "base": 0.9458,
-   "foot": [
-    0.294,
-    0.733
-   ]
-  },
-  "palm-s-2": {
-   "name": "작은 대추야자 2",
-   "real": [
-    2,
-    4
-   ],
-   "bed": "ground",
-   "kind": "palm-s",
-   "kindName": "작은 대추야자 2",
-   "flip": false,
-   "ownShadow": true,
-   "ground": [
-    0,
-    0.6
-   ],
-   "role": "big",
-   "base": 0.9106,
-   "foot": [
-    0.404,
-    0.493
-   ]
-  },
-  "branch-2": {
-   "name": "마른 나뭇가지 2",
-   "real": [
-    0.2,
-    0.4
-   ],
-   "bed": "ground",
-   "kind": "branch",
-   "kindName": "마른 나뭇가지 2",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.9371,
-   "foot": [
-    0.666,
-    0.7
-   ]
-  },
-  "boulder-3": {
-   "name": "큰 둥근 바위 3",
-   "real": [
-    1,
-    2
-   ],
-   "bed": "ground",
-   "kind": "boulder",
-   "kindName": "큰 둥근 바위 3",
-   "flip": false,
-   "ownShadow": true,
-   "role": "big",
-   "base": 0.9075,
-   "foot": [
-    0.178,
-    0.657
-   ]
-  },
-  "shrub-3": {
-   "name": "마른 덤불 3",
-   "real": [
-    0.8,
-    1.5
-   ],
-   "bed": "ground",
-   "kind": "shrub",
-   "kindName": "마른 덤불 3",
-   "flip": false,
-   "ownShadow": true,
-   "role": "big",
-   "base": 0.9363,
-   "foot": [
-    0.165,
-    0.662
-   ]
-  },
-  "trunk-3": {
-   "name": "쓰러진 마른 나무 3",
-   "real": [
-    0.5,
-    0.9
-   ],
-   "bed": "ground",
-   "kind": "trunk",
-   "kindName": "쓰러진 마른 나무 3",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.9215,
-   "foot": [
-    0.044,
-    0.518
-   ]
-  },
-  "stones-3": {
-   "name": "돌무더기 3",
-   "real": [
-    0.5,
-    1
-   ],
-   "bed": "ground",
-   "kind": "stones",
-   "kindName": "돌무더기 3",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.9102,
-   "foot": [
-    0.211,
-    0.777
-   ]
-  },
-  "crackrock-3": {
-   "name": "갈라진 큰 바위 3",
-   "real": [
-    1,
-    2
-   ],
-   "bed": "ground",
-   "kind": "crackrock",
-   "kindName": "갈라진 큰 바위 3",
-   "flip": false,
-   "ownShadow": true,
-   "role": "big",
-   "base": 0.9118,
-   "foot": [
-    0.199,
-    0.664
-   ]
-  },
-  "thornbush-3": {
-   "name": "가시덤불 3",
-   "real": [
-    1,
-    1.8
-   ],
-   "bed": "ground",
-   "kind": "thornbush",
-   "kindName": "가시덤불 3",
-   "flip": false,
-   "ownShadow": true,
-   "role": "big",
-   "base": 0.9515,
-   "foot": [
-    0.258,
-    0.648
-   ]
-  },
-  "palm-s-3": {
-   "name": "작은 대추야자 3",
-   "real": [
-    2,
-    4
-   ],
-   "bed": "ground",
-   "kind": "palm-s",
-   "kindName": "작은 대추야자 3",
-   "flip": false,
-   "ownShadow": true,
-   "ground": [
-    0,
-    0.6
-   ],
-   "role": "big",
-   "base": 0.9319,
-   "foot": [
-    0.366,
-    0.454
-   ]
-  },
-  "branch-3": {
-   "name": "마른 나뭇가지 3",
-   "real": [
-    0.2,
-    0.4
-   ],
-   "bed": "ground",
-   "kind": "branch",
-   "kindName": "마른 나뭇가지 3",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.8944,
-   "foot": [
-    0.055,
-    0.863
+    0.069,
+    0.69
    ]
   },
   "pillar-1": {
@@ -628,10 +266,54 @@
     0.35
    ],
    "role": "big",
-   "base": 0.9515,
+   "base": 0.982,
    "foot": [
-    0.051,
-    0.512
+    0.032,
+    0.463
+   ]
+  },
+  "pillar-2": {
+   "name": "바위 기둥 2",
+   "real": [
+    4,
+    7
+   ],
+   "bed": "ground",
+   "kind": "pillar",
+   "kindName": "바위 기둥",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
+    0.35
+   ],
+   "role": "big",
+   "base": 0.9807,
+   "foot": [
+    0.034,
+    0.458
+   ]
+  },
+  "pillar-3": {
+   "name": "바위 기둥 3",
+   "real": [
+    4,
+    7
+   ],
+   "bed": "ground",
+   "kind": "pillar",
+   "kindName": "바위 기둥",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
+    0.35
+   ],
+   "role": "big",
+   "base": 0.982,
+   "foot": [
+    0.032,
+    0.463
    ]
   },
   "mound-1": {
@@ -650,10 +332,120 @@
     0.7
    ],
    "role": "big",
-   "base": 0.9085,
+   "base": 0.9474,
    "foot": [
-    0.108,
-    0.71
+    0.116,
+    0.682
+   ]
+  },
+  "mound-2": {
+   "name": "바위 언덕 2",
+   "real": [
+    1.5,
+    3
+   ],
+   "bed": "ground",
+   "kind": "mound",
+   "kindName": "바위 언덕",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
+    0.7
+   ],
+   "role": "big",
+   "base": 0.9624,
+   "foot": [
+    0.123,
+    0.659
+   ]
+  },
+  "mound-3": {
+   "name": "바위 언덕 3",
+   "real": [
+    1.5,
+    3
+   ],
+   "bed": "ground",
+   "kind": "mound",
+   "kindName": "바위 언덕",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
+    0.7
+   ],
+   "role": "big",
+   "base": 0.963,
+   "foot": [
+    0.092,
+    0.707
+   ]
+  },
+  "mound-4": {
+   "name": "바위 언덕 4",
+   "real": [
+    1.5,
+    3
+   ],
+   "bed": "ground",
+   "kind": "mound",
+   "kindName": "바위 언덕",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
+    0.7
+   ],
+   "role": "big",
+   "base": 0.8893,
+   "foot": [
+    0.123,
+    0.741
+   ]
+  },
+  "mound-red-1": {
+   "name": "붉은 바위 언덕",
+   "real": [
+    2,
+    4
+   ],
+   "bed": "ground",
+   "kind": "mound-red",
+   "kindName": "붉은 바위 언덕",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
+    0.7
+   ],
+   "role": "big",
+   "base": 0.7762,
+   "foot": [
+    0.098,
+    0.735
+   ]
+  },
+  "mound-red-2": {
+   "name": "붉은 바위 언덕 2",
+   "real": [
+    2,
+    4
+   ],
+   "bed": "ground",
+   "kind": "mound-red",
+   "kindName": "붉은 바위 언덕",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
+    0.7
+   ],
+   "role": "big",
+   "base": 0.8579,
+   "foot": [
+    0.036,
+    0.801
    ]
   },
   "palm-1": {
@@ -672,78 +464,250 @@
     0.45
    ],
    "role": "big",
-   "base": 0.9558,
+   "base": 0.9742,
    "foot": [
-    0.353,
-    0.512
+    0.359,
+    0.435
    ]
   },
-  "grass-1": {
-   "name": "마른 풀 포기",
+  "palm-2": {
+   "name": "대추야자 나무 2",
    "real": [
-    0.5,
-    1
+    6,
+    10
    ],
    "bed": "ground",
-   "kind": "grass",
-   "kindName": "마른 풀 포기",
+   "kind": "palm",
+   "kindName": "대추야자 나무",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9289,
+   "ground": [
+    0,
+    0.45
+   ],
+   "role": "big",
+   "base": 0.977,
    "foot": [
-    0.183,
-    0.873
+    0.213,
+    0.337
    ]
   },
-  "slab-1": {
-   "name": "납작한 바위",
+  "palms-big-1": {
+   "name": "대추야자 두 그루",
    "real": [
-    0.3,
+    6,
+    10
+   ],
+   "bed": "ground",
+   "kind": "palms-big",
+   "kindName": "대추야자 두 그루",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
+    0.45
+   ],
+   "role": "big",
+   "base": 0.9769,
+   "foot": [
+    0.308,
+    0.415
+   ]
+  },
+  "palms-big-2": {
+   "name": "대추야자 두 그루 2",
+   "real": [
+    6,
+    10
+   ],
+   "bed": "ground",
+   "kind": "palms-big",
+   "kindName": "대추야자 두 그루",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
+    0.45
+   ],
+   "role": "big",
+   "base": 0.9764,
+   "foot": [
+    0.334,
+    0.441
+   ]
+  },
+  "palm-s-1": {
+   "name": "작은 대추야자",
+   "real": [
+    2,
+    4
+   ],
+   "bed": "ground",
+   "kind": "palm-s",
+   "kindName": "작은 대추야자",
+   "flip": false,
+   "ownShadow": true,
+   "ground": [
+    0,
     0.6
    ],
-   "bed": "ground",
-   "kind": "slab",
-   "kindName": "납작한 바위",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.872,
+   "role": "big",
+   "base": 0.9771,
    "foot": [
-    0.241,
-    0.608
+    0.345,
+    0.466
    ]
   },
-  "tumble-1": {
-   "name": "회전초",
+  "palm-s-2": {
+   "name": "작은 대추야자 2",
    "real": [
-    0.5,
-    0.9
+    2,
+    4
    ],
    "bed": "ground",
-   "kind": "tumble",
-   "kindName": "회전초",
+   "kind": "palm-s",
+   "kindName": "작은 대추야자",
    "flip": false,
    "ownShadow": true,
-   "base": 0.8971,
-   "foot": [
-    0.177,
-    0.679
-   ]
-  },
-  "pebbles-1": {
-   "name": "작은 바위",
-   "real": [
-    0.3,
+   "ground": [
+    0,
     0.6
    ],
+   "role": "big",
+   "base": 0.9792,
+   "foot": [
+    0.365,
+    0.516
+   ]
+  },
+  "palm-s-3": {
+   "name": "작은 대추야자 3",
+   "real": [
+    2,
+    4
+   ],
    "bed": "ground",
-   "kind": "pebbles",
-   "kindName": "작은 바위",
+   "kind": "palm-s",
+   "kindName": "작은 대추야자",
    "flip": false,
    "ownShadow": true,
-   "base": 0.8936,
+   "ground": [
+    0,
+    0.6
+   ],
+   "role": "big",
+   "base": 0.9681,
    "foot": [
-    0.181,
-    0.67
+    0.321,
+    0.421
+   ]
+  },
+  "shrub-1": {
+   "name": "마른 덤불",
+   "real": [
+    0.8,
+    1.5
+   ],
+   "bed": "ground",
+   "kind": "shrub",
+   "kindName": "마른 덤불",
+   "flip": false,
+   "ownShadow": true,
+   "role": "big",
+   "base": 0.9658,
+   "foot": [
+    0.112,
+    0.564
+   ]
+  },
+  "shrub-2": {
+   "name": "마른 덤불 2",
+   "real": [
+    0.8,
+    1.5
+   ],
+   "bed": "ground",
+   "kind": "shrub",
+   "kindName": "마른 덤불",
+   "flip": false,
+   "ownShadow": true,
+   "role": "big",
+   "base": 0.9582,
+   "foot": [
+    0.167,
+    0.614
+   ]
+  },
+  "shrub-3": {
+   "name": "마른 덤불 3",
+   "real": [
+    0.8,
+    1.5
+   ],
+   "bed": "ground",
+   "kind": "shrub",
+   "kindName": "마른 덤불",
+   "flip": false,
+   "ownShadow": true,
+   "role": "big",
+   "base": 0.9476,
+   "foot": [
+    0.173,
+    0.627
+   ]
+  },
+  "thornbush-1": {
+   "name": "가시덤불",
+   "real": [
+    1,
+    1.8
+   ],
+   "bed": "ground",
+   "kind": "thornbush",
+   "kindName": "가시덤불",
+   "flip": false,
+   "ownShadow": true,
+   "role": "big",
+   "base": 0.9395,
+   "foot": [
+    0.145,
+    0.567
+   ]
+  },
+  "thornbush-2": {
+   "name": "가시덤불 2",
+   "real": [
+    1,
+    1.8
+   ],
+   "bed": "ground",
+   "kind": "thornbush",
+   "kindName": "가시덤불",
+   "flip": false,
+   "ownShadow": true,
+   "role": "big",
+   "base": 0.9599,
+   "foot": [
+    0.211,
+    0.69
+   ]
+  },
+  "thornbush-3": {
+   "name": "가시덤불 3",
+   "real": [
+    1,
+    1.8
+   ],
+   "bed": "ground",
+   "kind": "thornbush",
+   "kindName": "가시덤불",
+   "flip": false,
+   "ownShadow": true,
+   "role": "big",
+   "base": 0.9763,
+   "foot": [
+    0.18,
+    0.548
    ]
   },
   "brokenbush-1": {
@@ -757,144 +721,10 @@
    "kindName": "부러진 덤불",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9119,
+   "base": 0.9536,
    "foot": [
-    0.159,
-    0.576
-   ]
-  },
-  "pillar-2": {
-   "name": "바위 기둥 2",
-   "real": [
-    4,
-    7
-   ],
-   "bed": "ground",
-   "kind": "pillar",
-   "kindName": "바위 기둥 2",
-   "flip": false,
-   "ownShadow": true,
-   "ground": [
-    0,
-    0.35
-   ],
-   "role": "big",
-   "base": 0.9462,
-   "foot": [
-    0.062,
-    0.5
-   ]
-  },
-  "mound-2": {
-   "name": "바위 언덕 2",
-   "real": [
-    1.5,
-    3
-   ],
-   "bed": "ground",
-   "kind": "mound",
-   "kindName": "바위 언덕 2",
-   "flip": false,
-   "ownShadow": true,
-   "ground": [
-    0,
-    0.7
-   ],
-   "role": "big",
-   "base": 0.8978,
-   "foot": [
-    0.133,
-    0.749
-   ]
-  },
-  "palm-2": {
-   "name": "대추야자 나무 2",
-   "real": [
-    6,
-    10
-   ],
-   "bed": "ground",
-   "kind": "palm",
-   "kindName": "대추야자 나무 2",
-   "flip": false,
-   "ownShadow": true,
-   "ground": [
-    0,
-    0.45
-   ],
-   "role": "big",
-   "base": 0.9446,
-   "foot": [
-    0.397,
-    0.5
-   ]
-  },
-  "grass-2": {
-   "name": "마른 풀 포기 2",
-   "real": [
-    0.5,
-    1
-   ],
-   "bed": "ground",
-   "kind": "grass",
-   "kindName": "마른 풀 포기 2",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.9465,
-   "foot": [
-    0.187,
-    0.763
-   ]
-  },
-  "slab-2": {
-   "name": "납작한 바위 2",
-   "real": [
-    0.3,
-    0.6
-   ],
-   "bed": "ground",
-   "kind": "slab",
-   "kindName": "납작한 바위 2",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.8824,
-   "foot": [
-    0.212,
-    0.496
-   ]
-  },
-  "tumble-2": {
-   "name": "회전초 2",
-   "real": [
-    0.5,
-    0.9
-   ],
-   "bed": "ground",
-   "kind": "tumble",
-   "kindName": "회전초 2",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.893,
-   "foot": [
-    0.205,
-    0.634
-   ]
-  },
-  "pebbles-2": {
-   "name": "작은 바위 2",
-   "real": [
-    0.3,
-    0.6
-   ],
-   "bed": "ground",
-   "kind": "pebbles",
-   "kindName": "작은 바위 2",
-   "flip": false,
-   "ownShadow": true,
-   "base": 0.8881,
-   "foot": [
-    0.089,
-    0.43
+    0.213,
+    0.519
    ]
   },
   "brokenbush-2": {
@@ -905,270 +735,371 @@
    ],
    "bed": "ground",
    "kind": "brokenbush",
-   "kindName": "부러진 덤불 2",
+   "kindName": "부러진 덤불",
    "flip": false,
    "ownShadow": true,
-   "base": 0.9393,
+   "base": 0.9775,
    "foot": [
-    0.243,
-    0.53
+    0.336,
+    0.533
    ]
   },
-  "palms-big-1": {
-   "name": "대추야자 나무",
+  "brokenbush-3": {
+   "name": "부러진 덤불 3",
    "real": [
-    6,
-    10
+    0.6,
+    1.2
    ],
    "bed": "ground",
-   "kind": "palms-big",
-   "kindName": "대추야자 나무",
+   "kind": "brokenbush",
+   "kindName": "부러진 덤불",
    "flip": false,
    "ownShadow": true,
-   "ground": [
-    0,
-    0.45
-   ],
-   "role": "big",
-   "base": 0.982,
+   "base": 0.893,
    "foot": [
-    0.359,
-    0.51
+    0.228,
+    0.502
    ]
   },
-  "boulder-big-1": {
-   "name": "큰 둥근 바위",
+  "grass-1": {
+   "name": "마른 풀 포기",
    "real": [
-    1.5,
-    2.5
+    0.5,
+    1
    ],
    "bed": "ground",
-   "kind": "boulder-big",
-   "kindName": "큰 둥근 바위",
+   "kind": "grass",
+   "kindName": "마른 풀 포기",
    "flip": false,
    "ownShadow": true,
-   "ground": [
-    0,
-    0.85
-   ],
-   "role": "big",
-   "base": 0.9371,
+   "base": 0.9588,
    "foot": [
-    0.155,
-    0.626
+    0.189,
+    0.531
    ]
   },
-  "mound-red": {
-   "name": "바위 언덕",
+  "grass-2": {
+   "name": "마른 풀 포기 2",
    "real": [
-    2,
-    4
+    0.5,
+    1
    ],
    "bed": "ground",
-   "kind": "mound",
-   "kindName": "바위 언덕",
+   "kind": "grass",
+   "kindName": "마른 풀 포기",
    "flip": false,
    "ownShadow": true,
-   "ground": [
-    0,
-    0.7
-   ],
-   "role": "big",
-   "base": 0.9544,
+   "base": 0.9385,
    "foot": [
-    0.128,
-    0.607
+    0.093,
+    0.8
    ]
   },
-  "boulder-big-2": {
-   "name": "큰 둥근 바위",
+  "grass-3": {
+   "name": "마른 풀 포기 3",
    "real": [
-    1.5,
-    2.5
+    0.5,
+    1
    ],
    "bed": "ground",
-   "kind": "boulder-big",
-   "kindName": "큰 둥근 바위",
+   "kind": "grass",
+   "kindName": "마른 풀 포기",
    "flip": false,
    "ownShadow": true,
-   "ground": [
-    0,
-    0.85
-   ],
-   "role": "big",
-   "base": 0.975,
+   "base": 0.9726,
    "foot": [
-    0.143,
-    0.661
+    0.276,
+    0.515
    ]
   },
-  "palms-big-2": {
-   "name": "대추야자 나무",
+  "tumble-1": {
+   "name": "회전초",
    "real": [
-    6,
-    10
+    0.5,
+    0.9
    ],
    "bed": "ground",
-   "kind": "palms-big",
-   "kindName": "대추야자 나무",
+   "kind": "tumble",
+   "kindName": "회전초",
    "flip": false,
    "ownShadow": true,
-   "ground": [
-    0,
-    0.45
-   ],
-   "role": "big",
-   "base": 0.9796,
+   "base": 0.9592,
    "foot": [
-    0.332,
-    0.46
+    0.178,
+    0.578
    ]
   },
-  "crackrock-big": {
-   "name": "갈라진 큰 바위",
+  "tumble-2": {
+   "name": "회전초 2",
    "real": [
-    1.5,
-    2.5
+    0.5,
+    0.9
    ],
    "bed": "ground",
-   "kind": "crackrock",
-   "kindName": "갈라진 큰 바위",
+   "kind": "tumble",
+   "kindName": "회전초",
    "flip": false,
    "ownShadow": true,
-   "ground": [
-    0,
-    0.85
+   "base": 0.8201,
+   "foot": [
+    0.147,
+    0.634
+   ]
+  },
+  "trunk-1": {
+   "name": "쓰러진 마른 나무",
+   "real": [
+    0.5,
+    0.9
    ],
-   "role": "big",
+   "bed": "ground",
+   "kind": "trunk",
+   "kindName": "쓰러진 마른 나무",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.948,
+   "foot": [
+    0.561,
+    0.696
+   ]
+  },
+  "trunk-2": {
+   "name": "쓰러진 마른 나무 2",
+   "real": [
+    0.5,
+    0.9
+   ],
+   "bed": "ground",
+   "kind": "trunk",
+   "kindName": "쓰러진 마른 나무",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9669,
+   "foot": [
+    0.065,
+    0.659
+   ]
+  },
+  "trunk-3": {
+   "name": "쓰러진 마른 나무 3",
+   "real": [
+    0.5,
+    0.9
+   ],
+   "bed": "ground",
+   "kind": "trunk",
+   "kindName": "쓰러진 마른 나무",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9621,
+   "foot": [
+    0.025,
+    0.608
+   ]
+  },
+  "branch-1": {
+   "name": "마른 나뭇가지",
+   "real": [
+    0.2,
+    0.4
+   ],
+   "bed": "ground",
+   "kind": "branch",
+   "kindName": "마른 나뭇가지",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9609,
+   "foot": [
+    0.015,
+    0.127
+   ]
+  },
+  "branch-2": {
+   "name": "마른 나뭇가지 2",
+   "real": [
+    0.2,
+    0.4
+   ],
+   "bed": "ground",
+   "kind": "branch",
+   "kindName": "마른 나뭇가지",
+   "flip": false,
+   "ownShadow": true,
    "base": 0.9358,
    "foot": [
-    0.194,
-    0.663
+    0.018,
+    0.807
    ]
-  }
- },
- "installation": {
-  "placements": {
-   "item-01-1": {
-    "x": 0.2033,
-    "y": 0.5822,
-    "width": 0.1723
-   },
-   "item-02-1": {
-    "x": 0.4118,
-    "y": 0.452,
-    "width": 0.1793
-   },
-   "item-03-1": {
-    "x": 0.5366,
-    "y": 0.5582,
-    "width": 0.12
-   },
-   "item-04-1": {
-    "x": 0.0388,
-    "y": 0.9674,
-    "width": 0.1268
-   },
-   "item-05-1": {
-    "x": 0.1262,
-    "y": 0.7711,
-    "width": 0.1667
-   },
-   "item-06-1": {
-    "x": 0.3779,
-    "y": 0.9715,
-    "width": 0.158
-   },
-   "item-07-1": {
-    "x": 0.5941,
-    "y": 0.6721,
-    "width": 0.1729
-   },
-   "item-08-1": {
-    "x": 0.7972,
-    "y": 0.5853,
-    "width": 0.1648
-   },
-   "item-01-2": {
-    "x": 0.0602,
-    "y": 0.6417,
-    "width": 0.3
-   },
-   "item-02-2": {
-    "x": 0.4874,
-    "y": 0.4873,
-    "width": 0.1681
-   },
-   "item-03-2": {
-    "x": 0.6298,
-    "y": 1.2,
-    "width": 0.45
-   },
-   "item-04-2": {
-    "x": 0.07,
-    "y": 0.9114,
-    "width": 0.1607
-   },
-   "item-05-2": {
-    "x": 0.279,
-    "y": 0.58,
-    "width": 0.28
-   },
-   "item-06-2": {
-    "x": 0.498,
-    "y": 0.9022,
-    "width": 0.1647
-   },
-   "item-07-2": {
-    "x": 0.7719,
-    "y": 0.486,
-    "width": 0.1734
-   },
-   "item-08-2": {
-    "x": 0.913,
-    "y": 0.5926,
-    "width": 0.1652
-   },
-   "item-01-3": {
-    "x": 0.1983,
-    "y": 0.8906,
-    "width": 0.1655
-   },
-   "item-02-3": {
-    "x": 0.146,
-    "y": 0.952,
-    "width": 0.1649
-   },
-   "item-03-3": {
-    "x": 0.3375,
-    "y": 0.7743,
-    "width": 0.26
-   },
-   "item-04-3": {
-    "x": 0.873,
-    "y": 0.6997,
-    "width": 0.1784
-   },
-   "item-05-3": {
-    "x": 0.2505,
-    "y": 0.8266,
-    "width": 0.1783
-   },
-   "item-06-3": {
-    "x": 0.89,
-    "y": 1.2,
-    "width": 0.36
-   },
-   "item-07-3": {
-    "x": 0.1396,
-    "y": 0.8688,
-    "width": 0.1582
-   },
-   "item-08-3": {
-    "x": 0.2618,
-    "y": 0.6841,
-    "width": 0.1763
-   }
+  },
+  "branch-3": {
+   "name": "마른 나뭇가지 3",
+   "real": [
+    0.2,
+    0.4
+   ],
+   "bed": "ground",
+   "kind": "branch",
+   "kindName": "마른 나뭇가지",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.6995,
+   "foot": [
+    0.028,
+    0.876
+   ]
+  },
+  "stones-1": {
+   "name": "돌무더기",
+   "real": [
+    0.5,
+    1
+   ],
+   "bed": "ground",
+   "kind": "stones",
+   "kindName": "돌무더기",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9455,
+   "foot": [
+    0.192,
+    0.539
+   ]
+  },
+  "stones-2": {
+   "name": "돌무더기 2",
+   "real": [
+    0.5,
+    1
+   ],
+   "bed": "ground",
+   "kind": "stones",
+   "kindName": "돌무더기",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9624,
+   "foot": [
+    0.023,
+    0.679
+   ]
+  },
+  "stones-3": {
+   "name": "돌무더기 3",
+   "real": [
+    0.5,
+    1
+   ],
+   "bed": "ground",
+   "kind": "stones",
+   "kindName": "돌무더기",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9514,
+   "foot": [
+    0.06,
+    0.645
+   ]
+  },
+  "slab-1": {
+   "name": "납작한 바위",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "bed": "ground",
+   "kind": "slab",
+   "kindName": "납작한 바위",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9416,
+   "foot": [
+    0.218,
+    0.574
+   ]
+  },
+  "slab-2": {
+   "name": "납작한 바위 2",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "bed": "ground",
+   "kind": "slab",
+   "kindName": "납작한 바위",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9361,
+   "foot": [
+    0.106,
+    0.681
+   ]
+  },
+  "slab-3": {
+   "name": "납작한 바위 3",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "bed": "ground",
+   "kind": "slab",
+   "kindName": "납작한 바위",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.939,
+   "foot": [
+    0.131,
+    0.672
+   ]
+  },
+  "pebbles-1": {
+   "name": "작은 바위",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "bed": "ground",
+   "kind": "pebbles",
+   "kindName": "작은 바위",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9453,
+   "foot": [
+    0.249,
+    0.481
+   ]
+  },
+  "pebbles-2": {
+   "name": "작은 바위 2",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "bed": "ground",
+   "kind": "pebbles",
+   "kindName": "작은 바위",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9412,
+   "foot": [
+    0.211,
+    0.446
+   ]
+  },
+  "pebbles-3": {
+   "name": "작은 바위 3",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "bed": "ground",
+   "kind": "pebbles",
+   "kindName": "작은 바위",
+   "flip": false,
+   "ownShadow": true,
+   "base": 0.9396,
+   "foot": [
+    0.325,
+    0.547
+   ]
   }
  },
  "skirtMeta": {}
