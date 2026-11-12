@@ -2525,5 +2525,17 @@
    "face": "R"
   }
  ],
- "noShadow": true
+ "noShadow": true,
+ "softKinds": [
+  "oak",
+  "fir",
+  "fern",
+  "bush",
+  "maple",
+  "smallpine",
+  "tallfern",
+  "azalea",
+  "flower",
+  "raspberry"
+ ]
 }

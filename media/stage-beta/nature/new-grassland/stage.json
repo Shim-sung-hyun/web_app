@@ -6620,5 +6620,35 @@
   "rockbush",
   "thicketwall"
  ],
- "groundTol": 100
+ "groundTol": 100,
+ "softKinds": [
+  "acacia",
+  "acacia-s",
+  "acacias-big",
+  "baobab",
+  "bush",
+  "fanbush",
+  "flowers",
+  "grassbush",
+  "tallgrass",
+  "tuft",
+  "deadtree",
+  "grassstrip",
+  "greengrass",
+  "marula",
+  "mopane",
+  "mopane-s",
+  "redgrass",
+  "thicket",
+  "treegroup",
+  "bushmound",
+  "densebush",
+  "densegrass",
+  "droop",
+  "grassmound",
+  "logbush",
+  "droop-big",
+  "termitetree",
+  "thicketwall"
+ ]
 }

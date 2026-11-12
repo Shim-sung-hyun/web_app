@@ -3014,5 +3014,15 @@
   "brokenbush",
   "tumble",
   "branch"
+ ],
+ "softKinds": [
+  "palm",
+  "palms-big",
+  "palm-s",
+  "shrub",
+  "thornbush",
+  "brokenbush",
+  "grass",
+  "tumble"
  ]
 }
