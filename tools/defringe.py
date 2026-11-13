@@ -12,6 +12,7 @@
  ② --plant: 바깥과 안 이어졌어도 매끈하고(5×5 표준편차 < 9) 흰(> 215) 조각이 15점 넘고 둘레의 절반 넘게 잎(초록)이면 지움(잎 사이로 보이는 종이).
     줄기·껍질의 밝은 곳(바오바브·마른 나무)은 둘레가 회색이라 남음.
  ③ --plant: 잎이 빽빽한 곳(둘레 15점 안에 잎 25% 넘게) 안의 밝은(> 228) 흰 점은 둘레 잎 색으로 칠함(지우면 덤불에 구멍).
+ ⑤ --fill: 몸 안에 갇힌 작은 투명 구멍(3000점 이하)을 가장 가까운 색으로 메움 — 바위·흙에만(풀·나무는 잎 사이가 비어야 함).
  ④ --gaps: 아주 흰(> 240) 색 없는 덩어리 40점 넘는 것을 모두 지움(가지 사이 종이) — 줄기가 하얗지 않은 나무·덤불에만(바오바브·마른 나무·마룰라 빼고).
 지운 곳 가장자리는 알파를 1점 부드럽게. numpy·Pillow·scipy 필요.
 """
@@ -20,13 +21,15 @@ from PIL import Image
 from scipy import ndimage as ndi
 
 
-def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False):
+def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fill=False):
     im = Image.open(src).convert('RGBA'); a = np.asarray(im).astype(np.int32).copy()
     rgb, A = a[..., :3].copy(), a[..., 3]; H, W = A.shape
     tint = np.zeros(A.shape, bool)
     mn, mx = rgb.min(2), rgb.max(2)
     paper = (mx - mn < 28) & (A > 0) & ((mn > light) | ((A < 255) & (mn > 180)))
-    out = A <= 8
+    tr = A <= 8; lt, nt = ndi.label(tr)
+    edge = np.unique(np.concatenate([lt[0], lt[-1], lt[:, 0], lt[:, -1]])); edge = edge[edge > 0]
+    out = np.isin(lt, edge) | (tr & (ndi.sum(tr, lt, np.arange(nt + 1)) > 400)[lt])   # 바깥 = 그림 테두리와 이어진 투명 + 큰 틈(400점 넘는 투명 — 가지 사이). 몸 안의 작은 투명 점은 바깥이 아님
     d = depth or max(4, int(max(H, W) * .012))
     reach = out.copy(); kill = np.zeros_like(out)
     st = ndi.generate_binary_structure(2, 1)
@@ -54,8 +57,17 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False):
         blob = (mn > 240) & (mx - mn < 12) & (A > 0)
         lb, nb = ndi.label(blob); szb = ndi.sum(blob, lb, np.arange(nb + 1)); okb = szb > 40; okb[0] = False
         kill |= okb[lb]
-    n = int(kill.sum()) + (int(tint.sum()) if plant else 0)
+    holes = np.zeros(A.shape, bool)
+    if fill:   # ⑤ --fill: 몸 안에 갇힌 작은 구멍(자를 때 생긴 것, 3000점 이하)을 둘레 색으로 메움 — 바위·흙처럼 단단한 것에만
+        semi = A < 230; ls, ns = ndi.label(semi)   # 반투명 구멍까지 — 그림 테두리와 이어지지 않은 덩어리만
+        es = np.unique(np.concatenate([ls[0], ls[-1], ls[:, 0], ls[:, -1]])); es = es[es > 0]
+        ss = ndi.sum(semi, ls, np.arange(ns + 1)); holes = semi & ~np.isin(ls, es) & (ss <= 3000)[ls]
+    n = int(kill.sum()) + (int(tint.sum()) if plant else 0) + int(holes.sum())
     if dry or not n: return n
+    if holes.any():
+        idx = ndi.distance_transform_edt(holes | (A < 230), return_distances=False, return_indices=True)
+        for c in range(3): a[..., c][holes] = rgb[..., c][idx[0][holes], idx[1][holes]]
+        a[..., 3][holes] = 255; A = a[..., 3]
     if plant and tint.any():
         lw = ndi.uniform_filter(leaf.astype(float), 9) + 1e-6
         for c in range(3): a[..., c][tint] = (ndi.uniform_filter(rgb[..., c] * leaf, 9) / lw)[tint].astype(np.int32)
@@ -69,7 +81,7 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False):
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('files', nargs='+'); p.add_argument('--out'); p.add_argument("--light", type=int, default=235)
-    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true')
+    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true')
     o = p.parse_args()
     for f in o.files:
-        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps); print(f'{n:7d}  {f}')
+        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill); print(f'{n:7d}  {f}')
