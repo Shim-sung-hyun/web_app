@@ -43,7 +43,7 @@
  <button id="download">모두 내려받기</button>
  <button id="clear">목록 비우기</button>
 </header>
-<p id="note">장면마다 빨간 원 안의 동물 하나를 보고 <b>괜찮음</b> / <b>안 괜찮음</b>을 골라 주세요. 안 괜찮으면 까닭을 누르거나 한 줄 적어 주세요.
+<p id="note">장면마다 빨간 원 안의 동물 하나를 보고 <b>괜찮음</b> / <b>안 괜찮음</b>, 그리고 이 동물에 <b>맞는 단계</b>(하·중·상·스페셜)를 골라 주세요. 안 괜찮으면 까닭을 누르거나 한 줄 적어 주세요.
 지금 규칙으로 뽑힌 자리와 규칙에 걸려 버려진 자리가 섞여 있어요(어느 쪽인지는 안 보여 드려요). 여러 묶음을 고른 뒤 <b>모두 내려받기</b> 한 파일을 대화에 올려 주시면, Claude가 선생님 판단과 규칙을 견줘 경향을 익혀요.</p>
 <p id="msg"></p>
 <div id="grid"></div>
@@ -812,16 +812,20 @@ function card(c,n,lv){
   ring.style.cssText+=`;left:${(A.x-s/2)*100}%;top:${(A.y-A.h*A.base/2)*100-s*66}%;width:${s*100}%;height:${s*133}%`; st.appendChild(ring);
   const row=document.createElement('div'); row.className='row';
   row.innerHTML=`<span class="num">${n}</span><button class="pick okb">괜찮음</button><button class="pick nob">안 괜찮음</button>`;
+  const lvRow=document.createElement('div'); lvRow.className='row lvrow';   // 이 동물에 맞는 단계(2026-11-13 선생님: 하·중·상·스 체크)
+  lvRow.innerHTML='<span class="num">맞는 단계</span>'+['하','중','상','스페셜'].map(w=>`<button class="chip lvb">${w}</button>`).join('');
   const why=document.createElement('div'); why.className='why';
   why.innerHTML=WHYS.map(w=>`<button class="chip">${w}</button>`).join('')+'<input placeholder="까닭 한 줄(없어도 됨)">';
-  el.append(row,why); $('grid').appendChild(el);
+  el.append(row,lvRow,why); $('grid').appendChild(el);
   const rec={place:placeNow,level:Stage.LEVELS[c.lv||lv].name,board:Stage.LEVELS[lv].name,seed:c.seed,animal:c.animal,rule:c.why,visible:r3(c.v),ease:r3(c.ease),crush:r3(c.cr),see:r3(c.se),face:r3(c.fv),
-    x:r3(A.x),y:r3(A.y),w:r3(A.w),h:r3(A.h),grow:r3(A.grow),flip:!!A.flip,off:r3(A.off),front:frontKinds(c),judge:null,why:[],note:'',at:''};
+    x:r3(A.x),y:r3(A.y),w:r3(A.w),h:r3(A.h),grow:r3(A.grow),flip:!!A.flip,off:r3(A.off),front:frontKinds(c),judge:null,say:null,why:[],note:'',at:''};
   let idx=-1;
   const store=()=>{ rec.at=new Date().toISOString(); if(idx<0){ saved.push(rec); idx=saved.length-1; } else saved[idx]=rec; putSaved(saved); count(); };
   const [okb,nob]=row.querySelectorAll('.pick');
   okb.onclick=()=>{ rec.judge='ok'; rec.why=[]; el.className='card ok'; okb.classList.add('on'); nob.classList.remove('on'); why.querySelectorAll('.chip').forEach(b=>b.classList.remove('on')); store(); };
   nob.onclick=()=>{ rec.judge='no'; el.className='card no'; nob.classList.add('on'); okb.classList.remove('on'); store(); };
+  lvRow.querySelectorAll('.lvb').forEach(b=>b.onclick=()=>{ const on=!b.classList.contains('on'); lvRow.querySelectorAll('.lvb').forEach(x=>x.classList.remove('on'));
+    if(on){ b.classList.add('on'); rec.say=b.textContent; } else rec.say=null; store(); });   // 하나만 고름, 다시 누르면 지움
   why.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{ b.classList.toggle('on'); rec.why=[...why.querySelectorAll('.chip.on')].map(x=>x.textContent); store(); });
   why.querySelector('input').onchange=e=>{ rec.note=e.target.value.trim(); store(); };
 }
