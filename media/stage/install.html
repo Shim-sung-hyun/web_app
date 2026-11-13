@@ -832,6 +832,21 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   /* 찾기 쉬움 점수(2026-11-13, 선생님 판단 236장으로 맞춤): √(보이는 넓이 = 보이는 몫×그림 폭×높이) × (밝기 차이 + 색 거리) × 100.
      상 '괜찮음/너무 어려움'을 90%, 스페셜 '괜찮음/색이 튐'을 81% 맞게 가름(보이는 몫만 쓰면 82%·75%) */
   const easeOf = (pl, lay, A, P, v) => { P = P || probe(pl, lay, A); if (v == null) v = visOf(P); const d = colorDiff(pl, lay, A, P); return Math.sqrt(Math.max(0, v) * A.w * A.h) * (d.de + d.dl); };
+  /* 바닥 앞뒤용: 소품 o의 [x0,x1] 안 불투명 바닥(장면 y), 소품이 동물 A의 몸을 실제로 가리는지 */
+  function solidBottom(o, im, x0, x1) { const M = maskOf(im); if (!M.m) return null; let best = -1;
+    for (let k = 0; k <= 16; k++) { const fx = x0 + (x1 - x0) * k / 16; let u = (fx - (o.x - o.w / 2)) / o.w; if (u < 0 || u >= 1) continue; if (o.flip) u = 1 - u; const i = Math.floor(u * M.w);
+      for (let r = M.h - 1; r >= 0; r--) if (M.m[r * M.w + i]) { best = Math.max(best, r); break; } }
+    return best < 0 ? null : o.y - o.h * (o.base ?? 1) + (best + 1) / M.h * o.h; }
+  function coveredBy(o, im, A) { const M = maskOf(A.img); if (!M.m) return false; for (let j = 0; j < M.h; j += 2) for (let i = 0; i < M.w; i += 2) { if (!M.m[j * M.w + i]) continue;
+      const u = (A.flip ? M.w - 1 - i : i) + .5, fx = A.x - A.w / 2 + A.w * u / M.w, fy = A.y - A.h * A.base + A.h * (j + .5) / M.h; if (solidAt(o, im, fx, fy)) return true; } return false; }
+  /* 특징 칸(2026-11-13 선생님: 스페셜이라도 동물의 특징이 아주 조금이라도 드러나야 — 색·크기만으로 숨기면 무슨 동물인지 추측하기 어려움):
+     머리 쪽(얼굴 방향 앞 35%·위 70%) + 몸 윗선 끝(위 15% — 귀·뿔·혹·갈기·목) + 꼬리 쪽(뒤 15%·위 60%). 얼굴 방향을 모르면 양 끝 20%. 보이는 칸 중 특징 칸 수 */
+  function featureVis(P, face) { const M = P.M, G = P.G, H = P.all(); let vis = 0, feat = 0;
+    for (let j = M.box[1]; j < M.box[3]; j++) for (let i = M.box[0]; i < M.box[2]; i++) { const k = j * M.w + i; if (!M.m[k] || H[k]) continue; const fx = G.FX[i], fy = G.FY[j]; if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue; vis++;
+      const bu = (i + .5 - M.box[0]) / (M.box[2] - M.box[0]), bv = (j + .5 - M.box[1]) / (M.box[3] - M.box[1]);
+      const head = face === 'L' ? bu < .35 : face === 'R' ? bu > .65 : (bu < .2 || bu > .8), tail = face === 'L' ? bu > .85 : face === 'R' ? bu < .15 : false;
+      if (bv < .15 || (head && bv < .7) || (tail && bv < .6)) feat++; }
+    return {vis, feat}; }
   function hide(pl, lay, a, opt = {}) {
     const R = rnd(opt.seed ?? Math.floor(Math.random() * 1e9)), want = opt.visible || [.25, .4], mid = (want[0] + want[1]) / 2;
     const M = maskOf(a.img), bw = (M.box[2] - M.box[0]) / M.w, bh = (M.box[3] - M.box[1]) / M.h, long = Math.max(bw * (M.w / Math.max(M.w, M.h)) * .75 / .75, bh * (M.h / Math.max(M.w, M.h)));
@@ -865,6 +880,10 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       if (A.grow > 1.01) for (const o of frontAll) {   // 키운 동물을 가리는 소품은 모두 크기를 드러내지 않는 것
         if (o.animal) continue; const ob = [o.x - o.w / 2, o.y - o.h * (o.base || 1), o.x + o.w / 2, o.y];
         if (ob[0] < Abox[2] && ob[2] > Abox[0] && ob[1] < Abox[3] && ob[3] > Abox[1] && !SF.has((pl.items[o.id] || {}).kind)) return; }
+      /* 바닥 앞뒤(2026-11-13 선생님: 퍼핀을 가린 바위의 바닥이 퍼핀 발보다 위 — 가리는 소품의 바닥은 늘 동물 바닥보다 앞에): 동물을 실제로 가리는 소품의
+         불투명한 몸(알파 110 넘게 — 반투명한 눈 자락은 뺌)의 바닥이, 동물과 겹치는 폭(가운데 80%) 안에서 동물 바닥보다 위면 버림 */
+      for (const o of frontAll) { if (o.animal) continue; const im = o.img || (pl.items[o.id] || {}).img; if (!im) continue;
+        const ob = solidBottom(o, im, Abox[0], Abox[2]); if (ob != null && ob < A.y - .004 && coveredBy(o, im, A)) return; }
       /* (2026-11-09 선생님) 큰 줄기 뒤에서 몸 일부가 가려져도 됨 — 뿌리 위에 서는 것은 19번이 막음 */
       const feetTop = A.y - A.h * A.base * .25;
       for (const o of frontAll) { const it = pl.items[o.id] || {}; if (!it.img) continue; const baseTop = o.y - o.h * o.base * .18;
@@ -891,6 +910,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       if (best && sc >= best.sc) { lay.pop(); if (extra) lay.pop(); return; }   // 빠르게(2026-11-12): 지금 가장 좋은 자리보다 못하면 아래 검사는 안 해도 결과가 같음
       /* 얼굴(2026-11-09): 상·스페셜(opt.face 'hide')은 얼굴이 대부분 가려지고 등·꼬리·귀 같은 단서만, 하('show')는 얼굴이 잘 보이게 — 얼굴 = 머리 쪽(008 FACE) 앞 40%·위 65% */
       if (opt.face && a.face) { const fv = visOf(P, a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]); if ((opt.face === 'hide' && fv > .35) || (opt.face === 'show' && fv < .6)) { if (tell) tell('face', {cr, se, fv, ease: ez}); lay.pop(); if (extra) lay.pop(); return; } }
+      { const F = featureVis(P, a.face); if (F.feat < Math.max(opt.featMin ?? 6, F.vis * (opt.featShare ?? .2))) { if (tell) tell('feature', {cr, se, ease: ez}); lay.pop(); if (extra) lay.pop(); return; } }   // 특징이 조금이라도(보이는 칸의 20%·6칸 이상) — 모든 단계
       // 먼저 숨긴 동물을 이 동물·새 소품이 앞에서 덮지 않게 — 먼저 숨긴 동물이 덮이거나 깔리거나 비치게 되는 자리는 버림
       const over = (n, o) => { if (!(depthY(n) > depthY(o))) return false; const L = n.x - n.w / 2, T = n.y - n.h * n.base, l = o.x - o.w / 2, t = o.y - o.h * o.base; return !(L > l + o.w || L + n.w < l || T > t + o.h || T + n.h < t); };   // 빠르게: 새것이 그 동물 앞에 겹칠 때만 다시 셈(아니면 그대로)
       const hurt = lay.some(o => { if (!o.animal || o === A || !(over(A, o) || (extra && over(extra, o)))) return false; const Q = probe(pl, lay, o); return visOf(Q) < Math.max(.04, (o.want || want)[0] * .5) || crushP(Q) > (opt.crush ?? .08) || Q.fc > (opt.footCrush ?? 0) || seeP(Q) > (opt.see ?? .015); }); if (tell) tell(hurt ? 'hurt' : 'ok', {cr, se, sc, ease: ez}); lay.pop(); if (extra) lay.pop(); if (hurt) return;
