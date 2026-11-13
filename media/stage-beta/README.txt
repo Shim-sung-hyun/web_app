@@ -26,7 +26,8 @@
   009는 몸 부위 자리(PARTS, 512칸 좌표)가 그림에 묶여 있음 — 호랑이·곰·부엉이(오늘)와 기린·얼룩말(11-12 초원 때부터 어긋나 있었음)을 새 그림에 맞춰 다시 잼. media/animals 그림을 바꾸면 009 PARTS를 꼭 볼 것. 옛 만화풍 배경·소품 32·동물 7은 _trash/2026-11-13.
 - 20판 스페셜: 평균 6.0마리(20판 모두 6, 옛 숲 3.55), 한 판 0.5초 — stage.json "see": .05(비침 한도, 무대 README). 그 전엔 5.75마리·3초. 적게 숨는 동물: 곰 3·호랑이 6·사슴 8번.
 - 선생님 평가 132장 반영(2026-11-13, 숲에서만 — 무대 README '숲 평가'): 스페셜 보이는 몫 4.5~15%, 특징 안 보여도 되는 몫 20%, 상|스페셜 경계. stage.json levels·featFree·cut.
-- 다음: 숲 상·스페셜 판을 20~30장 더 평가하면 경계를 더 잘 맞춤, 통나무·쓰러진 큰 나무 더 받으면 in/에 넣고 stage-intake.py.
+- 평가 2차 96장(상·스페셜) 반영: 색이 비슷하면 1.5배 더 드러나게(무대 README, 숲 camo.diff 55).
+- 다음: 바뀐 숲 스페셜을 선생님이 다시 보기, 통나무·쓰러진 큰 나무 더 받으면 in/에 넣고 stage-intake.py.
 
 ■ nature/new-ground 들판(땅 위) — 준비 끝, 그림을 기다림(2026-11-13 선생님: 다음 장면은 들판, 동물 10마리)
 - 복사 화면 media/stage/prompts/copy.html?f=PROMPTS-new-ground-pencil.txt · 프롬프트 PROMPTS-new-ground-pencil.txt · 설정 new-ground/intake.json · 받는 곳 new-ground/in/

@@ -1106,11 +1106,17 @@ body.setup #adminBtn{display:none}
       const se = seeP(P); if (se > (opt.see ?? pl.see ?? .015)) { if (tell) tell('see', {cr, se}); lay.pop(); if (extra) lay.pop(); return 'see'; }   // 반투명한 밑동 뒤로 비치면 더 뒤(작게)로 — 아래 tryAt
       /* 단계(2026-11-13 선생님: 크기만이 아니라 색도): opt.ease=[아래,위]면 찾기 쉬움 점수가 그 안에 오게 — 점수 가운데(로그)에 가까울수록 좋음, 벗어나면 .5 벌점(보이는 몫도) */
       const Lt = opt.levelNo || 3, cut = opt.cut && opt.levelNo;
-      let ez = null, sc;
+      let ez = null, sc, camoMin = 0;
       if (cut) {   // 단계 자리(CUT): 몫·쉬움의 평균 자리가 이 단계(Lt)로 반올림되어야 — 자리가 단계 가운데에 가까울수록 좋음
-        const pv = posV(v), lo = CUT.wv * pv + (1 - CUT.wv) * .5, hi = CUT.wv * pv + (1 - CUT.wv) * 4.5, vOk = hi >= Lt - .5 && lo <= Lt + .5;   // 쉬움이 어떤 값이어도 못 닿으면 색은 안 셈(빠르게)
-        ez = vOk ? Math.max(1e-3, easeOf(pl, lay, A, P, v)) : 1e-3; const pos = vOk ? levelPos(v, ez) : 9;
-        sc = Math.abs(pos - Lt) * .15 + (Math.min(4, Math.max(1, Math.floor(pos + .5))) !== Lt ? .5 : 0) + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);   // 보이는 몫의 안전 범위(LEVELS visible) — 초원으로 맞춘 경계를 사막·북극에 쓸 때 지나치지 않게
+        const K = cutOf(pl), pv = lerpDown(v, K.v), lo = K.wv * pv + (1 - K.wv) * .5, hi = K.wv * pv + (1 - K.wv) * 4.5,   // 경계는 무대 것(cutOf)
+          vOk = hi >= Lt - .5 && lo <= Lt + .5;   // 쉬움이 어떤 값이어도 못 닿으면 색은 안 셈(빠르게)
+        /* 색이 비슷하면 더 드러나게(2026-11-13 선생님: 같은 색·비슷한 색 앞에서는 상·스페셜도 지금의 1.5배 — 4%면 6%. 꿩 꼬리와 나무토막처럼 색이 같으면 너무 안 보임.
+           숲 평가 228장: 보이는 몫 5.5% 아래 28장 중 9장이 '더 노출', 5.5~7%는 11장 중 0장): 동물의 보이는 곳과 둘레의 색 차이(색 거리 + 밝기 차이)가 camo.diff(기본 45 — 평가의 가운데 값) 아래면
+           상·스페셜의 보이는 몫 아래 끝을 camo.more(기본 1.5)배로. stage.json "camo": {"diff", "more"}로 무대마다 */
+        const cd = vOk ? colorDiff(pl, lay, A, P) : null, camoC = pl.camo || {};
+        ez = vOk ? Math.max(1e-3, Math.sqrt(Math.max(0, v) * A.w * A.h) * (cd.de + cd.dl)) : 1e-3; const pos = vOk ? levelPos(v, ez, pl) : 9;
+        camoMin = vOk && Lt >= 3 && (cd.de + cd.dl) < (camoC.diff ?? 45) ? want[0] * (camoC.more ?? 1.5) : 0;
+        sc = Math.abs(pos - Lt) * .15 + (Math.min(4, Math.max(1, Math.floor(pos + .5))) !== Lt ? .5 : 0) + (v < Math.max(want[0], camoMin) || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);   // 보이는 몫의 안전 범위(LEVELS visible) — 초원으로 맞춘 경계를 사막·북극에 쓸 때 지나치지 않게
       } else {
         const vOk = v >= want[0] - .04 && v <= want[1] + .04;   // 몫이 이미 단계 밖이면 색은 안 셈(어차피 못 씀 — 빠르게)
         ez = opt.ease ? (vOk ? Math.max(1e-3, easeOf(pl, lay, A, P, v)) : opt.ease[1] * 9) : null; const eMid = opt.ease ? Math.sqrt(opt.ease[0] * opt.ease[1]) : 0;
@@ -1126,7 +1132,7 @@ body.setup #adminBtn{display:none}
       // 먼저 숨긴 동물을 이 동물·새 소품이 앞에서 덮지 않게 — 먼저 숨긴 동물이 덮이거나 깔리거나 비치게 되는 자리는 버림
       const over = (n, o) => { if (!(depthY(n) > depthY(o))) return false; const L = n.x - n.w / 2, T = n.y - n.h * n.base, l = o.x - o.w / 2, t = o.y - o.h * o.base; return !(L > l + o.w || L + n.w < l || T > t + o.h || T + n.h < t); };   // 빠르게: 새것이 그 동물 앞에 겹칠 때만 다시 셈(아니면 그대로)
       const hurt = lay.some(o => { if (!o.animal || o === A || !(over(A, o) || (extra && over(extra, o)))) return false; const Q = probe(pl, lay, o); return visOf(Q) < Math.max(.04, (o.want || want)[0] * .5) || crushP(Q) > (opt.crush ?? .08) || Q.fc > (opt.footCrush ?? 0) || seeP(Q) > (opt.see ?? pl.see ?? .015); }); if (tell) tell(hurt ? 'hurt' : 'ok', {cr, se, sc, ease: ez}); lay.pop(); if (extra) lay.pop(); if (hurt) return;
-      if (!best || sc < best.sc) best = {sc, A, v, extra, ez, featOk}; };
+      if (!best || sc < best.sc) best = {sc, A, v, extra, ez, featOk, camoMin}; };
     const tryAt = (x, y, flip, extra) => {
       let r = tryAt0(x, y, flip, extra);
       if (r === 'crush') r = tryAt0(x, y, (flip = !flip), extra);   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
@@ -1155,7 +1161,7 @@ body.setup #adminBtn{display:none}
     }
     if (!best) return null;
     /* 단계를 지킴: 정한 몫보다 많이 보이면 숨기지 않음(null) — 부르는 쪽이 다른 동물로 */
-    if (opt.strict !== false && opt.cut && opt.levelNo) { if (levelAt(best.v, best.ez, pl) !== opt.levelNo || best.v < want[0] - .01 || best.v > want[1] + .01) return null; }   // 단계 자리가 이 단계여야(3차 평가)
+    if (opt.strict !== false && opt.cut && opt.levelNo) { if (levelAt(best.v, best.ez, pl) !== opt.levelNo || best.v < Math.max(want[0], best.camoMin || 0) - .01 || best.v > want[1] + .01) return null; }   // 단계 자리가 이 단계여야(3차 평가)
     else if (opt.strict !== false && (best.v > want[1] + .04 || best.v < want[0] - .04)) return null;
     if (opt.strict !== false && opt.ease && (best.ez < opt.ease[0] / 1.15 || best.ez > opt.ease[1] * 1.15)) return null;   // 찾기 쉬움이 단계를 벗어나면 숨기지 않음   // 너무 많이 가려져도(2026-11-12 선생님: 하인데 28%) 숨기지 않음 — hideMany가 다른 동물·판으로
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; best.A.ease = best.ez; best.A.level = opt.levelNo; best.A.featOk = best.featOk !== false; return best.A;
