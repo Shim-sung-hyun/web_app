@@ -501,3 +501,80 @@ Leaves and blades have clear dark-grey outlines. The plant is DENSE: inside its 
 SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
 The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper on the ground: the same blue everywhere, a sharp clean edge, no gradient, fading, hatching, texture or outline. It is one simple shape of the whole plant, not thin shadows of single blades, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object, its lines or the paper. The object keeps its pale colours and is not darkened.
 ▲
+
+━━━━━━━━ 보호색 가림 8가지 — 초원 스페셜용 (2026-11-13 선생님: 특징이 조금 보이게 숨기려면 보호색으로 가릴 소품이 더 필요 — 흰 바탕, 가공 쉽게)
+붙일 그림: 초원 배경(media/stage-beta/nature/new-grassland/bg.jpg) 한 장. 종류마다 2장씩, 장마다 2000자 안.
+누런 풀(코끼리풀·풀밭 띠·풀과 덤불·둔덕)은 사자·치타·하이에나·가젤, 회색 바위·쓰러진 나무·회갈색 덤불은 코끼리·코뿔소·물소·하이에나가 보호색으로 숨게.
+흰 바탕을 맨 앞에 못 박고, 둘레선을 닫고, 빽빽한 식물은 안에 흰 틈이 없게, 땅·다른 물건 없이 — 자르기 쉽게. 받으면: flat-shadow.py --key blue → defringe.py → stage-meta.py·stage-index.py.
+
+■ 코끼리풀 무리 (elephantgrass · 실제 2.5~3.5m · 자르기 --key blue, --plant 없이)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, not beige, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the savanna background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale straw-yellow and golden tan on dry grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a big clump of very tall, thick elephant grass, the long broad golden blades packed tightly together and arching a little outward at the top, about twice as wide as it is tall.
+The plant is DENSE: inside its outline there is no white at all, only the plant's own colours and lines, like one solid mass; only the outer edge is a little uneven. The outer edge is drawn with clear dark-grey lines. Nothing else in the picture: no loose grass, pebbles, sand or ground patch under or around it, no other objects, no text, and no blue or grey shading on the white paper.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object, not thin shadows of single blades, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 넓은 마른 풀밭 띠 (goldgrass · 실제 1~1.5m · 자르기 --key blue, --plant 없이)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, not beige, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the savanna background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale straw-yellow and golden tan on dry grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a long, low, dense band of dry golden savanna grass, about four times wider than it is tall, the blades packed tightly together, with a few seed heads on top.
+The plant is DENSE: inside its outline there is no white at all, only the plant's own colours and lines, like one solid mass; only the outer edge is a little uneven. The outer edge is drawn with clear dark-grey lines. Nothing else in the picture: no loose grass, pebbles, sand or ground patch under or around it, no other objects, no text, and no blue or grey shading on the white paper.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object, not thin shadows of single blades, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 마른 풀과 덤불 무리 (grassbush-mix · 실제 1.5~2.5m · 자르기 --key blue, --plant 없이)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, not beige, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the savanna background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale straw-yellow on dry grass, a muted olive green and grey-brown on the shrub). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a dense mixed clump of tall dry golden grass growing around and through a low olive-green shrub, about twice as wide as it is tall.
+The plant is DENSE: inside its outline there is no white at all, only the plant's own colours and lines, like one solid mass; only the outer edge is a little uneven. The outer edge is drawn with clear dark-grey lines. Nothing else in the picture: no loose grass, pebbles, sand or ground patch under or around it, no other objects, no text, and no blue or grey shading on the white paper.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object, not thin shadows of single blades, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 회색 바위와 마른 풀 (greyrock-grass · 실제 1.5~3m · 자르기 --key blue, --plant 없이)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, not beige, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the savanna background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool grey and soft grey-brown on the rock, a pale straw-yellow on the grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: two or three big rounded grey granite boulders with thick tufts of dry golden grass growing densely around their foot and in the gaps, wider than it is tall. The cracks and lumps of the rock form no face or face-like shape anywhere.
+Close the object's outline all the way round with one continuous dark-grey line, also along the bottom and where it touches its shadow. Nothing else in the picture: no loose grass, pebbles, sand or ground patch under or around it, no other objects, no text, and no blue or grey shading on the white paper.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 마른 풀에 둘러싸인 흰개미 둔덕 (termite-grass · 실제 2~3m · 자르기 --key blue, --plant 없이)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, not beige, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the savanna background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a light reddish-brown on the earth, a pale straw-yellow on the grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a wide, rounded termite mound of reddish-brown earth with a thick ring of dense, tall dry golden grass around its lower half, wider than it is tall.
+Close the object's outline all the way round with one continuous dark-grey line, also along the bottom and where it touches its shadow. Nothing else in the picture: no loose grass, pebbles, sand or ground patch under or around it, no other objects, no text, and no blue or grey shading on the white paper.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 마른 풀 속 쓰러진 큰 나무 (deadfall-grass · 실제 1~1.5m · 자르기 --key blue, --plant 없이)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, not beige, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the savanna background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft grey and grey-brown on the dry wood, a pale straw-yellow on the grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a thick, grey, weathered fallen tree trunk lying on its side, half hidden in dense tall dry golden grass, about three times wider than it is tall. No roots and no broken branch ends that look like fingers: both ends of the trunk are hidden in the grass.
+Close the object's outline all the way round with one continuous dark-grey line, also along the bottom and where it touches its shadow. Nothing else in the picture: no loose grass, pebbles, sand or ground patch under or around it, no other objects, no text, and no blue or grey shading on the white paper.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 회갈색 잔가지 덤불숲 (greyscrub · 실제 2~3m · 자르기 --key blue, --plant 없이)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, not beige, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the savanna background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft grey-brown on the twigs, a muted grey-olive on the small leaves). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a wide, dense mass of dry savanna scrub with many fine grey-brown twigs and small grey-olive leaves packed tightly together, about twice as wide as it is tall.
+The plant is DENSE: inside its outline there is no white at all, only the plant's own colours and lines, like one solid mass; only the outer edge is a little uneven. The outer edge is drawn with clear dark-grey lines. Nothing else in the picture: no loose grass, pebbles, sand or ground patch under or around it, no other objects, no text, and no blue or grey shading on the white paper.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object, not thin shadows of single blades, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 마른 풀 덮인 낮은 둔덕 무리 (grasshummocks · 실제 0.6~1m · 자르기 --key blue, --plant 없이)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, not beige, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the savanna background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale straw-yellow and golden tan on the grass, a light ochre on the earth). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a wide group of four or five low, rounded earth hummocks close together, each thickly covered with short dry golden grass, much wider than it is tall.
+Close the object's outline all the way round with one continuous dark-grey line, also along the bottom and where it touches its shadow. Nothing else in the picture: no loose grass, pebbles, sand or ground patch under or around it, no other objects, no text, and no blue or grey shading on the white paper.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. Blue is ONLY in the shadow: none on the object or the paper.
+▲
