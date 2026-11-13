@@ -723,7 +723,8 @@
         const A = hide(pl, lay, pick[i], Object.assign({}, slot, {seed: seed + i * 7}, skipped < cap ? {featSkip: true} : {})); if (A) { out.push(A); slot = null; if (!A.featOk) skipped++; } else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
       if (!best || out.length > best.out.length) best = {lay, out, seed};
       if (out.length >= n) break;
-      if (performance.now() - t0 > (opt.budget ?? 8000)) break;   // 8초 넘게 걸리면 판을 더 짜지 않고 지금까지 가장 많이 숨긴 판(2026-11-13)
+      if (opt.min && best.out.length >= opt.min && performance.now() - t0 > (opt.budget ?? 8000) / 2) break;   // 못 채우면 opt.min마리로(2026-11-13 무대마다 마릿수) — 한도의 절반을 쓴 뒤부터, min도 안 되면 한도의 두 배까지
+      if (performance.now() - t0 > (opt.budget ?? 8000) * (opt.min && best.out.length < opt.min ? 2 : 1)) break;   // 8초 넘게 걸리면 판을 더 짜지 않고 지금까지 가장 많이 숨긴 판(2026-11-13)
     }
     return best;
   }
@@ -743,9 +744,11 @@
   const MIX = {1: [[1, 1]], 2: [[2, .8], [3, .2]], 3: [[3, .8], [2, .1], [4, .1]], 4: [[4, .8], [3, .2]]};
   const levelOpt = lv => { const L = LEVELS[lv]; return {visible: L.visible, cut: true, face: L.face, offMax: L.offMax, minLong: L.minLong, levelNo: lv}; };
   function hideLevel(pl, animals, lv, opt = {}) {   // 판 단계 lv로 여러 마리 — 동물마다 MIX 비율로 단계를 뽑아 숨김(A.level에 그 단계)
-    const extra = opt.hide || {}, seed = opt.seed ?? Math.floor(Math.random() * 1e9), R = rnd(seed ^ 0x5bd1e995), n = LEVELS[lv].count;
+    /* 무대마다 마릿수(2026-11-13 선생님): stage.json "counts": {"4": [5, 4]} = 스페셜은 5마리, 못 채우면 4마리. 숫자 하나만 써도 됨. 없으면 LEVELS의 count */
+    const pc = [].concat(opt.count ?? (pl.counts && pl.counts[lv]) ?? LEVELS[lv].count), n = pc[0], min = pc[1];
+    const extra = opt.hide || {}, seed = opt.seed ?? Math.floor(Math.random() * 1e9), R = rnd(seed ^ 0x5bd1e995);
     const plan = Array.from({length: n}, () => { let r = R(); for (const [l, p] of MIX[lv]) { if (r < p) return l; r -= p; } return lv; });   // 자리별 단계 계획 — 판을 다시 짜도 그대로
-    return hideMany(pl, animals, n, Object.assign({featFree: .4}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv), extra)}));
+    return hideMany(pl, animals, n, Object.assign({featFree: .4, min}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv), extra)}));
   }
   G.Stage = {LEVELS, MIX, CUT, levelAt, levelPos, levelOpt, hideLevel, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
