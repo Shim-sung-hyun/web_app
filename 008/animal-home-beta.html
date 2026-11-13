@@ -1069,7 +1069,7 @@ body.setup #adminBtn{display:none}
         for (let k = 0; k < 7; k++) { const fx = Abox[0] + (Abox[2] - Abox[0]) * k / 6; for (const fy of [feetTop, (feetTop + A.y) / 2]) if (fy > baseTop && solidAt(o, it.img, fx, fy) && solidAt(A, A.img, fx, fy)) return; } }   // 동물끼리 몰리지 않게(한 소품 뒤에 여럿 겹치던 것)
       lay.push(A); if (extra) lay.push(extra); const P = probe(pl, lay, A), v = visOf(P);
       const floor = Math.max(.04, want[0] * .5);
-      const tell = opt.onTry && ((why, m) => opt.onTry(Object.assign({why, A, extra, lay, v}, m)));   // 평가 페이지(hide-judge)용: 자리 후보와 버린 까닭을 알려 줌(없으면 아무 일 없음)
+      const tell = opt.onTry && ((why, m) => opt.onTry(Object.assign({why, A, extra, lay, v, lv: opt.levelNo}, m)));   // 평가 페이지(hide-judge)용: 자리 후보와 버린 까닭을 알려 줌(없으면 아무 일 없음)
       if (v < floor) { lay.pop(); if (extra) lay.pop(); return; }   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
       const cr = crushP(P); if (cr > (opt.crush ?? .08)) { if (tell) tell('crush', {cr}); lay.pop(); if (extra) lay.pop(); return 'crush'; }   // 깔린 자리는 버림(좌우를 뒤집어 다시 해 봄 — 아래 tryAt)
       const se = seeP(P); if (se > (opt.see ?? .015)) { if (tell) tell('see', {cr, se}); lay.pop(); if (extra) lay.pop(); return 'see'; }   // 반투명한 밑동 뒤로 비치면 더 뒤(작게)로 — 아래 tryAt
@@ -1115,7 +1115,7 @@ body.setup #adminBtn{display:none}
     /* 단계를 지킴: 정한 몫보다 많이 보이면 숨기지 않음(null) — 부르는 쪽이 다른 동물로 */
     if (opt.strict !== false && (best.v > want[1] + .04 || best.v < want[0] - .04)) return null;
     if (opt.strict !== false && opt.ease && (best.ez < opt.ease[0] / 1.15 || best.ez > opt.ease[1] * 1.15)) return null;   // 찾기 쉬움이 단계를 벗어나면 숨기지 않음   // 너무 많이 가려져도(2026-11-12 선생님: 하인데 28%) 숨기지 않음 — hideMany가 다른 동물·판으로
-    if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; best.A.ease = best.ez; return best.A;
+    if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; best.A.ease = best.ez; best.A.level = opt.levelNo; return best.A;
   }
 
   /* 여러 마리 숨기기(2026-11-11 선생님: 스페셜은 6마리가 꼭 되게): 동물을 차례로 숨기고(못 지키는 동물은 건너뜀), n마리가 안 되면
@@ -1125,7 +1125,9 @@ body.setup #adminBtn{display:none}
     for (let t = 0; t < tries; t++) {
       const seed = seed0 + t * 7919, lay = compose(pl, Object.assign({}, opt.compose, {seed})), R = rnd(seed), out = [];
       const pick = animals.slice().sort(() => R() - .5).sort((p, q) => (miss.get(p) || 0) - (miss.get(q) || 0));   // 앞 판에서 못 숨긴 동물은 뒤로(빠르게)
-      for (let i = 0; i < pick.length && out.length < n; i++) { const A = hide(pl, lay, pick[i], Object.assign({}, opt.hide, {seed: seed + i * 7})); if (A) out.push(A); else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
+      let slot = null;   // 단계 섞기: 자리마다 단계를 먼저 뽑고, 그 단계로 숨는 동물이 나올 때까지 그 단계를 지킴(못 숨는 동물만 건너뜀 — 쉬운 단계로 쏠리지 않게)
+      for (let i = 0; i < pick.length && out.length < n; i++) { if (!slot) slot = typeof opt.hide === 'function' ? opt.hide(R, out.length) : opt.hide;
+        const A = hide(pl, lay, pick[i], Object.assign({}, slot, {seed: seed + i * 7})); if (A) { out.push(A); slot = null; } else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
       if (!best || out.length > best.out.length) best = {lay, out, seed};
       if (out.length >= n) break;
       if (performance.now() - t0 > (opt.budget ?? 8000)) break;   // 8초 넘게 걸리면 판을 더 짜지 않고 지금까지 가장 많이 숨긴 판(2026-11-13)
@@ -1134,12 +1136,19 @@ body.setup #adminBtn{display:none}
   }
     /* 숨기기 단계(2026-11-13 선생님 판단 236장): 하 더 드러냄·중·상(노출 더)·스페셜(노출 적고 색이 바탕과 비슷) — visible 보이는 몫, ease 찾기 쉬움 점수 */
   const LEVELS = {
-    1: {name: '하', visible: [.6, .92], ease: [8, 80], face: 'show', offMax: .5, minLong: .10, count: 3},
-    2: {name: '중', visible: [.28, .55], ease: [5, 20], offMax: .7, minLong: .07, count: 3},
-    3: {name: '상', visible: [.08, .3], ease: [2, 9], face: 'hide', offMax: .8, minLong: .05, count: 3},
-    4: {name: '스페셜', visible: [.04, .15], ease: [.8, 3.2], face: 'hide', offMax: .9, minLong: .05, count: 6}};
-  const levelOpt = lv => { const L = LEVELS[lv]; return {visible: L.visible, ease: L.ease, face: L.face, offMax: L.offMax, minLong: L.minLong}; };
-  G.Stage = {LEVELS, levelOpt, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
+    1: {name: '하', visible: [.65, .95], ease: [9, 80], face: 'show', offMax: .5, minLong: .10, count: 3},
+    2: {name: '중', visible: [.3, .6], ease: [7, 22], offMax: .7, minLong: .07, count: 3},
+    3: {name: '상', visible: [.1, .27], ease: [2.8, 7.5], face: 'hide', offMax: .8, minLong: .05, count: 3},
+    4: {name: '스페셜', visible: [.04, .15], ease: [.6, 2.8], face: 'hide', offMax: .9, minLong: .05, count: 6}};
+  /* 단계 섞기(2026-11-13 선생님): 상이라도 상 80%·중 10%·스페셜 10%, 스페셜은 스페셜 80%·상 20%, 중은 중 80%·상 20%, 하는 하만 — 동물마다 이 비율로 뽑음 */
+  const MIX = {1: [[1, 1]], 2: [[2, .8], [3, .2]], 3: [[3, .8], [2, .1], [4, .1]], 4: [[4, .8], [3, .2]]};
+  const levelOpt = lv => { const L = LEVELS[lv]; return {visible: L.visible, ease: L.ease, face: L.face, offMax: L.offMax, minLong: L.minLong, levelNo: lv}; };
+  function hideLevel(pl, animals, lv, opt = {}) {   // 판 단계 lv로 여러 마리 — 동물마다 MIX 비율로 단계를 뽑아 숨김(A.level에 그 단계)
+    const extra = opt.hide || {}, seed = opt.seed ?? Math.floor(Math.random() * 1e9), R = rnd(seed ^ 0x5bd1e995), n = LEVELS[lv].count;
+    const plan = Array.from({length: n}, () => { let r = R(); for (const [l, p] of MIX[lv]) { if (r < p) return l; r -= p; } return lv; });   // 자리별 단계 계획 — 판을 다시 짜도 그대로
+    return hideMany(pl, animals, n, Object.assign({}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv), extra)}));
+  }
+  G.Stage = {LEVELS, MIX, levelOpt, hideLevel, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script id="adminHold">

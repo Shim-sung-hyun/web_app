@@ -11,6 +11,8 @@
     선으로 둘러싼 안쪽 흰 곳(얼룩말 흰 줄·타조 흰 깃·흰 바위)은 안 닿음. 바깥에서 3점 넘게 들어간 곳은 밝기 245 넘는(거의 종이 그대로) 점만. 반투명한 가장자리 점(알파 255 미만)은 더 넓게(밝기 180까지) 봄.
  ② --plant: 바깥과 안 이어졌어도 매끈하고(5×5 표준편차 < 9) 흰(> 215) 조각이 15점 넘고 둘레의 절반 넘게 잎(초록)이면 지움(잎 사이로 보이는 종이).
     줄기·껍질의 밝은 곳(바오바브·마른 나무)은 둘레가 회색이라 남음.
+ ③ --plant: 잎이 빽빽한 곳(둘레 15점 안에 잎 25% 넘게) 안의 밝은(> 228) 흰 점은 둘레 잎 색으로 칠함(지우면 덤불에 구멍).
+ ④ --gaps: 아주 흰(> 240) 색 없는 덩어리 40점 넘는 것을 모두 지움(가지 사이 종이) — 줄기가 하얗지 않은 나무·덤불에만(바오바브·마른 나무·마룰라 빼고).
 지운 곳 가장자리는 알파를 1점 부드럽게. numpy·Pillow·scipy 필요.
 """
 import argparse, numpy as np
@@ -18,9 +20,10 @@ from PIL import Image
 from scipy import ndimage as ndi
 
 
-def fix(src, dst, light=235, depth=None, plant=False, dry=False):
+def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False):
     im = Image.open(src).convert('RGBA'); a = np.asarray(im).astype(np.int32).copy()
-    rgb, A = a[..., :3], a[..., 3]; H, W = A.shape
+    rgb, A = a[..., :3].copy(), a[..., 3]; H, W = A.shape
+    tint = np.zeros(A.shape, bool)
     mn, mx = rgb.min(2), rgb.max(2)
     paper = (mx - mn < 28) & (A > 0) & ((mn > light) | ((A < 255) & (mn > 180)))
     out = A <= 8
@@ -36,15 +39,26 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False):
         g = rgb.mean(2).astype(float); sd = np.sqrt(np.maximum(ndi.uniform_filter(g * g, 5) - ndi.uniform_filter(g, 5) ** 2, 0))
         flat = (mn > 215) & (mx - mn < 22) & (sd < 9) & (A > 0)
         R, G, B = rgb[..., 0], rgb[..., 1], rgb[..., 2]
-        leaf = (G >= R - 6) & (G > B + 8) & (A > 0)                       # 잎(누른 초록·올리브)
+        leaf = (G >= R - 6) & (G > B + 16) & (mx - mn > 18) & (A > 0)     # 잎(누른 초록·올리브) — 살짝 초록빛인 회색 껍질은 빼려고 초록이 짙어야
         lab, n = ndi.label(flat); sz = ndi.sum(flat, lab, np.arange(n + 1))
         ring = ndi.binary_dilation(flat, st, iterations=3) & ~flat & (A > 0)   # 조각마다 둘레 3점
         rl = ndi.maximum_filter(lab, 7) * ring                            # 둘레 점이 어느 조각 옆인지(가까운 것)
         tot = np.bincount(rl.ravel(), minlength=n + 1); lf = np.bincount(rl.ravel(), weights=leaf.ravel(), minlength=n + 1)
         ok = (sz > 15) & (lf > tot * .5); ok[0] = False                  # 둘레의 절반 넘게 잎이면 잎 사이 종이 — 줄기·껍질의 밝은 곳은 둘레가 회색이라 안 지움
         kill |= ok[lab]
-    n = int(kill.sum())
+        # ③ 잎 무더기 안의 흰 점(2026-11-13 선생님: 아카시아 잎 사이 흰 종이가 얼룩말 줄처럼 보여 찾기를 방해): 둘레 15점 안에 잎이 25% 넘는 곳의
+        #    밝고(> 228) 색 없는 점 — 줄기·굵은 가지는 둘레에 잎이 적어 남음
+        dens = ndi.uniform_filter(leaf.astype(float), 15)
+        tint = (mn > 228) & (mx - mn < 20) & (A > 0) & (dens > .25) & ~kill   # 지우면 빽빽한 덤불에 구멍이 나므로 둘레 잎 색으로 칠함
+    if gaps:   # ④ 가지 사이 큰 흰 종이(줄기가 하얗지 않은 나무·덤불에만 — 바오바브·마른 나무·마룰라처럼 흰 껍질에는 쓰지 말 것)
+        blob = (mn > 240) & (mx - mn < 12) & (A > 0)
+        lb, nb = ndi.label(blob); szb = ndi.sum(blob, lb, np.arange(nb + 1)); okb = szb > 40; okb[0] = False
+        kill |= okb[lb]
+    n = int(kill.sum()) + (int(tint.sum()) if plant else 0)
     if dry or not n: return n
+    if plant and tint.any():
+        lw = ndi.uniform_filter(leaf.astype(float), 9) + 1e-6
+        for c in range(3): a[..., c][tint] = (ndi.uniform_filter(rgb[..., c] * leaf, 9) / lw)[tint].astype(np.int32)
     A2 = A.copy(); A2[kill] = 0
     soft = ndi.binary_dilation(kill, st) & ~kill & (A2 > 0)          # 지운 곳 바로 옆은 조금 옅게
     A2[soft] = (A2[soft] * .6).astype(np.int32)
@@ -55,7 +69,7 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False):
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('files', nargs='+'); p.add_argument('--out'); p.add_argument("--light", type=int, default=235)
-    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true')
+    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true')
     o = p.parse_args()
     for f in o.files:
-        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry); print(f'{n:7d}  {f}')
+        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps); print(f'{n:7d}  {f}')
