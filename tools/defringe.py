@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""흰 테두리·틈 지우기(2026-11-13 선생님: 동물·소품 안쪽 흰 곳은 괜찮고, 가장자리 흰 테두리·나무와 덤불이 갈라진 사이·사자 갈기 사이의 흰 종이가 남음).
+
+    python3 tools/defringe.py 그림.webp [그림2.webp …]           # 제자리에서 고침
+    python3 tools/defringe.py 그림.webp --out 고친.webp            # 다른 파일로
+    python3 tools/defringe.py 폴더/*.webp --plant                  # 풀·나무: 몸 안에 갇힌 매끈한 흰 종이 조각도 지움
+    python3 tools/defringe.py 그림.webp --dry                      # 지울 점 수만 셈
+
+셈: 종이색 = 밝고(가장 어두운 채널 > --light, 기본 235 — 밝은 나무껍질(220~235)은 남게) 색이 거의 없음(채널 차 < 28).
+ ① 바깥(투명)에서 종이색 점만 밟고 들어갈 수 있는 곳을 --depth(기본 그림 긴 쪽의 1.2%)까지 지움 — 연필 테두리선(어두운 점)에서 멈추므로
+    선으로 둘러싼 안쪽 흰 곳(얼룩말 흰 줄·타조 흰 깃·흰 바위)은 안 닿음. 바깥에서 3점 넘게 들어간 곳은 밝기 245 넘는(거의 종이 그대로) 점만. 반투명한 가장자리 점(알파 255 미만)은 더 넓게(밝기 180까지) 봄.
+ ② --plant: 바깥과 안 이어졌어도 매끈하고(5×5 표준편차 < 9) 흰(> 215) 조각이 15점 넘고 둘레의 절반 넘게 잎(초록)이면 지움(잎 사이로 보이는 종이).
+    줄기·껍질의 밝은 곳(바오바브·마른 나무)은 둘레가 회색이라 남음.
+지운 곳 가장자리는 알파를 1점 부드럽게. numpy·Pillow·scipy 필요.
+"""
+import argparse, numpy as np
+from PIL import Image
+from scipy import ndimage as ndi
+
+
+def fix(src, dst, light=235, depth=None, plant=False, dry=False):
+    im = Image.open(src).convert('RGBA'); a = np.asarray(im).astype(np.int32).copy()
+    rgb, A = a[..., :3], a[..., 3]; H, W = A.shape
+    mn, mx = rgb.min(2), rgb.max(2)
+    paper = (mx - mn < 28) & (A > 0) & ((mn > light) | ((A < 255) & (mn > 180)))
+    out = A <= 8
+    d = depth or max(4, int(max(H, W) * .012))
+    reach = out.copy(); kill = np.zeros_like(out)
+    st = ndi.generate_binary_structure(2, 1)
+    deep = (mx - mn < 20) & (mn > 245)                                  # 3점 넘게 들어가면 거의 종이 그대로인 것만(밝은 껍질·털은 남게)
+    for k in range(d):   # 바깥에서 종이색만 밟고 한 점씩
+        grow = ndi.binary_dilation(reach, st) & (paper if k < 3 else paper & deep) & ~reach
+        if not grow.any(): break
+        reach |= grow; kill |= grow
+    if plant:
+        g = rgb.mean(2).astype(float); sd = np.sqrt(np.maximum(ndi.uniform_filter(g * g, 5) - ndi.uniform_filter(g, 5) ** 2, 0))
+        flat = (mn > 215) & (mx - mn < 22) & (sd < 9) & (A > 0)
+        R, G, B = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+        leaf = (G >= R - 6) & (G > B + 8) & (A > 0)                       # 잎(누른 초록·올리브)
+        lab, n = ndi.label(flat); sz = ndi.sum(flat, lab, np.arange(n + 1))
+        ring = ndi.binary_dilation(flat, st, iterations=3) & ~flat & (A > 0)   # 조각마다 둘레 3점
+        rl = ndi.maximum_filter(lab, 7) * ring                            # 둘레 점이 어느 조각 옆인지(가까운 것)
+        tot = np.bincount(rl.ravel(), minlength=n + 1); lf = np.bincount(rl.ravel(), weights=leaf.ravel(), minlength=n + 1)
+        ok = (sz > 15) & (lf > tot * .5); ok[0] = False                  # 둘레의 절반 넘게 잎이면 잎 사이 종이 — 줄기·껍질의 밝은 곳은 둘레가 회색이라 안 지움
+        kill |= ok[lab]
+    n = int(kill.sum())
+    if dry or not n: return n
+    A2 = A.copy(); A2[kill] = 0
+    soft = ndi.binary_dilation(kill, st) & ~kill & (A2 > 0)          # 지운 곳 바로 옆은 조금 옅게
+    A2[soft] = (A2[soft] * .6).astype(np.int32)
+    a[..., 3] = A2
+    Image.fromarray(a.astype(np.uint8)).save(dst, quality=92, method=6)
+    return n
+
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser(); p.add_argument('files', nargs='+'); p.add_argument('--out'); p.add_argument("--light", type=int, default=235)
+    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true')
+    o = p.parse_args()
+    for f in o.files:
+        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry); print(f'{n:7d}  {f}')
