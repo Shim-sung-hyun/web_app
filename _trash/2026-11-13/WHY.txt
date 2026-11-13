@@ -41,3 +41,4 @@ media/animals/sanyang.webp — 산양 그림을 빙 연필풍으로 다시 받�
 media/animals/saseum.webp — 사슴 그림을 빙 연필풍으로 다시 받음
 media/animals/ttakttaguri.webp — 딱따구리 그림을 빙 연필풍으로 다시 받음
 media/stage-beta/nature/new-forest/items/fern-3.webp — 숲 고사리순(fern-3) 밝은 연두 원본 — 색을 낮춘 것으로 바꿈(선생님 2026-11-13: 혼자 튀어 숨은 동물 찾기에 방해)
+media/animals/so.webp — 소 그림을 빙 연필풍으로 다시 받음

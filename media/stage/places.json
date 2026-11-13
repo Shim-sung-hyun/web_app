@@ -725,32 +725,20 @@
   "animals": [
    {
     "name": "개",
-    "src": "words/gae.webp",
+    "src": "animals/gae.webp",
     "real": 0.9,
     "face": "L"
    },
    {
     "name": "고양이",
-    "src": "words/goyangi.webp",
+    "src": "animals/goyangi.webp",
     "real": 0.7,
     "face": "L"
    },
    {
-    "name": "토끼",
-    "src": "animals/tokki.webp",
-    "real": 0.45,
-    "face": "L"
-   },
-   {
     "name": "닭",
-    "src": "words/dak.webp",
+    "src": "animals/dak.webp",
     "real": 0.5,
-    "face": "R"
-   },
-   {
-    "name": "너구리",
-    "src": "animals/neoguri.webp",
-    "real": 0.6,
     "face": "L"
    },
    {
@@ -760,15 +748,70 @@
     "face": "L"
    },
    {
+    "name": "돼지",
+    "src": "animals/dwaeji.webp",
+    "real": 1.5,
+    "face": "L"
+   },
+   {
+    "name": "말",
+    "src": "animals/mal.webp",
+    "real": 2.4,
+    "face": "L"
+   },
+   {
     "name": "달팽이",
-    "src": "words/dalpaengi.webp",
+    "src": "animals/dalpaengi.webp",
     "real": 0.06,
     "face": "L"
    },
    {
     "name": "거미",
-    "src": "words/geomi.webp",
-    "real": 0.05
+    "src": "animals/geomi.webp",
+    "real": 0.05,
+    "face": "L"
+   },
+   {
+    "name": "토끼",
+    "src": "animals/tokki.webp",
+    "real": 0.45,
+    "face": "L"
+   },
+   {
+    "name": "너구리",
+    "src": "animals/neoguri.webp",
+    "real": 0.6,
+    "face": "L"
+   },
+   {
+    "name": "염소",
+    "src": "animals/yeomso.webp",
+    "real": 1.2,
+    "face": "L"
+   },
+   {
+    "name": "오리",
+    "src": "animals/ori.webp",
+    "real": 0.6,
+    "face": "L"
+   },
+   {
+    "name": "고슴도치",
+    "src": "animals/goseumdochi.webp",
+    "real": 0.25,
+    "face": "L"
+   },
+   {
+    "name": "메뚜기",
+    "src": "animals/mettugi.webp",
+    "real": 0.06,
+    "face": "L"
+   },
+   {
+    "name": "양",
+    "src": "animals/yang.webp",
+    "real": 1.2,
+    "face": "L"
    }
   ],
   "props": "느티나무 8~12\n덤불 1~1.8\n키 큰 풀 1~1.5\n바위 0.5~1.2\n들꽃 0.3~0.6\n그루터기 0.4~0.8\n돌무더기 0.3~0.8\n풀 포기 0.2~0.4",

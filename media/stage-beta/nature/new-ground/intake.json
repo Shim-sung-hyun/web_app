@@ -1,7 +1,7 @@
 {
  "name": "들판",
- "horizon": 0.355,
- "groundTop": 0.365,
+ "horizon": 0.345,
+ "groundTop": 0.355,
  "groundTol": 100,
  "see": 0.05,
  "kinds": {
