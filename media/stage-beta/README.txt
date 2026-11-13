@@ -88,7 +88,12 @@
      큰 동물용 큰 보호색 소품 6가지 프롬프트를 드림(PROMPTS-new-grassland-pencil.txt 맨 끝: 큰 회색 바위 언덕 greykopje·쓰러진 바오밥 줄기 fallenbaobab·키 큰 갈대풀 벽 reedwall·누런 큰 가시나무 덤불 tawnythorn·어두운 큰 덤불숲 darkthicket·회갈색 큰 덤불숲 벽 greyscrub-big, 종류마다 2장).
      선생님이 그림을 주시면: flat-shadow.py --key blue → defringe.py → stage-meta.py·stage-index.py, softKinds(식물 넷)·baseMatch(greykopje·fallenbaobab)에 새 종류, 20판 다시 재기(6마리가 차면 counts를 지움).
   ② 숨기기 평가 다시(새 원리 — 바닥 앞뒤·특징 60%·단계 경계 4차·새 가림 소품 뒤): 초원·사막·북극. 평가 기록으로 Stage.CUT 다시 맞춤(무대 README 원리 22, 맞추는 셈은 3·4차 때처럼 판단 파일의 visible·ease·say로).
-  ③ 숲(new-forest)은 아직 새 방식(흰 종이·가림 소품·평가)으로 손보지 않음 — 스페셜 3.55마리.
+  ③ 숲(new-forest)을 빙 연필풍으로 한 번에 바꿀 준비 끝(2026-11-13 선생님) — 그림을 기다림. 지금 숲은 아직 옛 만화풍(스페셜 3.55마리).
+     프롬프트 media/stage/prompts/PROMPTS-new-forest-pencil.txt: 배경 1(초원 배경을 붙여 선·색 기준, 땅 시작 위에서 1/3·가까운 나무 없음) + 소품 26가지×2장(기본 18 + 보호색 가림 8을 처음부터) + 동물 12.
+     그림자는 다른 곳처럼 파랑으로 받음(나무는 키의 1/4로 짧게). 동물: 다람쥐·너구리·토끼는 media/animals에 새로(낱말 그림은 그대로), 여우·꿩을 더함(안 받아도 됨), 부엉이·딱따구리는 008 그림만 맞춤(숨기기엔 안 씀).
+     받는 곳 media/stage-beta/nature/new-forest/in/(이름: bg.jpg·종류-번호.jpg·동물이름.jpg) → python3 tools/stage-intake.py nature/new-forest media/stage-beta/nature/new-forest/in
+     한 줄이 옛 그림을 _trash로, stage.json을 intake.json(종류·크기·무른/단단·크기 안 드러냄·배치 덩어리·동물)으로 새로 짜고, 자르기·흰 종이·밑동·차림표까지 함. 가짜 그림으로 시험해 끝까지 돎(scipy 필요: pip install scipy).
+     넣은 뒤 할 일: 숨기기 시험으로 보기 → 지평선(지금 .355/.365로 적어 둠)이 받은 배경과 맞는지 → 나무 ground 범위·compose 손보기 → 스페셜 20판 재기 → in/ 원본 지우기 → 이 줄과 '■ nature/new-forest' 절 고쳐 쓰기.
   ④ 008에 쓸 때: Stage.hideLevel로, 앞 판을 보는 동안 다음 판을 미리 짜 둘 것(초원 스페셜 한 판 8초쯤).
   도구: tools/defringe.py(흰 테두리·잎 사이·갇힌 종이·구멍 메우기·둘레 흰 선 — 각 선택지는 파일 머리글), 평가 media/stage/hide-judge.html, 시험 media/stage/hide-test.html.
 - 다음: 선생님이 배치 고치기로 고친 JSON으로 원리.
