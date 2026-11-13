@@ -12,6 +12,7 @@
  ② --plant: 바깥과 안 이어졌어도 매끈하고(5×5 표준편차 < 9) 흰(> 215) 조각이 15점 넘고 둘레의 절반 넘게 잎(초록)이면 지움(잎 사이로 보이는 종이).
     줄기·껍질의 밝은 곳(바오바브·마른 나무)은 둘레가 회색이라 남음.
  ③ --plant: 잎이 빽빽한 곳(둘레 15점 안에 잎 25% 넘게) 안의 밝은(> 228) 흰 점은 둘레 잎 색으로 칠함(지우면 덤불에 구멍).
+ ⑦ --pockets: 몸에 갇힌 매끈한 흰 종이 조각(다리와 몸 사이 등)을 지움 — 몸이 흰 동물에는 쓰지 말 것.
  ⑥ --rim: 둘레 6점 띠의 점이 몸 안쪽(8~20점)보다 눈에 띄게 밝으면 바깥일수록 안쪽 색에 가깝게, 맨 바깥 한 줄은 조금 옅게(테두리선 없는 연한 털끝이 흰 선처럼 보일 때 — 동물).
  ⑤ --fill: 몸 안에 갇힌 작은 투명 구멍(3000점 이하)을 가장 가까운 색으로 메움 — 바위·흙에만(풀·나무는 잎 사이가 비어야 함).
  ④ --gaps: 아주 흰(> 240) 색 없는 덩어리 40점 넘는 것을 모두 지움(가지 사이 종이) — 줄기가 하얗지 않은 나무·덤불에만(바오바브·마른 나무·마룰라 빼고).
@@ -22,7 +23,7 @@ from PIL import Image
 from scipy import ndimage as ndi
 
 
-def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fill=False, rimfix=False):
+def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fill=False, rimfix=False, pockets=False):
     im = Image.open(src).convert('RGBA'); a = np.asarray(im).astype(np.int32).copy()
     rgb, A = a[..., :3].copy(), a[..., 3]; H, W = A.shape
     tint = np.zeros(A.shape, bool)
@@ -58,6 +59,10 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fil
         blob = (mn > 240) & (mx - mn < 12) & (A > 0)
         lb, nb = ndi.label(blob); szb = ndi.sum(blob, lb, np.arange(nb + 1)); okb = szb > 40; okb[0] = False
         kill |= okb[lb]
+    if pockets:   # ⑦ --pockets: 몸에 갇힌 매끈한 흰 종이(다리와 몸 사이 등, 2026-11-13 선생님: 낙타·전갈) — 밝고(> 232) 색 없고(< 16) 매끈한(표준편차 < 6) 30점 넘는 덩어리
+        g2 = rgb.mean(2).astype(float); sd2 = np.sqrt(np.maximum(ndi.uniform_filter(g2 * g2, 5) - ndi.uniform_filter(g2, 5) ** 2, 0))
+        pk = (mn > 232) & (mx - mn < 16) & (sd2 < 6) & (A > 0); lp, npk = ndi.label(pk); spk = ndi.sum(pk, lp, np.arange(npk + 1)); okp = spk > 30; okp[0] = False
+        kill |= ndi.binary_dilation(okp[lp], st) & (mn > 215) & (mx - mn < 22)
     holes = np.zeros(A.shape, bool)
     if fill:   # ⑤ --fill: 몸 안에 갇힌 작은 구멍(자를 때 생긴 것, 3000점 이하)을 둘레 색으로 메움 — 바위·흙처럼 단단한 것에만
         semi = A < 230; ls, ns = ndi.label(semi)   # 반투명 구멍까지 — 그림 테두리와 이어지지 않은 덩어리만
@@ -91,7 +96,7 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fil
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('files', nargs='+'); p.add_argument('--out'); p.add_argument("--light", type=int, default=235)
-    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true')
+    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true')
     o = p.parse_args()
     for f in o.files:
-        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill, o.rim); print(f'{n:7d}  {f}')
+        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill, o.rim, o.pockets); print(f'{n:7d}  {f}')
