@@ -1,0 +1,266 @@
+들판(땅 위) 베타 — 빙 연필풍 프롬프트 (2026-11-13, 선생님: 들판으로, 동물 10마리 — 숲과 같은 순서)
+순서: ① 배경 1장 → ② 소품 21가지(종류마다 2장) → ③ 동물 8마리(토끼·너구리는 숲 때 받은 그림을 그대로 씀 = 숨을 동물 10마리). 한꺼번에 받아도 됨.
+받는 곳 media/stage-beta/nature/new-ground/in/ — 이름을 못 붙이고 묶음으로 주셔도 Claude가 보고 붙임. 넣기: python3 tools/stage-intake.py nature/new-ground <받은 폴더>
+빛: 해는 등 뒤 왼쪽 위, 그림자는 오른쪽 안쪽(2시)·파랑 한 가지(#0000FF). 4판 가운데 바탕이 희고, 그림자가 온통 파랗고, 밑동까지 빽빽한 것을 골라 주세요.
+수풀·나무는 '둘레를 한 줄로 닫는다'는 말을 뺌(2026-11-13 선생님: 수풀 전체가 선으로 둘러짐) — 닫는 선은 바위·나무토막·흙만.
+
+━━━━━━━━ ① 배경 — 1장
+붙일 그림: 숲 배경(media/stage-beta/nature/new-forest/bg.jpg) — 선과 색 진하기 기준으로만.
+고를 때: 들판이 시작하는 줄이 위에서 1/3쯤, 아래 2/3가 빈 풀밭(연한 풀빛 — 숲·초원의 누런 땅과 달라야 함), 나무·바위·집이 없는 것.
+
+■ 빈 들판 배경 (bg.jpg · 4:3)
+▼
+Use the attached forest drawing ONLY as a reference for the line style and the strength of colour (do not draw this forest or its yellow ground): the same fine, thin dark-grey pencil-and-ink lines, short light hatching strokes and soft, pale watercolour washes. In that style, draw an EMPTY open field in the Korean countryside as a wide 4:3 picture.
+The edge where the open field ends is an almost straight, level line HIGH in the picture, only about one third from the top edge, so the empty field fills the whole lower two-thirds of the picture.
+Above that line: far away, a row of low, gentle green hills drawn small and light, with a few small distant trees and bushes along the foot of the hills, and above them a pale, clear sky with very light blue-grey hatching that becomes brighter toward the upper-left corner, and one or two thin small clouds. No houses, fences, roads, poles or people. Nothing from the distance reaches down into the lower two-thirds.
+Below the line: one wide, flat, open field in a clear, pale yellow-green watercolour wash, like short grass with small patches of light-brown soil showing through (clearly coloured, GREEN-ish, not yellow, white or grey), with fine, sparse marks of short grass and short hatching that get a little larger and clearer toward the bottom, and a slightly deeper tone near the bottom edge. Keep the field empty and calm: no trees, bushes, tall grass tufts, flowers, rocks, stumps, paths, furrows, puddles, shadows, animals or objects on it, so things can be placed on it later.
+Bright, soft daylight from the upper left behind the viewer; do not draw the sun. No animals, no text, no frame.
+▲
+
+━━━━━━━━ ② 소품 — 기본 소품 13가지
+붙일 그림: 새 들판 배경(받은 bg.jpg) 한 장. 종류마다 2장씩.
+
+■ 느티나무 (zelkova · 실제 8~12m)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted leaf-green on the leaves, a soft grey-brown on the bark). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a big old zelkova tree of a Korean village, a thick short trunk that divides into several strong branches and a very broad, rounded, dense crown of small leaves, wider than it is tall.
+The whole tree is in the picture, from the foot of the trunk to the top of the crown. The crown is drawn as full, dense masses of leaves with no white gaps inside it, its edge made only by the leaves themselves — do NOT draw one line around the whole crown. The trunk is closed all the way down to a flat foot. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, short, only about one quarter as long as the tree is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 감나무 (persimmon · 실제 4~7m)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted leaf-green on the leaves, a soft orange on the fruit, a dark grey-brown on the bark). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a persimmon tree with a dark, slightly crooked trunk and a rounded dense crown of broad leaves with a few small orange persimmons among them, about as wide as it is tall.
+The whole tree is in the picture, from the foot of the trunk to the top of the crown. The crown is drawn as full, dense masses of leaves with no white gaps inside it, its edge made only by the leaves themselves — do NOT draw one line around the whole crown. The trunk is closed all the way down to a flat foot. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, short, only about one quarter as long as the tree is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 덤불 (bush · 실제 1~1.8m · 너구리·닭·고양이 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted leaf-green and a darker olive green on the leaves). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a round, full countryside bush with many small leaves, about one and a half times as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 키 큰 풀 (tallgrass · 실제 1~1.5m · 토끼·개·닭 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted green and yellow-green on the blades). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a thick clump of tall wild grass, the long blades packed tightly and arching a little outward at the top, with a few seed heads, about one and a half times as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 바위 (rock · 실제 0.5~1.2m · 고양이·토끼·달팽이 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool grey and soft grey-brown on the rock). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low group of two or three rounded grey field stones touching each other, about twice as wide as it is tall.
+Close the outline of the hard parts (stone, wood, earth) with a continuous dark-grey line, also along the bottom and where it touches its shadow; any grass or leaves on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 큰 바위 (bigrock · 실제 1.5~2.5m · 고양이·너구리·소 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool grey and soft grey-brown on the rock, a pale green on the grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: one big rounded grey boulder with a few cracks and short grass packed along its whole foot, a little wider than it is tall.
+Close the outline of the hard parts (stone, wood, earth) with a continuous dark-grey line, also along the bottom and where it touches its shadow; any grass or leaves on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 돌무더기 (stones · 실제 0.3~0.8m · 달팽이·거미·토끼 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool light grey and soft grey-brown on the stones). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a small tight heap of seven or eight rounded field stones piled closely with no gaps between them, about twice as wide as it is tall.
+Close the outline of the hard parts (stone, wood, earth) with a continuous dark-grey line, also along the bottom and where it touches its shadow; any grass or leaves on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 그루터기 (stump · 실제 0.4~0.8m · 달팽이·거미·닭 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft grey-brown on the bark, a pale tan on the cut top). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: an old tree stump with a flat cut top showing rings, rough bark and short thick roots spreading flat at its foot, about as wide as it is tall.
+Close the outline of the hard parts (stone, wood, earth) with a continuous dark-grey line, also along the bottom and where it touches its shadow; any grass or leaves on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 장작 더미 (woodpile · 실제 0.8~1.4m · 말·닭·너구리·거미 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a warm light brown and tan on the cut ends, a soft grey-brown on the bark). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a neat stack of split firewood logs piled tightly on top of each other with their round cut ends facing the viewer and no gaps between them, about twice as wide as it is tall.
+Close the outline of the hard parts (stone, wood, earth) with a continuous dark-grey line, also along the bottom and where it touches its shadow; any grass or leaves on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 짚더미 (haystack · 실제 2~3m · 소·개·닭 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale straw-yellow and warm golden tan on the straw). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a big round haystack of rice straw shaped like a low dome with a small pointed top, the straw lying in thick downward layers right to the ground, a little wider than it is tall.
+The object is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own straw — do NOT draw one line around the whole object. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 들꽃 포기 (wildflowers · 실제 0.3~0.6m)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale yellow and white on the flowers, a muted leaf-green on the leaves). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a small thick tuft of field wildflowers and grass, small white and pale-yellow flowers on short stems above a dense bunch of leaves, about twice as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 풀 포기 (tuft · 실제 0.2~0.4m · 달팽이·거미 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted green on the blades). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: one small dense tuft of short field grass, the blades packed tightly and spreading a little at the top, about twice as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 토끼풀 무리 (clover · 실제 0.1~0.2m · 달팽이·거미 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted leaf-green on the leaves, white on the flowers). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low, dense patch of clover, many small three-part leaves packed tightly with a few small round white clover flowers on top, about three times as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+━━━━━━━━ ② 소품 — 보호색 가림 8가지 — 처음부터 함께
+붙일 그림: 새 들판 배경(받은 bg.jpg) 한 장. 종류마다 2장씩.
+
+■ 돌담 (stonewall · 실제 1~1.4m · 고양이·너구리·토끼·달팽이 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool grey and soft grey-brown on the stones, a pale green on the grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a piece of low dry-stone wall of rounded grey field stones fitted tightly with no gaps, level on top, with short grass packed along its foot, about three times as wide as it is tall.
+Close the outline of the hard parts (stone, wood, earth) with a continuous dark-grey line, also along the bottom and where it touches its shadow; any grass or leaves on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 볏짚 단 무리 (strawsheaves · 실제 1.5~2m · 소·개·닭 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale straw-yellow and warm golden tan on the straw). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a close group of five or six tall sheaves of rice straw standing upright and leaning together into one mass, each tied near the top, the straw reaching right down to the ground, about one and a half times as wide as it is tall.
+The object is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own straw — do NOT draw one line around the whole object. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 마른 수숫대 무리 (cornstalks · 실제 2~2.8m · 말·소 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale tan and warm light brown on the dry stalks and leaves, a few thin darker brown stalks between them). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a tall, wide bundle-like stand of dry sorghum stalks, many upright tan stalks with long dry hanging leaves packed tightly side by side, taller than a cow, about one and a half times as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 코스모스 무리 (cosmos · 실제 1~1.5m · 돼지 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale pink and soft rose on the flowers, a muted leaf-green on the fine leaves). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a wide, dense mass of cosmos flowers, very many pale-pink blossoms covering the top and front so that pink is the main colour, on thin stems with fine feathery leaves packed tightly below, about twice as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 억새 무리 (reedgrass · 실제 1.5~2.5m · 개·소·토끼 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale straw-yellow and warm tawny tan on the stems, a few thin brown stems between them). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a tall, wide clump of dry silver grass, hundreds of thin upright tawny stems packed tightly side by side, with pale feathery plumes on top, about one and a half times as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 흙 둔덕과 풀 (earthmound · 실제 1~1.5m · 말·돼지·닭 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a warm earth-brown and light reddish brown on the soil, a pale green on the grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low, wide, rounded mound of bare brown field soil with a few clods on it and short grass packed along its whole foot and on its top, about three times as wide as it is tall.
+Close the outline of the hard parts (stone, wood, earth) with a continuous dark-grey line, also along the bottom and where it touches its shadow; any grass or leaves on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 갈색 마른 덤불숲 (brownthicket · 실제 2~3m · 말·소·너구리 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a warm chestnut brown and soft grey-brown on the dry leaves and twigs, still light enough that the pencil lines show). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a wide, tall, very dense thicket of dry autumn bushes with tangled brown twigs and small withered chestnut-brown leaves packed tightly together, about twice as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the ground. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+■ 바위와 풀 (rockgrass · 실제 1~2m · 고양이·너구리·달팽이 보호색)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the countryside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool grey and grey-brown on the rock, a muted green on the grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: two big rounded grey boulders with thick wild grass growing densely around their whole foot and in the gap between them, about twice as wide as it is tall.
+Close the outline of the hard parts (stone, wood, earth) with a continuous dark-grey line, also along the bottom and where it touches its shadow; any grass or leaves on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose leaves, grass, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It is one simple shape of the whole object and lies beside it, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+━━━━━━━━ ③ 동물 8마리
+붙일 그림: media/animals/bukgeukgom.webp (연필풍 북극곰). 모두 머리가 왼쪽.
+개·고양이·닭·돼지·말·달팽이·거미는 media/animals에 새로 넣음(낱말 그림 media/words는 그대로) — 넣을 때 008의 OLD 표에서 NEW 표로 옮기고 FACE를 L로.
+소는 같은 파일(so.webp)이라 008·009가 함께 바뀜 — 넣을 때 009 PARTS의 소 자리를 꼭 다시 잼(009 README). 돼지·말은 숨을 동물을 10마리로 늘리려고 더한 것.
+
+■ 개 (gae.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO grass, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a Korean Jindo dog standing, short pale tan-yellow fur, pointed upright ears, a tail curled up over its back.
+▲
+
+■ 고양이 (goyangi.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO grass, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a domestic tabby cat standing on all four feet, grey-brown fur with darker stripes, pointed ears, a long tail held low behind it.
+▲
+
+■ 닭 (dak.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO grass, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a Korean native hen standing, reddish-brown feathers, a small red comb and wattle, yellow legs, a short upright tail.
+▲
+
+■ 소 (so.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO grass, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a Korean Hanwoo cow standing, short yellowish-brown coat all over with no patches, short horns, a long tail with a tuft at the end.
+▲
+
+■ 돼지 (dwaeji.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO grass, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a farm pig standing, pale pink skin with thin short bristles, a flat round snout, floppy ears, a short curly tail.
+▲
+
+■ 말 (mal.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO grass, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a horse standing, chestnut-brown coat, a darker brown mane and long tail, slender legs.
+▲
+
+■ 달팽이 (dalpaengi.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO grass, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a garden snail crawling to the left, a round spiral shell in light brown with darker bands, a soft pale grey-brown body, two long eye stalks raised.
+▲
+
+■ 거미 (geomi.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO grass, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a garden orb-weaver spider seen from above and a little from the side, a round yellow-and-black banded abdomen, eight long thin banded legs spread out, no web.
+▲

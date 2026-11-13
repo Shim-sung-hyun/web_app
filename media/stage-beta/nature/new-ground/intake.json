@@ -1,0 +1,500 @@
+{
+ "name": "들판",
+ "horizon": 0.355,
+ "groundTop": 0.365,
+ "groundTol": 100,
+ "see": 0.05,
+ "kinds": {
+  "zelkova": {
+   "name": "느티나무",
+   "real": [
+    8,
+    12
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false,
+   "ground": [
+    0,
+    0.4
+   ]
+  },
+  "persimmon": {
+   "name": "감나무",
+   "real": [
+    4,
+    7
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false,
+   "ground": [
+    0,
+    0.75
+   ]
+  },
+  "bush": {
+   "name": "덤불",
+   "real": [
+    1,
+    1.8
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "tallgrass": {
+   "name": "키 큰 풀",
+   "real": [
+    1,
+    1.5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "rock": {
+   "name": "바위",
+   "real": [
+    0.5,
+    1.2
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "bigrock": {
+   "name": "큰 바위",
+   "real": [
+    1.5,
+    2.5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "stones": {
+   "name": "돌무더기",
+   "real": [
+    0.3,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "stump": {
+   "name": "그루터기",
+   "real": [
+    0.4,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "woodpile": {
+   "name": "장작 더미",
+   "real": [
+    0.8,
+    1.4
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "haystack": {
+   "name": "짚더미",
+   "real": [
+    2,
+    3
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "wildflowers": {
+   "name": "들꽃 포기",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "tuft": {
+   "name": "풀 포기",
+   "real": [
+    0.2,
+    0.4
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "clover": {
+   "name": "토끼풀 무리",
+   "real": [
+    0.1,
+    0.2
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "stonewall": {
+   "name": "돌담",
+   "real": [
+    1,
+    1.4
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "strawsheaves": {
+   "name": "볏짚 단 무리",
+   "real": [
+    1.5,
+    2
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "cornstalks": {
+   "name": "마른 수숫대 무리",
+   "real": [
+    2,
+    2.8
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "cosmos": {
+   "name": "코스모스 무리",
+   "real": [
+    1,
+    1.5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "reedgrass": {
+   "name": "억새 무리",
+   "real": [
+    1.5,
+    2.5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "earthmound": {
+   "name": "흙 둔덕과 풀",
+   "real": [
+    1,
+    1.5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": true
+  },
+  "brownthicket": {
+   "name": "갈색 마른 덤불숲",
+   "real": [
+    2,
+    3
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "rockgrass": {
+   "name": "바위와 풀",
+   "real": [
+    1,
+    2
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  }
+ },
+ "animals": [
+  {
+   "name": "개",
+   "file": "gae",
+   "real": 0.9,
+   "face": "L",
+   "hide": true,
+   "fallback": "words/gae.webp"
+  },
+  {
+   "name": "고양이",
+   "file": "goyangi",
+   "real": 0.7,
+   "face": "L",
+   "hide": true,
+   "fallback": "words/goyangi.webp"
+  },
+  {
+   "name": "닭",
+   "file": "dak",
+   "real": 0.5,
+   "face": "L",
+   "hide": true,
+   "fallback": "words/dak.webp"
+  },
+  {
+   "name": "소",
+   "file": "so",
+   "real": 2.4,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "돼지",
+   "file": "dwaeji",
+   "real": 1.5,
+   "face": "L",
+   "hide": true,
+   "fallback": "words/dwaeji.webp"
+  },
+  {
+   "name": "말",
+   "file": "mal",
+   "real": 2.4,
+   "face": "L",
+   "hide": true,
+   "fallback": "words/mal_dongmul.webp"
+  },
+  {
+   "name": "달팽이",
+   "file": "dalpaengi",
+   "real": 0.06,
+   "face": "L",
+   "hide": true,
+   "fallback": "words/dalpaengi.webp"
+  },
+  {
+   "name": "거미",
+   "file": "geomi",
+   "real": 0.05,
+   "face": "L",
+   "hide": true,
+   "fallback": "words/geomi.webp"
+  },
+  {
+   "name": "토끼",
+   "file": "tokki",
+   "real": 0.45,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "너구리",
+   "file": "neoguri",
+   "real": 0.6,
+   "face": "L",
+   "hide": true
+  }
+ ],
+ "compose": {
+  "clusters": [
+   4,
+   5
+  ],
+  "perCluster": [
+   2,
+   4
+  ],
+  "loose": [
+   6,
+   10
+  ],
+  "maxSame": 3,
+  "overlap": 0.2,
+  "stackGap": 0.04,
+  "noThicket": [
+   "stump",
+   "woodpile",
+   "haystack",
+   "strawsheaves",
+   "stonewall",
+   "earthmound",
+   "stones"
+  ],
+  "thicketWeights": {
+   "tallgrass": 3,
+   "reedgrass": 2,
+   "cosmos": 2,
+   "bush": 2,
+   "wildflowers": 1,
+   "tuft": 2,
+   "clover": 1
+  }
+ },
+ "blocks": [
+  {
+   "name": "나무와 짚더미",
+   "n": [
+    1,
+    1
+   ],
+   "back": {
+    "kinds": [
+     "느티나무",
+     "감나무"
+    ],
+    "n": [
+     1,
+     2
+    ],
+    "scale": [
+     0.6,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "짚더미",
+     "볏짚 단 무리",
+     "큰 바위",
+     "장작 더미"
+    ],
+    "n": [
+     1,
+     2
+    ]
+   },
+   "small": {
+    "kinds": [
+     "들꽃 포기",
+     "풀 포기",
+     "돌무더기",
+     "토끼풀 무리"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  },
+  {
+   "name": "풀숲",
+   "n": [
+    1,
+    1
+   ],
+   "back": {
+    "kinds": [
+     "마른 수숫대 무리",
+     "억새 무리",
+     "갈색 마른 덤불숲",
+     "키 큰 풀"
+    ],
+    "n": [
+     2,
+     4
+    ],
+    "scale": [
+     0.8,
+     1.2
+    ]
+   },
+   "front": {
+    "kinds": [
+     "덤불",
+     "코스모스 무리",
+     "흙 둔덕과 풀",
+     "키 큰 풀"
+    ],
+    "n": [
+     1,
+     2
+    ]
+   },
+   "small": {
+    "kinds": [
+     "풀 포기",
+     "들꽃 포기",
+     "토끼풀 무리"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  },
+  {
+   "name": "돌담 둘레",
+   "n": [
+    0,
+    1
+   ],
+   "back": {
+    "kinds": [
+     "감나무",
+     "갈색 마른 덤불숲",
+     "마른 수숫대 무리"
+    ],
+    "n": [
+     1,
+     2
+    ],
+    "scale": [
+     0.6,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "돌담",
+     "바위와 풀",
+     "큰 바위"
+    ],
+    "n": [
+     1,
+     2
+    ]
+   },
+   "small": {
+    "kinds": [
+     "바위",
+     "돌무더기",
+     "풀 포기",
+     "그루터기"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ]
+}

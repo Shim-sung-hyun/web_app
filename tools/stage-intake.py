@@ -46,7 +46,7 @@ def main():
     place, src = args[0], os.path.abspath(args[1])
     rel = os.path.join('media', 'stage-beta', place); pdir = os.path.join(ROOT, rel)
     spec = json.load(open(os.path.join(pdir, 'intake.json'), encoding='utf-8'))
-    sj = os.path.join(pdir, 'stage.json'); st = json.load(open(sj, encoding='utf-8'))
+    sj = os.path.join(pdir, 'stage.json'); st = json.load(open(sj, encoding='utf-8')) if os.path.exists(sj) else {}   # 새 무대(들판처럼 아직 없는 곳)는 빈 것에서
     kinds, animals = spec['kinds'], {a['file']: a for a in spec['animals']}
 
     bg, props, anis, unknown = None, [], [], []
@@ -78,6 +78,7 @@ def main():
         st = {'name': spec['name'], 'view': 'ground', 'horizon': spec['horizon'], 'groundTop': gt, 'unit': spec.get('unit', .2), 'avoid': [],
               'beds': {'ground': {'name': '땅', 'y': [gt, 1], 'persp': True, 'skirt': []}}, 'noSkirt': True, 'blocks': spec['blocks'], 'animals': [],
               'compose': dict(spec['compose']), 'items': {}, 'skirtMeta': {}, 'scalefree': [], 'groundTol': spec.get('groundTol', 100), 'softKinds': [], 'pencil': True}
+        if spec.get('see'): st['see'] = spec['see']   # 비침 한도(식물 많은 무대 .05 — 무대 README)
         json.dump(st, open(sj, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)   # 가운데서 멈춰도 다시 돌리면 이어 감
     os.makedirs(os.path.join(pdir, 'items'), exist_ok=True)
 
