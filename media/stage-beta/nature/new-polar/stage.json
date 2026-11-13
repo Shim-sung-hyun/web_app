@@ -31,7 +31,14 @@
    8
   ],
   "maxSame": 3,
-  "overlap": 0.2
+  "overlap": 0.2,
+  "mixWith": [
+   "snowmound",
+   "snowrock",
+   "snowridge",
+   "floes",
+   "icechunks"
+  ]
  },
  "blocks": [
   {
