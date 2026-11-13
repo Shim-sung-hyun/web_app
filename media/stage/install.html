@@ -904,10 +904,11 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
           vOk = hi >= Lt - .5 && lo <= Lt + .5;   // 쉬움이 어떤 값이어도 못 닿으면 색은 안 셈(빠르게)
         /* 색이 비슷하면 더 드러나게(2026-11-13 선생님: 같은 색·비슷한 색 앞에서는 상·스페셜도 지금의 1.5배 — 4%면 6%. 꿩 꼬리와 나무토막처럼 색이 같으면 너무 안 보임.
            숲 평가 228장: 보이는 몫 5.5% 아래 28장 중 9장이 '더 노출', 5.5~7%는 11장 중 0장): 동물의 보이는 곳과 둘레의 색 차이(색 거리 + 밝기 차이)가 camo.diff(기본 45 — 평가의 가운데 값) 아래면
-           상·스페셜의 보이는 몫 아래 끝을 camo.more(기본 1.5)배로. stage.json "camo": {"diff", "more"}로 무대마다 */
-        const cd = vOk ? colorDiff(pl, lay, A, P) : null, camoC = pl.camo || {};
+           상·스페셜의 보이는 몫 아래 끝을 camo.more(기본 1.5)배로.
+           stage.json에 "camo"가 있는 무대만(선생님: 일단 숲에서만 — 사막·북극은 다름). 지금 숲 {"diff": 55, "more": 1.5} */
+        const cd = vOk ? colorDiff(pl, lay, A, P) : null, camoC = pl.camo;
         ez = vOk ? Math.max(1e-3, Math.sqrt(Math.max(0, v) * A.w * A.h) * (cd.de + cd.dl)) : 1e-3; const pos = vOk ? levelPos(v, ez, pl) : 9;
-        camoMin = vOk && Lt >= 3 && (cd.de + cd.dl) < (camoC.diff ?? 45) ? want[0] * (camoC.more ?? 1.5) : 0;
+        camoMin = camoC && vOk && Lt >= 3 && (cd.de + cd.dl) < (camoC.diff ?? 45) ? want[0] * (camoC.more ?? 1.5) : 0;
         sc = Math.abs(pos - Lt) * .15 + (Math.min(4, Math.max(1, Math.floor(pos + .5))) !== Lt ? .5 : 0) + (v < Math.max(want[0], camoMin) || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);   // 보이는 몫의 안전 범위(LEVELS visible) — 초원으로 맞춘 경계를 사막·북극에 쓸 때 지나치지 않게
       } else {
         const vOk = v >= want[0] - .04 && v <= want[1] + .04;   // 몫이 이미 단계 밖이면 색은 안 셈(어차피 못 씀 — 빠르게)
