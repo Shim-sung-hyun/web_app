@@ -1,7 +1,7 @@
 {
  "name": "숲",
- "horizon": 0.355,
- "groundTop": 0.365,
+ "horizon": 0.37,
+ "groundTop": 0.38,
  "kinds": {
   "oak": {
    "name": "참나무",

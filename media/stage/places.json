@@ -7,21 +7,21 @@
   "animals": [
    {
     "name": "다람쥐",
-    "src": "words/daramjwi.webp",
+    "src": "animals/daramjwi.webp",
     "real": 0.38,
     "face": "L"
    },
    {
     "name": "너구리",
-    "src": "words/neoguri.webp",
+    "src": "animals/neoguri.webp",
     "real": 0.6,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "토끼",
-    "src": "words/tokki.webp",
+    "src": "animals/tokki.webp",
     "real": 0.45,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "멧돼지",
@@ -45,13 +45,25 @@
     "name": "곰",
     "src": "animals/gom.webp",
     "real": 2.0,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "호랑이",
     "src": "animals/horangi.webp",
     "real": 2.6,
-    "face": "R"
+    "face": "L"
+   },
+   {
+    "name": "여우",
+    "src": "animals/yeou.webp",
+    "real": 1.1,
+    "face": "L"
+   },
+   {
+    "name": "꿩",
+    "src": "animals/kkwong.webp",
+    "real": 0.85,
+    "face": "L"
    }
   ],
   "props": "참나무 10~16\n전나무 6~10\n통나무 0.4~0.7\n고사리 0.5~1\n덤불 1~1.8\n이끼 바위 0.5~1.2\n버섯 0.1~0.25\n낙엽 더미 0.2~0.4",

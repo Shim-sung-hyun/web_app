@@ -1,1 +1,42 @@
 media/animals/bukgeukgom-old.webp — 북극곰 다시 받음(2026-11-13) — 뒷다리에 투명 표시 체크무늬가 박혀 있던 옛 그림(정면에 가까운 자세)
+media/stage-beta/nature/new-forest/items/item-08.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/raspberry-2.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/bigboulder.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/maple.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/raspberry.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/tallferns.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-02.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/branchpile.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-06.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/smallpine.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/mossmound.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/azalea.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/mossstump.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-03.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-05.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-07.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-05-2.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/log.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-02-2.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-03-2.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-04-2.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/neartrunk-oak.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-06-2.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-08-2.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/mossrock.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/fallengiant.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/wildflowers.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-01.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/neartrunk-pine.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-04.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-07-2.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/items/item-01-2.webp — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/bg.jpg — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/stage-beta/nature/new-forest/standard.jpg — 숲를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품
+media/animals/bueongi.webp — 부엉이 그림을 빙 연필풍으로 다시 받음
+media/animals/gom.webp — 곰 그림을 빙 연필풍으로 다시 받음
+media/animals/horangi.webp — 호랑이 그림을 빙 연필풍으로 다시 받음
+media/animals/metdwaeji.webp — 멧돼지 그림을 빙 연필풍으로 다시 받음
+media/animals/sanyang.webp — 산양 그림을 빙 연필풍으로 다시 받음
+media/animals/saseum.webp — 사슴 그림을 빙 연필풍으로 다시 받음
+media/animals/ttakttaguri.webp — 딱따구리 그림을 빙 연필풍으로 다시 받음
