@@ -23,7 +23,7 @@
  <button id="again">새 판</button>
  <label><input id="ans" type="checkbox" checked> 숨은 자리 보기</label>
 </header>
-<p id="note">무대가 장면을 원리대로 놓고, 동물을 <b>그 깊이의 원근 크기</b>로 같은 땅의 소품 <b>바로 뒤</b>에 숨겨요(가릴 소품이 없으면 하나를 앞에 더 놓음). 보이는 몫은 그림 모양으로 셈해 단계마다 맞춰요 — 하 50~70% · 중 25~40% · 상 8~18% · 스페셜 상만큼 6마리.
+<p id="note">무대가 장면을 원리대로 놓고, 동물을 <b>그 깊이의 원근 크기</b>로 같은 땅의 소품 <b>바로 뒤</b>에 숨겨요(가릴 소품이 없으면 하나를 앞에 더 놓음). 보이는 몫은 그림 모양으로 셈해 단계마다 맞춰요 — 하 60~92% · 중 28~55% · 상 8~30% · 스페셜 4~15%(6마리) — 색이 바탕과 얼마나 다른지(찾기 쉬움 점수)도 함께 맞춰요.
 어긋난 장면은 판 번호와 함께 어떤 원리가 어긋났는지 말해 주세요.</p>
 <div id="grid"></div>
 <script id="stagekit">
@@ -576,6 +576,42 @@
     return cols ? bad / cols : 0;
   }
   const crushOf = (pl, lay, A) => crushP(probe(pl, lay, A));
+  /* 찾기 쉬움(2026-11-13 선생님: 크기만이 아니라 색도 — 얼룩말은 바위 옆에서 튀고, 하이에나는 풀과 섞이면 어려움):
+     보이는 몸 칸마다 동물 색과 그 바로 뒤(뒤 소품 중 가장 가까운 것, 없으면 배경)의 색 거리(Lab ΔE)를 재서 평균. 클수록 눈에 띔 */
+  const LAB = new WeakMap();
+  const toLab = (r, g, b) => { const f = c => (c /= 255) <= .04045 ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4), R = f(r), G2 = f(g), B = f(b);
+    const X = (R * .4124 + G2 * .3576 + B * .1805) / .95047, Y = R * .2126 + G2 * .7152 + B * .0722, Z = (R * .0193 + G2 * .1192 + B * .9505) / 1.08883;
+    const h = t => t > .008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116, fx = h(X), fy = h(Y), fz = h(Z); return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)]; };
+  function labOf(img, n = 64, W0, H0) {   // 그림을 maskOf와 같은 칸으로(배경은 W0×H0) — 칸마다 Lab과 알파
+    const C0 = LAB.get(img) || {}, key = W0 ? W0 + 'x' + H0 : n; if (C0[key]) return C0[key];
+    const W = img.naturalWidth || img.width, H = img.naturalHeight || img.height, k = n / Math.max(W, H), w = W0 || Math.max(1, Math.round(W * k)), h = H0 || Math.max(1, Math.round(H * k));
+    let r = null; try { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', {willReadFrequently: true}); x.drawImage(img, 0, 0, w, h);
+      const d = x.getImageData(0, 0, w, h).data, L = new Float32Array(w * h * 3), A = new Uint8Array(w * h);
+      for (let i = 0; i < w * h; i++) { const q = toLab(d[i * 4], d[i * 4 + 1], d[i * 4 + 2]); L[i * 3] = q[0]; L[i * 3 + 1] = q[1]; L[i * 3 + 2] = q[2]; A[i] = d[i * 4 + 3]; }
+      r = {w, h, L, A}; } catch (e) { r = null; }
+    C0[key] = r; LAB.set(img, C0); return r;
+  }
+  function colorDiff(pl, lay, A, P, detail) {
+    P = P || probe(pl, lay, A); const M = P.M, G = P.G, H = P.all(), AL = labOf(A.img), BG = pl.bgImg && labOf(pl.bgImg, 0, 160, 120); if (!M.m || !AL) return {de: 0, dl: 0};
+    const ax0 = A.x - A.w / 2, ax1 = A.x + A.w / 2, ay0 = A.y - A.h * A.base, ay1 = ay0 + A.h;
+    const back = lay.filter(o => o !== A && depthY(o) < depthY(A)).map(o => ({o, im: o.img || (pl.items[o.id] || {}).img})).filter(b => b.im && b.o.w > 0)
+      .filter(({o}) => { const L = o.x - o.w / 2, T = o.y - o.h * (o.base ?? 1); return !(L > ax1 || L + o.w < ax0 || T > ay1 || T + o.h < ay0); })
+      .sort((p, q) => depthY(q.o) - depthY(p.o)).map(b => ({o: b.o, Lb: labOf(b.im), L: b.o.x - b.o.w / 2, T: b.o.y - b.o.h * (b.o.base ?? 1)}));
+    let sum = 0, sl = 0, n = 0;
+    for (let j = M.box[1]; j < M.box[3]; j++) for (let i = M.box[0]; i < M.box[2]; i++) {
+      const k = j * M.w + i; if (!M.m[k] || H[k]) continue; const fx = G.FX[i], fy = G.FY[j]; if (fx < 0 || fx > 1 || fy < 0 || fy > 1) continue;
+      let c = null;
+      for (const b of back) { if (!b.Lb) continue; let u = (fx - b.L) / b.o.w; const v = (fy - b.T) / b.o.h; if (!(u >= 0 && u < 1 && v >= 0 && v < 1)) continue; if (b.o.flip) u = 1 - u;
+        const q = Math.floor(v * b.Lb.h) * b.Lb.w + Math.floor(u * b.Lb.w); if (b.Lb.A[q] > 110) { c = q * 3; c = [b.Lb.L[c], b.Lb.L[c + 1], b.Lb.L[c + 2]]; break; } }
+      if (!c && BG) { const q = (Math.min(BG.h - 1, Math.floor(fy * BG.h)) * BG.w + Math.min(BG.w - 1, Math.floor(fx * BG.w))) * 3; c = [BG.L[q], BG.L[q + 1], BG.L[q + 2]]; }
+      if (!c) continue; const a3 = k * 3, de = Math.hypot(AL.L[a3] - c[0], AL.L[a3 + 1] - c[1], AL.L[a3 + 2] - c[2]), dl = Math.abs(AL.L[a3] - c[0]); sum += de; sl += dl; n++; if (detail) { (detail.de = detail.de || []).push(de); (detail.dl = detail.dl || []).push(dl); }
+    }
+    return n ? {de: sum / n, dl: sl / n} : {de: 0, dl: 0};
+  }
+  const contrastOf = (pl, lay, A, P, detail) => colorDiff(pl, lay, A, P, detail).de;
+  /* 찾기 쉬움 점수(2026-11-13, 선생님 판단 236장으로 맞춤): √(보이는 넓이 = 보이는 몫×그림 폭×높이) × (밝기 차이 + 색 거리) × 100.
+     상 '괜찮음/너무 어려움'을 90%, 스페셜 '괜찮음/색이 튐'을 81% 맞게 가름(보이는 몫만 쓰면 82%·75%) */
+  const easeOf = (pl, lay, A, P, v) => { P = P || probe(pl, lay, A); if (v == null) v = visOf(P); const d = colorDiff(pl, lay, A, P); return Math.sqrt(Math.max(0, v) * A.w * A.h) * (d.de + d.dl); };
   function hide(pl, lay, a, opt = {}) {
     const R = rnd(opt.seed ?? Math.floor(Math.random() * 1e9)), want = opt.visible || [.25, .4], mid = (want[0] + want[1]) / 2;
     const M = maskOf(a.img), bw = (M.box[2] - M.box[0]) / M.w, bh = (M.box[3] - M.box[1]) / M.h, long = Math.max(bw * (M.w / Math.max(M.w, M.h)) * .75 / .75, bh * (M.h / Math.max(M.w, M.h)));
@@ -617,14 +653,18 @@
       if (v < floor) { lay.pop(); if (extra) lay.pop(); return; }   // 어려워도 단서(귀·꼬리)는 보이게 — 다 가려지는 자리는 버림
       const cr = crushP(P); if (cr > (opt.crush ?? .08)) { if (tell) tell('crush', {cr}); lay.pop(); if (extra) lay.pop(); return 'crush'; }   // 깔린 자리는 버림(좌우를 뒤집어 다시 해 봄 — 아래 tryAt)
       const se = seeP(P); if (se > (opt.see ?? .015)) { if (tell) tell('see', {cr, se}); lay.pop(); if (extra) lay.pop(); return 'see'; }   // 반투명한 밑동 뒤로 비치면 더 뒤(작게)로 — 아래 tryAt
-      const sc = Math.abs(v - mid) + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);
+      /* 단계(2026-11-13 선생님: 크기만이 아니라 색도): opt.ease=[아래,위]면 찾기 쉬움 점수가 그 안에 오게 — 점수 가운데(로그)에 가까울수록 좋음, 벗어나면 .5 벌점(보이는 몫도) */
+      const vOk = v >= want[0] - .04 && v <= want[1] + .04;   // 몫이 이미 단계 밖이면 색은 안 셈(어차피 못 씀 — 빠르게)
+      const ez = opt.ease ? (vOk ? Math.max(1e-3, easeOf(pl, lay, A, P, v)) : opt.ease[1] * 9) : null, eMid = opt.ease ? Math.sqrt(opt.ease[0] * opt.ease[1]) : 0;
+      const sc = (opt.ease ? Math.abs(Math.log(ez / eMid)) / Math.log(opt.ease[1] / opt.ease[0]) * .15 + (ez < opt.ease[0] || ez > opt.ease[1] ? .5 : 0) : Math.abs(v - mid))
+        + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);
       if (best && sc >= best.sc) { lay.pop(); if (extra) lay.pop(); return; }   // 빠르게(2026-11-12): 지금 가장 좋은 자리보다 못하면 아래 검사는 안 해도 결과가 같음
       /* 얼굴(2026-11-09): 상·스페셜(opt.face 'hide')은 얼굴이 대부분 가려지고 등·꼬리·귀 같은 단서만, 하('show')는 얼굴이 잘 보이게 — 얼굴 = 머리 쪽(008 FACE) 앞 40%·위 65% */
-      if (opt.face && a.face) { const fv = visOf(P, a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]); if ((opt.face === 'hide' && fv > .35) || (opt.face === 'show' && fv < .6)) { if (tell) tell('face', {cr, se, fv}); lay.pop(); if (extra) lay.pop(); return; } }
+      if (opt.face && a.face) { const fv = visOf(P, a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]); if ((opt.face === 'hide' && fv > .35) || (opt.face === 'show' && fv < .6)) { if (tell) tell('face', {cr, se, fv, ease: ez}); lay.pop(); if (extra) lay.pop(); return; } }
       // 먼저 숨긴 동물을 이 동물·새 소품이 앞에서 덮지 않게 — 먼저 숨긴 동물이 덮이거나 깔리거나 비치게 되는 자리는 버림
       const over = (n, o) => { if (!(depthY(n) > depthY(o))) return false; const L = n.x - n.w / 2, T = n.y - n.h * n.base, l = o.x - o.w / 2, t = o.y - o.h * o.base; return !(L > l + o.w || L + n.w < l || T > t + o.h || T + n.h < t); };   // 빠르게: 새것이 그 동물 앞에 겹칠 때만 다시 셈(아니면 그대로)
-      const hurt = lay.some(o => { if (!o.animal || o === A || !(over(A, o) || (extra && over(extra, o)))) return false; const Q = probe(pl, lay, o); return visOf(Q) < Math.max(.04, (o.want || want)[0] * .5) || crushP(Q) > (opt.crush ?? .08) || seeP(Q) > (opt.see ?? .015); }); if (tell) tell(hurt ? 'hurt' : 'ok', {cr, se, sc}); lay.pop(); if (extra) lay.pop(); if (hurt) return;
-      if (!best || sc < best.sc) best = {sc, A, v, extra}; };
+      const hurt = lay.some(o => { if (!o.animal || o === A || !(over(A, o) || (extra && over(extra, o)))) return false; const Q = probe(pl, lay, o); return visOf(Q) < Math.max(.04, (o.want || want)[0] * .5) || crushP(Q) > (opt.crush ?? .08) || seeP(Q) > (opt.see ?? .015); }); if (tell) tell(hurt ? 'hurt' : 'ok', {cr, se, sc, ease: ez}); lay.pop(); if (extra) lay.pop(); if (hurt) return;
+      if (!best || sc < best.sc) best = {sc, A, v, extra, ez}; };
     const tryAt = (x, y, flip, extra) => {
       let r = tryAt0(x, y, flip, extra);
       if (r === 'crush') r = tryAt0(x, y, (flip = !flip), extra);   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
@@ -643,7 +683,7 @@
     if (!best || best.sc > .5) {      // 맞는 소품이 없으면 가릴 소품을 새로 앞에
       const pool = Object.values(pl.items).filter(i => i.bed === bed && i.role !== 'frame');
       /* 많이 가려야 하면(어려움) 동물보다 크게 그려질 수 있는 소품만(2026-11-09 선생님: 어려움인데 곰·호랑이가 다 보임) */
-      const needH = want[1] < .3 ? .85 : want[1] < .5 ? .6 : .45;
+      const needH = want[1] <= .3 ? .85 : want[1] <= .55 ? .6 : .45;
       const big = pool.filter(i => realMax(i) * (i.base ? 1 / i.base : 1) >= a.real * .55 * needH);
       for (let t = 0; t < 200 && !good(); t++) {
         const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), sfPool = pool.filter(i => SF.has(i.kind)), src = A0.grow > 1.01 ? sfPool : big.length && R() < .8 ? big : pool, it = src[Math.floor(R() * src.length)];
@@ -653,24 +693,33 @@
     }
     if (!best) return null;
     /* 단계를 지킴: 정한 몫보다 많이 보이면 숨기지 않음(null) — 부르는 쪽이 다른 동물로 */
-    if (opt.strict !== false && (best.v > want[1] + .04 || best.v < want[0] - .04)) return null;   // 너무 많이 가려져도(2026-11-12 선생님: 하인데 28%) 숨기지 않음 — hideMany가 다른 동물·판으로
-    if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; return best.A;
+    if (opt.strict !== false && (best.v > want[1] + .04 || best.v < want[0] - .04)) return null;
+    if (opt.strict !== false && opt.ease && (best.ez < opt.ease[0] / 1.15 || best.ez > opt.ease[1] * 1.15)) return null;   // 찾기 쉬움이 단계를 벗어나면 숨기지 않음   // 너무 많이 가려져도(2026-11-12 선생님: 하인데 28%) 숨기지 않음 — hideMany가 다른 동물·판으로
+    if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; best.A.ease = best.ez; return best.A;
   }
 
   /* 여러 마리 숨기기(2026-11-11 선생님: 스페셜은 6마리가 꼭 되게): 동물을 차례로 숨기고(못 지키는 동물은 건너뜀), n마리가 안 되면
      판(소품 배치)을 새로 짜서 다시 — tries번까지, 가장 많이 숨긴 판을 돌려줌. compose 옵션은 opt.compose, 판마다 숨기기 옵션은 opt.hide(seed는 판마다 바뀜) */
   function hideMany(pl, animals, n, opt = {}) {
-    const seed0 = opt.seed ?? Math.floor(Math.random() * 1e9), tries = opt.tries ?? 12, miss = new Map(); let best = null;
+    const seed0 = opt.seed ?? Math.floor(Math.random() * 1e9), tries = opt.tries ?? 12, miss = new Map(), t0 = performance.now(); let best = null;
     for (let t = 0; t < tries; t++) {
       const seed = seed0 + t * 7919, lay = compose(pl, Object.assign({}, opt.compose, {seed})), R = rnd(seed), out = [];
       const pick = animals.slice().sort(() => R() - .5).sort((p, q) => (miss.get(p) || 0) - (miss.get(q) || 0));   // 앞 판에서 못 숨긴 동물은 뒤로(빠르게)
       for (let i = 0; i < pick.length && out.length < n; i++) { const A = hide(pl, lay, pick[i], Object.assign({}, opt.hide, {seed: seed + i * 7})); if (A) out.push(A); else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
       if (!best || out.length > best.out.length) best = {lay, out, seed};
       if (out.length >= n) break;
+      if (performance.now() - t0 > (opt.budget ?? 8000)) break;   // 8초 넘게 걸리면 판을 더 짜지 않고 지금까지 가장 많이 숨긴 판(2026-11-13)
     }
     return best;
   }
-  G.Stage = {load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
+    /* 숨기기 단계(2026-11-13 선생님 판단 236장): 하 더 드러냄·중·상(노출 더)·스페셜(노출 적고 색이 바탕과 비슷) — visible 보이는 몫, ease 찾기 쉬움 점수 */
+  const LEVELS = {
+    1: {name: '하', visible: [.6, .92], ease: [8, 80], face: 'show', offMax: .5, minLong: .10, count: 3},
+    2: {name: '중', visible: [.28, .55], ease: [5, 20], offMax: .7, minLong: .07, count: 3},
+    3: {name: '상', visible: [.08, .3], ease: [2, 9], face: 'hide', offMax: .8, minLong: .05, count: 3},
+    4: {name: '스페셜', visible: [.04, .15], ease: [.8, 3.2], face: 'hide', offMax: .9, minLong: .05, count: 6}};
+  const levelOpt = lv => { const L = LEVELS[lv]; return {visible: L.visible, ease: L.ease, face: L.face, offMax: L.offMax, minLong: L.minLong}; };
+  G.Stage = {LEVELS, levelOpt, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>
@@ -678,10 +727,6 @@
 const GH='https://shim-sung-hyun.github.io/web_app/';
 const ANIMALS=[['다람쥐','words/daramjwi.webp',.38],['너구리','words/neoguri.webp',.6],['토끼','words/tokki.webp',.45],['멧돼지','animals/metdwaeji.webp',1.5],
  ['사슴','animals/saseum.webp',1.9],['산양','animals/sanyang.webp',1.3],['곰','animals/gom.webp',2],['호랑이','animals/horangi.webp',2.6]];
-const LV={1:[.5,.7],2:[.25,.4],3:[.08,.18],4:[.08,.18]};   // 하·중·상, 스페셜 = 상만큼 숨긴 동물 여러 마리(008 스페셜과 같음)
-const COUNT={1:3,2:3,3:3,4:6}, FACEV={1:'show',3:'hide',4:'hide'};
-const MINLONG={1:.10,2:.07,3:.05,4:.05};   // 몸의 가장 긴 쪽이 장면 높이의 이만큼은(2026-11-12 선생님: 하인데 작은 동물이 구석에 아주 작게)
-const OFFMAX={1:.5,2:.7,3:.8,4:.9};   // 화면 밖으로 나가도 되는 몸의 몫 한도(2026-11-11 선생님) — 하 50·중 70·상 80·스페셜 90%   // 하는 얼굴이 잘 보이게, 상·스페셜은 얼굴을 가리고 단서만
 const $=id=>document.getElementById(id);
 const img=src=>new Promise(ok=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>ok(i);i.onerror=()=>ok(null);i.src=src;});
 let pl=null, AN=[];
@@ -704,11 +749,11 @@ async function draw(){   /* 판을 하나씩 그려 보여 줌(스페셜은 판�
     const seed=Math.floor(Math.random()*1e5), f=document.createElement('figure'), d=document.createElement('div'), c=document.createElement('figcaption');
     d.className='st'; f.append(d,c); $('grid').append(f);
     const lv=$('lv').value;   /* 단계를 못 지키는 동물은 건너뛰고, 마릿수가 모자라면 판을 새로 짜서 다시(Stage.hideMany) */
-    const {lay,out}=Stage.hideMany(pl,AN,COUNT[lv],{seed,hide:{visible:LV[lv],face:FACEV[lv],offMax:OFFMAX[lv],minLong:MINLONG[lv]}});
+    const {lay,out}=Stage.hideMany(pl,AN,Stage.LEVELS[lv].count,{seed,hide:Stage.levelOpt(lv)});   // 단계 표는 무대 모듈 한곳(Stage.LEVELS, 2026-11-13 색까지 봄)
     Stage.render(d,pl,lay,{shadow:.25,haze:.3});
     out.forEach(A=>{ const r=document.createElement('div'), s=Math.max(A.w,A.h*.75)*1.1; r.className='ring';
       r.style.cssText+=`;left:${(A.x-s/2)*100}%;top:${(A.y-A.h*A.base/2)*100-s*66}%;width:${s*100}%;height:${s*133}%`; d.appendChild(r); });
-    c.textContent=`판 ${seed} · `+out.map(A=>`${A.animal} ${Math.round(Stage.visibleOf(pl,lay,A)*100)}% 보임`).join(' · ');   /* 다 놓은 뒤 다시 셈(뒤에 숨긴 동물·소품이 앞을 덮었는지) */
+    c.textContent=`판 ${seed} · `+out.map(A=>`${A.animal} ${Math.round(Stage.visibleOf(pl,lay,A)*100)}% 보임·쉬움 ${(A.ease||0).toFixed(1)}`).join(' · ');   /* 다 놓은 뒤 다시 셈(뒤에 숨긴 동물·소품이 앞을 덮었는지) */
   }
 }
 start();
