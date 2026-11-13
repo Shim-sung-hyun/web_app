@@ -208,6 +208,20 @@
    "real": 0.12,
    "face": "L",
    "hide": true
+  },
+  {
+   "name": "가오리",
+   "file": "gaori",
+   "real": 1.2,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "흰동가리",
+   "file": "huindonggari",
+   "real": 0.1,
+   "face": "L",
+   "hide": true
   }
  ],
  "compose": {

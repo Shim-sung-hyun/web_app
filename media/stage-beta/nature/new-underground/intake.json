@@ -151,6 +151,41 @@
    "real": 0.04,
    "face": "L",
    "hide": true
+  },
+  {
+   "name": "토끼",
+   "file": "tokki",
+   "real": 0.45,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "매미 애벌레",
+   "file": "maemiaebeolle",
+   "real": 0.03,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "공벌레",
+   "file": "gongbeolle",
+   "real": 0.015,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "들쥐",
+   "file": "deuljwi",
+   "real": 0.12,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "오소리",
+   "file": "osori",
+   "real": 0.8,
+   "face": "L",
+   "hide": true
   }
  ],
  "compose": {

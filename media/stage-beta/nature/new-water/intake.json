@@ -186,6 +186,13 @@
    "real": 0.05,
    "face": "L",
    "hide": true
+  },
+  {
+   "name": "수달",
+   "file": "sudal",
+   "real": 1.1,
+   "face": "L",
+   "hide": true
   }
  ],
  "compose": {

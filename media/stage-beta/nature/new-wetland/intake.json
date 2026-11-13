@@ -205,6 +205,27 @@
    "real": 0.3,
    "face": "L",
    "hide": true
+  },
+  {
+   "name": "청둥오리",
+   "file": "cheongdungori",
+   "real": 0.6,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "오리",
+   "file": "ori",
+   "real": 0.6,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "메뚜기",
+   "file": "mettugi",
+   "real": 0.06,
+   "face": "L",
+   "hide": true
   }
  ],
  "compose": {

@@ -230,6 +230,20 @@
    "real": 0.25,
    "face": "L",
    "hide": true
+  },
+  {
+   "name": "갈매기",
+   "file": "galmaegi",
+   "real": 0.45,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "백로",
+   "file": "baengno",
+   "real": 0.9,
+   "face": "L",
+   "hide": true
   }
  ],
  "compose": {

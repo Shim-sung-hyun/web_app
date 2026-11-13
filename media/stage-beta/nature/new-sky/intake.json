@@ -190,6 +190,27 @@
    "real": 0.02,
    "face": "L",
    "hide": true
+  },
+  {
+   "name": "부엉이",
+   "file": "bueongi",
+   "real": 0.7,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "갈매기",
+   "file": "galmaegi",
+   "real": 0.45,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "기러기",
+   "file": "gireogi",
+   "real": 0.8,
+   "face": "L",
+   "hide": true
   }
  ],
  "compose": {
