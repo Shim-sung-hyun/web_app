@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프롬프트 복사</title>
+<!-- 프롬프트 복사(2026-11-13 선생님: 버튼을 눌러 복사하고, 복사한 것은 표시가 남게 — 앞으로 프롬프트는 늘 이 화면으로)
+     copy.html?f=PROMPTS-new-forest-pencil.txt — 같은 폴더의 프롬프트 글을 읽어 ▼~▲ 사이를 한 장씩 보여 줌.
+     글의 꼴: '━━━' 줄 = 묶음 제목, '■' 줄 = 그림 이름, ▼ 다음 줄부터 ▲ 앞 줄까지 = 복사할 글, 나머지 = 안내.
+     복사한 표시는 이 브라우저에만 남음(localStorage, 글이 바뀌면 그 장은 다시 안 한 것으로). 새 프롬프트 글을 만들면 아래 FILES에 한 줄 더함. -->
+<style>
+  :root { --ink:#2b2a27; --soft:#6f6a60; --line:#d9d3c4; --paper:#f6f2e8; --card:#fffdf8; --done:#ffe98a; --doneLine:#d8b93a; --btn:#34495e; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 "Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif; }
+  header { position:sticky; top:0; z-index:5; background:var(--paper); border-bottom:1px solid var(--line); padding:10px 16px; display:flex; gap:10px 14px; align-items:center; flex-wrap:wrap; }
+  header h1 { font-size:17px; margin:0; font-weight:700; }
+  select { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:#fff; max-width:100%; }
+  #count { color:var(--soft); font-size:14px; margin-left:auto; }
+  #reset { font:inherit; font-size:14px; background:none; border:0; color:var(--soft); text-decoration:underline; cursor:pointer; padding:4px; }
+  main { max-width:860px; margin:0 auto; padding:8px 16px 80px; }
+  h2 { font-size:16px; margin:30px 0 4px; padding-top:14px; border-top:2px solid var(--ink); }
+  p.note { margin:2px 0; color:var(--soft); font-size:14px; white-space:pre-wrap; overflow-wrap:anywhere; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; margin:10px 0; padding:10px 12px; }
+  .card.done { background:var(--done); border-color:var(--doneLine); }
+  .row { display:flex; gap:10px; align-items:center; }
+  .name { flex:1; min-width:0; font-weight:700; overflow-wrap:anywhere; }
+  .name small { display:block; font-weight:400; color:var(--soft); font-size:13px; }
+  .card.done .name small { color:#6b5a12; }
+  button.copy { flex:none; font:inherit; font-weight:700; color:#fff; background:var(--btn); border:0; border-radius:8px; padding:11px 18px; min-width:104px; cursor:pointer; }
+  button.copy:active { transform:translateY(1px); }
+  .card.done button.copy { background:#fff; color:var(--ink); box-shadow:inset 0 0 0 1px var(--doneLine); }
+  details { margin-top:6px; }
+  summary { color:var(--soft); font-size:13px; cursor:pointer; }
+  pre { white-space:pre-wrap; overflow-wrap:anywhere; font:13px/1.5 ui-monospace,Menlo,Consolas,monospace; background:rgba(255,255,255,.6); border:1px solid var(--line); border-radius:6px; padding:8px; margin:6px 0 0; }
+  .over { color:#b3261e; font-weight:700; }
+  #err { color:#b3261e; }
+</style>
+</head>
+<body>
+<header>
+  <h1>프롬프트 복사</h1>
+  <select id="file" aria-label="프롬프트 글 고르기"></select>
+  <span id="count"></span>
+  <button id="reset" type="button">표시 지우기</button>
+</header>
+<main id="main"><p id="err"></p></main>
+<script>
+/* 새 프롬프트 글을 만들면 여기 맨 위에 한 줄(파일 이름, 보이는 이름) */
+const FILES=[
+ ['PROMPTS-new-forest-pencil.txt','숲 — 배경·소품 26·동물 12 (연필풍)'],
+ ['PROMPTS-new-grassland-pencil.txt','초원 (연필풍)'],
+ ['PROMPTS-new-desert-pencil.txt','사막 (연필풍)'],
+ ['PROMPTS-new-polar-bing-props.txt','북극 소품'],
+ ['PROMPTS-new-polar-bing.txt','북극 배경·동물'],
+ ['PROMPTS-shadow-key.txt','그림자 색으로 받기 시험'],
+ ['PROMPTS-new-desert-bing.txt','사막 (예전)'],['PROMPTS-new-desert-color.txt','사막 색 (예전)'],['PROMPTS-new-polar.txt','북극 (예전)'],['PROMPTS-new-forest.txt','숲 (예전 만화풍)'],
+ ['PROMPTS-008.txt','008 소품 1'],['PROMPTS-008-2.txt','008 소품 2'],['PROMPTS-008-3.txt','008 소품 3'],['PROMPTS-008-4.txt','008 소품 4'],['PROMPTS-008-5.txt','008 소품 5'],['PROMPTS-008-6.txt','008 소품 6']];
+const LIMIT=2000;   /* 빙에 붙일 글은 장마다 2000자 안(지침 2절) */
+const $=id=>document.getElementById(id), sel=$('file'), main=$('main');
+const store={ get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }, del(k){ try{ localStorage.removeItem(k); }catch(e){} } };
+const hash=s=>{ let h=5381; for(let i=0;i<s.length;i++) h=(h*33^s.charCodeAt(i))>>>0; return h.toString(36); };
+let keys=[];
+
+FILES.forEach(([f,n])=>{ const o=document.createElement('option'); o.value=f; o.textContent=n; sel.appendChild(o); });
+const want=new URLSearchParams(location.search).get('f');
+if(want){ if(!FILES.some(x=>x[0]===want)&&/^[\w.-]+\.txt$/.test(want)){ const o=document.createElement('option'); o.value=want; o.textContent=want; sel.prepend(o); } sel.value=want; }
+sel.onchange=()=>{ history.replaceState(null,'','?f='+encodeURIComponent(sel.value)); load(); };
+$('reset').onclick=()=>{ if(!confirm('이 글의 "복사함" 표시를 모두 지울까요?')) return; keys.forEach(k=>store.del(k)); load(); };
+
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); return true; }catch(e){}
+  const a=document.createElement('textarea'); a.value=t; a.style.cssText='position:fixed;left:-9999px;top:0'; document.body.appendChild(a); a.select();
+  let ok=false; try{ ok=document.execCommand('copy'); }catch(e){} a.remove(); return ok;
+}
+function tally(){ const n=keys.filter(k=>store.get(k)).length; $('count').textContent=keys.length?`복사함 ${n} / ${keys.length}`:''; }
+
+async function load(){
+  const f=sel.value; main.innerHTML=''; keys=[];
+  let text; try{ const r=await fetch(f,{cache:'no-store'}); if(!r.ok) throw 0; text=await r.text(); }
+  catch(e){ main.innerHTML='<p id="err">글을 읽지 못했습니다: '+f.replace(/[<&]/g,'')+'</p>'; tally(); return; }
+  const L=text.replace(/\r/g,'').split('\n'); let title='', sub=[], i=0, head='';
+  const open=s=>/^▼/.test(s.trim()), close=s=>/^▲/.test(s.trim());   /* '▼ 아래 글을…'처럼 뒤에 말이 붙은 예전 글도 */
+  const note=s=>{ const p=document.createElement('p'); p.className='note'; p.textContent=s; main.appendChild(p); };
+  while(i<L.length){ const s=L[i];
+    if(s.startsWith('━')){ const h=document.createElement('h2'); h.textContent=head=s.replace(/^━+\s*/,''); main.appendChild(h); title=''; sub=[]; i++; }
+    else if(s.startsWith('■')){ title=s.replace(/^■\s*/,''); sub=[]; i++; }
+    else if(open(s)){ let j=i+1; const body=[]; while(j<L.length&&!close(L[j])){ body.push(L[j]); j++; } card(f,title||head||'(이름 없음)',title?sub.join(' '):'',body.join('\n').trim()); title=''; head=''; sub=[]; i=j+1; }
+    else { if(s.trim()){ if(title) sub.push(s.trim()); else note(s); } i++; }
+  }
+  tally();
+}
+function card(f,title,sub,body){
+  const key='prompt-copied:'+f+':'+hash(body); keys.push(key);
+  const c=document.createElement('div'); c.className='card';
+  const m=title.match(/^(.*?)\s*\((.*)\)\s*$/), name=m?m[1]:title, info=[m?m[2]:'',sub].filter(Boolean).join(' · ');
+  c.innerHTML='<div class="row"><div class="name"></div><button class="copy" type="button"></button></div><details><summary></summary><pre></pre></details>';
+  const nm=c.querySelector('.name'), b=c.querySelector('button'), sm=document.createElement('small');
+  nm.textContent=name; sm.textContent=info; if(info) nm.appendChild(sm);
+  c.querySelector('pre').textContent=body;
+  const sum=c.querySelector('summary'); sum.textContent=`글 보기 · ${body.length}자`; if(body.length>LIMIT){ sum.textContent+=` — ${LIMIT}자를 넘음`; sum.className='over'; }
+  const paint=()=>{ const d=!!store.get(key); c.classList.toggle('done',d); b.textContent=d?'복사함 ✓':'복사'; };
+  b.onclick=async()=>{ const ok=await copyText(body); if(!ok){ b.textContent='복사 안 됨'; c.querySelector('details').open=true; return; } store.set(key,String(Date.now())); paint(); tally(); };
+  paint(); main.appendChild(c);
+}
+load();
+</script>
+</body>
+</html>

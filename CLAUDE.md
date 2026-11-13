@@ -7,6 +7,7 @@
 - "답만" 하라고 하면 파일을 바꾸지 않는다. 이상하면 멈춰서 묻는다. 큰 수정은 고칠 목록을 먼저 보여 주고 확인받는다.
 - **비밀**: API 키·`$REVIEW_TOKEN`·`$ADMIN_TOKEN`·GitHub 토큰을 코드·저장소·대화에 넣지 않는다. `server/charum-api/donate-config.php`는 서버에만 있다(저장소에는 `.sample`만).
 - 사용량이 넉넉하지 않다. 큰 파일은 필요한 부분만 읽고(Grep으로 자리를 찾은 뒤 offset/limit), 확인도 고친 부분만.
+- **프롬프트를 드릴 때**(2026-11-13): 대화에 길게 붙이지 않고 `media/stage/prompts/`에 글로 두고 복사 화면 주소(`https://shim-sung-hyun.github.io/web_app/media/stage/prompts/copy.html?f=파일이름`)를 드린다 — 단추로 복사, 복사한 장은 노랗게 표시. 새 글은 `copy.html`의 `FILES`에 한 줄.
 
 ## Copilot과 함께 (2026-11-09)
 - 선생님은 VS Code의 GitHub Copilot도 쓴다. **주 조정자는 Claude**다. Copilot은 `.github/copilot-instructions.md`를 읽고 같은 규칙(이 파일·지침·README 기록)을 따른다.

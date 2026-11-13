@@ -85,11 +85,14 @@
 - 이어 갈 일(2026-11-13 세션 마무리 — 다음 세션은 여기부터):
   ① 초원 스페셜 마릿수 — 선생님 결정(2026-11-13): 안 1+3. 초원 stage.json "counts": {"4": [5, 4]}(스페셜 5마리, 못 채우면 4 — 무대 README '무대마다 마릿수').
      20판: 평균 4.15마리(5마리 8판·4마리 8판·3마리 3판·2마리 1판), 한 판 평균 7.9초·최대 16초. 아직 4마리가 안 되는 판이 20판에 4판 — 큰 소품이 들어오면 다시 잴 것.
-     큰 동물용 큰 보호색 소품 6가지 프롬프트를 드림(PROMPTS-new-grassland-pencil.txt 맨 끝: 큰 회색 바위 언덕 greykopje·쓰러진 바오밥 줄기 fallenbaobab·키 큰 갈대풀 벽 reedwall·누런 큰 가시나무 덤불 tawnythorn·어두운 큰 덤불숲 darkthicket·회갈색 큰 덤불숲 벽 greyscrub-big, 종류마다 2장).
-     선생님이 그림을 주시면: flat-shadow.py --key blue → defringe.py → stage-meta.py·stage-index.py, softKinds(식물 넷)·baseMatch(greykopje·fallenbaobab)에 새 종류, 20판 다시 재기(6마리가 차면 counts를 지움).
+     큰 동물용 큰 보호색 소품 6가지 13장 받아 넣음(2026-11-13): 큰 회색 바위 언덕 greykopje 2·쓰러진 바오밥 줄기 fallenbaobab 2·키 큰 갈대풀 벽 reedwall 2·누런 큰 가시나무 덤불 tawnythorn 3·
+     어두운 큰 덤불숲 darkthicket 2·회갈색 큰 덤불숲 벽 greyscrub-big 2 — 소품 117. flat-shadow --key blue → defringe, 갈대·가시나무·회갈색 덤불은 defringe --gaps(윗부분 흰 종이). softKinds(식물 넷)·baseMatch(바위 언덕·바오밥)·scalefree·blocks에 넣음.
+     20판 스페셜: 3.75마리(전 4.15 — 판마다 들쭉날쭉한 범위 안, 늘지 않음). 까닭을 셈(10판, 단계를 안 따지고 찾은 가장 좋은 자리): 타조만 늘 스페셜. 코끼리·코뿔소·물소·얼룩말은 절반 넘게 13% 넘게 보임(가릴 것이 몸보다 작음),
+     사자·치타·하이에나·가젤은 자리는 찾아도 '상'으로 매겨짐(찾기 쉬움 2 넘음 — 보호색이 모자람), 기린은 10판 중 8판 자리 없음. 버려지는 후보의 90%는 '비침'.
+     해 본 것(효과가 안 보여 되돌림): 가림 후보를 빽빽한 종류에서 70% 뽑기(3.85), 바위 언덕·덤불숲을 1.6배까지 키워 가리기(4.00). 다음에 볼 것: 큰 동물은 소품 둘을 나란히 세워 가리기, 스페셜 경계(CUT)는 새 소품 뒤 평가(②)로 다시.
   ② 숨기기 평가 다시(새 원리 — 바닥 앞뒤·특징 60%·단계 경계 4차·새 가림 소품 뒤): 초원·사막·북극. 평가 기록으로 Stage.CUT 다시 맞춤(무대 README 원리 22, 맞추는 셈은 3·4차 때처럼 판단 파일의 visible·ease·say로).
   ③ 숲(new-forest)을 빙 연필풍으로 한 번에 바꿀 준비 끝(2026-11-13 선생님) — 그림을 기다림. 지금 숲은 아직 옛 만화풍(스페셜 3.55마리).
-     프롬프트 media/stage/prompts/PROMPTS-new-forest-pencil.txt: 배경 1(초원 배경을 붙여 선·색 기준, 땅 시작 위에서 1/3·가까운 나무 없음) + 소품 26가지×2장(기본 18 + 보호색 가림 8을 처음부터) + 동물 12.
+     복사 화면 media/stage/prompts/copy.html?f=PROMPTS-new-forest-pencil.txt (단추로 복사·복사한 장 노랗게). 프롬프트 media/stage/prompts/PROMPTS-new-forest-pencil.txt: 배경 1(초원 배경을 붙여 선·색 기준, 땅 시작 위에서 1/3·가까운 나무 없음) + 소품 26가지×2장(기본 18 + 보호색 가림 8을 처음부터) + 동물 12.
      그림자는 다른 곳처럼 파랑으로 받음(나무는 키의 1/4로 짧게). 동물: 다람쥐·너구리·토끼는 media/animals에 새로(낱말 그림은 그대로), 여우·꿩을 더함(안 받아도 됨), 부엉이·딱따구리는 008 그림만 맞춤(숨기기엔 안 씀).
      받는 곳 media/stage-beta/nature/new-forest/in/(이름: bg.jpg·종류-번호.jpg·동물이름.jpg) → python3 tools/stage-intake.py nature/new-forest media/stage-beta/nature/new-forest/in
      한 줄이 옛 그림을 _trash로, stage.json을 intake.json(종류·크기·무른/단단·크기 안 드러냄·배치 덩어리·동물)으로 새로 짜고, 자르기·흰 종이·밑동·차림표까지 함. 가짜 그림으로 시험해 끝까지 돎(scipy 필요: pip install scipy).
