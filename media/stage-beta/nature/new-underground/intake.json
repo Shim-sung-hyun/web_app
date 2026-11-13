@@ -153,13 +153,6 @@
    "hide": true
   },
   {
-   "name": "토끼",
-   "file": "tokki",
-   "real": 0.45,
-   "face": "L",
-   "hide": true
-  },
-  {
    "name": "매미 애벌레",
    "file": "maemiaebeolle",
    "real": 0.03,
@@ -184,6 +177,13 @@
    "name": "오소리",
    "file": "osori",
    "real": 0.8,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "프레리도그",
+   "file": "peureridogeu",
+   "real": 0.4,
    "face": "L",
    "hide": true
   }
