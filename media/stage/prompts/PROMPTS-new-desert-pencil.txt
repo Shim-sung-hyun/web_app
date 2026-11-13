@@ -243,3 +243,79 @@ The animal: an ostrich standing on its two long bare legs, long thin neck, small
 The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short hair strokes and light grey hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO sand, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
 The animal: a dorcas gazelle standing, slender body, sandy-beige back, white belly, a soft dark stripe along its side, thin legs, short curved horns.
 ▲
+
+━━━━━━━━ 가리는 소품 8가지 — 사막에 숨길 곳 더 (2026-11-13 선생님: 은폐물이 적음, 바위 단독보다 + 수풀·야자, 가시나무는 한·두·세 그루)
+붙일 그림: 지금 사막 배경(media/stage-beta/nature/new-desert/bg.jpg) 한 장. 종류마다 2장씩. 빙에 붙이므로 장마다 2000자 안. 바위에 얼굴처럼 보이는 금이 없는지 확인(지침 4절).
+받으면: flat-shadow.py --key blue(아래 각 줄의 --plant 여부대로) → defringe.py → stage-meta.py·stage-index.py. 빽빽한 것은 안이 비치지 않는 것으로 골라 주세요.
+
+■ 빽빽한 덤불 뭉치 (shrubclump · 실제 1~2m · 자르기 --key blue, --plant 없이)
+▼
+Plain pure white background (white paper, not cream). The attached picture is the empty desert background where this object will stand: draw in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (soft sand-beige on dry wood, a muted olive green on leaves). Draw ONE object and its shadow, inside the middle two-thirds of the picture width, with white margins on all sides.
+The object: a wide, very dense clump of several desert shrubs grown together, about twice as wide as it is tall, thick with small olive-green leaves and dry twigs from the ground to the top.
+Leaves and twigs have clear dark-grey outlines. The plant is DENSE: inside its outline almost no white paper shows through, like one solid mass; only the outer edge is a little uneven. No ground patch, loose sand or pebbles under it, and no blue or grey shading on the paper around its bottom.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper on the ground: the same blue everywhere, a sharp clean edge, no gradient, fading, hatching, texture or outline. It is one simple shape of the whole plant, not thin shadows of single twigs, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object, its lines or the paper. The object keeps its pale colours and is not darkened.
+▲
+
+■ 가시나무 한 그루 (thorntree · 실제 3~5m · 자르기 --key blue, --plant)
+▼
+Plain pure white background (white paper, not cream). The attached picture is the empty desert background where this object will stand: draw in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft grey-brown on the trunk, a muted olive green on the leaves). Draw ONE object and its shadow, inside the middle two-thirds of the picture width, with white margins on all sides.
+The object: one desert thorn tree (umbrella acacia) with a short, slightly bent trunk and a wide, flat, dense crown of tiny leaves; the crown is thick, so little white paper shows through it.
+Leaves and twigs have clear dark-grey outlines. The plant is DENSE: inside its outline almost no white paper shows through, like one solid mass; only the outer edge is a little uneven. No ground patch, loose sand or pebbles under it, and no blue or grey shading on the paper around its bottom.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper on the ground: the same blue everywhere, a sharp clean edge, no gradient, fading, hatching, texture or outline. It is one simple shape of the whole plant, not thin shadows of single twigs, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object, its lines or the paper. The object keeps its pale colours and is not darkened.
+▲
+
+■ 가시나무 두 그루 (thorntrees2 · 실제 3~5m · 자르기 --key blue, --plant)
+▼
+Plain pure white background (white paper, not cream). The attached picture is the empty desert background where this object will stand: draw in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft grey-brown on the trunks, a muted olive green on the leaves). Draw ONE object and its shadow, inside the middle two-thirds of the picture width, with white margins on all sides.
+The object: two desert thorn trees (umbrella acacias) of different heights growing side by side, their wide, flat, dense crowns touching and overlapping, with a low thorny bush between their trunks.
+Leaves and twigs have clear dark-grey outlines. The plant is DENSE: inside its outline almost no white paper shows through, like one solid mass; only the outer edge is a little uneven. No ground patch, loose sand or pebbles under it, and no blue or grey shading on the paper around its bottom.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper on the ground: the same blue everywhere, a sharp clean edge, no gradient, fading, hatching, texture or outline. It is one simple shape of the whole plant, not thin shadows of single twigs, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object, its lines or the paper. The object keeps its pale colours and is not darkened.
+▲
+
+■ 가시나무 세 그루와 덤불 (thorntrees3 · 실제 3~5m · 자르기 --key blue, --plant)
+▼
+Plain pure white background (white paper, not cream). The attached picture is the empty desert background where this object will stand: draw in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft grey-brown on the trunks, a muted olive green on the leaves). Draw ONE object and its shadow, inside the middle two-thirds of the picture width, with white margins on all sides.
+The object: a small group of three desert thorn trees (umbrella acacias) of different heights, crowns overlapping into one wide dense canopy, with dense low thorny bushes around their trunks, much wider than it is tall.
+Leaves and twigs have clear dark-grey outlines. The plant is DENSE: inside its outline almost no white paper shows through, like one solid mass; only the outer edge is a little uneven. No ground patch, loose sand or pebbles under it, and no blue or grey shading on the paper around its bottom.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper on the ground: the same blue everywhere, a sharp clean edge, no gradient, fading, hatching, texture or outline. It is one simple shape of the whole plant, not thin shadows of single twigs, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object, its lines or the paper. The object keeps its pale colours and is not darkened.
+▲
+
+■ 작은 모래언덕 (dune · 실제 1~2.5m · 자르기 --key blue, --plant 없이)
+▼
+Plain pure white background (white paper, not cream). The attached picture is the empty desert background where this object will stand: draw in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (soft warm sand-beige and light ochre, with fine wind ripples drawn as thin lines). Draw ONE object and its shadow, inside the middle two-thirds of the picture width, with white margins on all sides.
+The object: a low, smooth sand dune with one soft, rounded crest and a gentle slope, about three times wider than it is tall, with two or three small dry grass tufts on top.
+Close the object's outline all the way round with one continuous dark-grey line, also where it touches its shadow. No ground patch, loose sand or pebbles under it, and no blue or grey shading on the paper around its bottom.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper on the ground: the same blue everywhere, a sharp clean edge, no gradient, fading, hatching, texture or outline. Blue is ONLY in the shadow: none on the object, its lines or the paper. The object keeps its pale colours and is not darkened.
+▲
+
+■ 덤불 낀 바위 (rockshrub · 실제 1~2m · 자르기 --key blue, --plant 없이)
+▼
+Plain pure white background (white paper, not cream). The attached picture is the empty desert background where this object will stand: draw in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (warm sand-beige and pale ochre on stone, a muted olive green on the shrubs). Draw ONE object and its shadow, inside the middle two-thirds of the picture width, with white margins on all sides.
+The object: a group of two or three rounded sandstone rocks with dense dry desert shrubs growing tightly between and in front of them, so the rocks and the shrubs make one solid shape, wider than it is tall. The cracks and lumps of the rock form no face or face-like shape anywhere.
+Close the object's outline all the way round with one continuous dark-grey line, also where it touches its shadow. No ground patch, loose sand or pebbles under it, and no blue or grey shading on the paper around its bottom.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper on the ground: the same blue everywhere, a sharp clean edge, no gradient, fading, hatching, texture or outline. Blue is ONLY in the shadow: none on the object, its lines or the paper. The object keeps its pale colours and is not darkened.
+▲
+
+■ 바위와 작은 야자 (rockpalm · 실제 2~4m · 자르기 --key blue, --plant)
+▼
+Plain pure white background (white paper, not cream). The attached picture is the empty desert background where this object will stand: draw in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (warm sand-beige and pale ochre on stone, a muted green on the palm leaves, a soft grey-brown on the trunks). Draw ONE object and its shadow, inside the middle two-thirds of the picture width, with white margins on all sides.
+The object: two small date palms growing from behind a low group of rounded sandstone rocks, with a dense dry shrub at the foot of the rocks; the rocks hide the lower part of the palm trunks. The cracks and lumps of the rock form no face or face-like shape anywhere.
+Leaves and twigs have clear dark-grey outlines. The plant is DENSE: inside its outline almost no white paper shows through, like one solid mass; only the outer edge is a little uneven. No ground patch, loose sand or pebbles under it, and no blue or grey shading on the paper around its bottom.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper on the ground: the same blue everywhere, a sharp clean edge, no gradient, fading, hatching, texture or outline. It is one simple shape of the whole plant, not thin shadows of single twigs, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object, its lines or the paper. The object keeps its pale colours and is not darkened.
+▲
+
+■ 빽빽한 마른 풀숲 (dunegrass · 실제 0.8~1.5m · 자르기 --key blue, --plant 없이)
+▼
+Plain pure white background (white paper, not cream). The attached picture is the empty desert background where this object will stand: draw in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale straw-yellow and sand-beige on dry grass). Draw ONE object and its shadow, inside the middle two-thirds of the picture width, with white margins on all sides.
+The object: a wide, dense clump of tall dry desert grass, the long blades packed tightly together, about two and a half times wider than it is tall.
+Leaves and twigs have clear dark-grey outlines. The plant is DENSE: inside its outline almost no white paper shows through, like one solid mass; only the outer edge is a little uneven. No ground patch, loose sand or pebbles under it, and no blue or grey shading on the paper around its bottom.
+SHADOW: the sun is high in the upper LEFT, behind the viewer (not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, a little longer than the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper on the ground: the same blue everywhere, a sharp clean edge, no gradient, fading, hatching, texture or outline. It is one simple shape of the whole plant, not thin shadows of single twigs, and lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object, its lines or the paper. The object keeps its pale colours and is not darkened.
+▲

@@ -304,8 +304,13 @@
       if (lead.role === 'big' && R() < .75) { const same = items.filter(i => i.role === 'big' && i.kind && i.kind === lead.kind);
         for (let j = 0, k = 1 + (R() < .5), t = 0; j < k && same.length && t < 8; t++) { const it = pick(same), q = place(pl, it, L.x + (R() < .5 ? -1 : 1) * L.w * (.3 + R() * .35), clamp(L.y - R() * .03, pl.beds[it.bed].y[0], 1), R(), R() < .5);
           const k2 = .55 + R() * .55; q.w *= k2; q.h *= k2; if (!clash(q, true)) { out.push(q); j++; } } }
+      /* 섞기(2026-11-13 선생님: 바위·돌 단독보다 + 수풀·야자가 풍부함): 앞선 것이 단단한 소품이면 곁들이는 작은 것은 주로 무른 것(풀·덤불)에서,
+         이따금(compose.mixBig, 기본 .5) 큰 무른 것(야자·덤불·나무) 하나를 옆에 */
+      const softK = new Set(pl.softKinds || []), hardLead = softK.size && !softK.has(lead.kind), softSmall = small.filter(i => softK.has(i.kind)), softBig = big.filter(i => softK.has(i.kind));
+      if (hardLead && softBig.length && R() < (C.mixBig ?? .5)) { const it = pick(softBig), q = place(pl, it, L.x + (R() < .5 ? -1 : 1) * L.w * (.35 + R() * .3), clamp(L.y + (R() - .6) * .04, pl.beds[it.bed].y[0], 1), R(), it.flip !== false && R() < .5);
+        if (!clash(q, true)) out.push(q); }
       for (let j = 0, k = rng(C.perCluster), t2 = 0; j < k && small.length && t2 < k * 5; t2++) {
-        const it = pick(small), s2 = spot(b, it, L); if (!s2) continue;
+        const it = pick(hardLead && softSmall.length && R() < (C.mixSoft ?? .75) ? softSmall : small), s2 = spot(b, it, L); if (!s2) continue;
         const p = place(pl, it, s2.x, s2.y, R() * .7, it.flip !== false && R() < .5); if (!clash(p)) { out.push(p); j++; }
       }
     }
@@ -667,14 +672,16 @@
     /* 작은 동물 키우기(2026-11-12 선생님 '가'): 그 깊이의 실제 크기가 minLong에 못 미치면 minLong까지 키움(growMax배까지, 기본 5).
        키운 동물은 크기를 드러내지 않는 소품(stage.json scalefree 종류 — 돌·풀·덤불 등) 뒤에만 — 소품보다 커 보이지 않게. opt.grow:false면 안 키움 */
     const SF = new Set(pl.scalefree || []);
+    /* 최소 크기는 깊이를 따름(2026-11-13 선생님: 사막쥐·사막여우·거북이 앞에 있어도 너무 작음 — 키운 동물이 어디서나 같은 크기였음): 멀면 minLong×0.6, 바로 앞이면 ×1.6 */
+    const minAt = y => minLong * (.6 + Math.max(0, Math.min(1, (y - pl.horizon) / (1 - pl.horizon))));
     const make = (x, y, flip) => {   // 그 깊이의 크기로 동물 놓기: 몸의 가장 긴 쪽 = real × 1m (가로는 4:3 장면이라 0.75)
-      const m1 = perM(pl, y, bed), real0 = a.real * m1, bodyLong = opt.grow === false ? real0 : Math.max(real0, minLong), Mw = M.w / Math.max(M.w, M.h), Mh = M.h / Math.max(M.w, M.h);
+      const m1 = perM(pl, y, bed), real0 = a.real * m1, bodyLong = opt.grow === false ? real0 : Math.max(real0, minAt(y)), Mw = M.w / Math.max(M.w, M.h), Mh = M.h / Math.max(M.w, M.h);
       const bodyW = bw * Mw, bodyH = bh * Mh, k = bodyLong / Math.max(bodyW * .75, bodyH), h = k * Mh, w = k * Mw * .75;
       return {id: a.name, src: a.src, img: a.img, bed, x, y, w, h, base: baseFrac, flip, foot: [M.box[0] / M.w, M.box[2] / M.w], actor: true, skirt: null, animal: a.name, grow: bodyLong / real0};
     };
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
-    const tryAt0 = (x, y, flip, extra) => { const g0 = minLong / (a.real * perM(pl, y, bed)); if (g0 > 1 && (opt.grow === false || !SF.size || g0 > (opt.growMax ?? 5))) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
+    const tryAt0 = (x, y, flip, extra) => { const g0 = minAt(y) / (a.real * perM(pl, y, bed)); if (g0 > 1 && (opt.grow === false || !SF.size || g0 > (opt.growMax ?? 5))) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
       /* 화면 끝(2026-11-11 선생님): 코·꼬리만 내밀어도 됨(화면 밖은 가려진 것으로 셈). 화면 밖 몫의 한도는 단계마다 opt.offMax(하 .5·중 .7·상 .8·스페셜 .9, 기본 .7).
          끝에 걸친 동물은 한 장면에 하나만(둘째는 가운데로 단계를 못 지킬 때만), 화면 안에 남은 조각 폭이 장면의 opt.edgeMin(기본 3%)은 되게 — 점수에도 작은 벌점(EDGE_PEN)을 줘 가운데와 비슷하면 가운데로 */
       const E = edgeOf(A); A.off = E.off;
