@@ -322,6 +322,41 @@
    "real": 0.6,
    "face": "L",
    "hide": true
+  },
+  {
+   "name": "염소",
+   "file": "yeomso",
+   "real": 1.2,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "오리",
+   "file": "ori",
+   "real": 0.6,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "고슴도치",
+   "file": "goseumdochi",
+   "real": 0.25,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "메뚜기",
+   "file": "mettugi",
+   "real": 0.06,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "양",
+   "file": "yang",
+   "real": 1.2,
+   "face": "L",
+   "hide": true
   }
  ],
  "compose": {
