@@ -737,9 +737,9 @@
    },
    {
     "name": "토끼",
-    "src": "words/tokki.webp",
+    "src": "animals/tokki.webp",
     "real": 0.45,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "닭",
@@ -749,9 +749,9 @@
    },
    {
     "name": "너구리",
-    "src": "words/neoguri.webp",
+    "src": "animals/neoguri.webp",
     "real": 0.6,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "소",
