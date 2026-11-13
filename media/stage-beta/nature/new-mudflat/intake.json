@@ -1,0 +1,310 @@
+{
+ "name": "갯벌",
+ "horizon": 0.34,
+ "groundTop": 0.35,
+ "groundTol": 100,
+ "shadow": true,
+ "kinds": {
+  "reeds": {
+   "name": "갈대 무리",
+   "real": [
+    1.5,
+    2.5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "glasswort": {
+   "name": "칠면초 군락",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "shorerock": {
+   "name": "갯바위",
+   "real": [
+    1,
+    2
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "smallrock": {
+   "name": "작은 갯바위",
+   "real": [
+    0.3,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "bigrocks": {
+   "name": "큰 갯바위 무리",
+   "real": [
+    1.5,
+    3
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "oysterrock": {
+   "name": "굴 껍데기 붙은 바위",
+   "real": [
+    0.4,
+    1
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "post": {
+   "name": "나무 말뚝",
+   "real": [
+    1,
+    1.5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "netposts": {
+   "name": "그물 걸린 말뚝 줄",
+   "real": [
+    1,
+    1.6
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "boat": {
+   "name": "물 빠진 작은 배",
+   "real": [
+    1,
+    1.5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "mudmound": {
+   "name": "진흙 둔덕",
+   "real": [
+    0.2,
+    0.5
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "shellpile": {
+   "name": "조개껍데기 더미",
+   "real": [
+    0.1,
+    0.2
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "seaweed": {
+   "name": "해초 더미",
+   "real": [
+    0.1,
+    0.3
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "marshgrass": {
+   "name": "갯잔디 포기",
+   "real": [
+    0.2,
+    0.4
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "stones": {
+   "name": "돌무더기",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  }
+ },
+ "animals": [
+  {
+   "name": "칠게",
+   "file": "chilge",
+   "real": 0.04,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "농게",
+   "file": "nongge",
+   "real": 0.04,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "방게",
+   "file": "bangge",
+   "real": 0.05,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "조개",
+   "file": "jogae",
+   "real": 0.12,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "맛조개",
+   "file": "matjogae",
+   "real": 0.12,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "갯우렁이",
+   "file": "gaeturengi",
+   "real": 0.06,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "짱뚱어",
+   "file": "jjangttungeo",
+   "real": 0.15,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "낙지",
+   "file": "nakji",
+   "real": 0.5,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "갯지렁이",
+   "file": "gaetjireongi",
+   "real": 0.15,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "도요새",
+   "file": "doyosae",
+   "real": 0.25,
+   "face": "L",
+   "hide": true
+  }
+ ],
+ "compose": {
+  "clusters": [
+   4,
+   5
+  ],
+  "perCluster": [
+   2,
+   4
+  ],
+  "loose": [
+   6,
+   10
+  ],
+  "maxSame": 3,
+  "overlap": 0.2,
+  "stackGap": 0.04
+ },
+ "blocks": [
+  {
+   "name": "큰 것과 작은 것",
+   "n": [
+    1,
+    2
+   ],
+   "back": {
+    "kinds": [
+     "갈대 무리",
+     "갯바위",
+     "큰 갯바위 무리",
+     "나무 말뚝",
+     "그물 걸린 말뚝 줄",
+     "물 빠진 작은 배"
+    ],
+    "n": [
+     1,
+     3
+    ],
+    "scale": [
+     0.7,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "갈대 무리",
+     "갯바위",
+     "큰 갯바위 무리",
+     "나무 말뚝",
+     "그물 걸린 말뚝 줄",
+     "물 빠진 작은 배"
+    ],
+    "n": [
+     1,
+     1
+    ]
+   },
+   "small": {
+    "kinds": [
+     "칠면초 군락",
+     "작은 갯바위",
+     "굴 껍데기 붙은 바위",
+     "진흙 둔덕",
+     "조개껍데기 더미",
+     "해초 더미",
+     "갯잔디 포기",
+     "돌무더기"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ],
+ "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것"
+}

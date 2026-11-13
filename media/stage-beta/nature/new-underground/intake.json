@@ -1,0 +1,241 @@
+{
+ "name": "땅속",
+ "horizon": 0.14,
+ "groundTop": 0.15,
+ "groundTol": 100,
+ "shadow": false,
+ "kinds": {
+  "bigstone": {
+   "name": "큰 돌",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "stonegroup": {
+   "name": "작은 돌 무리",
+   "real": [
+    0.05,
+    0.15
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "tunnel": {
+   "name": "굴 방",
+   "real": [
+    0.2,
+    0.4
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "treeroots": {
+   "name": "나무뿌리",
+   "real": [
+    0.4,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "grassroots": {
+   "name": "풀뿌리 뭉치",
+   "real": [
+    0.2,
+    0.5
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "leaflayer": {
+   "name": "묻힌 낙엽 층",
+   "real": [
+    0.1,
+    0.2
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "acorns": {
+   "name": "도토리 무더기",
+   "real": [
+    0.05,
+    0.1
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "gravelband": {
+   "name": "자갈 띠",
+   "real": [
+    0.05,
+    0.1
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "buriedbranch": {
+   "name": "묻힌 나뭇가지",
+   "real": [
+    0.1,
+    0.25
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "clod": {
+   "name": "단단한 흙덩이",
+   "real": [
+    0.2,
+    0.4
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  }
+ },
+ "animals": [
+  {
+   "name": "두더지",
+   "file": "dudeoji",
+   "real": 0.17,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "지렁이",
+   "file": "jireongi",
+   "real": 0.15,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "땅강아지",
+   "file": "ttanggangaji",
+   "real": 0.04,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "개미",
+   "file": "gaemi",
+   "real": 0.01,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "굼벵이",
+   "file": "gumbengi",
+   "real": 0.04,
+   "face": "L",
+   "hide": true
+  }
+ ],
+ "compose": {
+  "clusters": [
+   4,
+   5
+  ],
+  "perCluster": [
+   2,
+   4
+  ],
+  "loose": [
+   6,
+   10
+  ],
+  "maxSame": 3,
+  "overlap": 0.2,
+  "stackGap": 0.04
+ },
+ "blocks": [
+  {
+   "name": "큰 것과 작은 것",
+   "n": [
+    1,
+    2
+   ],
+   "back": {
+    "kinds": [
+     "큰 돌",
+     "작은 돌 무리",
+     "굴 방",
+     "나무뿌리",
+     "풀뿌리 뭉치",
+     "묻힌 낙엽 층",
+     "도토리 무더기",
+     "자갈 띠",
+     "묻힌 나뭇가지",
+     "단단한 흙덩이"
+    ],
+    "n": [
+     1,
+     3
+    ],
+    "scale": [
+     0.7,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "큰 돌",
+     "작은 돌 무리",
+     "굴 방",
+     "나무뿌리",
+     "풀뿌리 뭉치",
+     "묻힌 낙엽 층",
+     "도토리 무더기",
+     "자갈 띠",
+     "묻힌 나뭇가지",
+     "단단한 흙덩이"
+    ],
+    "n": [
+     1,
+     1
+    ]
+   },
+   "small": {
+    "kinds": [
+     "큰 돌",
+     "작은 돌 무리",
+     "굴 방",
+     "나무뿌리",
+     "풀뿌리 뭉치",
+     "묻힌 낙엽 층",
+     "도토리 무더기",
+     "자갈 띠",
+     "묻힌 나뭇가지",
+     "단단한 흙덩이"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ],
+ "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것. 그림자 없는 장면: stage-intake.py가 아직 파란 그림자를 전제로 함 — 넣기 전에 도구와 자리 규칙을 이 장면에 맞게 손봄"
+}

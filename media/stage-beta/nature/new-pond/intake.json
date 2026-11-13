@@ -1,0 +1,266 @@
+{
+ "name": "강·호수",
+ "horizon": 0.45,
+ "groundTop": 0.46,
+ "groundTol": 100,
+ "shadow": true,
+ "kinds": {
+  "willow": {
+   "name": "버드나무",
+   "real": [
+    6,
+    10
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false,
+   "ground": [
+    0,
+    0.4
+   ]
+  },
+  "reeds": {
+   "name": "갈대 무리",
+   "real": [
+    1.5,
+    3
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "cattails": {
+   "name": "부들 무리",
+   "real": [
+    1.5,
+    2.5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "shorerock": {
+   "name": "물가 바위",
+   "real": [
+    1,
+    2
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "bigrocks": {
+   "name": "큰 물가 바위 무리",
+   "real": [
+    2.5,
+    4
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "shoregrass": {
+   "name": "물가 풀",
+   "real": [
+    0.4,
+    0.8
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "pebbles": {
+   "name": "작은 돌 무리",
+   "real": [
+    0.2,
+    0.5
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "driftlog": {
+   "name": "쓰러진 나무",
+   "real": [
+    0.6,
+    1.2
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "bushwillow": {
+   "name": "갯버들 덤불",
+   "real": [
+    2,
+    3
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "tallreeds": {
+   "name": "키 큰 갈대 벽",
+   "real": [
+    3,
+    4
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "mudbank": {
+   "name": "진흙 둑과 풀",
+   "real": [
+    1,
+    1.6
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": true
+  }
+ },
+ "animals": [
+  {
+   "name": "백로",
+   "file": "baengno",
+   "real": 0.9,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "개구리",
+   "file": "gaeguri",
+   "real": 0.12,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "자라",
+   "file": "jara",
+   "real": 0.3,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "수달",
+   "file": "sudal",
+   "real": 1.1,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "하마",
+   "file": "hama",
+   "real": 4.0,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "악어",
+   "file": "akeo",
+   "real": 3.5,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "청둥오리",
+   "file": "cheongdungori",
+   "real": 0.6,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "물총새",
+   "file": "mulchongsae",
+   "real": 0.17,
+   "face": "L",
+   "hide": true
+  }
+ ],
+ "compose": {
+  "clusters": [
+   4,
+   5
+  ],
+  "perCluster": [
+   2,
+   4
+  ],
+  "loose": [
+   6,
+   10
+  ],
+  "maxSame": 3,
+  "overlap": 0.2,
+  "stackGap": 0.04
+ },
+ "blocks": [
+  {
+   "name": "큰 것과 작은 것",
+   "n": [
+    1,
+    2
+   ],
+   "back": {
+    "kinds": [
+     "버드나무",
+     "갈대 무리",
+     "부들 무리",
+     "물가 바위",
+     "큰 물가 바위 무리",
+     "갯버들 덤불",
+     "키 큰 갈대 벽",
+     "진흙 둑과 풀"
+    ],
+    "n": [
+     1,
+     3
+    ],
+    "scale": [
+     0.7,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "버드나무",
+     "갈대 무리",
+     "부들 무리",
+     "물가 바위",
+     "큰 물가 바위 무리",
+     "갯버들 덤불",
+     "키 큰 갈대 벽",
+     "진흙 둑과 풀"
+    ],
+    "n": [
+     1,
+     1
+    ]
+   },
+   "small": {
+    "kinds": [
+     "물가 풀",
+     "작은 돌 무리",
+     "쓰러진 나무"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ],
+ "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것"
+}

@@ -1,0 +1,281 @@
+{
+ "name": "논·습지",
+ "horizon": 0.34,
+ "groundTop": 0.35,
+ "groundTol": 100,
+ "shadow": true,
+ "kinds": {
+  "cattails": {
+   "name": "부들 무리",
+   "real": [
+    1.5,
+    2.5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "reeds": {
+   "name": "갈대 무리",
+   "real": [
+    1.5,
+    3
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "willow": {
+   "name": "버드나무",
+   "real": [
+    6,
+    10
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false,
+   "ground": [
+    0,
+    0.4
+   ]
+  },
+  "rice": {
+   "name": "벼 포기 무리",
+   "real": [
+    0.6,
+    1
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "bankgrass": {
+   "name": "논두렁 풀 둔덕",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "lotus": {
+   "name": "연잎 무리",
+   "real": [
+    0.3,
+    0.8
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "waterstones": {
+   "name": "물가 돌",
+   "real": [
+    0.3,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "duckweed": {
+   "name": "개구리밥 무리",
+   "real": [
+    0.05,
+    0.1
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "sedge": {
+   "name": "물가 풀 포기",
+   "real": [
+    0.4,
+    0.8
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "iris": {
+   "name": "붓꽃 무리",
+   "real": [
+    0.6,
+    1
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "dryreeds": {
+   "name": "마른 갈대 덤불",
+   "real": [
+    1.2,
+    2
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "mudlog": {
+   "name": "진흙 묻은 통나무",
+   "real": [
+    0.4,
+    0.7
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  }
+ },
+ "animals": [
+  {
+   "name": "개구리",
+   "file": "gaeguri",
+   "real": 0.12,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "백로",
+   "file": "baengno",
+   "real": 0.9,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "미꾸라지",
+   "file": "mikkuraji",
+   "real": 0.15,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "우렁이",
+   "file": "ureongi",
+   "real": 0.06,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "소금쟁이",
+   "file": "sogeumjaengi",
+   "real": 0.02,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "물방개",
+   "file": "mulbanggae",
+   "real": 0.03,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "잠자리",
+   "file": "jamjari",
+   "real": 0.08,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "올챙이",
+   "file": "olchaengi",
+   "real": 0.03,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "자라",
+   "file": "jara",
+   "real": 0.3,
+   "face": "L",
+   "hide": true
+  }
+ ],
+ "compose": {
+  "clusters": [
+   4,
+   5
+  ],
+  "perCluster": [
+   2,
+   4
+  ],
+  "loose": [
+   6,
+   10
+  ],
+  "maxSame": 3,
+  "overlap": 0.2,
+  "stackGap": 0.04
+ },
+ "blocks": [
+  {
+   "name": "큰 것과 작은 것",
+   "n": [
+    1,
+    2
+   ],
+   "back": {
+    "kinds": [
+     "부들 무리",
+     "갈대 무리",
+     "버드나무",
+     "마른 갈대 덤불"
+    ],
+    "n": [
+     1,
+     3
+    ],
+    "scale": [
+     0.7,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "부들 무리",
+     "갈대 무리",
+     "버드나무",
+     "마른 갈대 덤불"
+    ],
+    "n": [
+     1,
+     1
+    ]
+   },
+   "small": {
+    "kinds": [
+     "벼 포기 무리",
+     "논두렁 풀 둔덕",
+     "연잎 무리",
+     "물가 돌",
+     "개구리밥 무리",
+     "물가 풀 포기",
+     "붓꽃 무리",
+     "진흙 묻은 통나무"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ],
+ "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것"
+}

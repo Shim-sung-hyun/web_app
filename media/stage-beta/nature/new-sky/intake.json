@@ -1,0 +1,271 @@
+{
+ "name": "하늘",
+ "horizon": 0.88,
+ "groundTop": 0.89,
+ "groundTol": 100,
+ "shadow": false,
+ "kinds": {
+  "bigcloud": {
+   "name": "큰 뭉게구름",
+   "real": [
+    3,
+    6
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "smallcloud": {
+   "name": "작은 구름",
+   "real": [
+    1,
+    2
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "longcloud": {
+   "name": "길게 누운 구름",
+   "real": [
+    2,
+    4
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "treetop": {
+   "name": "나무 꼭대기",
+   "real": [
+    3,
+    5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "pinetop": {
+   "name": "소나무 꼭대기",
+   "real": [
+    3,
+    5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "pole": {
+   "name": "전봇대와 전깃줄",
+   "real": [
+    6,
+    10
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "blossombranch": {
+   "name": "꽃 핀 나뭇가지",
+   "real": [
+    1,
+    2
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "nestbranch": {
+   "name": "새집 달린 나뭇가지",
+   "real": [
+    1,
+    2
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "kite": {
+   "name": "방패연",
+   "real": [
+    1,
+    1.5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "balloons": {
+   "name": "풍선 묶음",
+   "real": [
+    0.6,
+    1
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "rooftop": {
+   "name": "기와지붕 꼭대기",
+   "real": [
+    2,
+    4
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  }
+ },
+ "animals": [
+  {
+   "name": "참새",
+   "file": "chamsae",
+   "real": 0.15,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "까치",
+   "file": "kkachi",
+   "real": 0.45,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "제비",
+   "file": "jebi",
+   "real": 0.18,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "비둘기",
+   "file": "bidulgi",
+   "real": 0.33,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "박새",
+   "file": "baksae",
+   "real": 0.14,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "독수리",
+   "file": "doksuri",
+   "real": 0.9,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "나비",
+   "file": "nabi",
+   "real": 0.08,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "잠자리",
+   "file": "jamjari",
+   "real": 0.08,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "벌",
+   "file": "beol",
+   "real": 0.02,
+   "face": "L",
+   "hide": true
+  }
+ ],
+ "compose": {
+  "clusters": [
+   4,
+   5
+  ],
+  "perCluster": [
+   2,
+   4
+  ],
+  "loose": [
+   6,
+   10
+  ],
+  "maxSame": 3,
+  "overlap": 0.2,
+  "stackGap": 0.04
+ },
+ "blocks": [
+  {
+   "name": "큰 것과 작은 것",
+   "n": [
+    1,
+    2
+   ],
+   "back": {
+    "kinds": [
+     "큰 뭉게구름",
+     "작은 구름",
+     "길게 누운 구름",
+     "나무 꼭대기",
+     "소나무 꼭대기",
+     "전봇대와 전깃줄",
+     "꽃 핀 나뭇가지",
+     "새집 달린 나뭇가지",
+     "방패연",
+     "기와지붕 꼭대기"
+    ],
+    "n": [
+     1,
+     3
+    ],
+    "scale": [
+     0.7,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "큰 뭉게구름",
+     "작은 구름",
+     "길게 누운 구름",
+     "나무 꼭대기",
+     "소나무 꼭대기",
+     "전봇대와 전깃줄",
+     "꽃 핀 나뭇가지",
+     "새집 달린 나뭇가지",
+     "방패연",
+     "기와지붕 꼭대기"
+    ],
+    "n": [
+     1,
+     1
+    ]
+   },
+   "small": {
+    "kinds": [
+     "풍선 묶음"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ],
+ "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것. 그림자 없는 장면: stage-intake.py가 아직 파란 그림자를 전제로 함 — 넣기 전에 도구와 자리 규칙을 이 장면에 맞게 손봄"
+}

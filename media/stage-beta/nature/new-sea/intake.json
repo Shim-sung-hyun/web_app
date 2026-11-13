@@ -1,0 +1,287 @@
+{
+ "name": "바닷속",
+ "horizon": 0.45,
+ "groundTop": 0.46,
+ "groundTol": 100,
+ "shadow": false,
+ "kinds": {
+  "reef": {
+   "name": "바위 암초",
+   "real": [
+    2,
+    4
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "bigreef": {
+   "name": "큰 암초 벽",
+   "real": [
+    4,
+    7
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "kelp": {
+   "name": "다시마 숲",
+   "real": [
+    3,
+    8
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "coral": {
+   "name": "산호 무리",
+   "real": [
+    0.5,
+    1.5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": true
+  },
+  "tablecoral": {
+   "name": "넓적한 산호",
+   "real": [
+    1,
+    2
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "seagrass": {
+   "name": "해초 무리",
+   "real": [
+    0.5,
+    1.5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "anemone": {
+   "name": "말미잘 무리",
+   "real": [
+    0.2,
+    0.5
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "giantclam": {
+   "name": "큰 조개",
+   "real": [
+    0.3,
+    0.6
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "smallrocks": {
+   "name": "작은 바위 무리",
+   "real": [
+    0.3,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "sponge": {
+   "name": "해면과 부채 산호",
+   "real": [
+    0.8,
+    1.5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "sandmound": {
+   "name": "모래 둔덕과 조개껍데기",
+   "real": [
+    0.2,
+    0.5
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "wreckwood": {
+   "name": "가라앉은 나무토막",
+   "real": [
+    0.6,
+    1.2
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": false,
+   "baseMatch": false
+  }
+ },
+ "animals": [
+  {
+   "name": "고래",
+   "file": "gorae",
+   "real": 12.0,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "상어",
+   "file": "sangeo",
+   "real": 4.0,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "돌고래",
+   "file": "dolgorae",
+   "real": 2.8,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "바다거북",
+   "file": "badageobuk",
+   "real": 1.1,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "문어",
+   "file": "muneo",
+   "real": 1.0,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "오징어",
+   "file": "ojingeo",
+   "real": 0.6,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "해파리",
+   "file": "haepari",
+   "real": 0.4,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "고등어",
+   "file": "godeungeo",
+   "real": 0.35,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "불가사리",
+   "file": "bulgasari",
+   "real": 0.25,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "소라",
+   "file": "sora",
+   "real": 0.12,
+   "face": "L",
+   "hide": true
+  }
+ ],
+ "compose": {
+  "clusters": [
+   4,
+   5
+  ],
+  "perCluster": [
+   2,
+   4
+  ],
+  "loose": [
+   6,
+   10
+  ],
+  "maxSame": 3,
+  "overlap": 0.2,
+  "stackGap": 0.04
+ },
+ "blocks": [
+  {
+   "name": "큰 것과 작은 것",
+   "n": [
+    1,
+    2
+   ],
+   "back": {
+    "kinds": [
+     "바위 암초",
+     "큰 암초 벽",
+     "다시마 숲",
+     "산호 무리",
+     "넓적한 산호",
+     "해초 무리",
+     "해면과 부채 산호"
+    ],
+    "n": [
+     1,
+     3
+    ],
+    "scale": [
+     0.7,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "바위 암초",
+     "큰 암초 벽",
+     "다시마 숲",
+     "산호 무리",
+     "넓적한 산호",
+     "해초 무리",
+     "해면과 부채 산호"
+    ],
+    "n": [
+     1,
+     1
+    ]
+   },
+   "small": {
+    "kinds": [
+     "말미잘 무리",
+     "큰 조개",
+     "작은 바위 무리",
+     "모래 둔덕과 조개껍데기",
+     "가라앉은 나무토막"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ],
+ "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것. 그림자 없는 장면: stage-intake.py가 아직 파란 그림자를 전제로 함 — 넣기 전에 도구와 자리 규칙을 이 장면에 맞게 손봄"
+}

@@ -1,0 +1,261 @@
+{
+ "name": "물속(민물)",
+ "horizon": 0.45,
+ "groundTop": 0.46,
+ "groundTol": 100,
+ "shadow": false,
+ "kinds": {
+  "waterweed": {
+   "name": "물풀 무리",
+   "real": [
+    0.5,
+    1.5
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "bigstone": {
+   "name": "큰 돌",
+   "real": [
+    0.5,
+    1.2
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "stonepile": {
+   "name": "돌무더기 굴",
+   "real": [
+    0.8,
+    1.5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "sunkbranch": {
+   "name": "가라앉은 나뭇가지",
+   "real": [
+    0.6,
+    1.2
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "gravel": {
+   "name": "자갈 더미",
+   "real": [
+    0.1,
+    0.3
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "reedstems": {
+   "name": "갈대 줄기",
+   "real": [
+    1,
+    2
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "ribbonweed": {
+   "name": "긴 수초",
+   "real": [
+    0.6,
+    1.2
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "sandmound": {
+   "name": "모래 둔덕",
+   "real": [
+    0.1,
+    0.3
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "mossrock": {
+   "name": "물이끼 낀 바위",
+   "real": [
+    1,
+    2
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "rootmass": {
+   "name": "물가 나무뿌리",
+   "real": [
+    1,
+    1.8
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  }
+ },
+ "animals": [
+  {
+   "name": "붕어",
+   "file": "bungeo",
+   "real": 0.28,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "잉어",
+   "file": "ingeo",
+   "real": 0.6,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "메기",
+   "file": "megi",
+   "real": 0.6,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "송사리",
+   "file": "songsari",
+   "real": 0.04,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "미꾸라지",
+   "file": "mikkuraji",
+   "real": 0.15,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "자라",
+   "file": "jara",
+   "real": 0.3,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "올챙이",
+   "file": "olchaengi",
+   "real": 0.03,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "다슬기",
+   "file": "daseulgi",
+   "real": 0.03,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "가재",
+   "file": "gajae",
+   "real": 0.08,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "새우",
+   "file": "saeu",
+   "real": 0.05,
+   "face": "L",
+   "hide": true
+  }
+ ],
+ "compose": {
+  "clusters": [
+   4,
+   5
+  ],
+  "perCluster": [
+   2,
+   4
+  ],
+  "loose": [
+   6,
+   10
+  ],
+  "maxSame": 3,
+  "overlap": 0.2,
+  "stackGap": 0.04
+ },
+ "blocks": [
+  {
+   "name": "큰 것과 작은 것",
+   "n": [
+    1,
+    2
+   ],
+   "back": {
+    "kinds": [
+     "물풀 무리",
+     "돌무더기 굴",
+     "갈대 줄기",
+     "물이끼 낀 바위",
+     "물가 나무뿌리"
+    ],
+    "n": [
+     1,
+     3
+    ],
+    "scale": [
+     0.7,
+     1.1
+    ]
+   },
+   "front": {
+    "kinds": [
+     "물풀 무리",
+     "돌무더기 굴",
+     "갈대 줄기",
+     "물이끼 낀 바위",
+     "물가 나무뿌리"
+    ],
+    "n": [
+     1,
+     1
+    ]
+   },
+   "small": {
+    "kinds": [
+     "큰 돌",
+     "가라앉은 나뭇가지",
+     "자갈 더미",
+     "긴 수초",
+     "모래 둔덕"
+    ],
+    "n": [
+     1,
+     3
+    ]
+   }
+  }
+ ],
+ "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것. 그림자 없는 장면: stage-intake.py가 아직 파란 그림자를 전제로 함 — 넣기 전에 도구와 자리 규칙을 이 장면에 맞게 손봄"
+}

@@ -1,0 +1,178 @@
+바닷속 베타 — 빙 연필풍 프롬프트 (2026-11-13, 선생님: 남은 장면의 프롬프트를 모두 — 그림을 받아 두려고)
+순서: ① 배경 1장 → ② 소품 12가지(종류마다 2장) → ③ 동물 10마리. 장마다 2000자 안, 복사 화면에서 단추로 복사.
+받는 곳 media/stage-beta/nature/new-sea/in/ — 묶음으로 주셔도 Claude가 보고 이름을 붙임.
+이 장면은 땅에 서는 곳이 아니라 소품에 그림자가 없음(그림자 없이 흰 바탕에 물건만). 소품을 놓고 숨기는 규칙은 그림이 온 뒤 Claude가 이 장면에 맞게 따로 짬.
+수풀은 '둘레를 한 줄로 닫는다'는 말을 뺌. 닫는 선은 바위·나무토막·구름처럼 덩어리인 것만.
+
+━━━━━━━━ ① 배경 — 1장
+붙일 그림: 숲 배경(new-forest/bg.jpg) — 선과 색 진하기 기준으로만.
+
+■ 빈 바닷속 배경 (bg.jpg · 4:3)
+▼
+Use the attached drawing ONLY as a reference for the line style and the strength of colour (do not draw its scene): the same fine, thin dark-grey pencil-and-ink lines, short light hatching strokes and soft, pale watercolour washes. In that style, draw an EMPTY scene UNDER THE SEA as a wide 4:3 picture, seen from the side by a diver standing on the sea floor.
+Upper part, from the top edge down to a little above the middle: open sea water in a clear pale blue watercolour wash that is lightest at the upper left and a little deeper blue toward the right and far away, with a few soft, pale slanting light rays coming down from the upper left and a few tiny bubbles. Far away, very faint and small, the soft shapes of distant rocks.
+The far edge of the sea floor is an almost level, soft line a little above the middle of the picture. Below it, the whole lower half and more is one wide, flat, open sandy sea floor in a clear pale sand-beige wash with a slight blue tint (clearly coloured, not white), with fine, sparse ripple marks that get a little larger toward the bottom. Keep the sea floor and the water empty and calm: no rocks, coral, seaweed, shells, fish, shadows or objects, so things can be placed later. Bright, soft daylight from the upper left; do not draw the sun. No animals, no people, no text, no frame.
+▲
+
+━━━━━━━━ ② 소품 12가지
+붙일 그림: 새 바닷속 배경(받은 bg.jpg) 한 장. 종류마다 2장씩.
+
+■ 바위 암초 (reef · 실제 2~4m · 문어·바다거북·상어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool blue-grey and grey-brown on the rock, a dull green and soft pink on the growths). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a big rough underwater rock reef with holes and ledges, covered here and there with small seaweed and sponges, about one and a half times as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 큰 암초 벽 (bigreef · 실제 4~7m · 상어·돌고래·바다거북 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool blue-grey and grey-brown on the rock, a dull green and soft orange on the growths). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a very big, tall wall of underwater rock like a small cliff, with ledges and cracks, thickly covered with seaweed and small corals along its foot, about one and a half times as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 다시마 숲 (kelp · 실제 3~8m · 상어·돌고래·오징어·고등어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted olive green and golden brown on the long blades). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a tall, dense stand of kelp, many long wide wavy brown-green blades rising straight up from the bottom and packed tightly side by side like a curtain, about as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the bottom. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 산호 무리 (coral · 실제 0.5~1.5m · 불가사리·소라·고등어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft pink, pale orange and cream on the coral). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a dense group of branching and rounded corals growing closely together into one bumpy mass, about one and a half times as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 넓적한 산호 (tablecoral · 실제 1~2m · 문어·바다거북·오징어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale tan and soft pink on the coral). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: one big table coral, a wide flat round top like a plate on a short thick stalk, with smaller corals packed around its foot, about twice as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 해초 무리 (seagrass · 실제 0.5~1.5m · 소라·불가사리·고등어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a fresh muted green on the blades). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a dense bed of sea grass, many long thin ribbon-like green blades rising from the bottom and leaning a little to the right, packed tightly, about twice as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the bottom. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 말미잘 무리 (anemone · 실제 0.2~0.5m · 소라·불가사리 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft pink and pale cream on the tentacles). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a tight group of three sea anemones on a small stone, each a short thick stalk with a crown of many soft waving tentacles, about twice as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the bottom. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 큰 조개 (giantclam · 실제 0.3~0.6m · 소라·불가사리 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale cream and soft blue-grey on the shell). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: one giant clam sitting on the bottom with its thick wavy-edged shell slightly open, about one and a half times as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 작은 바위 무리 (smallrocks · 실제 0.3~0.8m · 소라·불가사리·문어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool blue-grey and grey-brown on the stones). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low group of three or four rounded sea stones touching each other with a little seaweed on top, about twice as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 해면과 부채 산호 (sponge · 실제 0.8~1.5m · 오징어·해파리·고등어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft orange, dull red and pale yellow). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a dense cluster of tube sponges and a wide sea fan growing closely together from one base, about as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the bottom. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 모래 둔덕과 조개껍데기 (sandmound · 실제 0.2~0.5m · 소라·불가사리 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale sand-beige on the sand, cream and soft pink on the shells). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low, wide, smooth mound of sand with a few empty shells half buried in it, about four times as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 가라앉은 나무토막 (wreckwood · 실제 0.6~1.2m · 문어·오징어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a dark grey-brown on the old wood, a dull green on the seaweed). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a thick old sunken piece of timber lying on its side, worn and full of small holes, with seaweed growing on top, about three times as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+━━━━━━━━ ③ 동물 10마리
+붙일 그림: media/animals/bukgeukgom.webp (연필풍 북극곰).
+모두 media/animals에 '이름.jpg'의 이름으로 넣음 — 같은 이름의 옛 그림이 있으면 008·009가 함께 바뀌므로 넣을 때 008 FACE·OLD/NEW 표와 009 PARTS(상어·고래·문어·벌·두더지·나비·독수리 등)를 꼭 다시 봄.
+
+■ 고래 (gorae.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a humpback whale swimming, a huge dark blue-grey body with a pale grooved throat and belly, very long front flippers, a small back fin, a wide tail.
+▲
+
+■ 상어 (sangeo.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a shark swimming, a strong streamlined blue-grey body with a white belly, a tall triangular back fin, a pointed snout, a crescent tail.
+▲
+
+■ 돌고래 (dolgorae.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a bottlenose dolphin swimming, a smooth grey body with a paler belly, a short beak, a curved back fin, a level tail.
+▲
+
+■ 바다거북 (badageobuk.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a green sea turtle swimming, an oval olive-brown shell with clear plates, long flat front flippers, a scaly head.
+▲
+
+■ 문어 (muneo.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen in its most recognisable view, with its head or front toward the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: an octopus with a big rounded reddish-brown head and eight thick arms with suckers spread and curling around it.
+▲
+
+■ 오징어 (ojingeo.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen in its most recognisable view, with its head or front toward the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a squid swimming level with its pointed fin end to the right and its arms to the left, a long pale reddish body, two side fins, big eyes, ten arms held together.
+▲
+
+■ 해파리 (haepari.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen in its most recognisable view, with its head or front toward the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a jellyfish, a clear pale blue-white dome-shaped bell with a fine outline and many long thin trailing tentacles and frilly arms hanging straight down.
+▲
+
+■ 고등어 (godeungeo.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a mackerel swimming, a slim streamlined body with a blue-green back with dark wavy stripes and a silver-white belly, a forked tail.
+▲
+
+■ 불가사리 (bulgasari.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen in its most recognisable view, with its head or front toward the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a starfish seen from above, five thick pointed arms, an orange-red bumpy surface.
+▲
+
+■ 소라 (sora.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen in its most recognisable view, with its head or front toward the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a turban sea snail shell, a thick rounded spiral shell in grey-brown with small blunt horns, its opening toward the lower left.
+▲
