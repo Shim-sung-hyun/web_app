@@ -678,10 +678,18 @@
       const cr = crushP(P); if (cr > (opt.crush ?? .08) || P.fc > (opt.footCrush ?? 0)) { if (tell) tell('crush', {cr}); lay.pop(); if (extra) lay.pop(); return 'crush'; }   // 깔린 자리는 버림(좌우를 뒤집어 다시 해 봄 — 아래 tryAt)
       const se = seeP(P); if (se > (opt.see ?? .015)) { if (tell) tell('see', {cr, se}); lay.pop(); if (extra) lay.pop(); return 'see'; }   // 반투명한 밑동 뒤로 비치면 더 뒤(작게)로 — 아래 tryAt
       /* 단계(2026-11-13 선생님: 크기만이 아니라 색도): opt.ease=[아래,위]면 찾기 쉬움 점수가 그 안에 오게 — 점수 가운데(로그)에 가까울수록 좋음, 벗어나면 .5 벌점(보이는 몫도) */
-      const vOk = v >= want[0] - .04 && v <= want[1] + .04;   // 몫이 이미 단계 밖이면 색은 안 셈(어차피 못 씀 — 빠르게)
-      const ez = opt.ease ? (vOk ? Math.max(1e-3, easeOf(pl, lay, A, P, v)) : opt.ease[1] * 9) : null, eMid = opt.ease ? Math.sqrt(opt.ease[0] * opt.ease[1]) : 0;
-      const sc = (opt.ease ? Math.abs(Math.log(ez / eMid)) / Math.log(opt.ease[1] / opt.ease[0]) * .15 + (ez < opt.ease[0] || ez > opt.ease[1] ? .5 : 0) : Math.abs(v - mid))
-        + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);
+      const Lt = opt.levelNo || 3, cut = opt.cut && opt.levelNo;
+      let ez = null, sc;
+      if (cut) {   // 단계 자리(CUT): 몫·쉬움의 평균 자리가 이 단계(Lt)로 반올림되어야 — 자리가 단계 가운데에 가까울수록 좋음
+        const pv = posV(v), vOk = pv >= 2 * Lt - 5.5 && pv <= 2 * Lt + .5;   // 쉬움이 어떤 값이어도 못 닿으면 색은 안 셈(빠르게)
+        ez = vOk ? Math.max(1e-3, easeOf(pl, lay, A, P, v)) : 1e-3; const pos = vOk ? (pv + posE(ez)) / 2 : 9;
+        sc = Math.abs(pos - Lt) * .15 + (Math.min(4, Math.max(1, Math.floor(pos + .5))) !== Lt ? .5 : 0) + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);   // 보이는 몫의 안전 범위(LEVELS visible) — 초원으로 맞춘 경계를 사막·북극에 쓸 때 지나치지 않게
+      } else {
+        const vOk = v >= want[0] - .04 && v <= want[1] + .04;   // 몫이 이미 단계 밖이면 색은 안 셈(어차피 못 씀 — 빠르게)
+        ez = opt.ease ? (vOk ? Math.max(1e-3, easeOf(pl, lay, A, P, v)) : opt.ease[1] * 9) : null; const eMid = opt.ease ? Math.sqrt(opt.ease[0] * opt.ease[1]) : 0;
+        sc = (opt.ease ? Math.abs(Math.log(ez / eMid)) / Math.log(opt.ease[1] / opt.ease[0]) * .15 + (ez < opt.ease[0] || ez > opt.ease[1] ? .5 : 0) : Math.abs(v - mid))
+          + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);
+      }
       if (best && sc >= best.sc) { lay.pop(); if (extra) lay.pop(); return; }   // 빠르게(2026-11-12): 지금 가장 좋은 자리보다 못하면 아래 검사는 안 해도 결과가 같음
       /* 얼굴(2026-11-09): 상·스페셜(opt.face 'hide')은 얼굴이 대부분 가려지고 등·꼬리·귀 같은 단서만, 하('show')는 얼굴이 잘 보이게 — 얼굴 = 머리 쪽(008 FACE) 앞 40%·위 65% */
       if (opt.face && a.face) { const fv = visOf(P, a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]); if ((opt.face === 'hide' && fv > .35) || (opt.face === 'show' && fv < .6)) { if (tell) tell('face', {cr, se, fv, ease: ez}); lay.pop(); if (extra) lay.pop(); return; } }
@@ -717,7 +725,8 @@
     }
     if (!best) return null;
     /* 단계를 지킴: 정한 몫보다 많이 보이면 숨기지 않음(null) — 부르는 쪽이 다른 동물로 */
-    if (opt.strict !== false && (best.v > want[1] + .04 || best.v < want[0] - .04)) return null;
+    if (opt.strict !== false && opt.cut && opt.levelNo) { if (levelAt(best.v, best.ez) !== opt.levelNo || best.v < want[0] - .01 || best.v > want[1] + .01) return null; }   // 단계 자리가 이 단계여야(3차 평가)
+    else if (opt.strict !== false && (best.v > want[1] + .04 || best.v < want[0] - .04)) return null;
     if (opt.strict !== false && opt.ease && (best.ez < opt.ease[0] / 1.15 || best.ez > opt.ease[1] * 1.15)) return null;   // 찾기 쉬움이 단계를 벗어나면 숨기지 않음   // 너무 많이 가려져도(2026-11-12 선생님: 하인데 28%) 숨기지 않음 — hideMany가 다른 동물·판으로
     if (best.extra) lay.push(best.extra); lay.push(best.A); best.A.visible = best.v; best.A.want = want; best.A.ease = best.ez; best.A.level = opt.levelNo; return best.A;
   }
@@ -738,21 +747,27 @@
     }
     return best;
   }
-    /* 숨기기 단계(2026-11-13 선생님 판단 236장): 하 더 드러냄·중·상(노출 더)·스페셜(노출 적고 색이 바탕과 비슷) — visible 보이는 몫, ease 찾기 쉬움 점수 */
-  const LEVELS = {
-    1: {name: '하', visible: [.65, .95], ease: [9, 80], face: 'show', offMax: .5, minLong: .10, count: 3},
-    2: {name: '중', visible: [.3, .6], ease: [7, 22], offMax: .7, minLong: .07, count: 3},
-    3: {name: '상', visible: [.1, .27], ease: [2.8, 7.5], face: 'hide', offMax: .8, minLong: .05, count: 3},
-    4: {name: '스페셜', visible: [.04, .15], ease: [.6, 2.8], face: 'hide', offMax: .9, minLong: .05, count: 6}};
+    /* 단계 자리(2026-11-13 3차 평가 662장 — 선생님이 고른 단계와 84% 맞음): 보이는 몫과 찾기 쉬움을 각각 단계 자리(.5 하 쪽 ~ 4.5 스페셜 쪽)로 바꿔 평균,
+     반올림이 그 동물의 단계. 경계: 보이는 몫 하|중 .73 · 중|상 .34 · 상|스 .065, 찾기 쉬움(로그) 하|중 25 · 중|상 3.15 · 상|스 3.05 — 중과 그 아래는 쉬움이, 상과 스페셜은 몫이 가름 */
+  const CUT = {v: [1, .73, .34, .065, 0], e: [80, 25, 3.15, 3.05, .3]};
+  const lerpDown = (x, xs) => { if (x >= xs[0]) return .5; if (x <= xs[xs.length - 1]) return 4.5; for (let i = 0; i < xs.length - 1; i++) if (x <= xs[i] && x >= xs[i + 1]) return .5 + i + (xs[i] - x) / (xs[i] - xs[i + 1]); return 4.5; };
+  const posV = v => lerpDown(v, CUT.v), posE = e => lerpDown(Math.log(Math.max(e, 1e-3)), CUT.e.map(Math.log));
+  const levelPos = (v, e) => (posV(v) + posE(e)) / 2, levelAt = (v, e) => Math.min(4, Math.max(1, Math.floor(levelPos(v, e) + .5)));
+  /* 숨기기 단계(2026-11-13 선생님 판단 236장): 하 더 드러냄·중·상(노출 더)·스페셜(노출 적고 색이 바탕과 비슷) — visible 보이는 몫, ease 찾기 쉬움 점수 */
+  const LEVELS = {   // visible = 보이는 몫의 안전 범위(바닥·가릴 소품 크기에도 씀) — 단계는 CUT(levelAt)로 정함
+    1: {name: '하', visible: [.6, 1], face: 'show', offMax: .5, minLong: .10, count: 3},
+    2: {name: '중', visible: [.25, .8], offMax: .7, minLong: .07, count: 3},
+    3: {name: '상', visible: [.06, .4], face: 'hide', offMax: .8, minLong: .05, count: 3},
+    4: {name: '스페셜', visible: [.03, .12], face: 'hide', offMax: .9, minLong: .05, count: 6}};
   /* 단계 섞기(2026-11-13 선생님): 상이라도 상 80%·중 10%·스페셜 10%, 스페셜은 스페셜 80%·상 20%, 중은 중 80%·상 20%, 하는 하만 — 동물마다 이 비율로 뽑음 */
   const MIX = {1: [[1, 1]], 2: [[2, .8], [3, .2]], 3: [[3, .8], [2, .1], [4, .1]], 4: [[4, .8], [3, .2]]};
-  const levelOpt = lv => { const L = LEVELS[lv]; return {visible: L.visible, ease: L.ease, face: L.face, offMax: L.offMax, minLong: L.minLong, levelNo: lv}; };
+  const levelOpt = lv => { const L = LEVELS[lv]; return {visible: L.visible, cut: true, face: L.face, offMax: L.offMax, minLong: L.minLong, levelNo: lv}; };
   function hideLevel(pl, animals, lv, opt = {}) {   // 판 단계 lv로 여러 마리 — 동물마다 MIX 비율로 단계를 뽑아 숨김(A.level에 그 단계)
     const extra = opt.hide || {}, seed = opt.seed ?? Math.floor(Math.random() * 1e9), R = rnd(seed ^ 0x5bd1e995), n = LEVELS[lv].count;
     const plan = Array.from({length: n}, () => { let r = R(); for (const [l, p] of MIX[lv]) { if (r < p) return l; r -= p; } return lv; });   // 자리별 단계 계획 — 판을 다시 짜도 그대로
     return hideMany(pl, animals, n, Object.assign({}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv), extra)}));
   }
-  G.Stage = {LEVELS, MIX, levelOpt, hideLevel, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
+  G.Stage = {LEVELS, MIX, CUT, levelAt, levelPos, levelOpt, hideLevel, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>
