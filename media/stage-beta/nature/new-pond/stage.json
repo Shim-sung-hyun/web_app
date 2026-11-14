@@ -167,7 +167,8 @@
    "bigrocks",
    "mudbank",
    "shorerock"
-  ]
+  ],
+  "backBias": 1.7
  },
  "items": {
   "bigrocks-1": {

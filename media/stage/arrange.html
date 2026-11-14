@@ -271,7 +271,7 @@
       const B = pl.beds[b], g = it.ground || (B.persp !== false && realMax(it) < (pl.smallFront ?? .7) ? [.45, 1] : [0, 1]), y0 = B.y[0] + (B.y[1] - B.y[0]) * g[0], y1 = B.y[0] + (B.y[1] - B.y[0]) * g[1] + (B.persp !== false && g[1] >= 1 && B.y[1] >= 1 ? .03 : 0);   // 맨 앞은 밑동이 화면 아래로 조금 나가도 됨(원리 8)
       for (let t = 0; t < 20; t++) {
         const x = near ? clamp(near.x + (R() - .5) * near.w * 1.4, .03, .97) : (B.x ? (r => r[0] + (r[1] - r[0]) * R())(pick(B.x)) : -.02 + R() * 1.04);
-        const y = near ? clamp(near.y + .01 + R() * .05, y0, y1) : y0 + (y1 - y0) * R();
+        const y = near ? clamp(near.y + .01 + R() * .05, y0, y1) : y0 + (y1 - y0) * Math.pow(R(), C.backBias ?? 1);   // compose.backBias(2026-11-14 강·호수: 앞에 몰림) — 1보다 크면 먼 쪽(후경)을 더 자주
         if (inX(B, x) && !inAvoid(pl, x, y)) return {x, y};
       }
       return null;

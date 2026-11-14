@@ -232,7 +232,8 @@
   ],
   "maxSame": 3,
   "overlap": 0.2,
-  "stackGap": 0.04
+  "stackGap": 0.04,
+  "backBias": 1.7
  },
  "blocks": [
   {
