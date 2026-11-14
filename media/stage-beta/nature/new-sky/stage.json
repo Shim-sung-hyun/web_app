@@ -198,6 +198,30 @@
    "src": "animals/galmaegi.webp",
    "real": 1.7,
    "face": "L"
+  },
+  {
+   "name": "참새",
+   "src": "animals/chamsae-fly.webp",
+   "real": 1.25,
+   "face": "L"
+  },
+  {
+   "name": "까치",
+   "src": "animals/kkachi-fly.webp",
+   "real": 1.75,
+   "face": "L"
+  },
+  {
+   "name": "비둘기",
+   "src": "animals/bidulgi-fly.webp",
+   "real": 1.5,
+   "face": "L"
+  },
+  {
+   "name": "박새",
+   "src": "animals/baksae-fly.webp",
+   "real": 1.19,
+   "face": "L"
   }
  ],
  "compose": {
