@@ -52,6 +52,10 @@
 - 더 받을 그림 프롬프트(2026-11-14 선생님: 더 풍부하게): copy.html?f=PROMPTS-new-mudflat-more.txt — 두 장째 5(작은 갯바위·큰 갯바위 무리·굴 바위·해초·돌무더기) + 새 소품 6가지×2
   (마른 갈대 덤불 dryreeds·나문재 덤불 seepweed·떠밀려 온 나무토막 driftwood·그물과 통발 더미 netpile·진흙 둑과 갯잔디 mudbank·굴 밭 oysterbed). intake.json kinds·blocks에 미리 넣어 둠 → 받으면 in/에 넣고 stage-intake.py.
   빙이 돌무더기 프롬프트를 '안전하지 않음'으로 막음(2026-11-14) → 'tight heap … rounded wet stones'를 'low pile of smooth grey beach cobbles … like a little cairn'으로, 해초의 'wet heap'도 'thick pile'로 바꿈 — 빙에서는 wet·tight·rounded를 한 문장에 몰아 쓰지 않음.
+- 더 받은 그림 넣음(2026-11-14, 선생님이 받은 24장 중 23장): 소품 14 → 20종류 23 → 46개 — 작은 갯바위 +2·큰 갯바위 무리 +2·굴 바위 +2·해초 +2,
+  새로 마른 갈대 덤불 2·나문재 덤불 3·떠밀려 온 나무토막 3·그물과 통발 더미 1·진흙 둑과 갯잔디 3·굴 밭 3. 돌무더기 두 장째는 빙이 막아 못 받음(문장 고침), 그물 더미는 1장.
+  큰 바위 무리·배가 줄줄이 서는 판이 있어 종류마다 한 판 한도(compose.maxKind: 배·큰 바위 무리·갯바위·말뚝 2, 진흙 둑·그물 말뚝·그물 더미 1).
+  하늘 세션의 연필풍 갈매기(galmaegi.webp)가 생겨 갯벌 숨기기에도 들어감(11마리). 20판: 스페셜 6.0마리·한 판 0.2초, 먼→앞 소품 27·25·21·27%·동물 8·18·24·50%.
 - 다음: 선생님 숨기기 시험·평가(hide-test.html?place=nature/new-mudflat) — 키운 조개·맛조개가 하에서 크게 보이는 것이 어색하지 않은지, 큰 갯바위 무리가 앞에서 너무 크지 않은지 보기.
 
 ■ nature/new-wetland 논·습지 (2026-11-14 빙 연필풍으로 한 번에 만듦 — tools/stage-intake.py, 설정 intake.json)

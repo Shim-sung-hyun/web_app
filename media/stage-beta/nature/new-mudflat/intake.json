@@ -352,6 +352,15 @@
    "seaweed": 1,
    "dryreeds": 2,
    "seepweed": 2
+  },
+  "maxKind": {
+   "boat": 2,
+   "bigrocks": 2,
+   "shorerock": 2,
+   "mudbank": 1,
+   "netposts": 1,
+   "post": 2,
+   "netpile": 1
   }
  },
  "blocks": [
