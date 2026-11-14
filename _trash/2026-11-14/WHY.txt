@@ -24,3 +24,6 @@ media/animals/sora.webp — 소라 그림을 빙 연필풍으로 다시 받음
 media/animals/dudeoji.webp — 두더지 그림을 빙 연필풍으로 다시 받음
 media/animals/jireongi.webp — 지렁이 그림을 빙 연필풍으로 다시 받음
 media/animals/ttanggangaji.webp — 땅강아지 그림을 빙 연필풍으로 다시 받음
+media/animals/daseulgi.webp — 다슬기 그림을 빙 연필풍으로 다시 받음
+media/animals/megi.webp — 메기 그림을 빙 연필풍으로 다시 받음
+media/animals/songsari.webp — 송사리 그림을 빙 연필풍으로 다시 받음

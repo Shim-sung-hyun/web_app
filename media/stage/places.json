@@ -1043,8 +1043,14 @@
   "animals": [
    {
     "name": "붕어",
-    "src": "words/bungeo.webp",
+    "src": "animals/bungeo.webp",
     "real": 0.28,
+    "face": "L"
+   },
+   {
+    "name": "잉어",
+    "src": "animals/ingeo.webp",
+    "real": 0.6,
     "face": "L"
    },
    {
@@ -1060,14 +1066,39 @@
     "face": "L"
    },
    {
-    "name": "다슬기",
-    "src": "animals/daseulgi.webp",
-    "real": 0.03
-   },
-   {
     "name": "미꾸라지",
     "src": "animals/mikkuraji.webp",
     "real": 0.15,
+    "face": "L"
+   },
+   {
+    "name": "자라",
+    "src": "animals/jara.webp",
+    "real": 0.3,
+    "face": "L"
+   },
+   {
+    "name": "올챙이",
+    "src": "animals/olchaengi.webp",
+    "real": 0.03,
+    "face": "L"
+   },
+   {
+    "name": "다슬기",
+    "src": "animals/daseulgi.webp",
+    "real": 0.045,
+    "face": "L"
+   },
+   {
+    "name": "가재",
+    "src": "animals/gajae.webp",
+    "real": 0.08,
+    "face": "L"
+   },
+   {
+    "name": "새우",
+    "src": "animals/saeu.webp",
+    "real": 0.05,
     "face": "L"
    }
   ],

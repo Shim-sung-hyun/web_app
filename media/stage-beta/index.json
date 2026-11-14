@@ -567,5 +567,40 @@
    "tunnel-1",
    "tunnel-2"
   ]
+ },
+ "nature/new-water": {
+  "name": "물속(민물)",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "used_by": [],
+  "ready": false,
+  "far": [],
+  "front": [],
+  "missing": [],
+  "skirt": [],
+  "items": [
+   "bigstone-1",
+   "bigstone-2",
+   "gravel-1",
+   "gravel-2",
+   "mossrock-1",
+   "mossrock-2",
+   "reedstems-1",
+   "reedstems-2",
+   "ribbonweed-1",
+   "ribbonweed-2",
+   "rootmass-1",
+   "rootmass-2",
+   "sandmound-1",
+   "stonepile-1",
+   "stonepile-2",
+   "sunkbranch-1",
+   "sunkbranch-2",
+   "waterweed-1",
+   "waterweed-2"
+  ]
  }
 }

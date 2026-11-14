@@ -1,7 +1,7 @@
 {
  "name": "물속(민물)",
- "horizon": 0.45,
- "groundTop": 0.46,
+ "horizon": 0.46,
+ "groundTop": 0.47,
  "groundTol": 100,
  "shadow": false,
  "kinds": {
@@ -169,7 +169,7 @@
   {
    "name": "다슬기",
    "file": "daseulgi",
-   "real": 0.03,
+   "real": 0.045,
    "face": "L",
    "hide": true
   },
@@ -192,7 +192,8 @@
    "file": "sudal",
    "real": 1.1,
    "face": "L",
-   "hide": true
+   "hide": false,
+   "why": "옛 만화풍 — 연필풍 수달을 받으면 다시 넣음(2026-11-14)"
   }
  ],
  "compose": {
@@ -264,5 +265,6 @@
    }
   }
  ],
- "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것. 그림자 없는 장면: stage-intake.py가 아직 파란 그림자를 전제로 함 — 넣기 전에 도구와 자리 규칙을 이 장면에 맞게 손봄"
+ "note": "2026-11-14 그림을 넣음(stage-intake.py — shadow:false면 bing-cut.py --noshadow로 자름). 배치(compose·blocks)는 첫 설정 그대로, stage.json growMax 12(작은 동물 키우기)",
+ "see": 0.05
 }
