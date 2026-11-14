@@ -140,6 +140,94 @@
    "big": false,
    "scalefree": true,
    "baseMatch": false
+  },
+  "reedwall": {
+   "name": "넓은 갈대숲 벽",
+   "real": [
+    2.0,
+    3.0
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "whiteplume": {
+   "name": "흰 이삭 물억새 무리",
+   "real": [
+    1.5,
+    2.2
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "minari": {
+   "name": "미나리 무리",
+   "real": [
+    0.3,
+    0.5
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "mudbank": {
+   "name": "진흙 둔덕과 물풀",
+   "real": [
+    0.4,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": true
+  },
+  "levee": {
+   "name": "긴 논두렁",
+   "real": [
+    0.5,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": true
+  },
+  "rocksedge": {
+   "name": "물풀 낀 바위",
+   "real": [
+    0.6,
+    1.0
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": true
+  },
+  "stumpweeds": {
+   "name": "버드나무 그루터기와 물풀",
+   "real": [
+    0.6,
+    1.0
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "sunkenlog": {
+   "name": "물풀에 묻힌 쓰러진 나무",
+   "real": [
+    0.5,
+    0.9
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": false,
+   "baseMatch": false
   }
  },
  "animals": [
@@ -252,7 +340,12 @@
    "mudlog",
    "bankgrass",
    "duckweed",
-   "willow"
+   "willow",
+   "mudbank",
+   "levee",
+   "rocksedge",
+   "stumpweeds",
+   "sunkenlog"
   ],
   "thicketWeights": {
    "rice": 3,
@@ -261,7 +354,10 @@
    "dryreeds": 2,
    "sedge": 2,
    "iris": 1,
-   "lotus": 1
+   "lotus": 1,
+   "reedwall": 2,
+   "whiteplume": 2,
+   "minari": 2
   }
  },
  "blocks": [
