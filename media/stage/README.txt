@@ -75,7 +75,7 @@ media/stage/ (기존) · media/stage-beta/ (새로 만드는 중, 구조 같음)
        (프롬프트 media/stage/prompts/PROMPTS-new-polar-bing*.txt). 자르기는 python3 tools/pencil-cut.py(미색 종이→배경 눈색, 선을 벽 삼아 바깥 종이 지움, 눈 소품 몸 안 불투명, --ice 얼음만 옅은 푸른 기).
        밑동을 그림에서부터 땅 색으로 녹아들게 받으면 규칙이 필요 없음 — 다음 곳도 이렇게 받는 게 좋음. 빙 프롬프트에는 "가로 3분의 2까지, 좌우 여백 6분의 1"(잘림 방지)을 넣음.
      · 보관: tools/soak-base.py·bury-base.py·line-unify.py·cast-shadow.py·shadow-split.py 는 다른 장면에서 쓸 수 있으니 12곳 작업이 끝날 때까지 지우지 않음(선생님).
-       → 2026-11-14 도구 창고 정리(선생님): 이 다섯과 pencil-cut.py는 tools/attic/(버린 도구 보관함, 6개월)으로 옮김 — 지우지 않았고 python3 tools/trash.py --revive 이름.py 로 바로 되살림. 까닭은 tools/attic/LIST.txt.
+       → 2026-11-14 선생님: 상황이 바뀌어 위 말씀은 끝남 — 이제 도구 창고 규칙(tools/README.txt 맨 위)대로. 이 다섯과 pencil-cut.py는 tools/attic/(6개월 보관)으로 옮김, 필요하면 python3 tools/trash.py --revive 이름.py. 까닭은 tools/attic/LIST.txt.
    → 적용 범위(2026-11-10 선생님): 그림자는 지금 사막만. 다른 곳은 밑동 스며들기(1번)만 하고, 그림자는 필요할 때 아래 도구를 가져와 씀.
      · 그림자 색 나눠 받기(2026-11-12 선생님 — 그림자 세션에서 세팅, 사막 소품에는 아직 적용 안 함): 빙의 회색 그림자는 얼룩·흰 점·푸른 자국이 따라와 손질이 안 됨 →
        받을 때부터 그림자만 한 가지 색(파랑, 소품이 파랗면 빨강)으로 받아 그 색인 곳만 떼고 검정 20%로 고르게 채움. 프롬프트 틀·시험 결과·자르는 법·남은 것은 모두
