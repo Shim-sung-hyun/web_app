@@ -1,0 +1,9 @@
+# 버린 도구 목록 — 날짜 · 이름 · 이유 [· 되살림/지움]. 다시 쓰려면 python3 tools/trash.py --revive 이름
+2026-11-14 · cast-shadow.py · 셈한 그림자(2026-11-10) — 처음부터 보관용으로 안 씀. 그림자는 파랑으로 받아 flat-shadow.py로
+2026-11-14 · shadow-split.py · 사막 만화풍 그림자 가르기 — 옅은 잎·돌 그늘을 그림자로 봄. flat-shadow.py --key blue · bing-cut.py가 대신
+2026-11-14 · pencil-cut.py · 옛 북극 연필풍 자르기 — 옅은 잎·가지가 반투명해짐. bing-cut.py가 대신
+2026-11-14 · soak-base.py · 밑동 스며들기 — 연필풍 무대 어디에도 안 씀(soak 0, 2026-11-14). 쓸 곳 생기면 --revive
+2026-11-14 · bury-base.py · 밑동 묻기 — 연필풍 무대 어디에도 안 씀(buried 0). 쓸 곳 생기면 --revive
+2026-11-14 · line-unify.py · 소품 선을 동물 선 색에 — 빙 연필풍으로 받으면서 선이 같아져 안 씀(lined 0). 쓸 곳 생기면 --revive
+2026-11-14 · white-to-alpha.py · bing-cut.py --white 로 합침(결과 같음 확인)
+2026-11-14 · edge-specks.py · clean-edges.py 마지막 단계로 합침(따로 돌릴 때는 --specks, 결과 같음 확인)

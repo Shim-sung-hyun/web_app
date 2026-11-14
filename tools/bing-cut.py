@@ -5,6 +5,7 @@
     python3 tools/bing-cut.py 받은.jpg 나갈.webp --animal   # 동물: 그림자·바닥 자국 없이 몸만
     python3 tools/bing-cut.py 받은.jpg 나갈.webp --animal --holes   # 뱀 똬리처럼 몸 안 큰 흰 틈도 지움
     python3 tools/bing-cut.py 받은.jpg 나갈.webp --plant    # 덤불·풀·야자·회전초·가지: 가지 사이 옅은 종이도 투명
+    python3 tools/bing-cut.py 받은.jpg 나갈.webp --white    # 가늘고 촘촘한 물풀(검정말·붕어마름): 흰색을 통째로 투명으로(옛 white-to-alpha.py, 2026-11-14)
 
 shadow-split.py·pencil-cut.py로 자르니(2026-11-12 선생님): 낙타에 흰 줄·그림자가 남고, 야자수·풀이 반투명해지고, 돌 테두리가 흐려짐.
 까닭: 옅은 잎·마른 가지·돌의 회색 그늘을 '색이 옅으니 그림자'로 봄, 바깥 종이를 밝기만큼 반투명으로 남김.
@@ -141,5 +142,20 @@ def cut(src, dst, animal=False, holes=False, plant=False):
     return out.size
 
 
+def white(src, dst):
+    """--white: 종이색을 순백으로 맞춘 뒤 '흰색을 투명으로'(밝을수록 투명, 색은 흰 바탕을 뺀 잉크 색) — 흰 테두리가 남을 수 없음.
+    잎 사이·가장자리에 흰 종이가 남는 가는 물풀용(2026-11-14 선생님: 흰색이 따로 논다). 연한 잎은 조금 비쳐 바탕과 섞임."""
+    a = np.asarray(Image.open(src).convert('RGB')).astype(float)
+    b = np.concatenate([a[:8].reshape(-1, 3), a[-8:].reshape(-1, 3), a[:, :8].reshape(-1, 3), a[:, -8:].reshape(-1, 3)])
+    a = np.clip(a * (255 / np.median(b, 0)), 0, 255)              # 종이를 순백으로
+    al = np.clip((np.max((255 - a) / 255, axis=2) - .06) / .94, 0, 1)   # 흰색을 투명으로, 종이 결 옅은 얼룩은 0
+    c = np.clip(np.where(al[..., None] > 0, (a - 255 * (1 - al[..., None])) / np.maximum(al[..., None], 1e-3), 0), 0, 255)
+    im = Image.fromarray(np.dstack([c, al * 255]).astype(np.uint8), 'RGBA')
+    bb = im.split()[3].point(lambda v: 255 if v > 30 else 0).getbbox(); im = im.crop((max(0, bb[0] - 4), max(0, bb[1] - 4), bb[2] + 4, bb[3] + 4))
+    im.save(dst, 'WEBP', quality=93, alpha_quality=100, method=6)
+    return im.size
+
+
 if __name__ == '__main__':
+    if '--white' in sys.argv[3:]: print(white(sys.argv[1], sys.argv[2])); sys.exit()
     print(cut(sys.argv[1], sys.argv[2], animal='--animal' in sys.argv[3:], holes='--holes' in sys.argv[3:], plant='--plant' in sys.argv[3:]))

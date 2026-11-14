@@ -3,7 +3,8 @@
 
     python3 tools/clean-edges.py 그림.webp [그림2.webp ...]           # 흰 바탕을 막 지운 그림을 그 자리에서 정리
     python3 tools/clean-edges.py --from a555b70^ 그림.webp ...        # git의 그 판(정리 전 원본)에서 다시 만들어 그 자리에 씀
-    python3 tools/clean-edges.py --check 그림.webp ...                # 고치지 않고 '어두운 배경에서 보이는 흰 점' 수만
+    python3 tools/clean-edges.py --check 그림.webp ...                # 고치지 않고 '어두운 배경에서 보이는 흰 점'·좁은 틈 점 수만
+    python3 tools/clean-edges.py --specks 그림.webp ...               # 이미 정리한 그림에 마지막 단계(좁은 틈 마무리)만
 
 왜(2026-10-31 다시 씀):
   흰 바탕을 지우면 윤곽선 바깥의 '선과 흰 바탕이 섞인 점'(회색·연한 갈색)이 불투명하게 남아,
@@ -17,6 +18,8 @@
      → 흰 기운은 사라지고 윤곽선의 부드러운 가장자리는 그대로 남는다.
      F와 흰색을 섞은 색이 아닌 점(가는 다리의 밝은 줄, 분홍 촉수)과, 윤곽선보다 안쪽 점은 그림이므로 그대로.
   4. 윤곽선 없이 밝은 몸이 바로 바깥과 닿는 곳은 계단 없이 살짝 부드럽게, 외톨이 점은 지움.
+  5. 좁은 틈 마무리(옛 edge-specks.py, 2026-10-31 009 두더지 발톱 — 2026-11-14 이 도구로 합침): 발톱·발가락·다리 사이처럼
+     띠가 못 들어간 좁은 틈의 '윤곽선 + 흰 바탕' 밝은 점을 윤곽선 색 + 섞인 만큼의 투명도로. 두 번 돌려도 같음.
   흰 털·흰 배·눈 흰자처럼 윤곽선 안의 흰색은 건드리지 않는다.
 새 그림을 넣을 때: 이 도구로 정리 → 어두운 배경 위에서 확대해 보고, 다리·가지 사이에 흰 바탕이 갇혀 있으면
   그 자리 한 점을 HOLES에 적고 다시 돌린다. 풀·나무처럼 흰 곳이 전혀 없는 그림은 ALL_WHITE_IS_BG에 이름을 적는다.
@@ -151,6 +154,26 @@ def matte(im, key=''):
     return np.dstack([rgb, al * 255]).round().clip(0, 255).astype(np.uint8)
 
 
+def specks(arr):
+    """5단계: 좁은 틈 밝은 점 → (고친 배열, 고친 점 수). 투명한 곳에서 윤곽선을 넘지 않고 3점 안, 둘레(7×7)에 어두운 윤곽선(<100)이 있고 그보다 40 넘게 밝은 점만."""
+    from scipy import ndimage as nd
+    im = arr.astype(float); rgb, a = im[..., :3], im[..., 3] / 255
+    L = rgb @ [.299, .587, .114]; clear = a < 0.08
+    near = nd.distance_transform_edt(~clear) <= 3
+    Lm = np.where(a > 0.5, L, 255.0); LD = nd.minimum_filter(Lm, size=7)
+    line = (a > 0.5) & (L <= LD + 25)
+    lab, _ = nd.label((near & ~line) | clear)
+    m = np.isin(lab, np.unique(lab[clear])) & ~clear & (LD < 100) & (L > LD + 40)
+    n = int(m.sum())
+    if not n: return arr, 0
+    dark = (a > 0.5) & (Lm <= LD + 1)
+    _, idx = nd.distance_transform_edt(~dark, return_indices=True)
+    k = np.clip((255 - L) / np.maximum(255 - LD, 1), 0, 1)
+    out = im.copy(); out[m, :3] = rgb[idx[0], idx[1]][m]; out[m, 3] = (a * k)[m] * 255
+    out[(out[..., 3] < 15) & m, 3] = 0
+    return out.round().clip(0, 255).astype(np.uint8), n
+
+
 def light_rim(arr):
     """어두운 배경에 놓았을 때 둘레에서 보이는 흰 점 수(가까운 윤곽선보다 훨씬 밝은 가장자리 점)"""
     im = arr.astype(float); a = im[..., 3] / 255; L = im[..., :3] @ [0.299, 0.587, 0.114]
@@ -163,19 +186,25 @@ def light_rim(arr):
 
 
 if __name__ == '__main__':
-    args = sys.argv[1:]; rev = None; check = False
+    args = sys.argv[1:]; rev = None; check = False; only_specks = False
     if '--check' in args: check = True; args.remove('--check')
+    if '--specks' in args: only_specks = True; args.remove('--specks')
     if '--from' in args:
         i = args.index('--from'); rev = args[i + 1]; del args[i:i + 2]
     for p in args:
         if check:
-            print(p, '보이는 흰 점', light_rim(np.array(Image.open(p).convert('RGBA')))); continue
+            arr = np.array(Image.open(p).convert('RGBA'))
+            print(p, '보이는 흰 점', light_rim(arr), '· 좁은 틈 점', specks(arr)[1]); continue
+        if only_specks:
+            out, n = specks(np.array(Image.open(p).convert('RGBA')))
+            if n: Image.fromarray(out, 'RGBA').save(p, 'WEBP', quality=95, alpha_quality=100, method=6)
+            print(p, '좁은 틈 점', n); continue
         key = key_of(p)
         if rev:
             data = subprocess.run(['git', 'show', f'{rev}:{key}'], capture_output=True, check=True).stdout
             src = Image.open(io.BytesIO(data))
         else:
             src = Image.open(p)
-        out = matte(np.array(src.convert('RGBA')), key)
+        out, n = specks(matte(np.array(src.convert('RGBA')), key))
         Image.fromarray(out, 'RGBA').save(p, 'WEBP', quality=95, alpha_quality=100, method=6)
-        print(p, '정리함 · 보이는 흰 점', light_rim(out))
+        print(p, '정리함 · 보이는 흰 점', light_rim(out), '· 좁은 틈 고침', n)

@@ -1,4 +1,45 @@
-차름 확인 도구 — 쓰는 법
+차름 도구 창고 — tools/ (2026-11-14 정리, 선생님)
+
+■ 규칙 — 모든 세션(Claude·Copilot)이 같은 도구를 써야 품질이 같다
+ 1. 그림·소리·파일 일을 하기 전에 이 목록부터 본다. 맞는 도구가 있으면 그것을 쓴다.
+ 2. 조금 모자라면 새로 만들지 말고 그 도구에 선택지(--무엇)를 덧붙인다. 머리글 설명과 이 목록 줄도 함께 고친다.
+ 3. 정말 다른 일일 때만 새 도구를 만들고, 만들면 아래 목록의 알맞은 무리에 한 줄 올린다.
+    한 번 쓰고 말 셈은 도구로 남기지 않는다(스크래치에서 돌리고 끝).
+ 4. 안 쓰게 된 도구는 지우지 않고 보관함으로: python3 tools/trash.py --tool 이름.py --why "이유"
+    → tools/attic/ 에 6개월. 목록 tools/attic/LIST.txt 에는 계속 남음. 다시 쓰려면 --revive 이름.py,
+    6개월 지나면 --empty 로 지움(목록에 되살릴 커밋이 적혀 지운 뒤에도 살릴 수 있음).
+ 5. 합칠 때·고칠 때는 고치기 전 결과와 같은지(또는 나아졌는지) 견주어 본 뒤 올린다. 기준은 효율과 정확성.
+ 그림 도구는 numpy·Pillow·scipy가 필요(없으면 pip install scipy).
+
+■ 목록 — 무엇을 할 때 무엇을
+ [그림 자르기 — 받은 jpg에서 투명 webp로]
+  bing-cut.py      빙 연필풍(흰 종이) 그림 자르기. 소품(기본, 회색 그림자 함께) · --animal 몸만 · --plant 가지 사이도 투명
+                   · --holes 몸 안 큰 틈 · --white 흰색을 통째로 투명(가는 물풀)
+  flat-shadow.py   그림자를 파랑(빨강)으로 받은 소품: 그림자 모양만 써서 검정 20%로 고르게. --key blue|red · --plant · --alpha
+  bark-fill.py     flat-shadow --plant 로 자른 나무의 줄기에 뚫린 밝은 껍질을 되살림(초원 나무, flat-shadow 뒤에)
+ [가장자리 정리 — 자른 뒤 흰 테두리·흰 점]
+  defringe.py      빙 연필풍 그림(지금 무대): 흰 테두리·잎 사이·갇힌 종이. --plant · --gaps · --pockets · --rim · --fill
+  clean-edges.py   옛 만화풍(흰 바탕 지운 동물·낱말·008 소품): 섞인 점을 선 색 + 투명도로, 좁은 틈 마무리까지 한 번에. --check · --specks
+                   (두 도구는 그림 종류가 달라 따로 둠 — 빙 연필풍은 defringe, 굵은 윤곽선 만화풍은 clean-edges)
+ [무대 — media/stage-beta/]
+  stage-intake.py  받은 폴더를 무대에 한 번에(자르기·정리·stage.json·밑동·목록까지 위 도구들을 차례로 부름). 새 무대는 이것부터
+  trunk-extend.py  매다는 줄기+뿌리 그림의 줄기를 늘이고 hangAt 적음(땅속)
+  stage-meta.py    그림마다 밑동 자리를 재어 stage.json에 · stage-index.py 008 가림 목록 media/stage/hide-index.json
+  props-index.py   008 가림 소품 목록·동물 모양 표(masks.json)
+ [검사·캡처]
+  check-files.py   앱이 부르는 파일이 저장소에 다 있는지 · check-modules.py 앱마다 같아야 할 모듈 비교
+  shot.js          앱을 네 크기로 캡처 · hide-check.js 008 숨은 동물이 너무 가려지는지
+ [공통 모듈·자료]
+  sync-modules.py  common/의 모듈 원본을 앱마다 넣기 · voice-add.py 목소리 zip을 mp3로 넣기 · trash.py 버릴 자료·버린 도구 보관함
+  (007/tools/split.py 는 007 편 판 만들기 — 007 README)
+
+■ 보관함(tools/attic/, 2026-11-14 넣음 — 2027-05-13 뒤 지울 수 있음): 자세한 까닭은 tools/attic/LIST.txt
+  cast-shadow · shadow-split · pencil-cut(→ bing-cut·flat-shadow가 대신) · soak-base · bury-base · line-unify(연필풍 무대에서 안 씀)
+  white-to-alpha(→ bing-cut --white) · edge-specks(→ clean-edges 마지막 단계)
+
+
+아래는 도구마다 자세한 쓰는 법.
+
 (저장소 맨 위 폴더에서 아래 글을 그대로 쳐서 돌립니다. Claude Code 세션에서는 "없는 파일 검사 돌려 줘"처럼 말하면 됩니다.)
 
 
@@ -83,15 +124,14 @@
    예전 방법(밝은 점을 통째로 지움)은 가장자리가 계단처럼 거칠고 흰 점이 남았음(보이는 흰 점: 원본 23,394 → 예전 42,480 → 지금 122).
 
 
-4-1. 좁은 틈 마무리 — edge-specks.py (clean-edges.py 다음에)
+4-1. 좁은 틈 마무리 — 2026-11-14부터 clean-edges.py의 마지막 단계(옛 edge-specks.py)
 
-   python3 tools/edge-specks.py --check 그림.webp ...            (고치지 않고 점 수만)
-   python3 tools/edge-specks.py 그림.webp ...                    (그 자리에 고쳐 씀)
+   python3 tools/clean-edges.py --specks 그림.webp ...          (이미 정리한 그림에 이 단계만)
 
  하는 일: 발톱·발가락·다리 사이처럼 좁은 틈에 남은 '윤곽선 + 흰 바탕' 밝은 점을 윤곽선 색으로 풀어냄(윤곽선 바깥쪽만).
  2026-10-31: 009 두더지 발톱 끝 흰 점(선생님 의견)으로 만듦. 동물 55장에 돌림.
    벌(머리와 다리 사이 흰 삼각형)·나비(몸 양옆 흰 점)는 갇힌 흰 바탕이라 그 자리만 따로 투명하게 함.
-   다시 정리할 때 순서: clean-edges.py --from a555b70^ → edge-specks.py → 벌·나비는 위 자리 확인.
+   다시 정리할 때: clean-edges.py --from a555b70^ (좁은 틈까지 함께) → 벌·나비는 위 자리 확인.
 
 4-2. 숨은 동물 찾기 검사 — hide-check.js (008)
 
@@ -125,7 +165,7 @@
    한 글자 이름("개.")은 "글자. 개."로 만든 소리라 마지막 마디만 잘라 넣습니다. 문장과 파일 이름(SHA-1 앞 16자리)이 맞지 않으면 넣지 않습니다.
    Azure로 만든 소리는 Leda와 목소리가 달라 같은 묶음에 넣지 않습니다(--pack 다른묶음).
 
-- trash.py : 버릴 자료 상자. 안 쓰는 파일을 _trash/<날짜>/로 옮기고(--why 이유), 90일 지나면 --empty로 비움
+- trash.py : 버릴 자료 상자. 안 쓰는 파일을 _trash/<날짜>/로 옮기고(--why 이유), 90일 지나면 --empty로 비움. 도구는 --tool(tools/attic/, 180일)·--revive
 - defringe.py : 흰 테두리·틈 지우기(2026-11-13). 동물·소품 둘레의 흰 테두리, 가지·갈기 사이 흰 종이를 지움(안쪽 흰 곳은 남김). 풀·나무는 --plant(잎 사이 종이도, 잎 속 흰 점은 잎 색으로), 줄기가 하얗지 않은 나무는 --gaps(가지 사이 종이), 바위·흙은 --depth 3 --fill(몸 안 작은 구멍 메움). 제자리에서 고침, --dry는 셈만.
 - stage-intake.py : 받은 빙 연필풍 그림(배경·소품·동물)을 무대 베타에 한 번에 넣기(2026-11-13). 무대 폴더의 intake.json을 읽어 옛 그림 버리기·자르기·흰 종이 지우기·stage.json·밑동·차림표까지. python3 tools/stage-intake.py nature/new-forest 받은폴더 [--dry]
-- white-to-alpha.py: 흰 종이를 완전히 투명하게(가늘고 촘촘한 물풀의 흰 테두리 없애기, 2026-11-14 물속 검정말·붕어마름)
+- bing-cut.py --white: 흰 종이를 완전히 투명하게(가늘고 촘촘한 물풀의 흰 테두리 없애기, 2026-11-14 물속 검정말·붕어마름 — 옛 white-to-alpha.py)

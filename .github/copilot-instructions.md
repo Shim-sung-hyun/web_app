@@ -15,6 +15,7 @@
 - **공통 모듈**: 원본은 `common/이름.js`(`roster.js`, `stagekit.js`, `keyRelay.js`, `photoRelay.js`, `adminHold.js`, `adminGate.js`, `holdBubble.js`). 앱 안의 `<script id="이름">` 칸은 손으로 고치지 말고, 원본을 고친 뒤 `python3 tools/sync-modules.py`.
 - 007은 통합본 `007/word-learn.html`이 원본(고친 뒤 `python3 007/tools/split.py`). 편 판은 손으로 고치지 않는다.
 - 안 쓰게 된 파일은 지우지 말고 `python3 tools/trash.py 경로 --why "이유"`로 `_trash/`에.
+- **도구 창고**(2026-11-14): 그림·소리·파일 일을 하기 전에 `tools/README.txt` 맨 위 목록부터 보고 있는 도구를 쓴다(모든 세션이 같은 도구 → 같은 품질). 모자라면 그 도구에 선택지를 덧붙이고, 새 도구는 정말 다른 일일 때만 만들어 목록에 올린다. 안 쓰게 된 도구는 `python3 tools/trash.py --tool 이름.py --why "이유"`로 `tools/attic/`에(6개월, `--revive`로 되살림).
 - 이미 쓰는 앱을 크게 바꿀 때, 정식판과 베타를 합칠 때, 지침을 바꿀 때는 선생님께 먼저 묻는다.
 
 ## 함께 일하는 순서 (판이 엇갈리지 않게)
@@ -32,11 +33,11 @@
 - 12곳을 무대 설치도구 `media/stage/install.html`로 새로 만들어 `media/stage-beta/`에 모은다(기존 `media/stage/nature/`는 다 될 때까지 그대로). 숲(new-forest)이 견본 — 끝남.
 - 설치도구 1단계 '자연 장소 고르기'(`media/stage/places.json`): 배경 설명·소품·그곳 동물·블록이 미리 들어가고, 가장 큰 동물을 가릴 소품이 있는지 보여 준다.
 - 새 무대는 밑동 덮개 없이, 소품 그림에 밑동의 흙·풀을 그린다. 무섭거나 훼손된 듯한 꼴(잘린 손 같은 뿌리, 무서운 얼굴)은 지운다(지침 4절).
-- 밑동 스며들기: 소품 밑동 흙·모래는 그라데이션으로 바닥에 스며들게(`python3 tools/soak-base.py <곳 폴더>`, 설치도구 5단계 기본 켬). 밑동 색을 손으로 칠하지 않는다.
-- 빛: 해는 그림 밖 보는 사람 등 뒤 왼쪽 위, 그림자는 오른쪽 안쪽(원리 1-2). 곳마다: 사막만 해 방향 그림자(빙 그림 → `tools/shadow-split.py`, ownShadow), 나머지는 원본 그림 그대로(규칙 없음, noShadow). 규칙 도구는 12곳이 끝날 때까지 보관.
-- 북극(옛 극지방, 펭귄 뺌): 동물·배경·소품 모두 가는 연필풍(빙). 받은 소품은 `python3 tools/pencil-cut.py 받은.jpg items/이름.webp [--ice]` → `tools/stage-meta.py`·`tools/stage-index.py`. 남은 일은 `media/stage-beta/README.txt` 끝 '남은 일'.
+- 밑동 스며들기: 소품 밑동 흙·모래는 그라데이션으로 바닥에 스며들게(설치도구 5단계 기본 켬 — 이미 있는 그림에 한꺼번에 하던 `tools/soak-base.py`는 2026-11-14 보관함으로). 밑동 색을 손으로 칠하지 않는다.
+- 빛: 해는 그림 밖 보는 사람 등 뒤 왼쪽 위, 그림자는 오른쪽 안쪽(원리 1-2). 곳마다: 사막만 해 방향 그림자(그림자를 파랑으로 받아 `tools/flat-shadow.py --key blue`, ownShadow), 나머지는 원본 그림 그대로(규칙 없음, noShadow). 
+- 북극(옛 극지방, 펭귄 뺌): 동물·배경·소품 모두 가는 연필풍(빙). 받은 그림은 `tools/stage-intake.py`(자르기는 `tools/bing-cut.py` — 옛 `pencil-cut.py`는 2026-11-14 보관함으로). 남은 일은 `media/stage-beta/README.txt` 끝 '남은 일'.
 - 목소리: 008은 ElevenLabs(Roger) 묶음 `media/voice/elevenlabs-roger/`로 다 채움(앱 말이 다 있으면 그 묶음, 아니면 Azure — 섞지 않음). 발음이 틀리면 소리 나는 대로 적어 다시 받음(예: 잠-자리, 땅깡아지).
-- 밑동 색이 땅과 비슷하면 스며들기, 다르면 묻기(`tools/bury-base.py`). 소품 선은 그 곳 동물 선 색으로(`tools/line-unify.py`) — 원리 1-1·1-3.
+- 밑동 색이 땅과 비슷하면 스며들기, 다르면 묻기. 소품 선은 그 곳 동물 선 색으로 — 원리 1-1·1-3(그 일을 하던 `bury-base.py`·`line-unify.py`는 연필풍 무대에서 안 써서 2026-11-14 보관함으로, 필요하면 `--revive`).
 - 그림 늘리기는 1.2배까지(넘으면 다시 그림), 줄이기는 자유(원리 9). 큰 줄기도 배경처럼 — 소품은 뿌리 끝 앞 땅이나 뿌리 사이 움푹한 흙에만(19).
 - 숨김 단계 하 50~70% · 중 25~40% · 상 8~18% · 스페셜(22). 화면 밖 한도 하 50·중 70·상 80·스페셜 90%, 끝 동물은 한 장면에 하나(21). 단계별 최소 크기 하 10·중 7·상 5%, 작은 동물은 그만큼 키워 돌·풀 같은 소품 뒤에만(22). 군락(23)·블록 소품(24)은 변형(가로·세로 0.8~1.2배·뒤집기)해 다양하게.
 - 보기: `media/stage/test.html?root=stage-beta`, 숨기기 시험 `media/stage/hide-test.html?place=nature/new-forest`. 만드는 순서는 `media/stage-beta/README.txt` 맨 위.
