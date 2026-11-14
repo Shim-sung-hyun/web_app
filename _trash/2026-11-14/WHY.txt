@@ -24,6 +24,7 @@ media/animals/sora.webp — 소라 그림을 빙 연필풍으로 다시 받음
 media/animals/dudeoji.webp — 두더지 그림을 빙 연필풍으로 다시 받음
 media/animals/jireongi.webp — 지렁이 그림을 빙 연필풍으로 다시 받음
 media/animals/ttanggangaji.webp — 땅강아지 그림을 빙 연필풍으로 다시 받음
+<<<<<<< Updated upstream
 media/animals/daseulgi.webp — 다슬기 그림을 빙 연필풍으로 다시 받음
 media/animals/megi.webp — 메기 그림을 빙 연필풍으로 다시 받음
 media/animals/songsari.webp — 송사리 그림을 빙 연필풍으로 다시 받음
@@ -34,3 +35,8 @@ media/animals/baksae.webp — 박새 그림을 빙 연필풍으로 다시 받음
 media/animals/beol.webp — 벌 그림을 빙 연필풍으로 다시 받음
 media/animals/bidulgi.webp — 비둘기 그림을 빙 연필풍으로 다시 받음
 media/animals/jebi.webp — 제비 그림을 빙 연필풍으로 다시 받음
+=======
+media/stage-beta/nature/new-underground/items/treeroots-1.webp — 땅속 나무뿌리를 줄기 있는 그림으로 다시 받음(선생님: 뿌리만 덩그러니)
+media/stage-beta/nature/new-underground/items/treeroots-2.webp — 땅속 나무뿌리를 줄기 있는 그림으로 다시 받음(선생님: 뿌리만 덩그러니)
+media/stage-beta/nature/new-underground/items/treeroots-3.webp — 땅속 나무뿌리를 줄기 있는 그림으로 다시 받음(선생님: 뿌리만 덩그러니)
+>>>>>>> Stashed changes

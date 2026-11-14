@@ -45,7 +45,7 @@
     1.1
    ],
    "plant": true,
-   "big": true,
+   "big": false,
    "scalefree": false,
    "baseMatch": false,
    "hang": true
@@ -212,7 +212,11 @@
    "bigstone",
    "clod",
    "buriedbranch"
-  ]
+  ],
+  "kindMax": {
+   "treeroots": 2,
+   "tunnel": 2
+  }
  },
  "blocks": [
   {
@@ -284,7 +288,7 @@
  "note": "2026-11-14 그림을 받아 넣음 — 단면(view flat, 원근 없음): 1m = 장면 높이의 35%(unit). 흙 속 아무 데나(beds.soil). 나무뿌리·풀뿌리는 꼭대기가 흙 맨 위(hangTop)에 매달림(stagekit hang). 그림자 없음(shadow false — bing-cut으로 자름)",
  "view": "flat",
  "unit": 0.35,
- "hangTop": 0.185,
+ "hangTop": 0.195,
  "bed": "soil",
  "beds": {
   "soil": {

@@ -563,11 +563,14 @@
    "leaflayer-1",
    "leaflayer-2",
    "stonegroup-1",
+   "tunnel-1",
+   "tunnel-2",
+   "stonegroup-2",
+   "stonegroup-3",
    "treeroots-1",
    "treeroots-2",
    "treeroots-3",
-   "tunnel-1",
-   "tunnel-2"
+   "treeroots-4"
   ]
  },
  "nature/new-water": {
