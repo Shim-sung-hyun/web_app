@@ -164,7 +164,8 @@
    "file": "olchaengi",
    "real": 0.03,
    "face": "L",
-   "hide": true
+   "hide": false,
+   "why": "3cm라 키워도 20판에 한 번도 안 나옴(2026-11-14 선생님 — 뺌)"
   },
   {
    "name": "다슬기",
@@ -192,8 +193,7 @@
    "file": "sudal",
    "real": 1.1,
    "face": "L",
-   "hide": false,
-   "why": "옛 만화풍 — 연필풍 수달을 받으면 다시 넣음(2026-11-14)"
+   "hide": true
   }
  ],
  "compose": {

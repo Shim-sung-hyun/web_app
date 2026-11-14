@@ -107,12 +107,6 @@
    "face": "L"
   },
   {
-   "name": "올챙이",
-   "src": "animals/olchaengi.webp",
-   "real": 0.03,
-   "face": "L"
-  },
-  {
    "name": "다슬기",
    "src": "animals/daseulgi.webp",
    "real": 0.045,
@@ -128,6 +122,12 @@
    "name": "새우",
    "src": "animals/saeu.webp",
    "real": 0.05,
+   "face": "L"
+  },
+  {
+   "name": "수달",
+   "src": "animals/sudal.webp",
+   "real": 1.1,
    "face": "L"
   }
  ],
