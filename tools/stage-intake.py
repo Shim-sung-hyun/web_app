@@ -48,6 +48,7 @@ def main():
     spec = json.load(open(os.path.join(pdir, 'intake.json'), encoding='utf-8'))
     sj = os.path.join(pdir, 'stage.json'); st = json.load(open(sj, encoding='utf-8')) if os.path.exists(sj) else {}   # 새 무대(들판처럼 아직 없는 곳)는 빈 것에서
     kinds, animals = spec['kinds'], {a['file']: a for a in spec['animals']}
+    noshadow = spec.get('shadow') is False   # 소품을 그림자 없이 받은 장면
 
     bg, props, anis, unknown = None, [], [], []
     for f in sorted(os.listdir(src)):
@@ -78,6 +79,8 @@ def main():
         st = {'name': spec['name'], 'view': 'ground', 'horizon': spec['horizon'], 'groundTop': gt, 'unit': spec.get('unit', .2), 'avoid': [],
               'beds': {'ground': {'name': '땅', 'y': [gt, 1], 'persp': True, 'skirt': []}}, 'noSkirt': True, 'blocks': spec['blocks'], 'animals': [],
               'compose': dict(spec['compose']), 'items': {}, 'skirtMeta': {}, 'scalefree': [], 'groundTol': spec.get('groundTol', 100), 'softKinds': [], 'pencil': True}
+        if spec.get('shadow') is False: st['noShadow'] = True   # 무대가 타원 그림자도 깔지 않음
+        if spec.get('maxLong'): st['maxLong'] = spec['maxLong']   # 큰 동물이 앞에서 화면을 덮지 않게(바닷속)
         if spec.get('see'): st['see'] = spec['see']   # 비침 한도(식물 많은 무대 .05 — 무대 README)
         json.dump(st, open(sj, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)   # 가운데서 멈춰도 다시 돌리면 이어 감
     os.makedirs(os.path.join(pdir, 'items'), exist_ok=True)
@@ -90,9 +93,12 @@ def main():
 
     for f, k, n in props:   # 2) 소품
         K = kinds[k]; name = '%s-%d' % (k, n); out = os.path.join(rel, 'items', name + '.webp'); pl = ['--plant'] if K.get('plant') else []
-        run(tool('flat-shadow.py'), os.path.join(src, f), out, '--key', K.get('key', 'blue'), *pl)
+        if noshadow:   # 그림자 없이 받은 장면(바닷속 등, 2026-11-14): 물체만 자름 — 단단한 것은 동물처럼(바닥 자국 없이), 식물은 가지 사이도 투명
+            run(tool('bing-cut.py'), os.path.join(src, f), out, *(pl or ['--animal']))
+        else: run(tool('flat-shadow.py'), os.path.join(src, f), out, '--key', K.get('key', 'blue'), *pl)
         run(tool('defringe.py'), out, *pl)
         it = {'name': K['name'], 'real': K['real'], 'bed': 'ground', 'kind': k, 'kindName': K['name'], 'flip': False, 'ownShadow': True}
+        if noshadow: it = {'name': K['name'], 'real': K['real'], 'bed': 'ground', 'kind': k, 'kindName': K['name']}   # 그림자가 없으니 뒤집어도 됨
         if K.get('big'): it['role'] = 'big'
         if K.get('ground'): it['ground'] = K['ground']
         st['items'][name] = it; print('소품 →', name)

@@ -485,5 +485,47 @@
    "willow-2",
    "willow-3"
   ]
+ },
+ "nature/new-sea": {
+  "name": "바닷속",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "used_by": [],
+  "ready": false,
+  "far": [],
+  "front": [],
+  "missing": [],
+  "skirt": [],
+  "items": [
+   "anemone-1",
+   "anemone-2",
+   "bigreef-1",
+   "bigreef-2",
+   "coral-1",
+   "coral-2",
+   "giantclam-1",
+   "giantclam-2",
+   "kelp-1",
+   "kelp-2",
+   "reef-1",
+   "reef-2",
+   "sandmound-1",
+   "sandmound-2",
+   "sandmound-3",
+   "seagrass-1",
+   "seagrass-2",
+   "smallrocks-1",
+   "smallrocks-2",
+   "sponge-1",
+   "sponge-2",
+   "sponge-3",
+   "tablecoral-1",
+   "tablecoral-2",
+   "wreckwood-1",
+   "wreckwood-2"
+  ]
  }
 }

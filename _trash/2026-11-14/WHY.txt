@@ -11,3 +11,13 @@ media/animals/baengno.webp — 백로 그림을 빙 연필풍으로 다시 받�
 media/animals/mikkuraji.webp — 미꾸라지 그림을 빙 연필풍으로 다시 받음
 media/animals/mulbanggae.webp — 물방개 그림을 빙 연필풍으로 다시 받음
 media/animals/sogeumjaengi.webp — 소금쟁이 그림을 빙 연필풍으로 다시 받음
+media/animals/badageobuk.webp — 바다거북 그림을 빙 연필풍으로 다시 받음
+media/animals/bulgasari.webp — 불가사리 그림을 빙 연필풍으로 다시 받음
+media/animals/dolgorae.webp — 돌고래 그림을 빙 연필풍으로 다시 받음
+media/animals/godeungeo.webp — 고등어 그림을 빙 연필풍으로 다시 받음
+media/animals/gorae.webp — 고래 그림을 빙 연필풍으로 다시 받음
+media/animals/haepari.webp — 해파리 그림을 빙 연필풍으로 다시 받음
+media/animals/muneo.webp — 문어 그림을 빙 연필풍으로 다시 받음
+media/animals/ojingeo.webp — 오징어 그림을 빙 연필풍으로 다시 받음
+media/animals/sangeo.webp — 상어 그림을 빙 연필풍으로 다시 받음
+media/animals/sora.webp — 소라 그림을 빙 연필풍으로 다시 받음

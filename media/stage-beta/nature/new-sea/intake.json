@@ -1,7 +1,7 @@
 {
  "name": "바닷속",
- "horizon": 0.45,
- "groundTop": 0.46,
+ "horizon": 0.53,
+ "groundTop": 0.54,
  "groundTol": 100,
  "shadow": false,
  "kinds": {
@@ -297,5 +297,6 @@
    }
   }
  ],
- "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것. 그림자 없는 장면: stage-intake.py가 아직 파란 그림자를 전제로 함 — 넣기 전에 도구와 자리 규칙을 이 장면에 맞게 손봄"
+ "note": "2026-11-14 그림을 넣음(stage-intake.py, 그림자 없이 받은 장면은 bing-cut.py로 자름). maxLong .5 — 큰 동물(고래·상어)이 앞에서 화면을 덮지 않게",
+ "maxLong": 0.5
 }

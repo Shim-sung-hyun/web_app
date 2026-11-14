@@ -653,6 +653,8 @@
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
     const tryAt0 = (x, y, flip, extra) => { const g0 = minAt(y) / (a.real * perM(pl, y, bed)); if (g0 > 1 && (opt.grow === false || !SF.size || g0 > (opt.growMax ?? pl.growMax ?? 5))) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
+      /* 너무 큰 동물은 앞에 안 옴(2026-11-14 바닷속: 12m 고래가 맨 앞에서 화면을 덮음): 그림의 긴 쪽이 장면 높이의 stage.json maxLong을 넘는 깊이는 버림 — 멀리(작게)만 */
+      const mL = opt.maxLong ?? pl.maxLong; if (mL && Math.max(A.w / .75, A.h) > mL) return;
       /* 화면 끝(2026-11-11 선생님): 코·꼬리만 내밀어도 됨(화면 밖은 가려진 것으로 셈). 화면 밖 몫의 한도는 단계마다 opt.offMax(하 .5·중 .7·상 .8·스페셜 .9, 기본 .7).
          끝에 걸친 동물은 한 장면에 하나만(둘째는 가운데로 단계를 못 지킬 때만), 화면 안에 남은 조각 폭이 장면의 opt.edgeMin(기본 3%)은 되게 — 점수에도 작은 벌점(EDGE_PEN)을 줘 가운데와 비슷하면 가운데로 */
       const E = edgeOf(A); A.off = E.off;

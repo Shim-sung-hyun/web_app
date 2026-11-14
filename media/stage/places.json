@@ -969,9 +969,34 @@
     "face": "L"
    },
    {
+    "name": "돌고래",
+    "src": "animals/dolgorae.webp",
+    "real": 2.8,
+    "face": "L"
+   },
+   {
+    "name": "바다거북",
+    "src": "animals/badageobuk.webp",
+    "real": 1.1,
+    "face": "L"
+   },
+   {
     "name": "문어",
     "src": "animals/muneo.webp",
-    "real": 1.0
+    "real": 1.0,
+    "face": "L"
+   },
+   {
+    "name": "오징어",
+    "src": "animals/ojingeo.webp",
+    "real": 0.6,
+    "face": "L"
+   },
+   {
+    "name": "해파리",
+    "src": "animals/haepari.webp",
+    "real": 0.4,
+    "face": "L"
    },
    {
     "name": "고등어",
@@ -982,34 +1007,26 @@
    {
     "name": "불가사리",
     "src": "animals/bulgasari.webp",
-    "real": 0.25
+    "real": 0.25,
+    "face": "L"
    },
    {
     "name": "소라",
     "src": "animals/sora.webp",
-    "real": 0.12
+    "real": 0.12,
+    "face": "L"
    },
    {
-    "name": "해파리",
-    "src": "animals/haepari.webp",
-    "real": 0.4
+    "name": "가오리",
+    "src": "animals/gaori.webp",
+    "real": 1.2,
+    "face": "L"
    },
    {
-    "name": "오징어",
-    "src": "animals/ojingeo.webp",
-    "real": 0.6
-   },
-   {
-    "name": "바다거북",
-    "src": "animals/badageobuk.webp",
-    "real": 1.1,
-    "face": "R"
-   },
-   {
-    "name": "돌고래",
-    "src": "animals/dolgorae.webp",
-    "real": 2.8,
-    "face": "R"
+    "name": "흰동가리",
+    "src": "animals/huindonggari.webp",
+    "real": 0.1,
+    "face": "L"
    }
   ],
   "props": "바위 암초 2~4\n다시마 숲 3~8\n산호 무리 0.5~1.5\n해초 0.5~1.5\n말미잘 0.1~0.3\n큰 조개 0.2~0.5\n작은 바위 0.3~0.8\n모래 위 조개껍데기 0.05~0.15",
