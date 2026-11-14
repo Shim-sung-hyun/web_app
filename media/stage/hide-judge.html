@@ -413,7 +413,7 @@
     const order = lay.slice().sort((a, b) => depthY(a) - depthY(b));
     order.forEach((o, i) => {
       const z = look.zOf ? look.zOf(o, i) : 10 + i * 2;
-      const B = pl.beds[o.bed] || {}, far = B.persp === false ? 0 : clamp(1 - (o.y - pl.horizon) / (1 - pl.horizon), 0, 1);
+      const B = pl.beds[o.bed] || {}, far = B.persp === false ? 0 : clamp(1 - (depthY(o) - pl.horizon) / (1 - pl.horizon), 0, 1);
       const top = o.y - o.h * o.base, left = o.x - o.w / 2, fx = f => o.x + (o.flip ? -1 : 1) * o.w * (f - .5);
       const footL = Math.min(fx(o.foot[0]), fx(o.foot[1])), footR = Math.max(fx(o.foot[0]), fx(o.foot[1]));
       if (B.persp !== false && sh > 0 && !o.noShadow && !pl.noShadow && !(pl.items[o.id] || {}).soak && !(pl.items[o.id] || {}).ownShadow) {   // 땅에 닿는 옅은 그림자(같은 방향·진하기) — 밑동 스며들기 한 소품은 안 그림(2026-11-10: 지운 모래 끝에 그림자만 남아 떠 보였음)
@@ -680,13 +680,18 @@
     const make = (x, y, flip) => {   // 그 깊이의 크기로 동물 놓기: 몸의 가장 긴 쪽 = real × 1m (가로는 4:3 장면이라 0.75)
       const m1 = perM(pl, y, bed), real0 = a.real * m1, bodyLong = opt.grow === false ? real0 : Math.max(real0, minAt(y)), Mw = M.w / Math.max(M.w, M.h), Mh = M.h / Math.max(M.w, M.h);
       const bodyW = bw * Mw, bodyH = bh * Mh, k = bodyLong / Math.max(bodyW * .75, bodyH), h = k * Mh, w = k * Mw * .75;
-      return {id: a.name, src: a.src, img: a.img, bed, x, y, w, h, base: baseFrac, flip, foot: [M.box[0] / M.w, M.box[2] / M.w], actor: true, skirt: null, animal: a.name, grow: bodyLong / real0};
+      const A = {id: a.name, src: a.src, img: a.img, bed, x, y, w, h, base: baseFrac, flip, foot: [M.box[0] / M.w, M.box[2] / M.w], actor: true, skirt: null, animal: a.name, grow: bodyLong / real0};
+      /* 떠 있는 동물(2026-11-14 선생님: 고래·상어는 바닥에서 떠 있게): stage.json animals의 swim [최소, 최대] m — 크기·앞뒤는 바닥 자리 y(sortY, 그 아래 바닥)로 셈하고,
+         그림만 그 깊이의 swim m만큼 위로 올림. 바닥 검사·'가리는 소품의 바닥이 앞에'는 바닥 자리로 봄 */
+      if (a.swim) { const lift = (a.swim[0] + R() * (a.swim[1] - a.swim[0])) * m1; A.sortY = y; A.y = y - lift; A.swimLift = lift; }
+      return A;
     };
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
     const tryAt0 = (x, y, flip, extra) => { const g0 = minAt(y) / (a.real * perM(pl, y, bed)); if (g0 > 1 && (opt.grow === false || !SF.size || g0 > (opt.growMax ?? pl.growMax ?? 5))) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
       /* 너무 큰 동물은 앞에 안 옴(2026-11-14 바닷속: 12m 고래가 맨 앞에서 화면을 덮음): 그림의 긴 쪽이 장면 높이의 stage.json maxLong을 넘는 깊이는 버림 — 멀리(작게)만 */
       const mL = opt.maxLong ?? pl.maxLong; if (mL && Math.max(A.w / .75, A.h) > mL) return;
+      if (A.swimLift && A.y - A.h * A.base < .02) return;   // 떠 있는 동물이 화면 위로 나가지 않게
       /* 화면 끝(2026-11-11 선생님): 코·꼬리만 내밀어도 됨(화면 밖은 가려진 것으로 셈). 화면 밖 몫의 한도는 단계마다 opt.offMax(하 .5·중 .7·상 .8·스페셜 .9, 기본 .7).
          끝에 걸친 동물은 한 장면에 하나만(둘째는 가운데로 단계를 못 지킬 때만), 화면 안에 남은 조각 폭이 장면의 opt.edgeMin(기본 3%)은 되게 — 점수에도 작은 벌점(EDGE_PEN)을 줘 가운데와 비슷하면 가운데로 */
       const E = edgeOf(A); A.off = E.off;
@@ -694,8 +699,9 @@
       const edge2 = E.off > EDGE && lay.some(o => o.animal && (o.off || 0) > EDGE);   // 이미 끝에 걸친 동물이 있음 — 가운데로는 단계를 못 지킬 때만(벌점 EDGE2_PEN < 단계 벗어남 .5)
       if (E.off > EDGE && E.onW < (opt.edgeMin ?? .03)) return;
       if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;
-      if (!footOnGround(pl, A, covers) || covers.some(f => !coversRoots(f, A))) return;
-      if (B.top != null && A.y - A.h * A.base < B.top) return;   // 자리의 꼭대기 위로 솟지 않게(beds.top — 땅속)   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
+      const Ag = A.swimLift ? Object.assign({}, A, {y: A.sortY}) : A;   // 떠 있는 동물은 그 아래 바닥 자리로
+      if (!footOnGround(pl, Ag, covers) || covers.some(f => !coversRoots(f, Ag))) return;   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
+      if (B.top != null && A.y - A.h * A.base < B.top) return;   // 자리의 꼭대기 위로 솟지 않게(beds.top — 땅속)
       /* 깔린 것처럼 보이지 않게(2026-11-09 선생님: 곰·너구리가 뿌리에 깔림): 가까운 줄기(frame)와는 겹치지 않고,
          앞 소품의 땅에 퍼진 밑동(아래 18%)이 동물의 발(아래 25%)을 덮지 않게 — 가리는 것은 소품의 몸통 */
       const Abox = [A.x - A.w * .4, A.y - A.h * A.base, A.x + A.w * .4, A.y];
@@ -706,7 +712,7 @@
       /* 바닥 앞뒤(2026-11-13 선생님: 퍼핀을 가린 바위의 바닥이 퍼핀 발보다 위 — 가리는 소품의 바닥은 늘 동물 바닥보다 앞에): 동물을 실제로 가리는 소품의
          불투명한 몸(알파 110 넘게 — 반투명한 눈 자락은 뺌)의 바닥이, 동물과 겹치는 폭(가운데 80%) 안에서 동물 바닥보다 위면 버림 */
       for (const o of frontAll) { if (o.animal) continue; const im = o.img || (pl.items[o.id] || {}).img; if (!im) continue;
-        const ob = solidBottom(o, im, Abox[0], Abox[2]); if (ob != null && ob < A.y - .004 && coveredBy(o, im, A)) return; }
+        const ob = solidBottom(o, im, Abox[0], Abox[2]); if (ob != null && ob < depthY(A) - .004 && coveredBy(o, im, A)) return; }
       /* (2026-11-09 선생님) 큰 줄기 뒤에서 몸 일부가 가려져도 됨 — 뿌리 위에 서는 것은 19번이 막음 */
       const feetTop = A.y - A.h * A.base * .25;
       for (const o of frontAll) { const it = pl.items[o.id] || {}; if (!it.img) continue; const baseTop = o.y - o.h * o.base * .18;
@@ -852,7 +858,7 @@ async function loadPlace(){
   const place=$('place').value; if(place===placeNow&&pl) return; placeNow=place;
   $('msg').textContent='무대를 불러오는 중…';
   pl=await Stage.load(place,{base:'../stage-beta/'});
-  AN=(await Promise.all((pl.animals||[]).map(async a=>({name:a.name,src:base()+a.src,real:a.real,face:a.face,img:await img(base()+a.src)})))).filter(a=>a.img);
+  AN=(await Promise.all((pl.animals||[]).map(async a=>({name:a.name,src:base()+a.src,real:a.real,face:a.face,swim:a.swim,img:await img(base()+a.src)})))).filter(a=>a.img);
 }
 /* 한 묶음: 판 하나(스페셜은 여러 판)에서 후보를 모아 까닭마다 고루 12장 */
 async function batch(){

@@ -78,13 +78,21 @@
    "name": "고래",
    "src": "animals/gorae.webp",
    "real": 12.0,
-   "face": "L"
+   "face": "L",
+   "swim": [
+    1.5,
+    4
+   ]
   },
   {
    "name": "상어",
    "src": "animals/sangeo.webp",
    "real": 4.0,
-   "face": "L"
+   "face": "L",
+   "swim": [
+    0.8,
+    2.5
+   ]
   },
   {
    "name": "돌고래",

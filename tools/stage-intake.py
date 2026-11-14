@@ -130,6 +130,7 @@ def main():
         srcs = ['animals/%s.webp' % a['file']] + ([a['fallback']] if a.get('fallback') else [])
         got = next((s for s in srcs if os.path.exists(os.path.join(ROOT, 'media', s))), None)
         if got: st['animals'].append({'name': a['name'], 'src': got, 'real': a['real'], 'face': a.get('face', 'L')})
+        if got and a.get('swim'): st['animals'][-1]['swim'] = a['swim']   # 떠 있는 동물: 바닥에서 [최소, 최대] m 위(바닷속 고래·상어)
     open(sj, "w", encoding="utf-8").write(json.dumps(st, ensure_ascii=False, indent=1) + "\n")
 
     ix = os.path.join(ROOT, 'media', 'stage-beta', 'index.json'); I = json.load(open(ix, encoding='utf-8'))

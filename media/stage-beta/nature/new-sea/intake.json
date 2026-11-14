@@ -144,14 +144,22 @@
    "file": "gorae",
    "real": 12.0,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "swim": [
+    1.5,
+    4
+   ]
   },
   {
    "name": "상어",
    "file": "sangeo",
    "real": 4.0,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "swim": [
+    0.8,
+    2.5
+   ]
   },
   {
    "name": "돌고래",
