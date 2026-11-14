@@ -917,20 +917,14 @@
  "nature/pond": {
   "name": "강·호수",
   "slug": "new-pond",
-  "horizon": 40,
+  "horizon": 39,
   "setting": "a calm Korean river and lake: soft green hills and trees far away, a wide still lake, and a sandy grassy shore in front",
   "animals": [
-   {
-    "name": "백로",
-    "src": "animals/baengno.webp",
-    "real": 0.9,
-    "face": "R"
-   },
    {
     "name": "수달",
     "src": "animals/sudal.webp",
     "real": 1.1,
-    "face": "R"
+    "face": "L"
    },
    {
     "name": "하마",
@@ -939,9 +933,40 @@
     "face": "L"
    },
    {
-    "name": "개구리",
-    "src": "words/gaeguri.webp",
-    "real": 0.12
+    "name": "악어",
+    "src": "animals/akeo.webp",
+    "real": 3.5,
+    "face": "L"
+   },
+   {
+    "name": "청둥오리",
+    "src": "animals/cheongdungori.webp",
+    "real": 0.6,
+    "face": "L"
+   },
+   {
+    "name": "물총새",
+    "src": "animals/mulchongsae.webp",
+    "real": 0.17,
+    "face": "L"
+   },
+   {
+    "name": "원앙",
+    "src": "animals/wonang.webp",
+    "real": 0.45,
+    "face": "L"
+   },
+   {
+    "name": "남생이",
+    "src": "animals/namsaengi.webp",
+    "real": 0.25,
+    "face": "L"
+   },
+   {
+    "name": "왜가리",
+    "src": "animals/waegari.webp",
+    "real": 1.0,
+    "face": "L"
    }
   ],
   "props": "버드나무 6~10\n갈대 무리 1.5~3\n부들 무리 1.5~2.5\n물가 바위 1~2\n연잎 무리 0.2~0.5\n물가 풀 0.4~0.8\n작은 돌 0.2~0.5\n쓰러진 나무 0.6~1.2",

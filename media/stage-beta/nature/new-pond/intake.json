@@ -1,7 +1,7 @@
 {
  "name": "강·호수",
- "horizon": 0.45,
- "groundTop": 0.46,
+ "horizon": 0.39,
+ "groundTop": 0.59,
  "groundTol": 100,
  "shadow": true,
  "kinds": {
@@ -89,8 +89,8 @@
   "driftlog": {
    "name": "쓰러진 나무",
    "real": [
-    0.6,
-    1.2
+    0.35,
+    0.6
    ],
    "plant": false,
    "big": false,
@@ -219,8 +219,8 @@
  ],
  "compose": {
   "clusters": [
-   4,
-   5
+   5,
+   7
   ],
   "perCluster": [
    2,
@@ -290,5 +290,7 @@
    }
   }
  ],
- "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것"
+ "note": "2026-11-14 그림을 넣으며 지평선을 배경에 맞춤(먼 물가 .39, 모래 시작 .59)",
+ "see": 0.05,
+ "growMax": 12
 }

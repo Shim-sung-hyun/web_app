@@ -602,5 +602,40 @@
    "waterweed-1",
    "waterweed-2"
   ]
+ },
+ "nature/new-pond": {
+  "name": "강·호수",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "used_by": [],
+  "ready": false,
+  "far": [],
+  "front": [],
+  "missing": [],
+  "skirt": [],
+  "items": [
+   "bigrocks-1",
+   "bigrocks-2",
+   "bushwillow-1",
+   "bushwillow-2",
+   "cattails-1",
+   "cattails-2",
+   "driftlog-1",
+   "driftlog-2",
+   "mudbank-1",
+   "pebbles-1",
+   "pebbles-2",
+   "reeds-1",
+   "reeds-2",
+   "shoregrass-1",
+   "shoregrass-2",
+   "shorerock-1",
+   "shorerock-2",
+   "willow-1",
+   "willow-2"
+  ]
  }
 }
