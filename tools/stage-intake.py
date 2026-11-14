@@ -82,7 +82,7 @@ def main():
               'compose': dict(spec['compose']), 'items': {}, 'skirtMeta': {}, 'scalefree': [], 'groundTol': spec.get('groundTol', 100), 'softKinds': [], 'pencil': True}
         if spec.get('shadow') is False: st['noShadow'] = True   # 무대가 타원 그림자도 깔지 않음
         if spec.get('maxLong'): st['maxLong'] = spec['maxLong']   # 큰 동물이 앞에서 화면을 덮지 않게(바닷속)
-        for k in ('see', 'hangTop', 'growMax', 'groundCheck'):   # 빈 땅 검사 끄기(물 배경 — 비친 하늘을 땅이 아니라고 봄, 논·습지) · 비침 한도(식물 많은 무대 .05 — 무대 README) · 매달린 것의 꼭대기(땅속) · 작은 동물 키우기 한도
+        for k in ('see', 'hangTop', 'growMax', 'groundCheck', 'smallFront'):   # 작은 소품을 앞쪽에만 두는 한도(m, 갯벌 .25 — 소품이 거의 작아 앞에 몰림) · 빈 땅 검사 끄기(물 배경 — 비친 하늘을 땅이 아니라고 봄, 논·습지) · 비침 한도(식물 많은 무대 .05 — 무대 README) · 매달린 것의 꼭대기(땅속) · 작은 동물 키우기 한도
             if spec.get(k) is not None: st[k] = spec[k]
         json.dump(st, open(sj, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)   # 가운데서 멈춰도 다시 돌리면 이어 감
     os.makedirs(os.path.join(pdir, 'items'), exist_ok=True)
