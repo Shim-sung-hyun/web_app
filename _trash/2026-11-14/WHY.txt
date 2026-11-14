@@ -39,3 +39,6 @@ media/stage-beta/nature/new-underground/items/treeroots-2.webp — 땅속 나무
 media/stage-beta/nature/new-underground/items/treeroots-3.webp — 땅속 나무뿌리를 줄기 있는 그림으로 다시 받음(선생님: 뿌리만 덩그러니)
 media/stage-beta/nature/new-water/items/rootmass-1.webp — 물속 물가 나무뿌리 — 수염(커튼)처럼 내려와 보여 뺌(선생님 2026-11-14), 그루터기가 대신함
 media/stage-beta/nature/new-water/items/rootmass-2.webp — 물속 물가 나무뿌리 — 수염(커튼)처럼 내려와 보여 뺌(선생님 2026-11-14), 그루터기가 대신함
+media/stage-beta/nature/new-wetland/items/willow-1.webp — 논·습지 버드나무를 키 큰 것으로 다시 받음(선생님 2026-11-14)
+media/stage-beta/nature/new-wetland/items/willow-2.webp — 논·습지 버드나무를 키 큰 것으로 다시 받음(선생님 2026-11-14)
+media/stage-beta/nature/new-wetland/items/willow-3.webp — 논·습지 버드나무를 키 큰 것으로 다시 받음(선생님 2026-11-14)

@@ -504,11 +504,22 @@
    "sedge-2",
    "waterstones-1",
    "waterstones-2",
-   "willow-1",
-   "willow-2",
-   "willow-3",
    "bankgrass-2",
-   "bankgrass-3"
+   "bankgrass-3",
+   "levee-1",
+   "levee-2",
+   "minari-1",
+   "minari-2",
+   "mudbank-1",
+   "reedwall-1",
+   "rocksedge-1",
+   "rocksedge-2",
+   "stumpweeds-1",
+   "stumpweeds-2",
+   "sunkenlog-1",
+   "sunkenlog-2",
+   "willow-1",
+   "willow-2"
   ]
  },
  "nature/new-sea": {
