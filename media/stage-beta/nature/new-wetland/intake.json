@@ -400,5 +400,6 @@
  ],
  "note": "2026-11-14 그림 넣음(빙 연필풍) — 배치는 들판을 본보기로",
  "see": 0.05,
- "growMax": 12
+ "growMax": 12,
+ "groundCheck": false
 }

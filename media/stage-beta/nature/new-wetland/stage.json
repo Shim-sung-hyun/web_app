@@ -2129,5 +2129,6 @@
  ],
  "pencil": true,
  "see": 0.05,
- "growMax": 12
+ "growMax": 12,
+ "groundCheck": false
 }
