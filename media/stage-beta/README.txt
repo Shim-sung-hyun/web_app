@@ -51,6 +51,7 @@
   깊이 넷으로 나눈 몫(먼→앞): 소품 8·25·28·40% → 26·23·23·29%, 동물 0·13·26·61% → 8·15·28·48%(게·조개 4~6cm는 멀면 키워도 찾을 크기가 안 돼 앞에 남음 — growMax 20도 거의 같아 12 그대로). 스페셜 20판 6.0마리.
 - 더 받을 그림 프롬프트(2026-11-14 선생님: 더 풍부하게): copy.html?f=PROMPTS-new-mudflat-more.txt — 두 장째 5(작은 갯바위·큰 갯바위 무리·굴 바위·해초·돌무더기) + 새 소품 6가지×2
   (마른 갈대 덤불 dryreeds·나문재 덤불 seepweed·떠밀려 온 나무토막 driftwood·그물과 통발 더미 netpile·진흙 둑과 갯잔디 mudbank·굴 밭 oysterbed). intake.json kinds·blocks에 미리 넣어 둠 → 받으면 in/에 넣고 stage-intake.py.
+  빙이 돌무더기 프롬프트를 '안전하지 않음'으로 막음(2026-11-14) → 'tight heap … rounded wet stones'를 'low pile of smooth grey beach cobbles … like a little cairn'으로, 해초의 'wet heap'도 'thick pile'로 바꿈 — 빙에서는 wet·tight·rounded를 한 문장에 몰아 쓰지 않음.
 - 다음: 선생님 숨기기 시험·평가(hide-test.html?place=nature/new-mudflat) — 키운 조개·맛조개가 하에서 크게 보이는 것이 어색하지 않은지, 큰 갯바위 무리가 앞에서 너무 크지 않은지 보기.
 
 ■ nature/new-wetland 논·습지 (2026-11-14 빙 연필풍으로 한 번에 만듦 — tools/stage-intake.py, 설정 intake.json)
