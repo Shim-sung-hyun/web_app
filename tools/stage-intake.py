@@ -7,6 +7,7 @@
 받은폴더 안 파일 이름(확장자는 jpg·jpeg·png·webp 아무거나):
     bg.jpg                 배경 — 가운데를 4:3으로 잘라 1200×900
     종류-번호.jpg          소품(예: oak-1.jpg) — 종류는 그 무대 intake.json의 kinds. 그림자는 파랑(#0000FF)으로 받은 것
+                           (intake.json "shadow": false인 곳 — 땅속·물속·하늘 — 은 그림자 없이 bing-cut.py로, view·beds·bed·hangTop도 intake.json에서)
     동물파일이름.jpg       동물(예: saseum.jpg) — intake.json의 animals[].file
 
 하는 일(무대 폴더 media/stage-beta/<곳>/, 설정 intake.json):
@@ -76,12 +77,13 @@ def main():
         old += [os.path.join(rel, f) for f in ('bg.jpg', 'standard.jpg')]
         trash(old, '%s를 빙 연필풍으로 다시 만듦 — 옛 만화풍 배경·소품' % spec['name'])
         gt = spec['groundTop']
-        st = {'name': spec['name'], 'view': 'ground', 'horizon': spec['horizon'], 'groundTop': gt, 'unit': spec.get('unit', .2), 'avoid': [],
-              'beds': {'ground': {'name': '땅', 'y': [gt, 1], 'persp': True, 'skirt': []}}, 'noSkirt': True, 'blocks': spec['blocks'], 'animals': [],
+        st = {'name': spec['name'], 'view': spec.get('view', 'ground'), 'horizon': spec['horizon'], 'groundTop': gt, 'unit': spec.get('unit', .2), 'avoid': [],
+              'beds': spec.get('beds') or {'ground': {'name': '땅', 'y': [gt, 1], 'persp': True, 'skirt': []}}, 'noSkirt': True, 'blocks': spec['blocks'], 'animals': [],
               'compose': dict(spec['compose']), 'items': {}, 'skirtMeta': {}, 'scalefree': [], 'groundTol': spec.get('groundTol', 100), 'softKinds': [], 'pencil': True}
         if spec.get('shadow') is False: st['noShadow'] = True   # 무대가 타원 그림자도 깔지 않음
         if spec.get('maxLong'): st['maxLong'] = spec['maxLong']   # 큰 동물이 앞에서 화면을 덮지 않게(바닷속)
-        if spec.get('see'): st['see'] = spec['see']   # 비침 한도(식물 많은 무대 .05 — 무대 README)
+        for k in ('see', 'hangTop', 'growMax'):   # 비침 한도(식물 많은 무대 .05 — 무대 README) · 매달린 것의 꼭대기(땅속) · 작은 동물 키우기 한도
+            if spec.get(k) is not None: st[k] = spec[k]
         json.dump(st, open(sj, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)   # 가운데서 멈춰도 다시 돌리면 이어 감
     os.makedirs(os.path.join(pdir, 'items'), exist_ok=True)
 
@@ -93,12 +95,15 @@ def main():
 
     for f, k, n in props:   # 2) 소품
         K = kinds[k]; name = '%s-%d' % (k, n); out = os.path.join(rel, 'items', name + '.webp'); pl = ['--plant'] if K.get('plant') else []
-        if noshadow:   # 그림자 없이 받은 장면(바닷속 등, 2026-11-14): 물체만 자름 — 단단한 것은 동물처럼(바닥 자국 없이), 식물은 가지 사이도 투명
+        if noshadow:   # 땅이 없는 곳(땅속·물속·하늘, 2026-11-14): 흰 바탕에 물건만 — 그림자 없이 자르고, 그림자가 없으니 뒤집어도 됨
             run(tool('bing-cut.py'), os.path.join(src, f), out, *(pl or ['--animal']))
-        else: run(tool('flat-shadow.py'), os.path.join(src, f), out, '--key', K.get('key', 'blue'), *pl)
-        run(tool('defringe.py'), out, *pl)
-        it = {'name': K['name'], 'real': K['real'], 'bed': 'ground', 'kind': k, 'kindName': K['name'], 'flip': False, 'ownShadow': True}
-        if noshadow: it = {'name': K['name'], 'real': K['real'], 'bed': 'ground', 'kind': k, 'kindName': K['name']}   # 그림자가 없으니 뒤집어도 됨
+            run(tool('defringe.py'), out, *pl); run(tool('defringe.py'), out, '--rim')   # 미색 종이로 온 그림의 밝은 테두리
+            it = {'name': K['name'], 'real': K['real'], 'bed': spec.get('bed', 'ground'), 'kind': k, 'kindName': K['name']}
+        else:
+            run(tool('flat-shadow.py'), os.path.join(src, f), out, '--key', K.get('key', 'blue'), *pl)
+            run(tool('defringe.py'), out, *pl)
+            it = {'name': K['name'], 'real': K['real'], 'bed': 'ground', 'kind': k, 'kindName': K['name'], 'flip': False, 'ownShadow': True}
+        if K.get('hang'): it['hang'] = True
         if K.get('big'): it['role'] = 'big'
         if K.get('ground'): it['ground'] = K['ground']
         st['items'][name] = it; print('소품 →', name)
@@ -126,7 +131,7 @@ def main():
     open(sj, "w", encoding="utf-8").write(json.dumps(st, ensure_ascii=False, indent=1) + "\n")
 
     ix = os.path.join(ROOT, 'media', 'stage-beta', 'index.json'); I = json.load(open(ix, encoding='utf-8'))
-    I.setdefault(place, {'name': spec['name'], 'group': place.split('/')[0], 'view': 'ground', 'bg': ['bg'], 'used_by': [], 'ready': False, 'far': [], 'front': [], 'missing': [], 'skirt': []})
+    I.setdefault(place, {'name': spec['name'], 'group': place.split('/')[0], 'view': spec.get('view', 'ground'), 'bg': ['bg'], 'used_by': [], 'ready': False, 'far': [], 'front': [], 'missing': [], 'skirt': []})
     I[place]['items'] = list(st['items']); json.dump(I, open(ix, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     run(tool('stage-meta.py')); run(tool('stage-index.py'))
     if anis: run(tool('props-index.py'))

@@ -21,3 +21,6 @@ media/animals/muneo.webp — 문어 그림을 빙 연필풍으로 다시 받음
 media/animals/ojingeo.webp — 오징어 그림을 빙 연필풍으로 다시 받음
 media/animals/sangeo.webp — 상어 그림을 빙 연필풍으로 다시 받음
 media/animals/sora.webp — 소라 그림을 빙 연필풍으로 다시 받음
+media/animals/dudeoji.webp — 두더지 그림을 빙 연필풍으로 다시 받음
+media/animals/jireongi.webp — 지렁이 그림을 빙 연필풍으로 다시 받음
+media/animals/ttanggangaji.webp — 땅강아지 그림을 빙 연필풍으로 다시 받음

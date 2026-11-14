@@ -557,8 +557,12 @@ body.setup #adminBtn{display:none}
     const w = h * (it.w / it.h) * .75;   // 장면이 4:3
     const R = rnd(Math.floor(r * 4294967296));
     const skirtMargin = it.skirtMargin || [.03 + R() * .04, .03 + R() * .04];
-    return Object.assign({id: it.id, src: it.src, bed: it.bed, x, y, w, h, base, flip: !!flip, foot: it.foot || [.2, .8], skirt: pickSkirt(pl, it, r), skirtMargin, skirtHeightScale: it.skirtHeightScale, skirtOffset: it.skirtOffset, skirtScale: it.skirtScale}, extra || {});
+    const o = Object.assign({id: it.id, src: it.src, bed: it.bed, x, y, w, h, base, flip: !!flip, foot: it.foot || [.2, .8], skirt: pickSkirt(pl, it, r), skirtMargin, skirtHeightScale: it.skirtHeightScale, skirtOffset: it.skirtOffset, skirtScale: it.skirtScale}, extra || {});
+    if (it.hang) { o.hang = true; hangTo(pl, o); }
+    return o;
   }
+  /* 매달린 것(2026-11-14 땅속 나무뿌리·풀뿌리): 그림 꼭대기가 stage.json hangTop(없으면 groundTop)에 닿게 — 위 풀밭에서 흙 속으로 내려옴. 크기가 바뀌어도 꼭대기는 그대로 */
+  const hangTo = (pl, o) => { o.y = (pl.hangTop ?? pl.groundTop) + o.h * (o.base || 1); };
 
   /* 무작위 배치: 자리마다 그 자리의 요소만. 고르게 흩뿌리지 않고 2~4 덩어리(큰 것 하나 + 앞쪽 작은 것) + 빈 땅 */
   /* 배치 고치기에서 익힌 원리(2026-11-12, 선생님이 사막 32판을 고친 것 — media/stage/arrange.html):
@@ -649,7 +653,8 @@ body.setup #adminBtn{display:none}
        ⑦ 같은 소품은 한 장면에 2번까지 · ⑧ 좌우는 화면 안에 다 들어옴(좌우 가장자리에서 잘려도 되는 것은 가까운 줄기 frame뿐, 위로는 넘어가도 됨) · 같은 자리에서 너무 겹침 */
     /* 줄기 그림 안의 설 땅에는 작은 것(실제 rootSmall m 이하)만 — 나무·덤불이 남의 뿌리 흙에서 자라지 않게 */
     const inFrame = p => fr && [0, .5, 1].some(k => { const fx = p.x + (p.flip ? -1 : 1) * p.w * (p.foot[0] + (p.foot[1] - p.foot[0]) * k - .5); return solidAt(fr, fr.img, fx, Math.min(.999, p.y + .004), 256); });
-    const clash = (p, grove) => !footOnGround(pl, p, fr && [fr]) || (inFrame(p) && realMax(pl.items[p.id] || {}) > (pl.rootSmall ?? 1.2))
+    const overTop = p => (B => B && B.top != null && !p.hang && p.y - p.h * p.base < B.top)(pl.beds[p.bed]);   // 자리의 꼭대기(beds.top, 2026-11-14 땅속: 흙 위 풀밭·하늘로 솟지 않게)
+    const clash = (p, grove) => !footOnGround(pl, p, fr && [fr]) || overTop(p) || (inFrame(p) && realMax(pl.items[p.id] || {}) > (pl.rootSmall ?? 1.2))
       || tooSoft(pl, pl.items[p.id] || {}, p)
       || ((it => it.cut && !((it.cut === 'left') !== p.flip ? p.x - p.w / 2 < -.005 : p.x + p.w / 2 > 1.005))(pl.items[p.id] || {}))   // 잘린 끝은 화면 밖으로
       || (fr && realMax(pl.items[p.id] || {}) > (pl.nestSmall ?? .6) && !coversRoots(fr, p))   // 움푹한 곳에 들어가는 것은 들풀·버섯·낙엽처럼 작은 것(nestSmall m 이하)만, 나머지는 뿌리 끝을 가리며 앞에
@@ -773,6 +778,8 @@ body.setup #adminBtn{display:none}
     /* 같은 소품이 또 나오면 두 번째부터 변형(가로·세로 0.8~1.2배) — 찍어 붙인 티가 안 나게 */
     { const seen = {}; out.forEach(o => { if (o.role === 'frame' || o.sortY != null) return; if (seen[o.id]) vary(o); seen[o.id] = 1; }); }
     settle(pl, out);
+    out.forEach(o => { if (o.hang) hangTo(pl, o); });
+    for (let i = out.length - 1; i >= 0; i--) if (overTop(out[i])) out.splice(i, 1);   // 크기를 맞춘 뒤에도 꼭대기 위로 솟으면 뺌
     if ((opt._t || 0) < 5 && out.filter(o => o.h > .06).length < 2)
       return compose(pl, Object.assign({}, opt, {seed: (opt.seed ?? Math.floor(R() * 1e9)) + 1, _t: (opt._t || 0) + 1}));
     return out;
@@ -1082,7 +1089,8 @@ body.setup #adminBtn{display:none}
       const edge2 = E.off > EDGE && lay.some(o => o.animal && (o.off || 0) > EDGE);   // 이미 끝에 걸친 동물이 있음 — 가운데로는 단계를 못 지킬 때만(벌점 EDGE2_PEN < 단계 벗어남 .5)
       if (E.off > EDGE && E.onW < (opt.edgeMin ?? .03)) return;
       if (lay.some(o => o.animal && Math.abs(o.x - A.x) < (o.w + A.w) * .55 && Math.abs(o.y - A.y) < .12)) return;
-      if (!footOnGround(pl, A, covers) || covers.some(f => !coversRoots(f, A))) return;   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
+      if (!footOnGround(pl, A, covers) || covers.some(f => !coversRoots(f, A))) return;
+      if (B.top != null && A.y - A.h * A.base < B.top) return;   // 자리의 꼭대기 위로 솟지 않게(beds.top — 땅속)   // 동물 발도 빈 땅 위에, 큰 줄기 그림 위는 안 됨(원리 19)
       /* 깔린 것처럼 보이지 않게(2026-11-09 선생님: 곰·너구리가 뿌리에 깔림): 가까운 줄기(frame)와는 겹치지 않고,
          앞 소품의 땅에 퍼진 밑동(아래 18%)이 동물의 발(아래 25%)을 덮지 않게 — 가리는 것은 소품의 몸통 */
       const Abox = [A.x - A.w * .4, A.y - A.h * A.base, A.x + A.w * .4, A.y];
@@ -2150,8 +2158,8 @@ const SCALEFREE=new Set('stones tinypebbles pebblemound algaepebbles seapebbles 
 let PLIST=null, SUBWL=null, HFLIP=false;   /* HFLIP: 놓는 동안 그 동물 그림을 좌우로 뒤집었는지(머리가 나올 쪽을 보게) */   /* SUBWL: 물에 잠긴 동물의 물낯 높이(동물 칸 크기 1 기준) — 놓는 동안만 */   /* 지금 동물이 쓸 소품 목록(사는 자리가 있으면 그 목록) */
 /* 그림 속 동물 머리가 어느 쪽인지(L 왼쪽 · R 오른쪽, 없으면 앞을 봄 — 2026-11-02 그림과 하나씩 맞춤: 악어·고래·딱따구리·미꾸라지가 거꾸로 적혀 꼬리부터 나왔음) — 가장자리에서 내밀 때 머리가 화면 안쪽을 보게 좌우를 뒤집음 */
 const FACE={개구리:'L',잠자리:'L',소금쟁이:'L',물방개:'L',백로:'L',미꾸라지:'L',코뿔소:'R',치타:'R',하이에나:'R',타조:'L',가젤:'L',물소:'L',방울뱀:'L',사막쥐:'L',북극여우:'L',바다코끼리:'L',순록:'L',북극토끼:'L',사향소:'L',북극늑대:'L',쇠똥구리:'L',오릭스:'L',멧돼지:'L',바다거북:'L',돌고래:'L',갯우렁이:'L',도요새:'L',닭:'L',너구리:'L',메기:'L',고등어:'L',송사리:'L',짱뚱어:'L',갯지렁이:'L',산양:'L',도마뱀:'L',사막거북:'L',제비:'R',박새:'L',개:'L',고양이:'L',토끼:'L',소:'L',돼지:'L',말:'L',코끼리:'L',사자:'L',호랑이:'L',기린:'R',곰:'L',물고기:'L',붕어:'L',새우:'L',달팽이:'L',
-  참새:'R',까치:'R',독수리:'L',다람쥐:'L',여우:'L',낙타:'L',펭귄:'R',하마:'L',악어:'L',고래:'L',상어:'L',바다표범:'L',북극곰:'L',두더지:'R',
-  땅강아지:'R',비둘기:'R',딱따구리:'L',얼룩말:'R',전갈:'L',수달:'R',우렁이:'L',지렁이:'R',사슴:'L',벌:'R',사막여우:'L'};
+  참새:'R',까치:'R',독수리:'L',다람쥐:'L',여우:'L',낙타:'L',펭귄:'R',하마:'L',악어:'L',고래:'L',상어:'L',바다표범:'L',북극곰:'L',두더지:'L',
+  땅강아지:'L',비둘기:'R',딱따구리:'L',얼룩말:'R',전갈:'L',수달:'R',우렁이:'L',지렁이:'L',사슴:'L',벌:'R',사막여우:'L'};
 /* 가장자리에서 내밀기(2026-11-01): 큰 동물의 몸을 화면 옆 밖으로 밀고, 화면 가장자리 가까이 놓인 (동물보다 작은) 소품 뒤에서 머리 쪽만 조금 내밀게.
    돌려줌: 동물 가운데(x,y)·뒤집기·소품 자리, 또는 못 하면 null. 실제 크기는 같은 규칙(보통 높이 ±25%) */
 function edgeCfg(a,p,tgt,z,dw,dh,W,H,yr,used){

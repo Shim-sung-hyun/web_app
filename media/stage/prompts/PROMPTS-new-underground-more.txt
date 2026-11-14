@@ -1,0 +1,25 @@
+땅속 베타 — 더 받을 그림 (2026-11-14, 선생님: 뿌리만 덩그러니 있고 땅 위로 나가는 줄기가 없음)
+순서: ① 줄기와 뿌리 3장(나무뿌리를 바꿈) → ② 작은 돌 무리 1장(지금 1장뿐).
+받는 곳 media/stage-beta/nature/new-underground/in/ — 이름: treeroots-1.jpg~treeroots-3.jpg, stonegroup-2.jpg (묶음으로 주셔도 Claude가 보고 붙임).
+붙일 그림: 땅속 배경(media/stage-beta/nature/new-underground/bg.jpg) 한 장.
+줄기 그림은 세로로 긴 그림(3:4)으로 받음 — 줄기가 그림 위 끝에서 잘리고, 그 아래 풀밭 높이쯤에서 땅으로 들어가 뿌리로 갈라짐. 무대가 그림 위 끝을 장면 맨 위에 붙임.
+
+━━━━━━━━ ① 줄기와 뿌리 — 3장 (같은 프롬프트로 3번, 모양이 조금씩 다르게)
+
+■ 줄기와 뿌리 (treeroots · 세로 3:4)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underground soil background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a warm grey-brown bark on the trunk, a soft grey-brown on the roots). Tall portrait picture, 3:4.
+The object: the lower part of ONE tree, seen from the side as in a cut-away. At the top, a thick straight tree trunk with rough bark rises and is cut off cleanly by the TOP EDGE of the picture (the trunk touches the top edge, no branches or leaves). About one fifth of the way down from the top, the trunk widens a little at its base and splits into several smooth, branching roots that spread downward and outward with many fine root hairs, filling the lower part of the picture like an upside-down small tree. The roots form no hand- or finger-like shape, and the bark forms no face.
+Keep the roots inside the middle four-fifths of the picture width, with white margins at the left, right and bottom. Nothing else in the picture: no grass, no soil line, no ground patch, no stones, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow or dark patch — only the trunk and roots on pure white. Light comes softly from the upper left.
+▲
+
+━━━━━━━━ ② 작은 돌 무리 — 1장
+
+■ 작은 돌 무리 (stonegroup-2)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underground soil background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool light grey, tan and grey-brown on the stones, each stone a slightly different colour). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low, loose cluster of eight or nine small pebbles of different sizes and shapes (round, flat, oval) lying close together in one or two layers, about three times as wide as it is tall.
+Close the outline all the way round with one continuous, clear dark-grey line so that it is one closed shape. Its lumps and folds form no face-like shape. Nothing else in the picture: no loose bits or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲

@@ -527,5 +527,45 @@
    "wreckwood-1",
    "wreckwood-2"
   ]
+ },
+ "nature/new-underground": {
+  "name": "땅속",
+  "group": "nature",
+  "view": "flat",
+  "bg": [
+   "bg"
+  ],
+  "used_by": [],
+  "ready": false,
+  "far": [],
+  "front": [],
+  "missing": [],
+  "skirt": [],
+  "items": [
+   "acorns-1",
+   "acorns-2",
+   "acorns-3",
+   "acorns-4",
+   "acorns-5",
+   "bigstone-1",
+   "bigstone-2",
+   "buriedbranch-1",
+   "buriedbranch-2",
+   "clod-1",
+   "clod-2",
+   "grassroots-1",
+   "grassroots-2",
+   "gravelband-1",
+   "gravelband-2",
+   "gravelband-3",
+   "leaflayer-1",
+   "leaflayer-2",
+   "stonegroup-1",
+   "treeroots-1",
+   "treeroots-2",
+   "treeroots-3",
+   "tunnel-1",
+   "tunnel-2"
+  ]
  }
 }

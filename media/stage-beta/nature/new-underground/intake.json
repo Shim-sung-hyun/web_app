@@ -1,26 +1,26 @@
 {
  "name": "땅속",
- "horizon": 0.14,
- "groundTop": 0.15,
+ "horizon": 0.18,
+ "groundTop": 0.19,
  "groundTol": 100,
  "shadow": false,
  "kinds": {
   "bigstone": {
    "name": "큰 돌",
    "real": [
-    0.3,
-    0.6
+    0.4,
+    0.8
    ],
    "plant": false,
-   "big": false,
+   "big": true,
    "scalefree": true,
    "baseMatch": false
   },
   "stonegroup": {
    "name": "작은 돌 무리",
    "real": [
-    0.05,
-    0.15
+    0.15,
+    0.3
    ],
    "plant": false,
    "big": false,
@@ -41,30 +41,32 @@
   "treeroots": {
    "name": "나무뿌리",
    "real": [
-    0.4,
-    0.8
+    0.7,
+    1.1
    ],
-   "plant": false,
-   "big": false,
+   "plant": true,
+   "big": true,
    "scalefree": false,
-   "baseMatch": false
+   "baseMatch": false,
+   "hang": true
   },
   "grassroots": {
    "name": "풀뿌리 뭉치",
    "real": [
-    0.2,
-    0.5
+    0.25,
+    0.45
    ],
-   "plant": false,
+   "plant": true,
    "big": false,
    "scalefree": true,
-   "baseMatch": false
+   "baseMatch": false,
+   "hang": true
   },
   "leaflayer": {
    "name": "묻힌 낙엽 층",
    "real": [
-    0.1,
-    0.2
+    0.12,
+    0.25
    ],
    "plant": false,
    "big": false,
@@ -74,8 +76,8 @@
   "acorns": {
    "name": "도토리 무더기",
    "real": [
-    0.05,
-    0.1
+    0.1,
+    0.18
    ],
    "plant": false,
    "big": false,
@@ -85,8 +87,8 @@
   "gravelband": {
    "name": "자갈 띠",
    "real": [
-    0.05,
-    0.1
+    0.08,
+    0.14
    ],
    "plant": false,
    "big": false,
@@ -96,8 +98,8 @@
   "buriedbranch": {
    "name": "묻힌 나뭇가지",
    "real": [
-    0.1,
-    0.25
+    0.15,
+    0.3
    ],
    "plant": false,
    "big": false,
@@ -107,11 +109,11 @@
   "clod": {
    "name": "단단한 흙덩이",
    "real": [
-    0.2,
-    0.4
+    0.3,
+    0.6
    ],
    "plant": false,
-   "big": false,
+   "big": true,
    "scalefree": true,
    "baseMatch": false
   }
@@ -201,9 +203,16 @@
    6,
    10
   ],
-  "maxSame": 3,
+  "maxSame": 2,
   "overlap": 0.2,
-  "stackGap": 0.04
+  "stackGap": 0.04,
+  "noThicket": [
+   "treeroots",
+   "tunnel",
+   "bigstone",
+   "clod",
+   "buriedbranch"
+  ]
  },
  "blocks": [
   {
@@ -272,5 +281,23 @@
    }
   }
  ],
- "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것. 그림자 없는 장면: stage-intake.py가 아직 파란 그림자를 전제로 함 — 넣기 전에 도구와 자리 규칙을 이 장면에 맞게 손봄"
+ "note": "2026-11-14 그림을 받아 넣음 — 단면(view flat, 원근 없음): 1m = 장면 높이의 35%(unit). 흙 속 아무 데나(beds.soil). 나무뿌리·풀뿌리는 꼭대기가 흙 맨 위(hangTop)에 매달림(stagekit hang). 그림자 없음(shadow false — bing-cut으로 자름)",
+ "view": "flat",
+ "unit": 0.35,
+ "hangTop": 0.185,
+ "bed": "soil",
+ "beds": {
+  "soil": {
+   "name": "흙 속",
+   "y": [
+    0.24,
+    0.99
+   ],
+   "persp": false,
+   "skirt": [],
+   "top": 0.205
+  }
+ },
+ "growMax": 25,
+ "see": 0.05
 }
