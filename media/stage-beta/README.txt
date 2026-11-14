@@ -49,6 +49,8 @@
 - 들판처럼 비침 한도 see .05·작은 동물 키우기 growMax 12. 20판: 스페셜 6.0마리(20판 모두 6)·한 판 0.2초, 하·중·상 3마리. 하에서는 게 셋·갯우렁이(4~6cm)가 너무 작아 안 나옴(들판 달팽이와 같음), 중부터 나옴.
 - 앞쪽 몰림 고침(2026-11-14 선생님: 너무 전면만 씀): ① 논·습지처럼 빈 땅 검사 끔(groundCheck:false — 젖은 진흙에 비친 하늘) ② 작은 소품(0.7m 아래)은 땅의 앞 55%에만 두던 규칙이 갯벌은 거의 모든 소품에 걸려서, 이 무대만 한도를 .25m로(stage.json smallFront, stage-intake.py도 옮겨 적음).
   깊이 넷으로 나눈 몫(먼→앞): 소품 8·25·28·40% → 26·23·23·29%, 동물 0·13·26·61% → 8·15·28·48%(게·조개 4~6cm는 멀면 키워도 찾을 크기가 안 돼 앞에 남음 — growMax 20도 거의 같아 12 그대로). 스페셜 20판 6.0마리.
+- 더 받을 그림 프롬프트(2026-11-14 선생님: 더 풍부하게): copy.html?f=PROMPTS-new-mudflat-more.txt — 두 장째 5(작은 갯바위·큰 갯바위 무리·굴 바위·해초·돌무더기) + 새 소품 6가지×2
+  (마른 갈대 덤불 dryreeds·나문재 덤불 seepweed·떠밀려 온 나무토막 driftwood·그물과 통발 더미 netpile·진흙 둑과 갯잔디 mudbank·굴 밭 oysterbed). intake.json kinds·blocks에 미리 넣어 둠 → 받으면 in/에 넣고 stage-intake.py.
 - 다음: 선생님 숨기기 시험·평가(hide-test.html?place=nature/new-mudflat) — 키운 조개·맛조개가 하에서 크게 보이는 것이 어색하지 않은지, 큰 갯바위 무리가 앞에서 너무 크지 않은지 보기.
 
 ■ nature/new-wetland 논·습지 (2026-11-14 빙 연필풍으로 한 번에 만듦 — tools/stage-intake.py, 설정 intake.json)

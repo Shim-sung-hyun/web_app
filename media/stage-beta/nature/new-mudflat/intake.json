@@ -158,6 +158,72 @@
    "big": false,
    "scalefree": true,
    "baseMatch": false
+  },
+  "dryreeds": {
+   "name": "마른 갈대 덤불",
+   "real": [
+    1.0,
+    1.8
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "seepweed": {
+   "name": "나문재 덤불",
+   "real": [
+    0.4,
+    0.8
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "driftwood": {
+   "name": "떠밀려 온 나무토막",
+   "real": [
+    0.3,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "netpile": {
+   "name": "그물과 통발 더미",
+   "real": [
+    0.4,
+    0.9
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "mudbank": {
+   "name": "진흙 둑과 갯잔디",
+   "real": [
+    0.6,
+    1.2
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "oysterbed": {
+   "name": "굴 밭",
+   "real": [
+    0.2,
+    0.5
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
   }
  },
  "animals": [
@@ -273,13 +339,19 @@
    "shellpile",
    "stones",
    "oysterrock",
-   "smallrock"
+   "smallrock",
+   "driftwood",
+   "netpile",
+   "mudbank",
+   "oysterbed"
   ],
   "thicketWeights": {
    "reeds": 3,
    "glasswort": 3,
    "marshgrass": 2,
-   "seaweed": 1
+   "seaweed": 1,
+   "dryreeds": 2,
+   "seepweed": 2
   }
  },
  "blocks": [
@@ -296,7 +368,9 @@
      "큰 갯바위 무리",
      "나무 말뚝",
      "그물 걸린 말뚝 줄",
-     "물 빠진 작은 배"
+     "물 빠진 작은 배",
+     "마른 갈대 덤불",
+     "진흙 둑과 갯잔디"
     ],
     "n": [
      1,
@@ -314,7 +388,9 @@
      "큰 갯바위 무리",
      "나무 말뚝",
      "그물 걸린 말뚝 줄",
-     "물 빠진 작은 배"
+     "물 빠진 작은 배",
+     "마른 갈대 덤불",
+     "진흙 둑과 갯잔디"
     ],
     "n": [
      1,
@@ -330,7 +406,11 @@
      "조개껍데기 더미",
      "해초 더미",
      "갯잔디 포기",
-     "돌무더기"
+     "돌무더기",
+     "나문재 덤불",
+     "떠밀려 온 나무토막",
+     "그물과 통발 더미",
+     "굴 밭"
     ],
     "n": [
      1,
