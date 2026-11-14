@@ -1,0 +1,27 @@
+강·호수 베타 — 더 받을 그림 (2026-11-14, 선생님: 하마·악어·수달을 가릴 큰 것이 모자람)
+순서: ① 키 큰 갈대 벽 2장(아직 0장) → ② 진흙 둑과 풀 1장(지금 1장뿐).
+받는 곳 media/stage-beta/nature/new-pond/in/ — 이름: tallreeds-1.jpg, tallreeds-2.jpg, mudbank-2.jpg (묶음으로 주셔도 Claude가 보고 붙임).
+붙일 그림: 강·호수 배경(media/stage-beta/nature/new-pond/bg.jpg) 한 장.
+바탕이 희고 그림자가 온통 파란 것을 골라 주세요. 갈대 벽은 이미 받은 '갈대 무리'(옆으로 1.5배, 푸른빛)와 달리 마른 누런 갈대가 옆으로 2배 넓게 선 것.
+
+━━━━━━━━ ① 키 큰 갈대 벽 — 2장 (같은 프롬프트로 2번, 모양이 조금씩 다르게)
+
+■ 키 큰 갈대 벽 (tallreeds · 실제 3~4m · 하마·악어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the lakeside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale straw-yellow and tan on the stems, a few thin brown stems between them). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a very tall, wide wall of dry reeds, taller than a person, hundreds of thin upright tan stems packed tightly side by side with feathery plumes on top, about twice as wide as it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the bottom. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
+
+━━━━━━━━ ② 진흙 둑과 풀 — 1장
+
+■ 진흙 둑과 풀 (mudbank · 실제 1~1.6m · 하마·악어·수달 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the lakeside background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft grey-brown on the mud, a muted green on the grass). Draw ONE object and its shadow only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low, long, rounded bank of grey-brown mud with thick grass on its top and along its foot, about three times as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where the object touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as the object is tall. The left side and the front (bottom edge) have NO shadow.
+The shadow is one flat shape of solid pure bright blue (#0000FF), like cut-out blue paper: the same blue everywhere, a sharp clean edge, no gradient, hatching or outline. It lies beside the object, not in its gaps. Blue is ONLY in the shadow: none on the object or the paper.
+▲
