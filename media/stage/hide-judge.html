@@ -262,13 +262,8 @@
       || tooSoft(pl, pl.items[p.id] || {}, p)
       || ((it => it.cut && !((it.cut === 'left') !== p.flip ? p.x - p.w / 2 < -.005 : p.x + p.w / 2 > 1.005))(pl.items[p.id] || {}))   // 잘린 끝은 화면 밖으로
       || (fr && realMax(pl.items[p.id] || {}) > (pl.nestSmall ?? .6) && !coversRoots(fr, p))   // 움푹한 곳에 들어가는 것은 들풀·버섯·낙엽처럼 작은 것(nestSmall m 이하)만, 나머지는 뿌리 끝을 가리며 앞에
-<<<<<<< Updated upstream
       || (!grove && out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2))   // 군락은 같은 소품을 여럿 겹쳐도 됨
       || ((k => C.maxKind && k in C.maxKind && out.filter(o => (pl.items[o.id] || {}).kind === k).length >= C.maxKind[k])((pl.items[p.id] || {}).kind))   // 종류마다 한 장면에 몇 번까지(compose.maxKind, 2026-11-14 하늘: 전봇대 둘이 겹쳐 섬)
-=======
-      || (!grove && out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2))
-      || ((k, m) => k && m[k] != null && out.filter(o => (pl.items[o.id] || {}).kind === k).length >= m[k])((pl.items[p.id] || {}).kind, C.kindMax || {})   // 종류마다 한 판에 몇 개까지(compose.kindMax, 2026-11-14 땅속 나무 2그루 — 숲처럼 늘어섰음)   // 군락은 같은 소품을 여럿 겹쳐도 됨
->>>>>>> Stashed changes
       || p.x - p.w / 2 < -p.w * .35 || p.x + p.w / 2 > 1 + p.w * .35   // 원리 8(2026-11-09 선생님 고침): 자연스러우면 좌우·위아래로 화면을 벗어나도 됨 — 폭의 35%까지
       || (!grove && out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * C.overlap && Math.abs(o.y - p.y) < .04));
     /* 가까운 줄기(frame)를 먼저 정함 — 다른 소품이 그 뿌리 위에 떠 있지 않게(원리 19) */

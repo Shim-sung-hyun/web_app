@@ -213,7 +213,7 @@
    "clod",
    "buriedbranch"
   ],
-  "kindMax": {
+  "maxKind": {
    "treeroots": 2,
    "tunnel": 2
   }

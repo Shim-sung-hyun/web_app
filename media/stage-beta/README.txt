@@ -85,7 +85,7 @@
   줄기와 뿌리(2026-11-14 선생님: 뿌리만 덩그러니 — 땅 위로 나가는 줄기가 없음): 줄기 있는 그림 4장과 작은 돌 무리 2장을 더 받음(옛 뿌리 3장은 _trash/2026-11-14).
     줄기가 짧아 python3 tools/trunk-extend.py nature/new-underground treeroots 로 줄기를 세로로 늘이고(띠를 이어 붙이니 사다리 같은 이음매가 보였음),
     뿌리가 갈라지는 자리(hangAt)를 흙 맨 위(hangTop .195)에 붙임 — 줄기는 풀밭·하늘을 지나 장면 위로 나감. 줄여도 줄기 끝이 하늘에 보이지 않게 무대가 크기를 지킴.
-    나무는 한 판에 2그루까지(compose.kindMax treeroots 2·tunnel 2 — 8그루가 숲처럼 늘어섰음), 곁에 같은 나무를 더 세우지 않게 big에서 뺌. 20판: 하·중·상 3마리·스페셜 6마리 그대로.
+    나무는 한 판에 2그루까지(compose.maxKind treeroots 2·tunnel 2 — 8그루가 숲처럼 늘어섰음), 곁에 같은 나무를 더 세우지 않게 big에서 뺌. 20판: 하·중·상 3마리·스페셜 6마리 그대로.
 
 ■ nature/new-water 물속(민물) (2026-11-14 빙 연필풍으로 한 번에 만듦 — tools/stage-intake.py, 설정 intake.json)
 - 선생님이 35장을 묶음으로 주심 → Claude가 보고 이름을 붙여 27장을 넣음. 배경 bg.jpg(받은 2장 중 바닥 선이 위에서 46%인 것 — horizon .46·groundTop .47, 다른 1장은 50%). 비침 한도 see .05.
