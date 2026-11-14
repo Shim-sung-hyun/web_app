@@ -1,0 +1,9 @@
+media/animals/bangge.webp — 방게 그림을 빙 연필풍으로 다시 받음
+media/animals/chilge.webp — 칠게 그림을 빙 연필풍으로 다시 받음
+media/animals/doyosae.webp — 도요새 그림을 빙 연필풍으로 다시 받음
+media/animals/gaetjireongi.webp — 갯지렁이 그림을 빙 연필풍으로 다시 받음
+media/animals/gaeturengi.webp — 갯우렁이 그림을 빙 연필풍으로 다시 받음
+media/animals/jjangttungeo.webp — 짱뚱어 그림을 빙 연필풍으로 다시 받음
+media/animals/matjogae.webp — 맛조개 그림을 빙 연필풍으로 다시 받음
+media/animals/nakji.webp — 낙지 그림을 빙 연필풍으로 다시 받음
+media/animals/nongge.webp — 농게 그림을 빙 연필풍으로 다시 받음

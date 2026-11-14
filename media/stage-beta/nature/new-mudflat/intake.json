@@ -1,7 +1,7 @@
 {
  "name": "갯벌",
  "horizon": 0.34,
- "groundTop": 0.35,
+ "groundTop": 0.4,
  "groundTol": 100,
  "shadow": true,
  "kinds": {
@@ -243,7 +243,8 @@
    "file": "baengno",
    "real": 0.9,
    "face": "L",
-   "hide": true
+   "hide": false,
+   "note": "지금 그림은 옛 만화풍 — 논·습지 연필풍 백로를 받으면 hide를 지움"
   }
  ],
  "compose": {
@@ -259,9 +260,27 @@
    6,
    10
   ],
-  "maxSame": 3,
+  "maxSame": 2,
   "overlap": 0.2,
-  "stackGap": 0.04
+  "stackGap": 0.04,
+  "noThicket": [
+   "boat",
+   "post",
+   "netposts",
+   "shorerock",
+   "bigrocks",
+   "mudmound",
+   "shellpile",
+   "stones",
+   "oysterrock",
+   "smallrock"
+  ],
+  "thicketWeights": {
+   "reeds": 3,
+   "glasswort": 3,
+   "marshgrass": 2,
+   "seaweed": 1
+  }
  },
  "blocks": [
   {
@@ -320,5 +339,5 @@
    }
   }
  ],
- "note": "2026-11-13 프롬프트와 함께 만든 첫 설정 — 배치(compose·blocks)는 그림을 넣을 때 다시 짤 것"
+ "note": "2026-11-14 그림 34장을 넣음(배경 45번 — 바다 지평선 .34, 갯벌 진흙은 .40부터). 배치는 들판 설정 그대로"
 }

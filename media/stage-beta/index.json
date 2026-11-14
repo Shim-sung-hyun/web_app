@@ -405,5 +405,44 @@
    "zelkova-1",
    "zelkova-2"
   ]
+ },
+ "nature/new-mudflat": {
+  "name": "갯벌",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "used_by": [],
+  "ready": false,
+  "far": [],
+  "front": [],
+  "missing": [],
+  "skirt": [],
+  "items": [
+   "bigrocks-1",
+   "boat-1",
+   "boat-2",
+   "glasswort-1",
+   "glasswort-2",
+   "marshgrass-1",
+   "marshgrass-2",
+   "mudmound-1",
+   "mudmound-2",
+   "netposts-1",
+   "netposts-2",
+   "oysterrock-1",
+   "post-1",
+   "post-2",
+   "reeds-1",
+   "reeds-2",
+   "seaweed-1",
+   "shellpile-1",
+   "shellpile-2",
+   "shorerock-1",
+   "shorerock-2",
+   "smallrock-1",
+   "stones-1"
+  ]
  }
 }
