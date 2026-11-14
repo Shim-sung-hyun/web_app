@@ -636,7 +636,8 @@
       const A = {id: a.name, src: a.src, img: a.img, bed, x, y, w, h, base: baseFrac, flip, foot: [M.box[0] / M.w, M.box[2] / M.w], actor: true, skirt: null, animal: a.name, grow: bodyLong / real0};
       /* 떠 있는 동물(2026-11-14 선생님: 고래·상어는 바닥에서 떠 있게): stage.json animals의 swim [최소, 최대] m — 크기·앞뒤는 바닥 자리 y(sortY, 그 아래 바닥)로 셈하고,
          그림만 그 깊이의 swim m만큼 위로 올림. 바닥 검사·'가리는 소품의 바닥이 앞에'는 바닥 자리로 봄 */
-      if (a.swim) { const lift = (a.swim[0] + R() * (a.swim[1] - a.swim[0])) * m1; A.sortY = y; A.y = y - lift; A.swimLift = lift; }
+      /* 떴다 가라앉았다(2026-11-14 선생님: 바다 생물은 뜰 때도, 가라앉을 때도): swimP(0~1)의 확률로만 뜨고 나머지는 바닥에 — 없으면 늘 뜸 */
+      if (a.swim && (a.swimP == null || R() < a.swimP)) { const lift = (a.swim[0] + R() * (a.swim[1] - a.swim[0])) * m1; A.sortY = y; A.y = y - lift; A.swimLift = lift; }
       return A;
     };
     let best = null;

@@ -82,7 +82,8 @@
    "swim": [
     1.5,
     4
-   ]
+   ],
+   "swimP": 0.6
   },
   {
    "name": "상어",
@@ -92,19 +93,30 @@
    "swim": [
     0.8,
     2.5
-   ]
+   ],
+   "swimP": 0.6
   },
   {
    "name": "돌고래",
    "src": "animals/dolgorae.webp",
    "real": 2.8,
-   "face": "L"
+   "face": "L",
+   "swim": [
+    0.8,
+    3
+   ],
+   "swimP": 0.7
   },
   {
    "name": "바다거북",
    "src": "animals/badageobuk.webp",
    "real": 1.1,
-   "face": "L"
+   "face": "L",
+   "swim": [
+    0.5,
+    2
+   ],
+   "swimP": 0.6
   },
   {
    "name": "문어",
@@ -116,19 +128,34 @@
    "name": "오징어",
    "src": "animals/ojingeo.webp",
    "real": 0.6,
-   "face": "L"
+   "face": "L",
+   "swim": [
+    0.3,
+    1.5
+   ],
+   "swimP": 0.6
   },
   {
    "name": "해파리",
    "src": "animals/haepari.webp",
    "real": 0.4,
-   "face": "L"
+   "face": "L",
+   "swim": [
+    0.5,
+    2.5
+   ],
+   "swimP": 1
   },
   {
    "name": "고등어",
    "src": "animals/godeungeo.webp",
    "real": 0.35,
-   "face": "L"
+   "face": "L",
+   "swim": [
+    0.3,
+    1.5
+   ],
+   "swimP": 0.6
   },
   {
    "name": "불가사리",
@@ -146,27 +173,37 @@
    "name": "가오리",
    "src": "animals/gaori.webp",
    "real": 1.2,
-   "face": "L"
+   "face": "L",
+   "swim": [
+    0.3,
+    1.5
+   ],
+   "swimP": 0.5
   },
   {
    "name": "흰동가리",
    "src": "animals/huindonggari.webp",
    "real": 0.1,
-   "face": "L"
+   "face": "L",
+   "swim": [
+    0.1,
+    0.5
+   ],
+   "swimP": 0.5
   }
  ],
  "compose": {
   "clusters": [
-   4,
-   5
+   5,
+   7
   ],
   "perCluster": [
    2,
    4
   ],
   "loose": [
-   6,
-   10
+   10,
+   14
   ],
   "maxSame": 3,
   "overlap": 0.2,

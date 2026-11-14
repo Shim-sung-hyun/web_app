@@ -71,10 +71,13 @@
 - 그림자 없는 장면(intake.json "shadow": false): stage-intake.py가 flat-shadow.py 대신 bing-cut.py(단단한 것 --animal, 식물 --plant)로 자름, ownShadow 없음 → 무대가 뒤집어 써도 됨, stage.json noShadow(타원 그림자도 없음). 물속·땅속·하늘도 이대로.
 - 동물 12: 고래·상어·돌고래·바다거북·문어·오징어·해파리·고등어·불가사리·소라 = 옛 그림을 바꿈(008·009가 함께 — 008 FACE 바다거북·돌고래 L, 009 PARTS 고래·문어·상어 다시 잼) + 가오리·흰동가리 새로(무대 숨기기에만).
 - 큰 동물 한도(새 원리, 2026-11-14): 12m 고래가 맨 앞에서 화면을 덮음 → stage.json maxLong .5 — 동물 그림의 긴 쪽이 장면 높이의 50%를 넘는 깊이에는 안 놓음(stagekit hide, 값이 없는 무대는 그대로).
-- 떠 있는 동물(새 원리, 2026-11-14 선생님: 고래·상어는 바닥에서 떠 있게): stage.json animals의 swim [최소, 최대] m — 고래 1.5~4·상어 0.8~2.5. 크기·앞뒤는 그 아래 바닥 자리(sortY)로 셈하고 그림만 그만큼 올림,
-  바닥 검사·'가리는 소품 바닥이 앞에'도 바닥 자리로, 화면 위로는 안 나감(stagekit hide·render). 다른 동물은 바닥에 그대로. intake.json에 적으면 stage-intake.py가 옮김.
-- 시험 4판씩: 중 3마리씩, 스페셜 6마리씩(한 판 몇 초). 떠 있는 상어가 다시마 뒤, 고래가 암초 위 먼 물속에 숨음.
-- 다음: 선생님 숨기기 시험(hide-test.html?place=nature/new-sea) — 떠 있는 높이가 알맞은지, 돌고래·바다거북·가오리도 띄울지, 다시마 숲이 앞에서 너무 큰지.
+- 떠 있는 동물(새 원리, 2026-11-14 선생님: 고래·상어는 바닥에서 떠 있게 → 떴다 가라앉았다): stage.json animals의 swim [최소, 최대] m·swimP(뜰 확률, 없으면 늘 뜸).
+  크기·앞뒤는 그 아래 바닥 자리(sortY)로 셈하고 그림만 올림, 바닥 검사·'가리는 소품 바닥이 앞에'도 바닥 자리로, 화면 위로는 안 나감(stagekit hide·render). intake.json에 적으면 stage-intake.py가 옮김.
+  지금 값: 고래 1.5~4m·상어 .8~2.5·돌고래 .8~3·바다거북 .5~2·오징어·고등어 .3~1.5 (뜰 확률 .6~.7), 가오리 .3~1.5·흰동가리 .1~.5 (.5), 해파리 .5~2.5 (늘 뜸). 문어·불가사리·소라는 바닥.
+- 빽빽함을 올림(선생님: 휑한 부분): compose clusters 4~5 → 5~7, loose 6~10 → 10~14. 시험: 하·중 3마리, 스페셜 6마리, 한 판 1초 남짓.
+- 더 받을 그림(2026-11-14): 복사 화면 PROMPTS-new-sea-more.txt — 키 큰 다시마 벽·높은 바위 기둥·바위 아치(떠 있는 동물을 가림)·부채산호 숲·해초 덮인 바위 무더기·낮고 넓은 산호 밭(가운데 모래 채움), 6가지×2장.
+  intake.json kinds·blocks에 이미 적음. 받으면 in/에 넣고 stage-intake.py — 이미 만든 무대라 blocks는 stage.json에 저절로 안 옮겨지니 intake.json blocks를 stage.json에 복사할 것.
+- 다음: 그림 12장 받기 → 넣기. 선생님 숨기기 시험(hide-test.html?place=nature/new-sea) — 떠 있는 높이·확률이 알맞은지, 다시마 숲이 앞에서 너무 큰지.
 
 ■ nature/new-underground 땅속 (2026-11-14 빙 연필풍으로 한 번에 만듦 — tools/stage-intake.py, 설정 intake.json — 그림자 없는 첫 무대)
 - 선생님이 묶음 하나(48장)로 주심 → Claude가 보고 이름을 붙여 35장을 넣음. 배경 bg.jpg(받은 2장 중 흙 띠 줄무늬가 덜한 것, 흙 시작 위에서 19% — horizon .18·groundTop .19).

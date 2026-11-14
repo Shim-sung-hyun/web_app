@@ -1,0 +1,65 @@
+바닷속 베타 — 더 받을 그림 (2026-11-14, 선생님: 바다 생물이 숨을 곳이 더 필요하고 휑한 부분이 있음)
+까닭: 고래·상어·돌고래·가오리 등이 이제 바닥에서 떠 있어(떴다 가라앉았다) 물속 높이까지 가려 줄 큰 것이 필요함 — 지금은 다시마 숲·큰 암초 벽뿐. 가운데 모래를 채울 낮고 넓은 것도 모자람.
+순서: 6가지, 종류마다 같은 프롬프트로 2장씩(모양이 조금씩 다르게) = 12장.
+받는 곳 media/stage-beta/nature/new-sea/in/ — 이름: tallkelp-1.jpg … coralbed-2.jpg (묶음으로 주셔도 Claude가 보고 붙임).
+붙일 그림: 바닷속 배경(media/stage-beta/nature/new-sea/bg.jpg) 한 장. 지난번처럼 그림자 없이 흰 바탕에 물건만.
+
+━━━━━━━━ 키 큰 다시마 벽 — 2장
+
+■ 키 큰 다시마 벽 (tallkelp · 실제 6~10m · 고래·상어·돌고래 — 떠 있는 동물 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted olive green and golden brown on the long blades). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a very tall, wide wall of giant kelp, dozens of long wavy brown-green blades and thin stalks with small round floats rising straight up from the bottom to far above, packed tightly side by side like a thick curtain, about twice as wide as it is tall. The top edge is uneven, with some blades reaching much higher than others.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the bottom. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+━━━━━━━━ 높은 바위 기둥 — 2장
+
+■ 높은 바위 기둥 (pinnacle · 실제 5~8m · 고래·상어·돌고래·바다거북 — 떠 있는 동물 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool blue-grey and grey-brown on the rock, a dull green, soft pink and pale orange on the growths). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a tall underwater rock pinnacle like a rough tower, wider at the bottom and narrowing upward, with ledges and cracks, covered here and there with small corals, sponges and seaweed, about twice as tall as it is wide.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+━━━━━━━━ 바위 아치 — 2장
+
+■ 바위 아치 (rockarch · 실제 3~5m · 상어·돌고래·바다거북·가오리 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool blue-grey and grey-brown on the rock, a dull green and soft pink on the growths). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a big rough natural rock arch on the sea floor, two thick rock legs joined by a heavy rock bridge on top, the opening under it a little narrower than one leg is tall, small seaweed and corals growing on it, about one and a half times as wide as it is tall. Behind the opening there is only white paper.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+━━━━━━━━ 부채산호 숲 — 2장
+
+■ 부채산호 숲 (seafans · 실제 1.5~3m · 오징어·고등어·해파리·흰동가리 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a soft dull red, rose and pale orange on the fans, a muted yellow on a few tubes). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a dense thicket of many big flat sea fans and whip corals growing close together and overlapping from one base, standing upright, about one and a half times as wide as it is tall. The fans overlap so much that no white shows through them.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the bottom. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+━━━━━━━━ 해초 덮인 바위 무더기 — 2장
+
+■ 해초 덮인 바위 무더기 (weedrocks · 실제 1.5~2.5m · 문어·바다거북·가오리·고등어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a cool blue-grey on the rocks, a muted olive green and golden brown on the thick seaweed). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a heap of several big rounded rocks piled together, with thick long seaweed and sea grass growing from between them and hanging over their tops, about twice as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+━━━━━━━━ 낮고 넓은 산호 밭 — 2장
+
+■ 낮고 넓은 산호 밭 (coralbed · 실제 0.4~0.8m · 불가사리·소라·문어·가오리·흰동가리 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the under-the-sea background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (soft pink, pale orange, cream and a little dull purple on the corals). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low, very wide, dense carpet of many small rounded, brain and branching corals and small sponges growing tightly together on the sea floor, about five times as wide as it is tall, its top line gently bumpy.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲

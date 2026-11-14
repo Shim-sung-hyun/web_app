@@ -136,6 +136,72 @@
    "big": false,
    "scalefree": false,
    "baseMatch": false
+  },
+  "tallkelp": {
+   "name": "키 큰 다시마 벽",
+   "real": [
+    6,
+    10
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
+  },
+  "pinnacle": {
+   "name": "높은 바위 기둥",
+   "real": [
+    5,
+    8
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "rockarch": {
+   "name": "바위 아치",
+   "real": [
+    3,
+    5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "seafans": {
+   "name": "부채산호 숲",
+   "real": [
+    1.5,
+    3
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "weedrocks": {
+   "name": "해초 덮인 바위 무더기",
+   "real": [
+    1.5,
+    2.5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": true
+  },
+  "coralbed": {
+   "name": "낮고 넓은 산호 밭",
+   "real": [
+    0.4,
+    0.8
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": true
   }
  },
  "animals": [
@@ -148,7 +214,8 @@
    "swim": [
     1.5,
     4
-   ]
+   ],
+   "swimP": 0.6
   },
   {
    "name": "상어",
@@ -159,21 +226,32 @@
    "swim": [
     0.8,
     2.5
-   ]
+   ],
+   "swimP": 0.6
   },
   {
    "name": "돌고래",
    "file": "dolgorae",
    "real": 2.8,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "swim": [
+    0.8,
+    3
+   ],
+   "swimP": 0.7
   },
   {
    "name": "바다거북",
    "file": "badageobuk",
    "real": 1.1,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "swim": [
+    0.5,
+    2
+   ],
+   "swimP": 0.6
   },
   {
    "name": "문어",
@@ -187,21 +265,36 @@
    "file": "ojingeo",
    "real": 0.6,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "swim": [
+    0.3,
+    1.5
+   ],
+   "swimP": 0.6
   },
   {
    "name": "해파리",
    "file": "haepari",
    "real": 0.4,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "swim": [
+    0.5,
+    2.5
+   ],
+   "swimP": 1
   },
   {
    "name": "고등어",
    "file": "godeungeo",
    "real": 0.35,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "swim": [
+    0.3,
+    1.5
+   ],
+   "swimP": 0.6
   },
   {
    "name": "불가사리",
@@ -222,28 +315,38 @@
    "file": "gaori",
    "real": 1.2,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "swim": [
+    0.3,
+    1.5
+   ],
+   "swimP": 0.5
   },
   {
    "name": "흰동가리",
    "file": "huindonggari",
    "real": 0.1,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "swim": [
+    0.1,
+    0.5
+   ],
+   "swimP": 0.5
   }
  ],
  "compose": {
   "clusters": [
-   4,
-   5
+   5,
+   7
   ],
   "perCluster": [
    2,
    4
   ],
   "loose": [
-   6,
-   10
+   10,
+   14
   ],
   "maxSame": 3,
   "overlap": 0.2,
@@ -264,7 +367,12 @@
      "산호 무리",
      "넓적한 산호",
      "해초 무리",
-     "해면과 부채 산호"
+     "해면과 부채 산호",
+     "키 큰 다시마 벽",
+     "높은 바위 기둥",
+     "바위 아치",
+     "부채산호 숲",
+     "해초 덮인 바위 무더기"
     ],
     "n": [
      1,
@@ -283,7 +391,10 @@
      "산호 무리",
      "넓적한 산호",
      "해초 무리",
-     "해면과 부채 산호"
+     "해면과 부채 산호",
+     "바위 아치",
+     "부채산호 숲",
+     "해초 덮인 바위 무더기"
     ],
     "n": [
      1,
@@ -296,7 +407,8 @@
      "큰 조개",
      "작은 바위 무리",
      "모래 둔덕과 조개껍데기",
-     "가라앉은 나무토막"
+     "가라앉은 나무토막",
+     "낮고 넓은 산호 밭"
     ],
     "n": [
      1,
