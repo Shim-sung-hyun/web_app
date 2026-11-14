@@ -37,3 +37,5 @@ media/animals/jebi.webp — 제비 그림을 빙 연필풍으로 다시 받음
 media/stage-beta/nature/new-underground/items/treeroots-1.webp — 땅속 나무뿌리를 줄기 있는 그림으로 다시 받음(선생님: 뿌리만 덩그러니)
 media/stage-beta/nature/new-underground/items/treeroots-2.webp — 땅속 나무뿌리를 줄기 있는 그림으로 다시 받음(선생님: 뿌리만 덩그러니)
 media/stage-beta/nature/new-underground/items/treeroots-3.webp — 땅속 나무뿌리를 줄기 있는 그림으로 다시 받음(선생님: 뿌리만 덩그러니)
+media/stage-beta/nature/new-water/items/rootmass-1.webp — 물속 물가 나무뿌리 — 수염(커튼)처럼 내려와 보여 뺌(선생님 2026-11-14), 그루터기가 대신함
+media/stage-beta/nature/new-water/items/rootmass-2.webp — 물속 물가 나무뿌리 — 수염(커튼)처럼 내려와 보여 뺌(선생님 2026-11-14), 그루터기가 대신함
