@@ -233,7 +233,7 @@ media/stage/ (기존) · media/stage-beta/ (새로 만드는 중, 구조 같음)
 stage.json 꼴(장소마다)
   name · horizon · groundTop · unit · beds{자리:{y,x,persp}} · avoid · far(먼 띠) · front(앞가림 띠) · compose · blocks · animals(숨기기 시험용)
   items:{id:{name, real:[낮은,높은 m], bed, kind, role:'big'|'frame'(frameShow·frameY), ground:[0~1], from, base·foot(stage-meta.py가 잼), flip:false, scale}}
-  선택 값: sharpPx(1200) · maxStretch(1.2) · smallFront(.7) · nestSmall(.6) · rootSmall(1.2) · groundTol(48)
+  선택 값: sharpPx(1200) · maxStretch(1.2) · smallFront(.7) · compose.backBias(1 — 1보다 크면 자리를 먼 쪽에서 더 자주, 2026-11-14 강·호수·물속 1.8) · nestSmall(.6) · rootSmall(1.2) · groundTol(48)
 
 ■ 그림 받는 법
 - 프롬프트는 media/stage/prompts/에 앱(묶음)마다 한 파일, 그림마다 ▼~▲ 글을 통째로(공통 글을 따로 두지 않음). Gemini가 안 되면 Bing Image Creator(같은 글 + 본보기).

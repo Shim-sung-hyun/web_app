@@ -150,7 +150,8 @@
   "baseMatch": [
    "mossrock",
    "stonepile"
-  ]
+  ],
+  "backBias": 1.8
  },
  "items": {
   "bigstone-1": {
@@ -1417,5 +1418,6 @@
  ],
  "pencil": true,
  "see": 0.05,
- "growMax": 12
+ "growMax": 12,
+ "smallFront": 0.3
 }

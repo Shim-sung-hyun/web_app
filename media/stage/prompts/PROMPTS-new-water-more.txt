@@ -1,0 +1,21 @@
+물속(민물) — 더 받을 그림: 모래 둔덕 2장 (2026-11-14, 선생님 — 지금 1장뿐)
+받는 곳: 대화에 올려 주시면 Claude가 sandmound-2.jpg·sandmound-3.jpg로 넣음.
+붙일 그림: 물속 배경(media/stage-beta/nature/new-water/bg.jpg) 한 장 — 그림풍 기준으로만.
+받은 1장은 밋밋한 흰 언덕이라, 모양이 다르게 두 가지로 받음(물결 무늬 둔덕 · 자갈과 물풀이 조금 박힌 둔덕). 그림자 없이 흰 바탕.
+
+■ 물결 무늬 모래 둔덕 (sandmound-2)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underwater river background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale grey-beige on the sand). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low, wide mound of pale river sand, about four times as wide as it is tall, with soft ripple marks made by the water running across its top and a gentle slope on both sides.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 자갈과 물풀이 조금 박힌 모래 둔덕 (sandmound-3)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underwater river background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale grey-beige on the sand). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low, wide, uneven mound of river sand, about four times as wide as it is tall, a little darker and more golden than the sand of the background, with a few small round pebbles half buried in it and two or three tiny tufts of water grass at its foot.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
