@@ -102,13 +102,27 @@
    "name": "참새",
    "src": "animals/chamsae.webp",
    "real": 1.0,
-   "face": "L"
+   "face": "L",
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "까치",
    "src": "animals/kkachi.webp",
    "real": 1.4,
-   "face": "L"
+   "face": "L",
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "제비",
@@ -120,13 +134,27 @@
    "name": "비둘기",
    "src": "animals/bidulgi.webp",
    "real": 1.2,
-   "face": "L"
+   "face": "L",
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "박새",
    "src": "animals/baksae.webp",
    "real": 0.95,
-   "face": "L"
+   "face": "L",
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "독수리",
@@ -156,7 +184,14 @@
    "name": "부엉이",
    "src": "animals/bueongi.webp",
    "real": 1.4,
-   "face": "L"
+   "face": "L",
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "갈매기",

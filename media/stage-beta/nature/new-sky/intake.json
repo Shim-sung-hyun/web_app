@@ -180,14 +180,28 @@
    "file": "chamsae",
    "real": 1.0,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "까치",
    "file": "kkachi",
    "real": 1.4,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "제비",
@@ -201,14 +215,28 @@
    "file": "bidulgi",
    "real": 1.2,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "박새",
    "file": "baksae",
    "real": 0.95,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "독수리",
@@ -243,7 +271,14 @@
    "file": "bueongi",
    "real": 1.4,
    "face": "L",
-   "hide": true
+   "hide": true,
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   },
   {
    "name": "갈매기",
@@ -256,6 +291,34 @@
    "name": "기러기",
    "file": "gireogi",
    "real": 2.0,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "참새",
+   "file": "chamsae-fly",
+   "real": 1.25,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "까치",
+   "file": "kkachi-fly",
+   "real": 1.75,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "비둘기",
+   "file": "bidulgi-fly",
+   "real": 1.5,
+   "face": "L",
+   "hide": true
+  },
+  {
+   "name": "박새",
+   "file": "baksae-fly",
+   "real": 1.19,
    "face": "L",
    "hide": true
   }

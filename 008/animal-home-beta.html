@@ -1074,6 +1074,9 @@ body.setup #adminBtn{display:none}
     /* 작은 동물 키우기(2026-11-12 선생님 '가'): 그 깊이의 실제 크기가 minLong에 못 미치면 minLong까지 키움(growMax배까지, 기본 5).
        키운 동물은 크기를 드러내지 않는 소품(stage.json scalefree 종류 — 돌·풀·덤불 등) 뒤에만 — 소품보다 커 보이지 않게. opt.grow:false면 안 키움 */
     const SF = new Set(pl.scalefree || []);
+    /* 앉은 새는 앉을 데 뒤에만(2026-11-14 하늘, 선생님: 서 있는 참새가 하늘 한가운데 떠 있음): stage.json animals[].behind(소품 종류 목록)가 있으면
+       발 쪽이 그 종류 소품의 칠해진 곳에 가려진 자리만 — 나무 꼭대기·지붕·가지에 앉은 것처럼. 같은 이름이라도 그림(src)이 다르면(나는 그림) 묶이지 않음 */
+    const BH = (a.behind || ((pl.animals || []).find(x => x.name === a.name && x.behind && (a.src || '').endsWith(x.src)) || {}).behind), BHs = BH && BH.length ? new Set(BH) : null;
     /* 최소 크기는 깊이를 따름(2026-11-13 선생님: 사막쥐·사막여우·거북이 앞에 있어도 너무 작음 — 키운 동물이 어디서나 같은 크기였음): 멀면 minLong×0.6, 바로 앞이면 ×1.6 */
     const minAt = y => minLong * (.6 + Math.max(0, Math.min(1, (y - pl.horizon) / (1 - pl.horizon))));
     const make = (x, y, flip) => {   // 그 깊이의 크기로 동물 놓기: 몸의 가장 긴 쪽 = real × 1m (가로는 4:3 장면이라 0.75)
@@ -1105,6 +1108,8 @@ body.setup #adminBtn{display:none}
          앞 소품의 땅에 퍼진 밑동(아래 18%)이 동물의 발(아래 25%)을 덮지 않게 — 가리는 것은 소품의 몸통 */
       const Abox = [A.x - A.w * .4, A.y - A.h * A.base, A.x + A.w * .4, A.y];
       const frontAll = lay.concat(extra ? [extra] : []).filter(o => o !== A && depthY(o) > depthY(A));
+      if (BHs) { const fy = A.y - A.h * A.base * .06, perch = frontAll.filter(o => !o.animal && BHs.has((pl.items[o.id] || {}).kind));
+        if (![-.12, 0, .12].some(dx => perch.some(o => { const im = o.img || (pl.items[o.id] || {}).img; return im && solidAt(o, im, A.x + A.w * dx, fy); }))) return; }   // 앉은 새: 발이 앉을 데 뒤에
       if (A.grow > 1.01) for (const o of frontAll) {   // 키운 동물을 가리는 소품은 모두 크기를 드러내지 않는 것
         if (o.animal) continue; const ob = [o.x - o.w / 2, o.y - o.h * (o.base || 1), o.x + o.w / 2, o.y];
         if (ob[0] < Abox[2] && ob[2] > Abox[0] && ob[1] < Abox[3] && ob[3] > Abox[1] && !SF.has((pl.items[o.id] || {}).kind)) return; }
@@ -1160,7 +1165,7 @@ body.setup #adminBtn{display:none}
       for (let k = 1; r === 'see' && k <= 6; k++) r = tryAt0(x, Math.max(B.y[0], y - .006 * k), flip, extra);   // 비치면 조금씩 뒤로(원근으로 작아지고 발이 소품 몸통 뒤로)
     };   // 깔리면 좌우를 뒤집어(흰올빼미처럼 머리 쪽이 나오게)
     const flip0 = () => R() < .5, good = () => best && best.sc < (opt.enough ?? .03);   // 빠르게(2026-11-11): 몫 가운데에 충분히 가까운 자리를 찾으면 그만 찾음
-    for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03 && (pl.items[o.id] || {}).role !== 'frame')) {   // 놓인 소품 바로 뒤(가까운 줄기 뒤엔 안 숨음)
+    for (const o of lay.filter(o => o.bed === bed && !o.actor && o.h > .03 && (pl.items[o.id] || {}).role !== 'frame' && (!BHs || BHs.has((pl.items[o.id] || {}).kind)))) {   // 놓인 소품 바로 뒤(가까운 줄기 뒤엔 안 숨음)
       if (good()) break; for (let t = 0; t < 10; t++) { const y = Math.max(B.y[0], o.y - .004 - R() * .03), x = o.x + (R() - .5) * o.w * .9; tryAt(x, y, flip0()); }
     }
     /* 여럿이 함께 가리는 자리(2026-11-09 선생님: 곰도 멀리 두면 작아짐 — 나무 두세 그루 뒤, 앞 바위 + 뒤 나무 묶음 뒤, 화면 가장자리):
@@ -1170,7 +1175,7 @@ body.setup #adminBtn{display:none}
       tryAt(x, y, flip0());
     }
     if (!best || best.sc > .5) {      // 맞는 소품이 없으면 가릴 소품을 새로 앞에
-      const pool = Object.values(pl.items).filter(i => i.bed === bed && i.role !== 'frame');
+      const pool = Object.values(pl.items).filter(i => i.bed === bed && i.role !== 'frame' && (!BHs || BHs.has(i.kind)));
       /* 많이 가려야 하면(어려움) 동물보다 크게 그려질 수 있는 소품만(2026-11-09 선생님: 어려움인데 곰·호랑이가 다 보임) */
       const needH = want[1] <= .3 ? .85 : want[1] <= .55 ? .6 : .45;
       const big = pool.filter(i => realMax(i) * (i.base ? 1 / i.base : 1) >= a.real * .55 * needH);
@@ -1199,6 +1204,7 @@ body.setup #adminBtn{display:none}
       let skipped = 0; const cap = Math.floor(n * (opt.featFree ?? 0));   // 특징 원리를 쉬는 동물은 판의 featFree(hideLevel .4)까지
       let slot = null;   // 단계 섞기: 자리마다 단계를 먼저 뽑고, 그 단계로 숨는 동물이 나올 때까지 그 단계를 지킴(못 숨는 동물만 건너뜀 — 쉬운 단계로 쏠리지 않게)
       for (let i = 0; i < pick.length && out.length < n; i++) { if (!slot) slot = typeof opt.hide === 'function' ? opt.hide(R, out.length) : opt.hide;
+        if (out.some(o => o.animal === pick[i].name)) continue;   // 같은 이름은 한 판에 한 마리(2026-11-14 하늘: 앉은 참새와 나는 참새가 함께 나오지 않게)
         const A = hide(pl, lay, pick[i], Object.assign({}, slot, {seed: seed + i * 7}, skipped < cap ? {featSkip: true} : {})); if (A) { out.push(A); slot = null; if (!A.featOk) skipped++; } else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
       if (!best || out.length > best.out.length) best = {lay, out, seed};
       if (out.length >= n) break;

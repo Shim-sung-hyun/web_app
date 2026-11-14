@@ -1,0 +1,30 @@
+하늘 — 나는 새 4장 (2026-11-14, 선생님: 앉은 그림과 나는 그림을 둘 다)
+앉은 참새·까치·비둘기·박새는 나무 꼭대기·지붕·가지 뒤에만 숨음(stage.json behind). 나는 그림은 하늘 어디든 — 두 그림이 섞여 나옴.
+붙일 그림: media/animals/doksuri.webp (이번에 받은 연필풍 나는 독수리). 받는 곳 media/stage-beta/nature/new-sky/in/ — 이름은 아래 괄호대로(묶음으로 주셔도 Claude가 붙임).
+나는 그림은 무대 숨기기에만 씀(008·009는 앉은 그림 그대로).
+
+━━━━━━━━ 나는 새 4장
+
+■ 참새 — 나는 그림 (chamsae-fly.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE bird only, in exactly the same style as the attached flying eagle drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The bird is drawn WHOLE IN FLIGHT, seen from the SIDE and a little from below, with its head to the LEFT and both wings spread open (one wing raised, one lowered), legs tucked in. It fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO sky, NO clouds, NO branch, NO shadow, NO text, NO frame: only the bird on PURE WHITE. Square image.
+The bird: a tree sparrow flying, a chestnut-brown cap, a black cheek spot on a white cheek, streaked brown back and wings, pale belly, short tail.
+▲
+
+■ 까치 — 나는 그림 (kkachi-fly.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE bird only, in exactly the same style as the attached flying eagle drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The bird is drawn WHOLE IN FLIGHT, seen from the SIDE and a little from below, with its head to the LEFT and both wings spread open (one wing raised, one lowered), legs tucked in. It fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO sky, NO clouds, NO branch, NO shadow, NO text, NO frame: only the bird on PURE WHITE. Square image.
+The bird: a magpie flying, glossy black head, back and chest, a white belly, wings black with large white patches on the outer feathers, a long blue-black tail spread behind.
+▲
+
+■ 비둘기 — 나는 그림 (bidulgi-fly.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE bird only, in exactly the same style as the attached flying eagle drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The bird is drawn WHOLE IN FLIGHT, seen from the SIDE and a little from below, with its head to the LEFT and both wings spread open (one wing raised, one lowered), legs tucked in. It fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO sky, NO clouds, NO branch, NO shadow, NO text, NO frame: only the bird on PURE WHITE. Square image.
+The bird: a feral rock pigeon flying, blue-grey body, a shiny green-and-purple neck, two dark bars on each grey wing, dark wing tips and tail band.
+▲
+
+■ 박새 — 나는 그림 (baksae-fly.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE bird only, in exactly the same style as the attached flying eagle drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The bird is drawn WHOLE IN FLIGHT, seen from the SIDE and a little from below, with its head to the LEFT and both wings spread open (one wing raised, one lowered), legs tucked in. It fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO sky, NO clouds, NO branch, NO shadow, NO text, NO frame: only the bird on PURE WHITE. Square image.
+The bird: a great tit flying, a glossy black head with white cheeks, a black stripe down the yellow belly, a greenish back, blue-grey wings and tail.
+▲
