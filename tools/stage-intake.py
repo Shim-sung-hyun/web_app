@@ -96,9 +96,11 @@ def main():
     for f, k, n in props:   # 2) 소품
         K = kinds[k]; name = '%s-%d' % (k, n); out = os.path.join(rel, 'items', name + '.webp'); pl = ['--plant'] if K.get('plant') else []
         if noshadow:   # 땅이 없는 곳(땅속·물속·하늘, 2026-11-14): 흰 바탕에 물건만 — 그림자 없이 자르고, 그림자가 없으니 뒤집어도 됨
-            run(tool('bing-cut.py'), os.path.join(src, f), out, *(pl or ['--animal']))
+            mode = ['--' + K['cut']] if K.get('cut') else (pl or ['--animal'])   # 종류마다 자르는 법(하늘: 벚꽃 가지는 식물이지만 animal — 옅은 꽃잎이 뚫리지 않게)
+            run(tool('bing-cut.py'), os.path.join(src, f), out, *mode, *(['--holes'] if K.get('holes') else []))   # holes: 방패연 가운데 구멍
             run(tool('defringe.py'), out, *pl); run(tool('defringe.py'), out, '--rim')   # 미색 종이로 온 그림의 밝은 테두리
-            it = {'name': K['name'], 'real': K['real'], 'bed': spec.get('bed', 'ground'), 'kind': k, 'kindName': K['name']}
+            it = {'name': K['name'], 'real': K['real'], 'bed': K.get('bed', spec.get('bed', 'ground')), 'kind': k, 'kindName': K['name']}
+            if K.get('side'): it['cut'] = K['side']   # 잘린 끝이 화면 밖으로(하늘 가지 — 'left')
         else:
             run(tool('flat-shadow.py'), os.path.join(src, f), out, '--key', K.get('key', 'blue'), *pl)
             run(tool('defringe.py'), out, *pl)

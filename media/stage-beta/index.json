@@ -639,5 +639,46 @@
    "willow-1",
    "willow-2"
   ]
+ },
+ "nature/new-sky": {
+  "name": "하늘",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "used_by": [],
+  "ready": false,
+  "far": [],
+  "front": [],
+  "missing": [],
+  "skirt": [],
+  "items": [
+   "balloons-1",
+   "balloons-2",
+   "bigcloud-1",
+   "bigcloud-2",
+   "blossombranch-1",
+   "blossombranch-2",
+   "kite-1",
+   "kite-2",
+   "longcloud-1",
+   "longcloud-2",
+   "longcloud-3",
+   "nestbranch-1",
+   "nestbranch-2",
+   "pinetop-1",
+   "pinetop-2",
+   "pinetop-3",
+   "pole-1",
+   "pole-2",
+   "pole-3",
+   "rooftop-1",
+   "rooftop-2",
+   "smallcloud-1",
+   "smallcloud-2",
+   "treetop-1",
+   "treetop-2"
+  ]
  }
 }

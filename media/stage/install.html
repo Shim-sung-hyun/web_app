@@ -451,6 +451,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       || ((it => it.cut && !((it.cut === 'left') !== p.flip ? p.x - p.w / 2 < -.005 : p.x + p.w / 2 > 1.005))(pl.items[p.id] || {}))   // 잘린 끝은 화면 밖으로
       || (fr && realMax(pl.items[p.id] || {}) > (pl.nestSmall ?? .6) && !coversRoots(fr, p))   // 움푹한 곳에 들어가는 것은 들풀·버섯·낙엽처럼 작은 것(nestSmall m 이하)만, 나머지는 뿌리 끝을 가리며 앞에
       || (!grove && out.filter(o => o.id === p.id).length >= (opt.maxSame ?? 2))   // 군락은 같은 소품을 여럿 겹쳐도 됨
+      || ((k => C.maxKind && k in C.maxKind && out.filter(o => (pl.items[o.id] || {}).kind === k).length >= C.maxKind[k])((pl.items[p.id] || {}).kind))   // 종류마다 한 장면에 몇 번까지(compose.maxKind, 2026-11-14 하늘: 전봇대 둘이 겹쳐 섬)
       || p.x - p.w / 2 < -p.w * .35 || p.x + p.w / 2 > 1 + p.w * .35   // 원리 8(2026-11-09 선생님 고침): 자연스러우면 좌우·위아래로 화면을 벗어나도 됨 — 폭의 35%까지
       || (!grove && out.some(o => o.bed === p.bed && Math.abs(o.x - p.x) < (o.w + p.w) * C.overlap && Math.abs(o.y - p.y) < .04));
     /* 가까운 줄기(frame)를 먼저 정함 — 다른 소품이 그 뿌리 위에 떠 있지 않게(원리 19) */
@@ -959,6 +960,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       for (let t = 0; t < 200 && !good(); t++) {
         const g = B.y[0] + (B.y[1] - B.y[0]) * (.15 + R() * .8), x = .1 + R() * .8, A0 = make(x, g, false), sfPool = pool.filter(i => SF.has(i.kind)), src = A0.grow > 1.01 ? sfPool : big.length && R() < .8 ? big : pool, it = src[Math.floor(R() * src.length)];
         if (!it) break; const P = place(pl, it, x + (R() - .5) * A0.w * .5, Math.min(B.y[1], g + .005 + R() * .02), .5 + R() * .5, R() < .5); P.skirt = null;
+        { const B2 = pl.beds[it.bed] || B; if (B2.persp === false && it.ground && (P.y < B2.y[0] + (B2.y[1] - B2.y[0]) * it.ground[0] - .01 || P.y > B2.y[0] + (B2.y[1] - B2.y[0]) * it.ground[1] + .01)) continue; }   // 원근 없는 자리(하늘, 2026-11-14): 소품은 제 높이 몫(ground)에만 — 나무 꼭대기·지붕이 하늘 가운데 뜨지 않게
         if (P.h < A0.h * needH || P.x - P.w / 2 < 0 || P.x + P.w / 2 > 1 || !footOnGround(pl, P, covers) || tooSoft(pl, it, P) || covers.some(f => realMax(it) > (pl.nestSmall ?? .6) && !coversRoots(f, P))) continue; tryAt(x, g, flip0(), P);
       }
     }

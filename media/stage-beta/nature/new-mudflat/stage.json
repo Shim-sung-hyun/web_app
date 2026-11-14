@@ -134,6 +134,12 @@
    "src": "animals/doyosae.webp",
    "real": 0.25,
    "face": "L"
+  },
+  {
+   "name": "갈매기",
+   "src": "animals/galmaegi.webp",
+   "real": 0.45,
+   "face": "L"
   }
  ],
  "compose": {

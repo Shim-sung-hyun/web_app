@@ -30,3 +30,7 @@ media/animals/songsari.webp — 송사리 그림을 빙 연필풍으로 다시 �
 media/animals/hama.webp — 하마 그림을 빙 연필풍으로 다시 받음
 media/animals/sudal.webp — 수달 그림을 빙 연필풍으로 다시 받음
 media/animals/ureongi.webp — 우렁이 그림을 빙 연필풍으로 다시 받음
+media/animals/baksae.webp — 박새 그림을 빙 연필풍으로 다시 받음
+media/animals/beol.webp — 벌 그림을 빙 연필풍으로 다시 받음
+media/animals/bidulgi.webp — 비둘기 그림을 빙 연필풍으로 다시 받음
+media/animals/jebi.webp — 제비 그림을 빙 연필풍으로 다시 받음
