@@ -29,3 +29,4 @@ media/animals/megi.webp — 메기 그림을 빙 연필풍으로 다시 받음
 media/animals/songsari.webp — 송사리 그림을 빙 연필풍으로 다시 받음
 media/animals/hama.webp — 하마 그림을 빙 연필풍으로 다시 받음
 media/animals/sudal.webp — 수달 그림을 빙 연필풍으로 다시 받음
+media/animals/ureongi.webp — 우렁이 그림을 빙 연필풍으로 다시 받음
