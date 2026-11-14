@@ -92,6 +92,7 @@ media/stage/ (기존) · media/stage-beta/ (새로 만드는 중, 구조 같음)
    → 두 자리에 걸친 것은 아직 없음 — 물·하늘 무대를 만들 때 소품에 '밑동 자리'와 '뻗는 자리'를 따로 적게 함.
    → 매달린 것(2026-11-14 땅속): stage.json items에 hang:true면 그림 꼭대기를 hangTop(없으면 groundTop)에 붙임 — 나무뿌리·풀뿌리가 위 풀밭에서 흙 속으로 내려옴. 크기가 바뀌어도 꼭대기는 그대로(stagekit hangTo).
      줄기 있는 뿌리: items hangAt(그림 위에서 밑동까지 몫, tools/trunk-extend.py가 잼)이면 밑동을 hangTop에 붙이고 줄기는 장면 위로 — 줄여도 줄기 끝이 장면 안에 들어오지 않게 키움.
+     자주 숨길 동물: stage.json hideWeight {이름: 배} — hideMany가 숨길 차례를 가중 무작위로(땅속 오소리·프레리도그). 없으면 예전 순서.
      어둡게: stage.json dim {top, from, to}이면 render가 top 아래를 검정 from→to로 점점 덮음(맨 윗장, z 9500) — 땅속. look.dim 배율(0 끔).
      자리의 꼭대기: beds.<자리>.top이 있으면 소품·동물의 그림 꼭대기가 그 위로 솟지 않음(땅속 흙 맨 위 — 풀밭·하늘에 돌이 걸리지 않게).
  3 원근: 화면 크기 = 실제 높이 × 그 깊이의 1m 크기. 1m = unit × (밑동 y − 지평선)/(1 − 지평선). 크기를 임의로 바꾸지 않는다(2026-11-09 선생님 뜻 확인).

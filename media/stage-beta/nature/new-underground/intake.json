@@ -39,19 +39,19 @@
    "baseMatch": false
   },
   "treeroots": {
-   "name": "나무뿌리",
+   "name": "줄기와 뿌리",
    "real": [
     0.7,
     1.1
    ],
    "plant": true,
-   "big": false,
+   "big": true,
    "scalefree": false,
    "baseMatch": false,
    "hang": true
   },
   "grassroots": {
-   "name": "풀뿌리 뭉치",
+   "name": "풀 포기와 뿌리",
    "real": [
     0.25,
     0.45
@@ -214,8 +214,9 @@
    "buriedbranch"
   ],
   "maxKind": {
-   "treeroots": 2,
-   "tunnel": 2
+   "treeroots": 1,
+   "tunnel": 2,
+   "grassroots": 3
   }
  },
  "blocks": [
@@ -308,5 +309,9 @@
   "top": 0.19,
   "from": 0.05,
   "to": 0.2
+ },
+ "hideWeight": {
+  "오소리": 3,
+  "프레리도그": 2
  }
 }

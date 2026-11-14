@@ -182,13 +182,13 @@
     const R = rnd(Math.floor(r * 4294967296));
     const skirtMargin = it.skirtMargin || [.03 + R() * .04, .03 + R() * .04];
     const o = Object.assign({id: it.id, src: it.src, bed: it.bed, x, y, w, h, base, flip: !!flip, foot: it.foot || [.2, .8], skirt: pickSkirt(pl, it, r), skirtMargin, skirtHeightScale: it.skirtHeightScale, skirtOffset: it.skirtOffset, skirtScale: it.skirtScale}, extra || {});
-    if (it.hang) { o.hang = true; o.hangAt = it.hangAt || 0; hangTo(pl, o); }
+    if (it.hang) { o.hang = true; o.hangAt = it.hangAt || 0; o.hangUp = !!it.hangUp; hangTo(pl, o); }
     return o;
   }
   /* 매달린 것(2026-11-14 땅속 나무뿌리·풀뿌리): 그림 꼭대기가 stage.json hangTop(없으면 groundTop)에 닿게 — 위 풀밭에서 흙 속으로 내려옴. 크기가 바뀌어도 꼭대기는 그대로.
      items hangAt(그림 위에서 몫, tools/trunk-extend.py)이 있으면 그 줄(줄기가 뿌리로 갈라지는 밑동)을 hangTop에 — 줄기는 풀밭·하늘을 지나 장면 위로 나감 */
   const hangTo = (pl, o) => { const T = pl.hangTop ?? pl.groundTop;
-    if (o.hangAt) { const hMin = (T + .01) / o.hangAt; if (o.h < hMin) { o.w *= hMin / o.h; o.h = hMin; } }   // 줄였어도 줄기 끝이 장면 위로 나가게(하늘에 뜬 줄기 끝이 보이지 않게)
+    if (o.hangAt && o.hangUp) { const hMin = (T + .01) / o.hangAt; if (o.h < hMin) { o.w *= hMin / o.h; o.h = hMin; } }   // 줄였어도 줄기 끝이 장면 위로 나가게(하늘에 뜬 줄기 끝이 보이지 않게)
     o.y = T + o.h * ((o.base || 1) - (o.hangAt || 0)); };
 
   /* 무작위 배치: 자리마다 그 자리의 요소만. 고르게 흩뿌리지 않고 2~4 덩어리(큰 것 하나 + 앞쪽 작은 것) + 빈 땅 */
@@ -829,7 +829,8 @@
     const seed0 = opt.seed ?? Math.floor(Math.random() * 1e9), tries = opt.tries ?? 12, miss = new Map(), t0 = performance.now(); let best = null;
     for (let t = 0; t < tries; t++) {
       const seed = seed0 + t * 7919, lay = compose(pl, Object.assign({}, opt.compose, {seed})), R = rnd(seed), out = [];
-      const pick = animals.slice().sort(() => R() - .5).sort((p, q) => (miss.get(p) || 0) - (miss.get(q) || 0));   // 앞 판에서 못 숨긴 동물은 뒤로(빠르게)
+      const HW = pl.hideWeight, key = HW && new Map(animals.map(a => [a, -Math.log(1 - R()) / (HW[a.name] || 1)]));   // 자주 숨길 동물(stage.json hideWeight {이름: 배}, 2026-11-14 땅속 오소리·프레리도그 — 큰 동물은 가릴 곳이 적어 늘 뒤로 밀림)을 앞쪽에 — 가중 무작위 순서. hideWeight가 없는 무대는 예전 순서 그대로(같은 판 번호 = 같은 판)
+      const pick = animals.slice().sort(HW ? (p, q) => key.get(p) - key.get(q) : () => R() - .5).sort((p, q) => (miss.get(p) || 0) - (miss.get(q) || 0));   // 앞 판에서 못 숨긴 동물은 뒤로(빠르게)
       let skipped = 0; const cap = Math.floor(n * (opt.featFree ?? 0));   // 특징 원리를 쉬는 동물은 판의 featFree(hideLevel .4)까지
       let slot = null;   // 단계 섞기: 자리마다 단계를 먼저 뽑고, 그 단계로 숨는 동물이 나올 때까지 그 단계를 지킴(못 숨는 동물만 건너뜀 — 쉬운 단계로 쏠리지 않게)
       for (let i = 0; i < pick.length && out.length < n; i++) { if (!slot) slot = typeof opt.hide === 'function' ? opt.hide(R, out.length) : opt.hide;
