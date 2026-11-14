@@ -114,6 +114,61 @@
    "big": true,
    "scalefree": false,
    "baseMatch": false
+  },
+  "sunklog": {
+   "name": "잠긴 큰 통나무",
+   "real": [
+    0.8,
+    1.6
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "sunkstump": {
+   "name": "물에 잠긴 버드나무 그루터기",
+   "real": [
+    0.8,
+    1.5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": true
+  },
+  "hydrilla": {
+   "name": "키 큰 검정말 숲",
+   "real": [
+    1,
+    2
+   ],
+   "plant": true,
+   "big": true,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "hornwort": {
+   "name": "붕어마름 덤불",
+   "real": [
+    0.5,
+    1
+   ],
+   "plant": true,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
+  },
+  "musselbed": {
+   "name": "말조개 무더기",
+   "real": [
+    0.15,
+    0.35
+   ],
+   "plant": false,
+   "big": false,
+   "scalefree": true,
+   "baseMatch": false
   }
  },
  "animals": [
@@ -227,7 +282,10 @@
      "돌무더기 굴",
      "갈대 줄기",
      "물이끼 낀 바위",
-     "물가 나무뿌리"
+     "물가 나무뿌리",
+     "잠긴 큰 통나무",
+     "물에 잠긴 버드나무 그루터기",
+     "키 큰 검정말 숲"
     ],
     "n": [
      1,
@@ -244,7 +302,10 @@
      "돌무더기 굴",
      "갈대 줄기",
      "물이끼 낀 바위",
-     "물가 나무뿌리"
+     "물가 나무뿌리",
+     "잠긴 큰 통나무",
+     "물에 잠긴 버드나무 그루터기",
+     "키 큰 검정말 숲"
     ],
     "n": [
      1,
@@ -257,7 +318,9 @@
      "가라앉은 나뭇가지",
      "자갈 더미",
      "긴 수초",
-     "모래 둔덕"
+     "모래 둔덕",
+     "붕어마름 덤불",
+     "말조개 무더기"
     ],
     "n": [
      1,
@@ -266,7 +329,7 @@
    }
   }
  ],
- "note": "2026-11-14 그림을 넣음(stage-intake.py — shadow:false면 bing-cut.py --noshadow로 자름). 배치(compose·blocks)는 첫 설정 그대로, stage.json growMax 12(작은 동물 키우기)",
+ "note": "2026-11-14 그림을 넣음(stage-intake.py — shadow:false면 bing-cut.py --noshadow로 자름). 배치(compose·blocks)는 첫 설정 그대로, stage.json growMax 12(작은 동물 키우기) · 2026-11-14 더 받을 5가지(sunklog·sunkstump·hydrilla·hornwort·musselbed) 종류를 미리 적어 둠 — 그림이 오면 stage-intake.py",
  "see": 0.05,
  "smallFront_note": "stage.json smallFront .3 — 0.3m 넘는 소품도 먼 쪽에(기본 .7이면 앞 절반에만)"
 }

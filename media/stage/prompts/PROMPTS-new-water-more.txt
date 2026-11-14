@@ -1,21 +1,45 @@
-물속(민물) — 더 받을 그림: 모래 둔덕 2장 (2026-11-14, 선생님 — 지금 1장뿐)
-받는 곳: 대화에 올려 주시면 Claude가 sandmound-2.jpg·sandmound-3.jpg로 넣음.
+물속(민물) — 더 받을 그림 (2026-11-14, 선생님: 환경을 풍부하게)
+모래 둔덕 2장은 받아서 넣음(받은 6장 중 4장 — sandmound-2~5). 아래 5가지를 종류마다 2장씩(같은 프롬프트로 2번) = 10장.
 붙일 그림: 물속 배경(media/stage-beta/nature/new-water/bg.jpg) 한 장 — 그림풍 기준으로만.
-받은 1장은 밋밋한 흰 언덕이라, 모양이 다르게 두 가지로 받음(물결 무늬 둔덕 · 자갈과 물풀이 조금 박힌 둔덕). 그림자 없이 흰 바탕.
+까닭: 지금 소품은 낮은 것이 많고 수달·메기처럼 큰 동물이 숨을 큰 것이 바위뿐임. 먼 쪽에서도 보이는 키 큰 물풀, 큰 통나무·그루터기, 바닥의 조개 무더기로 높낮이와 결을 다양하게.
+물가 나무뿌리(rootmass)는 바닥에 선 커튼처럼 보여 그루터기를 받으면 뺄 생각.
 
-■ 물결 무늬 모래 둔덕 (sandmound-2)
+■ 잠긴 큰 통나무 (sunklog · 실제 0.8~1.6m · 메기·수달·자라 숨는 곳)
 ▼
-IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underwater river background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale grey-beige on the sand). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
-The object: a low, wide mound of pale river sand, about four times as wide as it is tall, with soft ripple marks made by the water running across its top and a gentle slope on both sides.
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underwater river background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted grey-brown on the wood and a little pale green moss). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a big old tree trunk lying sunken on the river bed, thick and long, about three times as wide as it is tall, with rough bark, a few broken stumps of branches, some pale moss and a dark hollow open at one end.
 Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
 NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
 ▲
 
-■ 자갈과 물풀이 조금 박힌 모래 둔덕 (sandmound-3)
+■ 물에 잠긴 버드나무 그루터기 (sunkstump · 실제 0.8~1.5m · 메기·잉어·가재 숨는 곳)
 ▼
-IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underwater river background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a pale grey-beige on the sand). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
-The object: a low, wide, uneven mound of river sand, about four times as wide as it is tall, a little darker and more golden than the sand of the background, with a few small round pebbles half buried in it and two or three tiny tufts of water grass at its foot.
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underwater river background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted grey-brown on the wood and a little pale green moss). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a wide old willow stump standing on the river bed, cut off at about knee height, with thick roots spreading out over the sand on both sides like fingers and small dark gaps between them, about one and a half times as wide as it is tall.
 Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
 NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
 ▲
 
+■ 키 큰 검정말 숲 (hydrilla · 실제 1~2m · 붕어·잉어·송사리 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underwater river background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a deep muted green, a little darker than the other plants). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a tall thick stand of river water plants with many straight stems covered all along with tiny whorled leaves, like soft bottle brushes, swaying gently to the right, about twice as tall as it is wide.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the bottom. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 붕어마름 덤불 (hornwort · 실제 0.5~1m · 새우·송사리·붕어 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underwater river background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a fresh muted olive green). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a round, bushy clump of feathery river water plant, with fine forked thread-like leaves in rings around soft stems, looking light and fluffy, a little wider than it is tall.
+The plant is DENSE from the very bottom to the top: inside it there is no white at all, like one solid mass, and no open gap near the bottom. Its outer edge is natural and a little uneven, made only by the tips of its own leaves and stems — do NOT draw one line around the whole plant. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲
+
+■ 말조개 무더기 (musselbed · 실제 0.15~0.35m · 다슬기·가재·미꾸라지 숨는 곳)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underwater river background where this object will stand: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and only very pale washes of colour (a muted brown and dark olive on the shells, pale sand between them). Draw ONE object only, inside the middle two-thirds of the picture width, with wide white margins on all four sides.
+The object: a low patch of river sand with many big freshwater mussel shells half buried in it, some closed and standing on their edge, some empty and open, about four times as wide as it is tall.
+Close the outline of the hard parts with a continuous dark-grey line, also along the bottom; any plants on it keep their natural loose edges. The bottom edge is almost flat and sits on the ground, with no hollow under it. Its cracks and lumps form no face-like shape. Nothing else in the picture: no loose bits, pebbles or ground patch under or around it, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow, dark patch or ground line under or beside the object — only the object itself on pure white. Light comes softly from the upper left.
+▲

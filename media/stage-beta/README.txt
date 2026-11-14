@@ -107,7 +107,8 @@
   메기·송사리·다슬기는 media/animals 그림을 새로(옛 것은 _trash/2026-11-14). 008·008 베타: 붕어·새우를 OLD(낱말 그림)→NEW 표로, FACE 다슬기 L. 009는 붕어·새우를 낱말 그림으로 써서 그대로. places.json 물속 동물도 새 목록.
 - 20판 시험: 하·중·상 3마리, 스페셜 6.0마리. 송사리·다슬기·가재·새우가 작아 들판처럼 키우기 한도 12배(stage.json growMax). 다슬기는 그래도 안 나와 길이를 기어가는 몸까지 4.5cm로(real .045) → 스페셜 7번·중·상 1번씩.
 - 먼 쪽도 쓰게(2026-11-14 선생님: 근거리만 씀): 작은 소품이 앞 절반에만 놓이던 것을 stage.json smallFront .3(0.3m 넘으면 어디든)으로, 자리 고를 때 먼 쪽을 더 자주(compose.backBias 1.8 — 강·호수 세션이 같은 날 만든 값).
-- 다음: 선생님 숨기기 시험·평가(hide-test.html?place=nature/new-water). 볼 것: 물가 나무뿌리가 바닥에 선 커튼처럼 보이지 않는지(어색하면 빼거나 다시 받기), 모래 둔덕 2장 더(프롬프트 prompts/PROMPTS-new-water-more.txt 드림 — 받으면 sandmound-2·3).
+- 모래 둔덕 4장 더 넣음(2026-11-14, 받은 6장 중 — 물결 무늬 2·자갈과 물풀 2 → sandmound-2~5). 소품 10종류 23개.
+- 다음: 더 받을 그림 5가지×2장(prompts/PROMPTS-new-water-more.txt — 잠긴 큰 통나무·버드나무 그루터기·키 큰 검정말·붕어마름·말조개 무더기, intake.json kinds·블록에 미리 적음). 그루터기가 오면 물가 나무뿌리(커튼처럼 보임)를 뺄지 선생님께 여쭘. 선생님 숨기기 시험·평가(hide-test.html?place=nature/new-water).
 
 ■ nature/new-pond 강·호수 (2026-11-14 빙 연필풍으로 만듦 — tools/stage-intake.py, 설정 intake.json)
 - 선생님이 묶음(37장)으로 주심 → Claude가 보고 이름을 붙여 28장을 넣음. 배경 bg.jpg(받은 2장 중 먼 물가가 낮은 것). 먼 물가 .39 = horizon, 모래 시작 .59 = groundTop — 위 40%가 하늘·먼 언덕, 그 아래 호수, 아래 40%가 모래 물가(소품·동물은 모래 위에만).
