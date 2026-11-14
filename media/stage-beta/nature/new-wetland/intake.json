@@ -176,14 +176,16 @@
    "file": "sogeumjaengi",
    "real": 0.02,
    "face": "L",
-   "hide": true
+   "hide": false,
+   "why": "2026-11-14 선생님: 너무 작아(2~3cm) 숨는 동물에서 뺌"
   },
   {
    "name": "물방개",
    "file": "mulbanggae",
    "real": 0.03,
    "face": "L",
-   "hide": true
+   "hide": false,
+   "why": "2026-11-14 선생님: 너무 작아(2~3cm) 숨는 동물에서 뺌"
   },
   {
    "name": "잠자리",
@@ -197,7 +199,8 @@
    "file": "olchaengi",
    "real": 0.03,
    "face": "L",
-   "hide": true
+   "hide": false,
+   "why": "2026-11-14 선생님: 너무 작아(2~3cm) 숨는 동물에서 뺌"
   },
   {
    "name": "자라",

@@ -177,27 +177,9 @@
    "face": "L"
   },
   {
-   "name": "소금쟁이",
-   "src": "animals/sogeumjaengi.webp",
-   "real": 0.02,
-   "face": "L"
-  },
-  {
-   "name": "물방개",
-   "src": "animals/mulbanggae.webp",
-   "real": 0.03,
-   "face": "L"
-  },
-  {
    "name": "잠자리",
    "src": "animals/jamjari.webp",
    "real": 0.08,
-   "face": "L"
-  },
-  {
-   "name": "올챙이",
-   "src": "animals/olchaengi.webp",
-   "real": 0.03,
    "face": "L"
   },
   {
