@@ -1,0 +1,10 @@
+수달 — 빙 연필풍 프롬프트 한 장 (2026-11-14, 선생님: 물속에서 옛 만화풍 수달을 뺀 자리를 채우려고)
+강·호수 프롬프트의 수달과 같은 글. 같은 프롬프트로 2~3번 받아 주시면 그중 고름.
+붙일 그림: media/animals/bukgeukgom.webp (연필풍 북극곰) 한 장 — 그림풍 기준으로만.
+받는 곳: 대화에 올려 주시면 Claude가 media/animals/sudal.webp로 넣음(물속·강과 호수·008이 함께 바뀜 — 008 FACE 수달 R→L).
+
+■ 수달 (sudal.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO water, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a river otter standing on all four feet, sleek dark brown fur, a paler throat, a flat head with small ears and long whiskers, a long thick tail.
+▲
