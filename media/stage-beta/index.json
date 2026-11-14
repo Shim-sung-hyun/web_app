@@ -444,5 +444,46 @@
    "smallrock-1",
    "stones-1"
   ]
+ },
+ "nature/new-wetland": {
+  "name": "논·습지",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "used_by": [],
+  "ready": false,
+  "far": [],
+  "front": [],
+  "missing": [],
+  "skirt": [],
+  "items": [
+   "bankgrass-1",
+   "cattails-1",
+   "cattails-2",
+   "cattails-3",
+   "dryreeds-1",
+   "dryreeds-2",
+   "duckweed-1",
+   "duckweed-2",
+   "iris-1",
+   "iris-2",
+   "lotus-1",
+   "lotus-2",
+   "mudlog-1",
+   "mudlog-2",
+   "reeds-1",
+   "reeds-2",
+   "rice-1",
+   "rice-2",
+   "sedge-1",
+   "sedge-2",
+   "waterstones-1",
+   "waterstones-2",
+   "willow-1",
+   "willow-2",
+   "willow-3"
+  ]
  }
 }

@@ -7,3 +7,7 @@ media/animals/jjangttungeo.webp — 짱뚱어 그림을 빙 연필풍으로 다�
 media/animals/matjogae.webp — 맛조개 그림을 빙 연필풍으로 다시 받음
 media/animals/nakji.webp — 낙지 그림을 빙 연필풍으로 다시 받음
 media/animals/nongge.webp — 농게 그림을 빙 연필풍으로 다시 받음
+media/animals/baengno.webp — 백로 그림을 빙 연필풍으로 다시 받음
+media/animals/mikkuraji.webp — 미꾸라지 그림을 빙 연필풍으로 다시 받음
+media/animals/mulbanggae.webp — 물방개 그림을 빙 연필풍으로 다시 받음
+media/animals/sogeumjaengi.webp — 소금쟁이 그림을 빙 연필풍으로 다시 받음
