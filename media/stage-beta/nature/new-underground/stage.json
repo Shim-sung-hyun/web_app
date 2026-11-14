@@ -1967,5 +1967,10 @@
  "see": 0.05,
  "hangTop": 0.195,
  "growMax": 25,
- "noShadow": true
+ "noShadow": true,
+ "dim": {
+  "top": 0.19,
+  "from": 0.05,
+  "to": 0.2
+ }
 }

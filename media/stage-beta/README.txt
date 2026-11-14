@@ -105,6 +105,10 @@
     줄기가 짧아 python3 tools/trunk-extend.py nature/new-underground treeroots 로 줄기를 세로로 늘이고(띠를 이어 붙이니 사다리 같은 이음매가 보였음),
     뿌리가 갈라지는 자리(hangAt)를 흙 맨 위(hangTop .195)에 붙임 — 줄기는 풀밭·하늘을 지나 장면 위로 나감. 줄여도 줄기 끝이 하늘에 보이지 않게 무대가 크기를 지킴.
     나무는 한 판에 2그루까지(compose.maxKind treeroots 2·tunnel 2 — 8그루가 숲처럼 늘어섰음), 곁에 같은 나무를 더 세우지 않게 big에서 뺌. 20판: 하·중·상 3마리·스페셜 6마리 그대로.
+  어둡게(2026-11-14 선생님: 땅 밑은 검정 필름을 맨 윗장에, 20%까지): stage.json dim {top .19, from .05, to .2} — 흙 맨 위 5%에서 맨 아래 20%로 점점(한 번에 바꾸면 흙 선에 줄). 숨기기 셈은 그대로, 보이는 모습만. 숨기기 시험의 하 단계는 절반(look.dim .5).
+  긴 뿌리 다시 받는 중(2026-11-14 선생님: 뿌리는 땅속 색 갈색으로, 무대 반 넘게 길게 — 교과서처럼 / 풀뿌리는 땅 위 풀 포기와 이어서): media/stage/prompts/PROMPTS-new-underground-roots.txt(줄기와 갈색 뿌리 4·풀 포기와 뿌리 3, 세로 2:3).
+    받으면: stage-intake.py → trunk-extend.py treeroots → 뿌리 부분이 장면 높이의 .45~.65가 되게 treeroots real을 맞춤(unit .35면 뿌리 1.3~1.9m). 풀 포기는 위가 넓어 trunk-extend의 밑동 찾기(줄기 폭이 넓어지는 줄)가 안 맞음 —
+    초록이 끝나는 줄을 hangAt으로 잡고(줄기 늘이기 없이) 풀잎이 배경 풀밭에 겹치게. 지금 grassroots(수염만)는 그때 _trash로.
 
 ■ nature/new-water 물속(민물) (2026-11-14 빙 연필풍으로 한 번에 만듦 — tools/stage-intake.py, 설정 intake.json)
 - 선생님이 35장을 묶음으로 주심 → Claude가 보고 이름을 붙여 27장을 넣음. 배경 bg.jpg(받은 2장 중 바닥 선이 위에서 46%인 것 — horizon .46·groundTop .47, 다른 1장은 50%). 비침 한도 see .05.

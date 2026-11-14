@@ -446,6 +446,10 @@
     if (look.front !== false) for (const f of pl.front || []) if (f.img) {
       const h = f.h || .12, e = mk('img', `left:-1%;width:102%;top:${(1 - h * (f.base || 1)) * 100}%;height:${h * 100}%;z-index:${look.frontZ ?? 9000};object-fit:fill`); e.src = f.srcUrl; e.alt = '';
     }
+    /* 어둡게(2026-11-14 땅속, 선생님: 땅 밑은 검정 필름을 맨 윗장에 — 20%까지): stage.json dim {top, from, to} — top(흙 맨 위)부터 아래 끝까지 검정을 from→to로 점점 진하게
+       (한 번에 바뀌면 흙 선에 줄이 생김). 숨기기 셈은 그대로, 보이는 모습만. look.dim은 배율(0이면 끔 — 하 단계는 .5로 옅게) */
+    const D = pl.dim, dk = look.dim ?? 1;
+    if (D && dk > 0) mk('div', `left:0;width:100%;top:${D.top * 100}%;height:${(1 - D.top) * 100}%;z-index:${look.dimZ ?? 9500};background:linear-gradient(to bottom,rgba(0,0,0,${(D.from ?? .05) * dk}),rgba(0,0,0,${(D.to ?? .2) * dk}))`);
     return order;
   }
 

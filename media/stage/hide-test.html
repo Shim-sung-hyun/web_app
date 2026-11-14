@@ -425,6 +425,10 @@
     if (look.front !== false) for (const f of pl.front || []) if (f.img) {
       const h = f.h || .12, e = mk('img', `left:-1%;width:102%;top:${(1 - h * (f.base || 1)) * 100}%;height:${h * 100}%;z-index:${look.frontZ ?? 9000};object-fit:fill`); e.src = f.srcUrl; e.alt = '';
     }
+    /* 어둡게(2026-11-14 땅속, 선생님: 땅 밑은 검정 필름을 맨 윗장에 — 20%까지): stage.json dim {top, from, to} — top(흙 맨 위)부터 아래 끝까지 검정을 from→to로 점점 진하게
+       (한 번에 바뀌면 흙 선에 줄이 생김). 숨기기 셈은 그대로, 보이는 모습만. look.dim은 배율(0이면 끔 — 하 단계는 .5로 옅게) */
+    const D = pl.dim, dk = look.dim ?? 1;
+    if (D && dk > 0) mk('div', `left:0;width:100%;top:${D.top * 100}%;height:${(1 - D.top) * 100}%;z-index:${look.dimZ ?? 9500};background:linear-gradient(to bottom,rgba(0,0,0,${(D.from ?? .05) * dk}),rgba(0,0,0,${(D.to ?? .2) * dk}))`);
     return order;
   }
 
@@ -852,7 +856,7 @@ async function draw(){   /* 판을 하나씩 그려 보여 줌(스페셜은 판�
     d.className='st'; f.append(d,c); $('grid').append(f);
     const lv=$('lv').value;   /* 단계를 못 지키는 동물은 건너뛰고, 마릿수가 모자라면 판을 새로 짜서 다시(Stage.hideMany) */
     const {lay,out}=Stage.hideLevel(pl,AN,+lv,{seed});   // 단계 표·섞기는 무대 모듈 한곳(Stage.LEVELS·MIX, 2026-11-13 색까지 봄, 상이라도 중·스페셜이 조금 섞임)
-    Stage.render(d,pl,lay,{shadow:.25,haze:.3});
+    Stage.render(d,pl,lay,{shadow:.25,haze:.3,dim:+lv===1?.5:1});   // 어둡게 한 무대(땅속)는 하 단계에서 절반만(잘 보여야 하니)
     out.forEach(A=>{ const r=document.createElement('div'), s=Math.max(A.w,A.h*.75)*1.1; r.className='ring';
       r.style.cssText+=`;left:${(A.x-s/2)*100}%;top:${(A.y-A.h*A.base/2)*100-s*66}%;width:${s*100}%;height:${s*133}%`; d.appendChild(r); });
     c.textContent=`판 ${seed} · `+out.map(A=>`${A.animal}(${Stage.LEVELS[A.level].name}) ${Math.round(Stage.visibleOf(pl,lay,A)*100)}% 보임·쉬움 ${(A.ease||0).toFixed(1)}`).join(' · ');   /* 다 놓은 뒤 다시 셈(뒤에 숨긴 동물·소품이 앞을 덮었는지) */

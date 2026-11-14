@@ -1,0 +1,27 @@
+땅속 베타 — 긴 뿌리 다시 받기 (2026-11-14, 선생님: 뿌리는 땅속 색으로, 무대 반 넘게 길게 — 교과서처럼 / 풀뿌리만 덩그러니 있지 않게 땅 위 풀과 이어서)
+순서: ① 줄기와 갈색 뿌리 4장(같은 프롬프트로 4번) → ② 풀 포기와 뿌리 3장(같은 프롬프트로 3번).
+받는 곳 media/stage-beta/nature/new-underground/in/ — 이름: treeroots-1.jpg~treeroots-4.jpg, grassroots-1.jpg~grassroots-3.jpg (묶음으로 주셔도 Claude가 보고 붙임).
+붙일 그림: 땅속 배경(media/stage-beta/nature/new-underground/bg.jpg) 한 장.
+세로로 긴 그림(2:3)으로 받음. 무대가 '줄기·풀이 뿌리로 바뀌는 곳'을 흙 맨 위 선에 붙이고, 뿌리는 그 아래로 장면 높이의 절반 넘게 내려오게 놓음(줄기는 Claude가 위로 늘임).
+
+━━━━━━━━ ① 줄기와 갈색 뿌리 — 4장 (같은 프롬프트로 4번, 모양이 조금씩 다르게)
+
+■ 줄기와 갈색 뿌리 (treeroots · 세로 2:3)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underground soil background where this object will be placed: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and soft watercolour washes. Tall portrait picture, 2:3.
+The object: the base of ONE tree and its whole root system, seen from the side as in a science-textbook cut-away. At the very top, a short piece of straight tree trunk with grey-brown bark is cut off cleanly by the TOP EDGE of the picture (no branches, no leaves). About one sixth of the way down, the trunk widens and turns into roots. From there the roots go DEEP: one or two thick main roots grow almost straight down and reach close to the BOTTOM EDGE of the picture, and many side roots branch off them, spreading outward and downward and getting thinner, ending in fine root hairs. The roots fill the whole lower five-sixths of the picture, as a tall shape about two-thirds as wide as it is tall.
+Colour: the roots are a warm earthy brown, darker brown in the creases and slightly soil-stained, clearly browner and darker than the grey-brown bark; the colour changes gradually from bark to brown just below the widening, not as a sharp line. No white or pale grey roots.
+The roots form no hand- or finger-like shape, and the bark forms no face. Keep white margins at the left, right and bottom. Nothing else in the picture: no grass, no soil line, no ground patch, no stones, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow or dark patch — only the trunk and roots on pure white. Light comes softly from the upper left.
+▲
+
+━━━━━━━━ ② 풀 포기와 뿌리 — 3장 (같은 프롬프트로 3번, 모양이 조금씩 다르게)
+
+■ 풀 포기와 뿌리 (grassroots · 세로 2:3)
+▼
+IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon. The attached picture is the underground soil background where this object will be placed: draw the object in exactly its style, with fine thin dark-grey pencil-and-ink lines, short light hatching and soft watercolour washes. Tall portrait picture, 2:3.
+The object: ONE small clump of grass pulled out whole, seen from the side as in a science-textbook picture. In the top quarter of the picture, a tuft of short green grass blades stands up from one point (the same kind of grass as the strip at the top of the attached background). From that point, a dense beard of many fine, thread-like fibrous roots hangs and spreads downward, getting thinner, and reaches close to the BOTTOM EDGE of the picture — the roots are about three times as long as the grass blades.
+Colour: the grass is a soft green like the background grass; the roots are a light earthy brown and tan, a little darker near the top, slightly soil-stained — not white.
+No hand- or finger-like shape. Keep white margins at the left, right and bottom, and above the grass tips. Nothing else in the picture: no soil line, no ground patch, no clods of earth on the roots, no stones, no other objects, no animals, no text, and no blue or grey shading on the white paper.
+NO SHADOW: do not draw any shadow or dark patch — only the grass and its roots on pure white. Light comes softly from the upper left.
+▲
