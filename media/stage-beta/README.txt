@@ -59,7 +59,7 @@
   큰 바위 무리·배가 줄줄이 서는 판이 있어 종류마다 한 판 한도(compose.maxKind: 배·큰 바위 무리·갯바위·말뚝 2, 진흙 둑·그물 말뚝·그물 더미 1).
   하늘 세션의 연필풍 갈매기(galmaegi.webp)가 생겨 갯벌 숨기기에도 들어감(11마리). 20판: 스페셜 6.0마리·한 판 0.2초, 먼→앞 소품 27·25·21·27%·동물 8·18·24·50%.
 - 소품 손질 준비·받음(2026-11-15 선생님): 원본 색 붓용 src/ 46장을 모두 맞춤(Claude가 받아 둔 두 묶음 원본으로 tools/src-align.py --dir — 의심 0).
-  선생님이 손질한 post-1·post-2·netposts-1·netposts-2·netpile-1을 items/에 덮어씀 → stage-meta.py·stage-index.py(갯벌 stage.json은 그대로).
+  선생님이 손질한 post-1·post-2·netposts-1·netposts-2·netpile-1을 items/에 덮어씀(netpile-1은 한 번 더 손질해 받음) → stage-meta.py·stage-index.py(갯벌 stage.json은 그대로).
 - 다음: 선생님 숨기기 시험·평가(hide-test.html?place=nature/new-mudflat) — 키운 조개·맛조개가 하에서 크게 보이는 것이 어색하지 않은지, 큰 갯바위 무리가 앞에서 너무 크지 않은지 보기.
 
 ■ nature/new-wetland 논·습지 (2026-11-14 빙 연필풍으로 한 번에 만듦 — tools/stage-intake.py, 설정 intake.json)
