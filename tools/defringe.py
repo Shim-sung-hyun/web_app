@@ -20,6 +20,9 @@
     (2026-11-14 선생님: 덤불 둘레·풀숲 위 흰 조각, 풀 사이 흰 점). 그림 넓이 0.12% 넘는 흰 덩어리와 둘레 31점 안 칠해진 점의 40% 넘게 밝은 회색인 곳(통나무·바위·껍질)은 남김.
     빽빽한 덤불·풀숲·풀 덮인 둔덕에만 — 잎이 듬성한 키 큰 풀·가는 줄기·뿌리·흰 껍질 나무는 잎·줄기의 밝은 결이 뚫리니 쓰지 말 것.
    (2026-11-15 다시: 초원에만 씀 — 선생님 '장면마다 사정이 다름'. 9efc8bf·f300b4f는 12곳에 한꺼번에 써서 되돌렸음)
+⑨ --paper [밝기, 기본 185]: 바깥과 이어졌는지 상관없이 색 없는(채널 차 < 30) 밝은 점을 밝기만큼 투명하게(밝기 185 → 0, 235 → 다 투명)
+    — 잔뿌리가 촘촘해 흰 틈이 갇힌 뿌리(2026-11-15 땅속: --gaps는 240 넘는 흰 점만이라 살짝 회색인 종이가 남았음). --below 몫: 그림 위에서 그 몫(줄기 껍질)은 그대로.
+    밝은 회색 몸(흰 바위·흰 껍질·흰 털)에는 쓰지 말 것. 예) python3 tools/defringe.py items/treeroots-1.webp --paper --below .66
 지운 곳 가장자리는 알파를 1점 부드럽게. numpy·Pillow·scipy 필요.
 """
 import argparse, numpy as np
@@ -27,7 +30,7 @@ from PIL import Image
 from scipy import ndimage as ndi
 
 
-def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fill=False, rimfix=False, pockets=False, halo=False):
+def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fill=False, rimfix=False, pockets=False, halo=False, paper_lo=None, below=0.0):
     im = Image.open(src).convert('RGBA'); a = np.asarray(im).astype(np.int32).copy()
     rgb, A = a[..., :3].copy(), a[..., 3]; H, W = A.shape
     tint = np.zeros(A.shape, bool)
@@ -91,7 +94,7 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fil
         for _ in range(3): k8 |= ndi.binary_dilation(k8) & grey8
         kill |= k8
     n = int(kill.sum()) + (int(tint.sum()) if plant else 0) + int(holes.sum()) + int(rim.sum())
-    if dry or not n: return n
+    if dry or (not n and paper_lo is None): return n
     if holes.any():
         idx = ndi.distance_transform_edt(holes | (A < 230), return_distances=False, return_indices=True)
         for c in range(3): a[..., c][holes] = rgb[..., c][idx[0][holes], idx[1][holes]]
@@ -106,13 +109,17 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fil
     soft = ndi.binary_dilation(kill, st) & ~kill & (A2 > 0)          # 지운 곳 바로 옆은 조금 옅게
     A2[soft] = (A2[soft] * .6).astype(np.int32)
     a[..., 3] = A2
-    Image.fromarray(a.astype(np.uint8)).save(dst, quality=92, method=6)
+    if paper_lo is not None:   # ⑨ --paper(2026-11-15 땅속 뿌리, 선생님: 뿌리 사이 흰 공간이 거슬림) — 이어짐과 상관없이 종이색(색 차 < 30)을 밝기만큼 투명하게
+        rgb2 = a[..., :3].astype(float); mn = rgb2.min(2); pm = (rgb2.max(2) - mn) < 30; pm[:int(a.shape[0] * below)] = False   # --below: 그림 위에서 이 몫 위(줄기 껍질)는 그대로
+        k = np.clip((mn - paper_lo) / (235 - paper_lo), 0, 1) * pm; n += int((k > .5).sum())
+        a[..., 3] = (a[..., 3] * (1 - k)).astype(np.int32)
+    if not dry: Image.fromarray(a.astype(np.uint8)).save(dst, quality=92, method=6)
     return n
 
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('files', nargs='+'); p.add_argument('--out'); p.add_argument("--light", type=int, default=235)
-    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true'); p.add_argument('--halo', action='store_true')
+    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true'); p.add_argument('--halo', action='store_true'); p.add_argument('--paper', type=int, nargs='?', const=185); p.add_argument('--below', type=float, default=0.0)
     o = p.parse_args()
     for f in o.files:
-        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill, o.rim, o.pockets, o.halo); print(f'{n:7d}  {f}')
+        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill, o.rim, o.pockets, o.halo, o.paper, o.below); print(f'{n:7d}  {f}')
