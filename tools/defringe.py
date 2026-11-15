@@ -19,6 +19,8 @@
  ⑧ --halo: 가장자리(바깥에서 그림 긴 쪽의 4% 안)에 걸친 흰 조각(밝기 > 212, 4점 넘게)과 둘레 회백색(> 185) 3점까지 + 몸 안의 매끈한(표준편차 < 8) 흰(> 228) 조각을 지움
     (2026-11-14 선생님: 덤불 둘레·풀숲 위 흰 조각, 풀 사이 흰 점). 그림 넓이 0.12% 넘는 흰 덩어리와 둘레 31점 안 칠해진 점의 40% 넘게 밝은 회색인 곳(통나무·바위·껍질)은 남김.
     빽빽한 덤불·풀숲·풀 덮인 둔덕에만 — 잎이 듬성한 키 큰 풀·가는 줄기·뿌리·흰 껍질 나무는 잎·줄기의 밝은 결이 뚫리니 쓰지 말 것.
+   ⑪ --edge 몫(예 .03): 바깥(그림 테두리와 이어진 투명)에서 그림 긴 쪽의 그 몫 띠 안에서만, 2점 넘게 두꺼운 흰 종이(밝기>226)와 둘레 회백색 2점을 지움 —
+    가운데의 흰 잔가지·흰 곳은 건드리지 않음(2026-11-15 선생님: 흰색은 대부분 가장자리, 제한이 없으면 가운데 필요한 흰색도 뚫림). 회백색 잔가지 덤불에도 됨.
    (2026-11-15 다시: 초원에만 씀 — 선생님 '장면마다 사정이 다름'. 9efc8bf·f300b4f는 12곳에 한꺼번에 써서 되돌렸음)
 ⑨ --paper [밝기, 기본 185]: 바깥과 이어졌는지 상관없이 색 없는(채널 차 < 30) 밝은 점을 밝기만큼 투명하게(밝기 185 → 0, 235 → 다 투명)
     — 잔뿌리가 촘촘해 흰 틈이 갇힌 뿌리(2026-11-15 땅속: --gaps는 240 넘는 흰 점만이라 살짝 회색인 종이가 남았음). --below 몫: 그림 위에서 그 몫(줄기 껍질)은 그대로.
@@ -134,10 +136,32 @@ def bg_color(path, band):
     return np.median(b[int(H * band[0]):int(H * band[1])].reshape(-1, 3), axis=0)
 
 
+def edgeband(src,dst,band=.03,view=None):   # ⑪ --edge
+    a=np.array(Image.open(src).convert('RGBA')).astype(int); rgb=a[...,:3]; A=a[...,3]; mn=rgb.min(2); mx=rgb.max(2); H,W=A.shape
+    tr=A<=8; lt,nt=ndi.label(tr); e=np.unique(np.concatenate([lt[0],lt[-1],lt[:,0],lt[:,-1]])); e=e[e>0]; out=np.isin(lt,e)   # 바깥 = 그림 테두리와 이어진 투명만(몸 안 작은 틈은 아님)
+    d=ndi.distance_transform_edt(~out); R=max(8,int(max(H,W)*band))
+    zone=d<=R
+    wh=(mn>226)&(mx-mn<20)&(A>30)&zone
+    thick=ndi.binary_opening(wh,np.ones((3,3),bool))          # 2점 넘게 두꺼운 흰 곳(가는 흰 선은 빠짐)
+    thick=ndi.binary_dilation(thick,np.ones((3,3),bool))&wh
+    lab,n=ndi.label(thick); sz=ndi.sum(thick,lab,np.arange(n+1)); ok=sz>=6; ok[0]=False; k=ok[lab]
+    pale=(mn>195)&(mx-mn<26)&(A>0)&zone
+    for _ in range(2): k|=ndi.binary_dilation(k)&pale
+    A2=A.copy(); A2[k]=0; soft=ndi.binary_dilation(k)&~k&(A2>0); A2[soft]=(A2[soft]*.6).astype(int); a[...,3]=A2
+    Image.fromarray(a.astype(np.uint8)).save(dst,'WEBP',quality=92,method=6)
+    if view:
+        bg=np.zeros_like(rgb)+[70,60,50]; al=A[...,None]/255; c=(rgb*al+bg*(1-al)).astype(np.uint8); v=c.copy(); v[k]=[255,0,0]
+        al2=A2[...,None]/255; c2=(rgb*al2+bg*(1-al2)).astype(np.uint8); Image.fromarray(np.concatenate([v,c2],1)).save(view,quality=88)
+    return int(k.sum()), round(k.sum()/max((A>128).sum(),1)*100,2)
+
+
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('files', nargs='+'); p.add_argument('--out'); p.add_argument("--light", type=int, default=235)
-    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true'); p.add_argument('--halo', action='store_true'); p.add_argument('--paper', type=int, nargs='?', const=185); p.add_argument('--below', type=float, default=0.0); p.add_argument('--tint', type=float, nargs='?', const=1.0); p.add_argument('--bg'); p.add_argument('--band', default='.5,.9')
+    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true'); p.add_argument('--halo', action='store_true'); p.add_argument('--paper', type=int, nargs='?', const=185); p.add_argument('--below', type=float, default=0.0); p.add_argument('--tint', type=float, nargs='?', const=1.0); p.add_argument('--bg'); p.add_argument('--band', default='.5,.9'); p.add_argument('--edge', type=float)
     o = p.parse_args()
     if o.tint is not None and not o.bg: p.error('--tint 는 --bg 배경그림이 필요해요')
     for f in o.files:
         n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill, o.rim, o.pockets, o.halo, o.paper, o.below, o.tint, o.bg, tuple(map(float, o.band.split(',')))); print(f'{n:7d}  {f}')
+        if o.edge and not o.dry:
+            import os; s0 = o.out if (o.out and os.path.exists(o.out)) else f
+            print('   band', edgeband(s0, o.out or f, o.edge))
