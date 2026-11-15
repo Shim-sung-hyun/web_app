@@ -288,6 +288,8 @@
 - 선생님 손질(2026-11-15, 소품 손질 화면 touchup.html): 54장(아카시아·바오바브·마룰라·모파네·마른 나무·덤불·풀·바위 등) — 받은 그대로 items에 덮어씀.
 
 ■ nature/new-desert 사막(2026-11-10, Claude가 빙 그림으로 다시 만듦 — 설치도구 안 씀)
+- 원본 색 붓(2026-11-15): 처음 받은 40장의 원본을 src/에 맞춰 둠(src-align.py, 원본의 파랑 그림자는 흰색으로 — 붓이 파랑을 칠하지 않게). 나중에 넣은 15장(dune·dunegrass·rockpalm·rockshrub·shrubclump·thorntree·thorntrees2·thorntrees3)은 원본이 저장소·선생님께 없어 '구멍 메우기 붓'만.
+- 선생님 손질(2026-11-15, touchup.html): 13장(boulder-1·dune-1·palm-1·palm-2·palm-s-1·palm-s-2·palms-big-1·palms-big-2·rockshrub-1·rockshrub-2·shrubclump-1·shrubclump-2) — 받은 그대로 items에 덮어씀, 밑동 다시 잼.
 - 2026-11-12 빙 연필풍으로 바꿈(선생님): 배경 bg.jpg(지평선 .41, 받은 3:2를 4:3으로 좌우만 자름, 붙인 그림은 받은 모래색 바위) + 소품 18종류 40개(한 장에 하나, 그림자는 파랑으로 받아 검정 20%로 고르게). 자르기는 tools/bing-cut.py(2026-11-12 다시 자름 — 선생님: 야자·풀이 반투명, 돌 테두리 흐림, 낙타에 흰 줄·그림자).
   프롬프트 media/stage/prompts/PROMPTS-new-desert-pencil.txt(맨 앞 '배경은 흰색', 그림자 방향 강조). 새 종류: 붉은 바위 언덕·대추야자 두 그루. 예전 만화풍 배경·소품 46은 _trash/2026-11-12.
   아래 줄(소품 46·식물 자국 지우기)은 예전 만화풍 기록. 동물 11마리(타조·가젤 더함)도 연필풍으로 넣음 — 동물은 bing-cut.py --animal(그림자 없이 원본 그대로, 방울뱀 --holes), 1024칸 긴 쪽 91% 가운데.
