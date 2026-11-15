@@ -7850,8 +7850,8 @@
   "reedwall-1": {
    "name": "키 큰 마른 갈대풀 벽",
    "real": [
-    4,
-    5
+    2.2,
+    3
    ],
    "bed": "ground",
    "kind": "reedwall",
@@ -7919,8 +7919,8 @@
   "reedwall-2": {
    "name": "키 큰 마른 갈대풀 벽",
    "real": [
-    4,
-    5
+    2.2,
+    3
    ],
    "bed": "ground",
    "kind": "reedwall",
