@@ -6,6 +6,7 @@
 
 잘라 낸 소품(items/이름.webp)이 받은 원본 그림(빙 jpg)의 어디에서 잘렸는지 찾아(불투명한 곳의 밝기 차이가 가장 작은 자리, FFT로),
 소품과 같은 크기로 원본을 잘라 src/이름.jpg로 둔다. media/stage/touchup.html(소품 손질)의 '원본 색 붓'이 이 그림의 색으로 구멍을 칠함.
+줄기를 늘인 소품(trunk-extend.py — stage.json hangUp)은 원본보다 길어서, 밑동 아래 뿌리로 자리를 찾고 위 줄기는 원본 줄기를 세로로 늘여 붙임(2026-11-15 땅속).
 --paper: 북극처럼 자를 때 미색 종이를 배경 눈색(253)으로 맞춘 소품(옛 pencil-cut.py, 얼음은 --ice 푸른 기)은
   받은 원본도 똑같이 맞춘 뒤 잘라 둠 — 그래야 원본 색 붓의 색이 소품 색과 같음. 푸른 기는 소품 색에 더 가까운 쪽을 저절로 고름.
     python3 tools/src-align.py --paper --dir 받은폴더 장소폴더
@@ -25,11 +26,36 @@ def paper_fix(O):
     return wb, ice
 
 
+def hang_at(item):
+    """줄기를 늘인 소품(tools/trunk-extend.py)이면 stage.json의 hangAt(그림 위에서 밑동까지 몫), 아니면 None"""
+    sj = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(item))), 'stage.json')
+    if not os.path.exists(sj): return None
+    import json
+    it = json.load(open(sj, encoding='utf-8')).get('items', {}).get(os.path.splitext(os.path.basename(item))[0], {})
+    return it.get('hangAt') if it.get('hangUp') else None
+
+
+def default_dst(item):
+    d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(item))), 'src'); os.makedirs(d, exist_ok=True)
+    return os.path.join(d, os.path.splitext(os.path.basename(item))[0] + '.jpg')
+
+
 def align(src, item, dst=None, paper=False):
     it = np.array(Image.open(item).convert('RGBA')).astype(float); O = np.array(Image.open(src).convert('RGB')).astype(float)
     alt = None
     if paper: O, alt = paper_fix(O)
     h, w = it.shape[:2]; H, W = O.shape[:2]
+    ha = hang_at(item) if h > H else None
+    if ha and w <= W:   # 줄기를 늘인 그림(2026-11-15 땅속 나무뿌리): 밑동 아래(뿌리 — 늘이지 않은 곳)로 자리를 찾고, 위 줄기는 원본 줄기를 소품 높이만큼 세로로 늘임
+        fl = int(round(ha * h)); hb = h - fl; og = O.mean(2); m = (it[fl:, :, 3] > 250).astype(float); g = it[fl:, :, :3].mean(2) * m
+        def corr2(a, b):
+            F = np.fft.rfft2(a); K = np.fft.rfft2(b[::-1, ::-1], s=a.shape); return np.fft.irfft2(F * K, s=a.shape)[hb - 1:H, w - 1:W]
+        y, x = np.unravel_index(np.argmin(corr2(og * og, m) - 2 * corr2(og, g)), (H - hb + 1, W - w + 1))
+        B = O[y:y + hb, x:x + w]; err = float(np.abs(B.mean(2) - it[fl:, :, :3].mean(2))[m > 0].mean())
+        col = O[:y, x:x + w].min(2); rows = np.nonzero((col < 200).any(1))[0]; y0 = int(rows[0]) if len(rows) else 0   # 원본에서 줄기 꼭대기
+        top = np.array(Image.fromarray(O[y0:max(y0 + 1, y), x:x + w].astype(np.uint8)).resize((w, fl), Image.LANCZOS))
+        dst = dst or default_dst(item); Image.fromarray(np.concatenate([top, B.astype(np.uint8)])).save(dst, quality=88)
+        return dst, err
     if h > H or w > W: raise SystemExit(f'소품이 원본보다 커요: {item}')
     m = (it[..., 3] > 250).astype(float); g = it[..., :3].mean(2) * m; og = O.mean(2)
 
