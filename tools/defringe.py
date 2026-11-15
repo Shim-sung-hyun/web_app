@@ -23,6 +23,11 @@
 ⑨ --paper [밝기, 기본 185]: 바깥과 이어졌는지 상관없이 색 없는(채널 차 < 30) 밝은 점을 밝기만큼 투명하게(밝기 185 → 0, 235 → 다 투명)
     — 잔뿌리가 촘촘해 흰 틈이 갇힌 뿌리(2026-11-15 땅속: --gaps는 240 넘는 흰 점만이라 살짝 회색인 종이가 남았음). --below 몫: 그림 위에서 그 몫(줄기 껍질)은 그대로.
     밝은 회색 몸(흰 바위·흰 껍질·흰 털)에는 쓰지 말 것. 예) python3 tools/defringe.py items/treeroots-1.webp --paper --below .66
+⑩ --tint [세기, 기본 1] --bg 배경.jpg [--band .5,.9]: 지우지 않고 색 없는 밝은 점(흰 잔뿌리·남은 종이·잎 사이 흰 점)을 배경색 쪽으로 물들임
+    — 밝기 80부터 시작해 170이면 다 바뀜, 색이 짙은 곳(초록 잎·갈색 뿌리)은 거의 그대로. 배경색 = 배경 그림 band 띠(위에서 몫)의 가운데 색 × .68.
+    (2026-11-15 땅속: --paper로 지우면 잔뿌리가 끊기고, 남은 잔뿌리는 흰색 — 물들이면 뿌리 모양은 남고 흰 기만 사라짐.) --below 와 함께 쓸 수 있음.
+    풀·덤불·수풀에도 같은 원리(흰 점이 그 무대 땅색으로) — 단 흰 바위·흰 털·흰 꽃처럼 원래 흰 것에는 쓰지 말 것. 무대마다 사정이 다르니 그 무대를 맡은 세션이 보고 씀.
+    예) python3 tools/defringe.py items/treeroots-1.webp --tint --bg bg.jpg --band .35,.8 --below .66
 지운 곳 가장자리는 알파를 1점 부드럽게. numpy·Pillow·scipy 필요.
 """
 import argparse, numpy as np
@@ -30,7 +35,7 @@ from PIL import Image
 from scipy import ndimage as ndi
 
 
-def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fill=False, rimfix=False, pockets=False, halo=False, paper_lo=None, below=0.0):
+def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fill=False, rimfix=False, pockets=False, halo=False, paper_lo=None, below=0.0, tint_k=None, tint_bg=None, tint_band=(.5, .9)):
     im = Image.open(src).convert('RGBA'); a = np.asarray(im).astype(np.int32).copy()
     rgb, A = a[..., :3].copy(), a[..., 3]; H, W = A.shape
     tint = np.zeros(A.shape, bool)
@@ -94,7 +99,7 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fil
         for _ in range(3): k8 |= ndi.binary_dilation(k8) & grey8
         kill |= k8
     n = int(kill.sum()) + (int(tint.sum()) if plant else 0) + int(holes.sum()) + int(rim.sum())
-    if dry or (not n and paper_lo is None): return n
+    if dry or (not n and paper_lo is None and tint_k is None): return n
     if holes.any():
         idx = ndi.distance_transform_edt(holes | (A < 230), return_distances=False, return_indices=True)
         for c in range(3): a[..., c][holes] = rgb[..., c][idx[0][holes], idx[1][holes]]
@@ -113,13 +118,26 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fil
         rgb2 = a[..., :3].astype(float); mn = rgb2.min(2); pm = (rgb2.max(2) - mn) < 30; pm[:int(a.shape[0] * below)] = False   # --below: 그림 위에서 이 몫 위(줄기 껍질)는 그대로
         k = np.clip((mn - paper_lo) / (235 - paper_lo), 0, 1) * pm; n += int((k > .5).sum())
         a[..., 3] = (a[..., 3] * (1 - k)).astype(np.int32)
+    if tint_k is not None:   # ⑩ --tint(2026-11-15 땅속, 선생님: 잔뿌리가 여전히 흰색 — 지우면 뿌리가 끊기니 흰 곳을 배경색으로 물들임. 풀·수풀에도 같은 원리)
+        tc = bg_color(tint_bg, tint_band) * .68   # 배경색보다 조금 어둡게(밝은 채로 두면 다시 희끗해 보임)
+        rgb2 = a[..., :3].astype(float); mn = rgb2.min(2); c = rgb2.max(2) - mn
+        k = np.clip((mn - 80) / (170 - 80), 0, 1) * np.clip(1 - c / 80, 0, 1) * min(1.0, tint_k)   # 밝을수록·색이 없을수록 더(초록 잎·갈색 뿌리처럼 색 있는 곳은 거의 그대로)
+        k[:int(a.shape[0] * below)] = 0; k[a[..., 3] == 0] = 0; n += int((k > .5).sum())
+        for ch_ in range(3): a[..., ch_] = (rgb2[..., ch_] * (1 - k) + tc[ch_] * k).astype(np.int32)
     if not dry: Image.fromarray(a.astype(np.uint8)).save(dst, quality=92, method=6)
     return n
 
 
+def bg_color(path, band):
+    """배경 그림의 band(위에서 몫 y0~y1) 띠의 가운데 색 — 소품이 놓일 바탕색"""
+    b = np.asarray(Image.open(path).convert('RGB')).astype(float); H = b.shape[0]
+    return np.median(b[int(H * band[0]):int(H * band[1])].reshape(-1, 3), axis=0)
+
+
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('files', nargs='+'); p.add_argument('--out'); p.add_argument("--light", type=int, default=235)
-    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true'); p.add_argument('--halo', action='store_true'); p.add_argument('--paper', type=int, nargs='?', const=185); p.add_argument('--below', type=float, default=0.0)
+    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true'); p.add_argument('--halo', action='store_true'); p.add_argument('--paper', type=int, nargs='?', const=185); p.add_argument('--below', type=float, default=0.0); p.add_argument('--tint', type=float, nargs='?', const=1.0); p.add_argument('--bg'); p.add_argument('--band', default='.5,.9')
     o = p.parse_args()
+    if o.tint is not None and not o.bg: p.error('--tint 는 --bg 배경그림이 필요해요')
     for f in o.files:
-        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill, o.rim, o.pockets, o.halo, o.paper, o.below); print(f'{n:7d}  {f}')
+        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill, o.rim, o.pockets, o.halo, o.paper, o.below, o.tint, o.bg, tuple(map(float, o.band.split(',')))); print(f'{n:7d}  {f}')

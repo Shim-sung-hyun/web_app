@@ -115,7 +115,9 @@
     줄기: trunk-extend.py treeroots(줄기 늘이고 hangAt·hangUp), 뿌리 부분이 장면 높이의 .45~.65(real 3.8~5.5 — 줄기 포함 그림 전체 높이). 한 판에 한 그루(maxKind 1 — 두 그루면 줄기가 겹쳐 보였음), 덩어리를 이끄는 big이라 20판 모두 한 그루.
     풀 포기: trunk-extend.py grassroots --green(풀잎 끝 줄을 hangAt, 늘이지 않음 — 풀잎은 배경 풀밭에 겹침), 뿌리 부분 .18~.28. 한 판에 3포기까지.
     뿌리 사이 흰 종이(2026-11-15 선생님: 거슬림): 잔뿌리에 갇힌 살짝 회색인 종이가 남았음(--gaps는 240 넘는 흰 점만) → defringe.py에 --paper를 덧붙여
-      줄기·풀잎 아래(--below hangAt)만 색 없는 밝은 점을 밝기만큼 투명하게(185부터). 뿌리를 다시 받으면: stage-intake → trunk-extend → defringe --paper --below <hangAt>.
+      줄기·풀잎 아래(--below hangAt)만 색 없는 밝은 점을 밝기만큼 투명하게(185부터).
+      그래도 잔뿌리가 흰색(선생님 2026-11-15 — 더 지우면 끊김, 갈색 랩은 굵은 뿌리까지 탁해짐) → defringe --tint --bg bg.jpg --band .35,.8: 색 없는 밝은 곳만 배경 흙색(×.68)으로 물들임(선생님: 조금 더 진하게 — 80~170, 색 차 80).
+      뿌리를 다시 받으면: stage-intake → trunk-extend → defringe --paper --below <hangAt> → defringe --tint --bg <배경> --band .35,.8 --below <hangAt>.
   오소리·프레리도그 더 자주(2026-11-14 선생님): stage.json hideWeight {오소리 3, 프레리도그 2} — 숨길 차례를 앞쪽으로(stagekit hideMany, 가중 무작위). 혼자서는 하·중·상 잘 숨는데 10마리 중 늘 뒤로 밀렸음.
     20판×4단계 300마리 중 6·8 → 30·36(다른 동물 17~37). hideWeight가 없는 무대는 예전 순서 그대로(같은 판 번호 = 같은 판).
 
