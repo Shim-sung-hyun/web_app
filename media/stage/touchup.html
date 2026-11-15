@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>소품 손질</title>
+<!-- 무대 설치도구 3단계(소품 손질)만 떼어 낸 것(2026-11-15 선생님: 남은 흰 점을 직접 손보고 바로 저장 — 모든 장면을 고를 수 있게).
+     장면(stage-beta)을 고르면 소품이 나오고, 붓으로 손질한 뒤 저장소 폴더에 바로 덮어쓰거나 파일로 받음. 손질 방법은 install.html 3단계와 같음. -->
+<style>
+:root{color-scheme:light;--ink:#24352c;--muted:#607067;--line:#d5dfd8;--paper:#f4f7f3;--green:#315c48;--pale:#e7f0e9;--orange:#a44c28}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+button,input,select{font:inherit}
+header{background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+header h1{font-size:20px;margin:0;color:var(--green)}
+header .grow{flex:1}
+select{border:1px solid #bdcbc1;border-radius:8px;padding:6px 8px;background:#fff;color:var(--ink)}
+.btn{border:0;border-radius:8px;padding:7px 12px;font-weight:700;background:var(--pale);color:var(--green);cursor:pointer}
+.btn.primary{background:var(--green);color:#fff}
+.btn:disabled{opacity:.45;cursor:default}
+.status{font-size:13px;color:var(--muted)}
+main{display:grid;grid-template-columns:230px 1fr 260px;gap:12px;padding:12px 16px;height:calc(100vh - 62px)}
+#list{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px}
+.item{display:flex;gap:8px;align-items:center;width:100%;border:1px solid transparent;border-radius:8px;background:none;padding:4px;text-align:left;cursor:pointer;color:var(--ink)}
+.item:hover{background:var(--paper)}
+.item.sel{border-color:var(--green);background:var(--pale)}
+.item img{width:54px;height:40px;object-fit:contain;background:#ddd2b8;border-radius:4px;flex:none}
+.item small{display:block;color:var(--muted);font-size:11px}
+.item .dot{margin-left:auto;color:var(--orange);font-weight:700}
+#stageWrap{position:relative;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}
+#cv{display:block;margin:auto;cursor:crosshair;image-rendering:auto;touch-action:none}
+.checker{background-image:linear-gradient(45deg,#ccc 25%,transparent 25%),linear-gradient(-45deg,#ccc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ccc 75%),linear-gradient(-45deg,transparent 75%,#ccc 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;background-color:#eee}
+aside{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+aside strong{display:block;margin-bottom:4px}
+aside label{display:block;font-weight:600;margin:10px 0 3px;font-size:14px}
+aside input[type=range]{width:100%}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.hint{font-size:12.5px;color:var(--muted);margin:4px 0}
+.mode{display:block;width:100%;text-align:left;margin:3px 0;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:600}
+.mode.on{border-color:var(--green);background:var(--pale);color:var(--green)}
+#zoomVal{font-variant-numeric:tabular-nums}
+@media (max-width:900px){main{grid-template-columns:1fr;height:auto}#list{max-height:220px}#stageWrap{height:60vh}}
+</style>
+</head>
+<body>
+<header>
+ <h1>소품 손질</h1>
+ <label>장면 <select id="place"></select></label>
+ <span class="grow"></span>
+ <button id="connect" class="btn" type="button">저장소 폴더 연결</button>
+ <span id="folder" class="status">폴더 연결 안 됨 — 저장하면 파일로 받아요</span>
+</header>
+<main>
+ <div id="list" aria-label="소품 목록"></div>
+ <div id="stageWrap" class="checker"><canvas id="cv" aria-label="고른 소품 손질"></canvas></div>
+ <aside>
+  <strong id="name">소품을 골라 주세요</strong>
+  <div class="status" id="size"></div>
+  <label>손질 방법</label>
+  <button class="btn mode on" data-mode="white" type="button">흰색만 지우는 붓 — 문지른 곳의 흰 점만</button>
+  <button class="btn mode" data-mode="hole" type="button">흰 틈 지우기 — 누른 곳에 이어진 흰 틈만</button>
+  <button class="btn mode" data-mode="erase" type="button">지우개 — 칠한 곳 모두 투명</button>
+  <button class="btn mode" data-mode="restore" type="button">복구 붓 — 처음 불러온 그림으로</button>
+  <label for="brush">붓 크기 <output id="brushVal">16</output>점</label>
+  <input id="brush" type="range" min="2" max="80" value="16">
+  <label for="tol">흰색 기준 <output id="tolVal">200</output></label>
+  <input id="tol" type="range" min="120" max="252" value="200">
+  <p class="hint">덜 지워지면 기준을 낮추고, 그림까지 지워지면 되돌린 뒤 높여요. 하얀 나무껍질·흰 털 위는 기준을 높게(230 넘게).</p>
+  <label>바탕</label>
+  <div class="row"><button class="btn bgb" data-bg="ground" type="button">장면 땅색</button><button class="btn bgb" data-bg="dark" type="button">어두운 색</button><button class="btn bgb" data-bg="checker" type="button">체크무늬</button></div>
+  <p class="hint">남은 흰색은 장면 땅색이나 어두운 바탕에서 잘 보여요.</p>
+  <label>확대 <output id="zoomVal">100%</output></label>
+  <div class="row"><button id="zout" class="btn" type="button">−</button><button id="zin" class="btn" type="button">+</button><button id="zfit" class="btn" type="button">화면에 맞춤</button></div>
+  <p class="hint">Ctrl(맥은 ⌘도 됨)+휠로도 확대해요. 되돌리기: Ctrl+Z · 붓 크기: [ ]</p>
+  <div class="row"><button id="undo" class="btn" type="button">되돌리기</button><button id="reset" class="btn" type="button">처음 그림으로</button></div>
+  <div class="row"><button id="save" class="btn primary" type="button" disabled>저장</button></div>
+  <p id="saveMsg" class="hint" role="status"></p>
+  <p class="hint">폴더를 연결하면 저장소의 그림 파일(media/stage-beta/…/items/이름.webp)을 바로 덮어써요. 저장한 뒤 VS Code에서 커밋·올리기 하거나 Claude에게 “손질한 것 올려 줘”라고 하면 돼요. 밑동 자리 다시 재기(stage-meta)는 Claude가 올릴 때 함께 해요.</p>
+ </aside>
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const BETA='../stage-beta/';
+let dirRoot=null;          // 연결한 폴더(media/stage-beta 를 가리키게 맞춤)
+let place='',stage=null,groundRGB=[200,160,90];
+let cur=null;              // {id,name,img(ImageData),src(ImageData 처음),undo:[]}
+const edited=new Set();    // 'place/id' 저장 안 한 손질
+let mode='white',zoom=1,bgMode='ground';
+const cv=$('#cv'),cx=cv.getContext('2d',{willReadFrequently:true});
+
+/* 장면 목록 */
+async function loadIndex(){const ix=await (await fetch(BETA+'index.json',{cache:'no-store'})).json();
+ $('#place').innerHTML=Object.entries(ix).map(([k,v])=>`<option value="${k}">${v.name||k}</option>`).join('');
+ const last=localStore('touchup-place');if(last&&ix[last])$('#place').value=last;else if(ix['nature/new-grassland'])$('#place').value='nature/new-grassland';
+ await loadPlace($('#place').value)}
+function localStore(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+
+/* 파일 읽기: 폴더를 연결했으면 내 컴퓨터의 최신 파일, 아니면 웹 */
+async function dirFor(path){let d=dirRoot;for(const part of path.split('/').filter(Boolean))d=await d.getDirectoryHandle(part);return d}
+async function readBlob(rel){if(dirRoot){try{const parts=rel.split('/'),fn=parts.pop(),d=await dirFor(parts.join('/'));return await (await d.getFileHandle(fn)).getFile()}catch(e){}}
+ const r=await fetch(BETA+rel,{cache:'no-store'});if(!r.ok)throw new Error(rel);return await r.blob()}
+async function readJSON(rel){return JSON.parse(await (await readBlob(rel)).text())}
+function blobImage(b){return new Promise((ok,no)=>{const u=URL.createObjectURL(b),i=new Image();i.onload=()=>{ok(i)};i.onerror=no;i.src=u})}
+
+async function loadPlace(p){
+ if(cur&&edited.size&&!confirm('저장하지 않은 손질이 있어요. 그래도 장면을 바꿀까요?')){$('#place').value=place;return}
+ place=p;localStore('touchup-place',p);cur=null;edited.clear();$('#save').disabled=true;$('#name').textContent='소품을 골라 주세요';$('#size').textContent='';cx.clearRect(0,0,cv.width,cv.height);
+ stage=await readJSON(p+'/stage.json');
+ try{const bg=await blobImage(await readBlob(p+'/bg.jpg')),c=document.createElement('canvas');c.width=64;c.height=48;const x=c.getContext('2d');x.drawImage(bg,0,0,64,48);
+  const d=x.getImageData(19,41,26,7).data,a=[[],[],[]];for(let i=0;i<d.length;i+=4){a[0].push(d[i]);a[1].push(d[i+1]);a[2].push(d[i+2])}
+  groundRGB=a.map(v=>v.sort((p,q)=>p-q)[v.length>>1])}catch(e){groundRGB=[200,160,90]}
+ setBg(bgMode);
+ const ids=Object.keys(stage.items||{}).sort();
+ $('#list').innerHTML=ids.map(id=>{const it=stage.items[id];return `<button class="item" data-id="${id}" type="button"><img loading="lazy" alt="" data-src="${p}/items/${id}.webp"><span>${it.name||id}<small>${id}</small></span><span class="dot"></span></button>`}).join('')||'<p class="hint">소품이 없어요.</p>';
+ for(const im of $$('#list img'))readBlob(im.dataset.src).then(b=>{im.src=URL.createObjectURL(b)}).catch(()=>{});
+ $$('#list .item').forEach(b=>b.addEventListener('click',()=>open(b.dataset.id)));
+}
+$('#place').addEventListener('change',e=>loadPlace(e.target.value));
+
+async function open(id){
+ if(cur&&edited.has(place+'/'+cur.id)&&cur.id!==id&&!confirm(`'${cur.name}' 손질을 저장하지 않았어요. 버리고 다른 소품을 열까요?`))return;
+ if(cur)edited.delete(place+'/'+cur.id),mark(cur.id,false);
+ const im=await blobImage(await readBlob(`${place}/items/${id}.webp`));cv.width=im.naturalWidth;cv.height=im.naturalHeight;cx.clearRect(0,0,cv.width,cv.height);cx.drawImage(im,0,0);
+ const data=cx.getImageData(0,0,cv.width,cv.height);
+ cur={id,name:(stage.items[id]||{}).name||id,img:data,src:new ImageData(new Uint8ClampedArray(data.data),data.width,data.height),undo:[]};
+ $('#name').textContent=cur.name;$('#size').textContent=`${id} · ${cv.width}×${cv.height}점`;$('#save').disabled=false;$('#saveMsg').textContent='';
+ $$('#list .item').forEach(b=>b.classList.toggle('sel',b.dataset.id===id));fit();draw()}
+function mark(id,on){const b=$(`#list .item[data-id="${id}"] .dot`);if(b)b.textContent=on?'●':''}
+function touched(){edited.add(place+'/'+cur.id);mark(cur.id,true)}
+function draw(){cx.putImageData(cur.img,0,0)}
+
+/* 바탕 */
+function setBg(m){bgMode=m;const w=$('#stageWrap');w.classList.toggle('checker',m==='checker');w.style.backgroundColor=m==='ground'?`rgb(${groundRGB})`:m==='dark'?'#3d352e':'';$$('.bgb').forEach(b=>b.classList.toggle('primary',b.dataset.bg===m))}
+$$('.bgb').forEach(b=>b.addEventListener('click',()=>setBg(b.dataset.bg)));
+
+/* 확대 */
+function applyZoom(){cv.style.width=Math.round(cv.width*zoom)+'px';cv.style.height=Math.round(cv.height*zoom)+'px';$('#zoomVal').value=Math.round(zoom*100)+'%'}
+function fit(){const w=$('#stageWrap');zoom=Math.min((w.clientWidth-8)/cv.width,(w.clientHeight-8)/cv.height,4);applyZoom()}
+$('#zin').onclick=()=>{zoom=Math.min(12,zoom*1.25);applyZoom()};$('#zout').onclick=()=>{zoom=Math.max(.1,zoom/1.25);applyZoom()};$('#zfit').onclick=fit;
+$('#stageWrap').addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey)||!cur)return;e.preventDefault();const w=$('#stageWrap'),r=cv.getBoundingClientRect(),px=(e.clientX-r.left)/zoom,py=(e.clientY-r.top)/zoom;
+ zoom=Math.max(.1,Math.min(12,zoom*(e.deltaY<0?1.15:1/1.15)));applyZoom();const r2=cv.getBoundingClientRect();w.scrollLeft+=r2.left+px*zoom-e.clientX;w.scrollTop+=r2.top+py*zoom-e.clientY},{passive:false});
+
+/* 손질 방법 */
+$$('.mode').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;$$('.mode').forEach(x=>x.classList.toggle('on',x===b))}));
+$('#brush').oninput=e=>$('#brushVal').value=e.target.value;$('#tol').oninput=e=>$('#tolVal').value=e.target.value;
+const NEU=52;   // 색 범위(install.html 기본 32+20)
+const isWhite=(d,k,thr)=>d[k+3]>8&&(d[k]+d[k+1]+d[k+2])/3>=thr&&Math.max(d[k],d[k+1],d[k+2])-Math.min(d[k],d[k+1],d[k+2])<=NEU;
+function unmix(d,k){/* 흰색과 섞인 만큼만 투명하게(테두리 계단 없이) — install.html과 같음 */const r=d[k],g=d[k+1],b=d[k+2],a=1-Math.min(r,g,b)/255;if(a<.12){d[k+3]=0;return}
+ d[k]=Math.max(0,Math.min(255,(r-255*(1-a))/a));d[k+1]=Math.max(0,Math.min(255,(g-255*(1-a))/a));d[k+2]=Math.max(0,Math.min(255,(b-255*(1-a))/a));d[k+3]=Math.min(d[k+3],Math.round(a*255))}
+function pushUndo(){cur.undo.push(new Uint8ClampedArray(cur.img.data));if(cur.undo.length>40)cur.undo.shift()}
+function xy(e){const r=cv.getBoundingClientRect();return [Math.floor((e.clientX-r.left)*cv.width/r.width),Math.floor((e.clientY-r.top)*cv.height/r.height)]}
+function dab(x,y){const d=cur.img.data,s=cur.src.data,W=cv.width,H=cv.height,rad=Math.max(1,$('#brush').value/2),thr=+$('#tol').value;
+ for(let yy=Math.max(0,Math.floor(y-rad));yy<Math.min(H,Math.ceil(y+rad));yy++)for(let xx=Math.max(0,Math.floor(x-rad));xx<Math.min(W,Math.ceil(x+rad));xx++){
+  if((xx-x)**2+(yy-y)**2>rad*rad)continue;const k=(yy*W+xx)*4;
+  if(mode==='restore'){d[k]=s[k];d[k+1]=s[k+1];d[k+2]=s[k+2];d[k+3]=s[k+3]}else if(mode==='white'){if(isWhite(d,k,thr))unmix(d,k)}else d[k+3]=0}}
+function fillHole(x,y){const {width:W,height:H,data:d}=cur.img,thr=+$('#tol').value;if(x<0||y<0||x>=W||y>=H||!isWhite(d,(y*W+x)*4,thr))return 0;
+ const seen=new Uint8Array(W*H),q=new Int32Array(W*H);let h=0,t=0;seen[y*W+x]=1;q[t++]=y*W+x;
+ while(h<t){const k=q[h++],xx=k%W,yy=(k/W)|0;for(const n of [xx?k-1:-1,xx<W-1?k+1:-1,yy?k-W:-1,yy<H-1?k+W:-1])if(n>=0&&!seen[n]&&isWhite(d,n*4,thr)){seen[n]=1;q[t++]=n}}
+ for(let i=0;i<t;i++)unmix(d,q[i]*4);return t}
+let painting=false,last=null;
+cv.addEventListener('pointerdown',e=>{if(!cur)return;cv.setPointerCapture(e.pointerId);const [x,y]=xy(e);pushUndo();
+ if(mode==='hole'){if(fillHole(x,y)){touched();draw()}else cur.undo.pop();return}
+ painting=true;last=[x,y];dab(x,y);touched();draw();ring(e)});
+cv.addEventListener('pointermove',e=>{if(!cur)return;if(painting){const [x,y]=xy(e),[lx,ly]=last,st=Math.max(1,$('#brush').value/4),n=Math.ceil(Math.hypot(x-lx,y-ly)/st);
+ for(let i=1;i<=n;i++)dab(lx+(x-lx)*i/n,ly+(y-ly)*i/n);last=[x,y];draw()}ring(e)});
+addEventListener('pointerup',()=>{painting=false});
+cv.addEventListener('pointerleave',()=>{if(cur&&!painting)draw()});
+function ring(e){if(!cur||mode==='hole')return;draw();const [x,y]=xy(e),r=Math.max(1,$('#brush').value/2);cx.save();cx.lineWidth=Math.max(1,1.5/zoom);
+ cx.strokeStyle='#fff';cx.beginPath();cx.arc(x,y,r,0,7);cx.stroke();cx.strokeStyle='#000';cx.setLineDash([3/zoom,3/zoom]);cx.beginPath();cx.arc(x,y,r,0,7);cx.stroke();cx.restore()}
+$('#undo').onclick=()=>{if(!cur||!cur.undo.length)return;cur.img.data.set(cur.undo.pop());draw();if(!cur.undo.length){edited.delete(place+'/'+cur.id);mark(cur.id,false)}};
+$('#reset').onclick=()=>{if(!cur)return;pushUndo();cur.img.data.set(cur.src.data);draw();touched()};
+addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();$('#undo').click()}
+ if(e.key==='['||e.key===']'){const b=$('#brush');b.value=Math.max(2,Math.min(80,+b.value+(e.key===']'?2:-2)));$('#brushVal').value=b.value}});
+
+/* 폴더 연결: media/stage-beta(또는 그 위 web_app·media)를 골라도 stage-beta를 찾아 맞춤 */
+async function findBeta(h){for(const path of ['', 'stage-beta','media/stage-beta']){try{let d=h;for(const p of path.split('/').filter(Boolean))d=await d.getDirectoryHandle(p);await d.getFileHandle('index.json');await d.getDirectoryHandle('nature');return d}catch(e){}}return null}
+$('#connect').onclick=async()=>{if(!window.showDirectoryPicker){alert('이 브라우저는 폴더 바로 저장을 못 해요. 크롬에서 열어 주세요. (저장하면 파일로 받아요.)');return}
+ try{const h=await window.showDirectoryPicker({mode:'readwrite'}),b=await findBeta(h);if(!b){alert('media/stage-beta 폴더를 찾지 못했어요. 저장소(web_app) 폴더나 media/stage-beta 폴더를 골라 주세요.');return}
+  dirRoot=b;$('#folder').textContent='연결됨: '+h.name+' — 저장하면 그 파일을 덮어써요';$('#connect').textContent='폴더 다시 연결';await loadPlace(place)}catch(e){if(e.name!=='AbortError')alert('폴더를 열지 못했어요: '+e.message)}};
+
+/* 저장 */
+$('#save').onclick=async()=>{if(!cur)return;draw();
+ const blob=await new Promise(ok=>cv.toBlob(ok,'image/webp',.95));const fn=cur.id+'.webp';
+ try{if(dirRoot){const d=await dirFor(place+'/items'),fh=await d.getFileHandle(fn,{create:true}),w=await fh.createWritable();await w.write(blob);await w.close();
+   $('#saveMsg').textContent=`저장했어요: media/stage-beta/${place}/items/${fn}`}
+  else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;a.click();$('#saveMsg').textContent=`파일로 받았어요: ${fn} — media/stage-beta/${place}/items/ 에 넣으면 돼요(같은 이름으로 덮어쓰기).`}
+  edited.delete(place+'/'+cur.id);mark(cur.id,false);cur.src=new ImageData(new Uint8ClampedArray(cur.img.data),cv.width,cv.height);cur.undo=[];
+  const t=$(`#list .item[data-id="${cur.id}"] img`);if(t)t.src=URL.createObjectURL(blob)}catch(e){$('#saveMsg').textContent='저장하지 못했어요: '+e.message}};
+addEventListener('beforeunload',e=>{if(edited.size){e.preventDefault();e.returnValue=''}});
+addEventListener('resize',()=>{if(cur)fit()});
+setBg('ground');loadIndex().catch(e=>{$('#list').innerHTML='<p class="hint">장면 목록을 못 읽었어요: '+e.message+'</p>'});
+</script>
+</body>
+</html>
