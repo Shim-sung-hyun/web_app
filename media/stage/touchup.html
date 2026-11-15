@@ -61,6 +61,9 @@ aside input[type=range]{width:100%}
   <button class="btn mode" data-mode="hole" type="button">흰 틈 지우기 — 누른 곳에 이어진 흰 틈만</button>
   <button class="btn mode" data-mode="erase" type="button">지우개 — 칠한 곳 모두 투명</button>
   <button class="btn mode" data-mode="restore" type="button">복구 붓 — 처음 불러온 그림으로</button>
+  <button class="btn mode" data-mode="orig" type="button" id="origBtn" disabled>원본 색 붓 — 받은 원본 그림의 색으로</button>
+  <button class="btn mode" data-mode="fill" type="button">구멍 메우기 붓 — 지워진 곳을 둘레 색으로</button>
+  <p class="hint">지워진 곳(구멍)은 '원본 색 붓'으로 칠하면 받은 그림의 색 그대로 돌아와요. 원본이 없는 소품은 '구멍 메우기 붓'(둘레 색으로 채움 — 빗금까지는 안 살아나요).</p>
   <label for="brush">붓 크기 <output id="brushVal">16</output>점</label>
   <input id="brush" type="range" min="2" max="80" value="16">
   <label for="tol">흰색 기준 <output id="tolVal">200</output></label>
@@ -83,7 +86,7 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const BETA='../stage-beta/';
 let dirRoot=null;          // 연결한 폴더(media/stage-beta 를 가리키게 맞춤)
 let place='',stage=null,groundRGB=[200,160,90];
-let cur=null;              // {id,name,img(ImageData),src(ImageData 처음),undo:[]}
+let cur=null;              // {id,name,img(ImageData),src(ImageData 처음),orig(ImageData 받은 원본 — 있을 때만),undo:[]}
 const edited=new Set();    // 'place/id' 저장 안 한 손질
 let mode='white',zoom=1,bgMode='ground';
 const cv=$('#cv'),cx=cv.getContext('2d',{willReadFrequently:true});
@@ -122,7 +125,9 @@ async function open(id){
  if(cur)edited.delete(place+'/'+cur.id),mark(cur.id,false);
  const im=await blobImage(await readBlob(`${place}/items/${id}.webp`));cv.width=im.naturalWidth;cv.height=im.naturalHeight;cx.clearRect(0,0,cv.width,cv.height);cx.drawImage(im,0,0);
  const data=cx.getImageData(0,0,cv.width,cv.height);
- cur={id,name:(stage.items[id]||{}).name||id,img:data,src:new ImageData(new Uint8ClampedArray(data.data),data.width,data.height),undo:[]};
+ cur={id,name:(stage.items[id]||{}).name||id,img:data,src:new ImageData(new Uint8ClampedArray(data.data),data.width,data.height),orig:null,undo:[]};
+ try{const o=await blobImage(await readBlob(`${place}/src/${id}.jpg`));if(o.naturalWidth===cv.width&&o.naturalHeight===cv.height){const c=document.createElement('canvas');c.width=cv.width;c.height=cv.height;const x=c.getContext('2d');x.drawImage(o,0,0);cur.orig=x.getImageData(0,0,cv.width,cv.height)}}catch(e){}
+ $('#origBtn').disabled=!cur.orig;$('#origBtn').title=cur.orig?'':'이 소품은 받은 원본이 저장소에 없어요';if(!cur.orig&&mode==='orig'){mode='fill';$$('.mode').forEach(x=>x.classList.toggle('on',x.dataset.mode==='fill'))}
  $('#name').textContent=cur.name;$('#size').textContent=`${id} · ${cv.width}×${cv.height}점`;$('#save').disabled=false;$('#saveMsg').textContent='';
  $$('#list .item').forEach(b=>b.classList.toggle('sel',b.dataset.id===id));fit();draw()}
 function mark(id,on){const b=$(`#list .item[data-id="${id}"] .dot`);if(b)b.textContent=on?'●':''}
@@ -152,7 +157,12 @@ function xy(e){const r=cv.getBoundingClientRect();return [Math.floor((e.clientX-
 function dab(x,y){const d=cur.img.data,s=cur.src.data,W=cv.width,H=cv.height,rad=Math.max(1,$('#brush').value/2),thr=+$('#tol').value;
  for(let yy=Math.max(0,Math.floor(y-rad));yy<Math.min(H,Math.ceil(y+rad));yy++)for(let xx=Math.max(0,Math.floor(x-rad));xx<Math.min(W,Math.ceil(x+rad));xx++){
   if((xx-x)**2+(yy-y)**2>rad*rad)continue;const k=(yy*W+xx)*4;
-  if(mode==='restore'){d[k]=s[k];d[k+1]=s[k+1];d[k+2]=s[k+2];d[k+3]=s[k+3]}else if(mode==='white'){if(isWhite(d,k,thr))unmix(d,k)}else d[k+3]=0}}
+  if(mode==='restore'){d[k]=s[k];d[k+1]=s[k+1];d[k+2]=s[k+2];d[k+3]=s[k+3]}else if(mode==='white'){if(isWhite(d,k,thr))unmix(d,k)}
+  else if(mode==='orig'){const o=cur.orig.data;d[k]=o[k];d[k+1]=o[k+1];d[k+2]=o[k+2];d[k+3]=255}
+  else if(mode==='fill'){if(d[k+3]<250)holeAt(d,W,H,xx,yy,k)}else d[k+3]=0}}
+/* 구멍 메우기: 둘레(4점 안, 없으면 9점 안)의 칠해진 점 색을 거리로 섞어 채움 — 여러 번 문지르면 안쪽까지 */
+function holeAt(d,W,H,x,y,k){for(const R of [4,9]){let r=0,g=0,b=0,w=0;for(let j=-R;j<=R;j++){const yy=y+j;if(yy<0||yy>=H)continue;for(let i=-R;i<=R;i++){const xx=x+i;if(xx<0||xx>=W||i*i+j*j>R*R)continue;const q=(yy*W+xx)*4;if(d[q+3]<250)continue;const ww=1/(1+i*i+j*j);r+=d[q]*ww;g+=d[q+1]*ww;b+=d[q+2]*ww;w+=ww}}
+  if(w>0){d[k]=r/w;d[k+1]=g/w;d[k+2]=b/w;d[k+3]=255;return}}}
 function fillHole(x,y){const {width:W,height:H,data:d}=cur.img,thr=+$('#tol').value;if(x<0||y<0||x>=W||y>=H||!isWhite(d,(y*W+x)*4,thr))return 0;
  const seen=new Uint8Array(W*H),q=new Int32Array(W*H);let h=0,t=0;seen[y*W+x]=1;q[t++]=y*W+x;
  while(h<t){const k=q[h++],xx=k%W,yy=(k/W)|0;for(const n of [xx?k-1:-1,xx<W-1?k+1:-1,yy?k-W:-1,yy<H-1?k+W:-1])if(n>=0&&!seen[n]&&isWhite(d,n*4,thr)){seen[n]=1;q[t++]=n}}
