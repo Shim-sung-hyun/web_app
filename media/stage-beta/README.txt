@@ -258,6 +258,15 @@
   도구: tools/defringe.py(흰 테두리·잎 사이·갇힌 종이·구멍 메우기·둘레 흰 선 — 각 선택지는 파일 머리글), 평가 media/stage/hide-judge.html, 시험 media/stage/hide-test.html.
 - 다음: 선생님이 배치 고치기로 고친 JSON으로 원리.
 
+- 흰 조각 지우기 — 초원에만(2026-11-15 선생님: 지워지지 않은 흰색 때문에 뒤에 숨은 동물이 안 보임, 장면마다 사정이 다르니 초원만. 너무 지우면 바오밥 같은 나무도 지워짐).
+  tools/defringe.py에 --halo를 다시 넣고(f300b4f에서 가져옴, --outline은 안 넣음) 종류별로 나눠 씀:
+  · 풀·덤불(밝은 몸 없음) --plant --gaps: bush·fanbush·grassbush·tallgrass·tuft·grassstrip·greengrass·mopane-s·redgrass·thicket·densebush·densegrass·thicketwall·elephantgrass·goldgrass·grassbush-mix·greyscrub(-big)·reedwall·tawnythorn·darkthicket·flowers
+  · 밝은 통나무·바위·흙이 섞인 것과 잎 나무 --plant: logbush·deadfall-grass·bushmound·termite-grass·grasshummocks·kopjebush·rockbush·greyrock-grass·greykopje·termitetree·grassrocks·acacia(-s)·acacias-big·marula·mopane·treegroup·droop(-big)
+  · 빽빽한 것에만 --halo 더함: densegrass·densebush·thicket(wall)·darkthicket·tawnythorn·bush·fanbush·mopane-s·bushmound·logbush·deadfall-grass·kopjebush·rockbush·grassbush-mix·termite-grass·grasshummocks·reedwall·goldgrass·droop(-big).
+    grassbush·elephantgrass는 --halo가 옅은 풀잎을 물어뜯어(검은 홈) 뺌. greyscrub은 잔가지가 회백색이라 뺌.
+  · 바오바브·꺾인 마른 나무·쓰러진 바오밥: 바깥 테두리만(옵션 없음). 바위·흙 둔덕·통나무·흰개미 둔덕: 안 건드림.
+  94장 중 몸에서 빠진 몫은 많아야 2.6%(thicketwall). 다음에 초원 그림을 더 받으면 같은 묶음으로.
+
 ■ nature/new-desert 사막(2026-11-10, Claude가 빙 그림으로 다시 만듦 — 설치도구 안 씀)
 - 2026-11-12 빙 연필풍으로 바꿈(선생님): 배경 bg.jpg(지평선 .41, 받은 3:2를 4:3으로 좌우만 자름, 붙인 그림은 받은 모래색 바위) + 소품 18종류 40개(한 장에 하나, 그림자는 파랑으로 받아 검정 20%로 고르게). 자르기는 tools/bing-cut.py(2026-11-12 다시 자름 — 선생님: 야자·풀이 반투명, 돌 테두리 흐림, 낙타에 흰 줄·그림자).
   프롬프트 media/stage/prompts/PROMPTS-new-desert-pencil.txt(맨 앞 '배경은 흰색', 그림자 방향 강조). 새 종류: 붉은 바위 언덕·대추야자 두 그루. 예전 만화풍 배경·소품 46은 _trash/2026-11-12.
