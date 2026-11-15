@@ -10,7 +10,7 @@
 - animal-riddle.html : 앱. 동물 자료(AD·SCENE·ALIAS·PARTS·RID)도 이 안에 있음 — 고칠 때는 여기를
   2026-11-02: 고래·상어·코끼리·기린·곰·낙타·하마·사슴·호랑이·사자·소(2026-11-03 젖소 → 한우: 힌트 "검은 얼룩무늬"→"몸이 누런 갈색이에요", 우유는 부분 짚기 없이, spots는 maybe로)는 새로 크게 그린 media/animals 그림(1024)을 씀(코끼리~호랑이·사자 8마리는 OLD→NEW). PARTS 7마리(코끼리·기린·호랑이·곰·상어·고래·사자)·BB를 새 그림에 맞춰 다시 잼
 - server-loader.html : 서버 study/009/에 animal-riddle.html 이름으로 올리는 불러오기 파일
-- voice-lines.json   : 앱이 쓰는 말 목록(콘솔 __voiceLines()와 같음) 392마디 — 모두 소리 모음 leda-0.92에 있음(2026-10-26 322마디를 만들어 넣고 만들기 화면은 지움)
+- voice-lines.json   : 앱이 쓰는 말 목록(콘솔 __voiceLines()와 같음) 391마디(2026-11-15). 목소리는 ElevenLabs Roger로 옮기는 중 — 받을 목록 media/stage/prompts/VOICE-009-elevenlabs.txt(372마디 6묶음, 복사 화면). 다 들어오면 앱이 저절로 ElevenLabs(VBUNDLES — 008과 같은 방식), 그전엔 Leda에 없는 고개 4개 때문에 기기 목소리
 
 수준(설정 ②) — 모두 학습 → 퀴즈 → 정리하기 → 같은 동물 찾기
 - 하 · 다섯 고개: 오늘의 동물 4마리. 동물마다 학습(이름 → 고개 다섯, 문장 사이 한 템포 쉼) → 카드 퀴즈(고개 다섯 번, 카드 2장: 그 동물 + 그 고개에 확실히 맞지 않는 동물. 2026-10-31부터 '지느러미가 있어요. 상어예요. 찾아 눌러요.'처럼 답을 알려 줌)
@@ -48,6 +48,15 @@
 저장 칸: animalRiddle.* (log2·resume2·picks·설정. 첫 판의 log·resume·done은 쓰지 않음), 학생 명단 webapp.students
 기록 한 줄: 학생·시각·수업·수준·단계(quiz·sort)·동물·결과(바로/도움)·먼저 고른·말한 것·들은 고개 수(·하 퀴즈의 단서 종류)
 게시판 글: 본문 animal-riddle_manual.html 만듦(2026-11-01), 아직 안 올림 → 올리면 reportLink·endLesson의 주소를 webapp/글번호로
+
+★ 정식 발행 준비(2026-11-15 선생님: 008과 함께 연필풍 · ElevenLabs로)
+  · 연필풍 화면: CSS 끝 '연필풍' 덩어리(008 베타와 같은 바탕 + 009만의 고개 글·답 칸·카드), 머리의 부엉이, 장면 = media/stage-beta/nature/new-(곳)/bg.jpg(STB). 🔀 그림 문자 뺌, 활동지 상자 테두리 뺌.
+  · 동물 그림: 토끼·개·고양이·독수리·나비를 연필풍(media/animals, OLD→NEW 표)으로 — PARTS·BB 새로 잼, IMGV 20261115.
+    새 그림에 맞춰 고개 글 고침: 개 "귀가 쫑긋 서 있어요."·"털이 누런색이에요."(진돗개), 독수리 "머리와 몸이 갈색이에요."·"날개 끝 깃털이 손가락처럼 벌어져요."(흰머리수리 아님), AD 개 floppy·독수리 whitehead를 '그럴 수도 있는' 칸으로.
+  · 남은 것: ① (선생님) 목소리 372마디 받기 → 넣기(tools/voice-add.py가 아니라 008 때처럼 쉼으로 잘라 elevenlabs-roger에, media/voice/elevenlabs-roger/README) → 캡처 12(선생님 메뉴의 '기기 목소리' 알림이 사라진 판) 다시
+    ② (선생님) 원숭이·펭귄 연필풍 그림 받기(media/stage/prompts/PROMPTS-009-wonsungi-penggwin.txt) → media/animals/wonsungi·penggwin.webp, OLD→NEW, PARTS·BB 다시, 캡처 다시(오늘 할 것·상 학습 카드에 보임)
+    ③ 자세한 설명(_guide)에 연필풍·ElevenLabs 반영 ④ 서버 study/009/에 server-loader.html 올리기·게시판 글(본문 animal-riddle_manual.html — 연필풍으로 새로 씀, 끝에 "목소리: ElevenLabs") → 글 번호를 reportLink·endLesson에
+  · 캡처 01~14·홍보 그림(tools/promo-pencil.html?app=009)은 연필풍으로 새로 찍음(2026-11-15).
 
 다음 할 일 (2026-10-31 "009 만들기" 세션)
 지금 상태: main에 있음(https://shim-sung-hyun.github.io/web_app/009/animal-riddle.html). 목소리 392마디 모두 내장.

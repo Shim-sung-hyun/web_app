@@ -1,0 +1,17 @@
+원숭이·펭귄 — 빙 연필풍 프롬프트 두 장 (2026-11-15, 009 정식 발행 준비: 009의 20마리 가운데 이 둘만 옛 만화풍이라)
+같은 프롬프트로 2~3번씩 받아 주시면 그중 고름.
+붙일 그림: media/animals/bukgeukgom.webp (연필풍 북극곰) 한 장 — 그림풍 기준으로만.
+받는 곳: 대화에 올려 주시면 Claude가 media/animals/wonsungi.webp · penggwin.webp로 넣고, 009의 몸 부위 자리(PARTS)·크기(BB)를 새 그림에 맞춰 다시 잼.
+009 고개 글에 맞춰야 할 것 — 원숭이: 손으로 물건을 잡음, 꼬리가 길고 둥글게 말림, 바나나 / 펭귄: 등은 까맣고 배는 하얌(턱시도), 부리가 뾰족함, 날개가 작음, 두 발로 섬.
+
+■ 원숭이 (wonsungi.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE and seen from the SIDE with its head to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ground, NO branch, NO plants, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: a capuchin monkey sitting upright, holding a small banana in one hand close to its chest so both the hand and fingers are clearly visible, brown fur with a paler face and chest, round ears, and a long tail that curls into a clear loop at the end, lying on the white beside it.
+▲
+
+■ 펭귄 (penggwin.jpg)
+▼
+The background of this picture is plain pure white. Draw ONE animal only, in exactly the same style as the attached polar bear drawing: fine, thin dark-grey pencil-and-ink lines, short light hatching, only very pale natural colour washes, realistic proportions, calm and not cute or babyish. The animal is drawn WHOLE, standing upright on its two feet, its body turned three-quarters so the head and pointed beak face to the LEFT, and it fills most of the square picture with a small white margin. Close the outline all the way around with a continuous line. NO background, NO ice, NO snow, NO water, NO shadow, NO text, NO frame: only the animal on PURE WHITE. Square image.
+The animal: an Adelie penguin — black back and head, clean white belly and white ring around the eye, short pointed dark beak, small flipper-like wings held slightly away from the body, pinkish feet with claws.
+▲

@@ -30,6 +30,7 @@
  [검사·캡처]
   check-files.py   앱이 부르는 파일이 저장소에 다 있는지 · check-modules.py 앱마다 같아야 할 모듈 비교
   shot.js          앱을 네 크기로 캡처 · hide-check.js 008 숨은 동물이 너무 가려지는지
+  promo-pencil.html 연필풍 앱(008·009)의 홍보 그림 — ?app=009(캡처 폴더 cap=008/release, 대신 쓸 캡처 shots=03,05,09,11)를 1366×768로 찍어 앱-promo.jpg
  [공통 모듈·자료]
   sync-modules.py  common/의 모듈 원본을 앱마다 넣기 · voice-add.py 목소리 zip을 mp3로 넣기 · trash.py 버릴 자료·버린 도구 보관함
   (007/tools/split.py 는 007 편 판 만들기 — 007 README)
