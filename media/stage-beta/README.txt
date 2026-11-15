@@ -307,6 +307,8 @@
   펭귄은 뺌(남극에만 삶). 들꿩 대신 뇌조(들꿩은 숲새). 뇌조는 흰 눈 위에서 흐려 어려운 편. blocks '얼음 언덕 무리'.
   008의 '극지방'(교과서 극지 묶음, 펭귄 포함)은 그대로 — 008을 무대로 다시 짤 때 펭귄 자리를 정함.
 - 보기: test.html?root=stage-beta#nature/new-polar · hide-test.html?place=nature/new-polar
+- 원본 색 붓(2026-11-15 선생님): 처음 23개는 받은 원본을 자를 때처럼 맞춰(미색→눈색, 얼음 13개는 푸른 기) src/에 둠 — 소품 손질에서 켜짐.
+  가리는 소품 15장은 원본이 저장소에 없어 꺼짐 → 선생님이 new-polar/in/에 올리면 python3 tools/src-align.py --paper --dir media/stage-beta/nature/new-polar/in media/stage-beta/nature/new-polar (이름 목록은 in/README.txt).
 
 ■ 밑동 스며들기(2026-11-10): 숲 30개·초원 24개 소품에 적용했다가, 숲은 2026-11-11 되돌림(선생님: 완성 때 없던 공중부양이 생김 — 숲은 밑동 이끼·흙 색이 땅과 달라 지우면 받침이 사라지고, 스며들기 소품은 무대 그림자도 꺼져서). 초원도 2026-11-11 되돌림(선생님 확정). 숲·초원은 옛 타원 그림자도 끔(stage.json noShadow) — 숲·초원 = 원본 그림 그대로.
 
