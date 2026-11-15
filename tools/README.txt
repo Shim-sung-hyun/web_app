@@ -18,7 +18,7 @@
   flat-shadow.py   그림자를 파랑(빨강)으로 받은 소품: 그림자 모양만 써서 검정 20%로 고르게. --key blue|red · --plant · --alpha
   bark-fill.py     flat-shadow --plant 로 자른 나무의 줄기에 뚫린 밝은 껍질을 되살림(초원 나무, flat-shadow 뒤에)
  [가장자리 정리 — 자른 뒤 흰 테두리·흰 점]
-  defringe.py      빙 연필풍 그림(지금 무대): 흰 테두리·잎 사이·갇힌 종이. --plant · --gaps · --pockets · --rim · --fill · --paper(뿌리처럼 촘촘한 틈의 회백색 종이까지, --below) · --tint --bg(흰 곳을 배경색으로 물들임 — 잔뿌리·풀·수풀) · --halo(빽빽한 풀·덤불 둘레 흰 조각, 옅은 풀잎엔 쓰지 말 것) · --edge .03(가장자리 띠 안의 두꺼운 흰 종이만 — 가운데 흰 잔가지는 그대로)
+  defringe.py      빙 연필풍 그림(지금 무대): 흰 테두리·잎 사이·갇힌 종이. --plant · --gaps · --pockets · --rim · --fill · --paper(뿌리처럼 촘촘한 틈의 회백색 종이까지, --below) · --tint --bg(흰 곳을 배경색으로 물들임 — 잔뿌리·풀·수풀) · --halo(빽빽한 풀·덤불 둘레 흰 조각, 옅은 풀잎엔 쓰지 말 것) · --edge .03(가장자리 띠 안의 두꺼운 흰 종이만 — 가운데 흰 잔가지는 그대로) · --zone x0,y0,x1,y1(정한 사각형 안 갈래 사이 흰 종이 — 나무마다 구역을 눈으로)
   clean-edges.py   옛 만화풍(흰 바탕 지운 동물·낱말·008 소품): 섞인 점을 선 색 + 투명도로, 좁은 틈 마무리까지 한 번에. --check · --specks
                    (두 도구는 그림 종류가 달라 따로 둠 — 빙 연필풍은 defringe, 굵은 윤곽선 만화풍은 clean-edges)
  [무대 — media/stage-beta/]

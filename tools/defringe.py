@@ -21,6 +21,8 @@
     빽빽한 덤불·풀숲·풀 덮인 둔덕에만 — 잎이 듬성한 키 큰 풀·가는 줄기·뿌리·흰 껍질 나무는 잎·줄기의 밝은 결이 뚫리니 쓰지 말 것.
    ⑪ --edge 몫(예 .03): 바깥(그림 테두리와 이어진 투명)에서 그림 긴 쪽의 그 몫 띠 안에서만, 2점 넘게 두꺼운 흰 종이(밝기>226)와 둘레 회백색 2점을 지움 —
     가운데의 흰 잔가지·흰 곳은 건드리지 않음(2026-11-15 선생님: 흰색은 대부분 가장자리, 제한이 없으면 가운데 필요한 흰색도 뚫림). 회백색 잔가지 덤불에도 됨.
+   ⑫ --zone x0,y0,x1,y1[;x0,y0,x1,y1…] (그림 대비 몫): 그 사각형 안에서만, 연필선·투명에서 2점 넘게 떨어진 흰 종이 조각(6점 넘게)과 선 앞까지를 지움
+    — 나무 갈래 사이·잎 덩어리 아래 흰 종이(2026-11-15 초원 선생님 캡처). 나무마다 구역을 눈으로 정함(잎 덩어리 아래~줄기 갈라지기 전, 굵은 줄기는 빼기).
    (2026-11-15 다시: 초원에만 씀 — 선생님 '장면마다 사정이 다름'. 9efc8bf·f300b4f는 12곳에 한꺼번에 써서 되돌렸음)
 ⑨ --paper [밝기, 기본 185]: 바깥과 이어졌는지 상관없이 색 없는(채널 차 < 30) 밝은 점을 밝기만큼 투명하게(밝기 185 → 0, 235 → 다 투명)
     — 잔뿌리가 촘촘해 흰 틈이 갇힌 뿌리(2026-11-15 땅속: --gaps는 240 넘는 흰 점만이라 살짝 회색인 종이가 남았음). --below 몫: 그림 위에서 그 몫(줄기 껍질)은 그대로.
@@ -155,9 +157,32 @@ def edgeband(src,dst,band=.03,view=None):   # ⑪ --edge
     return int(k.sum()), round(k.sum()/max((A>128).sum(),1)*100,2)
 
 
+def zonewhite(src,dst,rects,dist=2,view=None):   # ⑫ --zone
+    a=np.array(Image.open(src).convert('RGBA')).astype(int); rgb=a[...,:3]; A=a[...,3]; H,W=A.shape; mn=rgb.min(2); mx=rgb.max(2)
+    zone=np.zeros((H,W),bool)
+    for x0,y0,x1,y1 in rects: zone[int(H*y0):int(H*y1),int(W*x0):int(W*x1)]=True
+    white=(mn>222)&(mx-mn<22)&(A>150)&zone
+    dark=(mn<150)|(A<100)                                  # 연필선·투명
+    far=ndi.distance_transform_edt(~dark)>=dist
+    core=white&far
+    lab,n=ndi.label(core); sz=ndi.sum(core,lab,np.arange(n+1)); ok=sz>=6; ok[0]=False; k=ok[lab]
+    for _ in range(dist): k|=ndi.binary_dilation(k)&white   # 선 앞까지 넓힘
+    pale=(mn>200)&(mx-mn<26)&(A>0)&zone
+    k|=ndi.binary_dilation(k)&pale
+    A2=A.copy(); A2[k]=0; soft=ndi.binary_dilation(k)&~k&(A2>0); A2[soft]=(A2[soft]*.6).astype(int)
+    out=a.copy(); out[...,3]=A2; Image.fromarray(out.astype(np.uint8)).save(dst,'WEBP',quality=92,method=6)
+    if view:
+        bg=np.zeros_like(rgb)+[200,160,90]; al=A[...,None]/255; c=(rgb*al+bg*(1-al)).astype(np.uint8); v=c.copy(); v[k]=[255,0,0]
+        for x0,y0,x1,y1 in rects:   # 구역 테두리(파랑)
+            X0,Y0,X1,Y1=int(W*x0),int(H*y0),min(W-1,int(W*x1)),min(H-1,int(H*y1)); v[Y0,X0:X1]=v[Y1,X0:X1]=[0,0,255]; v[Y0:Y1,X0]=v[Y0:Y1,X1]=[0,0,255]
+        al2=A2[...,None]/255; c2=(rgb*al2+bg*(1-al2)).astype(np.uint8)
+        Image.fromarray(np.concatenate([c,v,c2],1)).save(view,quality=90)
+    return int(k.sum()), round(k.sum()/max((A>128).sum(),1)*100,2)
+
+
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('files', nargs='+'); p.add_argument('--out'); p.add_argument("--light", type=int, default=235)
-    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true'); p.add_argument('--halo', action='store_true'); p.add_argument('--paper', type=int, nargs='?', const=185); p.add_argument('--below', type=float, default=0.0); p.add_argument('--tint', type=float, nargs='?', const=1.0); p.add_argument('--bg'); p.add_argument('--band', default='.5,.9'); p.add_argument('--edge', type=float)
+    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true'); p.add_argument('--halo', action='store_true'); p.add_argument('--paper', type=int, nargs='?', const=185); p.add_argument('--below', type=float, default=0.0); p.add_argument('--tint', type=float, nargs='?', const=1.0); p.add_argument('--bg'); p.add_argument('--band', default='.5,.9'); p.add_argument('--edge', type=float); p.add_argument('--zone')
     o = p.parse_args()
     if o.tint is not None and not o.bg: p.error('--tint 는 --bg 배경그림이 필요해요')
     for f in o.files:
@@ -165,3 +190,6 @@ if __name__ == '__main__':
         if o.edge and not o.dry:
             import os; s0 = o.out if (o.out and os.path.exists(o.out)) else f
             print('   band', edgeband(s0, o.out or f, o.edge))
+        if o.zone and not o.dry:
+            import os; s1 = o.out if (o.out and os.path.exists(o.out)) else f
+            print('   zone', zonewhite(s1, o.out or f, [tuple(map(float, r.split(','))) for r in o.zone.split(';')]))
