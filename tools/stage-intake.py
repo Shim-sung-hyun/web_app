@@ -108,6 +108,7 @@ def main():
         if K.get('hang'): it['hang'] = True
         if K.get('big'): it['role'] = 'big'
         if K.get('ground'): it['ground'] = K['ground']
+        run(tool('src-align.py'), os.path.join(src, f), out)   # 받은 원본을 src/이름.jpg로 남김 — 소품 손질의 '원본 색 붓'(2026-11-15)
         st['items'][name] = it; print('소품 →', name)
 
     for f, a in anis:   # 3) 동물

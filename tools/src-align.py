@@ -2,6 +2,7 @@
 """받은 원본 맞춰 두기(2026-11-15 선생님: 소품 손질에서 지워진 색을 '원래 색으로 복원'하고 싶음).
 
     python3 tools/src-align.py 받은.jpg 장소폴더/items/이름.webp        # → 장소폴더/src/이름.jpg
+    python3 tools/src-align.py --dir 받은폴더 장소폴더                    # 폴더째: 이름.jpg ↔ items/이름.webp, 맞춘 원본은 받은 폴더에서 지움
 
 잘라 낸 소품(items/이름.webp)이 받은 원본 그림(빙 jpg)의 어디에서 잘렸는지 찾아(불투명한 곳의 밝기 차이가 가장 작은 자리, FFT로),
 소품과 같은 크기로 원본을 잘라 src/이름.jpg로 둔다. media/stage/touchup.html(소품 손질)의 '원본 색 붓'이 이 그림의 색으로 구멍을 칠함.
@@ -29,7 +30,25 @@ def align(src, item, dst=None):
     return dst, err
 
 
+def align_dir(srcdir, place):
+    """받은 폴더의 이름.jpg/png를 장소폴더/items/이름.webp에 맞춤(2026-11-15 숲 — 소품이 많을 때 한 번에). 잘 맞은 원본만 지움."""
+    items = os.path.join(place, 'items'); done = bad = 0
+    for f in sorted(os.listdir(srcdir)):
+        n, e = os.path.splitext(f)
+        if e.lower() not in ('.jpg', '.jpeg', '.png', '.webp'): continue
+        it = os.path.join(items, n + '.webp')
+        if not os.path.exists(it): print(f'  {f}: items/{n}.webp 없음 — 이름 확인'); continue
+        dst, err = align(os.path.join(srcdir, f), it); ok = err <= 8
+        print(f'  {n}  차이 {err:.1f}' + ('' if ok else '  ← 의심(다른 원본?) — 받은 파일은 남겨 둠'))
+        if ok: os.remove(os.path.join(srcdir, f)); done += 1
+        else: bad += 1
+    have = {os.path.splitext(x)[0] for x in os.listdir(os.path.join(place, 'src'))} if os.path.isdir(os.path.join(place, 'src')) else set()
+    miss = sorted(os.path.splitext(x)[0] for x in os.listdir(items) if x.endswith('.webp') and os.path.splitext(x)[0] not in have)
+    print(f'맞춤 {done}, 의심 {bad}. 아직 원본 없는 소품 {len(miss)}' + (': ' + ' '.join(miss) if miss else ''))
+
+
 if __name__ == '__main__':
+    if len(sys.argv) == 4 and sys.argv[1] == '--dir': align_dir(sys.argv[2], sys.argv[3]); sys.exit(0)
     if len(sys.argv) < 3: print(__doc__); sys.exit(1)
     dst, err = align(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else None)
     print(f'{dst}  차이 {err:.1f}' + ('  ← 의심(다른 원본?)' if err > 8 else ''))

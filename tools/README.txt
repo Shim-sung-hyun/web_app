@@ -23,7 +23,7 @@
                    (두 도구는 그림 종류가 달라 따로 둠 — 빙 연필풍은 defringe, 굵은 윤곽선 만화풍은 clean-edges)
  [무대 — media/stage-beta/]
   stage-intake.py  받은 폴더를 무대에 한 번에(자르기·정리·stage.json·밑동·목록까지 위 도구들을 차례로 부름). 새 무대는 이것부터
-  src-align.py     받은 원본에서 소품 자리를 찾아 src/이름.jpg로(소품 손질 touchup.html의 '원본 색 붓'이 지워진 색을 되살림)
+  src-align.py     받은 원본에서 소품 자리를 찾아 src/이름.jpg로(소품 손질 touchup.html의 '원본 색 붓'이 지워진 색을 되살림) · --dir 받은폴더 장소폴더(이름째 한 번에). stage-intake가 넣을 때 자동으로 부름
   trunk-extend.py  매다는 줄기+뿌리 그림의 줄기를 세로로 늘이고 hangAt 적음(땅속) · --up 줄기 길이 배 · --green 풀 포기(풀잎 끝만 잼, 안 늘임)
   stage-meta.py    그림마다 밑동 자리를 재어 stage.json에 · stage-index.py 008 가림 목록 media/stage/hide-index.json
   props-index.py   008 가림 소품 목록·동물 모양 표(masks.json)
