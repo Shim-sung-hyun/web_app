@@ -101,7 +101,7 @@
 - 더 받은 그림(2026-11-14, 복사 화면 PROMPTS-new-sea-more.txt): 14장을 모두 넣음 — 키 큰 다시마 벽 2·부채산호 숲 2·해초 덮인 바위 무더기 2·높은 바위 기둥 3·낮고 넓은 산호 밭 3·바위 아치 2(구멍은 투명).
   이제 소품 18종류 40개. 블록(큰 것과 작은 것)에 새 종류를 넣어 stage.json에 옮김. 시험: 중 3마리, 스페셜 6마리(판마다), 아치·부채산호·다시마 벽 뒤에 떠 있는 동물이 숨음.
 - 원본 색 붓 준비(2026-11-15 선생님): 소품 40장 모두 받은 원본을 src/이름.jpg로 맞춰 둠(tools/src-align.py --dir, 의심 0) — 소품 손질(touchup.html)에서 바닷속 모든 소품에 '원본 색 붓'을 씀.
-- 선생님 손질 1차(2026-11-15, touchup.html): 소품 24장의 남은 흰 틈·흰 자국을 지움(덮어씀, 크기 같음, 밑동 자리 그대로). 손질 안 온 16장: anemone·giantclam·sandmound·seagrass 2·3장씩, kelp-2·seafans-2·smallrocks-2·sponge-2·3·tallkelp 1·2.
+- 선생님 손질 1차(2026-11-15, touchup.html): 소품 24장의 남은 흰 틈·흰 자국을 지움(덮어씀, 크기 같음, 밑동 자리 그대로). 2차: pinnacle-1 흰 점 몇 군데 더. 손질 안 온 16장: anemone·giantclam·sandmound·seagrass 2·3장씩, kelp-2·seafans-2·smallrocks-2·sponge-2·3·tallkelp 1·2.
 - 다음: 선생님 숨기기 시험(hide-test.html?place=nature/new-sea) — 떠 있는 높이·확률, 맨 앞 바위 아치가 너무 큰지, 높은 바위 기둥이 잘 나오는지.
 
 ■ nature/new-underground 땅속 (2026-11-14 빙 연필풍으로 한 번에 만듦 — tools/stage-intake.py, 설정 intake.json — 그림자 없는 첫 무대)
