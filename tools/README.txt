@@ -23,7 +23,7 @@
                    (두 도구는 그림 종류가 달라 따로 둠 — 빙 연필풍은 defringe, 굵은 윤곽선 만화풍은 clean-edges)
  [무대 — media/stage-beta/]
   stage-intake.py  받은 폴더를 무대에 한 번에(자르기·정리·stage.json·밑동·목록까지 위 도구들을 차례로 부름). 새 무대는 이것부터
-  trunk-extend.py  매다는 줄기+뿌리 그림의 줄기를 늘이고 hangAt 적음(땅속)
+  trunk-extend.py  매다는 줄기+뿌리 그림의 줄기를 세로로 늘이고 hangAt 적음(땅속) · --up 줄기 길이 배 · --green 풀 포기(풀잎 끝만 잼, 안 늘임)
   stage-meta.py    그림마다 밑동 자리를 재어 stage.json에 · stage-index.py 008 가림 목록 media/stage/hide-index.json
   props-index.py   008 가림 소품 목록·동물 모양 표(masks.json)
  [검사·캡처]
@@ -166,6 +166,8 @@
    Azure로 만든 소리는 Leda와 목소리가 달라 같은 묶음에 넣지 않습니다(--pack 다른묶음).
 
 - trash.py : 버릴 자료 상자. 안 쓰는 파일을 _trash/<날짜>/로 옮기고(--why 이유), 90일 지나면 --empty로 비움. 도구는 --tool(tools/attic/, 180일)·--revive
-- defringe.py : 흰 테두리·틈 지우기(2026-11-13). 동물·소품 둘레의 흰 테두리, 가지·갈기 사이 흰 종이를 지움(안쪽 흰 곳은 남김). 풀·나무는 --plant(잎 사이 종이도, 잎 속 흰 점은 잎 색으로), 줄기가 하얗지 않은 나무는 --gaps(가지 사이 종이), 바위·흙은 --depth 3 --fill(몸 안 작은 구멍 메움). 제자리에서 고침, --dry는 셈만.
+- defringe.py : 흰 테두리·틈 지우기(2026-11-13). 동물·소품 둘레의 흰 테두리, 가지·갈기 사이 흰 종이를 지움(안쪽 흰 곳은 남김). 풀·나무는 --plant(잎 사이 종이도, 잎 속 흰 점은 잎 색으로), 줄기가 하얗지 않은 나무는 --gaps(가지 사이 종이), 바위·흙은 --depth 3 --fill(몸 안 작은 구멍 메움). 잔뿌리 사이처럼 촘촘한 틈의 살짝 회색인 종이는 --paper [185] --below <줄기 몫>(2026-11-15 땅속 뿌리 — 흰 바위·흰 털에는 쓰지 말 것). 제자리에서 고침, --dry는 셈만.
 - stage-intake.py : 받은 빙 연필풍 그림(배경·소품·동물)을 무대 베타에 한 번에 넣기(2026-11-13). 무대 폴더의 intake.json을 읽어 옛 그림 버리기·자르기·흰 종이 지우기·stage.json·밑동·차림표까지. python3 tools/stage-intake.py nature/new-forest 받은폴더 [--dry]
+  그림자 없이 받은 곳(땅속·물속·바닷속·하늘)은 intake.json "shadow": false — 소품을 bing-cut.py로 자름. view·beds·bed·hangTop·dim·hideWeight 같은 무대 값도 intake.json에서 stage.json으로 옮김
+- trunk-extend.py : 줄기+뿌리 그림(2026-11-14 땅속). 줄기가 뿌리로 갈라지는 줄(줄기 폭이 위 끝보다 30% 넓어지는 곳)을 찾아 그 위 줄기를 세로로 늘이고(이어 붙이면 이음매가 사다리처럼 보였음) stage.json에 hangAt·hangUp·real을 적음 — 무대가 그 줄을 흙 맨 위에 붙임. 풀 포기는 --green(풀잎 끝 줄만). python3 tools/trunk-extend.py nature/new-underground treeroots
 - bing-cut.py --white: 흰 종이를 완전히 투명하게(가늘고 촘촘한 물풀의 흰 테두리 없애기, 2026-11-14 물속 검정말·붕어마름 — 옛 white-to-alpha.py)
