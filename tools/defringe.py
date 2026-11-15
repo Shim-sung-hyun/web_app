@@ -16,6 +16,10 @@
  ⑥ --rim: 둘레 6점 띠의 점이 몸 안쪽(8~20점)보다 눈에 띄게 밝으면 바깥일수록 안쪽 색에 가깝게, 맨 바깥 한 줄은 조금 옅게(테두리선 없는 연한 털끝이 흰 선처럼 보일 때 — 동물).
  ⑤ --fill: 몸 안에 갇힌 작은 투명 구멍(3000점 이하)을 가장 가까운 색으로 메움 — 바위·흙에만(풀·나무는 잎 사이가 비어야 함).
  ④ --gaps: 아주 흰(> 240) 색 없는 덩어리 40점 넘는 것을 모두 지움(가지 사이 종이) — 줄기가 하얗지 않은 나무·덤불에만(바오바브·마른 나무·마룰라 빼고).
+ ⑧ --halo: 가장자리(바깥에서 그림 긴 쪽의 4% 안)에 걸친 흰 조각(밝기 > 212, 4점 넘게)과 둘레 회백색(> 185) 3점까지 + 몸 안의 매끈한(표준편차 < 8) 흰(> 228) 조각을 지움
+    (2026-11-14 선생님: 덤불 둘레·풀숲 위 흰 조각, 풀 사이 흰 점). 그림 넓이 0.12% 넘는 흰 덩어리와 둘레 31점 안 칠해진 점의 40% 넘게 밝은 회색인 곳(통나무·바위·껍질)은 남김.
+    빽빽한 덤불·풀숲·풀 덮인 둔덕에만 — 잎이 듬성한 키 큰 풀·가는 줄기·뿌리·흰 껍질 나무는 잎·줄기의 밝은 결이 뚫리니 쓰지 말 것.
+   (2026-11-15 다시: 초원에만 씀 — 선생님 '장면마다 사정이 다름'. 9efc8bf·f300b4f는 12곳에 한꺼번에 써서 되돌렸음)
 지운 곳 가장자리는 알파를 1점 부드럽게. numpy·Pillow·scipy 필요.
 """
 import argparse, numpy as np
@@ -23,7 +27,7 @@ from PIL import Image
 from scipy import ndimage as ndi
 
 
-def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fill=False, rimfix=False, pockets=False):
+def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fill=False, rimfix=False, pockets=False, halo=False):
     im = Image.open(src).convert('RGBA'); a = np.asarray(im).astype(np.int32).copy()
     rgb, A = a[..., :3].copy(), a[..., 3]; H, W = A.shape
     tint = np.zeros(A.shape, bool)
@@ -74,6 +78,18 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fil
         mean = np.stack([ndi.uniform_filter(rgb[..., c] * inn, 41) / w for c in range(3)], -1)
         rim = (dd <= 6) & (A > 0) & (rgb.mean(2) > mean.mean(2) + 10) & (w > .003)   # 둘레 6점 띠의 밝은 털 — 몸 안쪽(8~20점) 색과 견줌
         rimk = np.clip((7 - dd) / 6, 0, 1)                                            # 바깥일수록 안쪽 색에 가깝게
+    if halo:   # ⑧ --halo: 가장자리에 걸친 흰 조각 + 둘레 회백색, 몸 안의 매끈한 흰 점(빽빽한 덤불·풀숲)
+        dd8 = ndi.distance_transform_edt(~out); R8 = max(6, int(max(H, W) * .04)); cap8 = max(150, H * W * .0012)
+        body8 = ndi.uniform_filter(((A > 8) & (mn > 165) & (mx - mn < 34)).astype(float), 31) > .4 * ndi.uniform_filter((A > 8).astype(float), 31)   # 둘레 31점 안 칠해진 점이 거의 밝은 회색이면 몸(통나무·바위·흰 껍질)
+        wh = (A > 8) & (mn > 212) & (mx - mn < 26) & ~body8; lw8, nw8 = ndi.label(wh, np.ones((3, 3)))
+        sw8 = ndi.sum(wh, lw8, np.arange(nw8 + 1)); dm8 = ndi.minimum(dd8, lw8, np.arange(nw8 + 1))
+        ok8 = (sw8 >= 4) & (sw8 <= cap8) & (dm8 <= R8); ok8[0] = False; k8 = ok8[lw8]
+        g8 = rgb.mean(2).astype(float); sd8 = np.sqrt(np.maximum(ndi.uniform_filter(g8 * g8, 5) - ndi.uniform_filter(g8, 5) ** 2, 0))
+        pk8 = (A > 8) & (mn > 228) & (mx - mn < 22) & (sd8 < 8) & ~body8; lp8, np8 = ndi.label(pk8, np.ones((3, 3)))
+        sp8 = ndi.sum(pk8, lp8, np.arange(np8 + 1)); okp8 = (sp8 >= 4) & (sp8 <= cap8); okp8[0] = False; k8 |= okp8[lp8]
+        grey8 = (A > 8) & (mn > 185) & (mx - mn < 32) & ~body8
+        for _ in range(3): k8 |= ndi.binary_dilation(k8) & grey8
+        kill |= k8
     n = int(kill.sum()) + (int(tint.sum()) if plant else 0) + int(holes.sum()) + int(rim.sum())
     if dry or not n: return n
     if holes.any():
@@ -96,7 +112,7 @@ def fix(src, dst, light=235, depth=None, plant=False, dry=False, gaps=False, fil
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('files', nargs='+'); p.add_argument('--out'); p.add_argument("--light", type=int, default=235)
-    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true')
+    p.add_argument('--depth', type=int); p.add_argument('--plant', action='store_true'); p.add_argument('--dry', action='store_true'); p.add_argument('--gaps', action='store_true'); p.add_argument('--fill', action='store_true'); p.add_argument('--rim', action='store_true'); p.add_argument('--pockets', action='store_true'); p.add_argument('--halo', action='store_true')
     o = p.parse_args()
     for f in o.files:
-        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill, o.rim, o.pockets); print(f'{n:7d}  {f}')
+        n = fix(f, o.out or f, o.light, o.depth, o.plant, o.dry, o.gaps, o.fill, o.rim, o.pockets, o.halo); print(f'{n:7d}  {f}')
