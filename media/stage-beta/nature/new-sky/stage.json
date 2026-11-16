@@ -200,6 +200,12 @@
    "face": "L"
   },
   {
+   "name": "기러기",
+   "src": "animals/gireogi.webp",
+   "real": 2.0,
+   "face": "L"
+  },
+  {
    "name": "참새",
    "src": "animals/chamsae-fly.webp",
    "real": 1.25,

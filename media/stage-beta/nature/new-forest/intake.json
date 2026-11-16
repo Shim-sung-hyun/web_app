@@ -304,6 +304,17 @@
    "big": true,
    "scalefree": false,
    "baseMatch": false
+  },
+  "snag": {
+   "name": "구멍 난 늙은 줄기",
+   "real": [
+    3,
+    5
+   ],
+   "plant": false,
+   "big": true,
+   "scalefree": false,
+   "baseMatch": false
   }
  },
  "animals": [
@@ -385,7 +396,26 @@
    "file": "bueongi",
    "real": 0.7,
    "face": "L",
-   "hide": false
+   "hide": true,
+   "behind": [
+    "snag",
+    "oak",
+    "pine",
+    "fir",
+    "maple"
+   ],
+   "swim": [
+    1.5,
+    5
+   ],
+   "swimP": 1,
+   "growBehind": [
+    "snag",
+    "oak",
+    "pine",
+    "fir",
+    "maple"
+   ]
   },
   {
    "name": "딱따구리",
@@ -393,6 +423,32 @@
    "real": 0.25,
    "face": "L",
    "hide": false
+  },
+  {
+   "name": "딱따구리",
+   "file": "ttakttaguri-cling",
+   "real": 0.25,
+   "face": "L",
+   "hide": true,
+   "behind": [
+    "snag",
+    "oak",
+    "pine",
+    "fir",
+    "maple"
+   ],
+   "swim": [
+    1.2,
+    4
+   ],
+   "swimP": 1,
+   "growBehind": [
+    "snag",
+    "oak",
+    "pine",
+    "fir",
+    "maple"
+   ]
   }
  ],
  "compose": {

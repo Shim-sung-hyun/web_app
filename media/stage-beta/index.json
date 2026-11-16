@@ -60,7 +60,13 @@
    "wildflowers-1",
    "wildflowers-2",
    "youngfirs-1",
-   "youngfirs-2"
+   "youngfirs-2",
+   "fallengiant-2",
+   "fallengiant-3",
+   "log-1",
+   "log-2",
+   "snag-1",
+   "snag-2"
   ],
   "used_by": [
    "008"
@@ -80,7 +86,9 @@
    "곰",
    "호랑이",
    "여우",
-   "꿩"
+   "꿩",
+   "부엉이",
+   "딱따구리"
   ]
  },
  "nature/new-grassland": {
@@ -927,7 +935,8 @@
    "잠자리",
    "벌",
    "부엉이",
-   "갈매기"
+   "갈매기",
+   "기러기"
   ]
  }
 }

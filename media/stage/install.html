@@ -869,7 +869,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     const minLong = opt.minLong ?? .05;   // 찾을 수 있게: 몸의 가장 긴 쪽이 장면 높이의 이만큼은 되는 깊이에만 — 단계마다(hide-test MINLONG 하 .10·중 .07·상 .05, 2026-11-12). 어디서도 못 미치는 작은 동물은 그 단계에서 빠짐
     /* 작은 동물 키우기(2026-11-12 선생님 '가'): 그 깊이의 실제 크기가 minLong에 못 미치면 minLong까지 키움(growMax배까지, 기본 5).
        키운 동물은 크기를 드러내지 않는 소품(stage.json scalefree 종류 — 돌·풀·덤불 등) 뒤에만 — 소품보다 커 보이지 않게. opt.grow:false면 안 키움 */
-    const SF = new Set(pl.scalefree || []);
+    const ent = (pl.animals || []).find(x => x.name === a.name && (a.src || '').endsWith(x.src)) || {};
+    /* 키워도 되는 가림을 동물마다(2026-11-16 숲 딱따구리·부엉이): stage.json animals[].growBehind(소품 종류) — 나무 위 새는 작아서 키워야 하는데, 큰 줄기·나무 뒤라 커 보여도 어색하지 않음 */
+    const SF = new Set((pl.scalefree || []).concat(a.growBehind || ent.growBehind || []));
     /* 앉은 새는 앉을 데 뒤에만(2026-11-14 하늘, 선생님: 서 있는 참새가 하늘 한가운데 떠 있음): stage.json animals[].behind(소품 종류 목록)가 있으면
        발 쪽이 그 종류 소품의 칠해진 곳에 가려진 자리만 — 나무 꼭대기·지붕·가지에 앉은 것처럼. 같은 이름이라도 그림(src)이 다르면(나는 그림) 묶이지 않음 */
     const BH = (a.behind || ((pl.animals || []).find(x => x.name === a.name && x.behind && (a.src || '').endsWith(x.src)) || {}).behind), BHs = BH && BH.length ? new Set(BH) : null;
