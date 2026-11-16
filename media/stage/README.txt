@@ -234,10 +234,10 @@ media/stage/ (기존) · media/stage-beta/ (새로 만드는 중, 구조 같음)
 - 바탕: 장면 땅색(bg.jpg 아래 띠)·어두운 색·체크무늬 — 남은 흰색이 잘 보이게.
 - 선생님이 손질한 파일을 받으면(2026-11-15 — 모든 장면 세션이 같은 순서로): ① 파일 이름과 그림 크기로 어느 장면 것인지 확인(폴더 이름은 틀릴 수 있음 — 초원 것을 '숲손질'로 보낸 적 있음,
   boulder·stones·reedwall처럼 여러 장면에 같은 이름이 있으니 크기가 같은 곳) ② 같은 이름이 둘이면 나중에 받은 것('이름 (1).webp') ③ 그 장면 items/에 덮어쓰기
-  ④ python3 tools/stage-meta.py · tools/stage-index.py(다른 장면 stage.json이 줄바꿈만 바뀌면 되돌림) ⑤ 커밋·main에 올리고 그 장면 README에 한 줄.
+  ④ python3 tools/stage-meta.py · tools/stage-index.py · tools/webp-slim.py 그 장면/items/*.webp(손질 화면은 품질 .95로 저장 — 가볍게, 2026-11-16)(다른 장면 stage.json이 줄바꿈만 바뀌면 되돌림) ⑤ 커밋·main에 올리고 그 장면 README에 한 줄.
 - 지워진 색 되살리기(2026-11-15 선생님): '원본 색 붓'은 장소폴더/src/이름.jpg(받은 원본을 소품과 같은 자리·크기로 자른 것 — tools/src-align.py)의 색으로 칠함. 초원 74장·강·호수 23장(모두)·땅속 29장(모두)·사막 40장(나중 넣은 15장은 원본 없음)·물속 31장(전부)에 있음. 숲은 5장만(진달래 2·덤불 2·고사리 1 — 나머지는 원본이 아무 데도 없음). 앞으로 stage-intake.py가 넣을 때 src/를 함께 남김. 원본이 없으면 '구멍 메우기 붓'(둘레 색으로 채움).
 - 저장: '저장소 폴더 연결'(크롬, web_app이나 media/stage-beta 폴더)이면 items/이름.webp를 바로 덮어씀(연결하면 그림도 내 컴퓨터 파일에서 읽음), 아니면 파일로 받음.
-  저장한 뒤 선생님이 VS Code로 커밋·올리기 하거나 Claude에게 '손질한 것 올려 줘' — Claude는 올릴 때 stage-meta.py·stage-index.py를 돌림(밑동 자리).
+  저장한 뒤 선생님이 VS Code로 커밋·올리기 하거나 Claude에게 '손질한 것 올려 줘' — Claude는 올릴 때 stage-meta.py·stage-index.py·webp-slim.py를 돌림(밑동 자리·그림 가볍게).
 
 ■ 무대 설치도구 media/stage/install.html (만드는 순서는 media/stage-beta/README.txt 맨 위)
 - 1 장면 구상: '자연 장소 고르기'(places.json)로 이름·폴더·배경 설명·지평선·소품(판 1·3)·가장자리 큰 것·동물·블록이 들어감 → 표준 장면·빈 배경·소품 판·큰 그림·가장자리 프롬프트.

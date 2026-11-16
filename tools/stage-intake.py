@@ -17,7 +17,7 @@
      (plant·big·scalefree·baseMatch·ground는 intake.json kinds — softKinds·scalefree·compose.baseMatch가 받은 종류로 채워짐)
   3) 동물: bing-cut.py --animal → defringe.py --depth 3 → defringe.py --rim → 1024칸에 긴 쪽 91% 가운데 → media/animals/이름.webp
      (같은 이름의 옛 그림은 버릴 자료 상자로 — 008·009가 함께 바뀜). stage.json animals는 그림이 있는 동물만(hide: false는 숨기기에 안 씀)
-  4) stage-beta/index.json 목록, stage-meta.py(밑동), stage-index.py(가림 목록), props-index.py(동물 모양 표)
+  4) stage-beta/index.json 목록, stage-meta.py(밑동), stage-index.py(가림 목록), props-index.py(동물 모양 표), webp-slim.py(소품 그림 가볍게)
 끝에 모자란 것(2장이 안 되는 종류·안 받은 동물·모르는 파일)을 알려 줌. 받은폴더의 원본은 건드리지 않음(다 넣은 뒤 지우면 됨).
 넣은 뒤: 숨기기 시험 media/stage/hide-test.html?place=<곳> 으로 보고, 지평선(horizon·groundTop)이 배경과 맞는지 확인.
 """
@@ -141,6 +141,7 @@ def main():
     if '008' not in I[place]['used_by']: I[place]['used_by'].append('008')
     json.dump(I, open(ix, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     run(tool('stage-meta.py')); run(tool('stage-index.py')); run(tool('prop-room.py'))   # 소품실 목록도(2026-11-16)
+    run(tool('webp-slim.py'), *sorted(glob.glob(os.path.join(ROOT, 'media', 'stage-beta', place, 'items', '*.webp'))))   # 마지막에 가볍게(품질 80, 알파·크기 그대로 — 2026-11-16)
     if anis: run(tool('props-index.py'))
     report(spec, st, [], [])
     print('다음: 숨기기 시험 media/stage/hide-test.html?place=%s · 지평선이 배경과 맞는지 · README 기록 · 커밋' % place)
