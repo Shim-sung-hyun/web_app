@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>소품실</title>
+<!-- 소품실(2026-11-16 선생님): 무대 소품을 한곳에서 둘러보고, 다른 무대에 빌려 쓸 소품을 고름. 목록은 media/stage-beta/props.json(tools/prop-room.py가 짬).
+     소품을 누르면 빌려 쓰는 줄(python3 tools/prop-room.py --borrow 받을무대 소품)을 복사 — Claude 대화에 붙이면 됨. 그림 파일은 옮기지 않음. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f3eee3;--ink:#3a3530;--soft:#8a8175;--mark:rgba(250,214,92,.55);--pick:#5b3f8a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 'Gowun Dodum',sans-serif;
+ background-image:radial-gradient(rgba(120,100,70,.05) 1px,transparent 1px);background-size:5px 5px}
+header{padding:28px 28px 6px;max-width:1280px;margin:auto}
+h1{font:30px 'Jua',sans-serif;margin:0 0 2px;color:var(--pick)}
+.lead{color:var(--soft);margin:0 0 14px;max-width:760px}
+.bar{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:baseline;margin:6px 0}
+.bar b{font-weight:normal;color:var(--soft);min-width:64px}
+.bar a{cursor:pointer;color:var(--ink);text-decoration:none;padding:0 3px}
+.bar a.on{background:linear-gradient(transparent 45%,var(--mark) 45%,var(--mark) 88%,transparent 88%)}
+input{font:inherit;border:0;border-bottom:1px solid #cfc6b6;background:transparent;padding:2px 4px;width:200px;outline:none}
+.count{color:var(--soft);margin:8px 0 0}
+main{max-width:1280px;margin:auto;padding:8px 28px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:26px 22px}
+figure{margin:0;cursor:pointer}
+figure .pic{height:130px;display:flex;align-items:flex-end;justify-content:center;position:relative}
+figure img{max-width:100%;max-height:130px;object-fit:contain}
+figure .pic:after{content:'';position:absolute;bottom:-3px;left:18%;right:18%;height:8px;border-radius:50%;background:radial-gradient(closest-side,rgba(60,45,25,.16),transparent)}
+figcaption{margin-top:9px;font-size:14px}
+figcaption .n{display:block}
+figcaption .s{display:block;color:var(--soft);font-size:12.5px}
+figure.got figcaption .n{background:linear-gradient(transparent 50%,var(--mark) 50%,var(--mark) 90%,transparent 90%)}
+#tip{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:6px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:92vw}
+#tip.on{opacity:1}
+@media (max-width:600px){header,main{padding-left:16px;padding-right:16px}main{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<header>
+ <h1>소품실</h1>
+ <p class="lead">모든 무대의 소품입니다. 새 무대나 새 앱에 쓸 소품은 여기서 먼저 찾아 주세요. 밑동 땅이 같은 묶음이면 그림을 옮기지 않고 빌려 씁니다. 소품을 누르면 빌려 쓰는 줄이 복사되니, Claude 대화에 받을 무대 이름과 함께 붙여 주세요.</p>
+ <div class="bar" id="grounds"><b>밑동 땅</b></div>
+ <div class="bar" id="places"><b>무대</b></div>
+ <div class="bar"><b>찾기</b><input id="q" placeholder="통나무, 바위, 갈대 …"></div>
+ <p class="count" id="count"></p>
+</header>
+<main id="grid"></main>
+<div id="tip"></div>
+<script>
+const $=id=>document.getElementById(id), ROOT='../stage-beta/';
+let P=[], g='', pl='';
+const tip=t=>{ const e=$('tip'); e.textContent=t; e.classList.add('on'); clearTimeout(tip.t); tip.t=setTimeout(()=>e.classList.remove('on'),2600); };
+const chips=(box,vals,cur,set)=>{ box.querySelectorAll('a').forEach(a=>a.remove());
+  [['','모두'],...vals].forEach(([v,t])=>{ const a=document.createElement('a'); a.textContent=t; if(v===cur) a.className='on'; a.onclick=()=>{ set(v); draw(); }; box.appendChild(a); }); };
+function draw(){
+  const q=$('q').value.trim();
+  chips($('grounds'),[...new Set(P.map(p=>p.ground))].map(v=>[v,v]),g,v=>{g=v;pl='';});
+  chips($('places'),[...new Map(P.filter(p=>!g||p.ground===g).map(p=>[p.place,p.placeName]))],pl,v=>pl=v);
+  const L=P.filter(p=>(!g||p.ground===g)&&(!pl||p.place===pl)&&(!q||(p.name+' '+p.kind).includes(q)));
+  $('count').textContent=L.length+'장 · '+new Set(L.map(p=>p.kind)).size+'종류';
+  $('grid').innerHTML='';
+  L.forEach(p=>{ const f=document.createElement('figure'), r=p.real?(Array.isArray(p.real)?p.real.join('~')+'m':p.real):'';
+    f.innerHTML=`<div class="pic"><img loading="lazy" alt="" src="${ROOT+p.place}/items/${p.file}.webp"></div><figcaption><span class="n">${p.name}</span><span class="s">${p.placeName} · ${r}${p.usedBy.length>1?' · '+p.usedBy.length+'곳에서 씀':''}</span></figcaption>`;
+    f.onclick=()=>{ const line='python3 tools/prop-room.py --borrow (받을 무대) '+p.id;
+      (navigator.clipboard?navigator.clipboard.writeText(line):Promise.reject()).then(()=>{ f.classList.add('got'); tip('복사함: '+p.name+' ('+p.placeName+')'); },()=>tip(line)); };
+    $('grid').appendChild(f); });
+}
+fetch(ROOT+'props.json',{cache:'no-cache'}).then(r=>r.json()).then(j=>{ P=Object.entries(j).map(([id,v])=>Object.assign({id},v)).sort((a,b)=>a.kind.localeCompare(b.kind)||a.place.localeCompare(b.place)); $('q').oninput=draw; draw(); })
+  .catch(()=>{ $('count').textContent='목록을 못 읽었어요(media/stage-beta/props.json).'; });
+</script>
+</body></html>

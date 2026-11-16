@@ -54,7 +54,7 @@
     const bed0 = Object.keys(pl.beds)[0];
     const jobs = [img(dir + (opt.bg || 'bg') + '.jpg').then(i => pl.bgImg = i)];
     for (const [k, it] of Object.entries(pl.items || {})) {
-      it.id = k; it.bed = pl.beds[it.bed] ? it.bed : bed0; it.src = (it.from ? base + it.from + '/' : dir) + 'items/' + k + '.webp';
+      it.id = k; it.bed = pl.beds[it.bed] ? it.bed : bed0; it.src = (it.from ? base + it.from + '/' : dir) + 'items/' + (it.file || k) + '.webp';   // 빌려 쓴 소품(소품실, tools/prop-room.py): from 무대의 file 그림
       jobs.push(img(it.src).then(i => { it.img = i; if (i) { it.w = i.naturalWidth; it.h = i.naturalHeight; } }));
     }
     for (const f of pl.front || []) { f.srcUrl = dir + 'front/' + f.src + '.webp'; jobs.push(img(f.srcUrl).then(i => f.img = i)); }

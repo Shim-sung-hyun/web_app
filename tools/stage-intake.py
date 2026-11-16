@@ -140,7 +140,7 @@ def main():
     I[place]['items'] = list(st['items']); I[place]['animals'] = list(dict.fromkeys(a['name'] for a in st.get('animals', [])))   # 008이 판마다 무대를 고를 때 씀(2026-11-15)
     if '008' not in I[place]['used_by']: I[place]['used_by'].append('008')
     json.dump(I, open(ix, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    run(tool('stage-meta.py')); run(tool('stage-index.py'))
+    run(tool('stage-meta.py')); run(tool('stage-index.py')); run(tool('prop-room.py'))   # 소품실 목록도(2026-11-16)
     if anis: run(tool('props-index.py'))
     report(spec, st, [], [])
     print('다음: 숨기기 시험 media/stage/hide-test.html?place=%s · 지평선이 배경과 맞는지 · README 기록 · 커밋' % place)

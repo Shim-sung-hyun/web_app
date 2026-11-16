@@ -28,6 +28,7 @@
 - 이 파일(`.github/copilot-instructions.md`)과 `CLAUDE.md`는 같은 규칙을 말해야 한다. 한쪽 규칙을 바꾸면 다른 쪽도 맞춘다.
 
 ## 무대(stage) — 지금 하는 일 (2026-11-11)
+- 소품실(2026-11-16 선생님): 새 무대·새 앱은 소품을 새로 받기 전에 `media/stage/prop-room.html`부터 보고, 밑동 땅이 같은 묶음이면 `python3 tools/prop-room.py --borrow 받을무대 소품`으로 빌려 씀(그림은 옮기지 않음). 새로 받은 소품은 stage-intake가 소품실 목록에 올림. 지금 있는 무대는 그대로.
 - 장면은 배경·소품을 따로 그려 밑동 높이 차례로 쌓는다(만화영화 셀처럼). 모듈 `common/stagekit.js`, 원리는 `media/stage/README.txt` '장면의 원리'(1~24)와 끝의 '선생님과 맞출 것'.
 - 판 하나하나를 고치지 않고 원리(모듈·stage.json)를 고친다. 선생님 글은 그대로 두고 반영한 방법을 '→'로 단다.
 - 12곳을 무대 설치도구 `media/stage/install.html`로 새로 만들어 `media/stage-beta/`에 모은다(기존 `media/stage/nature/`는 다 될 때까지 그대로). 숲(new-forest)이 견본 — 끝남.
