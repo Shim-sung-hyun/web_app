@@ -43,7 +43,7 @@ li{margin:3px 0}
 <section id="s2"><h2><span class="n">2</span>세 수준</h2>
 <table>
 <tr><th>수준</th><th>동물</th><th>배우는 방식</th><th>답하는 방식</th></tr>
-<tr><td><b>하 · 다섯 고개</b></td><td>4마리</td><td>한 마리씩: 특징 다섯 → 카드 퀴즈 → 다섯 고개 → 특징 정리</td><td>카드 2장 중 누르기. 카드 퀴즈는 답을 먼저 알려 줌</td></tr>
+<tr><td><b>하 · 다섯 고개</b></td><td>4마리</td><td>한 마리씩: 특징 다섯 → 카드 퀴즈 → 다섯 고개 → 특징 정리</td><td>카드 2장 중 누르기. 보기는 그 고개에 확실히 맞지 않는 동물</td></tr>
 <tr><td><b>중 · 열 고개</b></td><td>5마리</td><td>세 마리·두 마리씩 특징을 배운 뒤, 그중 한 마리를 열 고개로</td><td><b>정답</b>(마이크) 단추를 누르고 말하기, 또는 선생님이 들은 이름을 칸에 쓰기</td></tr>
 <tr><td><b>상 · 스무고개</b></td><td>10마리</td><td>10마리 카드를 하나씩 눌러 특징을 들은 뒤, 동물마다 스무고개</td><td>이름을 써서, 또는 <b>정답</b>(마이크) 단추를 누르고 말해서</td></tr>
 </table>
@@ -57,7 +57,7 @@ li{margin:3px 0}
 <h3>하 · 다섯 고개</h3>
 <div class="two">
 <div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle02.jpg" alt="특징 학습"><p class="cap">▲ 특징 학습: 이름을 말하고 특징 다섯을 하나씩, 문장 사이에 한 템포 쉬며</p></div>
-<div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle03.jpg" alt="카드 퀴즈"><p class="cap">▲ 카드 퀴즈: "물에 살아요. 상어예요. 찾아 눌러요." 다른 카드는 그 특징이 확실히 아닌 동물</p></div>
+<div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle03.jpg" alt="카드 퀴즈"><p class="cap">▲ 카드 퀴즈: "물에 살아요. 찾아 눌러요." 다른 카드는 그 특징이 확실히 아닌 동물이라 고개만 들어도 고를 수 있음. 이름은 맞힌 뒤에 말해 줌</p></div>
 <div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle04.jpg" alt="다섯 고개"><p class="cap">▲ 다섯 고개: 고개마다 동물 그림이 물결처럼 차오르고, 아래 카드 2장(그림+이름) 중에 누름</p></div>
 <div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle05.jpg" alt="특징 정리"><p class="cap">▲ 특징 정리: 그 동물과 특징을 한 화면에, 한 번 읽어 주고 멈춤</p></div>
 </div>
@@ -70,7 +70,7 @@ li{margin:3px 0}
 <p>고개는 말이 끝나고 7초 뒤 저절로 다음으로 넘어갑니다(학생이 말하는 중이면 기다림). <b>패스</b>를 누르면 바로 다음 고개로 갑니다. 열 고개를 다 들어도 못 맞히면 12초 뒤 정답을 보여 줍니다.</p>
 <h3>상 · 스무고개</h3>
 <div class="two">
-<div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle08.jpg" alt="상 학습"><p class="cap">▲ 학습: 10마리 카드를 눌러 특징을 들음(본 카드에 ✓). 다 보면 다음으로</p></div>
+<div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle08.jpg" alt="상 학습"><p class="cap">▲ 학습: 10마리 카드를 눌러 특징을 들음(본 카드에 ✓). 다 보면 다음으로, 아래 [퀴즈 →]를 누르면 다 보지 않아도 바로 스무고개로</p></div>
 <div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle09.jpg" alt="스무고개"><p class="cap">▲ 스무고개: 사는 곳 배경만, 고개는 말과 글로. 이름을 쓰거나 말해서 맞힘</p></div>
 </div>
 <p>상은 9초 뒤 다음 고개로 넘어갑니다(쓰는 중이면 기다림). 전자칠판이면 화면 키보드를 켜 두세요.</p>
@@ -80,7 +80,7 @@ li{margin:3px 0}
 <ul>
 <li>맞히면 맑은 소리와 함께 동물이 나타나고 이름을 말해 줍니다.</li>
 <li>틀리게 눌러도, 다른 이름을 말해도 <b>"틀렸어요"라고 하지 않습니다</b>. 반응 없이 기다립니다. 먼저 고른 것은 기록에만 남습니다.</li>
-<li>하 카드 퀴즈는 처음부터 답을 알려 주고(무오류 학습), 8초 뒤 다시 말하고, 16초 뒤 정답 카드가 빛납니다. 다섯 고개도 8초 뒤 다시 묻고 16초 뒤 정답 카드가 빛납니다.</li>
+<li>하 카드 퀴즈는 보기를 그 고개에 확실히 맞지 않는 동물로만 내어 고개만 들어도 고를 수 있고(무오류 학습), 8초 뒤 다시 말하고, 16초 뒤 정답 카드가 빛납니다. 다섯 고개도 8초 뒤 다시 묻고 16초 뒤 정답 카드가 빛납니다.</li>
 <li>보기 카드는 그 특징이 확실히 아니고, 그림에서 보기에도 확실히 다른 동물만 냅니다(예: 다리가 안 보이는 나비는 '다리가 없어요'의 보기로 내지 않음).</li>
 <li>카드에는 동물이 한 마리씩 가득 그려집니다. 크기가 답의 단서가 되지 않게 했습니다. 사는 곳 배경이 있는 고개 장면에서는 실제 크기에 맞춰 코끼리는 크게, 벌은 작게 보입니다.</li>
 </ul>
@@ -97,7 +97,7 @@ li{margin:3px 0}
 
 <section id="s6"><h2><span class="n">6</span>정리하기 · 같은 동물 찾기</h2>
 <div class="two">
-<div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle10.jpg" alt="정리하기"><p class="cap">▲ 정리하기: 오늘의 동물을 늘 같은 자리에 펼쳐 두고, 그 동물만 남는 고개를 한꺼번에</p></div>
+<div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle10.jpg" alt="정리하기"><p class="cap">▲ 정리하기: 오늘의 동물을 늘 같은 자리에 펼쳐 두고, 그 동물만 남는 고개를 한꺼번에. 상은 아래 [같은 동물 찾기 →]로 바로 놀이로</p></div>
 <div><img src="https://shim-sung-hyun.github.io/web_app/009/animal-riddle11.jpg" alt="같은 동물 찾기"><p class="cap">▲ 같은 동물 찾기: 뒤집힌 카드에서 같은 동물 짝 찾기</p></div>
 </div>
 <p><b>정리하기</b>는 찾은 동물에 ✓가 붙고, 말이 끝나고 3초마다 다시 들려주며, 16초 뒤 정답이 빛납니다.</p>
