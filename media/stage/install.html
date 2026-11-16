@@ -280,7 +280,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     }
     await Promise.all(jobs);
     for (const k of Object.keys(pl.items || {})) if (!pl.items[k].img) delete pl.items[k];
-    await Promise.all(Object.values(pl.items || {}).filter(it => it.ownShadow).map(splitShadow));
+    { const sj = []; for (const it of Object.values(pl.items || {})) if (it.ownShadow) { sj.push(splitShadow(it)); await new Promise(ok => setTimeout(ok, 0)); } await Promise.all(sj); }   // 픽셀 나누기는 하나씩 쉬어 가며, 그림 압축(toBlob)은 함께(2026-11-15 — 한꺼번에 하면 2~3초 멈춤, 008 놀이 중에 다음 판을 불러올 때)
     groundMap(pl);
     return pl;
   }
@@ -993,7 +993,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
 
   /* 여러 마리 숨기기(2026-11-11 선생님: 스페셜은 6마리가 꼭 되게): 동물을 차례로 숨기고(못 지키는 동물은 건너뜀), n마리가 안 되면
      판(소품 배치)을 새로 짜서 다시 — tries번까지, 가장 많이 숨긴 판을 돌려줌. compose 옵션은 opt.compose, 판마다 숨기기 옵션은 opt.hide(seed는 판마다 바뀜) */
-  function hideMany(pl, animals, n, opt = {}) {
+  function* hideManyG(pl, animals, n, opt = {}) {   // 동물 하나 숨길 때마다 yield — 같은 셈을 한 번에(hideMany) 또는 쉬어 가며(hideManyAsync)
     const seed0 = opt.seed ?? Math.floor(Math.random() * 1e9), tries = opt.tries ?? 12, miss = new Map(), t0 = performance.now(); let best = null;
     for (let t = 0; t < tries; t++) {
       const seed = seed0 + t * 7919, lay = compose(pl, Object.assign({}, opt.compose, {seed})), R = rnd(seed), out = [];
@@ -1003,7 +1003,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
       let slot = null;   // 단계 섞기: 자리마다 단계를 먼저 뽑고, 그 단계로 숨는 동물이 나올 때까지 그 단계를 지킴(못 숨는 동물만 건너뜀 — 쉬운 단계로 쏠리지 않게)
       for (let i = 0; i < pick.length && out.length < n; i++) { if (!slot) slot = typeof opt.hide === 'function' ? opt.hide(R, out.length) : opt.hide;
         if (out.some(o => o.animal === pick[i].name)) continue;   // 같은 이름은 한 판에 한 마리(2026-11-14 하늘: 앉은 참새와 나는 참새가 함께 나오지 않게)
-        const A = hide(pl, lay, pick[i], Object.assign({}, slot, {seed: seed + i * 7}, skipped < cap ? {featSkip: true} : {})); if (A) { out.push(A); slot = null; if (!A.featOk) skipped++; } else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
+        const A = hide(pl, lay, pick[i], Object.assign({}, slot, {seed: seed + i * 7}, skipped < cap ? {featSkip: true} : {})); yield; if (A) { out.push(A); slot = null; if (!A.featOk) skipped++; } else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
       if (!best || out.length > best.out.length) best = {lay, out, seed};
       if (out.length >= n) break;
       if (opt.min && best.out.length >= opt.min && performance.now() - t0 > (opt.budget ?? 8000) / 2) break;   // 못 채우면 opt.min마리로(2026-11-13 무대마다 마릿수) — 한도의 절반을 쓴 뒤부터, min도 안 되면 한도의 두 배까지
@@ -1011,6 +1011,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     }
     return best;
   }
+  /* 쉬어 가며(2026-11-15 008): 앱이 다음 판을 미리 짜는 동안 화면이 멈추지 않게 — 동물 하나(0.1~0.3초)마다 브라우저에 차례를 돌려줌. 결과는 hideMany와 같음 */
+  function hideMany(pl, animals, n, opt = {}) { const g = hideManyG(pl, animals, n, opt); let r; while (!(r = g.next()).done); return r.value; }
+  async function hideManyAsync(pl, animals, n, opt = {}) { const g = hideManyG(pl, animals, n, opt); let r; while (!(r = g.next()).done) await new Promise(ok => setTimeout(ok, 0)); return r.value; }
     /* 단계 자리(2026-11-13 3차 평가 662장 — 선생님이 고른 단계와 84% 맞음): 보이는 몫과 찾기 쉬움을 각각 단계 자리(.5 하 쪽 ~ 4.5 스페셜 쪽)로 바꿔 평균,
      반올림이 그 동물의 단계. 경계: 보이는 몫 하|중 .73 · 중|상 .34 · 상|스 .065, 찾기 쉬움(로그) 하|중 25 · 중|상 3.15 · 상|스 3.05 — 중과 그 아래는 쉬움이, 상과 스페셜은 몫이 가름 */
   const CUT = {v: [1, .80, .31, .035, 0], e: [80, 24.6, 2.97, 2.0, .3], wv: .6};   // 2026-11-13 4차(초원 662 + 사막 138 + 북극 31장): 초원 83·사막 79·북극 87% — 스페셜은 아주 작은 것보다 보호색(쉬움 2 아래)으로
@@ -1036,9 +1039,15 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     const pc = [].concat(opt.count ?? (pl.counts && pl.counts[lv]) ?? LEVELS[lv].count), n = pc[0], min = pc[1];
     const extra = opt.hide || {}, seed = opt.seed ?? Math.floor(Math.random() * 1e9), R = rnd(seed ^ 0x5bd1e995);
     const plan = Array.from({length: n}, () => { let r = R(); for (const [l, p] of MIX[lv]) { if (r < p) return l; r -= p; } return lv; });   // 자리별 단계 계획 — 판을 다시 짜도 그대로
-    return hideMany(pl, animals, n, Object.assign({featFree: pl.featFree ?? .4, min}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv, pl), extra)}));
+    return (opt.async ? hideManyAsync : hideMany)(pl, animals, n, Object.assign({featFree: pl.featFree ?? .4, min}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv, pl), extra)}));
   }
-  G.Stage = {LEVELS, MIX, CUT, levelAt, levelPos, levelOpt, hideLevel, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
+  /* 미리 재기(2026-11-15 008): 처음 숨길 때 소품마다 모양·색 지도를 재느라 1~2초 멈추던 것을, 무대를 불러온 뒤 소품 하나씩 쉬어 가며 미리 잼(결과는 같음, 지도는 그림마다 한 번) */
+  async function warm(pl) { const rest = () => new Promise(ok => setTimeout(ok, 0));
+    if (pl.bgImg) { labOf(pl.bgImg, 0, 160, 120); await rest(); }
+    for (const it of Object.values(pl.items || {})) { if (!it.img) continue; maskOf(it.img); alphaOf(it.img); labOf(it.img); await rest(); }
+    return pl; }
+  const hideLevelAsync = (pl, animals, lv, opt = {}) => hideLevel(pl, animals, lv, Object.assign({}, opt, {async: true}));   // Promise — 결과는 hideLevel과 같음
+  G.Stage = {LEVELS, MIX, CUT, levelAt, levelPos, levelOpt, hideLevel, hideLevelAsync, hideManyAsync, warm, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>

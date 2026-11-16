@@ -136,7 +136,9 @@ def main():
 
     ix = os.path.join(ROOT, 'media', 'stage-beta', 'index.json'); I = json.load(open(ix, encoding='utf-8'))
     I.setdefault(place, {'name': spec['name'], 'group': place.split('/')[0], 'view': spec.get('view', 'ground'), 'bg': ['bg'], 'used_by': [], 'ready': False, 'far': [], 'front': [], 'missing': [], 'skirt': []})
-    I[place]['items'] = list(st['items']); json.dump(I, open(ix, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    I[place]['items'] = list(st['items']); I[place]['animals'] = list(dict.fromkeys(a['name'] for a in st.get('animals', [])))   # 008이 판마다 무대를 고를 때 씀(2026-11-15)
+    if '008' not in I[place]['used_by']: I[place]['used_by'].append('008')
+    json.dump(I, open(ix, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     run(tool('stage-meta.py')); run(tool('stage-index.py'))
     if anis: run(tool('props-index.py'))
     report(spec, st, [], [])

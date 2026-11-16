@@ -13,7 +13,8 @@
 ■ 지금 하는 일(2026-11-09)
 - 12곳을 무대 설치도구(media/stage/install.html)로 새로 만들어 media/stage-beta/ 에 모은다. 숲(nature/new-forest)이 견본 — 끝남.
 - 기존 media/stage/nature/<12곳>(덮개 방식, 2026-11-04~06)은 다 될 때까지 건드리지 않는다. 다 되면 새 판으로 바꾸고, 기존 소품을 더 쓸지는 그때 정함.
-- 다음: 설치도구에서 장소를 골라(풀다운) 한 번에 만들기 → 12곳이 다 되면 008 숨은 동물 찾기를 이 무대(Stage.compose + Stage.hide) 위에서 새로 짬.
+- 008 숨은 동물 찾기를 새 무대 위에서 짬(2026-11-15, 008 베타 buildStage — 008 README '새 무대 숨은 동물 찾기'). 모듈에 쉬어 가며 숨기기(Stage.hideLevelAsync·hideManyAsync)·미리 재기(Stage.warm), 그림자 나누기(splitShadow)도 하나씩 쉬어 가며 — 앱이 다음 판을 미리 짜는 동안 화면이 멈추지 않게(결과는 같음).
+- 다음: 12곳 무대를 media/stage/nature/로 옮길지(선생님), 딱따구리·부엉이·소금쟁이 자리.
 - 배치 고치기(2026-11-12): media/stage/arrange.html?place=nature/new-desert&seed=판번호 — 무대가 짠 판에서 선생님이 소품을 끌어 옮기고(깊이 따라 크기도)·크게/작게·빼기·더하기, 까닭과 함께 저장 → '모두 내려받기' JSON(before·after·changes·why)을 대화에 올리면 Claude가 견줘 원리(모듈·stage.json)로 바꿈. 무대 보기의 판 번호를 넣으면 같은 판.
   익힌 원리(2026-11-12, 사막 32판 — stagekit settle·compose, stage.json compose):
    ① 앞뒤 분명히: 큰 소품 둘의 밑동이 가로로 30% 넘게 겹치면 밑동 높이 차이 stackGap(.04) 이상 — 같은 줄에 겹치면 앞의 것이 떠 보임(고치기 전 .00~.03 → 고친 뒤 .03~.08). 200판에서 842 → 26.

@@ -62,12 +62,26 @@
    "youngfirs-1",
    "youngfirs-2"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
   "missing": [],
-  "skirt": []
+  "skirt": [],
+  "animals": [
+   "다람쥐",
+   "너구리",
+   "토끼",
+   "멧돼지",
+   "사슴",
+   "산양",
+   "곰",
+   "호랑이",
+   "여우",
+   "꿩"
+  ]
  },
  "nature/new-grassland": {
   "name": "초원",
@@ -195,12 +209,26 @@
    "greyscrub-big-1",
    "greyscrub-big-2"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
   "missing": [],
-  "skirt": []
+  "skirt": [],
+  "animals": [
+   "사자",
+   "얼룩말",
+   "기린",
+   "코끼리",
+   "치타",
+   "하이에나",
+   "가젤",
+   "물소",
+   "코뿔소",
+   "타조"
+  ]
  },
  "nature/new-desert": {
   "name": "사막",
@@ -290,12 +318,27 @@
    "thorntrees3-1",
    "thorntrees3-2"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
   "missing": [],
-  "skirt": []
+  "skirt": [],
+  "animals": [
+   "낙타",
+   "사막여우",
+   "미어캣",
+   "도마뱀",
+   "사막거북",
+   "전갈",
+   "방울뱀",
+   "사막쥐",
+   "오릭스",
+   "타조",
+   "가젤"
+  ]
  },
  "nature/new-polar": {
   "name": "북극",
@@ -344,12 +387,27 @@
    "snowdrift-big-1",
    "snowdrift-big-2"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
   "missing": [],
-  "skirt": []
+  "skirt": [],
+  "animals": [
+   "북극곰",
+   "바다표범",
+   "북극여우",
+   "바다코끼리",
+   "순록",
+   "흰올빼미",
+   "북극토끼",
+   "사향소",
+   "북극늑대",
+   "퍼핀",
+   "뇌조"
+  ]
  },
  "nature/new-ground": {
   "name": "들판",
@@ -358,7 +416,9 @@
   "bg": [
    "bg"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
@@ -404,6 +464,23 @@
    "woodpile-2",
    "zelkova-1",
    "zelkova-2"
+  ],
+  "animals": [
+   "개",
+   "고양이",
+   "닭",
+   "소",
+   "돼지",
+   "말",
+   "달팽이",
+   "거미",
+   "토끼",
+   "너구리",
+   "염소",
+   "오리",
+   "고슴도치",
+   "메뚜기",
+   "양"
   ]
  },
  "nature/new-mudflat": {
@@ -413,7 +490,9 @@
   "bg": [
    "bg"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
@@ -466,6 +545,19 @@
    "seepweed-3",
    "smallrock-2",
    "smallrock-3"
+  ],
+  "animals": [
+   "칠게",
+   "농게",
+   "방게",
+   "조개",
+   "맛조개",
+   "갯우렁이",
+   "짱뚱어",
+   "낙지",
+   "갯지렁이",
+   "도요새",
+   "갈매기"
   ]
  },
  "nature/new-wetland": {
@@ -475,7 +567,9 @@
   "bg": [
    "bg"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
@@ -520,6 +614,17 @@
    "sunkenlog-2",
    "willow-1",
    "willow-2"
+  ],
+  "animals": [
+   "개구리",
+   "백로",
+   "미꾸라지",
+   "우렁이",
+   "잠자리",
+   "자라",
+   "청둥오리",
+   "오리",
+   "메뚜기"
   ]
  },
  "nature/new-sea": {
@@ -529,7 +634,9 @@
   "bg": [
    "bg"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
@@ -576,6 +683,20 @@
    "tallkelp-2",
    "weedrocks-1",
    "weedrocks-2"
+  ],
+  "animals": [
+   "고래",
+   "상어",
+   "돌고래",
+   "바다거북",
+   "문어",
+   "오징어",
+   "해파리",
+   "고등어",
+   "불가사리",
+   "소라",
+   "가오리",
+   "흰동가리"
   ]
  },
  "nature/new-underground": {
@@ -585,7 +706,9 @@
   "bg": [
    "bg"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
@@ -621,6 +744,18 @@
    "treeroots-2",
    "treeroots-3",
    "treeroots-4"
+  ],
+  "animals": [
+   "두더지",
+   "지렁이",
+   "땅강아지",
+   "개미",
+   "굼벵이",
+   "매미 애벌레",
+   "공벌레",
+   "들쥐",
+   "오소리",
+   "프레리도그"
   ]
  },
  "nature/new-water": {
@@ -630,7 +765,9 @@
   "bg": [
    "bg"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
@@ -668,6 +805,18 @@
    "sunklog-2",
    "sunkstump-1",
    "sunkstump-2"
+  ],
+  "animals": [
+   "붕어",
+   "잉어",
+   "메기",
+   "송사리",
+   "미꾸라지",
+   "자라",
+   "다슬기",
+   "가재",
+   "새우",
+   "수달"
   ]
  },
  "nature/new-pond": {
@@ -677,7 +826,9 @@
   "bg": [
    "bg"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
@@ -707,6 +858,20 @@
    "mudbank-3",
    "tallreeds-1",
    "tallreeds-2"
+  ],
+  "animals": [
+   "백로",
+   "개구리",
+   "자라",
+   "수달",
+   "하마",
+   "악어",
+   "청둥오리",
+   "물총새",
+   "잠자리",
+   "원앙",
+   "남생이",
+   "왜가리"
   ]
  },
  "nature/new-sky": {
@@ -716,7 +881,9 @@
   "bg": [
    "bg"
   ],
-  "used_by": [],
+  "used_by": [
+   "008"
+  ],
   "ready": false,
   "far": [],
   "front": [],
@@ -748,6 +915,19 @@
    "smallcloud-2",
    "treetop-1",
    "treetop-2"
+  ],
+  "animals": [
+   "참새",
+   "까치",
+   "제비",
+   "비둘기",
+   "박새",
+   "독수리",
+   "나비",
+   "잠자리",
+   "벌",
+   "부엉이",
+   "갈매기"
   ]
  }
 }

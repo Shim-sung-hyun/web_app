@@ -575,7 +575,7 @@ details.more .card{background:transparent}
     }
     await Promise.all(jobs);
     for (const k of Object.keys(pl.items || {})) if (!pl.items[k].img) delete pl.items[k];
-    await Promise.all(Object.values(pl.items || {}).filter(it => it.ownShadow).map(splitShadow));
+    { const sj = []; for (const it of Object.values(pl.items || {})) if (it.ownShadow) { sj.push(splitShadow(it)); await new Promise(ok => setTimeout(ok, 0)); } await Promise.all(sj); }   // 픽셀 나누기는 하나씩 쉬어 가며, 그림 압축(toBlob)은 함께(2026-11-15 — 한꺼번에 하면 2~3초 멈춤, 008 놀이 중에 다음 판을 불러올 때)
     groundMap(pl);
     return pl;
   }
@@ -1288,7 +1288,7 @@ details.more .card{background:transparent}
 
   /* 여러 마리 숨기기(2026-11-11 선생님: 스페셜은 6마리가 꼭 되게): 동물을 차례로 숨기고(못 지키는 동물은 건너뜀), n마리가 안 되면
      판(소품 배치)을 새로 짜서 다시 — tries번까지, 가장 많이 숨긴 판을 돌려줌. compose 옵션은 opt.compose, 판마다 숨기기 옵션은 opt.hide(seed는 판마다 바뀜) */
-  function hideMany(pl, animals, n, opt = {}) {
+  function* hideManyG(pl, animals, n, opt = {}) {   // 동물 하나 숨길 때마다 yield — 같은 셈을 한 번에(hideMany) 또는 쉬어 가며(hideManyAsync)
     const seed0 = opt.seed ?? Math.floor(Math.random() * 1e9), tries = opt.tries ?? 12, miss = new Map(), t0 = performance.now(); let best = null;
     for (let t = 0; t < tries; t++) {
       const seed = seed0 + t * 7919, lay = compose(pl, Object.assign({}, opt.compose, {seed})), R = rnd(seed), out = [];
@@ -1298,7 +1298,7 @@ details.more .card{background:transparent}
       let slot = null;   // 단계 섞기: 자리마다 단계를 먼저 뽑고, 그 단계로 숨는 동물이 나올 때까지 그 단계를 지킴(못 숨는 동물만 건너뜀 — 쉬운 단계로 쏠리지 않게)
       for (let i = 0; i < pick.length && out.length < n; i++) { if (!slot) slot = typeof opt.hide === 'function' ? opt.hide(R, out.length) : opt.hide;
         if (out.some(o => o.animal === pick[i].name)) continue;   // 같은 이름은 한 판에 한 마리(2026-11-14 하늘: 앉은 참새와 나는 참새가 함께 나오지 않게)
-        const A = hide(pl, lay, pick[i], Object.assign({}, slot, {seed: seed + i * 7}, skipped < cap ? {featSkip: true} : {})); if (A) { out.push(A); slot = null; if (!A.featOk) skipped++; } else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
+        const A = hide(pl, lay, pick[i], Object.assign({}, slot, {seed: seed + i * 7}, skipped < cap ? {featSkip: true} : {})); yield; if (A) { out.push(A); slot = null; if (!A.featOk) skipped++; } else miss.set(pick[i], (miss.get(pick[i]) || 0) + 1); }
       if (!best || out.length > best.out.length) best = {lay, out, seed};
       if (out.length >= n) break;
       if (opt.min && best.out.length >= opt.min && performance.now() - t0 > (opt.budget ?? 8000) / 2) break;   // 못 채우면 opt.min마리로(2026-11-13 무대마다 마릿수) — 한도의 절반을 쓴 뒤부터, min도 안 되면 한도의 두 배까지
@@ -1306,6 +1306,9 @@ details.more .card{background:transparent}
     }
     return best;
   }
+  /* 쉬어 가며(2026-11-15 008): 앱이 다음 판을 미리 짜는 동안 화면이 멈추지 않게 — 동물 하나(0.1~0.3초)마다 브라우저에 차례를 돌려줌. 결과는 hideMany와 같음 */
+  function hideMany(pl, animals, n, opt = {}) { const g = hideManyG(pl, animals, n, opt); let r; while (!(r = g.next()).done); return r.value; }
+  async function hideManyAsync(pl, animals, n, opt = {}) { const g = hideManyG(pl, animals, n, opt); let r; while (!(r = g.next()).done) await new Promise(ok => setTimeout(ok, 0)); return r.value; }
     /* 단계 자리(2026-11-13 3차 평가 662장 — 선생님이 고른 단계와 84% 맞음): 보이는 몫과 찾기 쉬움을 각각 단계 자리(.5 하 쪽 ~ 4.5 스페셜 쪽)로 바꿔 평균,
      반올림이 그 동물의 단계. 경계: 보이는 몫 하|중 .73 · 중|상 .34 · 상|스 .065, 찾기 쉬움(로그) 하|중 25 · 중|상 3.15 · 상|스 3.05 — 중과 그 아래는 쉬움이, 상과 스페셜은 몫이 가름 */
   const CUT = {v: [1, .80, .31, .035, 0], e: [80, 24.6, 2.97, 2.0, .3], wv: .6};   // 2026-11-13 4차(초원 662 + 사막 138 + 북극 31장): 초원 83·사막 79·북극 87% — 스페셜은 아주 작은 것보다 보호색(쉬움 2 아래)으로
@@ -1331,9 +1334,15 @@ details.more .card{background:transparent}
     const pc = [].concat(opt.count ?? (pl.counts && pl.counts[lv]) ?? LEVELS[lv].count), n = pc[0], min = pc[1];
     const extra = opt.hide || {}, seed = opt.seed ?? Math.floor(Math.random() * 1e9), R = rnd(seed ^ 0x5bd1e995);
     const plan = Array.from({length: n}, () => { let r = R(); for (const [l, p] of MIX[lv]) { if (r < p) return l; r -= p; } return lv; });   // 자리별 단계 계획 — 판을 다시 짜도 그대로
-    return hideMany(pl, animals, n, Object.assign({featFree: pl.featFree ?? .4, min}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv, pl), extra)}));
+    return (opt.async ? hideManyAsync : hideMany)(pl, animals, n, Object.assign({featFree: pl.featFree ?? .4, min}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv, pl), extra)}));
   }
-  G.Stage = {LEVELS, MIX, CUT, levelAt, levelPos, levelOpt, hideLevel, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
+  /* 미리 재기(2026-11-15 008): 처음 숨길 때 소품마다 모양·색 지도를 재느라 1~2초 멈추던 것을, 무대를 불러온 뒤 소품 하나씩 쉬어 가며 미리 잼(결과는 같음, 지도는 그림마다 한 번) */
+  async function warm(pl) { const rest = () => new Promise(ok => setTimeout(ok, 0));
+    if (pl.bgImg) { labOf(pl.bgImg, 0, 160, 120); await rest(); }
+    for (const it of Object.values(pl.items || {})) { if (!it.img) continue; maskOf(it.img); alphaOf(it.img); labOf(it.img); await rest(); }
+    return pl; }
+  const hideLevelAsync = (pl, animals, lv, opt = {}) => hideLevel(pl, animals, lv, Object.assign({}, opt, {async: true}));   // Promise — 결과는 hideLevel과 같음
+  G.Stage = {LEVELS, MIX, CUT, levelAt, levelPos, levelOpt, hideLevel, hideLevelAsync, hideManyAsync, warm, easeOf, load, compose, add, render, perM, place, hide, visibleOf, crushOf, seeOf, contrastOf, maskOf, edgeOf, hideMany, footOnGround, BASE};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script id="adminHold">
@@ -1414,6 +1423,18 @@ const STG=GH+'media/stage/', STGP={ground:1,forest:1,grassland:1,desert:1,polar:
 const stgOn=p=>!!(window.Stage&&PL[p]&&STGP[PL[p].scene]);
 const STGL={}; let STGCUR=null;   /* STGCUR: 지금 장면의 무대(밑동 덮개를 고를 때) */
 const stgLoad=p=>STGL[p]||(STGL[p]=Stage.load('nature/'+PL[p].scene,{base:STG}).catch(()=>null));
+/* 새 무대(2026-11-15 무대 마무리): 숨은 동물 찾기를 무대 엔진 위에서 — media/stage-beta/nature/new-(곳), Stage.hideLevel(단계·보호색·바닥 앞뒤·특징 원리는 모두 모듈 몫).
+   곳마다 쓸 무대(앞의 것부터), 판의 동물이 모두 그 무대 동물(차림표 index.json의 animals)이면 새 무대, 아니면 옛 길(buildHide 아래 — 딱따구리·부엉이 나무 위, 소금쟁이 등).
+   '땅'·'물'처럼 넓은 곳은 동물이 사는 무대로 판을 나눔(hideRounds) — 붕어는 강 물속, 고래는 바닷속 */
+const STB=GH+'media/stage-beta/', STB_LAND=['new-ground','new-forest','new-grassland'];
+const STB_OF={land:STB_LAND,ground:STB_LAND,water:['new-water','new-sea'],underground:['new-underground'],sky:['new-sky'],forest:['new-forest'],grassland:['new-grassland'],
+  desert:['new-desert'],polar:['new-polar'],sea:['new-sea'],pond:['new-pond','new-water'],mudflat:['new-mudflat'],wetland:['new-wetland']};
+let STBI={}; const stbReady=fetch(STB+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{ STBI=j||{}; }).catch(()=>{});
+const stbHas=(sc,a)=>((STBI['nature/'+sc]||{}).animals||[]).includes(a);
+const stbOf=(p,a)=>(STB_OF[p]||[]).find(sc=>stbHas(sc,a))||'';
+const stbFor=(p,ts,need)=>window.Stage?(STB_OF[p]||[]).find(sc=>ts.filter(a=>stbHas(sc,a)).length>=need)||'':'';
+const STBL={}, stbLoad=sc=>STBL[sc]||(STBL[sc]=Stage.load('nature/'+sc,{base:STB}).then(pl=>Stage.warm?Stage.warm(pl):pl).catch(()=>null));   /* 소품 모양은 쉬어 가며 미리 잼 */
+const STIM={}, stImg=src=>STIM[src]||(STIM[src]=new Promise(ok=>{ const i=new Image(); i.crossOrigin='anonymous'; i.onload=()=>ok(i); i.onerror=()=>ok(null); i.src=src; }));
 const OLD={'물고기':'mulgogi',
  '원숭이':'wonsungi','펭귄':'penggwin','악어':'akeo'};
 const NEW={'조개':'jogae','개':'gae','고양이':'goyangi','닭':'dak','돼지':'dwaeji','말':'mal','달팽이':'dalpaengi','거미':'geomi','토끼':'tokki','다람쥐':'daramjwi','여우':'yeou','너구리':'neoguri','소':'so','사자':'saja','코끼리':'kokkiri','기린':'girin','곰':'gom','낙타':'nakta','하마':'hama','사슴':'saseum','호랑이':'horangi','코뿔소':'koppulso','치타':'chita','하이에나':'haiena','타조':'tajo','가젤':'gajel','물소':'mulso','방울뱀':'bangulbaem','사막쥐':'samakjwi','북극여우':'bukgeukyeou','바다코끼리':'badakokkiri','순록':'sullok','흰올빼미':'huinolppaemi','북극토끼':'bukgeuktokki','사향소':'sahyangso','북극늑대':'bukgeuknukdae','쇠똥구리':'soettongguri','오릭스':'oriks','멧돼지':'metdwaeji','바다거북':'badageobuk','돌고래':'dolgorae','갯우렁이':'gaeturengi','맛조개':'matjogae','도요새':'doyosae','방게':'bangge',
@@ -1841,6 +1862,9 @@ function buildRun(lv,plan,idx){
     phases.push({k,items}); });
   return {lv,plan,idx,b:bd.bi==null?-1:bd.bi,bd,phases,pi:0,ii:0,g:Date.now(),placed:{},token:(TOKBASE+=1e5)};
 }
+/* 숨은 동물 찾기를 하는 묶음이면 쓸 새 무대를 수업 중에 미리 불러 둠(초원은 몇 초 걸림 — 불러오는 동안 화면은 멈추지 않음) */
+function stbPre(bd){ if(!S.game||!window.Stage) return; stbReady.then(()=>bd.places.forEach(p=>{ const ts=bd.items.filter(x=>x.p===p).map(x=>x.a);
+  new Set(ts.map(a=>stbOf(p,a)).filter(Boolean)).forEach(sc=>setTimeout(()=>stbLoad(sc),3000)); })); }
 /* 판 번호는 판마다 새로(2026-11-02): 0부터 다시 세면, 설정으로 나갈 때 그림을 기다리던 앞 판이 새 판과 같은 번호가 되어 되살아나
    한 화면을 서로 지우고 그림(스페셜에서 배경만 남고 '다 찾았어요') */
 let TOKBASE=0;
@@ -1851,7 +1875,7 @@ function shuffleNoRepeat(items){ /* 같은 곳이 세 번 이어 나오지 않�
 function startLesson(rs){
   unlockAudio(); chooseEngine();
   const plan=rs&&rs.plan?rs.plan:makePlan();
-  RUN=buildRun(rs?rs.lv:S.level,plan,rs&&rs.plan?Math.min(rs.idx||0,plan.length-1):0);
+  RUN=buildRun(rs?rs.lv:S.level,plan,rs&&rs.plan?Math.min(rs.idx||0,plan.length-1):0); stbPre(RUN.bd);
   if(rs){ const pi=RUN.phases.findIndex(p=>p.k===rs.ph); if(pi>=0){ RUN.pi=pi; RUN.ii=Math.min(rs.ii||0,RUN.phases[pi].items.length-1); } }
   document.body.classList.remove('setup'); goFull();
   setTimeout(()=>runStep(),350);   /* 전체 화면으로 다 커진 뒤 그림 */
@@ -2151,7 +2175,7 @@ function endGrid(){
 }
 function drawEnd(tok){
   if(!S.endScene){ if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); }
-    if(RUN.plan&&RUN.idx<RUN.plan.length-1) later(()=>{ if(alive(tok)){ const lv=RUN.lv, plan=RUN.plan, i=RUN.idx+1; RUN=buildRun(lv,plan,i); saveSpot(); runStep(); } },2500);
+    if(RUN.plan&&RUN.idx<RUN.plan.length-1) later(()=>{ if(alive(tok)){ const lv=RUN.lv, plan=RUN.plan, i=RUN.idx+1; RUN=buildRun(lv,plan,i); stbPre(RUN.bd); saveSpot(); runStep(); } },2500);
     return; }
   const cards=endGrid();
   requestAnimationFrame(()=>{ cards.forEach(c=>{ const p=c.dataset.p, sc=c.querySelector('.scene');
@@ -2160,7 +2184,7 @@ function drawEnd(tok){
   if(RUN.newDex){ const t=document.createElement('div'); t.className='dexNew'; t.textContent='도감에 새로 '+RUN.newDex+'마리'; $('stage').appendChild(t); }
   if(!RUN.endSaid){ RUN.endSaid=true; speak(END_LINE); }
   /* 고른 묶음이 더 있으면 끝 장면을 5초 보여 준 뒤 저절로 다음(관리 메뉴가 열려 있으면 기다림) */
-  if(RUN.plan&&RUN.idx<RUN.plan.length-1) later(()=>{ if(alive(tok)){ const lv=RUN.lv, plan=RUN.plan, i=RUN.idx+1; RUN=buildRun(lv,plan,i); saveSpot(); runStep(); } },5000);
+  if(RUN.plan&&RUN.idx<RUN.plan.length-1) later(()=>{ if(alive(tok)){ const lv=RUN.lv, plan=RUN.plan, i=RUN.idx+1; RUN=buildRun(lv,plan,i); stbPre(RUN.bd); saveSpot(); runStep(); } },5000);
 }
 /* 숨은 동물 찾기(학습 뒤 보상, 기록 안 함, 진 것·시간 제한 없음). 사는 곳마다 한 장씩 크게(동물이 많으면 4마리씩 나눠서).
    동물 크기는 실제 크기 비율(같은 거리라면 코끼리는 크게, 다람쥐는 작게).
@@ -2406,10 +2430,67 @@ function preHide(p,lvG,targets,o={},ms){ const k=hideKey(p,lvG,targets,o); if(HP
 async function takeHide(p,lvG,targets,o){ const k=hideKey(p,lvG,targets,o), pr=HPRE.get(k); HPRE.delete(k); return pr?await pr:null; }
 /* 수업 놀이의 판 나누기(곳마다, 4마리 넘으면 고르게 나눔) — 미리 짜려면 판을 먼저 정해 둠. 놀이를 마치면 지워 다음엔 새로 섞음 */
 function hideRounds(){ if(RUN.hr) return RUN.hr; const R=[];
-  for(const p of RUN.bd.places){ const all=shuffle(RUN.bd.items.filter(x=>x.p===p).map(x=>x.a)), n=Math.ceil(all.length/4);
-    for(let i=0;i<n;i++) R.push({p,t:all.slice(Math.round(i*all.length/n),Math.round((i+1)*all.length/n))}); }
+  for(const p of RUN.bd.places){ const by=new Map();   /* 새 무대: 같은 무대에 사는 동물끼리 한 판(stbOf) */
+    shuffle(RUN.bd.items.filter(x=>x.p===p).map(x=>x.a)).forEach(a=>{ const k=stbOf(p,a); if(!by.has(k)) by.set(k,[]); by.get(k).push(a); });
+    for(const all of by.values()){ const n=Math.ceil(all.length/4);
+      for(let i=0;i<n;i++) R.push({p,t:all.slice(Math.round(i*all.length/n),Math.round((i+1)*all.length/n))}); } }
   return RUN.hr=R; }
+/* 새 무대 위에서 판 짜기(2026-11-15): 단계(쉬움 하·보통 중·어려움 상·스페셜)는 무대 모듈 Stage.hideLevel이 정함 — 보이는 몫·찾기 쉬움(색)·바닥 앞뒤·특징 조금은 보이게.
+   수업 판은 찾을 동물이 모두 숨어야 함: 단계를 못 지킨 동물은 같은 단계 값으로 단계 검사 없이(strict:false) 숨기고, 그래도 안 되면 옛 길(null).
+   보통·어려움은 그 무대의 다른 동물(GLV nd)도 함께 숨김(찾을 동물을 덮지 않게 — 모듈이 막음). 스페셜은 무대 마릿수(stage.json counts, 기본 6)만큼. */
+async function buildStage(p,lvG,targets,o,sc){
+  const pl=await stbLoad(sc); if(!pl) return null;
+  const lv=Math.min(4,Math.max(1,lvG)), seed=Math.floor(Math.random()*1e9);
+  const entry=a=>{ const L=(pl.animals||[]).filter(x=>x.name===a); return L.length?pick1(L):null; };   /* 하늘 참새처럼 그림이 둘(앉은·나는)이면 하나를 */
+  const mkA=async x=>{ if(!x) return null; const src=GH+'media/'+x.src, im=await stImg(src); return im&&{name:x.name,src,real:x.real,face:x.face,swim:x.swim,swimP:x.swimP,behind:x.behind,img:im}; };
+  const T=(await Promise.all(targets.map(a=>mkA(entry(a))))).filter(Boolean);
+  if(o.special?T.length<SP_MIN:T.length<targets.length) return null;
+  const pc=[].concat((pl.counts&&pl.counts[4])||Stage.LEVELS[4].count), n=o.special?Math.min(T.length,pc[0]):T.length, min=o.special?Math.min(n,pc[1]||n):n;
+  const R=await Stage.hideLevelAsync(pl,T,lv,{seed,count:[n,min],budget:o.special?8000:2500}); if(!R) return null;   /* 쉬어 가며 — 다음 판을 미리 짜는 동안 놀던 화면이 멈추지 않게 */
+  const rest=()=>new Promise(ok=>setTimeout(ok,0));
+  const lay=R.lay, opt=k=>Object.assign(Stage.levelOpt(lv,pl),{seed:seed+k});
+  if(!o.special){
+    /* 못 숨긴 찾을 동물: 옆 단계(쉬움은 보통, 어려움은 보통) → 단계 검사 없이 → 작은 동물을 더 키워서(growMax 12 — 전갈·칠게처럼 아주 작은 동물이 쉬움 최소 크기에 못 미침) */
+    const tries=[[lv],[lv===1?2:lv-1,{}],[lv,{strict:false,featSkip:true}],[lv,{strict:false,featSkip:true,growMax:12}],[lv,{strict:false,featSkip:true,growMax:12,minLong:.05}]];
+    for(const A of T) for(const [k,[l,x]] of tries.entries()){ if(lay.some(q=>q.animal===A.name)) break; if(!x) continue;
+      await rest(); Stage.hide(pl,lay,A,Object.assign(Stage.levelOpt(l,pl),{seed:seed+31+k},x)); }
+    if(T.some(A=>!lay.some(x=>x.animal===A.name))) return null;
+    const pool=shuffle([...new Set((pl.animals||[]).map(x=>x.name))].filter(a=>!targets.includes(a)&&!PAIRS.some(pr=>pr.includes(a)&&targets.some(t=>pr.includes(t))))).slice(0,rint(GLV[lvG].nd));
+    for(const [i,a] of pool.entries()){ const A=await mkA(entry(a)); await rest(); if(A) Stage.hide(pl,lay,A,opt(53+i)); }   /* 못 숨기면 그냥 뺌 */
+  }
+  const {card,w:W,h:H}=gameCard(pl.dir+'bg.jpg',o.wmax,o.hmax,true);
+  const acts=lay.filter(x=>x.animal), tset=new Set(o.special?acts.map(x=>x.animal):targets);
+  acts.forEach(A=>{ const im=document.createElement('img'); im.className='placed'; im.src=A.src; im.alt=A.animal; im.draggable=false; A.el=im; A.noShadow=true; });
+  const ly=document.createElement('div'); ly.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none'; card.appendChild(ly);
+  Stage.render(ly,pl,lay,{layer:true,bg:false,shadow:.25,haze:.3,dim:lv===1?.5:1,frontZ:4000,dimZ:4500});   /* 찾은 동물(5000)은 앞가림·어둡게 위로 */
+  const dY=o=>o.sortY??o.y, bbox=o=>[o.x-o.w/2,o.y-o.h*(o.base??1),o.x+o.w/2,o.y-o.h*(o.base??1)+o.h];
+  const ov=(a,b)=>Math.max(0,Math.min(a[2],b[2])-Math.max(a[0],b[0]))*Math.max(0,Math.min(a[3],b[3])-Math.max(a[1],b[1]));
+  const walk=MOVE[p]==='walk'||MOVE[p]==='slide', shadeOk=walk&&!pl.noShadow, items=[];
+  acts.forEach(A=>{ const im=A.el; card.appendChild(im);   /* 장면 카드에 바로(잘못 누름을 카드가 셈) — 자리는 px 가운데로 바꿔 XF로 움직임 */
+    const b=bbox(A), cx=A.x*W, cy=(b[1]+b[3])/2*H, dw=A.w*W, dh=A.h*H;
+    Object.assign(im.style,{left:cx+'px',top:cy+'px',width:dw+'px',height:dh+'px',transform:XF(0,0,1,A.flip),transition:'transform 1s ease-in-out, filter 1s',cursor:'inherit'});
+    if(A.flip) im.dataset.flip=1;
+    if(!tset.has(A.animal)) return;   /* 함께 숨은 다른 동물은 장식 */
+    /* 가린 것: 이 동물보다 앞(밑동이 아래)이면서 겹치는 소품 — 가장 많이 겹친 것이 흔들 소품 */
+    const fr=lay.filter(q=>!q.animal&&dY(q)>dY(A)&&ov(bbox(q),b)>0).sort((u,v)=>ov(bbox(v),b)-ov(bbox(u),b));
+    const pr=fr.length?[...ly.children].find(e=>e.tagName==='IMG'&&+e.style.zIndex===fr[0].z)||null:null;
+    /* 나올 길: 걷는 동물은 머리 쪽(아니면 반대쪽) 옆으로, 나는·헤엄치는·땅속 동물은 위로 — 가린 소품들에서 다 벗어나고 화면 안 */
+    const fc=A.face||FACE[A.animal], hd=fc?((fc==='L')!==!!A.flip?-1:1):1, U=fr.map(bbox);
+    const left=a=>Math.min(...a.map(r=>r[0])), right=a=>Math.max(...a.map(r=>r[2])), top=a=>Math.min(...a.map(r=>r[1]));
+    const side=d=>{ if(!U.length) return 0; const want=d>0?right(U)-b[0]+.01:left(U)-b[2]-.01; return Math.max(A.w/2-A.x,Math.min(1-A.w/2-A.x,want)); };
+    const up=()=>U.length?Math.max(-b[1],Math.min(0,top(U)-b[3]-.01)):0;
+    const left2=(dx,dy)=>{ const c=[b[0]+dx,b[1]+dy,b[2]+dx,b[3]+dy]; return U.reduce((s,r)=>s+ov(r,c),0); };
+    const cand=[[side(hd),0],[side(-hd),0],[0,up()]]; if(!walk) cand.unshift(cand.pop());
+    let [dx,dy]=cand.reduce((m,c)=>left2(...c)<left2(...m)-1e-6?c:m);
+    if(!U.length) dx=hd*Math.min(A.w*.3,.04);
+    const it={a:A.animal,im,ox:dx*W,oy:dy*H,dw,dh,pr,fly:MOVE[p]==='fly',flip:A.flip,face:fc,stage:true};
+    if(shadeOk&&!A.swimLift&&(pl.beds[A.bed]||{}).persp!==false){ it.sh=groundShadow(card,cx,A.y*H,(A.foot[1]-A.foot[0])*dw*1.1,(A.z||100)-1); it.sh.style.transition='transform 1s ease-in-out'; }
+    items.push(it); });
+  return {card,W,H,items};
+}
 async function buildHide(p,lvG,targets,o={}){   /* 장면 짜기: 화면에 붙이지 않은 카드에 동물·소품을 놓아 돌려줌 */
+  { await stbReady; const sc=stbFor(p,targets,o.special?SP_MIN:targets.length);   /* 새 무대가 되면 새 무대로(아래는 옛 길) */
+    if(sc){ const B=await buildStage(p,lvG,targets,o,sc).catch(e=>{ console.warn('새 무대 판 짜기 실패',e); return null; }); if(B) return B; } }
   STGCUR=stgOn(p)?await stgLoad(p):null;
   const L=GLV[lvG], m=MOVE[p], wlP=STGCUR&&STGCUR.waterline?STGCUR.waterline:WATERLINE[p]?WATERLINE[p][lvG===1?0:1]:null;
   const {card,w:W,h:H}=gameCard(STGCUR?STG+STGCUR.id+'/bg.jpg':HAB+(lvG===1?'':'game/')+PL[p].scene+'.jpg',o.wmax,o.hmax,true);
@@ -2571,7 +2652,7 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
   const L=GLV[lvG];
   const B=await takeHide(p,lvG,targets,o)||await buildHide(p,lvG,targets,o); if(!alive(tok)) return;
   clearStage(); $('stage').appendChild(B.card); const {card,W,H,items}=B;
-  await revealCard(card); if(!alive(tok)) return; if(o.onReady) o.onReady(items.length);
+  await revealCard(card); if(!alive(tok)) return; if(o.onReady) o.onReady(items.length,items.map(t=>t.a));
   if(o.next) o.next();
   const move=(t,f,dx,dy,k)=>{ t.im.style.transform=XF(t.ox*f+(dx||0),t.oy*f+(dy||0),k||1,t.flip);
     if(t.sh){ t.sh.style.transform='translate(-50%,-50%) translate('+(t.ox*f)+'px,'+(t.oy*f)+'px)'; t.sh.style.opacity=dx||dy?0:1; } };
@@ -2583,7 +2664,7 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
      머리가 향한 쪽으로 날아 화면 밖으로 → 옆에서(머리가 가운데를 보며) 또는 먼 곳에서(작게 → 크게) 가운데로 날아옴 → 문장 → 화면 밖으로 날아갔다가 먼 곳에서 제자리로 내려앉음.
      뒤집기는 화면 밖에 있거나 아주 작을 때만 */
   const TF=XF;
-  const headDir=t=>FACE[t.a]?((FACE[t.a]==='L')!==!!t.flip?-1:1):1;
+  const headDir=t=>{ const f=t.face||FACE[t.a]; return f?((f==='L')!==!!t.flip?-1:1):1; };   /* 새 무대 동물은 무대의 face */
   const flyTo=(t,kf,ms)=>{ t.im.style.transition='none'; const an=t.im.animate(kf,{duration:ms,easing:'ease-in-out',fill:'forwards'}); return an.finished.catch(()=>{}).then(()=>{ t.im.style.transform=kf[kf.length-1].transform; an.cancel(); }); };
   const flyIn=async t=>{ const x=parseFloat(t.im.style.left), y=parseFloat(t.im.style.top), k=Math.max(1,Math.min(2.2,H*.42/Math.max(t.dw,t.dh))), cx=W/2-x, cy=H*.5-y, hd=headDir(t), fl=!!t.flip;
     t.im.style.zIndex=5000; if(t.sh) t.sh.style.opacity=0;
@@ -2604,14 +2685,16 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
      답을 눌러도 넘어가지 않던 일. 다른 동물·찾은 동물은 누름이 그대로 통과하고 '잘못 누름'으로 셈 */
   const found=[];
   /* 찾은 동물이 다음에 찾을 동물(의 보이는 곳)을 가리면 다시 제 소품 뒤로 들어가게(2026-11-02) */
-  const unblock=t=>{ const own=[{p:t.pg}], base=seen(t.box,own).f;
+  const unblock=t=>{ if(t.stage){ const r=t.im.getBoundingClientRect();   /* 새 무대: 찾은 동물이 이 동물 자리에 겹치면 제 소품 뒤로 */
+      found.forEach(f=>{ if(f.back) return; const q=f.im.getBoundingClientRect(); if(q.left<r.right&&q.right>r.left&&q.top<r.bottom&&q.bottom>r.top){ move(f,0); f.im.style.zIndex=f.z0; f.back=true; } }); return; }
+    const own=[{p:t.pg}], base=seen(t.box,own).f;
     found.forEach(f=>{ const fb={...f.box,bx:f.box.bx+f.ox,by:f.box.by+f.oy,flip:f.flip};
       if(seen(t.box,own.concat([{b:fb}])).f<base-.005){ move(f,0); f.im.style.zIndex=f.z0; if(f.sub) f.im.style.webkitMaskImage=f.im.style.maskImage=f.mask; f.back=true; } }); };
   for(const a of shuffle(targets)){ const t=items.find(x=>x.a===a); if(!t) continue;
     items.forEach(x=>x.im.style.pointerEvents=x===t?'auto':'none');
     unblock(t); t.z0=t.im.style.zIndex;
     /* 흔들기: 동물을 가린 소품이 아래를 축으로 살짝 두 번 흔들림(번쩍임 없이 0.7초) + 바스락 */
-    const shake=()=>{ if(!t.pr.animate) return; const b=t.pr.style.transform||''; t.pr.style.transformOrigin='50% 95%'; rustle();
+    const shake=()=>{ if(!t.pr||!t.pr.animate) return; const b=t.pr.style.transform||''; t.pr.style.transformOrigin='50% 95%'; rustle();
       t.pr.animate([0,-3,2.5,-2,1.2,0].map(r=>({transform:b+' rotate('+r+'deg)'})),{duration:700,easing:'ease-in-out'}); };
     if(o.special){   /* 스페셜: 찾으면 소품 뒤에서 조금 나와 그 자리에 남음(가운데로 오지 않음 — 다음 동물을 바로 찾게) */
       await findIt(tok,a,p,t.im,n=>n==='shake'?shake():t.sub?null:move(t,n===1?.5:.8),
@@ -2661,7 +2744,7 @@ const SP_EXTRA={sea:['오징어','해파리','바다거북','돌고래'],grassla
 const SP_MIN=6, SP_MAX=10, SP_URL='https://www.charum.org/charum-api/seek-rank.php';
 function spPool(p){ const s=new Set(); (POOL[3]||[]).forEach(x=>{ if(x.p===p) s.add(x.a); }); (SP_EXTRA[p]||[]).forEach(a=>{ if(OLD[a]||NEW[a]) s.add(a); }); return [...s]; }
 function spPlaces(){ return (PLACES[3]||[]).filter(p=>spPool(p).length>=SP_MIN); }
-const spCount=p=>Math.min(SP_MAX,spPool(p).length), spKey=p=>p+'-'+spCount(p);
+const spCount=p=>stbFor(p,spPool(p),SP_MIN)?Stage.LEVELS[4].count:Math.min(SP_MAX,spPool(p).length), spKey=(p,n)=>p+'-'+(n||spCount(p));   /* 새 무대 스페셜은 무대 마릿수(6) */
 let SPREC=[]; try{ SPREC=JSON.parse(store.get('spRec')||'[]')||[]; }catch(e){ SPREC=[]; }
 const saveSpRec=()=>store.set('spRec',JSON.stringify(SPREC.slice(-500)));
 let NICK={}; try{ NICK=JSON.parse(store.get('nicks')||'{}')||{}; }catch(e){ NICK={}; }
@@ -2705,17 +2788,17 @@ async function runSpecial(){
     list.forEach(a=>{ const w=document.createElement('div'); w.className='spW'; w.dataset.a=a; w.innerHTML='<span class="t">'+esc(a)+'</span><img alt="" src="'+pic(a)+'">'; d.appendChild(w); }); };
   const clock=document.createElement('div'); clock.className='spClock'; clock.textContent='0:00';
   const W=a=>st.querySelector('.spW[data-a="'+a+'"]');
-  let t0=0, nf=0;
+  let t0=0, nf=0, shown=names;   /* 새 무대는 숨은 동물만(무대 마릿수) — onReady가 알려 줌 */
   let iv=0; const tick=()=>{ if(!alive(tok)||!t0||!clock.isConnected){ clearInterval(iv); return; } const s=Math.floor((Date.now()-t0)/1000); clock.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };   /* 찾을 때마다 clearTimers가 돌아 later는 못 씀 */
   await playHide(p,4,names,tok,{special:true,wmax:G.wmax,hmax:G.hmax,
-    onReady:()=>{ mk(tb?'t':'l',names.slice(0,half)); mk(tb?'b':'r',names.slice(half)); st.appendChild(clock); t0=Date.now(); tick(); iv=setInterval(tick,500); },
+    onReady:(n,hid)=>{ if(hid&&hid.length) shown=hid; const h2=Math.ceil(shown.length/2); mk(tb?'t':'l',shown.slice(0,h2)); mk(tb?'b':'r',shown.slice(h2)); st.appendChild(clock); t0=Date.now(); tick(); iv=setInterval(tick,500); },
     onCall:a=>{ st.querySelectorAll('.spW.now').forEach(x=>x.classList.remove('now')); const w=W(a); if(!w) return; w.classList.add('now');
       if(w.animate) w.animate([{transform:'scale(1)'},{transform:'scale(1.16)',offset:.4},{transform:'scale(1)'}],{duration:800,easing:'ease-in-out'}); },
     onFound:a=>{ const w=W(a); if(w){ w.classList.remove('now'); w.classList.add('done'); } nf++; }});
   if(!alive(tok)||!t0) return;
   clearInterval(iv); const ms=Date.now()-t0; clock.textContent=spTime(ms);
-  const k=spWho(), key=spKey(p), prev=SPREC.filter(r=>r.k===k&&r.key===key).reduce((m,r)=>Math.min(m,r.ms),Infinity);
-  const rec={k,key,p,n:names.length,ms,t:Date.now(),nick:NICK[k]||'',up:0}; SPREC.push(rec); saveSpRec();
+  const k=spWho(), key=spKey(p,shown.length), prev=SPREC.filter(r=>r.k===k&&r.key===key).reduce((m,r)=>Math.min(m,r.ms),Infinity);
+  const rec={k,key,p,n:shown.length,ms,t:Date.now(),nick:NICK[k]||'',up:0}; SPREC.push(rec); saveSpRec();
   await wait(500); if(!alive(tok)) return; speak('다 찾았어요.');
   spResult(tok,rec,prev);
 }

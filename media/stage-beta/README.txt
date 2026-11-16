@@ -272,7 +272,7 @@
   ② 숨기기 평가 다시(새 원리 — 바닥 앞뒤·특징 60%·단계 경계 4차·새 가림 소품 뒤): 초원·사막·북극. 평가 기록으로 Stage.CUT 다시 맞춤(무대 README 원리 22, 맞추는 셈은 3·4차 때처럼 판단 파일의 visible·ease·say로).
   ③ 숲(new-forest) 빙 연필풍으로 바꿈(2026-11-13) — 위 '■ nature/new-forest' 절. 스페셜 5.75마리. 남은 것: 선생님 평가, 통나무 그림.
   ③-2 들판(new-ground) 만듦(2026-11-13, 스페셜 6마리) — 위 '■ nature/new-ground' 절. 갯벌·논과 습지·바닷속·땅속·강·호수도 만듦(2026-11-14). ③-3 물속(new-water) 만듦(2026-11-14, 스페셜 6마리) — 위 '■ nature/new-water' 절. 남은 한 곳(하늘)은 프롬프트만 준비('■ 남은 곳') — 그림을 기다림.
-  ④ 008에 쓸 때: Stage.hideLevel로, 앞 판을 보는 동안 다음 판을 미리 짜 둘 것(초원 스페셜 한 판 8초쯤).
+  ④ 008에 씀(2026-11-15, 008 베타 buildStage — Stage.hideLevelAsync로 앞 판을 보는 동안 미리 짬). index.json의 animals(stage-intake.py가 적음)로 008이 무대를 고름 — 동물을 더하면 stage-intake.py를 꼭 돌릴 것.
 - 되돌림(2026-11-14 선생님): 9efc8bf(12곳 모든 소품 defringe — 북극 얼음·눈이 종이색이라 상당수가 투명해짐)와 그 뒤 흰 조각 3차(f300b4f, --halo·--outline)를 모두 되돌림.
   다시 할 때: 북극(눈·얼음)은 defringe를 쓰지 않음. 흰 조각 3차 방법은 git show f300b4f(빽빽한 풀·덤불에만 --halo, 듬성한 풀잎·줄기·뿌리·클로버는 결이 뚫림).
   도구: tools/defringe.py(흰 테두리·잎 사이·갇힌 종이·구멍 메우기·둘레 흰 선 — 각 선택지는 파일 머리글), 평가 media/stage/hide-judge.html, 시험 media/stage/hide-test.html.
