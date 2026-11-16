@@ -2721,7 +2721,7 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
   const unblock=t=>{ if(t.stage){ const r=t.im.getBoundingClientRect();   /* 새 무대: 찾은 동물이 이 동물 자리에 겹치면 제 소품 뒤로 */
       found.forEach(f=>{ if(f.back) return; const q=f.im.getBoundingClientRect(); if(q.left<r.right&&q.right>r.left&&q.top<r.bottom&&q.bottom>r.top){ move(f,0); f.im.style.zIndex=f.z0; f.back=true; } }); return; }
     const own=[{p:t.pg}], base=seen(t.box,own).f;
-    found.forEach(f=>{ const fb={...f.box,bx:f.box.bx+f.ox,by:f.box.by+f.oy,flip:f.flip};
+    found.forEach(f=>{ const fb={...f.box,bx:f.box.bx+(f.home?0:f.ox),by:f.box.by+(f.home?0:f.oy),flip:f.flip};
       if(seen(t.box,own.concat([{b:fb}])).f<base-.005){ move(f,0); f.im.style.zIndex=f.z0; if(f.sub) f.im.style.webkitMaskImage=f.im.style.maskImage=f.mask; f.back=true; } }); };
   for(const a of shuffle(targets)){ const t=items.find(x=>x.a===a); if(!t) continue;
     items.forEach(x=>x.im.style.pointerEvents=x===t?'auto':'none');
@@ -2734,17 +2734,28 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
       if(el===t.pr) el.style.transformOrigin='50% 95%';
       el.animate([[0,0],[-1,-1],[.8,.9],[-.6,-.7],[.35,.4],[0,0]].map(([r,x])=>({transform:b+' translateX('+(x*px).toFixed(1)+'px) rotate('+(r*deg).toFixed(2)+'deg)'})),{duration:700*Math.min(g,1.5),easing:'ease-in-out',iterations:g>1?2:1}); };
     /* 도움(2026-11-16 선생님): 동물을 조금 내밀던 것을 그만두고 가린 소품을 흔듦 — 화면 아래쪽에 숨은 동물은 내밀어도 안 보였음. 18초 조금 세게 · 32초 더 세게, 24초부터 10초마다 살짝 */
-    const hint=n=>shake(n==='shake'?1:n===1?1.6:2.2);
+    /* 세 번째 도움부터(2026-11-16 선생님): 동물이 위나 옆으로 '보이게' 나왔다가 들어가기를 두 번 — 나올 길(ox·oy, 앞 소품에서 벗어나는 쪽)로,
+       화면 끝에 걸렸으면 화면 안쪽으로 더. 나오는 동안만 앞으로(z) */
+    const peek=async()=>{ const c=card.getBoundingClientRect(), q=t.im.getBoundingClientRect(); let dx=t.ox||0, dy=t.oy||0;
+      if(q.bottom>c.bottom) dy=Math.min(dy,-(q.bottom-c.bottom)-q.height*.25); if(q.top<c.top) dy=Math.max(dy,c.top-q.top+q.height*.25);
+      if(q.left<c.left) dx=Math.max(dx,c.left-q.left+q.width*.25); if(q.right>c.right) dx=Math.min(dx,-(q.right-c.right)-q.width*.25);
+      if(Math.hypot(dx,dy)<Math.max(q.height,q.width)*.3) dy=-Math.max(q.height*.5,Math.min(q.top-c.top,q.height));
+      const z0=t.im.style.zIndex, tr=t.im.style.transition, mk=t.im.style.maskImage; t.im.style.zIndex=4900; t.im.style.transition='transform .55s ease-in-out';
+      if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage='';
+      for(let i=0;i<2;i++){ if(!alive(tok)||t.done) break; t.im.style.transform=XF(dx,dy,1,t.flip); await wait(1000); t.im.style.transform=XF(0,0,1,t.flip); await wait(750); }
+      if(!t.done){ t.im.style.zIndex=z0; if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage=mk; t.im.style.transition=tr; } };
+    const hint=n=>n===3?peek():shake(n==='shake'?1:n===1?1.6:2.2);
     if(o.special){   /* 스페셜: 찾으면 소품 뒤에서 조금 나와 그 자리에 남음(가운데로 오지 않음 — 다음 동물을 바로 찾게) */
       await findIt(tok,a,p,t.im,hint,
-        async()=>{ if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage=''; move(t,1); if(L.fade) t.im.style.filter=''; if(o.onFound) o.onFound(a); await wait(700); },
-        null,{quiet:true,onCall:o.onCall,h1:30000,h2:50000,sk:40000});
+        async()=>{ t.done=true; t.im.style.transition='transform 1s ease-in-out, filter 1s'; if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage=''; move(t,1); if(L.fade) t.im.style.filter=''; if(o.onFound) o.onFound(a); await wait(700); },
+        null,{quiet:true,onCall:o.onCall,h1:30000,h2:50000,h3:70000});
       found.push(t); if(!alive(tok)) return; await wait(300); if(!alive(tok)) return; continue; }
     await findIt(tok,a,p,t.im,hint,   /* 물에 잠긴 하마는 도움 때 움직이지 않고 흔들기만 */
-      async()=>{ if(t.fly&&FLY_SHOW){ t.flip0=!!t.flip; if(L.fade) t.im.style.filter=''; await flyIn(t); return; }
+      async()=>{ t.done=true; t.im.style.transition='transform 1s ease-in-out, filter 1s'; if(t.fly&&FLY_SHOW){ t.flip0=!!t.flip; if(L.fade) t.im.style.filter=''; await flyIn(t); return; }
         if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage=''; move(t,1); if(L.fade) t.im.style.filter=''; await wait(1050); if(!alive(tok)) return; toCenter(t); await wait(950); },
       async()=>{ if(t.fly&&FLY_SHOW){ await flyBack(t); return; }
-        move(t,1); await wait(950); });
+        /* 돌아갈 때(2026-11-16 선생님): 나온 자리가 아니라 처음 숨었던 자리로, 은폐물 앞(z 5000 그대로)에 — 나온 자리끼리 서로 엉기던 것 */
+        move(t,0); t.home=true; if(t.sub&&t.mask) t.im.style.webkitMaskImage=t.im.style.maskImage=t.mask; await wait(950); });
     found.push(t);
     if(!alive(tok)) return; await wait(400); if(!alive(tok)) return; }
 }
@@ -2764,8 +2775,8 @@ function findIt(tok,a,p,el,help,found,after,o={}){ return new Promise(res=>{   /
   const schedule=ms=>{ clearTimeout(tm); tm=setTimeout(call,ms); };
   call();
   window.__help=n=>{ if(live()) help(n); };   /* 검사 도구가 도움을 바로 부를 때 */
-  later(()=>{ if(live()) help(1); },o.h1||18000); later(()=>{ if(live()) help(2); },o.h2||32000);
-  const shk=()=>{ if(!live()) return; help('shake'); later(shk,10000); }; later(shk,o.sk||24000);   /* 24초부터 10초마다 소품이 바스락 흔들림 */
+  later(()=>{ if(live()) help(1); },o.h1||18000); later(()=>{ if(live()) help(2); },o.h2||32000);   /* 1·2번째: 은폐물 흔들기 */
+  const pk=()=>{ if(!live()) return; help(3); later(pk,14000); }; later(pk,o.h3||46000);   /* 3번째부터(2026-11-16 선생님): 동물이 보이게 나왔다 들어감, 14초마다 */
   const miss=e=>{ if(!live()||e.target===el) return; lastTap=Date.now(); if(++wrong>=3&&Date.now()-lastCall>4000){ wrong=0; schedule(600); } };
   card.addEventListener('pointerdown',miss);
   const h=async e=>{ if(e) e.stopPropagation(); if(over||!alive(tok)) return; over=true; clearTimeout(tm); card.removeEventListener('pointerdown',miss); el.removeEventListener('pointerdown',h); clearTimers(); chime();
