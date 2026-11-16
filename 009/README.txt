@@ -53,9 +53,12 @@
   · 연필풍 화면: CSS 끝 '연필풍' 덩어리(008 베타와 같은 바탕 + 009만의 고개 글·답 칸·카드), 머리의 부엉이, 장면 = media/stage-beta/nature/new-(곳)/bg.jpg(STB). 🔀 그림 문자 뺌, 활동지 상자 테두리 뺌.
   · 동물 그림: 토끼·개·고양이·독수리·나비를 연필풍(media/animals, OLD→NEW 표)으로 — PARTS·BB 새로 잼, IMGV 20261115.
     새 그림에 맞춰 고개 글 고침: 개 "귀가 쫑긋 서 있어요."·"털이 누런색이에요."(진돗개), 독수리 "머리와 몸이 갈색이에요."·"날개 끝 깃털이 손가락처럼 벌어져요."(흰머리수리 아님), AD 개 floppy·독수리 whitehead를 '그럴 수도 있는' 칸으로.
-  · 남은 것: ① (선생님) 목소리 372마디 받기 → 넣기(tools/voice-add.py가 아니라 008 때처럼 쉼으로 잘라 elevenlabs-roger에, media/voice/elevenlabs-roger/README) → 캡처 12(선생님 메뉴의 '기기 목소리' 알림이 사라진 판) 다시
-    ② (선생님) 원숭이·펭귄 연필풍 그림 받기(media/stage/prompts/PROMPTS-009-wonsungi-penggwin.txt) → media/animals/wonsungi·penggwin.webp, OLD→NEW, PARTS·BB 다시, 캡처 다시(오늘 할 것·상 학습 카드에 보임)
-    ③ 자세한 설명(_guide)에 연필풍·ElevenLabs 반영 ④ 서버 study/009/에 server-loader.html 올리기·게시판 글(본문 animal-riddle_manual.html — 연필풍으로 새로 씀, 끝에 "목소리: ElevenLabs") → 글 번호를 reportLink·endLesson에
+  · 2026-11-16 원숭이·펭귄 연필풍 그림 넣음(받은 6장 중 옆모습 원숭이·날개 보이는 펭귄, bing-cut --animal + defringe --rim, 1024 정사각) → OLD→NEW, PARTS·BB 다시, IMGV 20261116.
+  · 2026-11-16 목소리(선생님): 받은 6묶음 가운데 확실히 맞게 자른 213마디를 elevenlabs-roger에 넣음(1·4·5·6묶음 전부 + 2묶음 앞 11·끝 2, 3묶음 앞 6·끝 1 — 0.3초 넘는 쉼으로 나눈 덩어리가 문장과 하나씩 맞는 것만).
+    2·3묶음 가운데는 못 넣음: 3묶음은 약 13줄을 건너뛰었고, 2묶음은 "음매·어흥" 등을 동물 울음으로 내 덩어리가 13개 더 많음 → 잘라 맞추면 다른 고개를 말할 위험.
+    지금 앱은 말마다 ElevenLabs → 없으면 Leda(구글) → 둘 다 없으면 그 말만 기기 목소리(새로 고친 고개 4개)로 — 선생님이 잠깐 섞는 것을 허락. ElevenLabs 232 · Leda 155 · 기기 4.
+  · 남은 것: ① (선생님) 남은 159마디를 작은 묶음 5개로 받기(media/stage/prompts/VOICE-009-elevenlabs.txt, 복사 화면) → 넣으면 다 ElevenLabs(목소리 섞임 끝)
+    ② (선생님) 서버 study/009/에 server-loader.html을 animal-riddle.html 이름으로 올리기 · 게시판 글(본문 animal-riddle_manual.html) → 글 번호를 reportLink·endLesson에(Claude)
   · 캡처 01~14·홍보 그림(tools/promo-pencil.html?app=009)은 연필풍으로 새로 찍음(2026-11-15).
 
 다음 할 일 (2026-10-31 "009 만들기" 세션)

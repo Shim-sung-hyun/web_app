@@ -608,8 +608,8 @@ window.AdminHold = (function () {
 const GH='https://shim-sung-hyun.github.io/web_app/';
 const P007=GH+'media/words/', PNEW=GH+'media/animals/', HAB=GH+'media/habitats/', STB=GH+'media/stage-beta/nature/new-',   /* 장면은 무대의 연필풍 빈 배경(2026-11-15) */ FOODP=GH+'media/play/feed/food/';
 const OLD={'돼지':'dwaeji','말':'mal_dongmul','물고기':'mulgogi','붕어':'bungeo','조개':'jogae','새우':'saeu','달팽이':'dalpaengi','거미':'geomi','참새':'chamsae','까치':'kkachi','잠자리':'jamjari',
- '다람쥐':'daramjwi','여우':'yeou','원숭이':'wonsungi','펭귄':'penggwin','개구리':'gaeguri','악어':'akeo'};
-const NEW={'토끼':'tokki','개':'gae','고양이':'goyangi','독수리':'doksuri','나비':'nabi','소':'so','사자':'saja','코끼리':'kokkiri','기린':'girin','곰':'gom','낙타':'nakta','하마':'hama','사슴':'saseum','호랑이':'horangi','고래':'gorae','상어':'sangeo','문어':'muneo','오징어':'ojingeo','해파리':'haepari','불가사리':'bulgasari','바다표범':'badapyobeom','북극곰':'bukgeukgom',
+ '다람쥐':'daramjwi','여우':'yeou','개구리':'gaeguri','악어':'akeo'};
+const NEW={'원숭이':'wonsungi','펭귄':'penggwin','토끼':'tokki','개':'gae','고양이':'goyangi','독수리':'doksuri','나비':'nabi','소':'so','사자':'saja','코끼리':'kokkiri','기린':'girin','곰':'gom','낙타':'nakta','하마':'hama','사슴':'saseum','호랑이':'horangi','고래':'gorae','상어':'sangeo','문어':'muneo','오징어':'ojingeo','해파리':'haepari','불가사리':'bulgasari','바다표범':'badapyobeom','북극곰':'bukgeukgom',
  '두더지':'dudeoji','지렁이':'jireongi','땅강아지':'ttanggangaji','비둘기':'bidulgi','벌':'beol','부엉이':'bueongi','딱따구리':'ttakttaguri','얼룩말':'eollukmal',
  '전갈':'jeongal','사막여우':'sangmagyeou','소금쟁이':'sogeumjaengi','물방개':'mulbanggae','수달':'sudal','우렁이':'ureongi','백로':'baengno','미꾸라지':'mikkuraji'};
 /* 009 동물 다섯 고개 자료 — 이 앱 안의 자료(고칠 때는 여기를 고침)
@@ -646,7 +646,7 @@ const AD={
 const SCENE={'코끼리':'grassland','기린':'grassland','얼룩말':'grassland','사자':'grassland','토끼':'ground','소':'ground','개':'ground','고양이':'ground','나비':'ground','벌':'ground',
  '호랑이':'forest','곰':'forest','원숭이':'forest','부엉이':'forest','독수리':'sky','상어':'sea','고래':'sea','문어':'sea','펭귄':'polar','두더지':'underground'};
 const ALIAS={'개':[.91,.84],'고양이':[.91,.63],'소':['소','한우','황소','송아지','젖소'],'호랑이':['호랑이','범','호랭이'],'곰':['곰','곰돌이','불곰'],
- '부엉이':['부엉이','올빼미'],'벌':['벌','꿀벌'],'토끼':[.9,.85],'원숭이':['원숭이'],'펭귄':['펭귄','펭귄이']};
+ '부엉이':['부엉이','올빼미'],'벌':['벌','꿀벌'],'토끼':[.9,.85],'원숭이':[.9,.8],'펭귄':[.67,.9]};
 /* 몸 부분 자리(그림 512×512 기준 — 그림이 1024여도 같은 비율). 코끼리·기린·호랑이·곰·상어·고래·사자는 2026-11-02 새 그림(media/animals, 크게 그린 것)으로 다시 잼 */
 const PARTS={
  '코끼리':{legs:'r130,300,450,440',tail:'e450,285,498,370',ear:'e170,75,320,250',tusk:'e75,225,145,278',trunk:'e18,170,138,425'},
@@ -657,7 +657,7 @@ const PARTS={
  '사자':{legs:'r95,320,420,462',tail:'e395,220,494,400',mane:'e20,50,265,345'},
  '호랑이':{legs:'r60,273,407,380',tail:'e393,247,487,333',stripes:'e120,140,400,287',face:'e20,125,110,235'},
  '곰':{legs:'r73,287,488,400',body:'e120,120,467,333',ears:'e100,105,180,170',head:'e35,127,167,253'},
- '원숭이':{tail:'e325,155,505,425',hands:'r55,295,345,505',head:'e105,15,405,265'},
+ '원숭이':{tail:'e295,340,488,450',hands:'r22,225,155,365',head:'e55,45,228,205'},
  '개':{legs:'r120,300,495,472',tail:'e340,92,478,215',body:'e150,150,465,330',ears:'e58,32,195,125'},
  '고양이':{legs:'r100,285,395,418',tail:'e375,235,492,388',ears:'e20,85,130,150',face:'e25,95,135,218'},
  '독수리':{feet:'r245,335,325,385',wings:'e15,100,495,310',beak:'e90,278,135,318',head:'e90,262,185,335'},
@@ -667,7 +667,7 @@ const PARTS={
  '상어':{tail:'e400,170,495,335',belly:'e100,240,400,320',dorsal:'e195,140,275,222',head:'e18,195,150,302'},
  '고래':{tail:'e375,260,497,355',fin:'e175,235,305,365',belly:'e70,215,430,295',head:'e18,168,178,265'},
  '문어':{arms:'r150,95,512,420',head:'e15,100,215,255'},
- '펭귄':{feet:'r145,425,425,512',flippers:'e65,115,255,455',belly:'e195,125,425,475',head:'e245,25,425,175'},
+ '펭귄':{feet:'r150,400,405,485',flippers:'e90,190,165,350',belly:'e148,110,358,418',head:'e82,22,320,135'},
  '두더지':{legs:'r50,300,420,390',body:'e40,125,450,350',nose:'e20,210,115,290',hands:'e50,295,265,392'}
 };
 const RID={
@@ -710,7 +710,7 @@ const AN={}; Object.keys(AD).forEach(n=>{ const [home,legs,cover,move,f,m,fo,snd
   AN[n]={home:home==='?'?null:home,legs:legs==='?'?null:+legs,cover:cover==='?'?null:cover,move:move==='?'?null:move.split('+')[0],moves:move==='?'?null:move.split('+'),feats:f?f.split('+'):[],maybe:m?m.split('+'):[],foods:fo?fo.split('+'):[],sound:snd||null}; });
 const ALL=Object.keys(AD);
 /* IMGV: 동물 그림을 고치면 올림 — 기기에 남은 옛 그림 대신 새 그림을 받게 */
-const IMGV='?v=20261115';   /* 2026-11-15 토끼·개·고양이·독수리·나비 연필풍(그 전 11-14 벌, 11-03 소·큰 동물) */
+const IMGV='?v=20261116';   /* 2026-11-16 원숭이·펭귄 연필풍, 2026-11-15 토끼·개·고양이·독수리·나비 연필풍(그 전 11-14 벌, 11-03 소·큰 동물) */
 const pic=a=>(OLD[a]?P007+OLD[a]+'.webp':PNEW+NEW[a]+'.webp')+IMGV;
 /* 실제 크기(2026-10-31 선생님 의견, 1편 008과 같은 셈): 배경(사는 곳 장면)이 있을 때만 씀 — 중·상 고개 장면.
    그려진 동물의 가장 긴 쪽 = 장면 높이 × absFrac(실제 몸 크기 m를 로그 눈금으로) — 고개 장면은 동물이 혼자라 가장 작아도 30%(선생님 의견).
@@ -841,13 +841,14 @@ function playClip(clip){ return new Promise(res=>{ const c=getCtx(); if(!c){res(
 function stopVoice(){ try{speechSynthesis.cancel();}catch(e){}
   if(curSrc){ const {src,g,res}=curSrc; curSrc=null; try{ src.onended=null; const t=actx.currentTime; g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+0.05); src.stop(t+0.06); }catch(e){} if(res) res(); } }
 /* 내장 목소리: 차름 소리 모음 media/voice/leda-0.92/ (이름 = 문장 조각 SHA-1 앞 16자리) */
-/* 2026-11-15(008과 같게): ElevenLabs 묶음(media/voice/elevenlabs-roger/)을 앞에 둠. 앱 말이 그 묶음에 다 있으면 ElevenLabs, 아니면 Leda — 한 앱 안에서 섞지 않음 */
+/* 목소리 묶음(2026-11-16 선생님): 말마다 ElevenLabs(media/voice/elevenlabs-roger/)에 있으면 그것, 없으면 Leda(구글), 둘 다 없으면 그 말만 기기 목소리.
+   ElevenLabs로 다 바꿀 때까지 잠깐 두 목소리가 섞임(선생님 결정 — 받은 소리 가운데 확실히 맞게 자른 것만 넣었고, 나머지는 나중에 ElevenLabs로 바꿈. 009 README) */
 const VBUNDLES=[{id:'elevenlabs-roger',credit:'목소리: ElevenLabs'},{id:'leda-0.92',credit:''}];
-let VBASE=GH+'media/voice/leda-0.92/', VSET=null, VCREDIT='';
+let VSETS=[], VSET=null, VCREDIT='';
+const vbaseOf=h=>{ const i=VSETS.findIndex(st=>st.has(h)); return i<0?null:GH+'media/voice/'+VBUNDLES[i].id+'/'; };
 const voiceReady=Promise.all(VBUNDLES.map(b=>fetch(GH+'media/voice/'+b.id+'/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set())))
-  .then(async sets=>{ const hs=await Promise.all(window.__voiceLines().map(sha16));
-    let i=sets.findIndex(st=>hs.length>0&&hs.every(h=>st.has(h))); if(i<0) i=VBUNDLES.length-1;
-    VBASE=GH+'media/voice/'+VBUNDLES[i].id+'/'; VSET=sets[i]; VCREDIT=VBUNDLES[i].credit; })
+  .then(async sets=>{ VSETS=sets; VSET=new Set(); sets.forEach(st=>st.forEach(h=>VSET.add(h)));
+    const hs=await Promise.all(window.__voiceLines().map(sha16)); VCREDIT=hs.some(h=>sets[0].has(h))?VBUNDLES[0].credit:''; })
   .catch(()=>{ VSET=new Set(); });
 function sha1Bytes(msg){
   const l=msg.length, w=[], H=[0x67452301,0xEFCDAB89,0x98BADCFE,0x10325476,0xC3D2E1F0];
@@ -867,14 +868,14 @@ function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim
 /* 말 목록 뽑기(제작자용): 콘솔에서 __voiceLines() → 008/voice-lines.json 과 같은 목록 */
 window.__voiceLines=()=>{ const parts=[]; allLines().forEach(t=>splitSay(t).forEach(x=>{ if(!parts.includes(x)) parts.push(x); })); return parts; };
 let BUILTIN_OK=false;
-const builtinCheck=voiceReady.then(async()=>{ const hs=await Promise.all(window.__voiceLines().map(sha16)); BUILTIN_OK=hs.length>0&&hs.every(h=>VSET.has(h)); renderVoiceRow(); });
+const builtinCheck=voiceReady.then(async()=>{ const hs=await Promise.all(window.__voiceLines().map(sha16)); BUILTIN_OK=hs.length>0&&hs.filter(h=>VSET.has(h)).length>=hs.length*.97;   /* 몇 마디(새로 고친 말)가 아직 없어도 내장 — 없는 말만 기기 목소리 */ renderVoiceRow(); });
 function chooseEngine(){ S.engineNow=(S.engine==='builtin'&&BUILTIN_OK)?'builtin':'device';
   S.voiceNote=(S.engine==='builtin'&&!BUILTIN_OK)?'내장 목소리가 아직 다 준비되지 않아, 이번 수업은 기기 목소리로 해요.':''; }
 const CLIPS=new Map();
 function getClip(text){
   if(!CLIPS.has(text)){
-    const p=(async()=>{ const h=await sha16(text); if(!VSET||!VSET.has(h)) throw new Error('missing');
-      const r=await fetch(VBASE+h+'.mp3'); if(!r.ok) throw new Error('voice '+r.status);
+    const p=(async()=>{ const h=await sha16(text), base=vbaseOf(h); if(!base) throw new Error('missing');
+      const r=await fetch(base+h+'.mp3'); if(!r.ok) throw new Error('voice '+r.status);
       const ab=await r.arrayBuffer(), c=getCtx(); if(!c) throw new Error('audio');
       const buf=await new Promise((res,rej)=>{ const q=c.decodeAudioData(ab,res,rej); if(q&&q.then) q.then(res,rej); });
       return cleanF(buf.getChannelData(0).slice(0),buf.sampleRate); })();
@@ -926,8 +927,9 @@ function speak(text){ return new Promise(resolve=>{
   const parts=splitSay(text), ps=parts.map(x=>getClip(x));
   (async()=>{
     for(let i=0;i<parts.length;i++){
-      let clip=null; try{ clip=await Promise.race([ps[i],new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),8000))]); }catch(e){}
+      let clip=null, miss=false; try{ clip=await Promise.race([ps[i],new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),8000))]); }catch(e){ miss=e&&e.message==='missing'; }
       if(id!==speakSeq) return done();
+      if(!clip&&miss){ const w=await new Promise(r=>deviceSay(parts[i],id,r)); if(id!==speakSeq) return done(); if(i<parts.length-1) await wait(320); continue; }   /* 묶음에 없는 말만 기기 목소리 */
       if(!clip){ S.engineNow='device'; S.voiceNote='내장 목소리를 받지 못해, 이번 수업은 기기 목소리로 바꿨어요.'; renderDock(); deviceSay(parts.slice(i).join(' '),id,done); return; }
       if(await playClip(clip)==='cut') return done(id===speakSeq?'cut':''); if(id!==speakSeq) return done();
       if(i<parts.length-1) await wait(/,$/.test(parts[i])?220:320);
