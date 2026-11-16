@@ -47,7 +47,7 @@
 자료: 동물 그림 media/words·media/animals(가장자리 정리함) · 배경 media/habitats · 먹이 그림 media/play/feed/food · 목소리 media/voice/leda-0.92
 저장 칸: animalRiddle.* (log2·resume2·picks·설정. 첫 판의 log·resume·done은 쓰지 않음), 학생 명단 webapp.students
 기록 한 줄: 학생·시각·수업·수준·단계(quiz·sort)·동물·결과(바로/도움)·먼저 고른·말한 것·들은 고개 수(·하 퀴즈의 단서 종류)
-게시판 글: 본문 animal-riddle_manual.html 만듦(2026-11-01), 아직 안 올림 → 올리면 reportLink·endLesson의 주소를 webapp/글번호로
+게시판 글: 59934(2026-11-16 올림, 본문 animal-riddle_manual.html) — reportLink·endLesson 주소에 넣음
 
 ★ 정식 발행 준비(2026-11-15 선생님: 008과 함께 연필풍 · ElevenLabs로)
   · 연필풍 화면: CSS 끝 '연필풍' 덩어리(008 베타와 같은 바탕 + 009만의 고개 글·답 칸·카드), 머리의 부엉이, 장면 = media/stage-beta/nature/new-(곳)/bg.jpg(STB). 🔀 그림 문자 뺌, 활동지 상자 테두리 뺌.
@@ -58,7 +58,7 @@
     (두 번째 파일 = 3묶음 개·고양이…, 세 번째 = 2묶음 소·사자…). 바꿔 맞추니 덩어리 수 = 문장 수(82·95). 넣은 389마디를 음성 인식(faster-whisper small)으로 하나씩 글자로 바꿔 문장과 같은지 확인함.
     앱은 말마다 ElevenLabs → 없으면 Leda → 둘 다 없으면 기기(지금 Leda는 이름 둘뿐).
   · 남은 것: ① (선생님) "원숭이." "펭귄." 두 마디만 받기(media/stage/prompts/VOICE-009-elevenlabs.txt) → 넣으면 모두 ElevenLabs
-    ② (선생님) 서버 study/009/에 server-loader.html을 animal-riddle.html 이름으로 올리기 · 게시판 글(본문 animal-riddle_manual.html) → 글 번호를 reportLink·endLesson에(Claude)
+    ② 게시판 글 59934 올림(2026-11-16), 💬·⏻ 주소에 넣음. (선생님) 서버 study/009/에 server-loader.html을 animal-riddle.html 이름으로 올렸는지 확인
   · 캡처 01~14·홍보 그림(tools/promo-pencil.html?app=009)은 연필풍으로 새로 찍음(2026-11-15).
 
 다음 할 일 (2026-10-31 "009 만들기" 세션)

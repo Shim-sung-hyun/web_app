@@ -1617,7 +1617,7 @@ window.AdminGate = (function () {
 <script id="reportLink">
 /* 오류·의견 알리기(10-26 휴대폰처럼 좁으면 💬 동그라미만): 선생님 화면(설정·관리 메뉴)에서만 왼쪽 아래에 작게. 차름 게시판 이 앱 글의 댓글 칸이 새 탭으로 열림 */
 (function(){
-  var URL='https://www.charum.org/webapp';
+  var URL='https://www.charum.org/webapp/59934#write';
   var css=document.createElement('style');
   css.textContent='#reportBtn{position:fixed;left:12px;bottom:12px;z-index:2147480000;display:none;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid #6A4C9C55;color:#6A4C9C;font:600 13px/1.2 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer}#reportBtn:hover{background:#fff;border-color:#6A4C9C}#reportBtn.on{display:inline-flex}@media (max-width:600px){#reportBtn{width:40px;height:40px;padding:0;justify-content:center;font-size:18px}#reportBtn .rbTxt{display:none}}@media print{#reportBtn{display:none!important}}';
   document.head.appendChild(css);
@@ -1633,7 +1633,7 @@ window.AdminGate = (function () {
 <script id="endLesson">
 /* 수업 끝내기: 관리 메뉴를 열면 전체 화면에서 나오고(잠깐 나가기), 관리 메뉴에 있는 동안 왼쪽 아래 "⏻ 수업 끝내기"(두 번 눌러야)로 앱을 아예 끝냄 */
 (function(){
-  var BOARD='https://www.charum.org/webapp';
+  var BOARD='https://www.charum.org/webapp/59934';
   var ctxs=[]; ['AudioContext','webkitAudioContext'].forEach(function(n){ var C=window[n]; if(!C||C.__endWrap) return;
     var W=function(){ var c=new (Function.prototype.bind.apply(C,[null].concat([].slice.call(arguments))))(); ctxs.push(c); return c; };
     W.prototype=C.prototype; W.__endWrap=true; try{ window[n]=W; }catch(e){} });
