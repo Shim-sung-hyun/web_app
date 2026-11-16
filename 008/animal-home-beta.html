@@ -2051,6 +2051,19 @@ async function stepShow(it,tok){
   nextItem();
 }
 
+/* 맞힌 뒤 그 장면만 크게(2026-11-16 선생님): 동물이 장면에 들어가면 보기·말풍선을 서서히 치우고, 살펴보기처럼 그 곳 장면 하나를 크게(동물 이름 아래) —
+   '이 동물은 여기에 산다'를 한 번 더 크게 확인(강화). 사는 곳 찾기·동물 찾기 같게 */
+async function bigScene(it,tok){
+  const st=$('stage'); [...st.children].forEach(e=>{ if(!e.classList.contains('recDot')){ e.style.transition='opacity .4s'; e.style.opacity=0; } });
+  await wait(420); if(!alive(tok)) return false;
+  clearStage(); const A=area(), h=Math.min(A.h*0.78,(A.w*(portrait()?0.94:0.7))*3/4), w=h*4/3;
+  const card=document.createElement('div'); card.className='showCard'; card.style.cssText='width:'+w+'px;height:'+h+'px;opacity:0;transition:opacity .5s';
+  card.innerHTML='<img class="bg" src="'+scn(it.p)+'" alt=""><div class="lab">'+PL[it.p].label+'</div>';
+  const tag=document.createElement('div'); tag.className='nameTag'; tag.textContent=it.a;
+  st.appendChild(card); st.appendChild(tag); layoutPlaced(card,it.p,[it.a]);
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))); card.style.opacity=1;
+  await wait(500); return alive(tok);
+}
 /* 고르기 공통: 8초 뒤 안내 다시 → 16초 뒤 정답 빛남. 틀리면 정답 빛남(도움으로 기록). 고르기 전에는 보기 이름을 말하지 않음 */
 function choiceRound(tok,{say,cards,isRight,onRight,rec}){
   let wrong=null, helped=false, over=false, armed=false;
@@ -2086,7 +2099,7 @@ function stepA2P(it,tok){
   choiceRound(tok,{say:askPlace(it.a),cards,isRight:c=>c.dataset.p===it.p,
     rec:(w,h)=>logRow('a2p',it,w&&w.dataset.p,h),
     onRight:async c=>{ const sc=c.querySelector('.scene'); img.style.visibility='hidden';
-      layoutPlaced(sc,it.p,[it.a]); await enter(lastPlaced(sc),it.p); if(!alive(tok)) return; await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(900); if(alive(tok)) nextItem(); }});
+      layoutPlaced(sc,it.p,[it.a]); await enter(lastPlaced(sc),it.p); if(!alive(tok)) return; if(!await bigScene(it,tok)) return; await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(1300); if(alive(tok)) nextItem(); }});
 }
 
 /* ---- 3. 곳 보고 동물 고르기: 견본 = 곳 장면(말풍선), 보기 = 동물 2~3마리(정답은 하나) ---- */
@@ -2110,7 +2123,7 @@ function stepP2A(it,tok){
   choiceRound(tok,{say:askAnimal(it.p),cards,isRight:c=>c.dataset.a===it.a,
     rec:(w,h)=>logRow('p2a',it,w&&w.dataset.a,h),
     onRight:async c=>{ cards.forEach(x=>{ if(x!==c) x.style.opacity=.25; }); c.querySelector('img').style.visibility='hidden';
-      layoutPlaced(scene,it.p,[it.a]); await enter(lastPlaced(scene),it.p); if(!alive(tok)) return; await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(900); if(alive(tok)) nextItem(); }});
+      layoutPlaced(scene,it.p,[it.a]); await enter(lastPlaced(scene),it.p); if(!alive(tok)) return; if(!await bigScene(it,tok)) return; await speak(liveLine(it.a,it.p)); if(!alive(tok)) return; await wait(1300); if(alive(tok)) nextItem(); }});
 }
 
 /* ---- 4. 정리하기: 곳 카드를 모두 펼치고, 동물을 하나씩 사는 곳에 넣음(끌거나, 곳을 누름). 틀리면 반응 없음 ---- */

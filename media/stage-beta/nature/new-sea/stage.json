@@ -199,6 +199,12 @@
     0.5
    ],
    "swimP": 0.5
+  },
+  {
+   "name": "조개",
+   "src": "animals/jogae.webp",
+   "real": 0.12,
+   "face": "L"
   }
  ],
  "compose": {

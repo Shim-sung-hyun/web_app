@@ -228,6 +228,19 @@
    "src": "animals/baksae-fly.webp",
    "real": 1.19,
    "face": "L"
+  },
+  {
+   "name": "딱따구리",
+   "src": "animals/ttakttaguri.webp",
+   "real": 1.1,
+   "face": "L",
+   "behind": [
+    "treetop",
+    "pinetop",
+    "rooftop",
+    "nestbranch",
+    "blossombranch"
+   ]
   }
  ],
  "compose": {
