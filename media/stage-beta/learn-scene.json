@@ -1,0 +1,14 @@
+{
+ "new-ground": 7,
+ "new-forest": 7,
+ "new-grassland": 7,
+ "new-desert": 7,
+ "new-polar": 7,
+ "new-mudflat": 7,
+ "new-underground": 7,
+ "new-sky": 7,
+ "new-water": 7,
+ "new-sea": 11,
+ "new-pond": 7,
+ "new-wetland": 7
+}

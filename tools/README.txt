@@ -27,6 +27,7 @@
   trunk-extend.py  매다는 줄기+뿌리 그림의 줄기를 세로로 늘이고 hangAt 적음(땅속) · --up 줄기 길이 배 · --green 풀 포기(풀잎 끝만 잼, 안 늘임)
   prop-room.py     소품실 — 모든 무대 소품 목록(media/stage-beta/props.json, 보기 media/stage/prop-room.html) · --borrow 받을무대 소품 [--as 새이름] 다른 무대 소품을 그림 옮기지 않고 빌려 씀(밑동 땅 묶음이 다르면 멈춤). stage-intake가 끝에 부름
   stage-meta.py    그림마다 밑동 자리를 재어 stage.json에 · stage-index.py 008 가림 목록 media/stage/hide-index.json
+  learn-scene.js   학습용 장면 learn.jpg(무대 소품을 채운 한 장, 동물 서는 앞 땅은 비움 — 008 학습 장면) · 곳 이름과 --seed로 다시, 고른 seed는 media/stage-beta/learn-scene.json
   props-index.py   008 가림 소품 목록·동물 모양 표(masks.json)
  [검사·캡처]
   check-files.py   앱이 부르는 파일이 저장소에 다 있는지 · check-modules.py 앱마다 같아야 할 모듈 비교
