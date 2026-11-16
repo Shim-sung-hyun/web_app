@@ -191,6 +191,9 @@ body.admin #stage{pointer-events:none}
 .fc.got .front{border-color:var(--ok)}
 .fc .ftxt{display:flex;flex-direction:column;justify-content:center;gap:.35em;height:100%;text-align:center;word-break:keep-all;line-height:1.35;font-weight:700;color:var(--ink)}
 .fc .ftxt p{margin:0}
+.memAgain{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;padding:22px 28px;border-radius:18px 22px 19px 24px;background:var(--paper2,#fff);box-shadow:0 6px 22px rgba(50,40,25,.18);flex-wrap:nowrap;z-index:5}
+.mem.over{opacity:.35;transition:opacity .6s}
+.memAgain .sumBtn{white-space:nowrap;min-width:0;height:62px;padding:0 24px;letter-spacing:0}
 .memPick{display:flex;flex-direction:column;align-items:center;gap:22px}
 .memPick h3{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,4vw,46px);color:var(--sci-d);margin:0}
 .memPick .row{display:flex;gap:4vw;flex-wrap:wrap;justify-content:center}
@@ -1376,9 +1379,17 @@ function memChoose(tok){
   const st=$('stage'), box=document.createElement('div'); box.className='memPick';
   box.innerHTML='<h3>같은 동물 찾기</h3><div class="row"></div>'; st.appendChild(box);
   const a=RUN.animals[0], f=featPairs(RUN.animals.slice(0,6))[a]||[];
-  [['pic','그림 짝','<img src="'+pic(a)+'" alt=""><img src="'+pic(a)+'" alt="">'],['feat','그림·특징 짝','<img src="'+pic(a)+'" alt=""><span>'+esc((f[0]?factText(f[0]):'').replace(/[.]$/,''))+'</span>']].forEach(([k,lab,inner])=>{
+  [['pic','같은 그림','<img src="'+pic(a)+'" alt=""><img src="'+pic(a)+'" alt="">'],['feat','동물 특징','<img src="'+pic(a)+'" alt=""><span>'+esc((f[0]?factText(f[0]):'').replace(/[.]$/,''))+'</span>']].forEach(([k,lab,inner])=>{
     const b=document.createElement('button'); b.type='button'; b.className='memOpt'; b.innerHTML='<div class="pv">'+inner+'</div><b>'+lab+'</b>';
     tapper(b,()=>{ if(!alive(tok)) return; RUN.memMode=k; startEnd(); }); box.querySelector('.row').appendChild(b); });
+}
+/* 상: 다 찾으면 단추 셋 — 한 번 더(같은 그림) / 한 번 더(동물 특징) / 끝내기 (2026-11-16 선생님) */
+function memAgain(tok){
+  const g=document.querySelector('.mem'); if(g) g.classList.add('over');
+  const bar=document.createElement('div'); bar.className='sumBar skipBar memAgain'; $('stage').appendChild(bar);
+  [['한 번 더 · 같은 그림','',()=>{ RUN.memMode='pic'; startEnd(); }],['한 번 더 · 동물 특징','',()=>{ RUN.memMode='feat'; startEnd(); }],['끝내기','go',()=>{ RUN.gameDone=true; startEnd(); }]].forEach(([t,cls,go])=>{
+    const b=document.createElement('button'); b.type='button'; b.className='sumBtn'+(cls?' '+cls:''); b.textContent=t; bar.appendChild(b);
+    tapper(b,()=>{ if(!alive(tok)) return; go(); }); });
 }
 /* 그림·특징 짝: 서로 헷갈리지 않는 동물만 고르고(동물마다 다른 동물은 확실히 아닌 특징이 하나 이상), 특징은 그런 것 가운데 두 개까지 */
 function featPairs(cands){
@@ -1390,10 +1401,10 @@ function memGame(tok){
   if(RUN.lv===3&&!RUN.memMode){ memChoose(tok); return; }
   const lv=RUN.lv, feat=lv===3&&RUN.memMode==='feat';
   let pairs=[2,5,10][lv-1], pool=shuffle(RUN.animals.length>=pairs?RUN.animals:ALL).slice(0,pairs), F={};
-  if(feat){ F=featPairs(shuffle(RUN.animals)); pool=Object.keys(F).slice(0,6); pairs=pool.length; }   /* 글을 읽어야 하니 6쌍까지 */
+  if(feat){ F=featPairs([...shuffle(RUN.animals),...shuffle(ALL.filter(x=>!RUN.animals.includes(x)))]); pool=Object.keys(F).slice(0,pairs); pairs=pool.length; }   /* 그림 짝과 같은 10쌍(2026-11-16 선생님) — 오늘의 동물 가운데 헷갈리는 동물이 빠지면 다른 동물로 채움 */
   const deck=shuffle(feat?[...pool.map(a=>({a})),...pool.map(a=>({a,t:F[a]}))]:[...pool,...pool].map(a=>({a}))), n=deck.length, A=area(), por=portrait();
-  const cols=feat?(por?3:4):n<=4?(por?2:4):n<=10?(por?2:5):(por?4:5), rows=Math.ceil(n/cols), gap=Math.max(10,A.w*.015);
-  const cs=Math.min((A.w-gap*(cols-1))/cols,(A.h-gap*(rows-1))/rows,lv===1?260:feat?230:200);
+  const cols=n<=4?(por?2:4):n<=10?(por?2:5):(por?4:5), rows=Math.ceil(n/cols), gap=Math.max(10,A.w*.015);
+  const cs=Math.min((A.w-gap*(cols-1))/cols,(A.h-gap*(rows-1))/rows,lv===1?260:200);
   const g=document.createElement('div'); g.className='mem'; g.style.gap=gap+'px'; g.style.gridTemplateColumns='repeat('+cols+','+cs+'px)'; $('stage').appendChild(g);
   let first=null, lock=false, got=0;
   const cards=deck.map(({a,t})=>{ const c=document.createElement('div'); c.className='fc'; c.dataset.a=a; c.style.width=c.style.height=cs+'px';
@@ -1406,7 +1417,7 @@ function memGame(tok){
     if(!first){ first=c; if(lv===3&&!feat){ lock=true; later(()=>{ if(!alive(tok)) return; close(first); lock=false; },1000); } return; }
     const a=first, b=c; first=null;
     if(a.dataset.a===b.dataset.a){ a.classList.add('open','got'); b.classList.add('got'); chime(); got++; speak(shortName(b.dataset.a));
-      if(got===pairs) later(()=>{ if(alive(tok)){ RUN.gameDone=true; startEnd(); } },2200); return; }
+      if(got===pairs) later(()=>{ if(!alive(tok)) return; if(lv===3) memAgain(tok); else { RUN.gameDone=true; startEnd(); } },2200); return; }
     lock=true; later(()=>{ if(!alive(tok)) return; close(a,b); lock=false; },lv===1?1300:feat?1800:1000); }));   /* 그림·특징 짝: 첫 카드는 열린 채, 틀리면 글을 읽을 틈(1.8초) 뒤 닫힘 */
   speak(MEM);
 }
