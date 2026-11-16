@@ -836,7 +836,11 @@
   const posV = v => lerpDown(v, CUT.v), posE = e => lerpDown(Math.log(Math.max(e, 1e-3)), CUT.e.map(Math.log));
   /* 무대마다 다르게(2026-11-13 선생님: 숲은 알록달록해서 조금 널널해도 되지만, 사막·북극은 단순해서 기준을 넓히면 단계가 헷갈림): stage.json "cut": {"v": [...], "e": [...]}로 그 무대만 경계를 바꿈(없으면 위 CUT).
      숲: 상|스페셜을 보이는 몫 .035→.10·찾기 쉬움 2.0→1.8(숲 평가 131장 — 선생님의 스페셜은 4~15% 보임) */
-  const cutOf = pl => (pl && pl.cut) ? Object.assign({}, CUT, pl.cut) : CUT;
+  /* 연필풍으로 그림이 바뀌며 더 어려워짐(2026-11-16 선생님): 상·스페셜을 10%쯤 쉽게 — 중|상·상|스 경계(보이는 몫·찾기 쉬움)와 상·스페셜 보이는 몫 범위를 EASE배(무대마다 바꾼 값에도).
+     몫은 단계 판단의 60%만이라 1.1배로는 실제 보이는 몫이 거의 안 바뀜(상 .187→.178) → 1.2배: 상 .187→.206 · 스페셜 .064→.070(각 판 120~150마리, 008) */
+  const EASE = 1.2;
+  const cutOf = pl => { const K = (pl && pl.cut) ? Object.assign({}, CUT, pl.cut) : Object.assign({}, CUT);
+    K.v = K.v.map((x, i) => i >= 2 && i < K.v.length - 1 ? Math.min(.99, x * EASE) : x); K.e = K.e.map((x, i) => i >= 2 && i < K.e.length - 1 ? x * EASE : x); return K; };
   const levelPos = (v, e, pl) => { const K = cutOf(pl); return K.wv * lerpDown(v, K.v) + (1 - K.wv) * lerpDown(Math.log(Math.max(e, 1e-3)), K.e.map(Math.log)); }, levelAt = (v, e, pl) => Math.min(4, Math.max(1, Math.floor(levelPos(v, e, pl) + .5)));
   /* 숨기기 단계(2026-11-13 선생님 판단 236장): 하 더 드러냄·중·상(노출 더)·스페셜(노출 적고 색이 바탕과 비슷) — visible 보이는 몫, ease 찾기 쉬움 점수 */
   const LEVELS = {   // visible = 보이는 몫의 안전 범위(바닥·가릴 소품 크기에도 씀) — 단계는 CUT(levelAt)로 정함
@@ -845,10 +849,11 @@
     3: {name: '상', visible: [.06, .4], face: 'hide', offMax: .8, minLong: .05, count: 3},
     4: {name: '스페셜', visible: [.03, .12], face: 'hide', offMax: .9, minLong: .05, count: 6}};
   /* 단계 섞기(2026-11-13 선생님): 상이라도 상 80%·중 10%·스페셜 10%, 스페셜은 스페셜 80%·상 20%, 중은 중 80%·상 20%, 하는 하만 — 동물마다 이 비율로 뽑음 */
-  const MIX = {1: [[1, 1]], 2: [[2, .8], [3, .2]], 3: [[3, .8], [2, .1], [4, .1]], 4: [[4, .8], [3, .2]]};
+  /* 2026-11-16 선생님: 하는 하만, 중은 하 40·중 60, 상은 중 40·상 60, 스페셜은 상 20·스페셜 80(한 단계 아래와 섞어 쉽게) */
+  const MIX = {1: [[1, 1]], 2: [[1, .4], [2, .6]], 3: [[2, .4], [3, .6]], 4: [[3, .2], [4, .8]]};
   /* 단계 값도 무대마다(같은 날): stage.json "levels": {"4": {"visible": [.045, .15]}} — 숲 스페셜(안 됨 3장이 모두 '조금만 더 노출'·'특징이 조금이라도', 4~10% 보임).
      "featFree": 한 판에서 특징이 안 보여도 되는 동물의 몫(기본 .4, 숲 .2) */
-  const levelOpt = (lv, pl) => { const L = Object.assign({}, LEVELS[lv], pl && pl.levels && pl.levels[lv]); return {visible: L.visible, cut: true, face: L.face, offMax: L.offMax, minLong: L.minLong, levelNo: lv}; };
+  const levelOpt = (lv, pl) => { const L = Object.assign({}, LEVELS[lv], pl && pl.levels && pl.levels[lv]); if (lv >= 3) L.visible = L.visible.map(x => Math.min(1, x * EASE)); return {visible: L.visible, cut: true, face: L.face, offMax: L.offMax, minLong: L.minLong, levelNo: lv}; };
   function hideLevel(pl, animals, lv, opt = {}) {   // 판 단계 lv로 여러 마리 — 동물마다 MIX 비율로 단계를 뽑아 숨김(A.level에 그 단계)
     /* 무대마다 마릿수(2026-11-13 선생님): stage.json "counts": {"4": [5, 4]} = 스페셜은 5마리, 못 채우면 4마리. 숫자 하나만 써도 됨. 없으면 LEVELS의 count */
     const pc = [].concat(opt.count ?? (pl.counts && pl.counts[lv]) ?? LEVELS[lv].count), n = pc[0], min = pc[1];
