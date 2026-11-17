@@ -51,7 +51,18 @@ input[type=range]{width:min(360px,100%);vertical-align:middle}
 canvas{max-width:100%;height:auto;vertical-align:middle}
 #editViewport{overflow:auto;max-height:70vh;text-align:left}
 #editCanvas{display:block;cursor:crosshair;touch-action:none;width:auto;max-width:none;height:auto;image-rendering:auto;margin:0 auto}
-.canvas-zoom{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13px}
+.canvas-zoom{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:6px 0;font-size:13px}
+.checker{background-color:#3a443e!important;background-image:linear-gradient(45deg,#465149 25%,transparent 25%),linear-gradient(-45deg,#465149 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#465149 75%),linear-gradient(-45deg,transparent 75%,#465149 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+.size-plan{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 18px;margin:4px 0 8px}
+.size-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:400;margin:0}
+.size-row select{width:auto}
+.size-row small{color:var(--muted,#607067)}
+.ai-pick{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin:2px 0}
+.ai-pick label{display:inline;font-weight:400;margin:0}
+.cnt{display:inline-block;margin-left:10px}
+#sceneViewport{overflow:auto;max-height:78vh;text-align:left;cursor:grab}
+#sceneViewport.panning{cursor:grabbing}
+#sceneCanvas{max-width:none}
 .prop-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:14px 0}
 .prop-card{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfcfa}
 .prop-card.selected{border:2px solid var(--green)}
@@ -83,16 +94,16 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
 </header>
 <main>
  <nav class="steps" aria-label="제작 단계">
-  <button class="step active" data-step="0"><strong>1. 장면 구상</strong>이름과 그림 프롬프트</button>
-  <button class="step" data-step="1"><strong>2. 그림 준비</strong>배경과 3×3 소품 판</button>
-  <button class="step" data-step="2"><strong>3. 소품 손질</strong>배경 분리와 가장자리</button>
-  <button class="step" data-step="3"><strong>4. 배치 시안</strong>크기와 땅에 닿는 자리</button>
+  <button class="step active" data-step="0"><strong>1. 장면 구성</strong>소품 크기와 AI 프롬프트</button>
+  <button class="step" data-step="1"><strong>2. 그림 준비</strong>배경과 그림</button>
+  <button class="step" data-step="2"><strong>3. 소품 손질</strong>가장자리 깨끗하게</button>
+  <button class="step" data-step="3"><strong>4. 배치 시안</strong>끌고 확대하며 놓기</button>
   <button class="step" data-step="4"><strong>5. 검토·확정</strong>확인하고 묶음 받기</button>
  </nav>
 
  <section class="panel active" data-panel="0">
   <h2>어떤 장면을 만들까요?</h2>
-  <p class="intro">먼저 장면의 뜻과 이름을 적으면 배경 그림·소품 판을 만들 때 쓸 프롬프트 초안을 준비해요. 그림 생성은 사용하는 그림 서비스에서 진행한 뒤 다음 단계에서 불러옵니다.</p>
+  <p class="intro">장면 이름과 소품을 적고, 그림을 부탁할 AI를 고르면 그 AI에 맞는 프롬프트 초안을 만들어요. 작은 소품은 3×3 판 한 장에 여럿, 큰 소품은 한 장에 하나씩 받아요. 그림은 고른 AI에서 받은 뒤 다음 단계에서 불러옵니다.</p>
   <div class="row">
    <div><label for="sceneName">장면 이름</label><input id="sceneName" type="text" placeholder="예: 숲(산)"></div>
    <div><label for="sceneSlug">자료 폴더 이름 (영문 소문자)</label><input id="sceneSlug" type="text" value="new-stage" pattern="[a-z0-9\-]+"></div>
@@ -106,7 +117,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   <div class="row">
    <div style="flex:1"><label for="sceneSetting">장소와 배경 설명</label><input id="sceneSetting" type="text" placeholder="예: 먼 산과 빈 숲 바닥, 지평선은 위에서 36%"></div>
   </div>
-  <label for="objectNames">소품 이름과 실제 높이 (한 줄에 하나: <code>이름 높이m</code> 또는 <code>이름 낮게~높게</code>, 3×3 판의 1~8번 칸)</label>
+  <label for="objectNames">소품 이름과 실제 높이 (한 줄에 하나: <code>이름 높이m</code> 또는 <code>이름 낮게~높게</code> — 영어로 적으면 AI가 더 정확해요)</label>
   <textarea id="objectNames">참나무 10~16
 전나무 6~10
 통나무 0.4~0.7
@@ -115,39 +126,49 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
 이끼 바위 0.5~1.2
 버섯 0.1~0.25
 낙엽 더미 0.2~0.4</textarea>
-  <p class="hint">9번 오른쪽 아래 칸은 비워 두는 구성이 기본이에요. 소품은 최대 8개예요. 높이를 적으면 <b>가까이 놓일 때 크게 보일 소품</b>을 미리 셈해, 그 소품만 따로 큰 그림을 받게 안내해요(판에서 자른 그림은 한 칸이 300점쯤이라 크게 늘리면 흐려짐).</p>
+  <h3 style="margin:14px 0 4px">그림 크기 — 작은 소품은 3×3 판, 큰 소품은 한 장에 하나</h3>
+  <p class="hint">높이로 저절로 나눠요: 가까이 놓이면 크게 보일 소품(판에서 자른 한 칸 300점쯤으로는 늘어나 흐려짐)은 '한 장'. 바꾸고 싶으면 골라 주세요. 3×3 판에는 8개까지(오른쪽 아래 칸은 비움), 소품은 모두 16개까지.</p>
+  <div id="sizePlan" class="size-plan"></div>
   <div id="bigPlan" class="notice hidden"></div>
+  <h3 style="margin:14px 0 4px">어떤 AI에 부탁할까요?</h3>
+  <div class="ai-pick" id="aiPick">
+   <label><input type="radio" name="ai" value="bing" checked> 빙 이미지 크리에이터</label>
+   <label><input type="radio" name="ai" value="gemini"> 제미나이</label>
+   <label><input type="radio" name="ai" value="gpt"> 챗GPT</label>
+   <a id="aiLink" href="https://www.bing.com/images/create" target="_blank" rel="noopener">열기 ↗</a>
+  </div>
+  <p id="aiHint" class="hint"></p>
+  <label style="font-weight:400"><input type="checkbox" id="blueShadow" checked> 그림자를 파랑으로 받기 — 땅 위 장면(해가 왼쪽 위, 그림자는 오른쪽). 받은 파랑 그림자는 2단계에서 옅은 회색 그림자로 바꿔요. 물속·하늘·땅속처럼 그림자가 없는 곳은 끄세요.</label>
   <div class="toolbar"><button id="makePrompts" class="secondary">프롬프트 초안 만들기</button></div>
   <div id="prompts" class="hidden">
-   <p class="notice">배경은 두 번에 나눠 받아요(2026-11-09 선생님 — 빈 배경을 바로 받는 것보다 잘 됨): ① 그 곳의 <b>표준 장면</b>(나무·바위 등이 자연스럽게 있는 그림)을 먼저 받고, ② 그 그림을 붙여 <b>같은 자리·같은 그림풍의 빈 배경</b>을 받아요. 그림풍은 첫 장소인 <b>숲의 표준 장면</b>을 기준으로 삼아, 다른 곳을 만들 때는 숲 표준 장면을 본보기로 붙여요.</p>
-   <div class="prompt-box"><h3>① 표준 장면 프롬프트</h3><p class="hint">붙일 그림: 숲 표준 장면(숲을 처음 만들 때는 붙이지 않음 · 숲 다음부터는 media/stage-beta/nature/new-forest/standard.jpg)</p><textarea id="stdPrompt" readonly></textarea><button class="secondary copy" data-copy="stdPrompt">복사</button></div>
-   <div class="prompt-box"><h3>② 빈 배경 프롬프트</h3><p class="hint">붙일 그림: ①에서 받은 표준 장면 — 같은 창에서 이어서 부탁해도 돼요</p><textarea id="bgPrompt" readonly></textarea><button class="secondary copy" data-copy="bgPrompt">복사</button></div>
-   <p class="notice">소품은 <b>판 여러 장</b>으로 받아 한 종류를 여러 모양으로 써요(같은 나무가 똑같이 되풀이되면 찍어 붙인 티 — 2026-11-09 선생님). 판마다 같은 종류를 같은 칸 차례로, 모양만 다르게 그려요.
-   <label style="display:inline;font-weight:400;margin-left:6px">판 수 <select id="sheetCount" style="width:auto"><option value="1">1장</option><option value="2">2장</option><option value="3" selected>3장</option></select></label></p>
-   <div class="prompt-box"><h3>소품 판 1 프롬프트</h3><textarea id="propsPrompt" readonly></textarea><button class="secondary copy" data-copy="propsPrompt">복사</button></div>
+   <p class="notice">그림풍은 지금 무대들과 같은 <b>가는 연필풍</b>(가는 연필·잉크 선, 옅은 수채)이에요. 받는 차례: ① 빈 배경 → ② 소품(판·한 장 — 붙일 그림은 받은 빈 배경) → (선택) 표준 장면. 같은 종류를 여러 모양으로 쓰려면 '판·장 수'를 늘려요(똑같은 나무가 되풀이되면 찍어 붙인 티).
+   <label style="display:inline;font-weight:400;margin-left:6px">판·장 수 <select id="sheetCount" style="width:auto"><option value="1">1벌</option><option value="2" selected>2벌</option><option value="3">3벌</option></select></label></p>
+   <div class="prompt-box"><h3>① 빈 배경 프롬프트</h3><p class="hint">붙일 그림(선택): 그림풍 본보기 — 지금 무대의 빈 배경 한 장(예: media/stage-beta/nature/new-grassland/bg.jpg)</p><textarea id="bgPrompt" readonly></textarea><button class="secondary copy" data-copy="bgPrompt">복사</button></div>
+   <div class="prompt-box" id="sheet1Box"><h3>② 작은 소품 3×3 판 1 프롬프트</h3><p class="hint">붙일 그림: ①에서 받은 빈 배경</p><textarea id="propsPrompt" readonly></textarea><button class="secondary copy" data-copy="propsPrompt">복사</button></div>
    <div id="moreSheetPrompts"></div>
    <div id="bigPrompts"></div>
    <div class="prompt-box"><h3>가장자리에 설 큰 것 (선택)</h3>
     <p class="hint">화면 왼쪽·오른쪽 끝에 반쯤 서서 위가 화면 밖으로 나가는 아주 가까운 큰 것(숲: 큰 나무 줄기). 앞뒤 깊이를 줘요. 한 줄에 하나 — 영어로 적으면 더 정확해요. 비워 두면 안 써요.</p>
     <textarea id="frameNames" style="min-height:64px" placeholder="예: a huge old oak tree trunk&#10;a big Korean red pine trunk"></textarea>
     <div id="framePrompts"></div></div>
+   <div class="prompt-box"><h3>(선택) 표준 장면 프롬프트</h3><p class="hint">소품이 자연스럽게 놓인 그 곳의 그림 — 다음 곳을 만들 때 그림풍 본보기로 씀(확정 묶음에 standard.jpg). 붙일 그림: ①에서 받은 빈 배경</p><textarea id="stdPrompt" readonly></textarea><button class="secondary copy" data-copy="stdPrompt">복사</button></div>
    <div class="prompt-box"><h3>빽빽함</h3><p class="hint">장면에 소품을 얼마나 놓을지. 숲처럼 우거진 곳은 '빽빽하게', 사막·극지처럼 트인 곳은 '듬성듬성'.</p>
     <select id="density" style="width:auto"><option value="sparse">듬성듬성</option><option value="normal" selected>보통</option><option value="dense">빽빽하게</option></select></div>
-   <p class="notice">이 도구는 그림을 직접 생성하거나 외부 서비스에 보내지 않아요. 프롬프트를 복사해 원하는 그림 서비스에 붙여 넣고, 받은 그림을 다음 단계에서 불러와 주세요.</p>
+   <p class="notice">이 도구는 그림을 직접 만들거나 AI에 보내지 않아요. 프롬프트를 복사해 고른 AI에 붙여 넣고(붙일 그림이 있으면 함께), 받은 그림을 다음 단계에서 불러와 주세요.</p>
   </div>
   <div class="nav"><span></span><button class="primary next">그림 준비로 →</button></div>
  </section>
 
  <section class="panel" data-panel="1">
-  <h2>배경과 소품 그림을 불러와요</h2>
-  <p class="intro">배경은 한 장, 소품은 흰 바탕의 3×3 판 한 장을 선택해요. 원본 파일은 바뀌지 않습니다.</p>
+  <h2>배경과 그림을 불러와요</h2>
+  <p class="intro">빈 배경 한 장, 작은 소품의 3×3 판, 큰 소품의 그림(한 장에 하나)을 불러와요. 원본 파일은 바뀌지 않습니다.</p>
   <div class="row">
    <div class="file-pick"><label for="bgFile">빈 배경 그림</label><input id="bgFile" type="file" accept="image/*"><p id="bgInfo" class="hint">무대 배경은 4:3 가로 그림이어야 해요.</p><div class="toolbar" style="margin:8px 0 0"><button id="unstar" class="secondary" type="button">배경 별 표시 지우기</button></div><canvas id="starPeek" class="hidden" style="max-width:100%;border-radius:6px;margin-top:6px"></canvas><p id="starInfo" class="hint"></p></div>
    <div class="file-pick"><label for="stdFile">표준 장면 (참고 — 다음 곳의 그림풍 본보기)</label><input id="stdFile" type="file" accept="image/*"><p id="stdInfo" class="hint">확정 묶음에 standard.jpg로 함께 넣어요. 숲의 표준 장면은 다른 곳을 만들 때 본보기로 붙여요.</p></div>
    <div id="moreSheetPicks"></div>
-   <div class="file-pick"><label for="sheetFile">소품 3×3 그림판</label><input id="sheetFile" type="file" accept="image/*"><p id="sheetInfo" class="hint">이름 순서대로 왼쪽 위부터 채워 주세요. 오른쪽 아래는 비워 둬요.</p></div>
+   <div class="file-pick" id="sheetPick"><label for="sheetFile">작은 소품 3×3 판 1</label><input id="sheetFile" type="file" accept="image/*"><p id="sheetInfo" class="hint">1단계 '판' 소품을 적은 차례대로 왼쪽 위부터. 오른쪽 아래는 비워 둬요.</p></div>
   </div>
-  <div id="bigPick" class="hidden"><h3>큰 그림 (가까이 크게 놓일 소품 — 한 장에 하나)</h3><p class="hint">1단계의 '큰 그림 프롬프트'로 받은 그림을 소품마다 불러와요. 불러온 소품은 판의 칸 대신 이 그림을 써요. 아직 없으면 비워 둬도 판에서 잘라 쓰고, 배치 시안에서 흐려질 수 있다고 알려 줘요.</p><div id="bigFiles" class="prop-list"></div></div>
+  <div id="bigPick" class="hidden"><h3>큰 소품 그림 (한 장에 하나)</h3><p class="hint">1단계 '한 장' 소품의 프롬프트로 받은 그림을 소품마다 불러와요. 아직 없는 소품은 이번에는 빼고 나눠요.</p><div id="bigFiles" class="prop-list"></div></div>
   <div class="row three">
    <div><label for="threshold">흰 바탕 기준 밝기: <output id="thresholdValue">238</output></label><input id="threshold" type="range" min="50" max="252" value="238"><p class="hint">밝은 회색을 소품으로 남기려면 값을 낮춰 보세요.</p></div>
    <div><label for="neutral">흰 바탕 색 범위: <output id="neutralValue">32</output></label><input id="neutral" type="range" min="10" max="80" value="32"><p class="hint">색이 있는 소품까지 지워지면 값을 낮춰요.</p></div>
@@ -159,18 +180,18 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <div id="peekWrap" class="hidden"><label for="peekCell" style="display:inline;margin-right:8px">판의 칸</label><select id="peekCell" style="width:auto"></select>
     <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;margin-top:8px"><div class="thumb" style="height:auto;padding:6px"><canvas id="cellPeek" style="max-width:260px;max-height:220px"></canvas></div><p id="peekInfo" class="small" style="max-width:360px"></p></div></div>
   </div>
-  <button id="extract" class="primary">소품 칸 나누고 바깥 흰 바탕 지우기</button>
+  <button id="extract" class="primary">소품 자르기 — 판은 칸으로 나누고, 흰 바탕·파랑 그림자 정리</button>
   <p class="notice">자동 분리는 그림 인식 AI가 아니에요. 칸의 바깥과 이어진 밝은 색만 지우므로, 안에 갇힌 흰 점은 남을 수 있어요. 실제 그림을 확대해 확인하고 다음 단계에서 손질해 주세요.</p>
   <div id="loadStatus" class="status" role="status"></div>
-  <div class="nav"><button class="secondary back">← 장면 구상</button><button class="primary next">소품 손질로 →</button></div>
+  <div class="nav"><button class="secondary back">← 장면 구성</button><button class="primary next">소품 손질로 →</button></div>
  </section>
 
  <section class="panel" data-panel="2">
   <h2>소품 가장자리를 살펴요</h2>
-  <p class="intro">각 그림을 골라 확대해 보고, 남은 흰 점은 지우개로, 잘못 지워진 부분은 복구 붓으로 칠해요. 투명한 바탕은 체크 무늬로 보여요.</p>
+  <p class="intro">자를 때 흰 바탕·테두리 흰 기·작은 조각은 저절로 정리해요. 남은 흰 점은 바탕을 '배경 땅색'이나 '어두운 색'으로 바꿔 보며 찾고, 흰색만 지우는 붓·흰 틈 지우기로 지워요. 너무 지워진 곳은 원본 색 붓, 뚫린 곳은 구멍 메우기 붓으로 — 선생님이 무대 소품을 손질하던 소품 손질(touchup) 화면과 같은 붓이에요.</p>
   <div class="edit-layout">
    <div>
-    <div class="canvas-zoom"><span>Ctrl+마우스 휠로 확대·축소</span><button id="resetEditZoom" class="secondary" type="button">확대 초기화</button><output id="editZoomValue">100%</output></div>
+    <div class="canvas-zoom"><span>Ctrl+마우스 휠로 확대·축소</span><button id="resetEditZoom" class="secondary" type="button">확대 초기화</button><output id="editZoomValue">100%</output><span style="margin-left:10px">바탕</span><button class="secondary editBg" data-bg="ground" type="button">배경 땅색</button><button class="secondary editBg" data-bg="dark" type="button">어두운 색</button><button class="secondary editBg" data-bg="checker" type="button">체크무늬</button></div>
     <div class="canvas-wrap" id="editViewport"><canvas id="editCanvas" aria-label="고른 소품 그림 손질"></canvas></div>
     <div class="toolbar" style="margin:8px 0">
      <button id="replaceProp" class="secondary" type="button" disabled>선택한 소품 그림 바꾸기</button>
@@ -183,7 +204,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <aside class="edit-controls">
     <strong id="editName">소품을 먼저 골라 주세요</strong>
     <label for="brushSize">붓 크기 <output id="brushValue">16</output>점</label><input id="brushSize" type="range" min="2" max="60" value="16">
-    <label for="brushMode">손질 방법</label><select id="brushMode"><option value="erase">지우기 (투명하게)</option><option value="restore">복구하기 (원본 그림으로)</option><option value="keep">구역 남기기 (네모를 맞춘 뒤 적용 — 밖은 잘라 냄)</option><option value="hole">흰 틈 지우기 (누른 곳의 막힌 흰 틈만)</option><option value="white">흰색만 지우는 붓 (문지른 곳의 흰 점만 — 가지·잎은 남김)</option></select>
+    <label for="brushMode">손질 방법</label><select id="brushMode"><option value="erase">지우기 (투명하게)</option><option value="restore">복구하기 (원본 그림으로)</option><option value="keep">구역 남기기 (네모를 맞춘 뒤 적용 — 밖은 잘라 냄)</option><option value="hole">흰 틈 지우기 (누른 곳의 막힌 흰 틈만)</option><option value="white">흰색만 지우는 붓 (문지른 곳의 흰 점만 — 가지·잎은 남김)</option><option value="orig">원본 색 붓 (받은 그림의 색으로 — 지나치게 지워진 곳)</option><option value="fill">구멍 메우기 붓 (지워진 곳을 둘레 색으로)</option></select>
     <div id="holeBar" class="hidden" style="margin:8px 0"><label for="holeTol">틈 흰색 기준: <output id="holeTolValue">200</output></label><input id="holeTol" type="range" min="100" max="252" value="200"><p class="hint">흰 틈 지우기: 가지·다리 사이에 갇힌 흰 틈을 누르면 그 틈만 투명해져요. 흰색만 지우는 붓: 틈 가장자리나 작은 흰 조각 둘레를 문지르면 흰 점만 지워져요. 덜 지워지면 기준을 낮추고 다시 누르고, 소품까지 지워지면 되돌린 뒤 기준을 높여요.</p></div>
     <div class="toolbar" style="margin:6px 0"><button id="undoEdit" class="secondary" type="button">되돌리기</button></div>
     <div id="keepBar" class="toolbar hidden" style="margin:8px 0"><button id="keepApply" class="primary" type="button">구역 적용 (밖을 잘라 냄)</button><button id="keepCancel" class="secondary" type="button">취소</button></div>
@@ -200,8 +221,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
 
  <section class="panel" data-panel="3">
   <h2>배경 위에 소품을 놓아 봐요</h2>
-  <p class="intro">그림을 끌어 옮기고, 선택한 소품의 크기와 밑동 위치를 조절해요. 이 시안은 검토용이며 원본 배경과 그림은 바꾸지 않습니다.</p>
-  <div class="preview"><canvas id="sceneCanvas"></canvas></div>
+  <p class="intro">소품을 끌어 상하좌우로 옮기고, Ctrl+마우스 휠로 확대해 밑동이 땅에 닿는지 자세히 봐요. 확대했을 때는 빈 곳을 끌면 화면이 움직여요. 고른 소품은 방향키로 조금씩(Shift와 함께 크게) 옮길 수 있어요. 이 시안은 검토용이며 원본 배경과 그림은 바꾸지 않습니다.</p>
+  <div class="canvas-zoom"><span>Ctrl+휠 확대·축소 · 빈 곳 끌기 = 화면 옮기기 · 방향키 = 고른 소품 옮기기</span><button id="resetSceneZoom" class="secondary" type="button">확대 초기화</button><output id="sceneZoomValue">100%</output></div>
+  <div class="preview" id="sceneViewport"><canvas id="sceneCanvas"></canvas></div>
   <div id="layoutCards" class="prop-list"></div>
   <div class="layout-controls">
    <label>가로 위치 (0~100%)<input id="posX" type="range" min="0" max="100" value="50"></label>
@@ -1065,7 +1087,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const setStatus = (el,msg,bad=false) => {el.textContent=msg;el.classList.toggle('error',bad)};
  function specs(){return parseSpecs($('#objectNames').value)}
- function parseSpecs(txt){return String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,8).map(l=>{
+ function parseSpecs(txt){return String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,16).map(l=>{
   const m=l.match(/^(.*?)\s+(\d+(?:\.\d+)?)(?:\s*[~\-–]\s*(\d+(?:\.\d+)?))?\s*m?$/);
   if(!m)return {name:l,h:null};
   const a=Number(m[2]),b=m[3]!=null?Number(m[3]):null;return {name:m[1].trim(),h:b!=null?[Math.min(a,b),Math.max(a,b)]:[+(a*.7).toFixed(2),a]}})}
@@ -1093,11 +1115,53 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  $('#sceneSlug').addEventListener('input',e=>{e.target.value=e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/-+/g,'-');state.slug=e.target.value});
  $('#sceneGroup').addEventListener('change',e=>state.group=e.target.value);
  $('#sceneSetting').addEventListener('input',e=>state.setting=e.target.value);
- const stdText = () => `If a style reference picture is attached, follow its drawing style exactly (line weight, colours, shading), but do not copy its objects. Draw a typical, natural 4:3 landscape picture-book scene of this place: ${state.setting||state.name||'describe the place here'}. Include the things usually found there (for example trees, bushes, rocks, logs, plants) placed naturally, some near and some far, seen from a child's standing eye level, with the horizon about ${Math.round(state.horizon*100)}% from the top. Flat cartoon style for a gentle educational picture book for children with developmental disabilities: clear dark-brown outlines, soft simple shading, muted natural colours, light from the upper left. No animals, no people, no words, letters, labels, borders or watermark. Keep the bottom-right corner plain.`;
- const bgEmpty = () => `The attached picture is a scene drawn earlier. Redraw EXACTLY the same place — the same viewpoint, the same horizon, the same distant background, the same colours and drawing style — but as an EMPTY STAGE: remove every object standing on the open ground in the middle and front (trees, bushes, rocks, logs, plants, flowers, mushrooms). Keep only the sky, the distant scenery at the back, any big tree trunks right at the left and right edges, and the bare open ground with a few tiny details such as small fallen leaves. No animals, people, words or watermark. Keep the bottom-right corner plain.`;
- const bgBase = () => `Create a clean 4:3 landscape background for a gentle educational picture-book scene for children with developmental disabilities. Use a consistent flat cartoon style, clear dark-brown outlines, soft simple shading, muted natural colours, and light from the upper left. This must be an EMPTY stage: do not draw foreground trees, bushes, rocks, plants, buildings, animals, people, words, labels, borders, or cast shadows. Leave calm open ground across the lower part and keep the bottom-right corner plain. Place the horizon about ${Math.round(state.horizon*100)}% from the top. Scene: ${state.setting||state.name||'describe the place and distant scenery here'}. Keep distant scenery simple and quiet.`;
+ /* AI 고르기(2026-11-17 선생님): 빙 이미지 크리에이터·제미나이·챗GPT — 고른 AI에 맞게 프롬프트를 지음. 빙은 장마다 2000자 안(지침 2절): 넘으면 덜 중요한 문장부터 뺌 */
+ const AIS={bing:{name:'빙 이미지 크리에이터',url:'https://www.bing.com/images/create',limit:2000,lead:'',hint:'장마다 2000자 안으로 지어요(넘으면 덜 중요한 문장부터 뺌). 가로 그림은 화면 비율에서 가로를 고르고, 4판 가운데 바탕이 가장 희고 그림자가 온통 파란 것을 골라요.'},
+  gemini:{name:'제미나이',url:'https://gemini.google.com/app',limit:0,lead:'Generate an image.',hint:'붙일 그림은 + 단추로 함께 올려요. 한 번에 한 장씩 부탁하고, 같은 대화에서 이어 부탁하면 그림풍이 잘 맞아요.'},
+  gpt:{name:'챗GPT',url:'https://chatgpt.com/',limit:0,lead:'Create an image.',hint:'붙일 그림은 + 단추로 함께 올려요. 한 번에 한 장씩 부탁하고, 바탕이 흰색이 아니면 "배경을 순수한 흰색으로 다시"라고 부탁해요.'}};
+ const aiOf=()=>AIS[state.ai]||AIS.bing;
+ function aiText(parts){const A=aiOf();let ps=parts.filter(p=>p&&p[0]);if(A.lead)ps=[[A.lead,1],...ps];const join=a=>a.map(p=>p[0]).join(' ');let t=join(ps);
+  if(A.limit)for(let i=ps.length-1;i>=0&&t.length>A.limit;i--)if(!ps[i][1]){ps.splice(i,1);t=join(ps)}return t}
+ function syncAI(){state.ai=(($$('#aiPick input').find(r=>r.checked))||{}).value||'bing';const A=aiOf();$('#aiLink').href=A.url;$('#aiLink').textContent=A.name+' 열기 ↗';$('#aiHint').textContent=A.hint}
+ $$('#aiPick input').forEach(r=>r.addEventListener('change',()=>{syncAI();if(!$('#prompts').classList.contains('hidden'))$('#makePrompts').click()}));
+ $('#blueShadow').addEventListener('change',()=>{if(!$('#prompts').classList.contains('hidden'))$('#makePrompts').click()});
+ /* 그림풍(2026-11-11~ 지금 무대들): 가는 연필·잉크 선, 짧은 옅은 빗금, 아주 옅은 수채 — 무대 프롬프트(media/stage/prompts)와 같은 말 */
+ const PEN='fine, thin dark-grey pencil-and-ink lines, short light hatching and only very pale watercolour washes';
+ const CALM='Realistic proportions, calm and natural, not cute and not cartoon-like.';
+ const WHITE='IMPORTANT: the whole background is plain pure white (#FFFFFF) — not cream, no paper texture, no grey vignette, no ground, no horizon.';
+ const NORING='Its outer edge is only its own natural edge: do NOT draw any extra line, ring, bubble or frame around it.';
+ const NOFACE='Cracks, knots, holes and lumps form no face or face-like shape anywhere, and no roots look like fingers or claws.';
+ const ref=what=>`The attached picture is ${what}: use it ONLY as the reference for the drawing style and the strength of colour; do not copy its objects.`;
+ const shade=one=>$('#blueShadow').checked?[[`SHADOW: soft daylight comes from the upper LEFT, behind the viewer (the sun is not drawn). The one shadow falls ONLY on the RIGHT: it starts at the bottom-right where ${one?'the object':'each object'} touches the ground and stretches toward the UPPER RIGHT, like a clock hand at 2 o'clock, about half as long as ${one?'the object':'that object'} is tall. The left side and the front have NO shadow.`,1],
+  ['The shadow is one flat shape of solid pure bright blue (#0000FF) with a sharp clean edge — no gradient, hatching or outline. Blue is ONLY in the shadow.',1]]:[['No shadow at all.',1]];
+ const hTxt=h=>h?` (about ${h[0]}–${h[1]} m tall in real life)`:'';
+ const H100=()=>Math.round(state.horizon*100), PLACE=()=>state.setting||state.name||'the place';
+ const bgEmpty=()=>aiText([[`If a picture is attached, use it ONLY as the reference for the line style and the strength of colour; do not copy its place or objects.`,0],
+  [`In a style of ${PEN}, draw an EMPTY landscape of this place as a wide 4:3 picture: ${PLACE()}.`,1],
+  [`The edge where the open ground ends is an almost straight, level line about ${H100()}% from the top, so the empty ground fills the rest of the picture below it.`,1],
+  ['Above that line: the far scenery, drawn small and light, paler and mistier the farther away it is, brighter toward the upper-left corner.',0],
+  ['Below the line: one wide, flat, open ground in a clear watercolour wash of its natural colour (clearly coloured, not white or grey), with fine sparse marks that get a little larger toward the bottom. Keep the ground empty and calm: no trees, trunks, roots, rocks, logs, bushes, plants, paths, puddles, shadows, animals or objects on it, so things can be placed on it later.',1],
+  ['Bright, soft daylight from the upper left behind the viewer; do not draw the sun. No people, no animals, no text, no frame, no watermark.',1]]);
+ const stdText=()=>aiText([[ref('the empty background of this place'),1],[`In exactly that style (${PEN}), draw the same place as a typical, natural 4:3 scene: ${PLACE()}. Add the things usually found there, placed naturally in groups, some near and some far, seen at a child's standing eye level, with the same horizon.`,1],[CALM,0],['Soft daylight from the upper left. No animals, no people, no text, no frame, no watermark.',1]]);
+ function propText(name,h,extra=''){return aiText([[WHITE,1],[ref('the background of the place where this object will stand'),1],[`Draw ONE object and ${$('#blueShadow').checked?'its shadow':'nothing else'} in exactly that style, with ${PEN}, inside the middle two-thirds of the picture width, with wide white margins on all four sides — nothing touches the edge.`,1],
+  [`The object: ${name}${hTxt(h)}. The whole object is in the picture.${extra}`,1],[CALM,0],[BASE_RULE,1],[NORING,1],[NOFACE,0],['Nothing else in the picture: no loose leaves, pebbles or ground patch around it, no other objects, no animals, no people, no text, no frame.',1],...shade(true),
+  ['Draw fine detail: this picture will be shown large. Choose a picture shape that suits the object (tall objects in a tall picture, wide objects in a wide picture).',0]])}
+ function sheetText(list,v,N,same){return aiText([[WHITE,1],[v?ref('sheet 1 of this set of object sheets'):ref('the background of the place where these objects will stand'),1],
+  [`Draw a 3×3 arrangement of nine equal cells on the white paper — do NOT draw any grid lines — in exactly that style, with ${PEN}.`,1],
+  [`Fill the cells from the top-left, one clearly different object per cell, in this order:\n${list}\nLeave every unused cell, and always the bottom-right cell, completely empty and white.`,1],
+  same&&v?[`This is sheet ${v+1} of ${N}: the SAME kinds in the SAME cell order as the attached sheet, but every object must look clearly different from the same cell there — a different individual of the same kind (different shape, pose, proportions or details) with a similar real size.`,1]:null,
+  ['Each object is centred in its cell with a clear white gap to its neighbours, seen from the front at eye level.',1],[CALM,0],[BASE_RULE,1],[NORING,1],[NOFACE,0],['No animals, no people, no text, no frame.',1],...shade(false)])}
+ /* 그림 크기(2026-11-17 선생님): 작은 소품은 3×3 판, 큰 소품은 한 장에 하나 — 높이로 저절로(needBig), 선생님이 바꾸면 그대로(state.single) */
+ const isSingle=sp=>{const o=(state.single||{})[sp.name];return o?o==='one':needBig(sp)};
+ const smallOf=v=>specsOf(v).filter(sp=>!isSingle(sp));
+ function renderSizePlan(){const all=[];for(let v=0;v<sheetCount();v++)specsOf(v).forEach(sp=>{if(!all.some(x=>x.name===sp.name))all.push(sp)});
+  $('#sizePlan').innerHTML=all.length?all.map((sp,i)=>`<label class="size-row"><span>${esc(sp.name)}${sp.h?` <small>${sp.h[0]}~${sp.h[1]}m</small>`:''}</span><select data-n="${i}"><option value="sheet"${isSingle(sp)?'':' selected'}>작은 소품 — 3×3 판</option><option value="one"${isSingle(sp)?' selected':''}>큰 소품 — 한 장</option></select></label>`).join(''):'<p class="hint">소품을 적으면 여기서 판·한 장을 골라요.</p>';
+  $$('#sizePlan select').forEach(s=>s.addEventListener('change',()=>{state.single=state.single||{};state.single[all[+s.dataset.n].name]=s.value;if(!$('#prompts').classList.contains('hidden'))$('#makePrompts').click();renderBigFiles();renderSheetArea()}));
+  const n=smallOf(0).length;if(n>8)$('#sizePlan').insertAdjacentHTML('beforeend',`<p class="hint" style="color:#a12718">작은 소품이 ${n}개예요 — 판 한 장에 8개까지라 앞의 8개만 판에 들어가요. 나머지는 '한 장'으로 바꿔 주세요.</p>`)}
+ $('#objectNames').addEventListener('input',()=>{clearTimeout(renderSizePlan.t);renderSizePlan.t=setTimeout(renderSizePlan,300)});
+ function renderSheetArea(){const any=[...Array(sheetCount())].some((_,v)=>smallOf(v).length);['#sheetPick','#moreSheetPicks','#threshPreview','#sheet1Box','#moreSheetPrompts'].forEach(q=>{const e=$(q);if(e)e.classList.toggle('hidden',!any)})}
  $('#frameNames').addEventListener('change',renderFrames);
- $('#sheetCount').addEventListener('change',()=>{if(!$('#prompts').classList.contains('hidden'))$('#makePrompts').click();renderSheetPicks();renderBigFiles()});
+ $('#sheetCount').addEventListener('change',()=>{if(!$('#prompts').classList.contains('hidden'))$('#makePrompts').click();renderSizePlan();renderSheetPicks();renderBigFiles();renderSheetArea()});
  /* 자연 장소 프리셋(2026-11-09 선생님: 장면을 풀다운으로, 그곳 동물에 맞는 소품·배경 설명을 박아 두기) */
  let PLACES={};
  (async()=>{for(const u of ['places.json','https://shim-sung-hyun.github.io/web_app/media/stage/places.json']){try{PLACES=await fetch(u,{cache:'no-cache'}).then(r=>r.json());break}catch(e){}}
@@ -1111,39 +1175,40 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   if($('#frameNames'))$('#frameNames').value=P.frames||'';
   state.sheetCfg={1:{mode:'same',text:''},2:P.sheet3?{mode:'new',text:P.sheet3}:{mode:'same',text:''}};$('#sheetCount').value=P.sheet3?'3':'2';
   if($('#density'))$('#density').value=['nature/forest','nature/grassland'].includes($('#placePreset').value)?'dense':'normal';
-  ['sceneName','sceneSlug','sceneSetting'].forEach(id=>$('#'+id).dispatchEvent(new Event('input')));hidePlan(P);$('#makePrompts').click()});
+  ['sceneName','sceneSlug','sceneSetting'].forEach(id=>$('#'+id).dispatchEvent(new Event('input')));hidePlan(P);renderSizePlan();$('#makePrompts').click()});
  $('#makePrompts').addEventListener('click',()=>{
-  state.name=$('#sceneName').value.trim();state.slug=$('#sceneSlug').value.trim();state.group=$('#sceneGroup').value;state.setting=$('#sceneSetting').value.trim();
+  state.name=$('#sceneName').value.trim();state.slug=$('#sceneSlug').value.trim();state.group=$('#sceneGroup').value;state.setting=$('#sceneSetting').value.trim();syncAI();
   const ns=names();if(!state.name||!state.slug||!/^[a-z0-9-]+$/.test(state.slug)||!ns.length){alert('장면 이름, 영문 폴더 이름, 소품 이름을 확인해 주세요.');return}
   $('#stdPrompt').value=stdText();$('#bgPrompt').value=bgEmpty();
-  const list=ns.map((n,i)=>`${i+1}. ${n}`).join('\n');
-  $('#propsPrompt').value=`Use the attached picture only as a style reference; do not copy its objects. Draw a 3×3 grid sheet on a pure white background. Fill 8 cells, one clearly different object per cell, in this order:\n${list}\nLeave any unused cells and especially the bottom-right cell completely empty and white. Each object is centred and fills most of its cell, seen from the front at eye level. ${BASE_RULE} No cast shadow, separate ground patch, background, grid lines, animals, people, logo, or watermark. If the standard scene picture is attached, follow its drawing style. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.`;
-  const N=sheetCount();saveSheetCfg();$('#moreSheetPrompts').innerHTML='';for(let v=2;v<=N;v++){const cfg=sheetCfg(v-1);$('#moreSheetPrompts').insertAdjacentHTML('beforeend',`<div class="prompt-box"><h3>소품 판 ${v} 프롬프트</h3>
+  const N=sheetCount();saveSheetCfg();const listOf=(v,h=true)=>smallOf(v).slice(0,8).map((x,i)=>`${i+1}. ${x.name}${h?hTxt(x.h):''}`).join('\n'),sheetFit=(v,same)=>{const t=sheetText(listOf(v),v,N,same);return aiOf().limit&&t.length>aiOf().limit?sheetText(listOf(v,false),v,N,same):t};
+  $('#propsPrompt').value=smallOf(0).length?sheetFit(0,false):'';
+  $('#moreSheetPrompts').innerHTML='';for(let v=2;v<=N;v++){const cfg=sheetCfg(v-1);$('#moreSheetPrompts').insertAdjacentHTML('beforeend',`<div class="prompt-box"><h3>작은 소품 3×3 판 ${v} 프롬프트</h3>
     <label style="display:inline;margin-right:6px">이 판은</label><select id="sheetMode${v-1}" style="width:auto"><option value="same"${cfg.mode==='same'?' selected':''}>판 1과 같은 종류 — 모양만 다르게</option><option value="new"${cfg.mode==='new'?' selected':''}>새 종류</option></select>
-    <div id="newKinds${v-1}" class="${cfg.mode==='new'?'':'hidden'}"><label>새 종류 이름과 실제 높이 (한 줄에 하나, 1~8번 칸)</label><textarea id="sheetNames${v-1}" style="min-height:90px">${esc(cfg.text||'')}</textarea></div>
-    <p class="hint">붙일 그림: 소품 판 1(그림풍 본보기 — 같은 창에서 이어서 부탁해도 돼요)</p><textarea id="propsPrompt${v}" readonly></textarea><button class="secondary copy" data-copy="propsPrompt${v}">복사</button></div>`);
-   if(cfg.mode==='new'){const nl=specsOf(v-1).map((x,i)=>`${i+1}. ${x.name}`).join('\n');$('#propsPrompt'+v).value=`The attached picture is sheet 1 of a set of object sheets — use it only as the drawing style reference (line weight, colours, shading); do not copy its objects. Draw sheet ${v}: a 3×3 grid sheet on a pure white background with NEW kinds of objects for the same place, one clearly different object per cell, in this order:\n${nl}\nLeave any unused cells and especially the bottom-right cell completely empty and white. Each object is centred and fills most of its cell, seen from the front at eye level. ${BASE_RULE} No cast shadow, separate ground patch, background, grid lines, animals, people, logo, or watermark. Keep exactly the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the attached sheet.`;continue}
-   $('#propsPrompt'+v).value=`The attached picture is sheet 1 of a set of object sheets. Draw sheet ${v} of ${N}: the SAME 3×3 grid layout on a pure white background, with the SAME 8 kinds of objects in the SAME cell order:\n${list}\nbut every object must look clearly different from the same cell in the earlier sheet${v>2?'s':''} — a different individual of the same kind: different shape, pose, proportions, branches or details (for example a taller, leaning or wider tree; a rounder or flatter rock), while keeping a similar real size. Leave the bottom-right cell completely empty and white. Each object is centred and fills most of its cell, seen from the front at eye level. ${BASE_RULE} No cast shadow, separate ground patch, background, grid lines, animals, people, logo, or watermark. Keep exactly the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the attached sheet.`}
+    <div id="newKinds${v-1}" class="${cfg.mode==='new'?'':'hidden'}"><label>새 종류 이름과 실제 높이 (한 줄에 하나)</label><textarea id="sheetNames${v-1}" style="min-height:90px">${esc(cfg.text||'')}</textarea></div>
+    <p class="hint">붙일 그림: 작은 소품 판 1(그림풍 본보기 — 같은 창에서 이어서 부탁해도 돼요)</p><textarea id="propsPrompt${v}" readonly></textarea><button class="secondary copy" data-copy="propsPrompt${v}">복사</button></div>`);
+   $('#propsPrompt'+v).value=smallOf(v-1).length?sheetFit(v-1,cfg.mode!=='new'):'(이 판에 들어갈 작은 소품이 없어요)'}
   $$('#moreSheetPrompts .copy').forEach(wireCopy);
-  for(let v=1;v<N;v++){$('#sheetMode'+v).addEventListener('change',()=>{saveSheetCfg();$('#makePrompts').click()});$('#sheetNames'+v).addEventListener('change',()=>{saveSheetCfg();$('#makePrompts').click()})}
-  const bigOf=v=>specsOf(v).map((sp,i)=>({...sp,i,v})).filter(needBig);
-  const big=ns.length?bigOf(0):[];const bigAll=[...Array(N)].flatMap((_,v)=>bigOf(v));
-  $('#bigPlan').classList.toggle('hidden',!big.length);
-  $('#bigPlan').classList.toggle('hidden',!bigAll.length);$('#bigPlan').innerHTML=bigAll.length?`<b>큰 그림이 필요한 소품 — 모두 ${bigAll.length}장${N>1?` (판마다·모양마다 한 장)`:''}</b>: `+bigAll.map(b=>`${N>1?"판"+(b.v+1)+" ":""}${b.i+1}. ${esc(b.name)}(가까이 놓이면 ${nearPx(b.h)>SCENE_PX?'화면 높이를 넘을 만큼':'약 '+Math.round(nearPx(b.h))+'점'})`).join(' · ')+'. 아래 큰 그림 프롬프트로 한 장씩 받아 2단계에서 불러와 주세요. 판에도 함께 그려 두면 먼 곳(작게)에 그 그림을 써도 돼요.':'';
-  $('#bigPrompts').innerHTML=bigAll.map(b=>{const v=b.v;return `<div class="prompt-box"><h3>큰 그림 프롬프트 — ${b.i+1}. ${esc(b.name)}${N>1?` · 판 ${v+1}`:''}</h3>${N>1?`<p class="hint">붙일 그림: 소품 판 ${v+1}(그 판의 ${b.i+1}번 칸과 같은 모양으로 크게)</p>`:''}<textarea id="bigPrompt${v}-${b.i}" readonly></textarea><button class="secondary copy" data-copy="bigPrompt${v}-${b.i}">복사</button></div>`}).join('');
-  bigAll.forEach(b=>{const v=b.v;$(`#bigPrompt${v}-${b.i}`).value=bigPromptText(b.name)+(N>1?` If an object sheet is attached, draw exactly the object in cell ${b.i+1} of that sheet (the same individual shape), only much larger and more detailed.`:'')});
+  for(let v=1;v<N;v++){$('#sheetMode'+v).addEventListener('change',()=>{saveSheetCfg();renderSizePlan();$('#makePrompts').click()});$('#sheetNames'+v).addEventListener('change',()=>{saveSheetCfg();renderSizePlan();$('#makePrompts').click()})}
+  /* 큰 소품(한 장): 같은 종류 판(모양만 다르게)이면 벌마다 한 장씩, 새 종류 판이면 그 판의 큰 소품만 */
+  const bigOf=v=>specsOf(v).map((sp,i)=>({...sp,i,v})).filter(isSingle);
+  const bigAll=[...Array(N)].flatMap((_,v)=>bigOf(v));
+  $('#bigPlan').classList.toggle('hidden',!bigAll.length);$('#bigPlan').innerHTML=bigAll.length?`<b>큰 소품 — 한 장에 하나씩, 모두 ${bigAll.length}장${N>1?` (벌마다 모양을 달리)`:''}</b>: `+bigAll.map(b=>`${esc(b.name)}${N>1?' '+(b.v+1):''}`).join(' · ')+'. 아래 프롬프트로 한 장씩 받아 2단계에서 불러와 주세요.':'';
+  $('#bigPrompts').innerHTML=bigAll.map(b=>{const v=b.v;return `<div class="prompt-box"><h3>③ 큰 소품 한 장 — ${esc(b.name)}${N>1?` · ${v+1}벌`:''}</h3><p class="hint">붙일 그림: ①에서 받은 빈 배경${v&&sheetCfg(v).mode!=='new'?` · 앞 벌에서 받은 같은 소품(모양만 다르게)`:''}</p><textarea id="bigPrompt${v}-${b.i}" readonly></textarea><button class="secondary copy" data-copy="bigPrompt${v}-${b.i}">복사</button></div>`}).join('');
+  bigAll.forEach(b=>{const v=b.v,again=v&&sheetCfg(v).mode!=='new';$(`#bigPrompt${v}-${b.i}`).value=propText(b.name,b.h,again?' If a second picture of the same kind of object is attached, draw a clearly different individual (different shape, pose or proportions) with a similar real size.':'')});
   $$('#bigPrompts .copy').forEach(wireCopy);
-  renderBigFiles();renderFrames();
-  $('#prompts').classList.remove('hidden');
+  renderBigFiles();renderFrames();renderSheetArea();
+  $('#prompts').classList.remove('hidden');countPrompts();
  });
+ /* 글자 수(2026-11-17): 프롬프트 칸마다 글자 수 — 빙은 2000자 넘으면 빨갛게 */
+ function countPrompts(){const A=aiOf();$$('#prompts textarea[readonly]').forEach(t=>{let c=t.nextElementSibling;if(!c||!c.classList.contains('cnt')){c=document.createElement('span');c.className='cnt hint';t.after(c)}const n=t.value.length,over=A.limit&&n>A.limit;c.textContent=n?`${n}자${A.limit?` / ${A.limit}자`:''}${over?' — 너무 길어요. 소품 이름을 줄여 주세요':''}`:'';c.style.color=over?'#a12718':''})}
  /* 밑동(2026-11-09 선생님 결정): 밑동 덮개를 따로 깔지 않고, 소품 그림 자체에 밑동의 흙·풀·이끼·낙엽을 그려 땅에 닿게 함.
     그 밑동은 양옆으로 엷어지며 땅과 만나야 함(세로로 잘린 끝·네모 받침·흙 단면이면 어디에 놓아도 오려 붙인 티) */
- const BASE_RULE='At the bottom of each object draw its own natural base as part of the object: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line. Never end the object with a vertical cut, a slab, a box-shaped base or a soil cross-section.';
+ const BASE_RULE='At the bottom draw its own natural base as part of it: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line — never a vertical cut, a slab, a box-shaped base or a soil cross-section.';
  /* 가장자리 큰 것(2026-11-09 숲 '가까운 줄기'): 위만 그림 테두리에 닿고, 밑동은 흙·이끼에 스며들어 한 줄에서 땅과 만남 */
- function framePromptText(name){return `Use the attached picture only as a drawing style reference (line weight, colours, shading); do not copy its objects. Draw ONE object on a pure white background in a TALL portrait picture (about 2:3): a very close view of the lower part of ${name}, running straight out of the TOP edge of the picture (no crown or top visible). At the bottom it flares out and sinks into the ground: soil, moss, small plants and fallen leaves gather over its base, and everything thins out softly to the left and right, meeting the ground on ONE flat, level line. Only the top edge may touch the border; leave a clear white margin on the left, right and bottom. Never end the base with a vertical cut, a slab, a box-shaped base or a soil cross-section, and no finger-like or claw-like roots. Draw fine detail: this picture will be shown very large at the edge of the scene. Seen from the front at eye level. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Same flat-cartoon style, dark-brown outlines, muted colours, soft shading and upper-left light as the reference.`}
+ function framePromptText(name){return aiText([[WHITE,1],[ref('the background of the place where this object will stand'),1],[`In exactly that style (${PEN}), draw ONE object in a TALL portrait picture (about 2:3): a very close view of the lower part of ${name}, running straight out of the TOP edge of the picture (no crown or top visible).`,1],['At the bottom it flares out and sinks into the ground: soil, moss and fallen leaves gather over its base and thin out softly to the left and right, meeting the ground on ONE flat, level line. Only the top edge may touch the border; leave a clear white margin on the left, right and bottom.',1],[NOFACE,1],[CALM,0],['Draw fine detail: this picture will be shown very large at the edge of the scene. No animals, no people, no text, no frame.',1],...shade(true)])}
  const frameNames=()=>$('#frameNames').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,3);
- function renderFrames(){const fs=frameNames();$('#framePrompts').innerHTML=fs.map((n,j)=>`<div style="margin-top:8px"><b>가장자리 ${j+1}</b><textarea id="framePrompt${j}" readonly></textarea><button class="secondary copy" data-copy="framePrompt${j}">복사</button></div>`).join('');fs.forEach((n,j)=>$('#framePrompt'+j).value=framePromptText(n));$$('#framePrompts .copy').forEach(wireCopy);renderBigFiles()}
- function bigPromptText(name){return `Use the attached picture only as a style reference; do not copy its objects. Draw ONE object on a pure white background, as large as possible, in a picture whose shape suits the object (tall objects in a tall picture, wide objects in a wide picture): ${name}. The whole object must be visible with a clear white margin on all four sides — nothing touches the edge. Seen from the front at eye level. ${BASE_RULE} Draw fine detail: this picture will be shown very large. No cast shadow, background, animals, people, text, logo or watermark. Leave the bottom-right corner empty and white. Use the same flat-cartoon style, dark-brown outlines, muted colours, soft shading, and upper-left light as the reference.`}
+ function renderFrames(){const fs=frameNames();$('#framePrompts').innerHTML=fs.map((n,j)=>`<div style="margin-top:8px"><b>가장자리 ${j+1}</b><textarea id="framePrompt${j}" readonly></textarea><button class="secondary copy" data-copy="framePrompt${j}">복사</button></div>`).join('');fs.forEach((n,j)=>$('#framePrompt'+j).value=framePromptText(n));$$('#framePrompts .copy').forEach(wireCopy);renderBigFiles();countPrompts()}
+ function bigPromptText(name,h){return propText(name,h)}
  /* 판마다 설정(2026-11-09 선생님): 판 2·3은 '판 1과 같은 종류 — 모양만 다르게' 또는 '새 종류'(이름·높이를 따로 적음) */
  function sheetCfg(v){state.sheetCfg=state.sheetCfg||{};return state.sheetCfg[v]||{mode:v===2?'new':'same',text:''}}
  function saveSheetCfg(){state.sheetCfg=state.sheetCfg||{};for(let v=1;v<3;v++){const m=$('#sheetMode'+v),t=$('#sheetNames'+v);if(m)state.sheetCfg[v]={mode:m.value,text:t?t.value:''}}}
@@ -1153,8 +1218,8 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function renderBigFiles(){renderBigFiles0();const fs=frameNames(),wrap=$('#bigFiles');if(fs.length)$('#bigPick').classList.remove('hidden');
   fs.forEach((n,j)=>{const key='frame-'+j,d=document.createElement('div');d.className='prop-card';d.innerHTML=`<strong>가장자리 ${j+1}</strong><p class="small">${esc(n)}</p><input type="file" accept="image/*"><p class="hint">${state.big[key]?`불러옴 · ${state.big[key].naturalWidth}×${state.big[key].naturalHeight}`:'아직 없음'}</p>`;
    d.querySelector('input').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{state.big[key]=await readImage(f);d.querySelector('.hint').textContent=`불러옴 · ${state.big[key].naturalWidth}×${state.big[key].naturalHeight} — '소품 칸 나누고…'를 다시 누르면 반영돼요`}catch(err){d.querySelector('.hint').textContent=err.message}});wrap.appendChild(d)})}
- function renderBigFiles0(){const N=sheetCount(),big=[...Array(N)].flatMap((_,v)=>specsOf(v).map((sp,i)=>({...sp,i,v})).filter(needBig)),wrap=$('#bigFiles');$('#bigPick').classList.toggle('hidden',!big.length);wrap.innerHTML='';
-  big.forEach(b=>{{const v=b.v;const key=bigKey(v,b.i),d=document.createElement('div');d.className='prop-card';d.innerHTML=`<strong>${b.i+1}. ${esc(b.name)}${N>1?` · 판 ${v+1}`:''}</strong><input type="file" accept="image/*"><p class="hint">${state.big[key]?`불러옴 · ${state.big[key].naturalWidth}×${state.big[key].naturalHeight}`:'아직 없음'}</p>`;
+ function renderBigFiles0(){const N=sheetCount(),big=[...Array(N)].flatMap((_,v)=>specsOf(v).map((sp,i)=>({...sp,i,v})).filter(isSingle)),wrap=$('#bigFiles');$('#bigPick').classList.toggle('hidden',!big.length);wrap.innerHTML='';
+  big.forEach(b=>{{const v=b.v;const key=bigKey(v,b.i),d=document.createElement('div');d.className='prop-card';d.innerHTML=`<strong>${esc(b.name)}${N>1?` · ${v+1}벌`:''}</strong><input type="file" accept="image/*"><p class="hint">${state.big[key]?`불러옴 · ${state.big[key].naturalWidth}×${state.big[key].naturalHeight}`:'아직 없음'}</p>`;
    d.querySelector('input').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{state.big[key]=await readImage(f);d.querySelector('.hint').textContent=`불러옴 · ${state.big[key].naturalWidth}×${state.big[key].naturalHeight} — '소품 칸 나누고…'를 다시 누르면 반영돼요`}catch(err){d.querySelector('.hint').textContent=err.message}});wrap.appendChild(d)}})}
  function wireCopy(b){b.addEventListener('click',async()=>{const t=$('#'+b.dataset.copy);try{await navigator.clipboard.writeText(t.value);b.textContent='복사했어요'}catch{t.focus();t.select();document.execCommand('copy');b.textContent='복사했어요'}setTimeout(()=>b.textContent='복사',1600)})}
  $$('.copy').forEach(wireCopy);
@@ -1166,7 +1231,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function canvasDataUrl(im){const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);return c.toDataURL('image/png')}
  async function saveDraft(){
   const props=state.props.map(p=>({name:p.name,slug:p.slug,width:p.width,x:p.x,y:p.y,height:p.height,image:imageDataUrl(p.image),source:imageDataUrl(p.source)}));
-  const draft={version:1,scene:{name:$('#sceneName').value,slug:$('#sceneSlug').value,group:$('#sceneGroup').value,setting:$('#sceneSetting').value,objectNames:$('#objectNames').value,horizon:$('#horizon').value,threshold:$('#threshold').value,neutral:$('#neutral').value,cellMargin:$('#cellMargin').value,brushSize:$('#brushSize').value,brushMode:$('#brushMode').value,step:state.step,notes:$('#reviewNotes').value,checks:$$('.finalCheck').map(c=>c.checked),bgPrompt:$('#bgPrompt').value,preset:$('#placePreset').value,frameNames:$('#frameNames').value,density:$('#density').value,stdPrompt:$('#stdPrompt').value,propsPrompt:$('#propsPrompt').value},bg:state.bg?canvasDataUrl(state.bg):null,bgName:state.bgName,sheet:state.sheet?canvasDataUrl(state.sheet):null,sheetName:state.sheetName,props,sheets:(state.sheets||[]).map(x=>x?canvasDataUrl(x):null),sheetCount:sheetCount(),sheetCfg:(saveSheetCfg(),state.sheetCfg||{}),std:state.std?canvasDataUrl(state.std):null,big:Object.fromEntries(Object.entries(state.big).map(([k,im])=>[k,canvasDataUrl(im)]))};
+  const draft={version:1,scene:{name:$('#sceneName').value,slug:$('#sceneSlug').value,group:$('#sceneGroup').value,setting:$('#sceneSetting').value,objectNames:$('#objectNames').value,horizon:$('#horizon').value,threshold:$('#threshold').value,neutral:$('#neutral').value,cellMargin:$('#cellMargin').value,brushSize:$('#brushSize').value,brushMode:$('#brushMode').value,step:state.step,notes:$('#reviewNotes').value,checks:$$('.finalCheck').map(c=>c.checked),ai:state.ai,single:state.single||{},blueShadow:$('#blueShadow').checked,bgPrompt:$('#bgPrompt').value,preset:$('#placePreset').value,frameNames:$('#frameNames').value,density:$('#density').value,stdPrompt:$('#stdPrompt').value,propsPrompt:$('#propsPrompt').value},bg:state.bg?canvasDataUrl(state.bg):null,bgName:state.bgName,sheet:state.sheet?canvasDataUrl(state.sheet):null,sheetName:state.sheetName,props,sheets:(state.sheets||[]).map(x=>x?canvasDataUrl(x):null),sheetCount:sheetCount(),sheetCfg:(saveSheetCfg(),state.sheetCfg||{}),std:state.std?canvasDataUrl(state.std):null,big:Object.fromEntries(Object.entries(state.big).map(([k,im])=>[k,canvasDataUrl(im)]))};
   download(new Blob([JSON.stringify(draft)],{type:'application/json'}),`${state.slug||'stage'}-work.json`);
  }
  $('#saveDraft').addEventListener('click',async()=>{try{await saveDraft()}catch(err){alert(`작업을 저장하지 못했어요: ${err.message}`)}});
@@ -1176,7 +1241,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   try{
    const d=JSON.parse(await f.text());if(d.version!==1||!d.scene||!Array.isArray(d.props))throw new Error('이 도구에서 저장한 작업 파일이 아니에요.');
    const s=d.scene;$('#sceneName').value=s.name||'';$('#sceneSlug').value=s.slug||'new-stage';$('#sceneGroup').value=s.group||'nature';$('#sceneSetting').value=s.setting||'';$('#objectNames').value=s.objectNames||'';$('#horizon').value=s.horizon||36;$('#threshold').value=s.threshold||238;$('#thresholdValue').value=$('#threshold').value;$('#neutral').value=s.neutral||32;$('#neutralValue').value=$('#neutral').value;$('#cellMargin').value=s.cellMargin||4;$('#brushSize').value=s.brushSize||16;$('#brushValue').value=$('#brushSize').value;$('#brushMode').value=s.brushMode||'erase';$('#reviewNotes').value=s.notes||'';
-   state.name=s.name||'';state.slug=s.slug||'new-stage';state.group=s.group||'nature';state.setting=s.setting||'';state.horizon=(Number(s.horizon)||36)/100;state.bg=d.bg?await imageFromUrl(d.bg):null;state.bgName=d.bgName||'';state.sheet=d.sheet?await imageFromUrl(d.sheet):null;state.sheetName=d.sheetName||'';state.std=d.std?await imageFromUrl(d.std):null;state.sheets=[];for(const [k,u] of (d.sheets||[]).entries())state.sheets[k]=u?await imageFromUrl(u):null;if(d.sheetCount)$('#sheetCount').value=d.sheetCount;state.sheetCfg=d.sheetCfg||{};state.big={};for(const [k,u] of Object.entries(d.big||{}))state.big[k]=await imageFromUrl(u);
+   state.single=s.single||{};if(s.ai){const r=$$('#aiPick input').find(x=>x.value===s.ai);if(r)r.checked=true}if(s.blueShadow!=null)$('#blueShadow').checked=s.blueShadow;syncAI();renderSizePlan();state.name=s.name||'';state.slug=s.slug||'new-stage';state.group=s.group||'nature';state.setting=s.setting||'';state.horizon=(Number(s.horizon)||36)/100;state.bg=d.bg?await imageFromUrl(d.bg):null;state.bgName=d.bgName||'';state.sheet=d.sheet?await imageFromUrl(d.sheet):null;state.sheetName=d.sheetName||'';state.std=d.std?await imageFromUrl(d.std):null;state.sheets=[];for(const [k,u] of (d.sheets||[]).entries())state.sheets[k]=u?await imageFromUrl(u):null;if(d.sheetCount)$('#sheetCount').value=d.sheetCount;state.sheetCfg=d.sheetCfg||{};state.big={};for(const [k,u] of Object.entries(d.big||{}))state.big[k]=await imageFromUrl(u);
    state.props=[];for(const p of d.props){const im=await imageFromUrl(p.image),src=await imageFromUrl(p.source),c=document.createElement('canvas'),cx=c.getContext('2d',{willReadFrequently:true});c.width=im.naturalWidth;c.height=im.naturalHeight;cx.drawImage(im,0,0);const image=cx.getImageData(0,0,c.width,c.height),sc=document.createElement('canvas'),sx=sc.getContext('2d',{willReadFrequently:true});sc.width=src.naturalWidth;sc.height=src.naturalHeight;sx.drawImage(src,0,0);const source=sx.getImageData(0,0,sc.width,sc.height);state.props.push({...p,image,source,height:p.height||[.5,1]})}
    state.selected=0;state.drag=null;$('#bgInfo').textContent=state.bg?bgDescription(state.bg,state.bgName):'무대 배경은 4:3 가로 그림이어야 해요.';$('#sheetInfo').textContent=state.sheet?`${state.sheetName} · ${state.sheet.naturalWidth}×${state.sheet.naturalHeight}`:'이름 순서대로 왼쪽 위부터 채워 주세요. 오른쪽 아래는 비워 둬요.';
    $('#bgPrompt').value=s.bgPrompt||'';if(s.preset){$('#placePreset').value=s.preset;state.preset=PLACES[s.preset]||null;hidePlan(state.preset)}$('#frameNames').value=s.frameNames||'';$('#density').value=s.density||'normal';$('#stdPrompt').value=s.stdPrompt||'';$('#propsPrompt').value=s.propsPrompt||'';$('#prompts').classList.toggle('hidden',!s.bgPrompt&&!s.propsPrompt);$$('.finalCheck').forEach((c,i)=>c.checked=Boolean(s.checks&&s.checks[i]));
@@ -1221,7 +1286,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  let peekT=0;function threshPreview(){clearTimeout(peekT);peekT=setTimeout(()=>{const thr=Number($('#threshold').value),neu=Number($('#neutral').value);
   $('#swatches').innerHTML=SWATCH.map(([n,[r,g,b]])=>{const gone=(r+g+b)/3>=thr&&Math.max(r,g,b)-Math.min(r,g,b)<=neu;return `<div style="border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-size:12px;min-width:74px;text-align:center"><div style="height:22px;border-radius:4px;background:rgb(${r},${g},${b});border:1px solid #ccc;margin-bottom:3px"></div>${n}<br><b style="color:${gone?'#a12718':'#315c48'}">${gone?'지워짐':'남음'}</b></div>`}).join('');
   if(!state.sheet){$('#peekWrap').classList.add('hidden');return}$('#peekWrap').classList.remove('hidden');
-  const sel=$('#peekCell'),ns=names(),cnt=Math.max(1,Math.min(8,ns.length||8));if(sel.options.length!==cnt){sel.innerHTML='';for(let i=0;i<cnt;i++)sel.add(new Option(`${i+1}. ${ns[i]||'칸 '+(i+1)}`,i))}
+  const sel=$('#peekCell'),sm=specs().map((sp,i)=>({sp,i})).filter(x=>!isSingle(x.sp)).slice(0,8);if(!sm.length){$('#peekWrap').classList.add('hidden');return}if(sel.options.length!==sm.length){sel.innerHTML='';sm.forEach((x,k)=>sel.add(new Option(`${k+1}. ${x.sp.name}`,x.i)))}
   const i=Number(sel.value)||0,pr=cropObject(state.sheet,i,thr,neu,Math.max(0,Number($('#cellMargin').value)||0)),im=pr.image,d=im.data;let gone=0,part=0,tot=im.width*im.height;
   for(let k=0;k<tot;k++){const a=d[k*4+3];if(a===0)gone++;else if(a<255)part++}
   const c=$('#cellPeek');c.width=im.width;c.height=im.height;c.getContext('2d').putImageData(im,0,0);
@@ -1244,6 +1309,10 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   p.image=cut(p.image);p.source=cut(p.source)}
  function inkBox(p,pad=2){const {width:w,height:h,data:d}=p.image;let x0=w,y0=h,x1=-1,y1=-1;for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4+3]>8){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}return x1<0?null:[x0-pad,y0-pad,x1+1+pad,y1+1+pad]}
  function fitProp(p){const b=inkBox(p);if(b)cropProp(p,...b)}
+ /* 파랑 그림자(2026-11-17, tools/flat-shadow.py --key blue와 같은 생각): 파랑으로 받은 그림자 모양만 써서 검정 20%로 고르게 — 무대가 그림자 땅 층으로 나눠 깖(ownShadow).
+    파랑과 흰 종이가 섞인 가장자리도 파랑 몫만큼 그림자로 */
+ let shadowFound=false;
+ function blueShadow(im){shadowFound=false;if(!$('#blueShadow').checked)return im;const d=im.data;for(let j=0;j<d.length;j+=4){const r=d[j],g=d[j+1],b=d[j+2],br=b-r;if(br>70&&b>120&&b>=g){d[j]=0;d[j+1]=0;d[j+2]=0;d[j+3]=51;shadowFound=true}else if(br>18&&b>150&&b>=g){d[j]=0;d[j+1]=0;d[j+2]=0;d[j+3]=Math.round(51*Math.min(1,(br-18)/52))}}return im}   /* 그림자 칸이 꺼져 있으면(물속·하늘 — 파란 소품) 안 바꿈. 파랑과 흰 종이가 섞인 옅은 파란 테두리는 파랑 몫만큼 옅은 그림자로 */
  function removeWhiteBackground(im,threshold,neutral){
   const {width:w,height:h,data:d}=im,n=w*h,allow=new Uint8Array(n),seen=new Uint8Array(n),q=new Int32Array(n);let head=0,tail=0;
   for(let p=0,j=0;p<n;p++,j+=4){const r=d[j],g=d[j+1],b=d[j+2],hi=Math.max(r,g,b),lo=Math.min(r,g,b);if((r+g+b)/3>=threshold&&hi-lo<=neutral)allow[p]=1}
@@ -1260,26 +1329,28 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  }
  function cropObject(sheet,index,threshold,neutral,margin,v=0){
   const one=state.big[bigKey(v,index)];if(one)sheet=one;   /* 큰 그림을 불러온 소품은 그 그림 전체 */
-  const sw=sheet.naturalWidth,sh=sheet.naturalHeight,col=one?0:index%3,row=one?0:Math.floor(index/3);
+  const cell=specsOf(v).slice(0,index).filter(sp=>!isSingle(sp)).length;   /* 판의 칸 = 판 소품(작은 소품) 가운데 몇째(2026-11-17 — 큰 소품은 한 장으로 받아 칸을 안 씀) */
+  const sw=sheet.naturalWidth,sh=sheet.naturalHeight,col=one?0:cell%3,row=one?0:Math.floor(cell/3);
   const G=one?{xs:[0,sw],ys:[0,sh]}:gutters(sheet,threshold,neutral),gx=one?[0,sw]:G.xs,gy=one?[0,sh]:G.ys;
   const x=gx[col]+margin,y=gy[row]+margin,w=gx[col+1]-gx[col]-margin*2,h=gy[row+1]-gy[row]-margin*2;
   const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(sheet,x,y,w,h,0,0,w,h);
-  const im=removeWhiteBackground(cx.getImageData(0,0,w,h),threshold,neutral);
+  const raw=cx.getImageData(0,0,w,h),im=removeWhiteBackground(blueShadow(cx.getImageData(0,0,w,h)),threshold,neutral);   /* raw: 받은 그대로(원본 색 붓) */
   cx.putImageData(im,0,0);
   const sp=specsOf(v)[index]||{},name=sp.name||`소품 ${index+1}`,isNew=v&&sheetCfg(v).mode==='new';
   const N=sheetCount();
-  return {name:N>1&&!isNew?`${name} ${v+1}`:name,kind:isNew?`k${v+1}-${index+1}`:`k${index+1}`,kindName:name,v,cell:index,big:Boolean(one),slug:N>1?`item-${String(index+1).padStart(2,'0')}-${v+1}`:`item-${String(index+1).padStart(2,'0')}`,source:new ImageData(new Uint8ClampedArray(im.data),w,h),image:im,width:.18,x:.15+(index%4)*.22,y:.9-Math.floor(index/4)*.2,height:sp.h?[...sp.h]:[.5,1]};
+  return {name:N>1&&!isNew?`${name} ${v+1}`:name,kind:isNew?`k${v+1}-${index+1}`:`k${index+1}`,kindName:name,v,cell:index,big:Boolean(one),slug:N>1?`item-${String(index+1).padStart(2,'0')}-${v+1}`:`item-${String(index+1).padStart(2,'0')}`,source:new ImageData(new Uint8ClampedArray(im.data),w,h),raw,image:im,shadowed:shadowFound,width:.18,x:.15+(index%4)*.22,y:.9-Math.floor(index/4)*.2,height:sp.h?[...sp.h]:[.5,1]};
  }
  $('#extract').addEventListener('click',()=>{
-  if(!state.sheet){setStatus($('#loadStatus'),'먼저 소품 판 그림을 불러와 주세요.',true);return}
   const ns=names();if(!ns.length){setStatus($('#loadStatus'),'소품 이름을 한 개 이상 적어 주세요.',true);return}
-  if(state.sheet.naturalWidth<3||state.sheet.naturalHeight<3){setStatus($('#loadStatus'),'3×3으로 나눌 수 있는 크기의 그림을 선택해 주세요.',true);return}
+  const anySmall=[...Array(sheetCount())].some((_,v)=>smallOf(v).length);
+  if(anySmall&&!state.sheet){setStatus($('#loadStatus'),'먼저 작은 소품 3×3 판을 불러와 주세요.',true);return}
+  if(anySmall&&(state.sheet.naturalWidth<3||state.sheet.naturalHeight<3)){setStatus($('#loadStatus'),'3×3으로 나눌 수 있는 크기의 그림을 선택해 주세요.',true);return}
   const margin=Math.max(0,Math.min(30,Number($('#cellMargin').value)||0)),max=Math.min(8,ns.length);
-  const sheets=[state.sheet,...(state.sheets||[]).slice(1,sheetCount())];for(let v=sheets.length;v<sheetCount();v++)sheets.push(null);const miss=sheets.findIndex(x=>!x);if(miss>0){setStatus($('#loadStatus'),`소품 판 ${miss+1}을 불러와 주세요(판 수를 줄여도 돼요).`,true);return}
-  saveSheetCfg();state.props=[];for(let v=0;v<sheets.length;v++)for(let i=0,mv=Math.min(8,specsOf(v).length||max);i<mv;i++){const pr=cropObject(sheets[v],i,Number($('#threshold').value),Number($('#neutral').value),margin,v);pr.x=Math.min(.92,pr.x+v*.03);removeSpecks(pr);dropGroundLine(pr);defringe(pr,2);fitProp(pr);state.props.push(pr)}
+  const sheets=[state.sheet,...(state.sheets||[]).slice(1,sheetCount())];for(let v=sheets.length;v<sheetCount();v++)sheets.push(null);const miss=sheets.findIndex((x,v)=>!x&&smallOf(v).length);if(miss>0){setStatus($('#loadStatus'),`소품 판 ${miss+1}을 불러와 주세요(판 수를 줄여도 돼요).`,true);return}
+  saveSheetCfg();state.props=[];const skipped=[];for(let v=0;v<sheets.length;v++)for(let i=0,mv=specsOf(v).length;i<mv;i++){const sp=specsOf(v)[i];if(isSingle(sp)?!state.big[bigKey(v,i)]:(!sheets[v]||specsOf(v).slice(0,i).filter(q=>!isSingle(q)).length>=8)){skipped.push(sp.name+(sheets.length>1?' '+(v+1):''));continue}const pr=cropObject(sheets[v],i,Number($('#threshold').value),Number($('#neutral').value),margin,v);pr.x=Math.min(.92,pr.x+v*.03);removeSpecks(pr);dropGroundLine(pr);defringe(pr,2);fitProp(pr);state.props.push(pr)}
   frameNames().forEach((n,j)=>{const img=state.big['frame-'+j];if(!img)return;state.big['Fr'+j+'-0']=img;const pr=cropObject(img,0,Number($('#threshold').value),Number($('#neutral').value),margin,'Fr'+j);
    Object.assign(pr,{name:`가장자리 ${j+1}`,kind:'frame',kindName:'가장자리',slug:`edge-${j+1}`,role:'frame',height:[4,6],x:j%2?.9:.1,y:.98});dropGroundLine(pr);defringe(pr,2);fitProp(pr);state.props.push(pr)});
-  state.selected=0;renderPropCards();setStatus($('#loadStatus'),`${state.props.length}개 칸을 나눴어요. 흰색으로 된 실제 소품 부분이 투명해지지 않았는지 꼭 살펴봐 주세요.`);
+  state.selected=0;renderPropCards();setStatus($('#loadStatus'),`소품 ${state.props.length}개를 잘랐어요${state.props.some(p=>p.shadowed)?' (파랑 그림자는 옅은 회색 그림자로 바꿈)':''}. 흰색으로 된 실제 소품 부분이 투명해지지 않았는지 살펴봐 주세요.${skipped.length?' 아직 그림이 없어 뺀 것: '+skipped.join(' · '):''}`,!state.props.length);
  });
  let editZoom=1;
  const editViewport=$('#editViewport'),editCanvas=$('#editCanvas');
@@ -1287,6 +1358,10 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function changeEditZoom(next,x,y){const before=editCanvas.getBoundingClientRect(),box=editViewport.getBoundingClientRect(),ax=x-box.left-editViewport.clientLeft,ay=y-box.top-editViewport.clientTop;if(!before.width)return;editZoom=next;fitEditCanvas();const scale=editCanvas.getBoundingClientRect().width/before.width;editViewport.scrollLeft=(editViewport.scrollLeft+ax)*scale-ax;editViewport.scrollTop=(editViewport.scrollTop+ay)*scale-ay}
  new ResizeObserver(fitEditCanvas).observe(editViewport);
  editViewport.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();const factor=e.deltaY<0?1.15:1/1.15;changeEditZoom(Math.max(.5,Math.min(4,editZoom*factor)),e.clientX,e.clientY)},{passive:false});
+ /* 손질 바탕(2026-11-17, touchup.html과 같음): 배경 땅색(배경 그림 맨 아래 가운데 색)·어두운 색에서 흰 테두리가 잘 보임 */
+ function groundRGB(){if(!state.bg)return '200,180,140';const c=document.createElement('canvas');c.width=40;c.height=30;const x=c.getContext('2d');x.drawImage(state.bg,0,0,40,30);const d=x.getImageData(12,26,16,4).data;let r=0,g=0,b=0,n=d.length/4;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2]}return `${Math.round(r/n)},${Math.round(g/n)},${Math.round(b/n)}`}
+ function setEditBg(m){state.editBg=m;editViewport.classList.toggle('checker',m==='checker');editViewport.style.backgroundColor=m==='ground'?`rgb(${groundRGB()})`:m==='dark'?'#3d352e':'';$$('.editBg').forEach(b=>b.classList.toggle('primary',b.dataset.bg===m))}
+ $$('.editBg').forEach(b=>b.addEventListener('click',()=>setEditBg(b.dataset.bg)));
  $('#resetEditZoom').addEventListener('click',()=>{changeEditZoom(1,editViewport.getBoundingClientRect().left+editViewport.clientWidth/2,editViewport.getBoundingClientRect().top+editViewport.clientHeight/2)});
  function paint(canvas,im){canvas.width=im.width;canvas.height=im.height;canvas.getContext('2d').putImageData(im,0,0);if(canvas===editCanvas)fitEditCanvas()}
  function renderPropCards(){
@@ -1308,9 +1383,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   try{
    const img=await readImage(file),c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
    const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0);const replacement=cx.getImageData(0,0,c.width,c.height);
-   const threshold=Number($('#itemThreshold').value);removeWhiteBackground(replacement,threshold,Number($('#neutral').value));
+   const threshold=Number($('#itemThreshold').value);removeWhiteBackground(blueShadow(replacement),threshold,Number($("#neutral").value));
    if(!replacement.data.some((value,index)=>index%4===3&&value>8))throw new Error('흰 바탕을 지운 뒤 남는 그림이 없어요. 흰 바탕 기준을 낮추거나 다른 그림을 골라 주세요.');
-   pushUndo(p);p.threshold=threshold;p.source=copyImageData(replacement);p.image=copyImageData(replacement);defringe(p,2);
+   pushUndo(p);p.threshold=threshold;p.raw=cx.getImageData(0,0,c.width,c.height);p.source=copyImageData(replacement);p.image=copyImageData(replacement);defringe(p,2);
    $('#replaceStatus').textContent=`${p.name} 그림을 바꿨어요. 마음에 들지 않으면 '되돌리기'를 누르세요.`;
    renderPropCards();drawScene();
   }catch(err){$('#replaceStatus').textContent=`그림을 바꾸지 못했어요: ${err.message}`}
@@ -1325,11 +1400,14 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   for(let i=0;i<tl;i++){const j=q[i]*4,r=d[j],g=d[j+1],b=d[j+2],a=1-Math.min(r,g,b)/255;if(a<.12){d[j+3]=0;continue}const aa=Math.max(.12,a);d[j]=Math.max(0,Math.min(255,(r-255*(1-aa))/aa));d[j+1]=Math.max(0,Math.min(255,(g-255*(1-aa))/aa));d[j+2]=Math.max(0,Math.min(255,(b-255*(1-aa))/aa));d[j+3]=Math.round(aa*255)}
   return tl}
  $('#holeTol').addEventListener('input',e=>$('#holeTolValue').value=e.target.value);
+ /* 구멍 메우기(touchup.html과 같음): 둘레의 불투명한 점 색을 가까울수록 크게 섞어 채움 — 지워져 뚫린 잎·껍질 */
+ function holeAt(d,W,H,x,y,k){for(const R of [4,9]){let r=0,g=0,b=0,w=0;for(let j=-R;j<=R;j++){const yy=y+j;if(yy<0||yy>=H)continue;for(let i=-R;i<=R;i++){const xx=x+i;if(xx<0||xx>=W||i*i+j*j>R*R)continue;const q=(yy*W+xx)*4;if(d[q+3]<250)continue;const ww=1/(1+i*i+j*j);r+=d[q]*ww;g+=d[q+1]*ww;b+=d[q+2]*ww;w+=ww}}
+  if(w>0){d[k]=r/w;d[k+1]=g/w;d[k+2]=b/w;d[k+3]=255;return}}}
  function editAt(e){
   const p=state.props[state.selected],canvas=$('#editCanvas');if(!p)return;
   const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height,x=Math.floor((e.clientX-r.left)*sx),y=Math.floor((e.clientY-r.top)*sy),rad=Math.max(1,Number($('#brushSize').value)/2);
-  const d=p.image.data,src=p.source.data,restore=$('#brushMode').value==='restore',whiteOnly=$('#brushMode').value==='white',thr=Number($('#holeTol').value),neu=(Number($('#neutral').value)||32)+20;
-  for(let yy=Math.max(0,Math.floor(y-rad));yy<Math.min(p.image.height,Math.ceil(y+rad));yy++)for(let xx=Math.max(0,Math.floor(x-rad));xx<Math.min(p.image.width,Math.ceil(x+rad));xx++){if((xx-x)**2+(yy-y)**2>rad*rad)continue;const k=(yy*p.image.width+xx)*4;if(restore){d[k]=src[k];d[k+1]=src[k+1];d[k+2]=src[k+2];d[k+3]=src[k+3]}else if(whiteOnly){const r=d[k],g=d[k+1],b=d[k+2];if(d[k+3]>8&&(r+g+b)/3>=thr&&Math.max(r,g,b)-Math.min(r,g,b)<=neu){/* 흰색과 섞인 만큼만 투명하게(테두리 계단 없이) */const a=1-Math.min(r,g,b)/255;if(a<.12)d[k+3]=0;else{const aa=a;d[k]=Math.max(0,Math.min(255,(r-255*(1-aa))/aa));d[k+1]=Math.max(0,Math.min(255,(g-255*(1-aa))/aa));d[k+2]=Math.max(0,Math.min(255,(b-255*(1-aa))/aa));d[k+3]=Math.min(d[k+3],Math.round(aa*255))}}}else d[k+3]=0}
+  const d=p.image.data,src=p.source.data,restore=$('#brushMode').value==='restore',whiteOnly=$('#brushMode').value==='white',origM=$('#brushMode').value==='orig'&&p.raw,fillM=$('#brushMode').value==='fill',W0=p.image.width,H0=p.image.height,thr=Number($('#holeTol').value),neu=(Number($('#neutral').value)||32)+20;
+  for(let yy=Math.max(0,Math.floor(y-rad));yy<Math.min(p.image.height,Math.ceil(y+rad));yy++)for(let xx=Math.max(0,Math.floor(x-rad));xx<Math.min(p.image.width,Math.ceil(x+rad));xx++){if((xx-x)**2+(yy-y)**2>rad*rad)continue;const k=(yy*p.image.width+xx)*4;if(origM){const o=p.raw.data;d[k]=o[k];d[k+1]=o[k+1];d[k+2]=o[k+2];d[k+3]=255}else if(fillM){if(d[k+3]<250)holeAt(d,W0,H0,xx,yy,k)}else if(restore){d[k]=src[k];d[k+1]=src[k+1];d[k+2]=src[k+2];d[k+3]=src[k+3]}else if(whiteOnly){const r=d[k],g=d[k+1],b=d[k+2];if(d[k+3]>8&&(r+g+b)/3>=thr&&Math.max(r,g,b)-Math.min(r,g,b)<=neu){/* 흰색과 섞인 만큼만 투명하게(테두리 계단 없이) */const a=1-Math.min(r,g,b)/255;if(a<.12)d[k+3]=0;else{const aa=a;d[k]=Math.max(0,Math.min(255,(r-255*(1-aa))/aa));d[k+1]=Math.max(0,Math.min(255,(g-255*(1-aa))/aa));d[k+2]=Math.max(0,Math.min(255,(b-255*(1-aa))/aa));d[k+3]=Math.min(d[k+3],Math.round(aa*255))}}}else d[k+3]=0}
   $('#editCanvas').getContext('2d').putImageData(p.image,0,0);drawScene();
  }
  /* 구역 남기기(2026-11-09 선생님): 네모를 끌어 소품의 실제 폭·높이만 남기고 밖은 지움 — 옆 칸 글자·티끌이 따라오지 않고, 밑동·크기 셈의 오차가 줄어듦 */
@@ -1373,7 +1451,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  /* 작은 조각 지우기: 붙어 있는 덩어리 중 가장 큰 것의 4%보다 작은 덩어리(옆 칸 글자·티끌)를 지움. 칸을 나눌 때 저절로 한 번 함 */
  function removeSpecks(p,keep=.04){const {width:w,height:h,data:d}=p.image,n=w*h,lab=new Int32Array(n),q=new Int32Array(n),sizes=[0];let id=0;
   for(let s0=0;s0<n;s0++){if(lab[s0]||d[s0*4+3]<=100)continue;id++;let hd=0,tl=0,cnt=0;q[tl++]=s0;lab[s0]=id;while(hd<tl){const s1=q[hd++];cnt++;const x=s1%w,y=(s1/w)|0;for(const t of [x?s1-1:-1,x<w-1?s1+1:-1,y?s1-w:-1,y<h-1?s1+w:-1])if(t>=0&&!lab[t]&&d[t*4+3]>100){lab[t]=id;q[tl++]=t}}sizes.push(cnt)}
-  const big=Math.max(0,...sizes);let removed=0;for(let s1=0;s1<n;s1++){const L=lab[s1];if(L&&sizes[L]<big*keep){d[s1*4+3]=0;removed++}else if(!L&&d[s1*4+3]>0&&d[s1*4+3]<=100){/* 덩어리에 붙지 않은 옅은 점 */const x=s1%w,y=(s1/w)|0;let near=false;for(let dy=-2;dy<=2&&!near;dy++)for(let dx=-2;dx<=2;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&yy>=0&&xx<w&&yy<h){const L2=lab[yy*w+xx];if(L2&&sizes[L2]>=big*keep){near=true;break}}}if(!near){d[s1*4+3]=0;removed++}}}
+  const big=Math.max(0,...sizes);let removed=0;for(let s1=0;s1<n;s1++){const L=lab[s1];if(L&&sizes[L]<big*keep){d[s1*4+3]=0;removed++}else if(!L&&d[s1*4+3]>0&&d[s1*4+3]<=100&&!(d[s1*4]<40&&d[s1*4+1]<40&&d[s1*4+2]<40)){/* 덩어리에 붙지 않은 옅은 점(그림자 점 — 옅은 검정 — 은 남김, 2026-11-17) */const x=s1%w,y=(s1/w)|0;let near=false;for(let dy=-2;dy<=2&&!near;dy++)for(let dx=-2;dx<=2;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&yy>=0&&xx<w&&yy<h){const L2=lab[yy*w+xx];if(L2&&sizes[L2]>=big*keep){near=true;break}}}if(!near){d[s1*4+3]=0;removed++}}}
   return removed}
  /* 테두리 흰 기 정리(2026-11-09 선생님: 흰 바탕 기준을 낮추면 연한 색까지 지워짐 — 흰색만 지워져야 함):
     투명한 바깥과 붙은 테두리 점 가운데 색이 거의 없고(채도 낮음) 밝은 점만, 흰색과 섞인 비율만큼 투명하게. 한 겹씩 n번 */
@@ -1397,7 +1475,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function stretchReport(){const c=canvas;if(!state.bg)return '';const bad=state.props.filter(p=>p.image&&stretchOf(p,c)>STRETCH);return bad.length?'흐려질 수 있어요(빨간 점선): '+bad.map(p=>`${p.name} ×${stretchOf(p,c).toFixed(1)}`).join(' · ')+' — 1단계 큰 그림 프롬프트로 큰 그림을 받아 2단계에서 불러와 주세요.':''}
  function drawScene(target=canvas){
   const bg=state.bg;if(!bg)return;
-  const c=target,ctx=c.getContext('2d');c.width=bg.naturalWidth;c.height=bg.naturalHeight;ctx.drawImage(bg,0,0,c.width,c.height);
+  const c=target,ctx=c.getContext('2d');c.width=bg.naturalWidth;c.height=bg.naturalHeight;ctx.drawImage(bg,0,0,c.width,c.height);if(target===canvas)fitScene();
   if(target===canvas){const r=stretchReport();if(r)setStatus($('#layoutStatus'),r,true)}
   state.props.map((p,i)=>({p,i})).sort((a,b)=>a.p.y-b.p.y).forEach(({p,i})=>{if(!p.image)return;const tmp=document.createElement('canvas');paint(tmp,p.image);const w=Math.max(1,c.width*p.width),h=w*p.image.height/p.image.width,x=c.width*p.x-w/2,y=c.height*p.y-h;ctx.drawImage(tmp,x,y,w,h);const k=stretchOf(p,c);if(target===canvas&&k>STRETCH){ctx.save();ctx.strokeStyle='#e0533a';ctx.lineWidth=Math.max(2,c.width/400);ctx.setLineDash([4,4]);ctx.strokeRect(x,y,w,h);ctx.restore()}if(target===canvas&&i===state.selected){ctx.save();ctx.strokeStyle='#ffcb59';ctx.lineWidth=Math.max(2,c.width/500);ctx.setLineDash([8,5]);ctx.strokeRect(x,y,w,h);ctx.restore()}});
  }
@@ -1411,9 +1489,17 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function syncLayout(){const p=state.props[state.selected];if(!p)return;p.x=$('#posX').value/100;p.y=$('#posY').value/100;p.width=$('#itemWidth').value/100;const card=$$('#layoutCards .prop-card')[state.selected];if(card){const v=card.querySelectorAll('input');v[0].value=$('#posX').value;v[1].value=$('#posY').value;v[2].value=$('#itemWidth').value}drawScene()}
  ['posX','posY','itemWidth'].forEach(id=>$('#'+id).addEventListener('input',syncLayout));
  $('#horizon').addEventListener('input',e=>{state.horizon=e.target.value/100});
- canvas.addEventListener('pointerdown',e=>{if(!state.bg)return;const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;for(let i=state.props.length-1;i>=0;i--){const p=state.props[i],w=p.width,h=w*p.image.height/p.image.width;if(x>=p.x-w/2&&x<=p.x+w/2&&y>=p.y-h&&y<=p.y){state.selected=i;state.drag={x:p.x,y:p.y,px:x,py:y};selectLayout(i);renderLayoutCards();canvas.setPointerCapture(e.pointerId);break}}});
- canvas.addEventListener('pointermove',e=>{if(!state.drag)return;const r=canvas.getBoundingClientRect(),p=state.props[state.selected];p.x=Math.max(-.25,Math.min(1.25,state.drag.x+(e.clientX-r.left)/r.width-state.drag.px));p.y=Math.max(0,Math.min(1.2,state.drag.y+(e.clientY-r.top)/r.height-state.drag.py));selectLayout(state.selected);drawScene()});
- canvas.addEventListener('pointerup',()=>state.drag=null);canvas.addEventListener('pointercancel',()=>state.drag=null);
+ /* 확대·화면 옮기기(2026-11-17 선생님: 마우스로 끌고 Ctrl로 확대해 보면서) */
+ let sceneZoom=1;const sceneVP=$('#sceneViewport');
+ function fitScene(){if(!canvas.width)return;const base=Math.max(1,Math.min(canvas.width,sceneVP.clientWidth-16));canvas.style.width=`${base*sceneZoom}px`;$('#sceneZoomValue').value=`${Math.round(sceneZoom*100)}%`}
+ function zoomScene(next,cx,cy){const before=canvas.getBoundingClientRect(),box=sceneVP.getBoundingClientRect(),ax=cx-box.left,ay=cy-box.top;if(!before.width)return;sceneZoom=next;fitScene();const k=canvas.getBoundingClientRect().width/before.width;sceneVP.scrollLeft=(sceneVP.scrollLeft+ax)*k-ax;sceneVP.scrollTop=(sceneVP.scrollTop+ay)*k-ay}
+ new ResizeObserver(fitScene).observe(sceneVP);
+ sceneVP.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();zoomScene(Math.max(1,Math.min(6,sceneZoom*(e.deltaY<0?1.15:1/1.15))),e.clientX,e.clientY)},{passive:false});
+ $('#resetSceneZoom').addEventListener('click',()=>{sceneZoom=1;fitScene();sceneVP.scrollLeft=sceneVP.scrollTop=0});
+ document.addEventListener('keydown',e=>{if(state.step!==3||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;const p=state.props[state.selected],dx={ArrowLeft:-1,ArrowRight:1}[e.key]||0,dy={ArrowUp:-1,ArrowDown:1}[e.key]||0;if(!p||!(dx||dy))return;e.preventDefault();const st=e.shiftKey?.02:.004;p.x=Math.max(-.25,Math.min(1.25,p.x+dx*st));p.y=Math.max(0,Math.min(1.2,p.y+dy*st));selectLayout(state.selected);drawScene()});
+ canvas.addEventListener('pointerdown',e=>{if(!state.bg)return;const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;state.pan={cx:e.clientX,cy:e.clientY,sl:sceneVP.scrollLeft,st:sceneVP.scrollTop};for(let i=state.props.length-1;i>=0;i--){const p=state.props[i],w=p.width,h=w*p.image.height/p.image.width;if(x>=p.x-w/2&&x<=p.x+w/2&&y>=p.y-h&&y<=p.y){state.selected=i;state.pan=null;state.drag={x:p.x,y:p.y,px:x,py:y};selectLayout(i);renderLayoutCards();canvas.setPointerCapture(e.pointerId);break}}if(state.pan){sceneVP.classList.add('panning');canvas.setPointerCapture(e.pointerId)}});
+ canvas.addEventListener('pointermove',e=>{if(state.pan&&!state.drag){sceneVP.scrollLeft=state.pan.sl-(e.clientX-state.pan.cx);sceneVP.scrollTop=state.pan.st-(e.clientY-state.pan.cy);return}if(!state.drag)return;const r=canvas.getBoundingClientRect(),p=state.props[state.selected];p.x=Math.max(-.25,Math.min(1.25,state.drag.x+(e.clientX-r.left)/r.width-state.drag.px));p.y=Math.max(0,Math.min(1.2,state.drag.y+(e.clientY-r.top)/r.height-state.drag.py));selectLayout(state.selected);drawScene()});
+ const endDrag=()=>{state.drag=null;state.pan=null;sceneVP.classList.remove('panning')};canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
  /* 밑동 스며들기(2026-11-10 선생님 — '밑동의 일정 부분까지 그라데이션 지우기'): 맨 아래 5%에서 밑동 흙 색을 재고, 그 색과 비슷한 점만
     아래로 갈수록·가장자리에 가까울수록 투명하게(몸통은 그대로), 밑동 끝 가는 선도 옅게. tools/soak-base.py와 같은 셈. 밑동 높이는 스며들기 전에 잰 값을 씀 */
  const soakOn=p=>$('#soak')&&$('#soak').checked&&p.role!=='frame', soakBand=()=>Math.max(.04,Math.min(.4,Number(($('#soakBand')||{}).value||16)/100));
@@ -1449,7 +1535,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   return new Blob([...chunks,...central,...end],{type:'application/zip'});
  }
  function stageConfig(){
-  const items={};for(const p of state.props){const t=trim(p),slug=p.slug;const real=p.height.map(v=>Math.max(.01,Number(v)||.1));items[slug]=Object.assign({name:p.name,real,bed:'ground',base:t.base,foot:t.foot},p.kind?{kind:p.kind,kindName:p.kindName}:{},soakOn(p)?{soak:soakBand()}:{},p.role==='frame'?{role:'frame',frameShow:.55,frameY:[.96,1]}:{},(real[1]>=1.5&&p.role!=='frame')?{role:'big'}:{},p.ground?{ground:p.ground}:{})   /* 큰 요소(덩어리의 중심)는 1.5m 넘는 것만 — 모두 big이면 무대가 큰 것·작은 것으로 덩어리를 못 지음 */}
+  const items={};for(const p of state.props){const t=trim(p),slug=p.slug;const real=p.height.map(v=>Math.max(.01,Number(v)||.1));items[slug]=Object.assign({name:p.name,real,bed:'ground',base:t.base,foot:t.foot},p.kind?{kind:p.kind,kindName:p.kindName}:{},soakOn(p)?{soak:soakBand()}:{},p.role==='frame'?{role:'frame',frameShow:.55,frameY:[.96,1]}:{},(real[1]>=1.5&&p.role!=='frame')?{role:'big'}:{},p.ground?{ground:p.ground}:{},p.shadowed&&p.role!=='frame'?{ownShadow:true}:{})   /* 큰 요소(덩어리의 중심)는 1.5m 넘는 것만 — 모두 big이면 무대가 큰 것·작은 것으로 덩어리를 못 지음 */}
   return {name:state.name,view:'ground',horizon:state.horizon,groundTop:Number((state.horizon+.01).toFixed(3)),unit:Number(state.unit.toFixed(3)),learned:state.learned||undefined,avoid:[],beds:{ground:{name:'땅',y:[state.horizon,1],persp:true,skirt:[]}},noSkirt:true,blocks:(state.preset&&state.preset.blocks)||undefined,animals:(state.preset&&state.preset.animals)||undefined,compose:({sparse:{clusters:[2,3],perCluster:[0,2],loose:[2,4],maxSame:2,overlap:.3},normal:{clusters:[3,5],perCluster:[1,3],loose:[4,8],maxSame:3,overlap:.2},dense:{clusters:[5,7],perCluster:[2,4],loose:[8,14],maxSame:4,overlap:.12}})[$('#density').value],items,installation:{placements:Object.fromEntries(state.props.map(p=>[p.slug,{x:Number(p.x.toFixed(4)),y:Number(p.y.toFixed(4)),width:Number(p.width.toFixed(4))}]))}};
  }
  function indexEntry(){return {[`${state.group}/${state.slug}`]:{name:state.name,group:state.group,view:'ground',bg:['bg'],items:state.props.map(p=>p.slug),used_by:[],ready:false,far:[],front:[],missing:[],skirt:[]}}}
@@ -1553,6 +1639,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   for(let i=0;i<3;i++){const d=document.createElement('div');d.style.cssText='border-radius:8px;overflow:hidden';wrap.appendChild(d);Stage.render(d,pl,Stage.compose(pl,{seed:seed++}),{shadow:.25,haze:.3})}}
  if(location.hash==='#test')window.__install={state,drawScene,learn};   /* 시험용(주소 끝 #test일 때만) */
  showStep(0);
+ syncAI();renderSizePlan();renderSheetArea();   /* 처음 화면(2026-11-17) */
 })();
 </script>
 </body>
