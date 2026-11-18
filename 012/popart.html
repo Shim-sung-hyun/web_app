@@ -302,7 +302,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
     <div class="opts">
       <label>AI 방식 <select class="mode-select" id="mode"><option value="faithful">얼굴 그대로</option><option value="balanced">균형</option><option value="bold">과감하게</option></select></label>
       <label>대상 <select class="mode-select" id="target"><option value="person">사람</option><option value="object">사물</option></select></label>
-      <label>색 조합 <select class="mode-select" id="pal"><option value="classic">클래식</option><option value="vivid">비비드(청록)</option><option value="warm">따뜻한 팝</option><option value="mono">흑백</option></select></label>
+      <label>색 조합 <select class="mode-select" id="pal"><option value="classic">원색(자연)</option><option value="vivid">강한 원색</option><option value="warm">따뜻한 팝</option><option value="mono">흑백</option></select></label>
       <label>점 크기 <input type="range" id="dot" min="3" max="16" value="6"></label>
       <label>선 굵기 <input type="range" id="line" min="0" max="3" value="1"></label>
       <label>디테일 <input type="range" id="edge" min="3" max="18" value="8"></label>
@@ -412,7 +412,7 @@ document.getElementById('file-in').addEventListener('change', function(e) {
       canvas.getContext('2d').drawImage(preview, 0, 0, w, h);
       const jpeg = canvas.toDataURL('image/jpeg', 0.88);
       b64 = jpeg.split(',')[1];
-      srcImg = preview; current = null; document.querySelector('.mailbox-btn').classList.add('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } document.getElementById('sugg').style.display = 'none';
+      srcImg = preview; layoutSeed = (Math.random() * 1e9) | 0; current = null; document.querySelector('.mailbox-btn').classList.add('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } document.getElementById('sugg').style.display = 'none';
       mime = 'image/jpeg';
       document.getElementById('thumb').src = url;
       document.getElementById('thumb').style.display='block';
@@ -558,7 +558,7 @@ function popFilter(img, o, maxSide) {
   return cv;
 }
 // ---------- 레이어형 필터: 만화 바탕 + 점 레이어들을 겹쳐 올림 ----------
-let layoutSeed = 0;
+let layoutSeed = (Math.random() * 1e9) | 0;
 const lc = { img: null, m: {} };
 function prepLayers(img, maxSide) {
   if (lc.img !== img) { lc.img = img; lc.m = {}; }
@@ -595,7 +595,14 @@ function prepLayers(img, maxSide) {
   for (let x = 0; x < bw; x++) { push(x, 0); push(x, bh - 1); } for (let y = 0; y < bh; y++) { push(0, y); push(bw - 1, y); }
   while (st.length) { const k = st.pop(), x = k % bw, y = (k / bw) | 0; if (x > 0) push(x - 1, y); if (x < bw - 1) push(x + 1, y); if (y > 0) push(x, y - 1); if (y < bh - 1) push(x, y + 1); }
   for (let k = 0; k < bw * bh; k++) if (!blk[k] && !seen[k]) face[k] = 1;
-  return (lc.m[maxSide] = { ...P, R, G, B, sk, face, bs, bw });
+  let sr = 0, sg = 0, sb = 0, sc = 0;                       // 얼굴 피부의 평균 색 → 피부 색면의 기준 색
+  for (let i = 0; i < n; i++) if (sk[i] && face[(((i / w) | 0) / bs | 0) * bw + (((i % w) / bs) | 0)]) { sr += R[i]; sg += G[i]; sb += B[i]; sc++; }
+  let skin = null;
+  if (sc > n * 0.01) {
+    const r = sr / sc / 255, g = sg / sc / 255, b = sb / sc / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn || 1e-6, l = (mx + mn) / 2;
+    skin = { h: (mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4) / 6, s: Math.min(0.9, Math.max(0.5, d / (1 - Math.abs(2 * l - 1)) * 1.15)) };
+  }
+  return (lc.m[maxSide] = { ...P, R, G, B, sk, face, bs, bw, skin });
 }
 function edgeMask(E, mx, w, h, edge, line) {
   const n = w * h, eh = new Uint32Array(256); for (let i = 0; i < n; i++) eh[Math.min(255, (E[i] / (mx || 1) * 255) | 0)]++;
@@ -610,11 +617,17 @@ function edgeMask(E, mx, w, h, edge, line) {
   return mask;
 }
 const _t = [0, 0, 0];
-function flatInto(out, r, g, b, sat) {                // 색을 단순한 몇 가지로 평평하게
+// 사진 색을 '원색 만화 색면'으로: 피부는 한 가지 살구색 계열 4단계, 그 외 색은 채도를 꽉 채운 원색 3단계, 무채색은 검정·회색·흰색
+function vividInto(out, r, g, b, pal, skin, isSkin) {
   r /= 255; g /= 255; b /= 255;
   const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let l = (mx + mn) / 2, hh = 0, s = 0;
   if (d > 1e-6) { s = d / (1 - Math.abs(2 * l - 1)); hh = (mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4) / 6; }
-  hh = Math.round(hh * 24) / 24; s = Math.round(Math.min(1, s * sat) * 4) / 4; l = Math.min(0.95, Math.max(0.12, Math.round(l * 5) / 5));
+  if (pal === 'mono' || s < 0.12 || l < 0.16 || l > 0.94) { s = 0; l = l < 0.16 ? 0.08 : l > 0.94 ? 0.97 : l < 0.3 ? 0.12 : l < 0.55 ? 0.4 : l < 0.8 ? 0.7 : 0.95; }
+  else if (isSkin && skin) { hh = skin.h; s = skin.s; l = l < 0.5 ? 0.58 : l < 0.62 ? 0.7 : l < 0.75 ? 0.8 : 0.9; }
+  else {
+    const k = pal === 'classic' ? 24 : 12; hh = Math.round(hh * k) / k; if (pal === 'warm') hh = (hh + 0.972) % 1;
+    s = 0.55 + 0.45 * Math.min(1, (s - 0.12) / 0.3); l = l < 0.36 ? 0.3 : l < 0.62 ? 0.5 : 0.72;
+  }
   const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
   const f = t => { t = (t + 1) % 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < 0.5 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; };
   out[0] = f(hh + 1 / 3) * 255; out[1] = f(hh) * 255; out[2] = f(hh - 1 / 3) * 255;
@@ -625,32 +638,43 @@ function star(c, x, y, R, fill) {
   c.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? R * 0.42 : R; c[i ? 'lineTo' : 'moveTo'](x + Math.cos(a) * r, y + Math.sin(a) * r); }
   c.closePath(); c.fillStyle = fill; c.fill(); c.stroke();
 }
-function drawDecor(c, w, h, ly, seed) {                // 모서리 장식: 큰 원 판, 별 판 (배치 바꾸기로 모서리가 바뀜)
-  if (!ly.big && !ly.star) return;
-  c.save(); c.translate(seed & 1 ? w : 0, seed & 2 ? h : 0); c.scale(seed & 1 ? -1 : 1, seed & 2 ? -1 : 1);
-  c.lineJoin = 'round'; c.strokeStyle = '#111'; c.lineWidth = Math.max(3, w * 0.007);
-  if (ly.big) {
-    c.save(); c.beginPath(); c.moveTo(w * 0.6, h); c.lineTo(w, h * 0.58); c.lineTo(w, h); c.closePath(); c.fillStyle = '#F7C600'; c.fill(); c.clip();
-    c.fillStyle = '#A31021'; const s = w * 0.07;
-    for (let r = 0, y = h * 0.58; y < h + s; y += s * 0.9, r++) for (let x = w * 0.55 + (r % 2) * s / 2; x < w + s; x += s) { c.beginPath(); c.arc(x, y, s * 0.36, 0, 7); c.fill(); }
-    c.restore(); c.beginPath(); c.moveTo(w * 0.6, h); c.lineTo(w, h * 0.58); c.stroke();
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function drawDecor(c, w, h, ly, seed, face, bs, bw) {
+  const R = rng(seed), inFace = (x, y) => { const bx = (x / bs) | 0, by = (y / bs) | 0; return bx >= 0 && by >= 0 && bx < bw && by * bw + bx < face.length && face[by * bw + bx] === 1; };
+  c.lineJoin = 'round'; c.strokeStyle = '#111'; c.lineWidth = Math.max(3, w * 0.006);
+  if (ly.big) {                                          // 큰 점 판: 무작위 모서리 1~2곳, 얼굴은 피함
+    const pairs = [['#F7C600', '#A31021'], ['#35B6D8', '#1F4FB0'], ['#E8001C', '#FFFFFF'], ['#1F5FB0', '#7FD6F2']];
+    const corners = [[0, 0], [1, 0], [0, 1], [1, 1]].sort(() => R() - 0.5), want = R() < 0.5 ? 1 : 2; let made = 0;
+    for (const [cx0, cy0] of corners) {
+      if (made >= want) break;
+      const a = w * (0.26 + R() * 0.16), b = h * (0.26 + R() * 0.16), X = cx0 ? w : 0, Y = cy0 ? h : 0, sx = cx0 ? -1 : 1, sy = cy0 ? -1 : 1;
+      const pts = [[X, Y], [X + sx * a, Y], [X, Y + sy * b]], mid = [(pts[1][0] + pts[2][0]) / 2, (pts[1][1] + pts[2][1]) / 2];
+      if ([mid, [(X + pts[1][0] + pts[2][0]) / 3, (Y + pts[1][1] + pts[2][1]) / 3], [(X + mid[0]) / 2, (Y + mid[1]) / 2]].some(q => inFace(q[0], q[1]))) continue;
+      const [bg, dot] = pairs[(R() * pairs.length) | 0], s = w * (0.055 + R() * 0.03);
+      c.save(); c.beginPath(); pts.forEach((q, i) => c[i ? 'lineTo' : 'moveTo'](q[0], q[1])); c.closePath(); c.fillStyle = bg; c.fill(); c.clip(); c.fillStyle = dot;
+      for (let r = 0, y = -s; y < h + s; y += s * 0.9, r++) for (let x = -s + (r % 2) * s / 2; x < w + s; x += s) { c.beginPath(); c.arc(x, y, s * 0.36, 0, 7); c.fill(); }
+      c.restore(); c.beginPath(); c.moveTo(pts[1][0], pts[1][1]); c.lineTo(pts[2][0], pts[2][1]); c.stroke(); made++;
+    }
   }
-  if (ly.star) {
-    c.beginPath(); c.moveTo(0, 0); c.lineTo(w * 0.3, 0); c.lineTo(0, h * 0.4); c.closePath(); c.fillStyle = '#1F5FB0'; c.fill(); c.stroke();
-    star(c, w * 0.075, h * 0.1, w * 0.05, '#fff'); star(c, w * 0.175, h * 0.045, w * 0.032, '#111'); star(c, w * 0.05, h * 0.2, w * 0.024, '#fff');
+  if (ly.star) {                                         // 별 3~4개를 여기저기 (얼굴 위는 피함)
+    const n = 3 + ((R() * 2) | 0), cols = ['#fff', '#111', '#F7C600', '#fff'];
+    for (let k = 0, tries = 0; k < n && tries < 80; tries++) {
+      const x = R() * w, y = R() * h, r = w * (0.025 + R() * 0.04);
+      if ([[x, y], [x + r, y], [x - r, y], [x, y + r], [x, y - r]].some(q => inFace(q[0], q[1]))) continue;
+      c.save(); c.translate(x, y); c.rotate((R() - 0.5) * 0.6); star(c, 0, 0, r, cols[(R() * cols.length) | 0]); c.restore(); k++;
+    }
   }
-  c.restore();
 }
 function popLayers(img, o, maxSide) {
-  const { w, h, cv, cx, im, L, E, mx, R, G, B, sk, face, bs, bw } = prepLayers(img, maxSide), px = im.data;
+  const { w, h, cv, cx, im, L, E, mx, R, G, B, sk, face, bs, bw, skin } = prepLayers(img, maxSide), px = im.data;
   const mask = edgeMask(E, mx, w, h, o.edge, o.line);
-  const sat = { classic: 1.3, vivid: 1.9, warm: 1.6, mono: 0 }[o.palName]; const s1 = o.dot, s2 = s1 * 1.8, s3 = s1 * 2.6;
+  const s1 = o.dot, s2 = s1 * 1.8, s3 = s1 * 2.6;
   const a1 = Math.PI / 4, a2 = Math.PI / 12, c1 = Math.cos(a1), n1 = Math.sin(a1), c2 = Math.cos(a2), n2 = Math.sin(a2);
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const i = y * w + x, p = i * 4;
     if (mask[i]) { px[p] = px[p + 1] = px[p + 2] = 17; px[p + 3] = 255; continue; }       // 선명한 윤곽선
-    flatInto(_t, R[i], G[i], B[i], sat); let r = _t[0], g = _t[1], b = _t[2];              // 1층: 사진을 만화 색면으로
-    const lum = L[i], inFace = face[((y / bs) | 0) * bw + ((x / bs) | 0)];
+    const inFace = face[((y / bs) | 0) * bw + ((x / bs) | 0)], lum = L[i]; vividInto(_t, R[i], G[i], B[i], o.palName, skin, sk[i] && inFace === 1); let r = _t[0], g = _t[1], b = _t[2];              // 1층: 사진을 만화 색면으로
+    
     if (sk[i] && inFace) {
       if (o.ly.f1) { const t = clamp01((0.52 + 0.36 * o.mix - lum) / 0.5); if (t > 0 && cellD(x, y, s1, c1, n1) < s1 * 0.75 * Math.sqrt(t)) { r *= 0.74; g *= 0.62; b *= 0.58; } }   // 2층: 얼굴 고운 점
       if (o.ly.f2) { const t = clamp01((0.34 + 0.2 * o.mix - lum) / 0.3); if (t > 0 && cellD(x, y, s2, c2, n2) < s2 * 0.75 * Math.sqrt(t)) { r *= 0.5; g *= 0.38; b *= 0.36; } }   // 3층: 얼굴 큰 점
@@ -660,7 +684,7 @@ function popLayers(img, o, maxSide) {
     px[p] = r; px[p + 1] = g; px[p + 2] = b; px[p + 3] = 255;
   }
   cx.putImageData(im, 0, 0);
-  drawDecor(cx, w, h, o.ly, o.seed);                                                        // 5·6층: 큰 원, 별
+  drawDecor(cx, w, h, o.ly, o.seed, face, bs, bw);                                                        // 5·6층: 큰 원, 별
   return cv;
 }
 function renderFilter(img, o, maxSide) { return o.style === 'layers' ? popLayers(img, o, maxSide) : popFilter(img, o, maxSide); }
@@ -913,7 +937,7 @@ function liveFilter() {
   clearTimeout(liveTimer); liveTimer = setTimeout(liveFilter, 120);
 }));
 document.getElementById('mode').addEventListener('change', () => { delete results.ai; delete results.hybrid; });
-document.getElementById('btn-shuffle').addEventListener('click', () => { layoutSeed = (layoutSeed + 1) % 4; liveFilter(); });
+document.getElementById('btn-shuffle').addEventListener('click', () => { layoutSeed = (Math.random() * 1e9) | 0; liveFilter(); });
 document.getElementById('target').addEventListener('change', () => { delete results.ai; delete results.hybrid; });
 document.querySelectorAll('.xf').forEach(c => c.addEventListener('change', () => { delete results.ai; delete results.hybrid; }));
 
