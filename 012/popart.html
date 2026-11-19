@@ -373,6 +373,13 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
   background:#fff;
 }
 
+
+/* 첫 화면에서 휴대폰 사진 받기 버튼의 클릭 영역과 레이어를 보장 */
+.app:not(.settings-open) .control-panel { overflow: visible; }
+.app:not(.settings-open) .cp-head { position: relative; z-index: 40; width: 100%; }
+.app:not(.settings-open) .photo-tools,
+.app:not(.settings-open) .photo-tools .quick-actions { position: relative; z-index: 41; pointer-events: auto; }
+#relay-photo-btn { position: relative; z-index: 42; pointer-events: auto; touch-action: manipulation; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -549,6 +556,8 @@ const GEMINI_PROXY_URL = WORKER_URL.replace(/\/cartoon$/, '/gemini');
 // API 자격 증명은 현재 페이지 메모리에만 보관하며 localStorage/cookie에는 저장하지 않습니다.
 let cloudflareAccountId = '';
 let cloudflareApiToken = '';
+// Gemini 키는 선택 사항이며, 선언되지 않아 발생하던 ReferenceError를 방지합니다.
+let geminiApiKey = '';
 // API 자격 증명은 브라우저 메모리에만 보관합니다.
 function updateAiRouteInfo() {
   const info = document.getElementById('ai-route-info');
@@ -700,7 +709,11 @@ document.getElementById('file-in').addEventListener('change', function(e) {
 });
 
 // 휴대폰 사진 받기: relay 모듈이 QR 창을 표시하고, 수신한 Blob을 기존 사진 입력 흐름에 전달합니다.
-document.getElementById('relay-photo-btn').addEventListener('click', () => {
+document.getElementById('relay-photo-btn').addEventListener('click', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  // 첫 화면에서도 수신 창이 다른 화면 요소 뒤에 가려지지 않도록 설정 패널을 먼저 엽니다.
+  openPanel();
   if (!window.CharumRelay || typeof window.CharumRelay.receive !== 'function') {
     toast('휴대폰 사진 연결 모듈을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.');
     return;
