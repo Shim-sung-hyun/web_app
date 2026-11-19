@@ -318,6 +318,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
         <div class="file-col">
           <span id="no-file" class="no-file">우편함을 눌러<br>사진을 넣어주세요!<br><small>얼굴이 크게 나온 사진이 좋아요</small></span>
           <span id="fname" class="fname"></span>
+          <button type="button" id="relay-photo-btn" class="chip" style="margin-top:7px;white-space:nowrap;">📱 휴대폰 사진 받기</button>
         </div>
       </div>
     </div>
@@ -396,6 +397,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 <div id="print-area"></div>
 <div id="toast"></div>
 <input type="file" id="file-in" accept="image/*"/>
+<script src="https://shim-sung-hyun.github.io/web_app/relay/charum-relay.js"></script>
 
 <script>
 // Cloudflare AI는 브라우저별 최대 3회. Gemini 키가 있으면 Google API를 브라우저에서 직접 호출합니다.
@@ -475,18 +477,24 @@ let srcImg=null, current=null;
 const results={}, errs={};
 function setButtons(on){ document.querySelectorAll('.mbtn, #btn-detect').forEach(b => b.disabled=!on); }
 
-function openPanel() { document.querySelector('.app').classList.add('settings-open'); }
+function openPanel() { document.querySelector('.app').classList.add('settings-open'); document.getElementById('control-panel').classList.add('open'); }
 document.getElementById('canvas').addEventListener('click', () => closePanel());
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
-function closePanel() { document.querySelector('.app').classList.remove('settings-open'); }
+function closePanel() { document.querySelector('.app').classList.remove('settings-open'); document.getElementById('control-panel').classList.remove('open'); }
 function toggleSettingsAndPick() {
   openPanel();
-  document.getElementById('file-in').click();
+  // 새 사진 선택 창은 우편함을 직접 눌렀을 때만 엽니다.
+  const picker = document.getElementById('file-in');
+  picker.value = '';
+  picker.click();
 }
 
-document.getElementById('file-in').addEventListener('change', function(e) {
-  const f = e.target.files[0];
-  if (!f) return;
+// 파일 선택과 휴대폰 전송 사진이 같은 처리 경로를 사용합니다.
+function loadPhotoBlob(blob, filename) {
+  if (!(blob instanceof Blob) || !blob.type.startsWith('image/')) {
+    toast('사진 파일을 받지 못했습니다. 다시 전송해 주세요.');
+    return;
+  }
   const reader = new FileReader();
   reader.onload = ev => {
     const url = ev.target.result;
@@ -508,9 +516,11 @@ document.getElementById('file-in').addEventListener('change', function(e) {
       document.getElementById('thumb').src = url;
       document.getElementById('thumb').style.display='block';
       document.getElementById('no-file').style.display='none';
-      document.getElementById('fname').textContent=f.name;
+      document.getElementById('fname').textContent=filename || '사진';
       document.getElementById('fname').style.display='block';
+      document.getElementById('error-box').style.display='none';
       setButtons(true);
+      toast('사진을 불러왔어요.');
     };
     preview.onerror = () => {
       document.getElementById('error-box').textContent = '사진을 읽지 못했습니다. 다른 사진으로 시도해 주세요.';
@@ -518,7 +528,29 @@ document.getElementById('file-in').addEventListener('change', function(e) {
     };
     preview.src = url;
   };
-  reader.readAsDataURL(f);
+  reader.onerror = () => toast('사진 파일을 읽지 못했습니다.');
+  reader.readAsDataURL(blob);
+}
+
+document.getElementById('file-in').addEventListener('change', function(e) {
+  const f = e.target.files[0];
+  if (f) loadPhotoBlob(f, f.name);
+});
+
+// 휴대폰 사진 받기: relay 모듈이 QR 창을 표시하고, 수신한 Blob을 기존 사진 입력 흐름에 전달합니다.
+document.getElementById('relay-photo-btn').addEventListener('click', () => {
+  if (!window.CharumRelay || typeof window.CharumRelay.receive !== 'function') {
+    toast('휴대폰 사진 연결 모듈을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.');
+    return;
+  }
+  try {
+    window.CharumRelay.receive({
+      code: '2026-11-sim',
+      onPhoto: function(blob) { loadPhotoBlob(blob, '휴대폰에서 받은 사진'); }
+    });
+  } catch (e) {
+    toast('휴대폰 사진 받기를 시작하지 못했습니다: ' + (e.message || e));
+  }
 });
 
 function show(state) {
@@ -548,8 +580,7 @@ function reset() {
   openPanel();
 }
 
-async function callCharumAI(prompt, guide) {
-  if (geminiApiKey) return await callGeminiImage(prompt, guide);
+async function callCloudflareAI(prompt, guide) {
   takeCloudflareUse();
   // 원본 사진의 가로세로 비율을 유지합니다.
   const ratio = sourceWidth / sourceHeight;
@@ -569,6 +600,63 @@ async function callCharumAI(prompt, guide) {
   }
   if (!data.image) throw new Error('서버에서 변환된 이미지를 받지 못했습니다.');
   return data.image;
+}
+
+// Gemini 이미지 생성 한도에 걸리면 지정된 5개 모델을 순서대로 사진 분석에 사용하고,
+// 실제 그림 생성은 마지막 단계에서 기존 Cloudflare AI가 담당합니다.
+async function makeCloudflarePromptWithGemini(prompt, guide) {
+  const failures = [];
+  const parts = [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }];
+  if (guide) parts.push({ inline_data: { mime_type: 'image/jpeg', data: guide } });
+  parts.push({ text: `Look carefully at the supplied original photo. Write a concise visual description to append to an image-generation prompt. Identify only clearly visible people/objects, clothing, pose, composition, colors, and background. Do not invent details, do not identify the person, and do not give advice. Preserve the source photo faithfully. Return plain text only.
+
+Existing art direction:
+${prompt}` });
+
+  for (const model of GEMINI_TEXT_MODELS) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': geminiApiKey },
+        body: JSON.stringify({ contents: [{ parts }], generationConfig: { temperature: 0.2, maxOutputTokens: 700 } })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        failures.push(`${model}: ${data?.error?.message || `HTTP ${res.status}`}`);
+        if (res.status === 401 || res.status === 403) break;
+        continue;
+      }
+      const description = (data.candidates?.[0]?.content?.parts || []).map(x => x.text || '').join('').trim();
+      if (!description) { failures.push(`${model}: 빈 응답`); continue; }
+      window.lastGeminiFallbackModel = model;
+      const info = document.getElementById('ai-route-info');
+      if (info) info.textContent = `사진 분석: ${model} → 그림 생성: Cloudflare AI`;
+      return `${prompt}\n\n[사진에서 확인한 시각 정보]
+${description}`;
+    } catch (e) {
+      failures.push(`${model}: ${e.message || '네트워크 오류'}`);
+    }
+  }
+  window.lastGeminiFallbackFailures = failures;
+  return prompt; // 사진 분석 모델이 모두 실패해도 원본 프롬프트로 Cloudflare AI를 시도합니다.
+}
+
+async function callCharumAI(prompt, guide) {
+  if (!geminiApiKey) return await callCloudflareAI(prompt, guide);
+  try {
+    return await callGeminiImage(prompt, guide);
+  } catch (e) {
+    const message = String(e?.message || e);
+    const shouldFallback = /quota|limit:\s*0|rate.?limit|resource.?exhausted|429|5\d\d|not found|not supported|unsupported|unavailable/i.test(message);
+    if (!shouldFallback) throw e;
+    const info = document.getElementById('ai-route-info');
+    if (info) info.textContent = 'Gemini 그림 생성 한도/오류 → 대체 모델 순차 확인 중…';
+    const fallbackPrompt = await makeCloudflarePromptWithGemini(prompt, guide);
+    const image = await callCloudflareAI(fallbackPrompt, guide);
+    const status = document.getElementById('ai-route-info');
+    if (status) status.textContent = '최종 그림 생성: Cloudflare AI';
+    return image;
+  }
 }
 
 // ---------- ② 필터: AI 없이 브라우저에서 팝아트 만들기 ----------
@@ -837,8 +925,13 @@ async function generate(mode) {
     delete errs[mode];
     showResult(mode);
   } catch (e) {
-    errs[mode] = String(e.message || e);
-    document.getElementById('error-box').innerHTML = `오류 😢<br><br><strong>${String(e.message || e).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}</strong><br><br><small>잠시 후 다시 시도해 주세요.</small>`;
+    const rawError = String(e.message || e);
+    errs[mode] = rawError;
+    const quotaZero = /gemini-3\.1-flash-image/i.test(rawError) && /free.?tier|limit:\s*0|quota exceeded/i.test(rawError);
+    const displayError = quotaZero
+      ? 'Gemini 그림 생성 한도에 도달했습니다. 대체 모델 확인 후 Cloudflare AI로 전환했지만, Cloudflare AI에서도 그림을 만들지 못했습니다. Cloudflare 사용 가능 횟수와 서버 상태를 확인해 주세요.'
+      : rawError;
+    document.getElementById('error-box').innerHTML = `오류 😢<br><br><strong>${displayError.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}</strong><br><br><small>${quotaZero ? '사진 분석용 Gemini 모델과 그림 생성 모델은 별도입니다.' : '잠시 후 다시 시도해 주세요.'}</small>`;
     show('error');
   } finally {
     busy = false;
