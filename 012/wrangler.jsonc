@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "charum-ai",
+  "main": "charum-ai-worker.js",
+  "compatibility_date": "2026-11-19",
+
+  // 개발자 Cloudflare AI (Worker AI 바인딩). 코드에서는 env.AI 로 씀.
+  "ai": {
+    "binding": "AI"
+  },
+
+  // 하루 3회 제한 / TTS 캐시용. 코드에서는 env.KV 로 쓰므로 binding 이름이 꼭 "KV"여야 한다.
+  // 아래 id는 `wrangler kv namespace create KV`가 알려주는 값으로 바꾼다.
+  "kv_namespaces": [
+    { "binding": "KV", "id": "REPLACE_WITH_KV_ID" }
+  ],
+
+  // 허용 주소(ALLOW)는 코드 맨 위 상수에 들어 있다. 정식판 charum.org도 이미 포함되어 있다.
+  "vars": {},
+
+  "observability": {
+    "enabled": true
+  }
+}

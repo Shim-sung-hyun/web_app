@@ -9,18 +9,14 @@
     "binding": "AI"
   },
 
-  // 개발자 키 사용자별 하루 3회 제한용. 아래 id는 배포할 때 wrangler가 알려 주는 값으로 바꾼다.
+  // 하루 3회 제한 / TTS 캐시용. 코드가 env.KV를 쓰므로 binding 이름은 꼭 "KV"여야 한다.
+  // 아래 id는 `wrangler kv namespace create KV`가 알려주는 값으로 바꾼다.
   "kv_namespaces": [
-    { "binding": "LIMITS", "id": "REPLACE_WITH_KV_ID" }
+    { "binding": "KV", "id": "REPLACE_WITH_KV_ID" }
   ],
 
-  "vars": {
-    // 정식판은 charum.org에서 불러오므로 두 주소가 꼭 있어야 한다.
-    "ALLOW": "https://shim-sung-hyun.github.io,https://www.charum.org,https://charum.org,http://localhost:8787",
-    "DAILY_LIMIT": "3",
-    "FLUX_MODEL": "@cf/black-forest-labs/flux-2-klein-4b",
-    "VISION_MODEL": "@cf/meta/llama-3.2-11b-vision-instruct"
-  },
+  // 허용 주소(ALLOW)·모델·하루 횟수는 코드 상수에 들어 있다. 시크릿은 이 파일에 넣지 않는다.
+  "vars": {},
 
   "observability": {
     "enabled": true
