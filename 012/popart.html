@@ -475,7 +475,6 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
           <p>본인 계정으로 사용하려면 Account ID와 API Token을 모두 입력하세요. 두 항목을 비워 두면 기본 제공 계정으로 하루 3회 이용합니다. Gemini 키가 없으면 Cloudflare의 비전 AI가 사진을 분석하고, 이미지 AI가 팝아트를 생성합니다.</p>
           <p><a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener noreferrer">Cloudflare 토큰 받기 ↗</a></p>
           <p>토큰은 Workers AI 권한을 부여한 API Token을 사용하세요. Global API Key는 입력하지 마세요. 입력값은 브라우저 저장소에 저장하지 않으며 페이지가 열려 있는 동안 메모리에만 보관합니다.</p>
-          <p><b>처음 사용할 때 한 번:</b> 사진 분석 모델(<code>@cf/meta/llama-3.2-11b-vision-instruct</code>)은 Meta 라이선스 동의가 필요합니다. <a href="https://developers.cloudflare.com/workers-ai/models/llama-3.2-11b-vision-instruct/" target="_blank" rel="noopener noreferrer">모델 안내 페이지 ↗</a>의 'agree' 절차를 로그인한 Cloudflare 계정에서 한 번 따라 하면 됩니다. 동의하지 않으면 "Meta 라이선스 동의가 필요합니다" 안내가 나옵니다. 기본 제공 계정은 이미 동의되어 있으므로 이 단계가 필요 없습니다.</p>
           <hr style="border:0;border-top:1px solid #d7e1ee;margin:9px 0;">
           <b>Gemini API (선택 사항)</b>
           <p>Gemini 키를 입력하면 Gemini가 사진을 분석합니다. 키가 없거나 입력하지 않아도 Cloudflare AI가 분석하므로 필수는 아닙니다.</p>
@@ -543,21 +542,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 
 <script>
 // Cloudflare AI 사용량은 Worker에서 기본 계정 하루 3회로 제한합니다.
-// Worker 원본·배포법은 저장소 server/worker/charum-ai/ 를 보세요.
-// 정식판(www.charum.org)에서 불러올 때는 이 주소를 새 Worker 주소로 바꿔 넣습니다.
 const WORKER_URL = 'https://charum-ai.simdoly.workers.dev/cartoon';
-const DAILY_LIMIT = 3;
-// 개발자 키 하루 3회 제한용 익명 기기 번호(이름·IP 아님). 이 기기에만 저장한다.
-const DEVICE_KEY = 'webapp.deviceId';
-function deviceUid() {
-  let id = '';
-  try { id = localStorage.getItem(DEVICE_KEY) || ''; } catch (e) {}
-  if (!id) {
-    id = (crypto.randomUUID ? crypto.randomUUID() : 'd' + Date.now() + Math.random().toString(36).slice(2));
-    try { localStorage.setItem(DEVICE_KEY, id); } catch (e) {}
-  }
-  return id;
-}
 const GEMINI_DIRECT_IMAGE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent';
 // 사진 분석·자동 설정용 순차 대체 모델. 위에서 아래 순서로 시도합니다.
 const GEMINI_TEXT_MODELS = [
@@ -689,7 +674,7 @@ function loadPhotoBlob(blob, filename) {
       // 사진은 브라우저에서 JPEG로 변환합니다. AI 요청 시 선택한 사업자로 전송됩니다.
       sourceWidth = preview.naturalWidth;
       sourceHeight = preview.naturalHeight;
-      const scale = Math.min(1, 480 / Math.max(preview.naturalWidth, preview.naturalHeight));
+      const scale = Math.min(1, 512 / Math.max(preview.naturalWidth, preview.naturalHeight));
       const w = Math.max(1, Math.round(preview.naturalWidth * scale));
       const h = Math.max(1, Math.round(preview.naturalHeight * scale));
       const canvas = document.createElement('canvas');
@@ -775,7 +760,7 @@ function reset() {
   openPanel();
 }
 
-async function callCloudflareAI(prompt, guide, forceVision) {
+async function callCloudflareAI(prompt, guide) {
   takeCloudflareUse();
   if (!!cloudflareAccountId !== !!cloudflareApiToken) {
     throw new Error('Cloudflare Account ID와 API Token을 모두 입력하거나, 두 입력란을 모두 비워 주세요.');
@@ -789,8 +774,7 @@ async function callCloudflareAI(prompt, guide, forceVision) {
   const cloudflareImage = cloudflareAccountId
     ? await toJpegB64(srcImg || b64, 500)
     : b64;
-  const requestBody = { image: cloudflareImage, guide, prompt, width, height, uid: deviceUid(),
-    useCloudflareVision: (typeof forceVision === 'boolean' ? forceVision : !geminiApiKey) };
+  const requestBody = { image: cloudflareImage, guide, prompt, width, height, useCloudflareVision: !geminiApiKey };
   if (cloudflareAccountId && cloudflareApiToken) {
     requestBody.cloudflareAccountId = cloudflareAccountId;
     requestBody.cloudflareApiToken = cloudflareApiToken;
@@ -802,7 +786,6 @@ async function callCloudflareAI(prompt, guide, forceVision) {
   });
   const data = await res.json().catch(() => ({}));
   if (res.status === 403) throw new Error('이 주소에서는 변환 서버를 쓸 수 없어요. (Worker의 허용 주소 ALLOW 확인)');
-  if (res.status === 429) throw new Error(`오늘의 팝아트 변환 한도(${DAILY_LIMIT}회)를 사용했습니다. 내일 다시 해 주세요.`);
   if (!res.ok) {
     const message = data?.error?.message || `HTTP ${res.status}`;
     throw new Error(message);
@@ -840,16 +823,14 @@ ${prompt}` });
       window.lastGeminiFallbackModel = model;
       const info = document.getElementById('ai-route-info');
       if (info) info.textContent = `사진 분석: ${model} → 그림 생성: Cloudflare AI`;
-      return { prompt: `${prompt}\n\n[사진에서 확인한 시각 정보]\n${description}`, needVision: false };
+      return `${prompt}\n\n[사진에서 확인한 시각 정보]
+${description}`;
     } catch (e) {
       failures.push(`${model}: ${e.message || '네트워크 오류'}`);
     }
   }
   window.lastGeminiFallbackFailures = failures;
-  // Gemini 분석이 다 막히면 Cloudflare가 사진을 해석하도록 표시한다(선생님 정한 순서).
-  const routeInfo = document.getElementById('ai-route-info');
-  if (routeInfo) routeInfo.textContent = 'Gemini 분석 실패 → Cloudflare가 사진을 보고 그림 생성 중…';
-  return { prompt, needVision: true };
+  return prompt; // 사진 분석 모델이 모두 실패해도 원본 프롬프트로 Cloudflare AI를 시도합니다.
 }
 
 async function callCharumAI(prompt, guide) {
@@ -862,8 +843,8 @@ async function callCharumAI(prompt, guide) {
     if (!shouldFallback) throw e;
     const info = document.getElementById('ai-route-info');
     if (info) info.textContent = 'Gemini 그림 생성 한도/오류 → 대체 모델 순차 확인 중…';
-    const fb = await makeCloudflarePromptWithGemini(prompt, guide);
-    const image = await callCloudflareAI(fb.prompt, guide, fb.needVision);
+    const fallbackPrompt = await makeCloudflarePromptWithGemini(prompt, guide);
+    const image = await callCloudflareAI(fallbackPrompt, guide);
     const status = document.getElementById('ai-route-info');
     if (status) status.textContent = '최종 그림 생성: Cloudflare AI';
     return image;
@@ -1129,7 +1110,7 @@ async function generate(mode) {
     } else {
       msg('필터로 윤곽을 잡는 중…'); await tick();
       const o = filterOpts();
-      const guide = renderFilter(srcImg, { ...o, dot: Math.max(3, Math.round(o.dot / 2)), ly: { ...o.ly, big: false, star: false } }, 480).toDataURL('image/jpeg', 0.9).split(',')[1];
+      const guide = renderFilter(srcImg, { ...o, dot: Math.max(3, Math.round(o.dot / 2)), ly: { ...o.ly, big: false, star: false } }, 512).toDataURL('image/jpeg', 0.9).split(',')[1];
       msg('AI가 윤곽을 따라 그리는 중…');
       results.hybrid = `data:image/png;base64,${await callCharumAI((obj ? PROMPT_HYBRID_OBJ : PROMPT_HYBRID) + extras(), guide)}`;
     }
