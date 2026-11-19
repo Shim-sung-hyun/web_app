@@ -349,7 +349,22 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
           <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:#0057A8;">Google AI Studio에서 API 키 받기 ↗</a>
           <button type="button" class="chip" style="padding:5px 9px;" onclick="clearGeminiKey()">키 지우기</button>
         </div>
-        <small id="ai-route-info" style="display:block;margin-top:7px;color:#555;">테스트 중 · Cloudflare AI 사용 횟수 제한 없음</small>
+        <div style="border-top:1px solid #c8d8eb;margin-top:10px;padding-top:10px;">
+          <b style="font-size:13px;">Cloudflare 내 계정으로 사용하기</b>
+          <p style="font-size:11px;color:#555;line-height:1.55;margin:5px 0;">본인의 Cloudflare 계정으로 그림을 생성하려면 아래 두 값을 입력하세요. 입력값은 이 페이지가 열려 있는 동안에만 메모리에 보관하며, 사진 변환 요청 때 기존 Worker를 통해 Cloudflare로 전달합니다.</p>
+          <label for="cf-account-id" style="display:block;font-size:11px;font-weight:700;margin:7px 0 3px;">Account ID</label>
+          <input id="cf-account-id" type="text" autocomplete="off" spellcheck="false" placeholder="Cloudflare Account ID"
+            style="width:100%;padding:9px;border:1px solid #9bb8d8;border-radius:7px;font:inherit;font-size:12px;">
+          <label for="cf-api-token" style="display:block;font-size:11px;font-weight:700;margin:7px 0 3px;">Workers AI API Token</label>
+          <input id="cf-api-token" type="password" autocomplete="new-password" spellcheck="false" placeholder="Cloudflare API Token 붙여넣기"
+            style="width:100%;padding:9px;border:1px solid #9bb8d8;border-radius:7px;font:inherit;font-size:12px;">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:7px;">
+            <a href="https://dash.cloudflare.com/?to=/:account/ai/workers-ai" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:#0057A8;">Cloudflare에서 API Token 받기 ↗</a>
+            <button type="button" class="chip" style="padding:5px 9px;" onclick="clearCloudflareCredentials()">Cloudflare 키 지우기</button>
+          </div>
+          <small style="display:block;font-size:10px;color:#666;line-height:1.5;margin-top:6px;">토큰 권한: Workers AI - Read 및 Workers AI - Edit. Global API Key는 사용하지 마세요. 입력한 토큰은 브라우저 저장소나 Worker에 저장하지 않습니다.</small>
+        </div>
+        <small id="ai-route-info" style="display:block;margin-top:9px;color:#555;">테스트 중 · Cloudflare AI 사용 횟수 제한 없음</small>
       </div>
     </div>
     <div class="opts">
@@ -422,12 +437,26 @@ const GEMINI_TEXT_MODELS = [
   'gemini-flash-lite-latest'
 ];
 const GEMINI_PROXY_URL = WORKER_URL.replace(/\/cartoon$/, '/gemini');
+// API 자격 증명은 현재 페이지 메모리에만 보관하며 localStorage/cookie에는 저장하지 않습니다.
+let cloudflareAccountId = '';
+let cloudflareApiToken = '';
 // 테스트 기간 무제한 사용: 기존 브라우저별 3회 제한과 저장 카운터를 사용하지 않습니다.
 function updateAiRouteInfo() {
   const info = document.getElementById('ai-route-info');
-  if (info) info.textContent = geminiApiKey
-    ? 'Gemini 직접 연결 사용 중 · API 키는 현재 페이지 메모리에만 보관됩니다.'
-    : '테스트 중 · Cloudflare AI 사용 횟수 제한 없음';
+  if (!info) return;
+  const hasAccount = !!cloudflareAccountId;
+  const hasToken = !!cloudflareApiToken;
+  if (hasAccount !== hasToken) {
+    info.textContent = 'Cloudflare Account ID와 API Token을 모두 입력해야 개인 계정으로 연결됩니다.';
+  } else if (geminiApiKey && hasAccount) {
+    info.textContent = 'Gemini를 우선 사용합니다. Gemini 한도 초과 시 입력한 개인 Cloudflare 계정으로 전환합니다.';
+  } else if (geminiApiKey) {
+    info.textContent = 'Gemini 직접 연결 사용 중 · API 키는 현재 페이지 메모리에만 보관됩니다.';
+  } else if (hasAccount && hasToken) {
+    info.textContent = '개인 Cloudflare 계정 연결됨 · 해당 계정의 Workers AI 사용량이 적용됩니다.';
+  } else {
+    info.textContent = '테스트 중 · 제작자 Cloudflare AI 사용 횟수 제한 없음';
+  }
 }
 function takeCloudflareUse() { /* 테스트 중에는 횟수를 제한하지 않습니다. */ }
 function clearGeminiKey() {
@@ -436,11 +465,32 @@ function clearGeminiKey() {
   if (input) input.value = '';
   updateAiRouteInfo();
 }
+function clearCloudflareCredentials() {
+  cloudflareAccountId = '';
+  cloudflareApiToken = '';
+  const account = document.getElementById('cf-account-id');
+  const token = document.getElementById('cf-api-token');
+  if (account) account.value = '';
+  if (token) token.value = '';
+  updateAiRouteInfo();
+}
 document.getElementById('gemini-key').addEventListener('input', e => {
   geminiApiKey = e.target.value.trim();
   updateAiRouteInfo();
 });
-window.addEventListener('pagehide', () => { geminiApiKey = ''; });
+document.getElementById('cf-account-id').addEventListener('input', e => {
+  cloudflareAccountId = e.target.value.trim();
+  updateAiRouteInfo();
+});
+document.getElementById('cf-api-token').addEventListener('input', e => {
+  cloudflareApiToken = e.target.value.trim();
+  updateAiRouteInfo();
+});
+window.addEventListener('pagehide', () => {
+  geminiApiKey = '';
+  cloudflareAccountId = '';
+  cloudflareApiToken = '';
+});
 
 const PROMPT_TRACE = `Redraw the input photo as a classic Roy Lichtenstein 1960s comic-book pop-art illustration.
 
@@ -585,15 +635,27 @@ function reset() {
 
 async function callCloudflareAI(prompt, guide) {
   takeCloudflareUse();
+  if (!!cloudflareAccountId !== !!cloudflareApiToken) {
+    throw new Error('Cloudflare Account ID와 API Token을 모두 입력하거나, 두 입력란을 모두 비워 주세요.');
+  }
   // 원본 사진의 가로세로 비율을 유지합니다.
   const ratio = sourceWidth / sourceHeight;
   const maxSide = 768;
   const width = Math.max(256, Math.round(ratio >= 1 ? maxSide : maxSide * ratio));
   const height = Math.max(256, Math.round(ratio >= 1 ? maxSide / ratio : maxSide));
+  // FLUX.2 Klein의 참조 이미지는 512x512 미만이어야 하므로 개인 계정 호출 때 500px로 다시 축소합니다.
+  const cloudflareImage = cloudflareAccountId
+    ? await toJpegB64(srcImg || b64, 500)
+    : b64;
+  const requestBody = { image: cloudflareImage, guide, prompt, width, height };
+  if (cloudflareAccountId && cloudflareApiToken) {
+    requestBody.cloudflareAccountId = cloudflareAccountId;
+    requestBody.cloudflareApiToken = cloudflareApiToken;
+  }
   const res = await fetch(WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: b64, guide, prompt, width, height })
+    body: JSON.stringify(requestBody)
   });
   const data = await res.json().catch(() => ({}));
   if (res.status === 403) throw new Error('이 주소에서는 변환 서버를 쓸 수 없어요. (Worker의 허용 주소 ALLOW 확인)');
