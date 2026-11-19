@@ -401,7 +401,14 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 // Cloudflare AI는 브라우저별 최대 3회. Gemini 키가 있으면 Google API를 브라우저에서 직접 호출합니다.
 const WORKER_URL = 'https://charum-ai.simdoly.workers.dev/cartoon';
 const GEMINI_DIRECT_IMAGE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent';
-const GEMINI_DIRECT_TEXT_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent';
+// 사진 분석·자동 설정용 순차 대체 모델. 위에서 아래 순서로 시도합니다.
+const GEMINI_TEXT_MODELS = [
+  'gemma-4-26b-a4b-it',
+  'gemma-4-31b-it',
+  'gemini-3.1-flash-lite-preview',
+  'gemini-3.5-flash-lite',
+  'gemini-flash-lite-latest'
+];
 const GEMINI_PROXY_URL = WORKER_URL.replace(/\/cartoon$/, '/gemini');
 const CF_LIMIT_KEY = 'charum_popart_cf_uses_v1';
 const CF_LIMIT = 3;
@@ -1020,7 +1027,7 @@ function printGallery() {
   if (!gallery.length) { toast('먼저 전시판에 그림을 담아 주세요'); return; }
   printHTML(`<div class="pa-gal">${gallery.map(u => `<figure><img src="${u}"><figcaption>제목 / 이름:</figcaption></figure>`).join('')}</div>`);
 }
-// Gemini 키가 있으면 Google로 직접 요청. 키가 없으면 Cloudflare Worker를 사용합니다.
+// Gemini 키가 있으면 Google로 직접 요청. 키가 없으면 기존 Cloudflare Worker를 사용합니다.
 async function geminiRequest(parts, directUrl, generationConfig) {
   const headers = { 'Content-Type': 'application/json' };
   let url = directUrl;
@@ -1032,10 +1039,44 @@ async function geminiRequest(parts, directUrl, generationConfig) {
   if (!res.ok) throw new Error(data?.error?.message || `Gemini 요청 실패 (HTTP ${res.status})`);
   return data;
 }
+// 사진 분석은 테스트에서 확인한 모델을 우선순위대로 호출합니다.
+// 한 모델이 한도 초과·일시 오류·모델 미지원·빈 응답이면 다음 모델로 넘어갑니다.
 async function askGemini(parts) {
-  const data = await geminiRequest(parts, GEMINI_DIRECT_TEXT_URL, { responseMimeType: 'application/json' });
-  const t = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').replace(/```json|```/g, '').trim();
-  try { return JSON.parse(t); } catch (e) { throw new Error('AI 답을 읽지 못했어요. 다시 눌러 보세요.'); }
+  if (!geminiApiKey) {
+    const data = await geminiRequest(parts, '', { responseMimeType: 'application/json' });
+    const t = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').replace(/```json|```/g, '').trim();
+    try { return JSON.parse(t); } catch (e) { throw new Error('AI 답을 읽지 못했어요. 다시 눌러 보세요.'); }
+  }
+  const failures = [];
+  for (const model of GEMINI_TEXT_MODELS) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': geminiApiKey },
+        body: JSON.stringify({ contents: [{ parts }], generationConfig: { responseMimeType: 'application/json' } })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const detail = data?.error?.message || `HTTP ${res.status}`;
+        failures.push(`${model}: ${detail}`);
+        // API 키 오류나 권한 오류는 모든 모델에 공통이므로 불필요하게 반복하지 않습니다.
+        if (res.status === 401 || res.status === 403) break;
+        continue;
+      }
+      const t = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').replace(/```json|```/g, '').trim();
+      if (!t) { failures.push(`${model}: 빈 응답`); continue; }
+      try {
+        const parsed = JSON.parse(t);
+        window.lastGeminiAnalysisModel = model;
+        const info = document.getElementById('ai-route-info');
+        if (info) info.innerHTML = `사진 분석 모델: <b>${model}</b> · Gemini 직접 연결`;
+        return parsed;
+      } catch (_) { failures.push(`${model}: JSON 응답 형식 오류`); }
+    } catch (e) {
+      failures.push(`${model}: ${e.message || '네트워크 오류'}`);
+    }
+  }
+  throw new Error('사진 분석에 사용할 수 있는 Gemini 모델이 없습니다.\n' + failures.join('\n'));
 }
 async function callGeminiImage(prompt, guide) {
   const parts = [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }];
