@@ -241,6 +241,34 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .opts label.wide { display:flex; grid-column:1/-1; justify-content:flex-start; flex-wrap:wrap; gap:4px 10px; }
 #selbox { position:absolute; display:none; border:3px dashed #E8001C; border-radius:14px; pointer-events:none; z-index:3; }
 #result-img { touch-action:none; }
+
+/* 설정은 기본적으로 숨기고, 우편함을 누르면 부드럽게 펼쳐집니다. */
+.app { grid-template-columns:116px minmax(0,1fr); transition:grid-template-columns .38s cubic-bezier(.2,.8,.2,1); }
+.control-panel { width:116px; overflow:hidden; padding:14px 8px; gap:12px; transition:width .38s cubic-bezier(.2,.8,.2,1), padding .38s ease; }
+.control-panel > :not(.cp-head) { display:none; }
+.cp-head { width:100%; flex-direction:column; align-items:center; gap:6px; }
+.mailbox-btn svg { width:86px; }
+.mailbox-description { display:block; max-width:100px; text-align:center; font-size:11px; line-height:1.45; color:#555; font-weight:700; }
+.cp-file { display:none !important; }
+.app.settings-open { grid-template-columns:minmax(300px,33.333%) minmax(0,1fr); }
+.app.settings-open .control-panel { width:auto; padding:18px 20px; }
+.app.settings-open .control-panel > .mode-btns, .app.settings-open .control-panel > .opts { display:grid; animation:settingsFade .28s ease both; }
+.app.settings-open .control-panel > .smart { display:flex; animation:settingsFade .28s ease both; }
+.app.settings-open .cp-head { flex-direction:row; align-items:center; }
+.app.settings-open .mailbox-btn svg { width:clamp(84px,13vmin,140px); }
+.app.settings-open .mailbox-description { display:none; }
+.app.settings-open .cp-file { display:flex !important; }
+@keyframes settingsFade { from { opacity:0; transform:translateY(-7px); } to { opacity:1; transform:translateY(0); } }
+@media (max-aspect-ratio:1/1) {
+  .app { grid-template-columns:minmax(0,1fr); grid-template-rows:108px minmax(0,1fr) auto; grid-template-areas:"ctrl" "photo" "tray"; transition:grid-template-rows .38s cubic-bezier(.2,.8,.2,1); }
+  .control-panel { width:100%; height:108px; padding:8px 12px; border-right:0; border-bottom:0; }
+  .cp-head { flex-direction:row; justify-content:center; }
+  .mailbox-btn svg { width:76px; }
+  .mailbox-description { max-width:none; }
+  .app.settings-open { grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,34%) minmax(0,1fr) auto; }
+  .app.settings-open .control-panel { width:100%; height:auto; padding:12px 16px; border-bottom:4px solid #000; }
+  .app.settings-open .cp-head { flex-direction:row; }
+}
 </style>
 </head>
 <body>
@@ -264,7 +292,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 
   <div class="control-panel" id="control-panel">
     <div class="cp-head">
-      <div class="mailbox-btn" onclick="document.getElementById('file-in').click()" title="사진 넣기">
+      <div class="mailbox-btn" onclick="toggleSettingsAndPick()" title="사진 넣기 및 설정 열기">
         <svg width="187" height="192" viewBox="0 0 136 140" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="bd" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="3" cy="3" r="1.5" fill="#9b0014"/></pattern>
@@ -284,6 +312,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
       </svg>
         <span class="mb-label">사진 투입</span>
       </div>
+      <span class="mailbox-description">우편함을 눌러 사진을 넣어주세요</span>
       <div class="cp-file">
         <img id="thumb" class="thumb" alt="미리보기"/>
         <div class="file-col">
@@ -291,17 +320,6 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
           <span id="fname" class="fname"></span>
         </div>
       </div>
-    </div>
-    <div class="api-box" style="border:2px solid #0057A8;border-radius:10px;padding:10px;background:#f4f8ff;">
-      <b style="font-size:13px;">AI 사용 방식</b>
-      <p style="font-size:11px;color:#555;line-height:1.5;margin:5px 0;">Gemini API 키를 입력하면 이 브라우저에서 Google로 직접 요청합니다. 키를 Cloudflare Worker나 이 웹앱 서버로 보내거나 브라우저 저장소에 저장하지 않습니다.</p>
-      <input id="gemini-key" type="password" autocomplete="off" placeholder="Gemini API 키 붙여넣기"
-        style="width:100%;padding:9px;border:1px solid #9bb8d8;border-radius:7px;font:inherit;font-size:12px;">
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:7px;">
-        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:#0057A8;">Google AI Studio에서 API 키 받기 ↗</a>
-        <button type="button" class="chip" style="padding:5px 9px;" onclick="clearGeminiKey()">키 지우기</button>
-      </div>
-      <small id="ai-route-info" style="display:block;margin-top:7px;color:#555;">키가 없으면 Cloudflare AI를 사용합니다. Cloudflare 사용 가능 횟수: <b id="cf-left">3</b>/3</small>
     </div>
     <div class="mode-btns">
         <button class="mbtn m1" disabled onclick="generate('ai')"><b>① AI 변환</b><small>Cloudflare AI가 다시 그려요</small></button>
@@ -311,7 +329,17 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
       </div>
     <div class="smart">
       <button class="chip" id="btn-detect" disabled onclick="autoDetect()">🔍 사진 보고 자동 설정</button>
-      <small>입력한 Gemini 키 또는 Cloudflare AI로 사진을 분석합니다. 사진은 선택한 AI 사업자에게 전송됩니다.</small>
+      <div class="api-box" style="border:2px solid #0057A8;border-radius:10px;padding:10px;background:#f4f8ff;width:100%;">
+        <b style="font-size:13px;">AI 사용 방식</b>
+        <p style="font-size:11px;color:#555;line-height:1.5;margin:5px 0;">Gemini API 키를 입력하면 이 브라우저에서 Google로 직접 요청합니다. 키는 Cloudflare나 웹앱 서버로 전송하거나 브라우저 저장소에 저장하지 않습니다. 키가 없으면 Cloudflare AI를 사용합니다. 사진은 선택한 AI 사업자에게 전송되어 분석·변환에 사용됩니다.</p>
+        <input id="gemini-key" type="password" autocomplete="off" placeholder="Gemini API 키 붙여넣기"
+          style="width:100%;padding:9px;border:1px solid #9bb8d8;border-radius:7px;font:inherit;font-size:12px;">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:7px;">
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:#0057A8;">Google AI Studio에서 API 키 받기 ↗</a>
+          <button type="button" class="chip" style="padding:5px 9px;" onclick="clearGeminiKey()">키 지우기</button>
+        </div>
+        <small id="ai-route-info" style="display:block;margin-top:7px;color:#555;">Cloudflare 사용 가능 횟수: <b id="cf-left">3</b>/3</small>
+      </div>
     </div>
     <div class="opts">
       <label>AI 방식 <select class="mode-select" id="mode"><option value="faithful">얼굴 그대로</option><option value="balanced">균형</option><option value="bold">과감하게</option></select></label>
@@ -440,10 +468,14 @@ let srcImg=null, current=null;
 const results={}, errs={};
 function setButtons(on){ document.querySelectorAll('.mbtn, #btn-detect').forEach(b => b.disabled=!on); }
 
-function openPanel() {}
+function openPanel() { document.querySelector('.app').classList.add('settings-open'); }
 document.getElementById('canvas').addEventListener('click', () => closePanel());
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
-function closePanel() {}
+function closePanel() { document.querySelector('.app').classList.remove('settings-open'); }
+function toggleSettingsAndPick() {
+  openPanel();
+  document.getElementById('file-in').click();
+}
 
 document.getElementById('file-in').addEventListener('change', function(e) {
   const f = e.target.files[0];
