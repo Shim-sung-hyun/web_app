@@ -292,6 +292,17 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
         </div>
       </div>
     </div>
+    <div class="api-box" style="border:2px solid #0057A8;border-radius:10px;padding:10px;background:#f4f8ff;">
+      <b style="font-size:13px;">AI 사용 방식</b>
+      <p style="font-size:11px;color:#555;line-height:1.5;margin:5px 0;">Gemini API 키를 입력하면 이 브라우저에서 Google로 직접 요청합니다. 키를 Cloudflare Worker나 이 웹앱 서버로 보내거나 브라우저 저장소에 저장하지 않습니다.</p>
+      <input id="gemini-key" type="password" autocomplete="off" placeholder="Gemini API 키 붙여넣기"
+        style="width:100%;padding:9px;border:1px solid #9bb8d8;border-radius:7px;font:inherit;font-size:12px;">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:7px;">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:#0057A8;">Google AI Studio에서 API 키 받기 ↗</a>
+        <button type="button" class="chip" style="padding:5px 9px;" onclick="clearGeminiKey()">키 지우기</button>
+      </div>
+      <small id="ai-route-info" style="display:block;margin-top:7px;color:#555;">키가 없으면 Cloudflare AI를 사용합니다. Cloudflare 사용 가능 횟수: <b id="cf-left">3</b>/3</small>
+    </div>
     <div class="mode-btns">
         <button class="mbtn m1" disabled onclick="generate('ai')"><b>① AI 변환</b><small>Cloudflare AI가 다시 그려요</small></button>
         <button class="mbtn m2" disabled onclick="generate('filter')"><b>② 필터</b><small>AI 없이 · 얼굴 그대로</small></button>
@@ -300,7 +311,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
       </div>
     <div class="smart">
       <button class="chip" id="btn-detect" disabled onclick="autoDetect()">🔍 사진 보고 자동 설정</button>
-      <small>사진을 구글 AI(무료)가 살펴봐요. 사진이 구글로 전송되니 학생 얼굴 사진은 동의를 확인한 뒤 쓰세요.</small>
+      <small>입력한 Gemini 키 또는 Cloudflare AI로 사진을 분석합니다. 사진은 선택한 AI 사업자에게 전송됩니다.</small>
     </div>
     <div class="opts">
       <label>AI 방식 <select class="mode-select" id="mode"><option value="faithful">얼굴 그대로</option><option value="balanced">균형</option><option value="bold">과감하게</option></select></label>
@@ -359,8 +370,41 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 <input type="file" id="file-in" accept="image/*"/>
 
 <script>
-// 이미지 변환은 Cloudflare Worker(charum-ai)만 사용합니다. (Google API 키 불필요)
+// Cloudflare AI는 브라우저별 최대 3회. Gemini 키가 있으면 Google API를 브라우저에서 직접 호출합니다.
 const WORKER_URL = 'https://charum-ai.simdoly.workers.dev/cartoon';
+const GEMINI_DIRECT_IMAGE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent';
+const GEMINI_DIRECT_TEXT_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent';
+const GEMINI_PROXY_URL = WORKER_URL.replace(/\/cartoon$/, '/gemini');
+const CF_LIMIT_KEY = 'charum_popart_cf_uses_v1';
+const CF_LIMIT = 3;
+let geminiApiKey = ''; // 메모리에만 보관. localStorage/sessionStorage/cookie에 저장하지 않음.
+function getCfUses() { try { return Math.min(CF_LIMIT, Math.max(0, Number(localStorage.getItem(CF_LIMIT_KEY)) || 0)); } catch (_) { return 0; } }
+function updateAiRouteInfo() {
+  const left = document.getElementById('cf-left');
+  const info = document.getElementById('ai-route-info');
+  if (left) left.textContent = Math.max(0, CF_LIMIT - getCfUses());
+  if (info) info.innerHTML = geminiApiKey
+    ? 'Gemini 직접 연결 사용 중 · API 키는 현재 페이지 메모리에만 보관됩니다.'
+    : '키가 없으면 Cloudflare AI를 사용합니다. Cloudflare 사용 가능 횟수: <b id="cf-left">' + Math.max(0, CF_LIMIT - getCfUses()) + '</b>/3';
+}
+function takeCloudflareUse() {
+  const used = getCfUses();
+  if (used >= CF_LIMIT) throw new Error('이 브라우저의 Cloudflare AI 사용 3회를 모두 사용했습니다. Gemini API 키를 입력해 사용해 주세요.');
+  try { localStorage.setItem(CF_LIMIT_KEY, String(used + 1)); } catch (_) {}
+  updateAiRouteInfo();
+}
+function clearGeminiKey() {
+  geminiApiKey = '';
+  const input = document.getElementById('gemini-key');
+  if (input) input.value = '';
+  updateAiRouteInfo();
+}
+document.getElementById('gemini-key').addEventListener('input', e => {
+  geminiApiKey = e.target.value.trim();
+  updateAiRouteInfo();
+});
+window.addEventListener('pagehide', () => { geminiApiKey = ''; });
+
 const PROMPT_TRACE = `Redraw the input photo as a classic Roy Lichtenstein 1960s comic-book pop-art illustration.
 
 Use the photo as a tracing reference. Keep the drawing identical to the photo and change only the rendering technique:
@@ -409,7 +453,7 @@ document.getElementById('file-in').addEventListener('change', function(e) {
     const url = ev.target.result;
     const preview = new Image();
     preview.onload = () => {
-      // 기존 charum-ai /cartoon은 JPEG base64 입력을 받으므로 512px 이내 JPEG로 맞춥니다.
+      // 사진은 브라우저에서 JPEG로 변환합니다. AI 요청 시 선택한 사업자로 전송됩니다.
       sourceWidth = preview.naturalWidth;
       sourceHeight = preview.naturalHeight;
       const scale = Math.min(1, 512 / Math.max(preview.naturalWidth, preview.naturalHeight));
@@ -453,6 +497,7 @@ function show(state) {
 }
 
 function reset() {
+  clearGeminiKey();
   b64=''; mime='';
   sourceWidth=768; sourceHeight=768;
   document.getElementById('thumb').style.display='none';
@@ -465,6 +510,8 @@ function reset() {
 }
 
 async function callCharumAI(prompt, guide) {
+  if (geminiApiKey) return await callGeminiImage(prompt, guide);
+  takeCloudflareUse();
   // 원본 사진의 가로세로 비율을 유지합니다.
   const ratio = sourceWidth / sourceHeight;
   const maxSide = 768;
@@ -479,9 +526,7 @@ async function callCharumAI(prompt, guide) {
   if (res.status === 403) throw new Error('이 주소에서는 변환 서버를 쓸 수 없어요. (Worker의 허용 주소 ALLOW 확인)');
   if (!res.ok) {
     const message = data?.error?.message || `HTTP ${res.status}`;
-    throw new Error(message === 'daily limit'
-      ? '오늘의 팝아트 변환 한도(60회)를 사용했습니다.'
-      : message);
+    throw new Error(message);
   }
   if (!data.image) throw new Error('서버에서 변환된 이미지를 받지 못했습니다.');
   return data.image;
@@ -943,17 +988,31 @@ function printGallery() {
   if (!gallery.length) { toast('먼저 전시판에 그림을 담아 주세요'); return; }
   printHTML(`<div class="pa-gal">${gallery.map(u => `<figure><img src="${u}"><figcaption>제목 / 이름:</figcaption></figure>`).join('')}</div>`);
 }
-// ---------- 구글 AI(무료): 글·사진 이해만 사용 (그림 그리기는 Cloudflare) ----------
-const GEMINI_URL = WORKER_URL.replace(/\/cartoon$/, '/gemini');
-async function askGemini(parts) {
-  const res = await fetch(GEMINI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents: [{ parts }], generationConfig: { responseMimeType: 'application/json' } }) });
+// Gemini 키가 있으면 Google로 직접 요청. 키가 없으면 Cloudflare Worker를 사용합니다.
+async function geminiRequest(parts, directUrl, generationConfig) {
+  const headers = { 'Content-Type': 'application/json' };
+  let url = directUrl;
+  if (geminiApiKey) headers['x-goog-api-key'] = geminiApiKey;
+  else { takeCloudflareUse(); url = GEMINI_PROXY_URL; }
+  const res = await fetch(url, { method: 'POST', headers,
+    body: JSON.stringify({ contents: [{ parts }], generationConfig: generationConfig || {} }) });
   const data = await res.json().catch(() => ({}));
-  if (res.status === 403) throw new Error('이 주소에서는 쓸 수 없어요. (Worker의 허용 주소 ALLOW 확인)');
-  if (res.status === 429) throw new Error('오늘 쓸 수 있는 구글 AI 횟수를 다 썼어요. 내일 다시 해 보세요.');
-  if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.error?.message || `Gemini 요청 실패 (HTTP ${res.status})`);
+  return data;
+}
+async function askGemini(parts) {
+  const data = await geminiRequest(parts, GEMINI_DIRECT_TEXT_URL, { responseMimeType: 'application/json' });
   const t = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').replace(/```json|```/g, '').trim();
   try { return JSON.parse(t); } catch (e) { throw new Error('AI 답을 읽지 못했어요. 다시 눌러 보세요.'); }
+}
+async function callGeminiImage(prompt, guide) {
+  const parts = [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }];
+  if (guide) parts.push({ inline_data: { mime_type: 'image/jpeg', data: guide } });
+  parts.push({ text: prompt });
+  const data = await geminiRequest(parts, GEMINI_DIRECT_IMAGE_URL, { responseModalities: ['IMAGE'] });
+  const image = (data.candidates?.[0]?.content?.parts || []).find(p => p.inlineData?.data || p.inline_data?.data);
+  if (!image) throw new Error('Gemini가 이미지를 반환하지 않았습니다. API 키의 모델 이용 권한과 사용량을 확인해 주세요.');
+  return (image.inlineData || image.inline_data).data;
 }
 async function toJpegB64(src, max = 768) {
   let im = src;
