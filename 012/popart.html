@@ -1144,7 +1144,7 @@ async function generate(mode) {
     const displayError = quotaZero
       ? 'Gemini 그림 생성 한도에 도달했습니다. 대체 모델 확인 후 Cloudflare AI로 전환했지만, Cloudflare AI에서도 그림을 만들지 못했습니다. Cloudflare 사용 가능 횟수와 서버 상태를 확인해 주세요.'
       : rawError;
-    document.getElementById('error-box').innerHTML = `오류 😢<br><br><strong>${displayError.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}</strong><br><br><small>${quotaZero ? '사진 분석용 Gemini 모델과 그림 생성 모델은 별도입니다.' : '잠시 후 다시 시도해 주세요.'}</small>`;
+    document.getElementById('error-box').innerHTML = `오류 😢<br><br><strong>${displayError.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}</strong><br><br><small>${quotaZero ? '사진 분석용 Gemini 모델과 그림 생성 모델은 별도입니다.' : /모두 사용했|소진/.test(rawError) ? '' : '잠시 후 다시 시도해 주세요.'}</small>`;
     show('error');
   } finally {
     busy = false;
