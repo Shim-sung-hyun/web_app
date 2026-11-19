@@ -275,6 +275,91 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
   .app.settings-open .control-panel { width:100%; height:auto; padding:12px 16px; border-bottom:4px solid #000; }
   .app.settings-open .cp-head { flex-direction:row; }
 }
+
+/* ===== 설정 패널 스크롤 및 API 입력 배치 개선 ===== */
+.control-panel {
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+  min-height: 0;
+}
+.control-panel::-webkit-scrollbar { width: 8px; }
+.control-panel::-webkit-scrollbar-thumb { background: #b8c8dc; border-radius: 8px; }
+.cp-head { display:grid; grid-template-columns:minmax(90px, 0.7fr) minmax(0, 1.6fr); align-items:start; gap:12px; }
+.cp-head .mailbox-btn { grid-column:1; grid-row:1; align-self:center; }
+.cp-head .mailbox-description { display:none; }
+.photo-tools { grid-column:2; grid-row:1; display:flex; flex-direction:column; gap:7px; min-width:0; }
+.photo-tools .cp-file { display:flex; align-items:center; min-height:0; gap:8px; }
+.photo-tools .thumb { width:clamp(76px, 8vw, 112px); height:clamp(90px, 10vw, 145px); object-fit:cover; }
+.photo-tools .file-col { min-width:0; }
+.photo-tools .quick-actions { display:flex; flex-direction:column; gap:5px; width:100%; }
+.photo-tools .quick-actions button { width:100%; padding:7px 8px; }
+.api-credentials { width:100%; display:flex; flex-direction:column; gap:8px; padding:10px; border:2px solid #0057A8; border-radius:10px; background:#f4f8ff; }
+.api-credentials .credential-row { display:flex; flex-direction:column; gap:4px; }
+.api-credentials label { font-size:11px; font-weight:800; }
+.api-credentials input { width:100%; min-width:0; padding:9px; border:1px solid #9bb8d8; border-radius:7px; font:inherit; font-size:12px; background:#fff; }
+.api-help { width:100%; border:1px solid #b8cde6; border-radius:9px; background:#fff; }
+.api-help summary { cursor:pointer; padding:9px 11px; font-size:12px; font-weight:800; color:#0057A8; list-style:none; }
+.api-help summary::-webkit-details-marker { display:none; }
+.api-help summary::before { content:'▼ '; font-size:10px; }
+.api-help[open] summary::before { content:'▲ '; }
+.api-help .help-body { padding:0 11px 11px; font-size:11px; line-height:1.55; color:#444; }
+.api-help .help-body p { margin:6px 0; }
+.api-help a { color:#0057A8; font-weight:800; }
+#ai-route-info { font-size:10px; line-height:1.45; color:#555; }
+.app:not(.settings-open) .cp-head { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.app:not(.settings-open) .cp-head .mailbox-btn { align-self:center; }
+.app:not(.settings-open) .photo-tools { display:contents; }
+.app:not(.settings-open) .photo-tools .cp-file { display:none !important; }
+.app:not(.settings-open) .photo-tools .quick-actions { display:flex; flex-direction:column; width:100%; }
+@media (max-aspect-ratio:1/1) {
+  .app.settings-open { grid-template-rows:minmax(0,1fr) minmax(0,1fr) auto; }
+  .app.settings-open .control-panel {
+    position:fixed; inset:0; z-index:30; width:100%; height:100vh; height:100dvh;
+    max-height:100vh; max-height:100dvh; overflow-y:auto !important;
+    border:0; border-bottom:4px solid #000; padding:12px 16px 24px;
+  }
+  .app.settings-open .cp-head { display:grid; grid-template-columns:90px minmax(0,1fr); }
+  .app.settings-open .photo-tools { display:flex; }
+  .app.settings-open .photo-tools .cp-file { display:flex !important; }
+  .app.settings-open .photo-tools .quick-actions { display:flex; }
+}
+
+
+/* ===== 팝아트 결과를 오른쪽 작업 영역에 크게 표시 ===== */
+.canvas.has-result {
+  padding: 14px;
+  min-width: 0;
+  min-height: 0;
+}
+.canvas.has-result .result-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  background: #fff;
+}
+@media (max-width: 700px) {
+  .canvas.has-result { padding: 8px; }
+  .canvas.has-result .result-img {
+    border-width: 3px;
+    box-shadow: 4px 4px 0 #000;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -315,20 +400,22 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
         <rect x="24" y="68" width="72" height="22" rx="4" fill="#FFD700" stroke="#000" stroke-width="3"/>
         <circle cx="60" cy="79" r="3.5" fill="#fff" stroke="#000" stroke-width="2"/>
         <rect class="slot-hole" x="28" y="50" width="64" height="9" rx="4.5" fill="#111" stroke="#000" stroke-width="2"/>
-      </svg>
+        </svg>
         <span class="mb-label">사진 투입</span>
       </div>
       <span class="mailbox-description">우편함을 눌러 사진을 넣어주세요</span>
-      <div class="quick-actions">
-        <button type="button" onclick="openSettingsOnly()">⚙ 편집 설정</button>
-        <button type="button" onclick="pickNewPhoto()">＋ 사진 바꾸기</button>
-      </div>
-      <div class="cp-file">
-        <img id="thumb" class="thumb" alt="미리보기"/>
-        <div class="file-col">
-          <span id="no-file" class="no-file">우편함을 눌러<br>사진을 넣어주세요!<br><small>얼굴이 크게 나온 사진이 좋아요</small></span>
-          <span id="fname" class="fname"></span>
-          <button type="button" id="relay-photo-btn" class="chip" style="margin-top:7px;white-space:nowrap;">📱 휴대폰 사진 받기</button>
+      <div class="photo-tools">
+        <div class="cp-file">
+          <img id="thumb" class="thumb" alt="미리보기"/>
+          <div class="file-col">
+            <span id="no-file" class="no-file">우편함을 눌러<br>사진을 넣어주세요!<br><small>얼굴이 크게 나온 사진이 좋아요</small></span>
+            <span id="fname" class="fname"></span>
+            <button type="button" id="relay-photo-btn" class="chip" style="margin-top:7px;white-space:nowrap;">📱 휴대폰 사진 받기</button>
+          </div>
+        </div>
+        <div class="quick-actions">
+          <button type="button" onclick="openSettingsOnly()">⚙ 편집 설정</button>
+          <button type="button" onclick="pickNewPhoto()">＋ 사진 바꾸기</button>
         </div>
       </div>
     </div>
@@ -338,34 +425,42 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
         <button class="mbtn m3" disabled onclick="generate('hybrid')"><b>③ 필터 + AI</b><small>윤곽은 필터, 그림은 AI</small></button>
         <button class="mbtn m4" disabled onclick="generateAll()"><b>★ 세 가지 모두</b><small>한 번에 비교 (AI 2번 사용)</small></button>
       </div>
-    <div class="smart">
-      <button class="chip" id="btn-detect" disabled onclick="autoDetect()">🔍 사진 보고 자동 설정</button>
-      <div class="api-box" style="border:2px solid #0057A8;border-radius:10px;padding:10px;background:#f4f8ff;width:100%;">
-        <b style="font-size:13px;">AI 사용 방식</b>
-        <p style="font-size:11px;color:#555;line-height:1.5;margin:5px 0;">Gemini API 키를 입력하면 이 브라우저에서 Google로 직접 요청합니다. 키는 Cloudflare나 웹앱 서버로 전송하거나 브라우저 저장소에 저장하지 않습니다. 키가 없으면 Cloudflare AI를 사용합니다. 사진은 선택한 AI 사업자에게 전송되어 분석·변환에 사용됩니다.</p>
-        <input id="gemini-key" type="password" autocomplete="off" placeholder="Gemini API 키 붙여넣기"
-          style="width:100%;padding:9px;border:1px solid #9bb8d8;border-radius:7px;font:inherit;font-size:12px;">
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:7px;">
-          <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:#0057A8;">Google AI Studio에서 API 키 받기 ↗</a>
-          <button type="button" class="chip" style="padding:5px 9px;" onclick="clearGeminiKey()">키 지우기</button>
+    <div class="smart" style="width:100%;align-items:stretch;flex-direction:column;">
+      <button class="chip" id="btn-detect" disabled onclick="autoDetect()" style="align-self:flex-start;">🔍 사진 보고 자동 설정</button>
+      <div class="api-credentials">
+        <div class="credential-row">
+          <label for="cf-account-id">① Cloudflare AI · Account ID</label>
+          <input id="cf-account-id" type="text" autocomplete="off" spellcheck="false" placeholder="Cloudflare Account ID">
         </div>
-        <div style="border-top:1px solid #c8d8eb;margin-top:10px;padding-top:10px;">
-          <b style="font-size:13px;">Cloudflare 내 계정으로 사용하기</b>
-          <p style="font-size:11px;color:#555;line-height:1.55;margin:5px 0;">본인의 Cloudflare 계정으로 그림을 생성하려면 아래 두 값을 입력하세요. 입력값은 이 페이지가 열려 있는 동안에만 메모리에 보관하며, 사진 변환 요청 때 기존 Worker를 통해 Cloudflare로 전달합니다.</p>
-          <label for="cf-account-id" style="display:block;font-size:11px;font-weight:700;margin:7px 0 3px;">Account ID</label>
-          <input id="cf-account-id" type="text" autocomplete="off" spellcheck="false" placeholder="Cloudflare Account ID"
-            style="width:100%;padding:9px;border:1px solid #9bb8d8;border-radius:7px;font:inherit;font-size:12px;">
-          <label for="cf-api-token" style="display:block;font-size:11px;font-weight:700;margin:7px 0 3px;">Workers AI API Token</label>
-          <input id="cf-api-token" type="password" autocomplete="new-password" spellcheck="false" placeholder="Cloudflare API Token 붙여넣기"
-            style="width:100%;padding:9px;border:1px solid #9bb8d8;border-radius:7px;font:inherit;font-size:12px;">
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:7px;">
-            <a href="https://dash.cloudflare.com/?to=/:account/ai/workers-ai" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:#0057A8;">Cloudflare에서 API Token 받기 ↗</a>
-            <button type="button" class="chip" style="padding:5px 9px;" onclick="clearCloudflareCredentials()">Cloudflare 키 지우기</button>
-          </div>
-          <small style="display:block;font-size:10px;color:#666;line-height:1.5;margin-top:6px;">토큰 권한: Workers AI - Read 및 Workers AI - Edit. Global API Key는 사용하지 마세요. 입력한 토큰은 브라우저 저장소나 Worker에 저장하지 않습니다.</small>
+        <div class="credential-row">
+          <label for="cf-api-token">② Cloudflare AI · API Token</label>
+          <input id="cf-api-token" type="password" autocomplete="new-password" spellcheck="false" placeholder="Cloudflare API Token 붙여넣기">
         </div>
-        <small id="ai-route-info" style="display:block;margin-top:9px;color:#555;">테스트 중 · Cloudflare AI 사용 횟수 제한 없음</small>
+        <div class="credential-row">
+          <label for="gemini-key">③ Gemini API Key (선택 사항)</label>
+          <input id="gemini-key" type="password" autocomplete="off" placeholder="Gemini API 키 붙여넣기 · 없어도 사용 가능">
+        </div>
+        <small style="font-size:10px;color:#555;line-height:1.45;">Gemini 키가 없어도 괜찮습니다. Cloudflare AI가 사진 분석과 그림 생성을 모두 처리합니다. Cloudflare 정보를 비워 두면 기본 제공 계정으로 하루 3회 사용할 수 있습니다.</small>
+        <small id="ai-route-info">기본 제공 계정 · 하루 3회</small>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;">
+          <button type="button" class="chip" style="padding:5px 9px;" onclick="clearCloudflareCredentials()">Cloudflare 정보 지우기</button>
+          <button type="button" class="chip" style="padding:5px 9px;" onclick="clearGeminiKey()">Gemini 키 지우기</button>
+        </div>
       </div>
+      <details class="api-help">
+        <summary>API 설명 및 키 발급 안내</summary>
+        <div class="help-body">
+          <b>Cloudflare AI (필수 입력은 아닙니다)</b>
+          <p>본인 계정으로 사용하려면 Account ID와 API Token을 모두 입력하세요. 두 항목을 비워 두면 기본 제공 계정으로 하루 3회 이용합니다. Gemini 키가 없으면 Cloudflare의 비전 AI가 사진을 분석하고, 이미지 AI가 팝아트를 생성합니다.</p>
+          <p><a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener noreferrer">Cloudflare 토큰 받기 ↗</a></p>
+          <p>토큰은 Workers AI 권한을 부여한 API Token을 사용하세요. Global API Key는 입력하지 마세요. 입력값은 브라우저 저장소에 저장하지 않으며 페이지가 열려 있는 동안 메모리에만 보관합니다.</p>
+          <hr style="border:0;border-top:1px solid #d7e1ee;margin:9px 0;">
+          <b>Gemini API (선택 사항)</b>
+          <p>Gemini 키를 입력하면 Gemini가 사진을 분석합니다. 키가 없거나 입력하지 않아도 Cloudflare AI가 분석하므로 필수는 아닙니다.</p>
+          <p><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio에서 API 키 받기 ↗</a></p>
+          <p>Gemini 키는 이 브라우저에서 Google로 직접 전송되며 Cloudflare Worker로 보내지지 않습니다.</p>
+        </div>
+      </details>
     </div>
     <div class="opts">
       <label>AI 방식 <select class="mode-select" id="mode"><option value="faithful">얼굴 그대로</option><option value="balanced">균형</option><option value="bold">과감하게</option></select></label>
@@ -425,7 +520,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 <script src="https://shim-sung-hyun.github.io/web_app/relay/charum-relay.js"></script>
 
 <script>
-// 테스트 기간에는 Cloudflare AI 사용 횟수 제한을 적용하지 않습니다. 정식판에서 서버 측 제한을 추가합니다.
+// Cloudflare AI 사용량은 Worker에서 기본 계정 하루 3회로 제한합니다.
 const WORKER_URL = 'https://charum-ai.simdoly.workers.dev/cartoon';
 const GEMINI_DIRECT_IMAGE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent';
 // 사진 분석·자동 설정용 순차 대체 모델. 위에서 아래 순서로 시도합니다.
@@ -440,7 +535,7 @@ const GEMINI_PROXY_URL = WORKER_URL.replace(/\/cartoon$/, '/gemini');
 // API 자격 증명은 현재 페이지 메모리에만 보관하며 localStorage/cookie에는 저장하지 않습니다.
 let cloudflareAccountId = '';
 let cloudflareApiToken = '';
-// 테스트 기간 무제한 사용: 기존 브라우저별 3회 제한과 저장 카운터를 사용하지 않습니다.
+// API 자격 증명은 브라우저 메모리에만 보관합니다.
 function updateAiRouteInfo() {
   const info = document.getElementById('ai-route-info');
   if (!info) return;
@@ -455,10 +550,10 @@ function updateAiRouteInfo() {
   } else if (hasAccount && hasToken) {
     info.textContent = '개인 Cloudflare 계정 연결됨 · 해당 계정의 Workers AI 사용량이 적용됩니다.';
   } else {
-    info.textContent = '테스트 중 · 제작자 Cloudflare AI 사용 횟수 제한 없음';
+    info.textContent = '기본 제공 계정 사용 중 · 한국 시간 기준 하루 3회';
   }
 }
-function takeCloudflareUse() { /* 테스트 중에는 횟수를 제한하지 않습니다. */ }
+function takeCloudflareUse() { /* 사용량 제한은 Worker에서 관리합니다. */ }
 function clearGeminiKey() {
   geminiApiKey = '';
   const input = document.getElementById('gemini-key');
