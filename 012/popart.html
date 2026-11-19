@@ -762,7 +762,7 @@ function reset() {
   openPanel();
 }
 
-async function callCloudflareAI(prompt, guide) {
+async function callCloudflareAI(prompt, guide, useVision) {
   takeCloudflareUse();
   if (!!cloudflareAccountId !== !!cloudflareApiToken) {
     throw new Error('Cloudflare Account ID와 API Token을 모두 입력하거나, 두 입력란을 모두 비워 주세요.');
@@ -778,7 +778,7 @@ async function callCloudflareAI(prompt, guide) {
     : b64;
   // 필터+AI(③): 윤곽 이미지도 참조 이미지이므로 같은 이유로 500px로 줄여서 보냅니다. (없으면 undefined → 전송 안 됨)
   const cloudflareGuide = guide ? await toJpegB64('data:image/jpeg;base64,' + guide, 500) : undefined;
-  const requestBody = { image: cloudflareImage, guide: cloudflareGuide, prompt, width, height, useCloudflareVision: !geminiApiKey };
+  const requestBody = { image: cloudflareImage, guide: cloudflareGuide, prompt, width, height, useCloudflareVision: useVision === undefined ? !geminiApiKey : !!useVision };
   if (cloudflareAccountId && cloudflareApiToken) {
     requestBody.cloudflareAccountId = cloudflareAccountId;
     requestBody.cloudflareApiToken = cloudflareApiToken;
@@ -827,31 +827,36 @@ ${prompt}` });
       window.lastGeminiFallbackModel = model;
       const info = document.getElementById('ai-route-info');
       if (info) info.textContent = `사진 분석: ${model} → 그림 생성: Cloudflare AI`;
-      return `${prompt}\n\n[사진에서 확인한 시각 정보]
-${description}`;
+      return { prompt: `${prompt}\n\n[사진에서 확인한 시각 정보]
+${description}`, analyzed: true };
     } catch (e) {
       failures.push(`${model}: ${e.message || '네트워크 오류'}`);
     }
   }
   window.lastGeminiFallbackFailures = failures;
-  return prompt; // 사진 분석 모델이 모두 실패해도 원본 프롬프트로 Cloudflare AI를 시도합니다.
+  return { prompt, analyzed: false }; // Gemini 분석이 모두 실패하면 Cloudflare 비전이 직접 분석하도록 넘깁니다.
 }
 
 async function callCharumAI(prompt, guide) {
-  if (!geminiApiKey) return await callCloudflareAI(prompt, guide);
+  if (!geminiApiKey) return await callCloudflareAI(prompt, guide, true);
   try {
     return await callGeminiImage(prompt, guide);
   } catch (e) {
-    const message = String(e?.message || e);
-    const shouldFallback = /quota|limit:\s*0|rate.?limit|resource.?exhausted|429|5\d\d|not found|not supported|unsupported|unavailable/i.test(message);
-    if (!shouldFallback) throw e;
+    // 한도 초과, 안전 필터(이미지 없음), 키 오류, 네트워크 오류 등 Gemini 쪽 실패는 모두 Cloudflare로 넘깁니다.
+    const geminiMessage = String(e?.message || e);
     const info = document.getElementById('ai-route-info');
-    if (info) info.textContent = 'Gemini 그림 생성 한도/오류 → 대체 모델 순차 확인 중…';
-    const fallbackPrompt = await makeCloudflarePromptWithGemini(prompt, guide);
-    const image = await callCloudflareAI(fallbackPrompt, guide);
-    const status = document.getElementById('ai-route-info');
-    if (status) status.textContent = '최종 그림 생성: Cloudflare AI';
-    return image;
+    if (info) info.textContent = 'Gemini 그림 생성이 막혀 Cloudflare AI로 전환 중…';
+    const fallback = await makeCloudflarePromptWithGemini(prompt, guide);
+    try {
+      // Gemini 분석까지 실패했으면(analyzed=false) Cloudflare 비전이 직접 사진을 분석합니다.
+      const image = await callCloudflareAI(fallback.prompt, guide, !fallback.analyzed);
+      const status = document.getElementById('ai-route-info');
+      if (status) status.textContent = '최종 그림 생성: Cloudflare AI' + (fallback.analyzed ? ' (사진 분석: Gemini)' : ' (사진 분석: Cloudflare)');
+      return image;
+    } catch (cf) {
+      // 두 쪽 오류를 함께 보여 줘야 원인을 알 수 있습니다.
+      throw new Error(`${cf?.message || cf}\n[Gemini] ${geminiMessage}`);
+    }
   }
 }
 
@@ -1328,14 +1333,33 @@ async function geminiRequest(parts, directUrl, generationConfig) {
   if (!res.ok) throw new Error(data?.error?.message || `Gemini 요청 실패 (HTTP ${res.status})`);
   return data;
 }
-// 사진 분석은 테스트에서 확인한 모델을 우선순위대로 호출합니다.
-// 한 모델이 한도 초과·일시 오류·모델 미지원·빈 응답이면 다음 모델로 넘어갑니다.
+// 자동 설정·대사 추천용 사진 분석: Cloudflare Vision (Gemini 키가 없거나 Gemini가 모두 막힌 경우)
+const ANALYZE_URL = WORKER_URL.replace(/\/cartoon$/, '/analyze');
+async function askViaCloudflare(parts) {
+  const imagePart = parts.find(p => p.inline_data);
+  const textPart = [...parts].reverse().find(p => p.text);
+  if (!imagePart || !textPart) throw new Error('분석할 사진이나 질문이 없습니다.');
+  const body = { image: imagePart.inline_data.data, prompt: textPart.text };
+  const hasId = !!cloudflareAccountId, hasToken = !!cloudflareApiToken;
+  if (hasId !== hasToken) throw new Error('Cloudflare Account ID와 API Token을 모두 입력해 주세요.');
+  if (hasId) { body.cloudflareAccountId = cloudflareAccountId; body.cloudflareApiToken = cloudflareApiToken; }
+  const res = await fetch(ANALYZE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 403) throw new Error('이 주소에서는 변환 서버를 쓸 수 없어요. (Worker의 허용 주소 ALLOW를 확인해 주세요)');
+  if (!res.ok) throw new Error(data?.error?.message || `Cloudflare 사진 분석 실패 (HTTP ${res.status})`);
+  const raw = String(data.text || '').replace(/```json|```/g, '').trim();
+  const m = raw.match(/\{[\s\S]*\}/);
+  let parsed;
+  try { parsed = JSON.parse(m ? m[0] : raw); } catch (_) { throw new Error('AI 답을 읽지 못했어요. 다시 눌러 보세요.'); }
+  const info = document.getElementById('ai-route-info');
+  if (info) info.innerHTML = '사진 분석 모델: <b>Cloudflare Vision</b>';
+  return parsed;
+}
+// 사진 분석은 테스트에서 확인한 Gemini 모델을 우선순위대로 호출합니다.
+// 한 모델이 한도 초과·일시 오류·모델 미지원·빈 응답이면 다음 모델로 넘어가고,
+// 전부 실패하면 Cloudflare Vision이 분석합니다. Gemini 키가 없으면 처음부터 Cloudflare입니다.
 async function askGemini(parts) {
-  if (!geminiApiKey) {
-    const data = await geminiRequest(parts, '', { responseMimeType: 'application/json' });
-    const t = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').replace(/```json|```/g, '').trim();
-    try { return JSON.parse(t); } catch (e) { throw new Error('AI 답을 읽지 못했어요. 다시 눌러 보세요.'); }
-  }
+  if (!geminiApiKey) return await askViaCloudflare(parts);
   const failures = [];
   for (const model of GEMINI_TEXT_MODELS) {
     try {
@@ -1365,7 +1389,14 @@ async function askGemini(parts) {
       failures.push(`${model}: ${e.message || '네트워크 오류'}`);
     }
   }
-  throw new Error('사진 분석에 사용할 수 있는 Gemini 모델이 없습니다.\n' + failures.join('\n'));
+  // 모든 Gemini 모델이 실패하면 Cloudflare Vision으로 분석합니다.
+  const info = document.getElementById('ai-route-info');
+  if (info) info.textContent = 'Gemini 사진 분석이 막혀 Cloudflare Vision으로 분석 중…';
+  try {
+    return await askViaCloudflare(parts);
+  } catch (e) {
+    throw new Error('사진 분석에 실패했습니다.\n' + failures.join('\n') + '\n[Cloudflare] ' + (e?.message || e));
+  }
 }
 async function callGeminiImage(prompt, guide) {
   const parts = [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }];
