@@ -647,7 +647,7 @@ async function callCloudflareAI(prompt, guide) {
   const cloudflareImage = cloudflareAccountId
     ? await toJpegB64(srcImg || b64, 500)
     : b64;
-  const requestBody = { image: cloudflareImage, guide, prompt, width, height };
+  const requestBody = { image: cloudflareImage, guide, prompt, width, height, useCloudflareVision: !geminiApiKey };
   if (cloudflareAccountId && cloudflareApiToken) {
     requestBody.cloudflareAccountId = cloudflareAccountId;
     requestBody.cloudflareApiToken = cloudflareApiToken;
