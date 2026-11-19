@@ -249,6 +249,10 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .cp-head { width:100%; flex-direction:column; align-items:center; gap:6px; }
 .mailbox-btn svg { width:86px; }
 .mailbox-description { display:block; max-width:100px; text-align:center; font-size:11px; line-height:1.45; color:#555; font-weight:700; }
+.quick-actions { display:flex; flex-direction:column; gap:6px; width:100%; }
+.quick-actions button { width:100%; padding:7px 4px; border:2px solid #111; border-radius:8px; background:#fff; color:#111; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap; }
+.quick-actions button:first-child { background:#FFD700; }
+.quick-actions button:hover { transform:translateY(-1px); }
 .cp-file { display:none !important; }
 .app.settings-open { grid-template-columns:minmax(300px,33.333%) minmax(0,1fr); }
 .app.settings-open .control-panel { width:auto; padding:18px 20px; }
@@ -265,6 +269,8 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
   .cp-head { flex-direction:row; justify-content:center; }
   .mailbox-btn svg { width:76px; }
   .mailbox-description { max-width:none; }
+  .quick-actions { flex-direction:row; width:auto; }
+  .quick-actions button { width:auto; padding:7px 10px; }
   .app.settings-open { grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,34%) minmax(0,1fr) auto; }
   .app.settings-open .control-panel { width:100%; height:auto; padding:12px 16px; border-bottom:4px solid #000; }
   .app.settings-open .cp-head { flex-direction:row; }
@@ -292,7 +298,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 
   <div class="control-panel" id="control-panel">
     <div class="cp-head">
-      <div class="mailbox-btn" onclick="toggleSettingsAndPick()" title="사진 넣기 및 설정 열기">
+      <div class="mailbox-btn" onclick="pickNewPhoto()" title="새 사진 선택">
         <svg width="187" height="192" viewBox="0 0 136 140" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="bd" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="3" cy="3" r="1.5" fill="#9b0014"/></pattern>
@@ -313,6 +319,10 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
         <span class="mb-label">사진 투입</span>
       </div>
       <span class="mailbox-description">우편함을 눌러 사진을 넣어주세요</span>
+      <div class="quick-actions">
+        <button type="button" onclick="openSettingsOnly()">⚙ 편집 설정</button>
+        <button type="button" onclick="pickNewPhoto()">＋ 사진 바꾸기</button>
+      </div>
       <div class="cp-file">
         <img id="thumb" class="thumb" alt="미리보기"/>
         <div class="file-col">
@@ -339,7 +349,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
           <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:700;color:#0057A8;">Google AI Studio에서 API 키 받기 ↗</a>
           <button type="button" class="chip" style="padding:5px 9px;" onclick="clearGeminiKey()">키 지우기</button>
         </div>
-        <small id="ai-route-info" style="display:block;margin-top:7px;color:#555;">Cloudflare 사용 가능 횟수: <b id="cf-left">3</b>/3</small>
+        <small id="ai-route-info" style="display:block;margin-top:7px;color:#555;">테스트 중 · Cloudflare AI 사용 횟수 제한 없음</small>
       </div>
     </div>
     <div class="opts">
@@ -400,7 +410,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 <script src="https://shim-sung-hyun.github.io/web_app/relay/charum-relay.js"></script>
 
 <script>
-// Cloudflare AI는 브라우저별 최대 3회. Gemini 키가 있으면 Google API를 브라우저에서 직접 호출합니다.
+// 테스트 기간에는 Cloudflare AI 사용 횟수 제한을 적용하지 않습니다. 정식판에서 서버 측 제한을 추가합니다.
 const WORKER_URL = 'https://charum-ai.simdoly.workers.dev/cartoon';
 const GEMINI_DIRECT_IMAGE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent';
 // 사진 분석·자동 설정용 순차 대체 모델. 위에서 아래 순서로 시도합니다.
@@ -412,24 +422,14 @@ const GEMINI_TEXT_MODELS = [
   'gemini-flash-lite-latest'
 ];
 const GEMINI_PROXY_URL = WORKER_URL.replace(/\/cartoon$/, '/gemini');
-const CF_LIMIT_KEY = 'charum_popart_cf_uses_v1';
-const CF_LIMIT = 3;
-let geminiApiKey = ''; // 메모리에만 보관. localStorage/sessionStorage/cookie에 저장하지 않음.
-function getCfUses() { try { return Math.min(CF_LIMIT, Math.max(0, Number(localStorage.getItem(CF_LIMIT_KEY)) || 0)); } catch (_) { return 0; } }
+// 테스트 기간 무제한 사용: 기존 브라우저별 3회 제한과 저장 카운터를 사용하지 않습니다.
 function updateAiRouteInfo() {
-  const left = document.getElementById('cf-left');
   const info = document.getElementById('ai-route-info');
-  if (left) left.textContent = Math.max(0, CF_LIMIT - getCfUses());
-  if (info) info.innerHTML = geminiApiKey
+  if (info) info.textContent = geminiApiKey
     ? 'Gemini 직접 연결 사용 중 · API 키는 현재 페이지 메모리에만 보관됩니다.'
-    : '키가 없으면 Cloudflare AI를 사용합니다. Cloudflare 사용 가능 횟수: <b id="cf-left">' + Math.max(0, CF_LIMIT - getCfUses()) + '</b>/3';
+    : '테스트 중 · Cloudflare AI 사용 횟수 제한 없음';
 }
-function takeCloudflareUse() {
-  const used = getCfUses();
-  if (used >= CF_LIMIT) throw new Error('이 브라우저의 Cloudflare AI 사용 3회를 모두 사용했습니다. Gemini API 키를 입력해 사용해 주세요.');
-  try { localStorage.setItem(CF_LIMIT_KEY, String(used + 1)); } catch (_) {}
-  updateAiRouteInfo();
-}
+function takeCloudflareUse() { /* 테스트 중에는 횟수를 제한하지 않습니다. */ }
 function clearGeminiKey() {
   geminiApiKey = '';
   const input = document.getElementById('gemini-key');
@@ -481,9 +481,12 @@ function openPanel() { document.querySelector('.app').classList.add('settings-op
 document.getElementById('canvas').addEventListener('click', () => closePanel());
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
 function closePanel() { document.querySelector('.app').classList.remove('settings-open'); document.getElementById('control-panel').classList.remove('open'); }
-function toggleSettingsAndPick() {
+function openSettingsOnly() {
   openPanel();
-  // 새 사진 선택 창은 우편함을 직접 눌렀을 때만 엽니다.
+}
+function pickNewPhoto() {
+  openPanel();
+  // 사진 선택 창은 우편함 또는 '사진 바꾸기'를 직접 눌렀을 때만 엽니다.
   const picker = document.getElementById('file-in');
   picker.value = '';
   picker.click();
