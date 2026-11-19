@@ -714,9 +714,9 @@ document.getElementById('relay-photo-btn').addEventListener('click', (event) => 
   event.stopPropagation();
   // 첫 화면에서도 수신 창이 다른 화면 요소 뒤에 가려지지 않도록 설정 패널을 먼저 엽니다.
   openPanel();
-  // 현재 사진 중계 모듈은 window.PhotoRelay 이름으로 공개됩니다.
-  // 예전 버전의 CharumRelay 이름도 함께 지원합니다.
-  const relay = window.PhotoRelay || window.CharumRelay;
+  // 연수용 연결 코드를 포함해 휴대폰 사진 수신을 시작합니다.
+  // 배포된 모듈 이름(CharumRelay / PhotoRelay) 중 사용 가능한 것을 선택합니다.
+  const relay = window.CharumRelay || window.PhotoRelay;
   if (!relay || typeof relay.receive !== 'function') {
     toast('휴대폰 사진 연결 모듈을 불러오지 못했습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.');
     console.error('Photo relay API not found. Available:', Object.keys(window).filter(k => /relay/i.test(k)));
@@ -724,6 +724,7 @@ document.getElementById('relay-photo-btn').addEventListener('click', (event) => 
   }
   try {
     relay.receive({
+      code: "2026-11-sim",
       onPhoto: function(blob) { loadPhotoBlob(blob, '휴대폰에서 받은 사진'); }
     });
   } catch (e) {
