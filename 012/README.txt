@@ -37,6 +37,7 @@ AI 키·할당량 구조 (2026-11-19 선생님 정함, 오늘 작동 확인)
 - Wrangler로 배포할 때는 012/wrangler.jsonc의 REPLACE_WITH_KV_ID를 실제 id로 바꾼 뒤 wrangler deploy.
 - 코드 맨 위 ALLOW에 https://shim-sung-hyun.github.io · https://www.charum.org · https://charum.org · http://localhost:8787이 들어 있다(정식판 403 방지).
 - /ping은 JSON이 아니라 글이다: "ok / AI: 있음 / KV: 있음 / GEMINI_KEY: …"이 나오면 정상.
+- 사진 분석 모델(@cf/meta/llama-3.2-11b-vision-instruct)은 Meta 라이선스 동의가 필요하다. 개인 계정으로 처음 쓸 때 popart.html 설정 패널의 "모델 안내 페이지" 링크(공식 모델 문서, 'agree' 절차 있음)로 안내한다(기본 제공 계정은 이미 동의됨).
 
 다음 할 일
 1. 선생님: 012/charum-ai-worker.js를 워커에 붙여 넣고(KV 바인딩 "KV") 배포 → /ping에서 "KV: 있음" 확인.

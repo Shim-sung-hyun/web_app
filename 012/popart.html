@@ -475,6 +475,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
           <p>본인 계정으로 사용하려면 Account ID와 API Token을 모두 입력하세요. 두 항목을 비워 두면 기본 제공 계정으로 하루 3회 이용합니다. Gemini 키가 없으면 Cloudflare의 비전 AI가 사진을 분석하고, 이미지 AI가 팝아트를 생성합니다.</p>
           <p><a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener noreferrer">Cloudflare 토큰 받기 ↗</a></p>
           <p>토큰은 Workers AI 권한을 부여한 API Token을 사용하세요. Global API Key는 입력하지 마세요. 입력값은 브라우저 저장소에 저장하지 않으며 페이지가 열려 있는 동안 메모리에만 보관합니다.</p>
+          <p><b>처음 사용할 때 한 번:</b> 사진 분석 모델(<code>@cf/meta/llama-3.2-11b-vision-instruct</code>)은 Meta 라이선스 동의가 필요합니다. <a href="https://developers.cloudflare.com/workers-ai/models/llama-3.2-11b-vision-instruct/" target="_blank" rel="noopener noreferrer">모델 안내 페이지 ↗</a>의 'agree' 절차를 로그인한 Cloudflare 계정에서 한 번 따라 하면 됩니다. 동의하지 않으면 "Meta 라이선스 동의가 필요합니다" 안내가 나옵니다. 기본 제공 계정은 이미 동의되어 있으므로 이 단계가 필요 없습니다.</p>
           <hr style="border:0;border-top:1px solid #d7e1ee;margin:9px 0;">
           <b>Gemini API (선택 사항)</b>
           <p>Gemini 키를 입력하면 Gemini가 사진을 분석합니다. 키가 없거나 입력하지 않아도 Cloudflare AI가 분석하므로 필수는 아닙니다.</p>

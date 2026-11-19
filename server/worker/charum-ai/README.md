@@ -43,6 +43,7 @@ wrangler deploy
 - AI 바인딩은 `AI` 이름으로 연결합니다. 개발자 토큰은 파일에 넣지 않습니다.
 - 같은 이름(`charum-ai`)으로 배포하면 옛 주소 `https://charum-ai.simdoly.workers.dev/cartoon`이 새 코드가 됩니다. 012의 `WORKER_URL`을 바꿀 필요 없습니다.
 - `/ping`는 JSON이 아니라 글입니다. `ok / AI: 있음 / KV: 있음 …`이 나오면 정상입니다.
+- 사진 분석 모델(`@cf/meta/llama-3.2-11b-vision-instruct`)은 Meta 라이선스 동의가 필요합니다. 개인 Cloudflare 계정으로 처음 쓸 때는 012 설정 패널의 "모델 안내 페이지" 링크(공식 모델 문서)에서 `'prompt': 'agree'` 절차를 한 번 따라 하세요. 기본 제공 계정은 이미 동의되어 있습니다.
 
 ## 확인할 것
 
