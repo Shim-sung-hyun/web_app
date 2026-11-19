@@ -1,33 +1,15 @@
-// 차름 AI 중계 (charum-ai) — 012 팝아트 변환기용 / 복사해 붙여 넣는 원본
+// 차름 AI 중계 (charum-ai)
 // Cloudflare Vision 사진 분석 + FLUX 팝아트 생성
-// 기본 사용자는 기기별(익명 uid) 한국 시간 기준 하루 3회
-// 개인 Cloudflare 계정 사용자는 본인 계정으로 처리 (제한 없음)
-//
-// 012/popart.html과 맞추기 위해 아래 4가지를 고쳤다 (2026-11-19):
-//   1) ALLOW에 https://www.charum.org · https://charum.org 추가 (정식판에서 403 방지)
-//   2) overLimit()이 uid를 받아 기기별로 센다 (원본은 전역 3회였음)
-//   3) guide(③ 윤곽 이미지)를 input_image_1로 FLUX에 넘긴다 (원본은 버렸음)
-//   4) KV 바인딩 이름은 env.KV 이다 (wrangler.jsonc의 binding도 "KV"로 맞출 것)
-// 나머지는 선생님이 주신 코드 그대로다.
+// 기본 사용자는 한국 시간 기준 하루 3회
+// 개인 Cloudflare 계정 사용자는 본인 계정으로 처리
 
-const ALLOW = [
-  "https://shim-sung-hyun.github.io",
-  "https://www.charum.org",
-  "https://charum.org",
-  "http://localhost:8787"
-];
+const ALLOW = ["https://shim-sung-hyun.github.io"];
 
 const DAILY = { gemini: 200, cartoon: 3, cartoon9: 4, image: 60, tts: 250 };
 
 const TTS_VOICES = /^ko-KR-Chirp3-HD-(Leda|Aoede|Kore)$/;
 const MAX_TTS_CHARS = 300;
 const MAX_BODY = 6 * 1024 * 1024;
-
-// 012가 localStorage에 저장해 보내는 익명 기기 번호. KV 키에 넣기 전에 모양만 검사한다.
-function cleanUid(v) {
-  const s = String(v || "").trim();
-  return /^[A-Za-z0-9_-]{8,64}$/.test(s) ? s : "";
-}
 
 function cors(origin) {
   return {
@@ -49,10 +31,9 @@ function today() {
   return d.toISOString().slice(0, 10);
 }
 
-async function overLimit(env, kind, uid) {
+async function overLimit(env, kind) {
   if (!env.KV) return false;
-  // uid가 있으면 기기별 키(n:날짜:cartoon:기기번호), 없으면 예전처럼 종류별 키.
-  const key = `n:${today()}:${kind}${uid ? ":" + uid : ""}`;
+  const key = `n:${today()}:${kind}`;
   const n = parseInt((await env.KV.get(key)) || "0", 10);
   if (n >= DAILY[kind]) return true;
   try {
@@ -72,22 +53,6 @@ function b64ToBytes(b64) {
   const out = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;
-}
-
-// FLUX 참조 이미지: input_image_0 = 원본 사진, input_image_1 = ③ 필터 윤곽(guide)
-function addReferenceImages(form, body) {
-  form.append(
-    "input_image_0",
-    new Blob([b64ToBytes(body.image)], { type: "image/jpeg" }),
-    "photo.jpg"
-  );
-  if (body.guide) {
-    form.append(
-      "input_image_1",
-      new Blob([b64ToBytes(body.guide)], { type: "image/jpeg" }),
-      "guide.jpg"
-    );
-  }
 }
 
 // ---------- Gemini 모델 선택 ----------
@@ -254,12 +219,6 @@ function extractVisionText(result) {
   ).trim();
 }
 
-function licenseError(message) {
-  return /agree|license|acceptable use/i.test(message)
-    ? "Cloudflare Vision 모델을 처음 사용할 때 Meta 라이선스 동의가 필요합니다. Cloudflare 문서의 \"Agree to Meta's license\" 절차를 먼저 완료해 주세요."
-    : "";
-}
-
 // 개인 Cloudflare 계정으로 사진 분석
 async function analyzeVisionWithUserAccount(accountId, token, image, artDirection) {
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${VISION_MODEL}`;
@@ -282,7 +241,12 @@ async function analyzeVisionWithUserAccount(accountId, token, image, artDirectio
 
   if (!r.ok) {
     const message = result.errors?.[0]?.message || result.error?.message || `Cloudflare Vision 오류 (${r.status})`;
-    throw new Error(licenseError(message) || message);
+
+    if (/agree|license|acceptable use/i.test(message)) {
+      throw new Error("Cloudflare Vision 모델을 처음 사용할 때 Meta 라이선스 동의가 필요합니다. Cloudflare 문서의 'Agree to Meta's license' 절차를 먼저 완료해 주세요.");
+    }
+
+    throw new Error(message);
   }
 
   const text = extractVisionText(result);
@@ -311,7 +275,12 @@ async function analyzeVisionWithWorker(env, image, artDirection) {
     });
   } catch (e) {
     const message = String(e?.message || e);
-    throw new Error(licenseError(message) || message);
+
+    if (/agree|license|acceptable use/i.test(message)) {
+      throw new Error("Cloudflare Vision 모델을 처음 사용할 때 Meta 라이선스 동의가 필요합니다. Cloudflare 문서의 'Agree to Meta's license' 절차를 먼저 완료해 주세요.");
+    }
+
+    throw e;
   }
 
   const text = extractVisionText(result);
@@ -356,7 +325,7 @@ async function cartoonWithUserAccount(body) {
     return {
       status: 400,
       data: { error: { message: "사진 분석 프롬프트를 만들지 못했습니다." } }
-    };
+  };
   }
 
   const W = Math.min(1024, Math.max(256, Math.round(+body.width || 768)));
@@ -373,7 +342,11 @@ async function cartoonWithUserAccount(body) {
   for (const model of models) {
     const form = new FormData();
 
-    addReferenceImages(form, body);   // input_image_0 + (guide가 있으면 input_image_1)
+    form.append(
+      "input_image_0",
+      new Blob([b64ToBytes(body.image)], { type: "image/jpeg" }),
+      "photo.jpg"
+    );
 
     form.append("prompt", prompt);
     form.append("width", String(W));
@@ -402,8 +375,7 @@ async function cartoonWithUserAccount(body) {
           data: {
             image: img,
             model,
-            analysisModel: body.useCloudflareVision ? VISION_MODEL : undefined,
-            usedGuide: !!body.guide
+            analysisModel: body.useCloudflareVision ? VISION_MODEL : undefined
           }
         };
       }
@@ -426,7 +398,7 @@ async function cartoonWithUserAccount(body) {
 }
 
 // ---------- 제작자 계정으로 팝아트 생성 ----------
-async function cartoon(env, body, uid) {
+async function cartoon(env, body) {
   if (body.cloudflareAccountId || body.cloudflareApiToken) {
     return await cartoonWithUserAccount(body);
   }
@@ -453,7 +425,11 @@ async function cartoon(env, body, uid) {
 
   const form = new FormData();
 
-  addReferenceImages(form, body);   // input_image_0 + (guide가 있으면 input_image_1)
+  form.append(
+    "input_image_0",
+    new Blob([b64ToBytes(body.image)], { type: "image/jpeg" }),
+    "photo.jpg"
+  );
 
   form.append("prompt", prompt);
   form.append("width", String(W));
@@ -471,8 +447,7 @@ async function cartoon(env, body, uid) {
 
   let out = null;
 
-  // 9b는 비용이 더 드므로 기기별로 하루 4회까지만 시도(원본은 전역 4회).
-  if (!(await overLimit(env, "cartoon9", uid))) {
+  if (!(await overLimit(env, "cartoon9"))) {
     try {
       out = await run("@cf/black-forest-labs/flux-2-klein-9b");
     } catch (e) {
@@ -494,8 +469,7 @@ async function cartoon(env, body, uid) {
     status: 200,
     data: {
       image: img,
-      analysisModel: body.useCloudflareVision ? VISION_MODEL : undefined,
-      usedGuide: !!body.guide
+      analysisModel: body.useCloudflareVision ? VISION_MODEL : undefined
     }
   };
 }
@@ -627,9 +601,7 @@ export default {
             }, 503, origin);
           }
 
-          // 012가 보내는 익명 기기 번호로 하루 3회를 센다(없으면 예전처럼 전역).
-          const uid = cleanUid(body.uid);
-          if (await overLimit(env, "cartoon", uid)) {
+          if (await overLimit(env, "cartoon")) {
             return json({
               error: {
                 message: "기본 제공 횟수(하루 3회)를 모두 사용했습니다. 내 Cloudflare 계정 정보를 입력하거나 내일 다시 이용해 주세요."
@@ -638,7 +610,7 @@ export default {
           }
         }
 
-        res = await cartoon(env, body, cleanUid(body.uid));
+        res = await cartoon(env, body);
 
       } else if (url.pathname === "/image") {
         if (await overLimit(env, "image")) {
@@ -662,4 +634,4 @@ export default {
       );
     }
   },
-};
+}; 
