@@ -9,7 +9,8 @@
 - wrangler.jsonc    : 워커 Wrangler 설정. KV 바인딩 이름은 "KV" (코드가 env.KV를 씀)
 - server/worker/charum-ai/ : 위 두 파일의 사본(src/index.js) + 배포 안내(README.md). 원본은 012/ 파일들 — 워커를 고치면 사본도 복사해 맞출 것
 - tools/gemini-model-test.html : 제작자가 해석 모델을 고른 테스트 화면
-- 설명서(_manual·_guide)와 캡처는 아직 없음(2026-11-19). 화면이 바뀌었으므로 다음에 찍어 올릴 것.
+- popart_manual.html : 게시판 본문(2026-11-21). popart01~05.jpg 캡처(1366×768, 책장 사진: 01 시작 02 팝아트(필터 대체) 03 워홀 04 색칠 도안(001 책장 도안을 대신 넣어 찍음) 05 만화), popart-promo.jpg 홍보 그림.
+  _guide(자세한 설명)는 아직 없음. 캡처 02·03·05는 AI 대신 필터 결과라, 실제 AI 결과가 마음에 들면 바꿔 찍을 것.
 
 AI 키·할당량 구조 (2026-11-19 선생님 정함, 오늘 작동 확인)
 - 화면 조절판의 "API 자격 증명" 칸에서 ① Cloudflare Account ID ② Cloudflare API Token ③ Gemini API Key를 받는다.
@@ -82,4 +83,4 @@ Cloudflare 사용량 아끼기 (2026-11-21 선생님 정함)
 2. 🎨 팝아트 돌려 보기: 사람 사진으로 얼굴 보호·별 자리 확인, 사물 사진은 자동 설정 뒤 별·큰 원이 사물을 피하는지.
    정식 전환 후 키 없이 4번째에 3회 한도가 뜨는지, 다른 기기에서 다시 3회 되는지, charum.org에서 403이 안 나는지.
 3. Gemini 키를 넣고 해석 모델이 다 막혔을 때 Cloudflare 해석으로 넘어가는지 확인.
-4. 캡처(1366×768)와 게시판 본문·자세한 설명 만들기. 만들면 오류 알리기 글 번호도 함께 넣기.
+4. 선생님: 게시판 글 올리기 → 글 번호를 여기 적기. 서버 study/012/에 server-loader.html을 popart.html 이름으로 올리기.
