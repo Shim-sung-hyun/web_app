@@ -1,0 +1,52 @@
+010 무엇으로 만들었을까 — 물질 재료 조각 (빙, 2026-11-21)
+물질 카드에 쓰는 입체 조각 사진. 9가지 모두 비슷한 크기·모양(주먹만 한 조각)·같은 흰 바탕·같은 빛으로 맞춰, 학생이 모양이 아니라 물질의 겉모습만 비교하게 함.
+물질마다 한 번 붙이면 4장 — 4장 모두 대화에 올려 주세요. 받은 그림이 들어갈 자리: media/materials/물질-s1~4.webp (Claude가 정사각형으로 맞춰 넣음).
+쓰는 곳: 물질 카드(고르기·같은 물질 찾기·물질 공장). 결 사진(물질-1~4)은 정리하기 상자 뚜껑·문질러 찾기 판, 살펴보기에서는 조각 → 결 차례로.
+물건으로 보이는 그림(장난감 블록·지우개·컵·타일 등)은 빼 주세요 — 물질 카드가 답을 알려 주지 않게.
+
+━━━━━━━━ 재료 조각 (사진처럼, 9가지)
+
+■ 1 나무 (wood-s1~4.webp)
+▼
+Real photograph of a small solid block of natural wood, roughly cube-shaped, with clear wood grain on the top and sides and slightly rough cut edges. It is about the size of a child's fist and sits alone on a plain white table in front of a plain white background. Seen slightly from above, so the top and two sides are visible and the surface of the material is clear. Soft natural daylight from the upper left, one soft natural shadow under the piece. The piece is centred and fills about two thirds of the square picture. No other objects, no hands, no text, no logo. Honest everyday photo, not glossy, not CGI, not a render. Square image.
+▲
+
+■ 2 쇠 (metal-s1~4.webp)
+▼
+Real photograph of a small solid block of brushed steel metal, roughly cube-shaped, with fine brushing lines, slightly rounded edges and soft grey reflections. It is about the size of a child's fist and sits alone on a plain white table in front of a plain white background. Seen slightly from above, so the top and two sides are visible and the surface of the material is clear. Soft natural daylight from the upper left, one soft natural shadow under the piece. The piece is centred and fills about two thirds of the square picture. No other objects, no hands, no text, no logo. Honest everyday photo, not glossy, not CGI, not a render. Square image.
+▲
+
+■ 3 플라스틱 (plastic-s1~4.webp)
+▼
+Real photograph of a small solid block of smooth coloured plastic in one plain colour (blue, red, green or yellow), roughly cube-shaped with softly rounded edges and a gentle shine; plain smooth faces with no studs, holes or bumps, so it does not look like a toy brick. It is about the size of a child's fist and sits alone on a plain white table in front of a plain white background. Seen slightly from above, so the top and two sides are visible and the surface of the material is clear. Soft natural daylight from the upper left, one soft natural shadow under the piece. The piece is centred and fills about two thirds of the square picture. No other objects, no hands, no text, no logo. Honest everyday photo, not glossy, not CGI, not a render. Square image.
+▲
+
+■ 4 종이 (paper-s1~4.webp)
+▼
+Real photograph of a neat stack of plain paper sheets, roughly cube-shaped, with the thin layered paper edges clearly visible on the sides and the top sheet slightly lifted at one corner; no writing or printing. It is about the size of a child's fist and sits alone on a plain white table in front of a plain white background. Seen slightly from above, so the top and two sides are visible and the surface of the material is clear. Soft natural daylight from the upper left, one soft natural shadow under the piece. The piece is centred and fills about two thirds of the square picture. No other objects, no hands, no text, no logo. Honest everyday photo, not glossy, not CGI, not a render. Square image.
+▲
+
+■ 5 천 (cloth-s1~4.webp)
+▼
+Real photograph of a neatly folded stack of plain woven cotton fabric in one calm colour (beige, grey-blue, soft red or green), roughly cube-shaped, with soft folded edges and the weave visible. It is about the size of a child's fist and sits alone on a plain white table in front of a plain white background. Seen slightly from above, so the top and two sides are visible and the surface of the material is clear. Soft natural daylight from the upper left, one soft natural shadow under the piece. The piece is centred and fills about two thirds of the square picture. No other objects, no hands, no text, no logo. Honest everyday photo, not glossy, not CGI, not a render. Square image.
+▲
+
+■ 6 고무 (rubber-s1~4.webp)
+▼
+Real photograph of a small solid block of dark grey or black rubber, roughly cube-shaped, matte with a slightly soft look and softly rounded edges; it does not look like an eraser, a tyre or a toy. It is about the size of a child's fist and sits alone on a plain white table in front of a plain white background. Seen slightly from above, so the top and two sides are visible and the surface of the material is clear. Soft natural daylight from the upper left, one soft natural shadow under the piece. The piece is centred and fills about two thirds of the square picture. No other objects, no hands, no text, no logo. Honest everyday photo, not glossy, not CGI, not a render. Square image.
+▲
+
+■ 7 유리 (glass-s1~4.webp)
+▼
+Real photograph of a small solid cube of thick clear glass with polished edges; light passes through it, the edges look faintly green, and there are bright highlights and a soft light pattern in its shadow. It is about the size of a child's fist and sits alone on a plain white table in front of a plain white background. Seen slightly from above, so the top and two sides are visible and the surface of the material is clear. Soft natural daylight from the upper left, one soft natural shadow under the piece. The piece is centred and fills about two thirds of the square picture. No other objects, no hands, no text, no logo. Honest everyday photo, not glossy, not CGI, not a render. Square image.
+▲
+
+■ 8 도자기 (ceramic-s1~4.webp)
+▼
+Real photograph of a small solid piece of white glazed ceramic, roughly cube-shaped with softly rounded edges, a smooth shiny glaze with one soft highlight and a thin hand-painted blue line on one side; it is not a cup, bowl or tile. It is about the size of a child's fist and sits alone on a plain white table in front of a plain white background. Seen slightly from above, so the top and two sides are visible and the surface of the material is clear. Soft natural daylight from the upper left, one soft natural shadow under the piece. The piece is centred and fills about two thirds of the square picture. No other objects, no hands, no text, no logo. Honest everyday photo, not glossy, not CGI, not a render. Square image.
+▲
+
+■ 9 돌 (stone-s1~4.webp)
+▼
+Real photograph of a small rough-cut block of natural grey stone, roughly cube-shaped, with small grains, a few tiny holes and slightly uneven edges. It is about the size of a child's fist and sits alone on a plain white table in front of a plain white background. Seen slightly from above, so the top and two sides are visible and the surface of the material is clear. Soft natural daylight from the upper left, one soft natural shadow under the piece. The piece is centred and fills about two thirds of the square picture. No other objects, no hands, no text, no logo. Honest everyday photo, not glossy, not CGI, not a render. Square image.
+▲
