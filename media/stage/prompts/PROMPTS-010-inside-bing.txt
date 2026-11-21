@@ -1,0 +1,37 @@
+010 무엇으로 만들었을까 — 수준 4 '속 보기'(반쯤 열린 그림) (빙, 2026-11-21)
+수준 4(눈에 보이지 않는 물질)에서, 실제 사진의 물체를 보여 준 뒤 학생이 '열어 보기'를 누르면 펼쳐지는 그림입니다.
+한 그림 안에 겉과 속이 함께 보이게(겉을 일부만 떼어 냄) — 같은 물건의 안쪽이라는 것을 잇기 쉽게. 속은 크고 단순하게 한두 가지만.
+물체는 자료실 사진에 있고, 속 물질이 확실하고 널리 알려진 것만 골랐습니다(5가지). 받은 그림은 속이 실제와 맞는지 보고 고르세요.
+물체마다 4장이 나오면 마음에 드는 것만 대화에 올려 주세요(1~2장). 들어갈 자리: media/materials/inside/영어이름.webp (Claude가 정리).
+
+━━━━━━━━ 반쯤 열린 그림 (5가지)
+
+■ 1 정수기 (water-purifier.webp)
+사진: 자료실 사진 water-purifier(정수기 옆) · 겉 = 흰 플라스틱 몸 / 속 = 쇠(스테인리스) 물통과 관
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one white standing water purifier (water dispenser) for a school hallway, tall and narrow, with two taps at the front. The front cover is removed from the LOWER HALF only, so the upper half still shows the smooth white plastic outside, and the lower half shows the inside: one shiny stainless steel water tank and a few simple silver metal pipes going up to the taps. Draw the inside large and simple: only the steel tank and two or three pipes, no wires, no small parts. The edge of the white plastic cover is clearly visible where it is cut away, so it is easy to see that the metal is inside the plastic body. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 2 우유갑 (milk-carton.webp)
+사진: 자료실 사진 milk-basket(우유와 바구니) · 겉 = 종이 / 속 = 안쪽에 붙은 얇은 플라스틱 막(코팅)
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one small Korean school milk carton (200 ml, gable top) standing upright, plain white and light blue, with no words or logo. One side panel is cut open and folded outwards like a little door, and at the cut edge the carton wall is shown peeled into two layers: the thick paper layer on the outside, and a very thin, shiny, clear plastic film on the inside, slightly lifted at the corner so the two layers are easy to tell apart. Draw the paper layer with a soft paper texture and the plastic film glossy and see-through. No milk splashing. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 3 타이어 (tire.webp)
+사진: 자료실 사진 car-wheel·bus-wheel(바퀴) · 겉 = 고무 / 속 = 쇠줄(타이어 속 철선)
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one black car tire (without the wheel) standing upright, seen slightly from the side. A wedge-shaped piece is cut out of the tire, like a slice cut out of a round cake, so the inside of the tire wall is visible: thick black rubber on the outside, and inside the rubber several neat rows of thin silver steel wires running around the tire. Draw the steel wires bright silver and simple so they stand out clearly against the black rubber. No wheel rim, no car, no road. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 4 물병 (bottle-lid.webp)
+사진: 자료실 사진 bottles(물병과 컵) · 겉 = 플라스틱 뚜껑 · 쇠 몸 / 속 = 뚜껑 안쪽 고무 패킹
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one water bottle (tumbler) with a white metal body and a light pink plastic screw lid. The lid is unscrewed and floats just above the bottle, tilted so we can look up into the inside of the lid: around the inside of the lid there is one soft grey rubber sealing ring (gasket), drawn large, thick and clearly visible. The rest of the inside of the lid is pink plastic. The bottle body below is simple white metal with a soft shine. No water splashing. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 5 키보드 (keyboard.webp)
+사진: 자료실 사진 computer-desk·mug-monitor(키보드) · 겉 = 플라스틱 / 속 = 쇠판
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one plain grey computer keyboard seen from slightly above. The right half of the keyboard is shown cut open like a layered cake: the plastic keys and the plastic top case are lifted away there, showing one flat silver metal plate inside under the keys. The left half still shows the normal plastic keys. Draw the metal plate large, flat and simple with a soft shine, with no wires, chips or small parts. The keys have no letters or symbols. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
