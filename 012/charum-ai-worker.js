@@ -3,7 +3,10 @@
 //
 // [사용량 정책]
 // - 개인 Cloudflare 계정(Account ID + API Token)을 보낸 사용자: 본인 계정으로 처리, 제한 없음
-// - 개인 키가 없는 사용자: 개발자 계정으로 "사용자별 하루 3회" (한국 시간 기준, IP 해시로 구분)
+// - 개인 키가 없는 사용자: 개발자 계정으로 "기기별 하루 3회" (한국 시간 기준)
+//   웹앱이 기기에 저장한 익명 번호(deviceId)로 구분하고, 번호가 없을 때만 IP 해시로 대신합니다.
+//   번호·IP 원본은 저장하지 않고 해시만 KV 열쇠에 3일 동안 둡니다.
+// - 횟수는 그림이 실제로 만들어진 뒤에만 셉니다(실패하면 깎이지 않음).
 // - /analyze : 자동 설정·대사 추천용 사진 분석 (Cloudflare Vision, 사용자별 하루 10회)
 //
 // [모델 정책 - 무료 한도(하루 10,000 뉴런) 아끼기]
@@ -17,6 +20,7 @@ const ALLOW = [
   "https://shim-sung-hyun.github.io", // 테스트용
   "https://charum.org",               // 정식판
   "https://www.charum.org",
+  "http://localhost:8787",            // 로컬 시험
 ];
 
 // 전체 합계 상한 (서비스 보호용)
@@ -66,15 +70,30 @@ function today() {
 }
 
 // who 가 있으면 사용자별 상한(USER_DAILY), 없으면 전체 합계 상한(DAILY)
-async function overLimit(env, kind, who) {
+const limitKey = (kind, who) => `n:${today()}:${kind}${who ? ":" + who : ""}`;
+
+// 상한에 닿았는지 보기만 함 (세지 않음)
+async function isOver(env, kind, who) {
   if (!env.KV) return false;
   const cap = who ? USER_DAILY[kind] : DAILY[kind];
-  const key = `n:${today()}:${kind}${who ? ":" + who : ""}`;
-  const n = parseInt((await env.KV.get(key)) || "0", 10);
-  if (n >= cap) return true;
+  const n = parseInt((await env.KV.get(limitKey(kind, who))) || "0", 10);
+  return n >= cap;
+}
+
+// 한 번 쓴 것으로 셈 (성공한 뒤에 부름)
+async function addUse(env, kind, who) {
+  if (!env.KV) return;
+  const key = limitKey(kind, who);
   try {
+    const n = parseInt((await env.KV.get(key)) || "0", 10);
     await env.KV.put(key, String(n + 1), { expirationTtl: 3 * 86400 });
   } catch (e) {}
+}
+
+// 예전 방식(보고 바로 셈): 사용자 구분이 없는 tts·image·9b 시도에만 씀
+async function overLimit(env, kind, who) {
+  if (await isOver(env, kind, who)) return true;
+  await addUse(env, kind, who);
   return false;
 }
 
@@ -83,10 +102,13 @@ async function sha(text) {
   return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-// 사용자 구분: 접속 IP 해시 (원본 IP는 저장하지 않음)
-async function userId(req) {
+// 사용자 구분: 웹앱이 보낸 익명 기기 번호(deviceId)의 해시.
+// 번호가 없거나 모양이 이상하면 접속 IP 해시로 대신 (원본은 저장하지 않음)
+async function userId(req, body) {
+  const dev = String(body?.deviceId || "");
+  if (/^[A-Za-z0-9-]{16,64}$/.test(dev)) return "d" + (await sha("dev:" + dev)).slice(0, 16);
   const ip = req.headers.get("CF-Connecting-IP") || "unknown";
-  return (await sha(ip)).slice(0, 16);
+  return "i" + (await sha(ip)).slice(0, 16);
 }
 
 function b64ToBytes(b64) {
@@ -133,6 +155,7 @@ async function geminiModels(env) {
 
 async function gemini(env, body) {
   delete body.tools;
+  delete body.deviceId;          // 기기 번호는 횟수 세기용, 구글에는 보내지 않음
   delete body.toolConfig;
   delete body.cachedContent;
 
@@ -715,17 +738,21 @@ export default {
           return json({ error: { message: "no GEMINI_KEY" } }, 503, origin);
         }
 
-        if (!limitOff(env)) {
-          const who = await userId(req);
+        const counted = !limitOff(env);
+        const who = counted ? await userId(req, body) : "";
 
-          if (await overLimit(env, "gemini", who) || await overLimit(env, "gemini")) {
-            return json({
-              error: { message: "오늘 사진 분석 기본 제공 횟수를 모두 사용했습니다. 내일 다시 이용해 주세요." }
-            }, 429, origin);
-          }
+        if (counted && (await isOver(env, "gemini", who) || await isOver(env, "gemini"))) {
+          return json({
+            error: { message: "오늘 사진 분석 기본 제공 횟수를 모두 사용했습니다. 내일 다시 이용해 주세요." }
+          }, 429, origin);
         }
 
         res = await gemini(env, body);
+
+        if (counted && res.status === 200) {
+          await addUse(env, "gemini", who);
+          await addUse(env, "gemini");
+        }
 
       } else if (url.pathname === "/cartoon") {
         const hasAccount = !!String(body.cloudflareAccountId || "").trim();
@@ -738,7 +765,10 @@ export default {
         }
 
         // 개인 키가 없는 사용자만 개발자 계정 제한 대상
-        if (!hasAccount && !limitOff(env)) {
+        const counted = !hasAccount && !limitOff(env);
+        let who = "";
+
+        if (counted) {
           if (!env.KV) {
             return json({
               error: {
@@ -747,9 +777,9 @@ export default {
             }, 503, origin);
           }
 
-          const who = await userId(req);
+          who = await userId(req, body);
 
-          if (await overLimit(env, "cartoon", who)) {
+          if (await isOver(env, "cartoon", who)) {
             return json({
               error: {
                 message: `기본 제공 횟수(하루 ${USER_DAILY.cartoon}회)를 모두 사용했습니다. 내 Cloudflare 계정 정보를 입력하거나 내일(한국 시간 자정 이후) 다시 이용해 주세요.`
@@ -757,7 +787,7 @@ export default {
             }, 429, origin);
           }
 
-          if (await overLimit(env, "cartoonAll")) {
+          if (await isOver(env, "cartoonAll")) {
             return json({
               error: { message: "오늘 기본 제공 변환이 모두 소진되었습니다. 내 Cloudflare 계정 정보를 입력하거나 내일 다시 이용해 주세요." }
             }, 429, origin);
@@ -765,6 +795,11 @@ export default {
         }
 
         res = await cartoon(env, body);
+
+        if (counted && res.status === 200) {
+          await addUse(env, "cartoon", who);
+          await addUse(env, "cartoonAll");
+        }
 
       } else if (url.pathname === "/analyze") {
         const hasAccount = !!String(body.cloudflareAccountId || "").trim();
@@ -776,16 +811,19 @@ export default {
           }, 400, origin);
         }
 
-        if (!hasAccount && !limitOff(env)) {
+        const counted = !hasAccount && !limitOff(env);
+        let who = "";
+
+        if (counted) {
           if (!env.KV) {
             return json({
               error: { message: "기본 사용량 제한을 위한 KV 연결이 없습니다. Worker의 KV 바인딩을 확인해 주세요." }
             }, 503, origin);
           }
 
-          const who = await userId(req);
+          who = await userId(req, body);
 
-          if (await overLimit(env, "analyze", who) || await overLimit(env, "analyze")) {
+          if (await isOver(env, "analyze", who) || await isOver(env, "analyze")) {
             return json({
               error: { message: `오늘 사진 분석 기본 제공 횟수(하루 ${USER_DAILY.analyze}회)를 모두 사용했습니다. 내 Cloudflare 계정 정보를 입력하거나 내일 다시 이용해 주세요.` }
             }, 429, origin);
@@ -793,6 +831,11 @@ export default {
         }
 
         res = await analyze(env, body);
+
+        if (counted && res.status === 200) {
+          await addUse(env, "analyze", who);
+          await addUse(env, "analyze");
+        }
 
       } else if (url.pathname === "/image") {
         if (await overLimit(env, "image")) {

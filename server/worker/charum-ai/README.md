@@ -13,13 +13,18 @@
 
 나머지(`/gemini` 중계, `useCloudflareVision` 분기, Gemini→CF 순서, 429 안내, 480px 이미지)는 그대로입니다.
 
+## 2026-11-21 바뀐 것
+- 하루 횟수: 기기 번호(`deviceId`) 해시로 셈(없으면 IP 해시). 그림이 성공한 뒤에만 셈. `/analyze`·`/gemini`에도 `deviceId`를 보냄(구글에는 지워서 보냄).
+- 테스트 중에는 워커 변수 `LIMIT_OFF=1`로 해제, 정식 발행 때 지움.
+- 사진·윤곽 모두 500px(512 미만 규칙).
+
 ## 012가 보내는 요청 / 받는 응답
 
 ```
 POST https://charum-ai.simdoly.workers.dev/cartoon
 {
   image, guide, prompt, width, height,
-  uid,                       // webapp.deviceId (익명 기기 번호)
+  deviceId,                  // webapp.deviceId (익명 기기 번호, 기기별 하루 3회용. 2026-11-21 uid → deviceId)
   useCloudflareVision,       // true면 CF 비전이 사진을 해석
   cloudflareAccountId?,      // 개인 계정일 때만 (ID+토큰 함께)
   cloudflareApiToken?
