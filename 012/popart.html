@@ -503,7 +503,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
         <input type="checkbox" id="L-f1" checked> 얼굴 점1
         <input type="checkbox" id="L-f2" checked> 얼굴 점2
         <input type="checkbox" id="L-big" checked> 큰 원
-        <input type="checkbox" id="L-star" checked> 별
+        <input type="checkbox" id="L-star" checked> 별         <input type="checkbox" id="L-print" checked> 인쇄 느낌
         <button class="chip" id="btn-shuffle" type="button">🎲 배치</button></label>
     </div>
   </div>
@@ -522,6 +522,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
     <div class="play">
       <button class="chip" onclick="makeWarhol()">🎨 워홀 4칸</button>
       <button class="chip" onclick="makeColoring()">🖍 색칠 도안</button>
+      <button class="chip" onclick="makeColoringAI()">✏️ AI 도안</button>
       <button class="chip" onclick="suggestLines()">✨ 대사 추천</button>
       <button class="chip" onclick="startPlace('bubble')">💬 말풍선</button>
       <button class="chip" onclick="startPlace('burst')">💥 효과음</button>
@@ -901,30 +902,19 @@ function prepFilter(img, maxSide) {
   for (; hi > 0; hi--) { acc += hist[hi]; if (acc > n * 0.02) break; }
   const span = Math.max(8, hi - lo);
   for (let i = 0; i < n; i++) L[i] = Math.min(1, Math.max(0, (L[i] * 255 - lo) / span));
-  const E = new Float32Array(n); let mx = 0;   // 윤곽선(소벨)
+  const E = new Float32Array(n), D = new Uint8Array(n); let mx = 0;   // 윤곽선(소벨) + 방향(0~3)
   for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
     const i = y * w + x;
     const gx = -L[i - w - 1] - 2 * L[i - 1] - L[i + w - 1] + L[i - w + 1] + 2 * L[i + 1] + L[i + w + 1];
     const gy = -L[i - w - 1] - 2 * L[i - w] - L[i - w + 1] + L[i + w - 1] + 2 * L[i + w] + L[i + w + 1];
     E[i] = Math.hypot(gx, gy); if (E[i] > mx) mx = E[i];
+    let an = Math.atan2(gy, gx); if (an < 0) an += Math.PI; D[i] = Math.round(an / Math.PI * 4) % 4;
   }
-  return (fc.m[maxSide] = { w, h, cv, cx, im, L, E, mx, rgb });
+  return (fc.m[maxSide] = { w, h, cv, cx, im, L, E, D, mx, rgb });
 }
 function popFilter(img, o, maxSide) {
-  const { w, h, cv, cx, im, L, E, mx } = prepFilter(img, maxSide), px = im.data, n = w * h;
-  const eh = new Uint32Array(256); for (let i = 0; i < n; i++) eh[Math.min(255, (E[i] / (mx || 1) * 255) | 0)]++;
-  let k = 255, c = 0;
-  for (; k > 0; k--) { c += eh[k]; if (c > n * o.edge) break; }   // o.edge: 윤곽선으로 쓸 화소의 비율
-  const thr = k / 255 * mx;
-  let mask = new Uint8Array(n); for (let i = 0; i < n; i++) mask[i] = E[i] > thr ? 1 : 0;
-  const reps = o.line === 0 ? 0 : Math.max(1, Math.round(o.line * w / 1000));
-  for (let r = 0; r < reps; r++) {            // 선 굵게
-    const nm = mask.slice();
-    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
-      const i = y * w + x; if (mask[i - 1] || mask[i + 1] || mask[i - w] || mask[i + w]) nm[i] = 1;
-    }
-    mask = nm;
-  }
+  const { w, h, cv, cx, im, L, E, D, mx } = prepFilter(img, maxSide), px = im.data, n = w * h;
+  const mask = edgeMask(E, mx, w, h, o.edge, o.line, D);
   // 색: 대부분 평평한 색, 색과 색 사이 구간에만 벤데이 점 (o.mix가 클수록 점 구간이 넓어짐)
   const pal = o.pal.map(x => [parseInt(x.slice(1, 3), 16), parseInt(x.slice(3, 5), 16), parseInt(x.slice(5, 7), 16)]);
   const m = pal.length - 1, s = o.dot, q = Math.SQRT1_2, hw = 0.1 + 0.4 * o.mix;
@@ -961,6 +951,13 @@ function prepLayers(img, maxSide) {
     }
     R[i] = sr / sw; G[i] = sg / sw; B[i] = sb / sw;
   }
+  {   // 윤곽이 약한 평평한 곳은 색을 더 넓게 평균 내서(벽·하늘의 얼룩 줄이기), 윤곽 근처는 그대로 둠
+    const br = Math.max(3, Math.round(w / 110)), Rb = blurChannel(R, w, h, br), Gb = blurChannel(G, w, h, br), Bb = blurChannel(B, w, h, br);
+    for (let i = 0; i < n; i++) {
+      const t = clamp01((0.05 - P.E[i] / (P.mx || 1)) / 0.03);
+      if (t > 0) { R[i] += (Rb[i] - R[i]) * t; G[i] += (Gb[i] - G[i]) * t; B[i] += (Bb[i] - B[i]) * t; }
+    }
+  }
   // 피부색 판정 → 4px 블록으로 정리 → 눈·입 같은 구멍을 메워 '얼굴 영역'을 만듦
   const sk = new Uint8Array(n), bs = 4, bw = Math.ceil(w / bs), bh = Math.ceil(h / bs), cnt = new Uint16Array(bw * bh);
   for (let i = 0; i < n; i++) {
@@ -988,17 +985,31 @@ function prepLayers(img, maxSide) {
   }
   return (lc.m[maxSide] = { ...P, R, G, B, sk, face, bs, bw, skin });
 }
-function edgeMask(E, mx, w, h, edge, line) {
+// 윤곽선: ① 변화가 가장 큰 자리만 가늘게(비최대 억제) ② 강한 선에 이어진 약한 선만 남김 ③ 작은 점·잔선 제거 ④ 일정한 굵기로
+function edgeMask(E, mx, w, h, edge, line, D, keep) {
   const n = w * h, eh = new Uint32Array(256); for (let i = 0; i < n; i++) eh[Math.min(255, (E[i] / (mx || 1) * 255) | 0)]++;
   let k = 255, c = 0; for (; k > 0; k--) { c += eh[k]; if (c > n * edge) break; }
-  const thr = k / 255 * mx; let mask = new Uint8Array(n); for (let i = 0; i < n; i++) mask[i] = E[i] > thr ? 1 : 0;
-  const reps = line === 0 ? 0 : Math.max(1, Math.round(line * w / 1000));
-  for (let r = 0; r < reps; r++) {
-    const nm = mask.slice();
-    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const i = y * w + x; if (mask[i - 1] || mask[i + 1] || mask[i - w] || mask[i + w]) nm[i] = 1; }
-    mask = nm;
+  const hi = k / 255 * mx, lo = hi * 0.65, thin = new Uint8Array(n);
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const i = y * w + x, v = E[i], f = keep && keep[i] ? 0.7 : 1; if (v <= lo * f) continue;
+    if (D) {
+      const d = D[i], a = d === 0 ? i - 1 : d === 1 ? i - w - 1 : d === 2 ? i - w : i - w + 1, b = d === 0 ? i + 1 : d === 1 ? i + w + 1 : d === 2 ? i + w : i + w - 1;
+      if (v < E[a] || v < E[b]) continue;
+    }
+    thin[i] = v > hi * f ? 2 : 1;
   }
-  return mask;
+  let mask = new Uint8Array(n); const st = [];
+  for (let i = 0; i < n; i++) if (thin[i] === 2) { mask[i] = 1; st.push(i); }
+  while (st.length) {
+    const i = st.pop(), x = i % w, y = (i / w) | 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue;
+      const j = yy * w + xx; if (thin[j] === 1 && !mask[j]) { mask[j] = 1; st.push(j); }
+    }
+  }
+  mask = removeSpecks(mask, w, h, Math.round(n * 0.0002), keep);
+  const reps = line === 0 ? 0 : Math.max(1, Math.round(line * (0.5 + w / 700)));
+  return thickenMask(mask, w, h, reps);
 }
 const _t = [0, 0, 0];
 // 사진 색을 '원색 만화 색면'으로: 피부는 한 가지 살구색 계열 4단계, 그 외 색은 채도를 꽉 채운 원색 3단계, 무채색은 검정·회색·흰색
@@ -1010,7 +1021,7 @@ function vividInto(out, r, g, b, pal, skin, isSkin) {
   else if (isSkin && skin) { hh = skin.h; s = skin.s; l = l < 0.5 ? 0.58 : l < 0.62 ? 0.7 : l < 0.75 ? 0.8 : 0.9; }
   else {
     const k = pal === 'classic' ? 24 : 12; hh = Math.round(hh * k) / k; if (pal === 'warm') hh = (hh + 0.972) % 1;
-    s = 0.55 + 0.45 * Math.min(1, (s - 0.12) / 0.3); l = l < 0.36 ? 0.3 : l < 0.62 ? 0.5 : 0.72;
+    { const sq = Math.min(1, (s - 0.12) / 0.3); s = sq < 0.34 ? 0.62 : sq < 0.67 ? 0.8 : 1; } l = l < 0.36 ? 0.3 : l < 0.62 ? 0.5 : 0.72;
   }
   const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
   const f = t => { t = (t + 1) % 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < 0.5 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; };
@@ -1049,22 +1060,62 @@ function drawDecor(c, w, h, ly, seed, face, bs, bw) {
     }
   }
 }
+// 작은 색 얼룩 합치기: 같은 색으로 이어진 덩어리가 작으면, 둘러싼 이웃 색 중 가장 많은 색으로 바꿈
+function cleanRegions(key, cr, cg, cb, w, h, minSize) {
+  const n = w * h, lab = new Int32Array(n), stack = new Int32Array(n), comp = new Int32Array(n);
+  for (let pass = 0; pass < 2; pass++) {
+    lab.fill(0); let id = 0;
+    for (let s0 = 0; s0 < n; s0++) {
+      if (lab[s0]) continue;
+      id++; const k0 = key[s0]; let sp = 0, cnt = 0; stack[sp++] = s0; lab[s0] = id;
+      const nb = new Map();
+      while (sp) {
+        const i = stack[--sp]; comp[cnt++] = i; const x = i % w, y = (i / w) | 0;
+        for (let q = 0; q < 4; q++) {
+          if (q === 0 && x === 0 || q === 1 && x === w - 1 || q === 2 && y === 0 || q === 3 && y === h - 1) continue;
+          const j = q === 0 ? i - 1 : q === 1 ? i + 1 : q === 2 ? i - w : i + w;
+          if (key[j] === k0) { if (!lab[j]) { lab[j] = id; stack[sp++] = j; } }
+          else { const t = nb.get(key[j]); if (t) t[0]++; else nb.set(key[j], [1, j]); }
+        }
+      }
+      if (cnt < minSize && nb.size) {                    // 색이 많이 다른 이웃(검정 속의 빨강 창문 등)에는 합치지 않음
+        const r0 = cr[s0], g0 = cg[s0], b0 = cb[s0]; let bk = -1, bt = null;
+        for (const [kk, t] of nb) {
+          const j = t[1]; if (Math.abs(cr[j] - r0) + Math.abs(cg[j] - g0) + Math.abs(cb[j] - b0) > 170) continue;
+          if (!bt || t[0] > bt[0]) { bk = kk; bt = t; }
+        }
+        if (bt) { const j = bt[1]; for (let q = 0; q < cnt; q++) { const i = comp[q]; key[i] = bk; cr[i] = cr[j]; cg[i] = cg[j]; cb[i] = cb[j]; } }
+      }
+    }
+  }
+}
 function popLayers(img, o, maxSide) {
-  const { w, h, cv, cx, im, L, E, mx, R, G, B, sk, face, bs, bw, skin } = prepLayers(img, maxSide), px = im.data;
-  const mask = edgeMask(E, mx, w, h, o.edge, o.line);
+  const { w, h, cv, cx, im, L, E, D, mx, R, G, B, sk, face, bs, bw, skin } = prepLayers(img, maxSide), px = im.data, n = w * h;
+  const keep = new Uint8Array(n);      // 얼굴 영역: 눈·코·입 같은 작은 선을 지킴
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) keep[y * w + x] = face[((y / bs) | 0) * bw + ((x / bs) | 0)];
+  const mask = edgeMask(E, mx, w, h, o.edge, o.line, D, keep);
   const s1 = o.dot, s2 = s1 * 1.8, s3 = s1 * 2.6;
   const a1 = Math.PI / 4, a2 = Math.PI / 12, c1 = Math.cos(a1), n1 = Math.sin(a1), c2 = Math.cos(a2), n2 = Math.sin(a2);
+  // 1층: 사진을 만화 색면으로 → 작은 색 얼룩 합치기
+  const cr = new Uint8ClampedArray(n), cg = new Uint8ClampedArray(n), cb = new Uint8ClampedArray(n), key = new Int32Array(n);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = y * w + x, inFace = face[((y / bs) | 0) * bw + ((x / bs) | 0)];
+    vividInto(_t, R[i], G[i], B[i], o.palName, skin, sk[i] && inFace === 1);
+    cr[i] = _t[0]; cg[i] = _t[1]; cb[i] = _t[2]; key[i] = ((cr[i] >> 5) << 6) | ((cg[i] >> 5) << 3) | (cb[i] >> 5);
+  }
+  cleanRegions(key, cr, cg, cb, w, h, Math.round(n * 0.0005));
+  const pr = !!o.ly.print, ox = pr ? Math.max(1, Math.round(w / 500)) : 0;     // 인쇄 느낌: 검정 선판을 살짝 어긋나게
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const i = y * w + x, p = i * 4;
-    if (mask[i]) { px[p] = px[p + 1] = px[p + 2] = 17; px[p + 3] = 255; continue; }       // 선명한 윤곽선
-    const inFace = face[((y / bs) | 0) * bw + ((x / bs) | 0)], lum = L[i]; vividInto(_t, R[i], G[i], B[i], o.palName, skin, sk[i] && inFace === 1); let r = _t[0], g = _t[1], b = _t[2];              // 1층: 사진을 만화 색면으로
-    
+    if (y >= ox && x >= ox && mask[i - ox * w - ox]) { px[p] = px[p + 1] = px[p + 2] = 17; px[p + 3] = 255; continue; }       // 선명한 윤곽선
+    const inFace = face[((y / bs) | 0) * bw + ((x / bs) | 0)], lum = L[i]; let r = cr[i], g = cg[i], b = cb[i];
     if (sk[i] && inFace) {
       if (o.ly.f1) { const t = clamp01((0.52 + 0.36 * o.mix - lum) / 0.5); if (t > 0 && cellD(x, y, s1, c1, n1) < s1 * 0.75 * Math.sqrt(t)) { r *= 0.74; g *= 0.62; b *= 0.58; } }   // 2층: 얼굴 고운 점
       if (o.ly.f2) { const t = clamp01((0.34 + 0.2 * o.mix - lum) / 0.3); if (t > 0 && cellD(x, y, s2, c2, n2) < s2 * 0.75 * Math.sqrt(t)) { r *= 0.5; g *= 0.38; b *= 0.36; } }   // 3층: 얼굴 큰 점
     } else if (!inFace && o.ly.bg && cellD(x, y, s3, 1, 0) < s3 * 0.26) {                  // 4층: 얼굴 바깥 점
       if (lum < 0.5) { r = Math.min(255, r * 1.45 + 25); g = Math.min(255, g * 1.45 + 25); b = Math.min(255, b * 1.45 + 25); } else { r *= 0.78; g *= 0.82; b *= 0.9; }
     }
+    if (pr && r > 236 && g > 236 && b > 236) { r *= 0.99; g *= 0.975; b *= 0.93; }     // 종이 색
     px[p] = r; px[p + 1] = g; px[p + 2] = b; px[p + 3] = 255;
   }
   cx.putImageData(im, 0, 0);
@@ -1082,7 +1133,7 @@ function filterOpts() {
   const chk = id => document.getElementById(id).checked;
   return { pal: P[document.getElementById('pal').value], palName: document.getElementById('pal').value, dot: v('dot'), line: v('line'), edge: v('edge') / 100, mix: v('mix') / 10,
            style: document.getElementById('fstyle').value, seed: layoutSeed,
-           ly: { bg: chk('L-bg'), f1: chk('L-f1'), f2: chk('L-f2'), big: chk('L-big'), star: chk('L-star') } };
+           ly: { bg: chk('L-bg'), f1: chk('L-f1'), f2: chk('L-f2'), big: chk('L-big'), star: chk('L-star'), print: chk('L-print') } };
 }
 // AI에게 꼭 살리라고 알려 줄 특징 (체크한 것만)
 function extras() {
@@ -1119,13 +1170,13 @@ async function generate(mode) {
       msg('AI가 사진을 팝아트로 그리는 중…');
       const base = obj ? PROMPT_OBJECT + PROMPT_RENDER : (PROMPTS[document.getElementById('mode').value] || PROMPTS.faithful);
       results.ai = `data:image/png;base64,${await callCharumAI(base + extras())}`;
-    } else if (mode === 'color') {
+    } else if (mode === 'colorai') {
       msg('AI가 색칠 도안을 그리는 중…');
       try {
-        results.color = `data:image/png;base64,${await callCharumAI(PROMPT_COLORING + (obj ? ' The main subject is an object, not a person.' : ''), null, true)}`;
+        results.colorai = `data:image/png;base64,${await callCharumAI(PROMPT_COLORING + (obj ? ' The main subject is an object, not a person.' : ''), null, true)}`;
       } catch (e) {
         msg('필터로 색칠 도안을 만드는 중…'); await tick();
-        results.color = coloringFilter();
+        results.colorai = coloringFilter();
         toast('AI 도안을 만들지 못해 필터 도안으로 대신했어요');
       }
     } else {
@@ -1195,16 +1246,121 @@ function makeWarhol() {
   });
   results.warhol = out.toDataURL('image/png'); showResult('warhol');
 }
-// 색칠 도안: AI가 깨끗한 선화로 그려 주고, AI를 못 쓰면 필터로 대신합니다.
-function makeColoring() { generate('color'); }
+// 색칠 도안(무료): 이미 만든 AI 그림(필터+AI 우선)에서 선만 뽑습니다. 서버 사용량이 들지 않아요.
+// AI 그림이 아직 없으면 사진에서 바로 필터 도안을 만듭니다.
+async function makeColoring() {
+  if (!srcImg || busy) return;
+  closePanel();
+  busy = true; show('loading'); setButtons(false);
+  try {
+    document.getElementById('loading-msg').textContent = '색칠 도안을 만드는 중…'; await tick();
+    const src = results.hybrid || results.ai;
+    if (src) {
+      const img = new Image(); img.src = src; await img.decode();
+      results.color = coloringFromResult(img);
+    } else {
+      results.color = coloringFilter();
+      toast('AI 그림을 먼저 만들면 더 깔끔한 도안이 나와요');
+    }
+  } catch (e) {
+    results.color = coloringFilter();
+  } finally {
+    busy = false; setButtons(!!b64);
+  }
+  showResult('color');
+}
+// AI 도안: AI가 깨끗한 선화로 직접 그려 줍니다. (AI 1회 사용, 못 쓰면 필터 도안으로 대신)
+function makeColoringAI() { generate('colorai'); }
+// ---- 색칠 도안: 이미 만든 AI/필터+AI 그림에서 선만 뽑기 (서버 사용량 0) ----
+function blurChannel(a, w, h, r) {
+  const n = w * h, t = new Float32Array(n), o = new Float32Array(n), d = 2 * r + 1;
+  for (let y = 0; y < h; y++) {                       // 가로
+    let sum = 0; const row = y * w;
+    for (let x = -r; x <= r; x++) sum += a[row + Math.min(w - 1, Math.max(0, x))];
+    for (let x = 0; x < w; x++) {
+      t[row + x] = sum / d;
+      sum += a[row + Math.min(w - 1, x + r + 1)] - a[row + Math.max(0, x - r)];
+    }
+  }
+  for (let x = 0; x < w; x++) {                       // 세로
+    let sum = 0;
+    for (let y = -r; y <= r; y++) sum += t[Math.min(h - 1, Math.max(0, y)) * w + x];
+    for (let y = 0; y < h; y++) {
+      o[y * w + x] = sum / d;
+      sum += t[Math.min(h - 1, y + r + 1) * w + x] - t[Math.max(0, y - r) * w + x];
+    }
+  }
+  return o;
+}
+function morph(mask, w, h, r, dilate) {              // 정사각 창 침식/팽창 (가로·세로 분리)
+  const n = w * h, t = new Uint8Array(n), o = new Uint8Array(n), hit = dilate ? 1 : 0;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let v = dilate ? 0 : 1;
+    for (let k = -r; k <= r; k++) { const xx = x + k; if (xx < 0 || xx >= w) { if (!dilate) { v = 0; break; } continue; } if (mask[y * w + xx] === hit) { v = hit; break; } }
+    t[y * w + x] = v;
+  }
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let v = dilate ? 0 : 1;
+    for (let k = -r; k <= r; k++) { const yy = y + k; if (yy < 0 || yy >= h) { if (!dilate) { v = 0; break; } continue; } if (t[yy * w + x] === hit) { v = hit; break; } }
+    o[y * w + x] = v;
+  }
+  return o;
+}
+// RGBA → 선 마스크(1=선). 점 무늬·작은 얼룩은 지우고, 큰 검정 면은 채우지 않고 테두리만 남김
+function coloringFromRGBA(data, w, h) {
+  const n = w * h, s = w / 1000;
+  const R = new Float32Array(n), G = new Float32Array(n), B = new Float32Array(n);
+  for (let i = 0; i < n; i++) { R[i] = data[i * 4]; G[i] = data[i * 4 + 1]; B[i] = data[i * 4 + 2]; }
+  const r = Math.max(1, Math.round(2 * s));
+  const br = blurChannel(R, w, h, r), bg = blurChannel(G, w, h, r), bb = blurChannel(B, w, h, r);
+  const dark = new Uint8Array(n);
+  for (let i = 0; i < n; i++) dark[i] = (0.299 * br[i] + 0.587 * bg[i] + 0.114 * bb[i]) < 75 ? 1 : 0;
+  const k = Math.max(2, Math.round(5 * s));
+  const opened = morph(morph(dark, w, h, k, false), w, h, k, true);       // 굵은 검정 '면'
+  const line = new Uint8Array(n);
+  for (let i = 0; i < n; i++) if (dark[i] && !opened[i]) line[i] = 1;     // 가는 검정 선은 그대로
+  const o = r + 1;                                                       // 흐림 폭만큼 떨어진 두 점을 비교
+  for (let y = o; y < h - o; y++) for (let x = o; x < w - o; x++) {      // 색이 확 바뀌는 경계
+    const i = y * w + x;
+    const dx = Math.abs(br[i - o] - br[i + o]) + Math.abs(bg[i - o] - bg[i + o]) + Math.abs(bb[i - o] - bb[i + o]);
+    const dy = Math.abs(br[i - o * w] - br[i + o * w]) + Math.abs(bg[i - o * w] - bg[i + o * w]) + Math.abs(bb[i - o * w] - bb[i + o * w]);
+    if (dx > 100 || dy > 100) line[i] = 1;
+  }
+  return line;
+}
+
+function thickenMask(mask, w, h, reps) {
+  for (let r = 0; r < reps; r++) {
+    const nm = mask.slice();
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+      const i = y * w + x; if (mask[i - 1] || mask[i + 1] || mask[i - w] || mask[i + w]) nm[i] = 1;
+    }
+    mask = nm;
+  }
+  return mask;
+}
+function coloringFromResult(img) {
+  const sc = Math.min(1, 1000 / Math.max(img.naturalWidth, img.naturalHeight));
+  const w = Math.round(img.naturalWidth * sc), h = Math.round(img.naturalHeight * sc);
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const cx = cv.getContext('2d', { willReadFrequently: true });
+  cx.drawImage(img, 0, 0, w, h);
+  const im = cx.getImageData(0, 0, w, h), px = im.data, n = w * h;
+  let mask = coloringFromRGBA(px, w, h);
+  mask = removeSpecks(mask, w, h, Math.round(n * 0.0002));                 // 점 무늬·먼지 제거
+  mask = thickenMask(mask, w, h, Math.max(1, Math.round(w / 1000)));       // 선 굵게
+  for (let i = 0; i < n; i++) { const v = mask[i] ? 17 : 255, p = i * 4; px[p] = px[p + 1] = px[p + 2] = v; px[p + 3] = 255; }
+  cx.putImageData(im, 0, 0);
+  return cv.toDataURL('image/png');
+}
 // 필터 도안(대체용): 윤곽선을 뽑은 뒤 작은 점·잔선을 지워 깔끔하게
-function removeSpecks(mask, w, h, minSize) {
+function removeSpecks(mask, w, h, minSize, keep) {
   const n = w * h, seen = new Uint8Array(n), stack = new Int32Array(n), comp = new Int32Array(n);
   for (let s0 = 0; s0 < n; s0++) {
     if (!mask[s0] || seen[s0]) continue;
-    let sp = 0, cnt = 0; stack[sp++] = s0; seen[s0] = 1;
+    let sp = 0, cnt = 0, kept = false; stack[sp++] = s0; seen[s0] = 1;
     while (sp) {
-      const i = stack[--sp]; comp[cnt++] = i;
+      const i = stack[--sp]; comp[cnt++] = i; if (keep && keep[i]) kept = true;
       const x = i % w, y = (i / w) | 0;
       for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
         const xx = x + dx, yy = y + dy;
@@ -1213,7 +1369,7 @@ function removeSpecks(mask, w, h, minSize) {
         if (mask[j] && !seen[j]) { seen[j] = 1; stack[sp++] = j; }
       }
     }
-    if (cnt < minSize) for (let k = 0; k < cnt; k++) mask[comp[k]] = 0;
+    if (cnt < minSize && !kept) for (let k = 0; k < cnt; k++) mask[comp[k]] = 0;
   }
   return mask;
 }
@@ -1471,7 +1627,7 @@ async function autoDetect() {
       { text: '이 사진을 보고 JSON으로만 답하세요. 형식: {"subject":"person 또는 object","glasses":true/false,"hat":true/false,"beard":true/false,"summary":"한국어 한 문장"}' }]);
     document.getElementById('target').value = j.subject === 'object' ? 'object' : 'person';
     ['glasses', 'hat', 'beard'].forEach(k => document.getElementById('x-' + k).checked = !!j[k]);
-    delete results.ai; delete results.hybrid; delete results.color;      // 설정이 바뀌었으니 AI 그림은 다시 만들도록
+    delete results.ai; delete results.hybrid; delete results.colorai;      // 설정이 바뀌었으니 AI 그림은 다시 만들도록
     toast('🔍 ' + (j.summary || '설정을 채웠어요'));
   } catch (e) { toast('자동 설정 실패: ' + (e.message || e)); }
   finally { btn.textContent = label; btn.disabled = !srcImg; }
@@ -1505,10 +1661,10 @@ function liveFilter() {
 ['pal', 'dot', 'line', 'edge', 'mix', 'fstyle', 'L-bg', 'L-f1', 'L-f2', 'L-big', 'L-star'].forEach(id => document.getElementById(id).addEventListener('input', () => {
   clearTimeout(liveTimer); liveTimer = setTimeout(liveFilter, 120);
 }));
-document.getElementById('mode').addEventListener('change', () => { delete results.ai; delete results.hybrid; delete results.color; });
+document.getElementById('mode').addEventListener('change', () => { delete results.ai; delete results.hybrid; delete results.colorai; });
 document.getElementById('btn-shuffle').addEventListener('click', () => { layoutSeed = (Math.random() * 1e9) | 0; liveFilter(); });
-document.getElementById('target').addEventListener('change', () => { delete results.ai; delete results.hybrid; delete results.color; });
-document.querySelectorAll('.xf').forEach(c => c.addEventListener('change', () => { delete results.ai; delete results.hybrid; delete results.color; }));
+document.getElementById('target').addEventListener('change', () => { delete results.ai; delete results.hybrid; delete results.colorai; });
+document.querySelectorAll('.xf').forEach(c => c.addEventListener('change', () => { delete results.ai; delete results.hybrid; delete results.colorai; }));
 
 </script>
 </body>
