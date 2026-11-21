@@ -179,6 +179,12 @@ body.admin #stage{pointer-events:none}
 .miniMach{display:inline-block;width:clamp(80px,11vw,140px);aspect-ratio:230/200}
 .miniMach svg{width:100%;height:100%}
 .gPics .an.crop{width:clamp(64px,9vw,120px)!important;height:clamp(64px,9vw,120px)!important;border:3px solid #fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.12);background-size:cover}
+.matCol{display:flex;gap:14px;align-items:center;justify-content:center}
+.hidTag{position:absolute;right:8px;top:8px;background:rgba(40,30,60,.75);color:#fff;font-size:13px;border-radius:8px;padding:1px 8px}
+.mc{position:relative}
+.slots{display:flex;gap:10px;justify-content:center;margin:10px 0 12px}
+.slots i{width:34px;height:34px;border-radius:50%;border:3px dashed #BDB4CC;background-size:cover;background-position:center;transition:all .4s}
+.slots i.on{border:3px solid var(--ok);transform:scale(1.08)}
 /* 설정 — 사진 */
 .subh{font-weight:700;font-size:15px;color:var(--sci-d);margin:14px 0 6px}.card h2+.subh{margin-top:4px}
 .formRow .chip.lv{border-style:solid}
@@ -196,6 +202,11 @@ body.admin #stage{pointer-events:none}
 .scPick button .ms em{font-style:normal;color:#8A5A12}
 .scPick .ord{position:absolute;left:10px;top:10px;width:26px;height:26px;border-radius:8px;background:var(--sci);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
 .rcTools{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.keyInfo{background:#EEF4FB;border:1px solid #BCD6EF;border-radius:10px;padding:10px 14px;font-size:14px;color:#24405E;margin:6px 0 8px;line-height:1.6}
+.keyInfo.have{background:#EEF7F1;border-color:#BFD9C8;color:#2C5A40}
+.keyInfo ol{margin:6px 0 6px;padding-left:20px}.keyInfo li{margin:2px 0}
+.keyGo{display:inline-block;background:#3D6E9E;color:#fff;text-decoration:none;font-weight:700;border-radius:9px;padding:5px 12px;margin-top:2px}
+.keyAlt{font-size:13px;color:#4F6478;margin-left:6px}
 .privacy{background:#FFF6E0;border:1px solid #EBD39A;border-radius:10px;padding:8px 12px;font-size:14px;color:#6A4E12;margin:6px 0 10px}
 .keyOk{color:var(--ok);font-weight:700;font-size:14px;align-self:center}
 .keyIn{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #CFC8D8;border-radius:8px;min-width:220px}
@@ -210,7 +221,7 @@ body.admin #stage{pointer-events:none}
 .ckBox{position:absolute;border:3px solid #E8B84A;border-radius:6px;cursor:pointer}
 .ckBox.off{border-style:dashed;border-color:rgba(255,255,255,.75)}
 .ckBox.sel{border-color:var(--sci);box-shadow:0 0 0 3px rgba(255,255,255,.8)}
-.ckBox i{position:absolute;left:-2px;top:-2px;background:#E8B84A;color:#fff;font-style:normal;font-weight:700;font-size:13px;padding:0 6px;border-radius:5px 0 6px 0}
+.ckBox i{white-space:nowrap;position:absolute;left:-2px;top:-2px;background:#E8B84A;color:#fff;font-style:normal;font-weight:700;font-size:13px;padding:0 6px;border-radius:5px 0 6px 0}
 .ckBox.sel i{background:var(--sci)}.ckBox.off i{background:#999}
 .ckRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:5px 6px;border-radius:10px;border:1px solid #EAE5EF}
 .ckRow.sel{border-color:var(--sci);background:var(--sci-l)}.ckRow.off{opacity:.6}
@@ -222,6 +233,19 @@ body.admin #stage{pointer-events:none}
 .ckMsg{margin-right:auto;font-size:13px;color:#6F6A78}
 .ckModel{font:inherit;font-size:13px;padding:4px;border-radius:8px}
 .ckEmpty{color:#6F6A78;font-size:14px}
+.ckObj{border:1px solid #EAE5EF;border-radius:12px;padding:6px;display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.ckObj.sel{border-color:var(--sci);background:var(--sci-l)}
+.ckObj .ckRow{border:0;padding:2px 4px}
+.ckRow.head input{font-weight:700;width:150px}
+.ckRow.part{padding-left:18px!important}
+.ckRow input[type=checkbox]{width:auto;padding:0;margin:0}
+.ckRow i{width:auto!important;min-width:22px;white-space:nowrap}
+.ckRow.part input:not([type=checkbox]){width:110px}
+.ckRow .hid{font-size:13px;display:inline-flex;align-items:center;gap:3px;color:#6F6A78}
+.ckLv{font-size:12px;color:#6F6A78;padding:0 6px}
+.ckBox.obj{border:2px dashed #E8B84A}
+.ckBox.part{border:3px solid #4E9BD8}.ckBox.part i{background:#4E9BD8}
+.ckBox.sel{border-color:var(--sci)!important}
 /* 단계 알림 */
 .introBox{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4.5vh;height:100%;width:100%}
 .stepRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;font-size:clamp(13px,1.5vw,16px);color:#9A94A6;max-width:96%}
@@ -605,32 +629,48 @@ const LV={
 /* 생김새가 닮아 한 화면에 보기로 함께 내지 않는 짝 */
 const PAIRS=[['물통','페트병'],['숟가락','포크']];
 /* 실제 사진(일반화): 차름 사진 모음에서 그 물건만 밝게 보여 주고 물질을 고름. box = 사진 픽셀 [왼, 위, 오른, 아래] */
-/* 자료실 사진 속 물체(2026-11-21 Claude가 사진을 보고 적음 — 선생님 확인 전). [이름, 물질, 자리] — 자리 = [왼, 위, 오른, 아래] 0~1000(사진 너비·높이 비율).
-   물질이 하나로 분명한 것만(버스·모니터·의자처럼 섞인 것, 사람·동물·식물은 뺌). 이름에 물질 낱말이 든 것(돌담·종이)은 이름을 바꾸거나 뺌.
-   '사진에서' 단계(그림 묶음)와 사진 수업(자료실 자동·골라서)이 함께 씀 */
+/* 자료실 사진 속 물체(2026-11-21 Claude가 사진을 보고 적음 — 선생님 확인 전). 자리 = [왼, 위, 오른, 아래] 0~1000(사진 너비·높이 비율).
+   한 가지 물질: [이름, 물질, 자리]. 여러 물질(2026-11-21 선생님: 문 = 나무 + 쇠(손잡이) + 유리(창)): [이름, [[부분, 물질, 자리 또는 null], …], 물체 자리]
+   부분은 물질마다 대표 하나. 자리가 null = 겉에서 안 보이는 부분(정수기 안쪽 쇠) — 말로만 알려 주고 누르지 않음.
+   수준(objLevel): 한 가지 1 · 두 가지 2 · 세 가지 이상이거나 안 보이는 물질이 있으면 3. 사람·동물·식물은 뺌, 이름에 물질 낱말 넣지 않음(유리창 → 창) */
 const SCENES=[
- {id:'car-wheel',t:'자동차 바퀴',w:1280,h:719,o:[['타이어','rubber',[355,285,680,800]]]},
- {id:'bus-wheel',t:'버스 바퀴',w:1280,h:719,o:[['타이어','rubber',[275,40,805,820]]]},
+ {id:'car-wheel',t:'자동차 바퀴',w:1280,h:719,o:[['바퀴',[['타이어','rubber',[355,285,680,800]],['휠','metal',[415,385,615,705]]],[355,285,680,800]]]},
+ {id:'bus-wheel',t:'버스 바퀴',w:1280,h:719,o:[['바퀴',[['타이어','rubber',[275,40,805,820]],['휠','metal',[395,300,690,700]]],[275,40,805,820]]]},
  {id:'manhole',t:'맨홀 뚜껑',w:1280,h:719,o:[['맨홀 뚜껑','metal',[207,111,668,911]]]},
  {id:'parking-sign',t:'주차 금지 표지판',w:719,h:1280,o:[['표지판','plastic',[160,40,730,975]]]},
  {id:'tissue',t:'두루마리 휴지',w:1280,h:719,o:[['휴지','paper',[309,285,625,841]]]},
- {id:'shoe-rack',t:'신발장',w:1280,h:719,o:[['신발장','wood',[227,83,648,876]],['소화기','metal',[662,318,708,470]]]},
+ {id:'school-bus',t:'통학 버스',w:1280,h:719,o:[['버스',[['몸','metal',[560,330,1000,560]],['창','glass',[430,40,1000,330]],['타이어','rubber',[655,535,740,840]]],[140,0,1000,890]]]},
+ {id:'shoe-rack',t:'신발장',w:1280,h:719,o:[['신발장','wood',[227,83,648,876]],['소화기',[['통','metal',[662,318,708,470]],['호스','rubber',null]],[662,318,708,470]]]},
  {id:'bell',t:'종',w:1280,h:719,o:[['종','metal',[344,56,648,556]]]},
- {id:'computer-desk',t:'컴퓨터 책상',w:1280,h:576,o:[['꽃병','glass',[365,400,445,645]],['키보드','plastic',[400,680,700,990]],['마우스','plastic',[725,830,800,965]]]},
- {id:'desks',t:'책상과 의자',w:1280,h:576,o:[['방석','cloth',[515,410,625,540]]]},
- {id:'bookshelf',t:'책장',w:1280,h:576,o:[['책장','wood',[145,0,800,900]],['바구니','plastic',[175,700,300,840]],['상자','paper',[400,470,460,610]]]},
- {id:'door',t:'교실 문',w:576,h:1280,o:[['문','wood',[150,60,880,880]],['손잡이','metal',[200,525,330,570]],['창문','glass',[300,200,790,420]]]},
+ {id:'computer-desk',t:'컴퓨터 책상',w:1280,h:576,o:[['꽃병','glass',[365,400,445,645]],['키보드','plastic',[400,680,700,990]],['마우스','plastic',[725,830,800,965]],
+   ['모니터',[['화면','glass',[470,135,780,545]],['받침','metal',[545,560,690,700]],['테두리','plastic',[460,120,790,560]]],[455,110,795,705]],
+   ['컴퓨터',[['앞면','plastic',[165,190,250,650]],['옆면','metal',[250,195,345,650]]],[160,185,350,655]],
+   ['책상',[['상판','wood',[130,560,730,800]],['다리','metal',[225,700,300,1000]]],[130,555,965,1000]]]},
+ {id:'desks',t:'책상과 의자',w:1280,h:576,o:[['방석','cloth',[515,410,625,540]],['의자',[['앉는 곳','plastic',[150,470,400,720]],['다리','metal',[170,720,300,1000]]],[140,190,405,1000]]]},
+ {id:'bookshelf',t:'책장',w:1280,h:576,o:[['책장','wood',[145,0,800,900]],['바구니','plastic',[175,700,300,840]],['상자','paper',[400,470,460,610]],['수납함','plastic',[55,270,170,860]]]},
+ {id:'board',t:'전자칠판',w:1280,h:576,o:[['전자칠판',[['화면','glass',[275,30,780,820]],['테두리','metal',[262,0,790,900]]],[262,0,790,900]]]},
+ {id:'door',t:'교실 문',w:576,h:1280,o:[['문',[['문짝','wood',[150,60,880,880]],['손잡이','metal',[200,525,330,570]],['창','glass',[300,200,790,420]]],[150,60,880,880]]]},
  {id:'mug-monitor',t:'머그컵과 유리컵',w:576,h:1280,o:[['머그컵','ceramic',[87,590,462,762]],['컵','glass',[628,534,1000,773]],['키보드','plastic',[0,490,860,650]]]},
- {id:'water-purifier',t:'정수기 옆',w:576,h:1280,o:[['소화기','metal',[30,495,200,700]],['물통','plastic',[320,535,420,720]],['매트','rubber',[100,770,960,1000]]]},
- {id:'bottles',t:'물병과 컵',w:576,h:1280,o:[['컵','metal',[640,700,965,880]]]},
+ {id:'water-purifier',t:'정수기 옆',w:576,h:1280,o:[['정수기',[['몸','plastic',[400,80,880,950]],['안쪽','metal',null]],[400,80,880,950]],
+   ['소화기',[['통','metal',[30,495,200,700]],['호스','rubber',null]],[30,495,200,700]],['물통','plastic',[320,535,420,720]],['매트','rubber',[100,770,960,1000]]]},
+ {id:'recycle-bins',t:'분리수거함',w:1280,h:576,o:[['분리수거함','metal',[150,40,720,1000]]]},
+ {id:'bottles',t:'물병과 컵',w:576,h:1280,o:[['컵','metal',[640,700,965,880]],['물병',[['뚜껑','plastic',[20,365,400,455]],['몸','metal',[20,445,430,730]]],[15,360,435,735]]]},
  {id:'milk-basket',t:'우유와 바구니',w:1280,h:576,o:[['우유갑','paper',[310,180,600,550]],['바구니','plastic',[200,195,780,870]]]},
+ {id:'cup-drawings',t:'컵과 그림',w:1280,h:576,o:[['그림','paper',[175,105,503,583]]]},
  {id:'street-cat',t:'울타리',w:576,h:1280,o:[['울타리','metal',[380,140,1000,560]],['기둥','metal',[230,90,320,550]]]},
- {id:'potted-tree',t:'화분과 담장',w:576,h:1280,o:[['화분','plastic',[250,590,710,770]],['담장','stone',[0,450,1000,590]],['창문','glass',[480,30,890,290]]]}
+ {id:'potted-tree',t:'화분과 담장',w:576,h:1280,o:[['화분','plastic',[250,590,710,770]],['담장','stone',[0,450,1000,590]],['창문',[['창','glass',[505,70,875,290]],['창틀','metal',[480,30,890,300]]],[480,30,890,300]]]}
 ];
 const SC={};
-function addScene(sc){ sc.src=sc.src||PHO+sc.id+'/photo.jpg'; sc.objs=sc.o.map(([a,m,box])=>({a,m,box})); SC[sc.id]=sc; return sc; }
+/* 물체: {a, box, parts:[{a 부분, m, box|null}], ms 물질들, lv 수준}. 옛 꼴(받은 사진 [이름, 물질, 자리])도 받음 */
+function mkObj(o){ let [a,ps,box]=o; if(typeof ps==='string') ps=[[a,ps,box]];
+  const parts=ps.map(([p,m,b])=>({a:p,m,box:b||null})), vis=parts.filter(x=>x.box);
+  box=box||(vis.length?[Math.min(...vis.map(x=>x.box[0])),Math.min(...vis.map(x=>x.box[1])),Math.max(...vis.map(x=>x.box[2])),Math.max(...vis.map(x=>x.box[3]))]:null);
+  const ms=[...new Set(parts.map(x=>x.m))], lv=parts.some(x=>!x.box)||ms.length>=3?3:ms.length;
+  return {a,box,parts,ms,lv}; }
+function addScene(sc){ sc.src=sc.src||PHO+sc.id+'/photo.jpg'; sc.objs=sc.o.map(mkObj).filter(o=>o.box&&o.parts.length); SC[sc.id]=sc; return sc; }
 SCENES.forEach(addScene);
-const PHOTO=[]; SCENES.forEach(sc=>sc.objs.forEach(o=>PHOTO.push({id:sc.id,a:o.a,m:o.m,w:sc.w,h:sc.h,src:sc.src,box:[o.box[0]*sc.w/1000,o.box[1]*sc.h/1000,o.box[2]*sc.w/1000,o.box[3]*sc.h/1000]})));
+/* '사진에서' 단계(그림 묶음)는 한 가지 물질 물체만 */
+const PHOTO=[]; SCENES.forEach(sc=>sc.objs.forEach(o=>{ if(o.parts.length===1) PHOTO.push({id:sc.id,a:o.a,m:o.ms[0],w:sc.w,h:sc.h,src:sc.src,box:[o.box[0]*sc.w/1000,o.box[1]*sc.h/1000,o.box[2]*sc.w/1000,o.box[3]*sc.h/1000]}); }));
 const PH_URL=p=>p.src||PHO+p.id+'/photo.jpg';
 /* 수준별 물질(사진 수업) · 한 장에서 쓸 물체 수 */
 const LVM={1:['wood','metal'],2:['wood','metal','plastic'],3:['wood','metal','plastic','paper','cloth','rubber','glass','ceramic','stone']};
@@ -724,9 +764,12 @@ const nameLine=a=>nm(a)+'.';
 const END_LINE='다 했어요.', RUB_LINE='손으로 문질러 봐요.', TAP_LINE='두드려 봐요.', FACT_LINE='기계에 넣어 봐요.';
 const sameAsk=m=>ro(MAT[m].label)+' 만든 것을 모두 찾아요.';
 const sameDone=m=>'모두 '+madeLine(m);
+/* 여러 물질: "문은 나무, 쇠, 유리로 만들었어요." */
+const allLine=(a,ms)=>{ const L=ms.map(m=>MAT[m].label); return eun(nm(a))+' '+L.slice(0,-1).map(x=>x+', ').join('')+ro(L[L.length-1])+' 만들었어요.'; };
 function allLines(){ const L=new Set();
   Object.keys(LV).forEach(l=>LV[l].bundles.map(parseB).forEach(b=>b.items.forEach(({a,m})=>{ [isLine(a),madeLine(m),fullLine(a,m),askObj(a),askMat(a),nameLine(a)].forEach(x=>L.add(x)); })));
-  SCENES.forEach(sc=>sc.objs.forEach(({a,m})=>{ [isLine(a),fullLine(a,m),askObj(a),askMat(a),nameLine(a)].forEach(x=>L.add(x)); }));
+  SCENES.forEach(sc=>sc.objs.forEach(o=>{ [isLine(o.a),askObj(o.a),askMat(o.a),o.ms.length>1?allLine(o.a,o.ms):fullLine(o.a,o.ms[0])].forEach(x=>L.add(x));
+    o.parts.forEach(pt=>{ [fullLine(pt.a,pt.m),askMat(pt.a),nameLine(pt.a)].forEach(x=>L.add(x)); }); }));
   Object.keys(MAT).forEach(m=>{ L.add(madeLine(m)); L.add(sameAsk(m)); L.add(sameDone(m)); });
   [END_LINE,RUB_LINE,TAP_LINE,FACT_LINE].forEach(x=>L.add(x)); [...Object.values(INTRO_TITLE),...Object.values(GAME_TITLE)].forEach(t=>L.add(t+'.')); return [...L]; }
 
@@ -739,7 +782,7 @@ const shuffle=a=>{a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Mat
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const jget=(k,d)=>{ try{ const v=JSON.parse(store.get(k)||'null'); return v==null?d:v; }catch(e){ return d; } };
 
-const PHASES=[['show','보기'],['obj','물체 찾기'],['mat','물질 고르기'],['same','같은 물질 찾기'],['sort','정리하기'],['photo','사진에서']];   /* 사진 수업에는 '사진에서'가 없음(모두 사진이라) */
+const PHASES=[['show','보기'],['obj','물체 찾기'],['mat','물질 고르기'],['all','모두 찾기'],['same','같은 물질 찾기'],['sort','정리하기'],['photo','사진에서']];   /* 사진 수업에는 '사진에서'가 없음(모두 사진이라) */
 const FORMS=[['pic','그림 묶음','그림으로 개념 익히기'],['auto','자료실 사진 · 자동','수준에 맞는 사진을 앱이 골라요'],['choose','자료실 사진 · 골라서','선생님이 사진을 골라요'],['recv','사진 받기','찍은 사진을 AI가 살펴봐요']];
 const GAMES=[['끔',0],['문질러 찾기',1],['물질 공장',2],['두드려 보기',3],['돌아가며',4]];
 const GAME_TITLE={rub:'문질러 찾기',factory:'물질 공장',tap:'두드려 보기'};
@@ -936,7 +979,7 @@ function renderSetup(){
   const plan=makePlan(), ok=planOk(plan);
   const steps=PHASES.filter(p=>S.steps[p[0]]).map(p=>p[1]);
   if(S.form!=='pic') $('today').innerHTML=plan.map(bd=>'<div class="plan"><h4>'+esc(bd.label)+'</h4><div class="phPlan"><img src="'+SC[bd.sid].src+'" alt=""><div>'
-      +bd.items.map(it=>'<span class="phIt">'+thumbHTML(it,46,1)+esc(it.a)+' · '+MAT[it.m].label+'</span>').join('')+'</div></div></div>').join('')
+      +bd.objs.map(o=>'<span class="phIt">'+thumbHTML(o,46,1)+'<span><b>'+esc(o.a)+'</b> · '+o.ms.map(m=>MAT[m].label).join('·')+(o.parts.some(x=>!x.box)?' <em>(안쪽 포함)</em>':'')+'</span></span>').join('')+'</div></div></div>').join('')
     +'<div class="steps">'+LV[S.level].name+' · '+FORMS.find(f=>f[0]===S.form)[1]+' · 사진 '+plan.length+'장 · 물체 '+plan.reduce((n,b)=>n+b.items.length,0)+'개'
     +' · '+(S.who==='alone'?'학생 혼자(사진을 펼쳐 놓고 골라요)':'선생님과 함께')
     +'<br>단계: '+(PHASES.filter(p=>S.steps[p[0]]&&p[0]!=='photo').map(p=>p[1]).join(' → ')||'(없음)')+(S.game?' → '+GAMES.find(g=>g[1]===S.game)[0]:'')+' → 끝 장면'
@@ -1021,14 +1064,21 @@ function pickByMat(){
   S.mpick=out;
 }
 /* 사진 한 장 → 수업 한 덩이. 물체는 물질이 고르게, 같은 이름은 하나만(정해진 차례 — 미리 보기와 수업이 같게). 물질 카드·상자는 2가지 이상(모자라면 수준 물질 하나를 더 — 빈 상자도 고를 거리) */
-function sceneUnit(sc,lv){ if(!sc) return null; const allow=LVM[lv], objs=sc.objs.filter(o=>allow.includes(o.m)); if(!objs.length) return null;
-  const pick=[]; objs.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.some(p=>p.m===o.m)&&!pick.some(p=>p.a===o.a)) pick.push(o); });
-  objs.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.includes(o)&&!pick.some(p=>p.a===o.a)) pick.push(o); });
-  const items=pick.map(o=>({a:o.a,m:o.m,sc:sc.id,box:o.box})), ms=[...new Set(items.map(x=>x.m))];
-  const extra=allow.filter(m=>!ms.includes(m)); let k=0; while(ms.length<2&&extra.length){ ms.push(extra[(sc.id.length+k)%extra.length]); extra.splice((sc.id.length+k)%extra.length,1); k++; }
-  return {mats:allow.filter(m=>ms.includes(m)),items,label:sc.t||'사진',sid:sc.id,bi:null,photo:1}; }
+function sceneUnit(sc,lv){ if(!sc) return null; const allow=LVM[lv];
+  const objs=sc.objs.filter(o=>o.lv<=lv&&o.ms.every(m=>allow.includes(m))); if(!objs.length) return null;
+  /* 물체 고르기(정해진 차례 — 미리 보기와 수업이 같게): 여러 물질 물체를 먼저, 물질이 고르게, 같은 이름은 하나 */
+  const order=[...objs].sort((x,y)=>y.ms.length-x.ms.length), pick=[];
+  order.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.some(p=>p.a===o.a)&&o.ms.some(m=>!pick.some(p=>p.ms.includes(m)))) pick.push(o); });
+  order.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.includes(o)&&!pick.some(p=>p.a===o.a)) pick.push(o); });
+  const os=pick.map(o=>({a:o.a,box:o.box,sc:sc.id,ms:o.ms,parts:o.parts}));
+  const items=[]; os.forEach(o=>o.parts.forEach(pt=>{ if(pt.box) items.push({a:pt.a,m:pt.m,sc:sc.id,box:pt.box,of:o.a}); }));
+  const ms=[...new Set(os.flatMap(o=>o.ms))];
+  const extra=allow.filter(m=>!ms.includes(m)); let k=0; while(ms.length<2&&extra.length){ const i=(sc.id.length+k)%extra.length; ms.push(extra[i]); extra.splice(i,1); k++; }
+  return {mats:allow.filter(m=>ms.includes(m)),items,objs:os,label:sc.t||'사진',sid:sc.id,bi:null,photo:1}; }
 const libScenes=lv=>SCENES.filter(sc=>sceneUnit(sc,lv));
 function pickScenes(){ const L=libScenes(S.level), two=shuffle(L.filter(sc=>sceneUnit(sc,S.level).items.length>1)), one=shuffle(L.filter(sc=>sceneUnit(sc,S.level).items.length<2));
+  /* 수준 3은 여러 물질 물체가 있는 사진을 먼저 */
+  if(S.level===3){ const multi=x=>sceneUnit(x,3).objs.some(o=>o.ms.length>1); two.sort((x,y)=>multi(y)-multi(x)); }
   S.apick=[...two,...one].slice(0,S.pn).map(sc=>sc.id); }
 function makePlan(){
   const lv=S.level;
@@ -1059,10 +1109,17 @@ function buildRun(lv,plan,idx){
   const bd=plan[idx], phases=[];
   PHASES.forEach(([k])=>{ if(!S.steps[k]) return;
     let items;
-    if(k==='show') items=[...bd.items];
-    else if(k==='photo'){ if(bd.photo) return; items=photosFor(bd).map(p=>({a:p.a,m:p.m,ph:p})); }
+    if(bd.photo){   /* 사진: 보기·물체 찾기·모두 찾기는 물체, 물질 고르기·같은 물질·정리하기는 부분(6개까지) */
+      if(k==='photo') return;
+      if(k==='show') items=[...bd.objs];
+      else if(k==='obj'){ if(new Set(bd.objs.map(o=>o.a)).size<2) return; items=shuffle(bd.objs); }
+      else if(k==='all') items=shuffle(bd.objs.filter(o=>o.ms.length>1)).slice(0,3);
+      else if(k==='same') items=sameQs(bd);
+      else items=shuffleNoRepeat(bd.items).slice(0,6); }
+    else if(k==='all') return;
+    else if(k==='show') items=[...bd.items];
+    else if(k==='photo') items=photosFor(bd).map(p=>({a:p.a,m:p.m,ph:p}));
     else if(k==='same') items=sameQs(bd);
-    else if(k==='obj'&&bd.photo&&new Set(bd.items.map(x=>x.a)).size<2) return;   /* 물체가 하나뿐인 사진은 찾을 것이 없음 */
     else items=shuffleNoRepeat(bd.items);
     if(items.length) phases.push({k,items}); });
   const lid={}; Object.keys(MAT).forEach(m=>lid[m]=Math.floor(Math.random()*4));
@@ -1117,7 +1174,7 @@ function runStep(){
   RUN.token++; clearTimers(); stopVoice(); clearStage(); renderProg(); saveSpot();
   const ph=RUN.phases[RUN.pi], it=ph.items[RUN.ii];
   if(S.intro&&RUN.ii===0&&!(RUN.introSeen=RUN.introSeen||{})[ph.k]){ stageIntro(ph.k,RUN.token,()=>{ RUN.introSeen[ph.k]=1; runStep(); }); return; }   /* 단계 알림(2026-11-21, 008과 같은 꼴) */
-  const P=RUN.bd.photo; ({show:P?stepPShow:stepShow,obj:P?stepPObj:stepObj,mat:P?stepPMat:stepMat,same:stepSame,sort:stepSort,photo:stepPhoto})[ph.k](it,RUN.token);
+  const P=RUN.bd.photo; ({show:P?stepPShow:stepShow,obj:P?stepPObj:stepObj,mat:P?stepPMat:stepMat,all:stepAll,same:stepSame,sort:stepSort,photo:stepPhoto})[ph.k](it,RUN.token);
 }
 let TIMERS=[]; function later(fn,ms){ TIMERS.push(setTimeout(fn,ms)); } function clearTimers(){ TIMERS.forEach(clearTimeout); TIMERS=[]; }
 const alive=tok=>RUN&&RUN.token===tok&&!S.admin;
@@ -1315,7 +1372,7 @@ function startEnd(){
    보기만 하다가 누르기·끌기로 할 일이 바뀌는 때를 미리 알려 전환을 예측하게(시각적 일과표). 효과·칭찬 소리 없이 매번 같게.
    제목은 한 번 들려줌(내장 목소리에 그 소리가 있을 때만 — 없으면 말 없이). 학생이 시작(또는 제목)을 눌러야 시작.
    한 묶음에서 단계마다 한 번만(RUN.introSeen). 설정 '더 정하기 → 단계 알림'으로 끔(문질러 찾기 알림은 늘) */
-const INTRO_TITLE={show:'보기',obj:'물체 찾기',mat:'물질 고르기',same:'같은 물질 찾기',sort:'정리하기',photo:'사진에서'};
+const INTRO_TITLE={show:'보기',obj:'물체 찾기',mat:'물질 고르기',all:'모두 찾기',same:'같은 물질 찾기',sort:'정리하기',photo:'사진에서'};
 const titleOf=k=>k==='game'?GAME_TITLE[RUN.gk]||'놀이':INTRO_TITLE[k];
 async function sayIfHave(t){ if(S.engineNow==='builtin'){ await voiceReady; if(!VSET||!VSET.has(await sha16(t))) return; } return speak(t); }
 function stageIntro(k,tok,go){
@@ -1329,6 +1386,7 @@ function stageIntro(k,tok,go){
   const fig=k==='show'?(scImg?scImg+arrow+an(it0)+mt(it0.m):an(it0)+arrow+mt(it0.m))
     :k==='obj'?'<span class="wd">'+esc(nm(objs[0].a))+'</span>'+arrow+(scImg||shuffle(objs).map(x=>an(x)).join(''))
     :k==='mat'?an(it0)+arrow+ms.map(m=>mt(m)).join('')
+    :k==='all'?(()=>{ const o=bd.objs.find(x=>x.ms.length>1)||bd.objs[0]; return an(o)+arrow+o.ms.map(m=>mt(m)).join(''); })()
     :k==='same'?mt(it0.m)+arrow+(scImg||bd.items.filter(x=>x.m===it0.m).slice(0,3).map(x=>an(x)).join(''))
     :k==='sort'?objs.map(x=>an(x)).join('')+arrow+ms.map(m=>mt(m)).join('')
     :k==='photo'?(ph?'<img class="ph" src="'+PH_URL(ph)+'" alt="">':'')+arrow+ms.map(m=>mt(m)).join('')
@@ -1368,38 +1426,69 @@ function frame(V,it,cls){ const f=document.createElement('div'); f.className='fr
   const b=it.box; f.style.zIndex=String(10+Math.round(1e6/Math.max(400,(b[2]-b[0])*(b[3]-b[1])))); V.d.appendChild(f); return f; }
 const phOf=it=>{ const sc=SC[it.sc]; return {w:sc.w,h:sc.h,src:sc.src,box:[it.box[0]*sc.w/1000,it.box[1]*sc.h/1000,it.box[2]*sc.w/1000,it.box[3]*sc.h/1000]}; };
 
-/* ---- 사진 1. 살펴보기: 사진 전체 → 물체 하나만 밝게 → "탁자예요." → 물질 카드 "나무로 만들었어요." ---- */
-async function stepPShow(it,tok){
-  const st=$('stage'), A=area(), por=portrait(), sc=SC[it.sc];
-  const ms=por?Math.min(A.w*0.42,190):Math.min(A.h*0.46,A.w*0.22,250);
-  const V=sceneEl(sc,por?A.w:A.w-ms-70,por?A.h-ms-120:A.h-80);
-  const pair=document.createElement('div'); pair.className='pair'; pair.style.flexDirection=por?'column':'row'; pair.style.gap=por?'12px':'26px';
-  const L=document.createElement('div'), R=document.createElement('div'); R.className='slideIn';
-  L.appendChild(V.d); const tag=document.createElement('div'); tag.className='nameTag'; tag.textContent=nm(it.a); tag.style.opacity=0; tag.style.transition='opacity .6s'; L.appendChild(tag);
-  R.innerHTML='<div class="cap">물질</div>'; const mc=matCard(it.m,ms); mc.style.cursor='default'; R.appendChild(mc);
+/* ---- 사진 1. 살펴보기: 사진 전체 → 물체만 밝게 "문이에요." → 한 가지 물질이면 물질 카드 "나무로 만들었어요."
+   여러 물질이면 부분을 하나씩 밝히며 "손잡이는 쇠로 만들었어요."(카드가 하나씩 쌓임, 안 보이는 부분은 물체를 밝힌 채 말로만) → "문은 나무, 쇠, 유리로 만들었어요." ---- */
+async function stepPShow(o,tok){
+  const st=$('stage'), A=area(), por=portrait(), sc=SC[o.sc], multi=o.parts.length>1, n=o.ms.length;
+  const ms=por?Math.min(A.w*0.9/Math.max(1,n)-14,170):Math.min((A.h-120)/Math.max(1,n)-16,A.w*0.2,multi?190:250);
+  const V=sceneEl(sc,por?A.w:A.w-ms-80,por?A.h-ms-130:A.h-80);
+  const pair=document.createElement('div'); pair.className='pair'; pair.style.flexDirection=por?'column':'row'; pair.style.gap=por?'12px':'28px';
+  const L=document.createElement('div'), R=document.createElement('div'); R.className='matCol'; R.style.flexDirection=por?'row':'column';
+  L.appendChild(V.d); const tag=document.createElement('div'); tag.className='nameTag'; tag.textContent=nm(o.a); tag.style.opacity=0; tag.style.transition='opacity .6s'; L.appendChild(tag);
   pair.appendChild(L); pair.appendChild(R); st.appendChild(pair);
-  await wait(800); if(!alive(tok)) return; spot(V,it.box);
+  const addCard=(m,hid)=>{ const w=document.createElement('div'); w.className='slideIn'; const mc=matCard(m,ms); mc.style.cursor='default'; if(hid){ const t=document.createElement('span'); t.className='hidTag'; t.textContent='안쪽'; mc.appendChild(t); } w.appendChild(mc); R.appendChild(w); requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.add('on'))); return mc; };
+  await wait(800); if(!alive(tok)) return; spot(V,o.box);
   await wait(700); if(!alive(tok)) return; tag.style.opacity=1;
-  await speak(isLine(it.a)); if(!alive(tok)) return;
-  await wait(500); if(!alive(tok)) return; R.classList.add('on'); await wait(700); if(!alive(tok)) return;
-  await speak(madeLine(it.m)); if(!alive(tok)) return;
-  await showFlat(mc,it.m,tok); if(!alive(tok)) return;
-  await wait(1400); if(alive(tok)) nextItem();
+  await speak(isLine(o.a)); if(!alive(tok)) return; await wait(500); if(!alive(tok)) return;
+  if(!multi){ const mc=addCard(o.ms[0]); await wait(700); if(!alive(tok)) return; await speak(madeLine(o.ms[0])); if(!alive(tok)) return;
+    await showFlat(mc,o.ms[0],tok); if(!alive(tok)) return; await wait(1400); if(alive(tok)) nextItem(); return; }
+  const shown=new Set();
+  for(const pt of [...o.parts.filter(x=>x.box),...o.parts.filter(x=>!x.box)]){
+    spot(V,pt.box||o.box); tag.textContent=nm(o.a)+' · '+nm(pt.a); await wait(650); if(!alive(tok)) return;
+    if(!shown.has(pt.m)){ shown.add(pt.m); addCard(pt.m,!pt.box); await wait(450); if(!alive(tok)) return; }
+    await speak(fullLine(pt.a,pt.m)); if(!alive(tok)) return; await wait(600); if(!alive(tok)) return; }
+  spot(V,o.box); tag.textContent=nm(o.a); await wait(500); if(!alive(tok)) return;
+  await speak(allLine(o.a,o.ms)); if(!alive(tok)) return; await wait(1500); if(alive(tok)) nextItem();
 }
 /* ---- 사진 2. 물체 찾기: 이름 → 사진에서 그 물체를 누름. 수준 1 = 테두리 2곳, 2 = 4곳까지, 3 = 테두리 없이 ---- */
 function stepPObj(it,tok){
   const st=$('stage'), A=area(), sc=SC[it.sc], lv=RUN.lv, fs=Math.min(A.h*0.1,70);
   const bub=document.createElement('div'); bub.className='bubble'; bub.innerHTML='<div class="word" style="font-size:'+fs+'px">'+esc(nm(it.a))+'</div>';
   const V=sceneEl(sc,A.w,A.h-fs-90); V.d.style.marginTop='22px';
-  const others=shuffle(RUN.bd.items.filter(x=>x.a!==it.a)), cand=lv===1?[it,...others.slice(0,1)]:lv===2?[it,...others.slice(0,3)]:[it,...others];
+  const others=shuffle(RUN.bd.objs.filter(x=>x.a!==it.a)), cand=lv===1?[it,...others.slice(0,1)]:lv===2?[it,...others.slice(0,3)]:[it,...others];
   const cards=cand.map(x=>{ const f=frame(V,x,lv>=3?'ghost':''); f.style.opacity=0; return f; });
   st.appendChild(bub); st.appendChild(V.d);
   choiceRound(tok,{say:askObj(it.a),cards,isRight:c=>c.dataset.a===it.a,
-    rec:(w,h)=>logRow('obj',it,w&&w.dataset.a,h),
+    rec:(w,h)=>logRow('obj',{a:it.a,m:it.ms.join('+')},w&&w.dataset.a,h),
     onRight:async c=>{ cards.forEach(f=>{ if(f!==c) f.style.opacity=0; }); spot(V,it.box); await speak(isLine(it.a)); if(!alive(tok)) return; await wait(900); if(alive(tok)) nextItem(); }});
 }
-/* ---- 사진 3. 물질 고르기: '사진에서'와 같은 화면(물체 둘레만 밝게 → 물질 카드), 기록은 물질 고르기로 ---- */
+/* ---- 사진 3. 물질 고르기: 부분 하나만 밝게 → 물질 카드(답 하나), 기록은 물질 고르기로 ---- */
 function stepPMat(it,tok){ stepPhoto(Object.assign({},it,{ph:phOf(it)}),tok,'mat'); }
+/* ---- 사진 4. 모두 찾기(여러 물질 물체): 물체를 밝히고 "문은 무엇으로 만들었어요?" → 맞는 물질 카드를 모두 누름.
+   찾을 수만큼 빈 칸(○○○)을 보여 주어 몇 개인지 눈으로 알게. '다 했어요' 단추 없이 다 찾으면 끝. 틀리면 남은 답이 빛남(도움) ---- */
+function stepAll(o,tok){
+  const st=$('stage'), A=area(), sc=SC[o.sc], n=o.ms.length;
+  const pool=shuffle([...new Set([...RUN.bd.mats,...LVM[RUN.lv]])].filter(m=>!o.ms.includes(m))).slice(0,Math.max(1,Math.min(5-n,2)));
+  const opts=shuffle([...o.ms,...pool]), k=opts.length, gap=Math.max(14,A.w*0.02);
+  const cs=Math.min(optSize(k,A.w,A.h*0.3,gap,true),190), V=sceneEl(sc,A.w*0.9,A.h-cs-150);
+  const slots=document.createElement('div'); slots.className='slots'; for(let i=0;i<n;i++){ const d=document.createElement('i'); slots.appendChild(d); }
+  const row=optRow(k,cs,gap); opts.forEach(m=>row.appendChild(matCard(m,cs,'fadeIn')));
+  st.appendChild(V.d); st.appendChild(slots); st.appendChild(row); spot(V,o.box);
+  const cards=[...row.children], rights=cards.filter(c=>o.ms.includes(c.dataset.m)); let left=n, wrong=null, helped=false, over=false, armed=false;
+  const glow=()=>{ helped=true; rights.filter(c=>!c.classList.contains('right')).forEach(c=>c.classList.add('glow')); };
+  later(()=>{ if(alive(tok)&&!over){ cards.forEach(c=>{ c.style.opacity=1; }); armed=true; } },1000);
+  speak(askMat(o.a)).then(()=>{ if(!alive(tok)) return; later(()=>{ if(alive(tok)&&!over) speak(askMat(o.a)); },8000); later(()=>{ if(alive(tok)&&!over) glow(); },16000); });
+  cards.forEach(c=>tapper(c,()=>{
+    if(!armed||over||!alive(tok)||c.classList.contains('right')) return;
+    if(!o.ms.includes(c.dataset.m)){ if(!wrong){ wrong=c.dataset.m; glow(); } return; }
+    c.classList.remove('glow'); c.classList.add('right'); chime();
+    const sl=slots.children[n-left]; sl.style.backgroundImage=texOf(c.dataset.m).replace(/"/g,"'"); sl.classList.add('on'); left--;
+    if(left) return;
+    over=true; clearTimers(); logRow('all',{a:o.a,m:o.ms.join('+')},wrong,helped||!!wrong);
+    (async()=>{ cards.forEach(x=>{ if(!x.classList.contains('right')) x.style.opacity=.25; }); await wait(400); if(!alive(tok)) return;
+      await speak(allLine(o.a,o.ms)); if(!alive(tok)) return; await wait(1000); if(alive(tok)) nextItem(); })();
+  }));
+}
 
 /* ---- 같은 물질 찾기(그림·사진 모두): 물질 카드 → "나무로 만든 것을 모두 찾아요." → 다 찾으면 "모두 나무로 만들었어요." ---- */
 function stepSame(q,tok){
@@ -1473,7 +1562,7 @@ const MACH_SVG='<svg viewBox="0 0 230 200" aria-hidden="true"><g stroke="#5E4E3C
 function factoryPool(m){ const seen=new Set(), L=[];
   RUN.bd.items.filter(x=>x.m===m).forEach(x=>{ const k=x.a+'|'+(x.sc||''); if(!seen.has(k)){ seen.add(k); L.push(x); } });
   Object.keys(LV).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ if(x.m===m&&!PIC_TODO.has(x.a)&&!seen.has(x.a)){ seen.add(x.a); L.push({a:x.a,m}); } })));
-  SCENES.forEach(sc=>sc.objs.forEach(o=>{ const k=o.a+'|'+sc.id; if(o.m===m&&!seen.has(k)&&L.length<14){ seen.add(k); L.push({a:o.a,m,sc:sc.id,box:o.box}); } }));
+  SCENES.forEach(sc=>sc.objs.forEach(o=>o.parts.forEach(pt=>{ const k=pt.a+'|'+sc.id; if(pt.m===m&&pt.box&&!seen.has(k)&&L.length<14){ seen.add(k); L.push({a:pt.a,m,sc:sc.id,box:pt.box}); } })));
   return {list:shuffle(L),i:0}; }
 function playFactory(tok){
   const st=$('stage'), A=area(), bd=RUN.bd, mats=bd.mats, por=portrait();
@@ -1517,17 +1606,26 @@ function renderPhotoPick(A){
     const g=document.createElement('div'); g.className='scPick'; A.appendChild(g); const w=note('',true);
     S.csel=S.csel.filter(id=>sceneUnit(SC[id],lv));
     libScenes(lv).forEach(sc=>{ const k=S.csel.indexOf(sc.id), u=sceneUnit(sc,lv);
-      mkBtn(g,k>=0?'on':'','<img src="'+sc.src+'" alt="">'+(k>=0?'<span class="ord">'+(k+1)+'</span>':'')+'<b>'+esc(sc.t)+'</b><span class="ms">'+u.items.map(it=>esc(it.a)).join(' · ')+'</span>',()=>{
+      mkBtn(g,k>=0?'on':'','<img src="'+sc.src+'" alt="">'+(k>=0?'<span class="ord">'+(k+1)+'</span>':'')+'<b>'+esc(sc.t)+'</b><span class="ms">'+u.objs.map(o=>esc(o.a)+(o.ms.length>1?'('+o.ms.map(m=>MAT[m].label).join('·')+')':'')).join(' · ')+'</span>',()=>{
         if(k>=0) S.csel.splice(k,1); else if(S.csel.length>=4){ w.textContent='4장까지예요. 먼저 고른 것을 눌러 빼고 고르세요.'; return; } else S.csel.push(sc.id);
         saveS(); renderSetup(); flash('c3'); }); });
     return; }
   /* 사진 받기 */
+  /* 사진 받기는 선생님 개인 Gemini API 키가 있어야 함(2026-11-21 선생님) — 늘 위에 알리고 받는 법을 자세히 */
+  const KEYDOC='https://www.charum.org/study/doc.html?010/gemini-key';
+  const ki=document.createElement('div'); ki.className='keyInfo'+(gemKey()?' have':'');
+  ki.innerHTML=gemKey()?'사진 받기는 <b>선생님 개인 Gemini API 키</b>로 해요. 이 기기에는 키가 있어요 ✓'
+    :'<b>사진 받기는 선생님 개인 Gemini API 키가 있어야 해요.</b> Google AI Studio에서 개인 Gmail로 무료로 받을 수 있어요(처음 한 번, 5분쯤).<br>'
+     +'<ol><li>아래 <b>키 받는 법</b>을 열고 Google AI Studio에 <b>개인 Gmail</b>로 로그인해요(학교 계정은 막혀 있는 일이 많아요).</li><li><b>API 키 만들기</b>(Create API key)를 눌러요 — 결제(카드)를 연결한 프로젝트는 고르지 마세요.</li>'
+     +'<li><b>AQ.</b>(또는 AIza)로 시작하는 키를 복사 단추로 복사해, 아래 <b>Gemini 키</b> 칸에 붙여 넣고 저장해요. 휴대폰으로 받았다면 📱 휴대폰으로 받기 화면의 키 칸에 넣어 사진과 함께 보내도 돼요.</li></ol>'
+     +'<a class="keyGo" href="'+KEYDOC+'" target="_blank" rel="noopener">키 받는 법 자세히 보기 →</a> <span class="keyAlt">키가 없으면 <b>자료실 사진</b>(자동·골라서)으로 수업할 수 있어요.</span>';
+  A.appendChild(ki);
   const pv=document.createElement('div'); pv.className='privacy'; pv.innerHTML='⚠ 무료 Gemini에 보낸 사진은 Google이 서비스를 낫게 하는 데 쓸 수 있어요. <b>학생 얼굴이 나온 사진은 보내지 마세요.</b> 사람은 분석에서 빼요.'; A.appendChild(pv);
   const kr=document.createElement('div'); kr.className='opt'; kr.innerHTML='<span>Gemini 키</span>'; const kk=document.createElement('div'); kk.className='row'; kr.appendChild(kk); A.appendChild(kr);
   if(gemKey()){ const s0=document.createElement('span'); s0.className='keyOk'; s0.textContent='이 기기에 있어요 ✓'; kk.appendChild(s0); mkBtn(kk,'chip sm','키 지우기',()=>{ if(confirm('이 기기의 Gemini 키를 지울까요? (다른 차름 앱도 같은 키를 써요)')){ setGemKey(''); renderSetup(); } }); }
   else { const inp=document.createElement('input'); inp.type='password'; inp.placeholder='AIza… 또는 AQ.… 키 붙여 넣기'; inp.className='keyIn'; kk.appendChild(inp);
     mkBtn(kk,'chip sm on','저장',()=>{ const v=inp.value.trim(); if(!/^(AIza|AQ\.)/.test(v)){ inp.focus(); return; } setGemKey(v); renderSetup(); });
-    const a=document.createElement('a'); a.href='https://www.charum.org/study/doc.html?gemini-key'; a.target='_blank'; a.rel='noopener'; a.textContent='키 받는 법(1~2분)'; a.className='keyHow'; kk.appendChild(a); }
+    const a=document.createElement('a'); a.href=KEYDOC; a.target='_blank'; a.rel='noopener'; a.textContent='키 받는 법(1~2분)'; a.className='keyHow'; kk.appendChild(a); }
   const mr=document.createElement('div'); mr.className='opt'; mr.innerHTML='<span>분석 모델</span>'; const mm=document.createElement('div'); mm.className='row'; mr.appendChild(mm); A.appendChild(mr);
   GEM_MODELS.forEach(md=>mkBtn(mm,'chip sm'+(gemModel()===md?' on':''),md.replace('gemini-','')+(md===GEM_MODELS[0]?' (추천)':''),()=>{ store.set('model',md); renderSetup(); }));
   const br=document.createElement('div'); br.className='row'; A.appendChild(br);
@@ -1561,11 +1659,13 @@ function setGemKey(k){ try{ k?localStorage.setItem('webapp.geminiKey',k):localSt
 /* 무료 키로 되는 모델(2026-11-21 선생님 시험). 3.1 flash lite: 미리보기 아닌 정식판, 시험에서 물체를 가장 고르게 찾음. 안 되면 다음 것으로 */
 const GEM_MODELS=['gemini-3.1-flash-lite','gemini-flash-lite-latest','gemini-3.5-flash-lite','gemini-3.5-flash'];
 const gemModel=()=>{ const m=store.get('model'); return GEM_MODELS.includes(m)?m:GEM_MODELS[0]; };
-const GEM_PROMPT='이 사진은 발달장애 학생이 물체를 무엇(어떤 물질)으로 만들었는지 배우는 데 씁니다. 사진 속 물체를 찾아 JSON 배열로만 답하세요.\n'
+const GEM_PROMPT='이 사진은 발달장애 학생이 물체를 무엇(어떤 물질)으로 만들었는지 배우는 데 씁니다. 사진 속 물체와, 그 물체를 이루는 물질을 JSON 배열로만 답하세요.\n'
  +'- 사람, 사람이 입거나 든 것(옷·가방·안경·신발), 동물, 식물, 하늘·바다·땅·벽면 전체, 글자는 빼세요.\n'
- +'- 크고 잘 보이는 물체부터 10개까지.\n'
- +'- material: 그 물체 전체가 한 가지 물질로 만든 것이 분명할 때만 wood(나무) metal(쇠·금속) plastic(플라스틱) paper(종이·종이 상자) cloth(천) rubber(고무) glass(유리) ceramic(도자기·사기) stone(돌·바위) 가운데 하나. 여러 물질이 섞였으면 mixed, 알 수 없으면 unknown.\n'
- +'- name: 아이가 아는 짧은 한국어 이름. 물질 낱말을 넣지 마세요(나무 탁자→탁자, 종이컵→컵, 돌담→담장, 유리창→창문, 고무장갑→장갑).\n'
+ +'- 크고 잘 보이는 물체부터 8개까지. box_2d는 물체 전체 자리입니다.\n'
+ +'- parts: 그 물체를 이루는 물질마다 대표 부분 하나(같은 물질의 부분은 하나만). 예: 문 = 문짝(wood) · 손잡이(metal) · 창(glass). 한 가지 물질이면 부분 하나(이름은 물체 이름과 같게).\n'
+ +'- 겉에서 안 보이지만 그 물체에 들어 있다고 널리 알려진 물질(예: 정수기 안쪽의 metal)은 hidden: true로, 자리 없이 넣으세요. 확실하지 않으면 넣지 마세요.\n'
+ +'- material: wood(나무) metal(쇠·금속) plastic(플라스틱) paper(종이·종이 상자) cloth(천) rubber(고무) glass(유리) ceramic(도자기·사기) stone(돌·바위) 가운데 하나. 알 수 없는 부분은 넣지 마세요.\n'
+ +'- 이름은 아이가 아는 짧은 한국어. 물질 낱말을 넣지 마세요(나무 탁자→탁자, 종이컵→컵, 돌담→담장, 유리창→창, 고무바퀴→바퀴).\n'
  +'- box_2d: [ymin, xmin, ymax, xmax], 0~1000.';
 async function addRecv(blob){
   const url=await new Promise((res,rej)=>{ const im=new Image(), u=URL.createObjectURL(blob); im.onload=()=>{ const k=Math.min(1,1280/Math.max(im.naturalWidth,im.naturalHeight)), cv=document.createElement('canvas');
@@ -1580,8 +1680,10 @@ async function runGem(rc,model){
   catch(e){ rc.st='fail'; rc.err=String(e&&e.message||e).slice(0,160); }
   addScene(rc); saveRecv(); renderSetup(); if($('chkView')&&$('chkView').dataset.id===rc.id) openCheck(rc); }
 async function gemAnalyze(rc,model){
+  const BOX={type:'ARRAY',items:{type:'INTEGER'}};
   const body={contents:[{parts:[{text:GEM_PROMPT},{inline_data:{mime_type:'image/jpeg',data:rc.src.split(',')[1]}}]}],
-    generationConfig:{temperature:0.2,responseMimeType:'application/json',responseSchema:{type:'ARRAY',items:{type:'OBJECT',properties:{name:{type:'STRING'},material:{type:'STRING',enum:[...Object.keys(MAT),'mixed','unknown']},box_2d:{type:'ARRAY',items:{type:'INTEGER'}}},required:['name','material','box_2d']}}}};
+    generationConfig:{temperature:0.2,responseMimeType:'application/json',responseSchema:{type:'ARRAY',items:{type:'OBJECT',properties:{name:{type:'STRING'},box_2d:BOX,
+      parts:{type:'ARRAY',items:{type:'OBJECT',properties:{name:{type:'STRING'},material:{type:'STRING',enum:Object.keys(MAT)},box_2d:BOX,hidden:{type:'BOOLEAN'}},required:['name','material']}}},required:['name','box_2d','parts']}}}};
   let last=null;
   for(const md of [model,...GEM_MODELS.filter(x=>x!==model)]){
     try{ const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+md+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':gemKey()},body:JSON.stringify(body)});
@@ -1591,47 +1693,65 @@ async function gemAnalyze(rc,model){
       rc.model=md; return parseGem(JSON.parse(t)); }
     catch(e){ last=e; if(e.status===401||e.status===403||(e.status===400&&/key/i.test(e.message))) throw e; } }   /* 키 문제는 다른 모델로 넘어가도 같음 */
   throw last||new Error('분석 실패'); }
-function parseGem(arr){ const out=[];
-  (Array.isArray(arr)?arr:[]).forEach(x=>{ const b=x&&x.box_2d; if(!Array.isArray(b)||b.length!==4) return; const [y0,x0,y1,x1]=b.map(v=>Math.max(0,Math.min(1000,Math.round(+v||0))));
-    if(x1-x0<15||y1-y0<15) return; let a=String(x.name||'').trim().slice(0,12); Object.values(MAT).forEach(v=>{ if(a.startsWith(v.label+' ')) a=a.slice(v.label.length+1); });
-    out.push([a,MAT[x.material]?x.material:'',[x0,y0,x1,y1]]); });
-  return out.slice(0,10); }
+/* Gemini 답 → [이름, [[부분, 물질, 자리|null], …], 물체 자리] (SCENES와 같은 꼴) */
+function parseGem(arr){ const bx=b=>{ if(!Array.isArray(b)||b.length!==4) return null; const [y0,x0,y1,x1]=b.map(v=>Math.max(0,Math.min(1000,Math.round(+v||0)))); return x1-x0<12||y1-y0<12?null:[x0,y0,x1,y1]; };
+  const clean=a=>{ a=String(a||'').trim().slice(0,12); Object.values(MAT).forEach(v=>{ if(a.startsWith(v.label+' ')) a=a.slice(v.label.length+1); }); return a; };
+  const out=[];
+  (Array.isArray(arr)?arr:[]).forEach(x=>{ const box=bx(x&&x.box_2d); if(!box) return; const a=clean(x.name); const seen=new Set(), parts=[];
+    (Array.isArray(x.parts)?x.parts:[]).forEach(p=>{ if(!MAT[p.material]||seen.has(p.material)) return; seen.add(p.material); const pb=p.hidden?null:bx(p.box_2d); parts.push([clean(p.name)||a,p.material,pb||(p.hidden?null:box)]); });
+    out.push([a,parts,box]); });
+  return out.slice(0,8); }
 const giveAway=a=>Object.values(MAT).some(v=>a.includes(v.label))||/고무|유리|쇠|금속|플라스틱/.test(a);   /* 이름이 물질을 알려 주면 표시 */
 
-/* 확인 화면: 사진 위 번호 상자 + 줄마다 이름·물질(빼기). 사진 위를 끌면 상자를 더함(AI가 못 찾은 물체) */
+/* 확인 화면: 물체마다 부분 줄(이름 · 물질 · 안 보임 · 지우기). 사진 위를 끌면 — 고른 물체가 있으면 그 물체에 부분을, 없으면 새 물체를 더함 */
 function openCheck(rc){
   let v=$('chkView'); if(!v){ v=document.createElement('div'); v.id='chkView'; document.body.appendChild(v); }
   v.dataset.id=rc.id; v.className='on';
-  const rows=rc.o.map(o=>o.slice()); let sel=-1;
-  v.innerHTML='<div class="ck"><div class="ckHead"><b>받은 사진 확인</b><span>AI가 찾은 물체예요. 이름과 물질을 확인하고, 틀린 것은 고치거나 빼 주세요. 사진 위를 끌면 물체를 더할 수 있어요.</span></div>'
+  const objs=rc.o.map(o=>{ const ob=mkObj(o); return {a:ob.a,box:ob.box,parts:ob.parts.map(p=>({a:p.a,m:p.m,box:p.box}))}; }); let sel=-1;
+  v.innerHTML='<div class="ck"><div class="ckHead"><b>받은 사진 확인</b><span>AI가 찾은 물체와 그 물질이에요. 틀린 것은 고치거나 빼 주세요. 물체를 누른 뒤 사진 위를 끌면 그 물체에 부분을 더하고, 아무것도 고르지 않고 끌면 새 물체를 더해요.</span></div>'
     +'<div class="ckBody"><div class="ckPh"></div><div class="ckList"></div></div>'
     +'<div class="ckFoot"><span class="ckMsg"></span><select class="ckModel">'+GEM_MODELS.map(m=>'<option'+(m===(rc.model||gemModel())?' selected':'')+'>'+m+'</option>').join('')+'</select><button class="chip sm" id="ckRe">다시 분석</button><button class="chip sm" id="ckClose">닫기</button><button class="chip on" id="ckOk">확인했어요</button></div></div>';
   const ph=v.querySelector('.ckPh'), list=v.querySelector('.ckList'), msg=v.querySelector('.ckMsg');
-  const box=ph.getBoundingClientRect(), sc={w:rc.w,h:rc.h,src:rc.src}, V=sceneEl(sc,Math.max(240,box.width-8),Math.max(200,Math.min(box.height-8,innerHeight*0.62)));
+  const box=ph.getBoundingClientRect(), V=sceneEl({w:rc.w,h:rc.h,src:rc.src},Math.max(240,box.width-8),Math.max(200,Math.min(box.height-8,innerHeight*0.62)));
   ph.appendChild(V.d);
   msg.textContent=rc.st==='wait'?'분석하는 중…':rc.st==='fail'?'분석하지 못했어요'+(rc.err?': '+rc.err:''):rc.st==='nokey'?'Gemini 키가 없어요(설정 ②에서 넣어요).':(rc.model?'모델: '+rc.model:'');
+  const opt=m=>'<option value="">빼기</option>'+Object.keys(MAT).map(k=>'<option value="'+k+'"'+(k===m?' selected':'')+'>'+MAT[k].label+'</option>').join('');
   const draw=()=>{ V.d.querySelectorAll('.ckBox').forEach(x=>x.remove()); list.innerHTML='';
-    rows.forEach((o,i)=>{ const [a,m,b]=o, off=!m;
-      const f=document.createElement('div'); f.className='ckBox'+(off?' off':'')+(i===sel?' sel':''); V.at(f,b); f.innerHTML='<i>'+(i+1)+'</i>'; f.onclick=()=>{ sel=i; draw(); }; V.d.appendChild(f);
-      const r=document.createElement('div'); r.className='ckRow'+(off?' off':'')+(i===sel?' sel':'');
-      r.innerHTML='<i>'+(i+1)+'</i><input value="'+esc(a)+'" placeholder="이름"><select><option value="">빼기</option>'+Object.keys(MAT).map(k=>'<option value="'+k+'"'+(k===m?' selected':'')+'>'+MAT[k].label+'</option>').join('')+'</select>'
-        +(a&&giveAway(a)?'<em>이름이 물질을 알려 줘요</em>':'')+'<button class="chip sm">지우기</button>';
-      const [inp,se]=[r.querySelector('input'),r.querySelector('select')];
-      inp.oninput=()=>{ o[0]=inp.value.trim().slice(0,12); }; inp.onchange=draw; se.onchange=()=>{ o[1]=se.value; draw(); };
-      r.querySelector('button').onclick=()=>{ rows.splice(i,1); sel=-1; draw(); }; r.onclick=e=>{ if(e.target.tagName==='DIV'||e.target.tagName==='I'){ sel=i; draw(); } };
-      list.appendChild(r); });
-    if(!rows.length){ const e=document.createElement('p'); e.className='ckEmpty'; e.textContent=rc.st==='wait'?'분석하는 중이에요…':'찾은 물체가 없어요. 사진 위를 끌어 물체를 더하거나 다시 분석해 보세요.'; list.appendChild(e); } };
-  /* 끌어서 상자 더하기 */
+    objs.forEach((o,i)=>{ const on=i===sel;
+      const f=document.createElement('div'); f.className='ckBox obj'+(on?' sel':''); V.at(f,o.box); f.innerHTML='<i>'+(i+1)+'</i>'; f.onclick=e=>{ e.stopPropagation(); sel=on?-1:i; draw(); }; V.d.appendChild(f);
+      o.parts.forEach((p,j)=>{ if(!p.box||(o.parts.length===1&&p.box===o.box)) return; const g=document.createElement('div'); g.className='ckBox part'+(p.m?'':' off')+(on?' sel':''); V.at(g,p.box); g.innerHTML='<i>'+(i+1)+'-'+(j+1)+'</i>'; g.onclick=e=>{ e.stopPropagation(); sel=i; draw(); }; V.d.appendChild(g); });
+      const card=document.createElement('div'); card.className='ckObj'+(on?' sel':'');
+      card.innerHTML='<div class="ckRow head"><i>'+(i+1)+'</i><input class="oName" value="'+esc(o.a)+'" placeholder="물체 이름">'+(o.a&&giveAway(o.a)?'<em>이름이 물질을 알려 줘요</em>':'')+'<button class="chip sm oDel">물체 지우기</button></div>';
+      o.parts.forEach((p,j)=>{ const r=document.createElement('div'); r.className='ckRow part'+(p.m?'':' off');
+        r.innerHTML='<i>'+(i+1)+'-'+(j+1)+'</i><input value="'+esc(p.a)+'" placeholder="부분 이름"><select>'+opt(p.m)+'</select><label class="hid"><input type="checkbox"'+(p.box?'':' checked')+'>안 보임</label>'
+          +(p.a&&p.a!==o.a&&giveAway(p.a)?'<em>이름이 물질을 알려 줘요</em>':'')+'<button class="chip sm">지우기</button>';
+        const [inp,se,cb]=[r.querySelector('input'),r.querySelector('select'),r.querySelector('.hid input')];
+        inp.oninput=()=>{ p.a=inp.value.trim().slice(0,12); }; inp.onchange=draw; se.onchange=()=>{ p.m=se.value; draw(); };
+        cb.onchange=()=>{ if(cb.checked){ p.box0=p.box; p.box=null; } else p.box=p.box0||o.box; draw(); };
+        r.querySelector('button').onclick=()=>{ o.parts.splice(j,1); draw(); };
+        card.appendChild(r); });
+      const ms=[...new Set(o.parts.filter(p=>p.m).map(p=>p.m))];
+      const ft=document.createElement('div'); ft.className='ckLv'; ft.textContent=ms.length?('물질 '+ms.map(m=>MAT[m].label).join('·')+' → 수준 '+(o.parts.some(p=>p.m&&!p.box)||ms.length>=3?3:ms.length)+(on?' · 사진 위를 끌어 부분 더하기':'')):'물질이 없어 쓰지 않아요';
+      card.appendChild(ft);
+      const nIn=card.querySelector('.oName'); nIn.oninput=()=>{ o.a=nIn.value.trim().slice(0,12); }; nIn.onchange=draw;
+      card.querySelector('.oDel').onclick=()=>{ objs.splice(i,1); sel=-1; draw(); };
+      card.onclick=e=>{ if(e.target===card||e.target.classList.contains('ckLv')){ sel=on?-1:i; draw(); } };
+      list.appendChild(card); });
+    if(!objs.length){ const e=document.createElement('p'); e.className='ckEmpty'; e.textContent=rc.st==='wait'?'분석하는 중이에요…':'찾은 물체가 없어요. 사진 위를 끌어 물체를 더하거나 다시 분석해 보세요.'; list.appendChild(e); } };
   let dn=null, ghost=null;
-  V.d.addEventListener('pointerdown',e=>{ if(e.target.closest('.ckBox')) return; const r=V.d.getBoundingClientRect(); dn={x:(e.clientX-r.left)/r.width*1000,y:(e.clientY-r.top)/r.height*1000}; ghost=document.createElement('div'); ghost.className='ckBox sel'; V.d.appendChild(ghost); try{ V.d.setPointerCapture(e.pointerId); }catch(_){} });
-  V.d.addEventListener('pointermove',e=>{ if(!dn) return; const r=V.d.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*1000, y=(e.clientY-r.top)/r.height*1000; V.at(ghost,[Math.min(dn.x,x),Math.min(dn.y,y),Math.max(dn.x,x),Math.max(dn.y,y)]); });
-  V.d.addEventListener('pointerup',e=>{ if(!dn) return; const r=V.d.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*1000, y=(e.clientY-r.top)/r.height*1000, b=[Math.min(dn.x,x),Math.min(dn.y,y),Math.max(dn.x,x),Math.max(dn.y,y)].map(Math.round); dn=null; ghost.remove();
-    if(b[2]-b[0]>30&&b[3]-b[1]>30){ rows.push(['','',b]); sel=rows.length-1; draw(); const ins=list.querySelectorAll('input'); if(ins[sel]) ins[sel].focus(); } });
+  const pt=e=>{ const r=V.d.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*1000,y:(e.clientY-r.top)/r.height*1000}; };
+  V.d.addEventListener('pointerdown',e=>{ if(e.target.closest('.ckBox')) return; dn=pt(e); ghost=document.createElement('div'); ghost.className='ckBox sel'; V.d.appendChild(ghost); try{ V.d.setPointerCapture(e.pointerId); }catch(_){} });
+  V.d.addEventListener('pointermove',e=>{ if(!dn) return; const q=pt(e); V.at(ghost,[Math.min(dn.x,q.x),Math.min(dn.y,q.y),Math.max(dn.x,q.x),Math.max(dn.y,q.y)]); });
+  V.d.addEventListener('pointerup',e=>{ if(!dn) return; const q=pt(e), b=[Math.min(dn.x,q.x),Math.min(dn.y,q.y),Math.max(dn.x,q.x),Math.max(dn.y,q.y)].map(Math.round); dn=null; ghost.remove();
+    if(b[2]-b[0]<25||b[3]-b[1]<25) return;
+    if(sel>=0) objs[sel].parts.push({a:'',m:'',box:b}); else { objs.push({a:'',box:b,parts:[{a:'',m:'',box:b}]}); sel=objs.length-1; }
+    draw(); const c=list.children[sel]; if(c){ const ins=c.querySelectorAll('input:not([type=checkbox])'); (ins[ins.length-1]||ins[0]).focus(); } });
   draw();
+  const pack=()=>objs.map(o=>[o.a,o.parts.filter(p=>p.m).map(p=>[p.a||o.a,p.m,p.box]),o.box]).filter(o=>o[0]&&o[1].length);
   const close=()=>{ v.className=''; v.innerHTML=''; delete v.dataset.id; renderSetup(); };
   $('ckClose').onclick=close;
-  $('ckRe').onclick=()=>{ rc.o=rows; runGem(rc,v.querySelector('.ckModel').value); msg.textContent='분석하는 중…'; };
-  $('ckOk').onclick=()=>{ const use=rows.filter(o=>o[0]&&o[1]);
+  $('ckRe').onclick=()=>{ rc.o=pack(); runGem(rc,v.querySelector('.ckModel').value); msg.textContent='분석하는 중…'; };
+  $('ckOk').onclick=()=>{ const use=pack();
     if(!use.length){ msg.textContent='이름과 물질이 있는 물체가 하나는 있어야 해요.'; return; }
     rc.o=use; rc.ok=true; rc.st='ok'; addScene(rc); if(!S.rsel.includes(rc.id)&&S.rsel.length<4) S.rsel.push(rc.id); saveRecv(); saveS(); close(); };
 }
@@ -1778,12 +1898,12 @@ function showHelp(){
 function hideSpot(){ $('spot').style.display='none'; $('spotTip').style.display='none'; }
 
 /* ================= 학생 기록 보기 ================= */
-const PH_NAME={obj:'물체 찾기',mat:'물질 고르기',same:'같은 물질 찾기',sort:'정리하기',photo:'사진에서'};
+const PH_NAME={obj:'물체 찾기',mat:'물질 고르기',all:'모두 찾기',same:'같은 물질 찾기',sort:'정리하기',photo:'사진에서'};
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const barH=v=>'<span class="bar100"><b style="width:'+v+'%"></b></span>'+v+'%';
 const dayOf=t=>{ const d=new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
 const weekOf=t=>{ const d=new Date(t); const m=new Date(d); m.setDate(d.getDate()-((d.getDay()+6)%7)); return dayOf(m); };
-const mName=id=>MAT[id]?MAT[id].label:id;
+const mName=id=>MAT[id]?MAT[id].label:String(id||'').split('+').map(x=>MAT[x]?MAT[x].label:x).join('·');   /* 여러 물질(모두 찾기) = 'wood+metal' */
 const wName=r=>r.ph==='obj'||r.ph==='same'?r.w:mName(r.w);   /* 같은 물질 찾기: a = 찾을 물체들, w = 먼저 누른 다른 물체 */
 function exampleLog(){ /* 가상의 학생 홍길동의 한 달(이 기기 기록에 넣지 않음) */
   const rows=[], start=Date.now()-28*864e5; let seed=7; const rnd=()=>{ seed=(seed*9301+49297)%233280; return seed/233280; };
@@ -1805,16 +1925,16 @@ function renderRecords(){
   else{
     const ok=r=>r.res==='first';
     h+='<h3>단계별 바로 맞힌 비율 (처음 절반 → 최근 절반)</h3><table><tr><th>수준</th><th>단계</th><th>문제 수</th><th>처음</th><th>최근</th></tr>';
-    [1,2,3].forEach(lv=>['obj','mat','same','sort','photo'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
+    [1,2,3].forEach(lv=>['obj','mat','all','same','sort','photo'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
       const m=Math.floor(all.length/2), a=all.slice(0,m||all.length), b=all.slice(m);
       h+='<tr><td>'+LV[lv].name+'</td><td>'+PH_NAME[ph]+'</td><td>'+all.length+'</td><td>'+barH(pct(a.filter(ok).length,a.length))+'</td><td>'+barH(pct(b.filter(ok).length,b.length))+'</td></tr>'; }));
     h+='</table>';
     const wk={}; rows.forEach(r=>{ const w=weekOf(r.t); (wk[w]=wk[w]||[]).push(r); });
     h+='<h3>주별 흐름</h3><table><tr><th>주(월요일)</th><th>문제 수</th><th>바로 맞힘</th></tr>'+Object.keys(wk).sort().map(w=>'<tr><td>'+w+'</td><td>'+wk[w].length+'</td><td>'+barH(pct(wk[w].filter(ok).length,wk[w].length))+'</td></tr>').join('')+'</table>';
-    const byA={}; rows.filter(r=>r.ph!=='obj'&&r.ph!=='same').forEach(r=>{ const k=r.a+'|'+r.m; (byA[k]=byA[k]||[]).push(r); });
+    const byA={}; rows.filter(r=>r.ph!=='obj'&&r.ph!=='same'&&r.ph!=='all').forEach(r=>{ const k=r.a+'|'+r.m; (byA[k]=byA[k]||[]).push(r); });
     const hard=Object.entries(byA).filter(([k,v])=>v.length>=3&&pct(v.filter(ok).length,v.length)<60).sort((a,b)=>pct(a[1].filter(ok).length,a[1].length)-pct(b[1].filter(ok).length,b[1].length));
     h+='<h3>도움이 더 필요한 물체 (물질 고르기·정리하기·사진, 3번 이상, 바로 맞힘 60% 미만)</h3>'+(hard.length?'<table><tr><th>물체</th><th>물질</th><th>문제 수</th><th>바로 맞힘</th></tr>'+hard.map(([k,v])=>{ const [a,m]=k.split('|'); return '<tr><td>'+esc(a)+'</td><td>'+mName(m)+'</td><td>'+v.length+'</td><td>'+barH(pct(v.filter(ok).length,v.length))+'</td></tr>'; }).join('')+'</table>':'<p class="tip">없습니다.</p>');
-    const conf={}; rows.filter(r=>r.w&&r.ph!=='obj'&&r.ph!=='same').forEach(r=>{ const k=mName(r.m)+' → '+mName(r.w); conf[k]=(conf[k]||0)+1; });
+    const conf={}; rows.filter(r=>r.w&&r.ph!=='obj'&&r.ph!=='same'&&r.ph!=='all').forEach(r=>{ const k=mName(r.m)+' → '+mName(r.w); conf[k]=(conf[k]||0)+1; });
     const cf=Object.entries(conf).sort((a,b)=>b[1]-a[1]).slice(0,6);
     h+='<h3>자주 헷갈린 물질 (맞는 물질 → 먼저 누른 물질)</h3>'+(cf.length?'<table><tr><th>짝</th><th>번</th></tr>'+cf.map(([k,v])=>'<tr><td>'+k+'</td><td>'+v+'</td></tr>').join('')+'</table>':'<p class="tip">없습니다.</p>');
     const lvNow=rows[rows.length-1].lv, ses={}; rows.filter(r=>r.lv===lvNow).forEach(r=>{ (ses[r.g]=ses[r.g]||[]).push(r); });
