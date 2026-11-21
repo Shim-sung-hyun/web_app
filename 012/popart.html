@@ -380,6 +380,31 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .app:not(.settings-open) .photo-tools,
 .app:not(.settings-open) .photo-tools .quick-actions { position: relative; z-index: 41; pointer-events: auto; }
 #relay-photo-btn { position: relative; z-index: 42; pointer-events: auto; touch-action: manipulation; cursor: pointer; }
+
+/* ===== 2026-11-21 설정판 접기/펴기: 닫으면 완전히 접히고, 가장자리 화살표 손잡이로 다시 엶 ===== */
+.app:not(.settings-open) { grid-template-columns:0 minmax(0,1fr); }
+.app:not(.settings-open) .control-panel { width:0 !important; padding:0 !important; border:0 !important; overflow:hidden !important; }
+.app:not(.settings-open) .control-panel > * { visibility:hidden; }
+.panel-toggle { grid-area:photo; align-self:center; justify-self:start; position:relative; z-index:55;
+  width:42px; height:104px; margin:0; padding:0 4px 0 0; border:4px solid #000; border-left:0; border-radius:0 16px 16px 0;
+  background:#FFD700; box-shadow:4px 4px 0 #000; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  touch-action:manipulation; transition:background .15s; }
+.panel-toggle:hover { background:#ffe44d; }
+.panel-toggle:active { box-shadow:2px 2px 0 #000; }
+.panel-toggle svg { width:24px; height:24px; transition:transform .3s ease; }
+.app.settings-open .panel-toggle svg { transform:rotate(180deg); }
+@media (max-aspect-ratio:1/1) {
+  .app:not(.settings-open) { grid-template-columns:minmax(0,1fr); grid-template-rows:0 minmax(0,1fr) auto; }
+  .app:not(.settings-open) .control-panel { width:100% !important; height:0 !important; }
+  .panel-toggle { align-self:start; justify-self:center; width:112px; height:40px; padding:0 0 4px; border:4px solid #000; border-top:0; border-radius:0 0 16px 16px; }
+  .panel-toggle svg { transform:rotate(90deg); }
+  .app.settings-open .panel-toggle svg { transform:rotate(-90deg); }
+  /* 세로 화면: 펼치면 위쪽 60%가 설정판(스크롤), 그 아래 손잡이·그림판 — 화면 전체를 덮지 않음 */
+  .app.settings-open { grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,60%) minmax(0,1fr) auto; }
+  .app.settings-open .control-panel { position:relative !important; inset:auto !important; z-index:auto !important;
+    height:auto !important; max-height:none !important; border-bottom:4px solid #000 !important; }
+}
+@media print { .panel-toggle { display:none !important; } }
 </style>
 </head>
 <body>
@@ -399,6 +424,9 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
     <div class="error-box" id="error-box"></div>
   </div>
 
+  <button class="panel-toggle" id="panel-toggle" type="button" title="사진 넣기·설정 열고 닫기" aria-label="사진 넣기와 설정 열고 닫기" aria-expanded="false" onclick="event.stopPropagation(); togglePanel()">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 4.5 L16 12 L8.5 19.5" fill="none" stroke="#000" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
   <div class="hover-trigger" id="hover-trigger" onclick="openPanel()" onmouseenter="if(!busy)openPanel()"></div>
 
   <div class="control-panel" id="control-panel">
@@ -632,7 +660,7 @@ const PROMPT_RENDER = `
 Rendering: clean vector-style comic illustration. Smooth, uniform, bold black outlines; large flat areas of vivid color limited to red, yellow, blue, teal, black and white; fine Ben-Day halftone dots only in shadows and soft transitions, with a grainy halftone texture in the background. No gradients, no photorealism, no text, no speech bubbles. Only the people and objects that appear in the photo.`;
 
 // 색칠 도안: 사진을 아이가 색칠할 수 있는 깨끗한 선화로
-const PROMPT_COLORING = `Convert the supplied photo into a clean children's coloring book page. Pure black outlines on a pure white background. Use smooth, uniform, medium-thick lines and make every shape fully closed. Use large, simple shapes that a child can color with crayons. Simplify the scene: keep the main subject or subjects and only a few major background elements, and leave out fine texture, tiny details, small clutter, and any text or signs. No shading, no gray tones, no filled black areas, no halftone dots, no color, no text, no speech bubbles. Keep the subject's pose, the number of people or objects, and the composition faithful to the photo. Do not identify anyone.`;
+const PROMPT_COLORING = `Turn the supplied photo into a cute printable children's coloring book page. Thick, bold, smooth black outlines of the same width everywhere, as if drawn with a thick marker, on a pure white background, with pure white inside every shape. Draw the main subject large, in a friendly simple cartoon style with big clean rounded shapes, while keeping what makes it recognizable: for a person, the hairstyle, glasses, clothing shapes and pose; for an object, its overall shape and main parts. Keep the number of people or objects the same. Reduce the background to only a few big simple shapes taken from the photo and leave plenty of white space. Every shape is fully closed. No tiny details, no texture, no hatching, no shading, no gray, no color, no filled black areas, no halftone dots, no text, no speech bubbles. Do not identify anyone.`;
 const PROMPT_HYBRID = `Redraw image 1 as a polished, hand-drawn Roy Lichtenstein 1960s comic-book pop-art illustration. Image 1 is a rough pop-art rendering of the real photo (image 0) and it fixes the exact drawing: keep every outline, the face shape, eyes, nose, mouth, hairline, pose and composition of image 1 in exactly the same positions and proportions. Use image 0 only to refine the real person's look: skin tone, hair, clothing and background details. Clean bold black outlines, flat vivid colors from red, yellow, blue, black and white, neat Ben-Day halftone dots, no gradients, no text, no speech bubbles, nothing added that is not in the photo.`;
 
 const PROMPT_OBJECT = `Redraw the input photo as a classic Roy Lichtenstein 1960s comic-book pop-art illustration of the object or objects shown. Use the photo as a tracing reference: the same object with the same shape, proportions, viewing angle, composition and background layout, keeping its distinctive details, patterns and the placement of its colors.`;
@@ -656,10 +684,16 @@ let srcImg=null, current=null;
 const results={}, errs={};
 function setButtons(on){ document.querySelectorAll('.mbtn, #btn-detect').forEach(b => b.disabled=!on); }
 
-function openPanel() { document.querySelector('.app').classList.add('settings-open'); document.getElementById('control-panel').classList.add('open'); }
+function openPanel() { document.querySelector('.app').classList.add('settings-open'); document.getElementById('control-panel').classList.add('open'); document.getElementById('panel-toggle').setAttribute('aria-expanded', 'true'); }
+function togglePanel() { document.querySelector('.app').classList.contains('settings-open') ? closePanel(true) : openPanel(); }
 document.getElementById('canvas').addEventListener('click', () => closePanel());
+openPanel();                                   // 처음에는 펼친 채로 시작 (사진 넣기)
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
-function closePanel() { document.querySelector('.app').classList.remove('settings-open'); document.getElementById('control-panel').classList.remove('open'); }
+function closePanel(force) {
+  if (!force && !srcImg) return;               // 사진을 넣기 전에는 그림판을 눌러도 접지 않음 (화살표로는 접힘)
+  document.querySelector('.app').classList.remove('settings-open'); document.getElementById('control-panel').classList.remove('open');
+  document.getElementById('panel-toggle').setAttribute('aria-expanded', 'false');
+}
 function openSettingsOnly() {
   openPanel();
 }
@@ -1231,7 +1265,9 @@ async function generate(mode) {
       msg('AI가 색칠 도안을 그리는 중…');
       let raw;
       try {
-        raw = `data:image/png;base64,${await callCharumAI(PROMPT_COLORING + (obj ? ' The main subject is an object, not a person.' : ''), null, true)}`;
+        raw = `data:image/png;base64,${await callCharumAI(PROMPT_COLORING + (obj ? ' The main subject is an object, not a person.' : '') + extras(), null, true)}`;
+        msg('선을 굵고 고르게 다듬는 중…'); await tick();
+        raw = await lineArtClean(raw);           // AI 선화 → 굵기 고른 검정 선만 (색·회색·잔선 지움)
       } catch (e) {
         window.lastColorError = e;
         msg('AI를 쓰지 못해 필터로 도안을 만드는 중…'); await tick();
@@ -1330,14 +1366,43 @@ async function addDecor(baseUrl) {
 // 색칠 도안: AI가 선화로 그리고, 전체에 심플한 둥근 액자를 두릅니다
 function makeColoring() { generate('color'); }
 async function frameColoring(src) {
+  // 그림을 액자 안쪽에 꽉 채우고(비율 유지, 넘치는 가장자리만 살짝 잘림) 액자 선에서 끊기게 → 인쇄용 도안처럼
   const im = new Image(); im.src = src; await im.decode();
-  const W = im.naturalWidth, H = im.naturalHeight, m = Math.round(Math.min(W, H) * 0.035), pad = m * 2.6;
+  const W = im.naturalWidth, H = im.naturalHeight, m = Math.round(Math.min(W, H) * 0.035), r = m * 1.1;
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const c = cv.getContext('2d'); c.fillStyle = '#fff'; c.fillRect(0, 0, W, H);
-  const k = Math.min((W - 2 * pad) / W, (H - 2 * pad) / H), dw = W * k, dh = H * k;      // 그림은 비율을 지켜 액자 안쪽에 맞춤
-  c.drawImage(im, (W - dw) / 2, (H - dh) / 2, dw, dh);
-  c.strokeStyle = '#111'; c.lineWidth = Math.max(4, Math.min(W, H) * 0.008); c.lineJoin = 'round';
-  c.beginPath(); c.roundRect(m, m, W - 2 * m, H - 2 * m, m * 1.1); c.stroke();
+  const iw = W - 2 * m, ih = H - 2 * m, k = Math.max(iw / W, ih / H), dw = W * k, dh = H * k;
+  c.save(); c.beginPath(); c.roundRect(m, m, iw, ih, r); c.clip();
+  c.drawImage(im, m + (iw - dw) / 2, m + (ih - dh) / 2, dw, dh); c.restore();
+  c.strokeStyle = '#111'; c.lineWidth = Math.max(5, Math.min(W, H) * 0.011); c.lineJoin = 'round';
+  c.beginPath(); c.roundRect(m, m, iw, ih, r); c.stroke();
+  return cv.toDataURL('image/png');
+}
+// AI가 그린 선화를 '색칠 도안' 꼴로: 검정 선만 남기고(색·회색 면 지움), 큰 검정 면은 테두리만,
+// 잔선·먼지 지우고, 선을 굵게 해서 굵기를 고르게, 끊긴 틈은 메우고, 가장자리는 둥글게
+async function lineArtClean(src) {
+  const im = new Image(); im.src = src; await im.decode();
+  const sc = 1200 / Math.max(im.naturalWidth, im.naturalHeight);
+  const w = Math.round(im.naturalWidth * sc), h = Math.round(im.naturalHeight * sc), n = w * h;
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const cx = cv.getContext('2d', { willReadFrequently: true }); cx.imageSmoothingQuality = 'high'; cx.drawImage(im, 0, 0, w, h);
+  const id = cx.getImageData(0, 0, w, h), px = id.data;
+  let dark = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    const r = px[i * 4], g = px[i * 4 + 1], b = px[i * 4 + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+    dark[i] = (0.299 * r + 0.587 * g + 0.114 * b) < 165 && mx - mn < 70 ? 1 : 0;     // 어두운 무채색만 선 (청바지 같은 색 면은 빠짐)
+  }
+  const u = Math.max(2, Math.round(w / 600));                       // 굵기 단위 (1200px에서 2px, 더 굵으면 안경·눈이 뭉침)
+  const blob = morph(morph(dark, w, h, u * 2, false), w, h, u * 2, true);      // 선보다 훨씬 두꺼운 검정 '면'
+  const inner = morph(blob, w, h, u, false);
+  for (let i = 0; i < n; i++) if (inner[i]) dark[i] = 0;              // 면은 속을 비우고 테두리만
+  dark = removeSpecks(dark, w, h, Math.round(n * 0.0001));           // 먼지·짧은 잔선 (눈·안경 같은 작은 선은 남을 만큼만)
+  dark = morph(dark, w, h, u, true);                                 // 굵게 (가는 선도 최소 굵기 이상)
+  dark = morph(dark, w, h, Math.max(1, u >> 1), false);              // 살짝 되돌려 틈만 메운 효과(닫기)
+  const f = new Float32Array(n); for (let i = 0; i < n; i++) f[i] = dark[i];
+  const sm = blurChannel(f, w, h, Math.max(1, u >> 1));              // 계단 없이 둥근 선 가장자리
+  for (let i = 0; i < n; i++) { const v = sm[i] > 0.5 ? 17 : 255, p = i * 4; px[p] = px[p + 1] = px[p + 2] = v; px[p + 3] = 255; }
+  cx.putImageData(id, 0, 0);
   return cv.toDataURL('image/png');
 }
 
