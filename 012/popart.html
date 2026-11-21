@@ -649,6 +649,7 @@ const PROMPTS = {
 };
 
 let b64='', mime='';
+let photoDesc = '';   // Cloudflare가 이 사진을 분석한 설명 (새 사진·처음부터에서 지움)
 let sourceWidth=768, sourceHeight=768;
 let busy=false;
 let srcImg=null, current=null;
@@ -692,7 +693,7 @@ function loadPhotoBlob(blob, filename) {
       canvas.getContext('2d').drawImage(preview, 0, 0, w, h);
       const jpeg = canvas.toDataURL('image/jpeg', 0.88);
       b64 = jpeg.split(',')[1];
-      srcImg = preview; subjectBox = null; layoutSeed = (Math.random() * 1e9) | 0; current = null; document.querySelector('.mailbox-btn').classList.add('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
+      srcImg = preview; subjectBox = null; photoDesc = ''; layoutSeed = (Math.random() * 1e9) | 0; current = null; document.querySelector('.mailbox-btn').classList.add('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
       mime = 'image/jpeg';
       document.getElementById('thumb').src = url;
       document.getElementById('thumb').style.display='block';
@@ -765,7 +766,7 @@ function reset() {
   document.getElementById('no-file').style.display='block';
   document.getElementById('fname').style.display='none';
   document.getElementById('file-in').value='';
-  setButtons(false); srcImg=null; subjectBox=null; current=null; document.querySelector('.mailbox-btn').classList.remove('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
+  setButtons(false); srcImg=null; subjectBox=null; photoDesc=''; current=null; document.querySelector('.mailbox-btn').classList.remove('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
   show('ph');
   openPanel();
 }
@@ -777,14 +778,18 @@ async function callCloudflareAI(prompt, guide, useVision, keepPrompt) {
   }
   // 원본 사진의 가로세로 비율을 유지합니다.
   const ratio = sourceWidth / sourceHeight;
-  const maxSide = 768;
+  const maxSide = 640;   // 2026-11-21: 768→640 (Cloudflare 사용량 아끼기, 팝아트는 굵은 선이라 충분)
   const width = Math.max(256, Math.round(ratio >= 1 ? maxSide : maxSide * ratio));
   const height = Math.max(256, Math.round(ratio >= 1 ? maxSide / ratio : maxSide));
   // FLUX.2 Klein의 참조 이미지는 512x512 미만이어야 하므로 개인 계정 호출 때 500px로 다시 축소합니다.
   const cloudflareImage = await toJpegB64(srcImg || ('data:image/jpeg;base64,' + b64), 500);   // 기본 계정도 같은 크기로
   // 필터+AI(③): 윤곽 이미지도 참조 이미지이므로 같은 이유로 500px로 줄여서 보냅니다. (없으면 undefined → 전송 안 됨)
   const cloudflareGuide = guide ? await toJpegB64('data:image/jpeg;base64,' + guide, 500) : undefined;
-  const requestBody = { image: cloudflareImage, guide: cloudflareGuide, prompt, width, height, useCloudflareVision: useVision === undefined ? !geminiApiKey : !!useVision, keepPrompt: keepPrompt ? true : undefined, deviceId: deviceId() };
+  let vision = useVision === undefined ? !geminiApiKey : !!useVision;
+  // 같은 사진을 이미 분석했으면(팝아트→색칠 도안, 다시 시도 등) 설명을 붙여 보내고 분석 AI는 건너뜀
+  const keepMode = !!(guide || keepPrompt);
+  if (vision && keepMode && photoDesc) { prompt = `${prompt}\n\nVisible details of the real photo, keep them faithful: ${photoDesc}`; vision = false; }
+  const requestBody = { image: cloudflareImage, guide: cloudflareGuide, prompt, width, height, useCloudflareVision: vision, keepPrompt: keepPrompt ? true : undefined, deviceId: deviceId() };
   if (cloudflareAccountId && cloudflareApiToken) {
     requestBody.cloudflareAccountId = cloudflareAccountId;
     requestBody.cloudflareApiToken = cloudflareApiToken;
@@ -795,6 +800,7 @@ async function callCloudflareAI(prompt, guide, useVision, keepPrompt) {
     body: JSON.stringify(requestBody)
   });
   const data = await res.json().catch(() => ({}));
+  if (keepMode && typeof data.vision === 'string' && data.vision.trim()) photoDesc = data.vision.trim().slice(0, 1200);   // 실패해도 설명은 챙겨 둠
   if (res.status === 403) throw new Error('이 주소에서는 변환 서버를 쓸 수 없어요. (Worker의 허용 주소 ALLOW 확인)');
   if (!res.ok) {
     const message = data?.error?.message || `HTTP ${res.status}`;

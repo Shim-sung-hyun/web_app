@@ -27,6 +27,7 @@ const ALLOW = [
 // cartoonAll·analyze 는 Cloudflare 무료 한도(하루 10,000 뉴런)를 나눠 쓰는 값입니다.
 // 4b 한 장(+사진 분석)이 약 150~200 뉴런, 사진 분석(자동 설정·대사 추천) 한 번이 약 30~60 뉴런이라는 어림값으로 잡았어요.
 // 실제 사용량을 보고 조정하세요.
+// 그림 크기: 웹앱이 긴 변 640px로 요청(2026-11-21, 768보다 약 30% 적은 칸). 워커는 256~1024만 허용
 const DAILY = { gemini: 200, analyze: 80, cartoon9: 4, cartoonAll: 40, image: 60, tts: 250 };
 // 사용자별 하루 상한 (LIMIT_OFF 가 1 이 아닐 때만 적용)
 const USER_DAILY = { cartoon: 3, gemini: 10, analyze: 10 };
@@ -387,7 +388,7 @@ function mergeVisionPrompt(basePrompt, visionText, keep) {
 }
 
 // ---------- 개인 Cloudflare 계정으로 팝아트 생성 ----------
-async function cartoonWithUserAccount(body) {
+async function cartoonWithUserAccount(body, env) {
   const accountId = String(body.cloudflareAccountId || "").trim();
   const token = String(body.cloudflareApiToken || "").trim();
 
@@ -412,9 +413,11 @@ async function cartoonWithUserAccount(body) {
   const hasGuide = !!body.guide;
   const keep = hasGuide || body.keepPrompt === true;
   let prompt = String(body.prompt || "").slice(0, 3000);
+  let visionText = "";   // 사진 설명: 응답에 실어 보내면 웹앱이 같은 사진의 다음 요청에 재사용(분석 AI를 다시 안 돌림)
 
   if (body.useCloudflareVision === true || !prompt) {
     const vision = await analyzeVisionWithUserAccount(accountId, token, body.image, keep ? "" : prompt, keep);
+    if (keep) visionText = vision;
     prompt = mergeVisionPrompt(prompt, vision, keep);
   }
 
@@ -430,10 +433,10 @@ async function cartoonWithUserAccount(body) {
   const W = Math.min(1024, Math.max(256, Math.round(+body.width || 768)));
   const H = Math.min(1024, Math.max(256, Math.round(+body.height || 768)));
 
-  const models = [
-    "@cf/black-forest-labs/flux-2-klein-9b",
-    "@cf/black-forest-labs/flux-2-klein-4b",
-  ];
+  // 개인 계정도 기본은 가성비 4b 한 번만. 9b(약 10배)는 USE_9B=1일 때만 먼저 시도
+  const models = String(env?.USE_9B || "") === "1"
+    ? ["@cf/black-forest-labs/flux-2-klein-9b", "@cf/black-forest-labs/flux-2-klein-4b"]
+    : ["@cf/black-forest-labs/flux-2-klein-4b"];
 
   let lastStatus = 502;
   let lastMessage = "이미지 생성 실패";
@@ -482,6 +485,7 @@ async function cartoonWithUserAccount(body) {
           data: {
             image: img,
             model,
+            vision: visionText || undefined,
             analysisModel: body.useCloudflareVision ? VISION_MODEL : undefined
           }
         };
@@ -506,14 +510,14 @@ async function cartoonWithUserAccount(body) {
 
   return {
     status: lastStatus,
-    data: { error: { message: lastMessage } }
+    data: { error: { message: lastMessage }, vision: visionText || undefined }
   };
 }
 
 // ---------- 개발자 계정으로 팝아트 생성 ----------
 async function cartoon(env, body) {
   if (body.cloudflareAccountId || body.cloudflareApiToken) {
-    return await cartoonWithUserAccount(body);
+    return await cartoonWithUserAccount(body, env);
   }
 
   if (!body.image) {
@@ -523,9 +527,11 @@ async function cartoon(env, body) {
   const hasGuide = !!body.guide;
   const keep = hasGuide || body.keepPrompt === true;
   let prompt = String(body.prompt || "").slice(0, 3000);
+  let visionText = "";   // 사진 설명: 응답에 실어 보내면 웹앱이 같은 사진의 다음 요청에 재사용(분석 AI를 다시 안 돌림)
 
   if (body.useCloudflareVision === true || !prompt) {
     const vision = await analyzeVisionWithWorker(env, body.image, keep ? "" : prompt, keep);
+    if (keep) visionText = vision;
     prompt = mergeVisionPrompt(prompt, vision, keep);
   }
 
@@ -583,19 +589,25 @@ async function cartoon(env, body) {
   }
 
   if (!(out && (out.image || out.result?.image))) {
-    out = await run("@cf/black-forest-labs/flux-2-klein-4b");
+    try {
+      out = await run("@cf/black-forest-labs/flux-2-klein-4b");
+    } catch (e) {
+      const m = String(e && e.message || e);
+      return { status: isNeuronLimit(m) || /limit|quota|capacity|429/i.test(m) ? 429 : 502, data: { error: { message: koreanError(m, false) }, vision: visionText || undefined } };
+    }
   }
 
   const img = out && (out.image || out.result?.image);
 
   if (!img) {
-    return { status: 502, data: { error: { message: "no image" } } };
+    return { status: 502, data: { error: { message: "no image" }, vision: visionText || undefined } };
   }
 
   return {
     status: 200,
     data: {
       image: img,
+      vision: visionText || undefined,
       analysisModel: body.useCloudflareVision ? VISION_MODEL : undefined
     }
   };
