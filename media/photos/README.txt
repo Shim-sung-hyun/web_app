@@ -15,7 +15,7 @@
   media/photos/<id>/line.png    색칠 도안(있으면)
   media/photos/photos.json      목록
   media/photos/review.html      기증 사진 확인 화면(예전 방식, 확인 글자) — 지금은 charum.org/charum-api/donate-admin.php(관리자 로그인)
-  media/photos/snap.html        사진 넣기(2026-11-21, 선생님 휴대폰 전용): 물건 이름 쓰고 찍으면 GitHub 저장소 <폴더>/<물건>/날짜.jpg로 바로 들어감.
+  media/photos/snap.html        사진 넣기(2026-11-21, 선생님 휴대폰 전용): 찍거나 앨범에서 고르면 사진마다 이름 칸(최근 이름 단추) → 고친 뒤 "넣기" → <폴더>/<물건>/날짜.jpg.
                                 기본은 비공개 charum-inbox의 phone/. 선생님 GitHub 열쇠(fine-grained, Contents 쓰기)는 휴대폰에만 저장. 긴 쪽 1600, 위치 정보 지움.
   media/photos/REVIEW.md        기증 사진 정리 절차·권리 검토 기준(Claude가 따름)
 
