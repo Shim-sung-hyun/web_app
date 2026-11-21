@@ -9,6 +9,7 @@
 - 사용량이 넉넉하지 않다. 큰 파일은 필요한 부분만 읽고(Grep으로 자리를 찾은 뒤 offset/limit), 확인도 고친 부분만.
 - **도구 창고**(2026-11-14): 그림·소리·파일 일을 하기 전에 `tools/README.txt` 맨 위 목록부터 보고 있는 도구를 쓴다. 모자라면 선택지를 덧붙이고, 새 도구는 정말 다른 일일 때만 만들어 목록에 올린다. 안 쓰게 된 도구는 `python3 tools/trash.py --tool 이름.py --why "이유"`(6개월 보관, `--revive`로 되살림).
 - **소품실**(2026-11-16): 무대 소품을 새로 받기 전에 `media/stage/prop-room.html`(목록 `media/stage-beta/props.json`)부터 보고, 밑동 땅이 같으면 `python3 tools/prop-room.py --borrow 받을무대 소품`으로 빌려 쓴다. 새로 받은 소품은 stage-intake가 소품실에 올림. 새로 만드는 무대·앱부터 적용.
+- **차름 홈페이지 링크**(2026-11-21): 모든 웹앱(새 앱 포함)의 선생님 화면 왼쪽 위에 차름 로고 → charum.org 새 탭. 공통 모듈 `homeLink`, 자세한 것은 지침 3절.
 - **프롬프트를 드릴 때**(2026-11-13): 대화에 길게 붙이지 않고 `media/stage/prompts/`에 글로 두고 복사 화면 주소(`https://shim-sung-hyun.github.io/web_app/media/stage/prompts/copy.html?f=파일이름`)를 드린다 — 단추로 복사, 복사한 장은 노랗게 표시. 새 글은 `copy.html`의 `FILES`에 한 줄.
 
 ## Copilot과 함께 (2026-11-09)
