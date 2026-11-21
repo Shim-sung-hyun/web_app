@@ -665,7 +665,10 @@ const PROMPT_COLORING = `Image 1 is an illustration and image 2 is the coloring-
 Keep exactly the same scene, people, objects, positions, sizes, framing and aspect ratio as image 3.
 Use only clean, smooth, closed black outlines of even thickness on pure white, like image 2. Image 3 may have halftone dots, flat colors and shading: ignore them and draw only the outlines of the shapes. No shading, no gray, no color, no texture, no hatching.
 Keep each person's face, hairstyle, glasses and clothing recognizable. Every area should be a closed shape that is easy to color; leave out tiny details.
-No text, letters, numbers or logos. Do not identify anyone.`;
+Draw only image 3's content; never copy the shoe rack or anything else from images 1 and 2.
+No text, letters, numbers or logos. Leave the bottom-right corner plain and empty. Do not identify anyone.`;
+// Cloudflare용(대상 한 장만): 본보기 없이 글로 같은 꼴을 설명
+const PROMPT_COLORING_SOLO = `Turn the input image into a printable children's coloring-book page. Keep exactly the same scene, people, objects, positions, sizes and framing. Use only clean, smooth, closed black outlines of even, medium thickness on pure white, like a professional coloring book. The input may have halftone dots, flat colors and shading: ignore them and draw only the outlines of the shapes. Keep each person's face, hairstyle, glasses and clothing recognizable. Every area is a closed shape that is easy to color; leave out tiny details and texture. No shading, no gray, no color, no hatching, no filled black areas, no text. Do not identify anyone.`;
 const EXAMPLE_BASE = 'https://shim-sung-hyun.github.io/web_app/media/photos/';   // 001 신발장 본보기 (art.jpg → line.png)
 const PROMPT_HYBRID = `Redraw image 1 as a polished, hand-drawn Roy Lichtenstein 1960s comic-book pop-art illustration. Image 1 is a rough pop-art rendering of the real photo (image 0) and it fixes the exact drawing: keep every outline, the face shape, eyes, nose, mouth, hairline, pose and composition of image 1 in exactly the same positions and proportions. Use image 0 only to refine the real person's look: skin tone, hair, clothing and background details. Clean bold black outlines, flat vivid colors from red, yellow, blue, black and white, neat Ben-Day halftone dots, no gradients, no text, no speech bubbles, nothing added that is not in the photo.`;
 
@@ -1274,7 +1277,7 @@ async function generate(mode) {
         // 대상 그림: AI가 그린 팝아트가 있으면 그것(001의 '그림'처럼 이미 단순해진 모양), 없으면 사진
         raw = `data:image/png;base64,${await callColoringAI(PROMPT_COLORING + (obj ? '\nThe main subject is an object, not a person.' : '') + extras(), popBase || ('data:image/jpeg;base64,' + b64))}`;
         msg('선을 굵고 고르게 다듬는 중…'); await tick();
-        raw = await lineArtClean(raw);           // AI 선화 → 굵기 고른 검정 선만 (색·회색·잔선 지움)
+        raw = await lineArtClean(raw, lastColorFromGemini);   // AI 선화 → 검정 선만 (색·회색 면 지움, Gemini면 구석 로고 지움)
       } catch (e) {
         window.lastColorError = e;
         msg('AI를 쓰지 못해 필터로 도안을 만드는 중…'); await tick();
@@ -1386,7 +1389,7 @@ async function frameColoring(src) {
   return cv.toDataURL('image/png');
 }
 // AI가 그린 선화를 인쇄용으로: 검정 선만 남기고(색·회색 면 지움), 큰 검정 면은 테두리만, 먼지 지우고, 가장자리 둥글게
-async function lineArtClean(src) {
+async function lineArtClean(src, eraseCorner) {
   const im = new Image(); im.src = src; await im.decode();
   const sc = 1200 / Math.max(im.naturalWidth, im.naturalHeight);
   const w = Math.round(im.naturalWidth * sc), h = Math.round(im.naturalHeight * sc), n = w * h;
@@ -1405,7 +1408,8 @@ async function lineArtClean(src) {
   dark = removeSpecks(dark, w, h, Math.round(n * 0.00006));          // 먼지만 (본보기 방식은 선이 이미 고르므로 굵게 만들지 않음 — 굵히면 책·연필이 뭉침)
   const f = new Float32Array(n); for (let i = 0; i < n; i++) f[i] = dark[i];
   const sm = blurChannel(f, w, h, 1);                                // 계단 없이 둥근 선 가장자리 (넓게 흐리면 가는 선이 끊김)
-  for (let i = 0; i < n; i++) { const v = sm[i] > 0.34 ? 17 : 255, p = i * 4; px[p] = px[p + 1] = px[p + 2] = v; px[p + 3] = 255; }
+  const cw = eraseCorner ? Math.round(w * 0.07) : 0, ch = eraseCorner ? Math.round(h * 0.10) : 0;    // Gemini 별 로고 자리 (001과 같은 크기)
+  for (let i = 0; i < n; i++) { const corner = cw && (i % w) >= w - cw && ((i / w) | 0) >= h - ch, v = !corner && sm[i] > 0.34 ? 17 : 255, p = i * 4; px[p] = px[p + 1] = px[p + 2] = v; px[p + 3] = 255; }
   cx.putImageData(id, 0, 0);
   return cv.toDataURL('image/png');
 }
@@ -1732,10 +1736,7 @@ async function callGeminiImage(prompt, guide) {
   const parts = [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }];
   if (guide) parts.push({ inline_data: { mime_type: 'image/jpeg', data: guide } });
   parts.push({ text: prompt });
-  const data = await geminiRequest(parts, GEMINI_DIRECT_IMAGE_URL, { responseModalities: ['IMAGE'] });
-  const image = (data.candidates?.[0]?.content?.parts || []).find(p => p.inlineData?.data || p.inline_data?.data);
-  if (!image) throw new Error('Gemini가 이미지를 반환하지 않았습니다. API 키의 모델 이용 권한과 사용량을 확인해 주세요.');
-  return (image.inlineData || image.inline_data).data;
+  return await geminiImageAny(parts);     // 001처럼 이 키로 되는 그림 모델을 찾아 씀
 }
 // 색칠 도안 본보기 짝 (GitHub에서 한 번만 받아 둠)
 let exampleImgs = null;
@@ -1751,15 +1752,53 @@ async function callColoringAI(prompt, target) {
     try {
       const [a, l] = await coloringExamples(768), t = await toJpegB64(target, 768);
       const img = p => ({ inline_data: { mime_type: 'image/jpeg', data: p } });
-      const data = await geminiRequest([img(a), img(l), img(t), { text: prompt }], GEMINI_DIRECT_IMAGE_URL, { responseModalities: ['IMAGE'] });
-      const part = (data.candidates?.[0]?.content?.parts || []).find(p => p.inlineData?.data || p.inline_data?.data);
-      if (part) return (part.inlineData || part.inline_data).data;
-      geminiMessage = 'Gemini가 그림을 돌려주지 않았어요.';
+      const out = await geminiImageAny([img(a), img(l), img(t), { text: prompt }]);
+      if (await looksLikeExample(out)) geminiMessage = 'Gemini가 본보기(신발장)를 그대로 베껴서 버렸어요.';
+      else { lastColorFromGemini = true; return out; }
     } catch (e) { geminiMessage = String(e?.message || e); }
   }
-  const [a, l] = await coloringExamples(500);
-  try { return await callCloudflareAI(prompt, null, false, true, { image: target, examples: [a, l] }); }
+  // Cloudflare(FLUX)는 본보기 짝을 주면 본보기를 그대로 베끼므로(2026-11-21 확인) 대상 그림 한 장만 주고 글로만 지시
+  lastColorFromGemini = false;
+  try { return await callCloudflareAI(PROMPT_COLORING_SOLO + (document.getElementById('target').value === 'object' ? ' The main subject is an object, not a person.' : '') + extras(), null, false, true, { image: target }); }
   catch (cf) { throw new Error(`${cf?.message || cf}${geminiMessage ? '\n[Gemini] ' + geminiMessage : ''}`); }
+}
+let lastColorFromGemini = false;
+// 결과가 본보기 도안(신발장)과 거의 같으면 '베낌'으로 봄: 둘 다 96×96 흑백으로 줄여 검정 선이 겹치는 정도(IoU)를 잼
+async function looksLikeExample(b64png) {
+  try {
+    const ex = (await exampleImgs)[1], out = new Image(); out.src = 'data:image/png;base64,' + b64png; await out.decode();
+    const bits = im => { const c = document.createElement('canvas'); c.width = c.height = 96; const x = c.getContext('2d', { willReadFrequently: true });
+      x.fillStyle = '#fff'; x.fillRect(0, 0, 96, 96); x.drawImage(im, 0, 0, 96, 96); const d = x.getImageData(0, 0, 96, 96).data, m = new Uint8Array(96 * 96);
+      for (let i = 0; i < m.length; i++) m[i] = (d[i * 4] + d[i * 4 + 1] + d[i * 4 + 2]) / 3 < 170 ? 1 : 0; return m; };
+    const A = bits(ex), B = bits(out); let and = 0, or = 0;
+    for (let i = 0; i < A.length; i++) { and += A[i] & B[i]; or += A[i] | B[i]; }
+    window.lastExampleIoU = or ? and / or : 0;
+    return or > 0 && and / or > 0.35;
+  } catch (_) { return false; }
+}
+// Gemini 그림 모델: 001처럼 이 키로 쓸 수 있는 모델 목록에서 싼 것부터(무료 키에서 되는 모델을 찾음). 한도·없음이면 다음 모델
+let geminiImageModels = null;
+const imgCost = n => /pro/.test(n) ? 9 : /nano-banana-2\.1/.test(n) ? 0 : /lite/.test(n) ? 1 : /flash|nano-banana/.test(n) ? 2 : 5;
+async function geminiImageAny(parts) {
+  if (!geminiImageModels) {
+    try {
+      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': geminiApiKey } });
+      const j = r.ok ? await r.json() : {};
+      geminiImageModels = (j.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent')).map(m => m.name.replace(/^models\//, ''))
+        .filter(n => (/^gemini.*image/.test(n) || /nano-banana/.test(n)) && !/imagen/.test(n)).sort((a, b) => imgCost(a) - imgCost(b));
+    } catch (_) { geminiImageModels = []; }
+    if (!geminiImageModels.length) geminiImageModels = ['gemini-3.1-flash-image'];
+  }
+  const fails = [];
+  for (const model of geminiImageModels) {
+    try {
+      const data = await geminiRequest(parts, `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, { responseModalities: ['TEXT', 'IMAGE'] });
+      const part = (data.candidates?.[0]?.content?.parts || []).find(p => p.inlineData?.data || p.inline_data?.data);
+      if (part) { window.lastGeminiImageModel = model; return (part.inlineData || part.inline_data).data; }
+      fails.push(`${model}: 그림 없음`);
+    } catch (e) { const m = String(e?.message || e); fails.push(`${model}: ${m}`); if (/API key|permission|401|403/i.test(m)) break; }
+  }
+  throw new Error(fails.join('\n'));
 }
 async function toJpegB64(src, max = 768) {
   let im = src;
