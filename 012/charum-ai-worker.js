@@ -36,7 +36,8 @@ const TTS_VOICES = /^ko-KR-Chirp3-HD-(Leda|Aoede|Kore)$/;
 const MAX_TTS_CHARS = 300;
 const MAX_BODY = 6 * 1024 * 1024;
 
-const limitOff = env => String(env.LIMIT_OFF || "") === "1";
+// 빈칸·따옴표가 섞여도 1/true/on/yes면 해제로 봄 (대시보드에서 "1 "처럼 들어가는 일이 있음)
+const limitOff = env => /^(1|true|on|yes)$/i.test(String(env.LIMIT_OFF ?? "").trim().replace(/^["']|["']$/g, ""));
 
 // Cloudflare 무료 사용량(뉴런) 소진 오류 → 한국어 안내
 const isNeuronLimit = m => /\b4006\b|daily free allocation|neurons/i.test(String(m || ""));
@@ -707,7 +708,7 @@ export default {
       const ok = v => (v ? "있음" : "없음");
 
       return new Response(
-        `ok\nAI: ${ok(env.AI)}\nKV: ${ok(env.KV)}\nGEMINI_KEY: ${ok(env.GEMINI_KEY)}\nTTS_KEY: ${ok(env.TTS_KEY)}\n사용자별 제한: ${limitOff(env) ? "해제됨 (테스트 중, LIMIT_OFF=1)" : "적용 중"}\n그림 모델: ${String(env.USE_9B || "") === "1" ? "klein-9b 일부 + 4b (USE_9B=1)" : "klein-4b (기본, 가성비)"}`,
+        `ok\nAI: ${ok(env.AI)}\nKV: ${ok(env.KV)}\nGEMINI_KEY: ${ok(env.GEMINI_KEY)}\nTTS_KEY: ${ok(env.TTS_KEY)}\n사용자별 제한: ${limitOff(env) ? "해제됨 (테스트 중, LIMIT_OFF=1)" : "적용 중"} (LIMIT_OFF로 읽은 값: ${env.LIMIT_OFF === undefined ? "없음" : JSON.stringify(String(env.LIMIT_OFF))})\n그림 모델: ${String(env.USE_9B || "") === "1" ? "klein-9b 일부 + 4b (USE_9B=1)" : "klein-4b (기본, 가성비)"}`,
         { headers: { "Content-Type": "text/plain; charset=utf-8" } }
       );
     }
