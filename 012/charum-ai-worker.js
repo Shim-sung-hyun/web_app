@@ -1,15 +1,49 @@
 // 차름 AI 중계 (charum-ai)
 // Cloudflare Vision 사진 분석 + FLUX 팝아트 생성
-// 기본 사용자는 한국 시간 기준 하루 3회
-// 개인 Cloudflare 계정 사용자는 본인 계정으로 처리
+//
+// [사용량 정책]
+// - 개인 Cloudflare 계정(Account ID + API Token)을 보낸 사용자: 본인 계정으로 처리, 제한 없음
+// - 개인 키가 없는 사용자: 개발자 계정으로 "사용자별 하루 3회" (한국 시간 기준, IP 해시로 구분)
+// - /analyze : 자동 설정·대사 추천용 사진 분석 (Cloudflare Vision, 사용자별 하루 10회)
+//
+// [모델 정책 - 무료 한도(하루 10,000 뉴런) 아끼기]
+// - 개발자 계정의 그림 생성은 기본적으로 flux-2-klein-4b (가성비 모델)만 사용합니다.
+//   9b는 4b보다 한 장에 약 10배의 뉴런을 쓰므로, Worker 변수 USE_9B = 1 일 때만 하루 DAILY.cartoon9 장까지 씁니다.
+// - 개인 Cloudflare 계정 사용자는 본인 한도이므로 9b → 4b 순서로 시도합니다.
+// - 테스트 중에는 Worker 변수 LIMIT_OFF = 1 을 넣어 제한을 끕니다.
+//   정식으로 올릴 때 LIMIT_OFF 변수를 삭제(또는 0)하면 제한이 바로 적용됩니다.
 
-const ALLOW = ["https://shim-sung-hyun.github.io"];
+const ALLOW = [
+  "https://shim-sung-hyun.github.io", // 테스트용
+  "https://charum.org",               // 정식판
+  "https://www.charum.org",
+];
 
-const DAILY = { gemini: 200, cartoon: 3, cartoon9: 4, image: 60, tts: 250 };
+// 전체 합계 상한 (서비스 보호용)
+// cartoonAll·analyze 는 Cloudflare 무료 한도(하루 10,000 뉴런)를 나눠 쓰는 값입니다.
+// 4b 한 장(+사진 분석)이 약 150~200 뉴런, 사진 분석(자동 설정·대사 추천) 한 번이 약 30~60 뉴런이라는 어림값으로 잡았어요.
+// 실제 사용량을 보고 조정하세요.
+const DAILY = { gemini: 200, analyze: 80, cartoon9: 4, cartoonAll: 40, image: 60, tts: 250 };
+// 사용자별 하루 상한 (LIMIT_OFF 가 1 이 아닐 때만 적용)
+const USER_DAILY = { cartoon: 3, gemini: 10, analyze: 10 };
 
 const TTS_VOICES = /^ko-KR-Chirp3-HD-(Leda|Aoede|Kore)$/;
 const MAX_TTS_CHARS = 300;
 const MAX_BODY = 6 * 1024 * 1024;
+
+const limitOff = env => String(env.LIMIT_OFF || "") === "1";
+
+// Cloudflare 무료 사용량(뉴런) 소진 오류 → 한국어 안내
+const isNeuronLimit = m => /\b4006\b|daily free allocation|neurons/i.test(String(m || ""));
+
+function koreanError(message, personal) {
+  if (isNeuronLimit(message)) {
+    return personal
+      ? "내 Cloudflare 계정의 오늘 Workers AI 무료 사용량을 모두 사용했어요. 한국 시간 오전 9시 이후에 다시 이용하거나, Cloudflare 요금제를 확인해 주세요."
+      : "오늘 AI 기본 제공 무료 사용량을 모두 사용했어요. 한국 시간 오전 9시 이후에 다시 이용해 주세요.";
+  }
+  return message;
+}
 
 function cors(origin) {
   return {
@@ -31,11 +65,13 @@ function today() {
   return d.toISOString().slice(0, 10);
 }
 
-async function overLimit(env, kind) {
+// who 가 있으면 사용자별 상한(USER_DAILY), 없으면 전체 합계 상한(DAILY)
+async function overLimit(env, kind, who) {
   if (!env.KV) return false;
-  const key = `n:${today()}:${kind}`;
+  const cap = who ? USER_DAILY[kind] : DAILY[kind];
+  const key = `n:${today()}:${kind}${who ? ":" + who : ""}`;
   const n = parseInt((await env.KV.get(key)) || "0", 10);
-  if (n >= DAILY[kind]) return true;
+  if (n >= cap) return true;
   try {
     await env.KV.put(key, String(n + 1), { expirationTtl: 3 * 86400 });
   } catch (e) {}
@@ -45,6 +81,12 @@ async function overLimit(env, kind) {
 async function sha(text) {
   const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+// 사용자 구분: 접속 IP 해시 (원본 IP는 저장하지 않음)
+async function userId(req) {
+  const ip = req.headers.get("CF-Connecting-IP") || "unknown";
+  return (await sha(ip)).slice(0, 16);
 }
 
 function b64ToBytes(b64) {
@@ -200,7 +242,15 @@ function imageDataUrl(image) {
   return `data:image/jpeg;base64,${clean}`;
 }
 
-function makeVisionInstruction(artDirection) {
+// describeOnly: 필터+AI(윤곽 이미지 있음)일 때는 프롬프트 전체가 아니라
+// 실제 사진의 눈에 보이는 특징만 짧게 받아 기존 프롬프트 뒤에 덧붙입니다.
+function makeVisionInstruction(artDirection, describeOnly, raw) {
+  if (raw) return raw;
+
+  if (describeOnly) {
+    return `Look at the photograph and describe, in one short English paragraph of under 120 words, only what is clearly visible: the main subject or subjects and their approximate age appearance, hairstyle and hair color, skin tone, clothing and its colors, objects, pose, and background. Do not identify any person, do not invent details, and do not mention any art style. Return only the description.`;
+  }
+
   return `Analyze the supplied photograph and write a concise, detailed English image-to-image editing prompt for a pop-art illustration model.
 
 Preserve only details clearly visible in the photograph: the main subject or subjects, approximate age appearance, facial expression, hairstyle, clothing, pose, body proportions, objects, camera angle, framing, composition, lighting, and background. Do not identify any person, infer their name, or invent details. Do not change the number of people or objects. Preserve the original pose and composition.
@@ -219,8 +269,10 @@ function extractVisionText(result) {
   ).trim();
 }
 
+const LICENSE_MSG = "Cloudflare Vision 모델을 처음 사용할 때 Meta 라이선스 동의가 필요합니다. Cloudflare 문서의 'Agree to Meta's license' 절차를 먼저 완료해 주세요.";
+
 // 개인 Cloudflare 계정으로 사진 분석
-async function analyzeVisionWithUserAccount(accountId, token, image, artDirection) {
+async function analyzeVisionWithUserAccount(accountId, token, image, artDirection, describeOnly, raw) {
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${VISION_MODEL}`;
 
   const r = await fetch(endpoint, {
@@ -230,9 +282,9 @@ async function analyzeVisionWithUserAccount(accountId, token, image, artDirectio
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      prompt: makeVisionInstruction(artDirection),
+      prompt: makeVisionInstruction(artDirection, describeOnly, raw),
       image: imageDataUrl(image),
-      max_tokens: 700,
+      max_tokens: raw ? 500 : describeOnly ? 300 : 700,
       temperature: 0.2
     })
   });
@@ -243,7 +295,7 @@ async function analyzeVisionWithUserAccount(accountId, token, image, artDirectio
     const message = result.errors?.[0]?.message || result.error?.message || `Cloudflare Vision 오류 (${r.status})`;
 
     if (/agree|license|acceptable use/i.test(message)) {
-      throw new Error("Cloudflare Vision 모델을 처음 사용할 때 Meta 라이선스 동의가 필요합니다. Cloudflare 문서의 'Agree to Meta's license' 절차를 먼저 완료해 주세요.");
+      throw new Error(LICENSE_MSG);
     }
 
     throw new Error(message);
@@ -258,8 +310,8 @@ async function analyzeVisionWithUserAccount(accountId, token, image, artDirectio
   return text;
 }
 
-// 제작자 Worker의 AI 바인딩으로 사진 분석
-async function analyzeVisionWithWorker(env, image, artDirection) {
+// 개발자 Worker의 AI 바인딩으로 사진 분석
+async function analyzeVisionWithWorker(env, image, artDirection, describeOnly, raw) {
   if (!env.AI) {
     throw new Error("Worker의 AI 바인딩을 찾을 수 없습니다.");
   }
@@ -268,16 +320,16 @@ async function analyzeVisionWithWorker(env, image, artDirection) {
 
   try {
     result = await env.AI.run(VISION_MODEL, {
-      prompt: makeVisionInstruction(artDirection),
+      prompt: makeVisionInstruction(artDirection, describeOnly, raw),
       image: imageDataUrl(image),
-      max_tokens: 700,
+      max_tokens: raw ? 500 : describeOnly ? 300 : 700,
       temperature: 0.2
     });
   } catch (e) {
     const message = String(e?.message || e);
 
     if (/agree|license|acceptable use/i.test(message)) {
-      throw new Error("Cloudflare Vision 모델을 처음 사용할 때 Meta 라이선스 동의가 필요합니다. Cloudflare 문서의 'Agree to Meta's license' 절차를 먼저 완료해 주세요.");
+      throw new Error(LICENSE_MSG);
     }
 
     throw e;
@@ -290,6 +342,25 @@ async function analyzeVisionWithWorker(env, image, artDirection) {
   }
 
   return text;
+}
+
+// ---------- 필터+AI: 윤곽 이미지(guide) 처리 ----------
+// 웹앱의 필터+AI 프롬프트는 "image 0 = 실제 사진, image 1 = 필터로 만든 윤곽"이라고 부릅니다.
+// FLUX에는 input_image_0 = 사진, input_image_1 = 윤곽으로 보내고,
+// 번호가 헷갈리지 않도록 프롬프트 앞에 대응 관계를 한 줄 적어 줍니다.
+const GUIDE_NOTE = "Reference images: the first reference image is the real photo (called image 0 below) and the second reference image is the rough pop-art outline guide (called image 1 below).\n\n";
+
+function withGuideNote(prompt) {
+  return GUIDE_NOTE + prompt;
+}
+
+// 사진 분석(Cloudflare 비전) 결과를 프롬프트에 반영
+// - 윤곽 없음(AI 모드): 비전이 만든 프롬프트가 기존 프롬프트를 대신함
+// - 윤곽 있음(필터+AI): 기존 프롬프트는 그대로 두고, 사진 특징 설명만 뒤에 덧붙임
+// keepPrompt(색칠 도안처럼 팝아트가 아닌 그림)도 같은 방식으로, 기존 프롬프트를 유지합니다.
+function mergeVisionPrompt(basePrompt, visionText, keep) {
+  if (!keep) return visionText;
+  return `${basePrompt}\n\nVisible details of the real photo, keep them faithful: ${visionText}`;
 }
 
 // ---------- 개인 Cloudflare 계정으로 팝아트 생성 ----------
@@ -315,18 +386,23 @@ async function cartoonWithUserAccount(body) {
     return { status: 400, data: { error: { message: "image" } } };
   }
 
+  const hasGuide = !!body.guide;
+  const keep = hasGuide || body.keepPrompt === true;
   let prompt = String(body.prompt || "").slice(0, 3000);
 
   if (body.useCloudflareVision === true || !prompt) {
-    prompt = await analyzeVisionWithUserAccount(accountId, token, body.image, prompt);
+    const vision = await analyzeVisionWithUserAccount(accountId, token, body.image, keep ? "" : prompt, keep);
+    prompt = mergeVisionPrompt(prompt, vision, keep);
   }
 
   if (!prompt) {
     return {
       status: 400,
       data: { error: { message: "사진 분석 프롬프트를 만들지 못했습니다." } }
-  };
+    };
   }
+
+  if (hasGuide) prompt = withGuideNote(prompt);
 
   const W = Math.min(1024, Math.max(256, Math.round(+body.width || 768)));
   const H = Math.min(1024, Math.max(256, Math.round(+body.height || 768)));
@@ -347,6 +423,14 @@ async function cartoonWithUserAccount(body) {
       new Blob([b64ToBytes(body.image)], { type: "image/jpeg" }),
       "photo.jpg"
     );
+
+    if (hasGuide) {
+      form.append(
+        "input_image_1",
+        new Blob([b64ToBytes(body.guide)], { type: "image/jpeg" }),
+        "guide.jpg"
+      );
+    }
 
     form.append("prompt", prompt);
     form.append("width", String(W));
@@ -386,6 +470,12 @@ async function cartoonWithUserAccount(body) {
       lastStatus = r.status;
       lastMessage = result.errors?.[0]?.message || result.error?.message || "Cloudflare 이미지 생성 오류";
 
+      if (isNeuronLimit(lastMessage)) {
+        lastStatus = 429;
+        lastMessage = koreanError(lastMessage, true);
+        break;
+      }
+
       if (r.status === 401 || r.status === 403) break;
       if (![404, 429].includes(r.status) && r.status < 500) break;
     }
@@ -397,7 +487,7 @@ async function cartoonWithUserAccount(body) {
   };
 }
 
-// ---------- 제작자 계정으로 팝아트 생성 ----------
+// ---------- 개발자 계정으로 팝아트 생성 ----------
 async function cartoon(env, body) {
   if (body.cloudflareAccountId || body.cloudflareApiToken) {
     return await cartoonWithUserAccount(body);
@@ -407,10 +497,13 @@ async function cartoon(env, body) {
     return { status: 400, data: { error: { message: "image" } } };
   }
 
+  const hasGuide = !!body.guide;
+  const keep = hasGuide || body.keepPrompt === true;
   let prompt = String(body.prompt || "").slice(0, 3000);
 
   if (body.useCloudflareVision === true || !prompt) {
-    prompt = await analyzeVisionWithWorker(env, body.image, prompt);
+    const vision = await analyzeVisionWithWorker(env, body.image, keep ? "" : prompt, keep);
+    prompt = mergeVisionPrompt(prompt, vision, keep);
   }
 
   if (!prompt) {
@@ -419,6 +512,8 @@ async function cartoon(env, body) {
       data: { error: { message: "사진 분석 프롬프트를 만들지 못했습니다." } }
     };
   }
+
+  if (hasGuide) prompt = withGuideNote(prompt);
 
   const W = Math.min(1024, Math.max(256, Math.round(+body.width || 768)));
   const H = Math.min(1024, Math.max(256, Math.round(+body.height || 768)));
@@ -430,6 +525,14 @@ async function cartoon(env, body) {
     new Blob([b64ToBytes(body.image)], { type: "image/jpeg" }),
     "photo.jpg"
   );
+
+  if (hasGuide) {
+    form.append(
+      "input_image_1",
+      new Blob([b64ToBytes(body.guide)], { type: "image/jpeg" }),
+      "guide.jpg"
+    );
+  }
 
   form.append("prompt", prompt);
   form.append("width", String(W));
@@ -447,7 +550,8 @@ async function cartoon(env, body) {
 
   let out = null;
 
-  if (!(await overLimit(env, "cartoon9"))) {
+  // 기본은 가성비 모델(4b). 9b는 USE_9B=1 일 때만, 하루 DAILY.cartoon9 장까지.
+  if (String(env.USE_9B || "") === "1" && !(await overLimit(env, "cartoon9"))) {
     try {
       out = await run("@cf/black-forest-labs/flux-2-klein-9b");
     } catch (e) {
@@ -472,6 +576,38 @@ async function cartoon(env, body) {
       analysisModel: body.useCloudflareVision ? VISION_MODEL : undefined
     }
   };
+}
+
+// ---------- 사진 분석 (자동 설정·대사 추천) ----------
+// 웹앱이 보낸 질문(prompt)과 사진(image)을 Cloudflare Vision에 그대로 전달하고,
+// 답 텍스트(JSON 문자열)를 돌려줍니다. 해석은 웹앱이 합니다.
+async function analyze(env, body) {
+  if (!body.image) {
+    return { status: 400, data: { error: { message: "image" } } };
+  }
+
+  const question = String(body.prompt || "").slice(0, 1500);
+
+  if (!question) {
+    return { status: 400, data: { error: { message: "prompt" } } };
+  }
+
+  const instruction = `Look at the image and answer the request below. Reply with ONE valid JSON object only: no markdown, no code fences, no explanation. Write any natural-language text values in simple Korean.\n\nRequest: ${question}`;
+
+  const accountId = String(body.cloudflareAccountId || "").trim();
+  const token = String(body.cloudflareApiToken || "").trim();
+  let text;
+
+  if (accountId && token) {
+    if (!/^[a-f0-9]{32}$/i.test(accountId)) {
+      return { status: 400, data: { error: { message: "Account ID 형식이 올바르지 않습니다." } } };
+    }
+    text = await analyzeVisionWithUserAccount(accountId, token, body.image, "", false, instruction);
+  } else {
+    text = await analyzeVisionWithWorker(env, body.image, "", false, instruction);
+  }
+
+  return { status: 200, data: { text, model: VISION_MODEL } };
 }
 
 // ---------- 별도 이미지 생성 ----------
@@ -539,7 +675,7 @@ export default {
       const ok = v => (v ? "있음" : "없음");
 
       return new Response(
-        `ok\nAI: ${ok(env.AI)}\nKV: ${ok(env.KV)}\nGEMINI_KEY: ${ok(env.GEMINI_KEY)}\nTTS_KEY: ${ok(env.TTS_KEY)}`,
+        `ok\nAI: ${ok(env.AI)}\nKV: ${ok(env.KV)}\nGEMINI_KEY: ${ok(env.GEMINI_KEY)}\nTTS_KEY: ${ok(env.TTS_KEY)}\n사용자별 제한: ${limitOff(env) ? "해제됨 (테스트 중, LIMIT_OFF=1)" : "적용 중"}\n그림 모델: ${String(env.USE_9B || "") === "1" ? "klein-9b 일부 + 4b (USE_9B=1)" : "klein-4b (기본, 가성비)"}`,
         { headers: { "Content-Type": "text/plain; charset=utf-8" } }
       );
     }
@@ -560,8 +696,11 @@ export default {
       return json({ error: { message: "too large" } }, 413, origin);
     }
 
+    let personal = false;
+
     try {
       const body = await req.json();
+      personal = !!String(body?.cloudflareAccountId || "").trim();
       let res;
 
       if (url.pathname === "/tts") {
@@ -576,8 +715,14 @@ export default {
           return json({ error: { message: "no GEMINI_KEY" } }, 503, origin);
         }
 
-        if (await overLimit(env, "gemini")) {
-          return json({ error: { message: "daily limit" } }, 429, origin);
+        if (!limitOff(env)) {
+          const who = await userId(req);
+
+          if (await overLimit(env, "gemini", who) || await overLimit(env, "gemini")) {
+            return json({
+              error: { message: "오늘 사진 분석 기본 제공 횟수를 모두 사용했습니다. 내일 다시 이용해 주세요." }
+            }, 429, origin);
+          }
         }
 
         res = await gemini(env, body);
@@ -592,7 +737,8 @@ export default {
           }, 400, origin);
         }
 
-        if (!hasAccount) {
+        // 개인 키가 없는 사용자만 개발자 계정 제한 대상
+        if (!hasAccount && !limitOff(env)) {
           if (!env.KV) {
             return json({
               error: {
@@ -601,16 +747,52 @@ export default {
             }, 503, origin);
           }
 
-          if (await overLimit(env, "cartoon")) {
+          const who = await userId(req);
+
+          if (await overLimit(env, "cartoon", who)) {
             return json({
               error: {
-                message: "기본 제공 횟수(하루 3회)를 모두 사용했습니다. 내 Cloudflare 계정 정보를 입력하거나 내일 다시 이용해 주세요."
+                message: `기본 제공 횟수(하루 ${USER_DAILY.cartoon}회)를 모두 사용했습니다. 내 Cloudflare 계정 정보를 입력하거나 내일(한국 시간 자정 이후) 다시 이용해 주세요.`
               }
+            }, 429, origin);
+          }
+
+          if (await overLimit(env, "cartoonAll")) {
+            return json({
+              error: { message: "오늘 기본 제공 변환이 모두 소진되었습니다. 내 Cloudflare 계정 정보를 입력하거나 내일 다시 이용해 주세요." }
             }, 429, origin);
           }
         }
 
         res = await cartoon(env, body);
+
+      } else if (url.pathname === "/analyze") {
+        const hasAccount = !!String(body.cloudflareAccountId || "").trim();
+        const hasToken = !!String(body.cloudflareApiToken || "").trim();
+
+        if (hasAccount !== hasToken) {
+          return json({
+            error: { message: "Cloudflare Account ID와 API Token을 모두 입력해 주세요." }
+          }, 400, origin);
+        }
+
+        if (!hasAccount && !limitOff(env)) {
+          if (!env.KV) {
+            return json({
+              error: { message: "기본 사용량 제한을 위한 KV 연결이 없습니다. Worker의 KV 바인딩을 확인해 주세요." }
+            }, 503, origin);
+          }
+
+          const who = await userId(req);
+
+          if (await overLimit(env, "analyze", who) || await overLimit(env, "analyze")) {
+            return json({
+              error: { message: `오늘 사진 분석 기본 제공 횟수(하루 ${USER_DAILY.analyze}회)를 모두 사용했습니다. 내 Cloudflare 계정 정보를 입력하거나 내일 다시 이용해 주세요.` }
+            }, 429, origin);
+          }
+        }
+
+        res = await analyze(env, body);
 
       } else if (url.pathname === "/image") {
         if (await overLimit(env, "image")) {
@@ -628,10 +810,10 @@ export default {
     } catch (e) {
       const m = String(e && e.message || e);
       return json(
-        { error: { message: m } },
-        /limit|quota|capacity|429/i.test(m) ? 429 : 502,
+        { error: { message: koreanError(m, personal) } },
+        isNeuronLimit(m) || /limit|quota|capacity|429/i.test(m) ? 429 : 502,
         origin
       );
     }
   },
-}; 
+};
