@@ -180,6 +180,8 @@ body.admin #stage{pointer-events:none}
 .miniMach svg{width:100%;height:100%}
 .gPics .an.crop{width:clamp(64px,9vw,120px)!important;height:clamp(64px,9vw,120px)!important;border:3px solid #fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.12);background-size:cover}
 /* 설정 — 사진 */
+.subh{font-weight:700;font-size:15px;color:var(--sci-d);margin:14px 0 6px}.card h2+.subh{margin-top:4px}
+.formRow .chip.lv{border-style:solid}
 .phPlan{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
 .phPlan>img{width:150px;height:110px;object-fit:cover;border-radius:10px;border:1px solid var(--line,#ddd)}
 .phPlan>div{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:180px}
@@ -339,8 +341,10 @@ body.setup #adminBtn{display:none}
   </div>
 
   <div class="card" id="c2"><h2><span class="num">2</span>무엇을 할까요?</h2>
+    <div class="subh">학습 형태</div>
+    <div class="row formRow" id="formRow"></div>
+    <div class="subh">수준</div>
     <div class="row" id="lvRow"></div>
-    <div class="row" id="formRow"></div>
     <div class="mode" id="modeRow"></div>
     <div id="pickArea"></div>
   </div>
