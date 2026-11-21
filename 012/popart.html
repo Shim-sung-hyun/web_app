@@ -660,7 +660,13 @@ const PROMPT_RENDER = `
 Rendering: clean vector-style comic illustration. Smooth, uniform, bold black outlines; large flat areas of vivid color limited to red, yellow, blue, teal, black and white; fine Ben-Day halftone dots only in shadows and soft transitions, with a grainy halftone texture in the background. No gradients, no photorealism, no text, no speech bubbles. Only the people and objects that appear in the photo.`;
 
 // 색칠 도안: 사진을 아이가 색칠할 수 있는 깨끗한 선화로
-const PROMPT_COLORING = `Turn the supplied photo into a cute printable children's coloring book page. Thick, bold, smooth black outlines of the same width everywhere, as if drawn with a thick marker, on a pure white background, with pure white inside every shape. Draw the main subject large, in a friendly simple cartoon style with big clean rounded shapes, while keeping what makes it recognizable: for a person, the hairstyle, glasses, clothing shapes and pose; for an object, its overall shape and main parts. Keep the number of people or objects the same. Reduce the background to only a few big simple shapes taken from the photo and leave plenty of white space. Every shape is fully closed. No tiny details, no texture, no hatching, no shading, no gray, no color, no filled black areas, no halftone dots, no text, no speech bubbles. Do not identify anyone.`;
+// 색칠 도안: 001 line-maker와 같은 방식 — 본보기 짝(신발장 그림 → 신발장 도안)을 보여 주고 "같은 꼴로" 그리게 함
+const PROMPT_COLORING = `Image 1 is an illustration and image 2 is the coloring-book page made from it. Make the same kind of coloring-book page from image 3.
+Keep exactly the same scene, people, objects, positions, sizes, framing and aspect ratio as image 3.
+Use only clean, smooth, closed black outlines of even thickness on pure white, like image 2. Image 3 may have halftone dots, flat colors and shading: ignore them and draw only the outlines of the shapes. No shading, no gray, no color, no texture, no hatching.
+Keep each person's face, hairstyle, glasses and clothing recognizable. Every area should be a closed shape that is easy to color; leave out tiny details.
+No text, letters, numbers or logos. Do not identify anyone.`;
+const EXAMPLE_BASE = 'https://shim-sung-hyun.github.io/web_app/media/photos/';   // 001 신발장 본보기 (art.jpg → line.png)
 const PROMPT_HYBRID = `Redraw image 1 as a polished, hand-drawn Roy Lichtenstein 1960s comic-book pop-art illustration. Image 1 is a rough pop-art rendering of the real photo (image 0) and it fixes the exact drawing: keep every outline, the face shape, eyes, nose, mouth, hairline, pose and composition of image 1 in exactly the same positions and proportions. Use image 0 only to refine the real person's look: skin tone, hair, clothing and background details. Clean bold black outlines, flat vivid colors from red, yellow, blue, black and white, neat Ben-Day halftone dots, no gradients, no text, no speech bubbles, nothing added that is not in the photo.`;
 
 const PROMPT_OBJECT = `Redraw the input photo as a classic Roy Lichtenstein 1960s comic-book pop-art illustration of the object or objects shown. Use the photo as a tracing reference: the same object with the same shape, proportions, viewing angle, composition and background layout, keeping its distinctive details, patterns and the placement of its colors.`;
@@ -805,7 +811,7 @@ function reset() {
   openPanel();
 }
 
-async function callCloudflareAI(prompt, guide, useVision, keepPrompt) {
+async function callCloudflareAI(prompt, guide, useVision, keepPrompt, extra) {
   takeCloudflareUse();
   if (!!cloudflareAccountId !== !!cloudflareApiToken) {
     throw new Error('Cloudflare Account ID와 API Token을 모두 입력하거나, 두 입력란을 모두 비워 주세요.');
@@ -816,14 +822,14 @@ async function callCloudflareAI(prompt, guide, useVision, keepPrompt) {
   const width = Math.max(256, Math.round(ratio >= 1 ? maxSide : maxSide * ratio));
   const height = Math.max(256, Math.round(ratio >= 1 ? maxSide / ratio : maxSide));
   // FLUX.2 Klein의 참조 이미지는 512x512 미만이어야 하므로 개인 계정 호출 때 500px로 다시 축소합니다.
-  const cloudflareImage = await toJpegB64(srcImg || ('data:image/jpeg;base64,' + b64), 500);   // 기본 계정도 같은 크기로
+  const cloudflareImage = await toJpegB64(extra?.image || srcImg || ('data:image/jpeg;base64,' + b64), 500);   // 기본 계정도 같은 크기로
   // 필터+AI(③): 윤곽 이미지도 참조 이미지이므로 같은 이유로 500px로 줄여서 보냅니다. (없으면 undefined → 전송 안 됨)
   const cloudflareGuide = guide ? await toJpegB64('data:image/jpeg;base64,' + guide, 500) : undefined;
   let vision = useVision === undefined ? !geminiApiKey : !!useVision;
   // 같은 사진을 이미 분석했으면(팝아트→색칠 도안, 다시 시도 등) 설명을 붙여 보내고 분석 AI는 건너뜀
   const keepMode = !!(guide || keepPrompt);
   if (vision && keepMode && photoDesc) { prompt = `${prompt}\n\nVisible details of the real photo, keep them faithful: ${photoDesc}`; vision = false; }
-  const requestBody = { image: cloudflareImage, guide: cloudflareGuide, prompt, width, height, useCloudflareVision: vision, keepPrompt: keepPrompt ? true : undefined, deviceId: deviceId() };
+  const requestBody = { image: cloudflareImage, guide: cloudflareGuide, prompt, width, height, useCloudflareVision: vision, keepPrompt: keepPrompt ? true : undefined, examples: extra?.examples, deviceId: deviceId() };
   if (cloudflareAccountId && cloudflareApiToken) {
     requestBody.cloudflareAccountId = cloudflareAccountId;
     requestBody.cloudflareApiToken = cloudflareApiToken;
@@ -1265,7 +1271,8 @@ async function generate(mode) {
       msg('AI가 색칠 도안을 그리는 중…');
       let raw;
       try {
-        raw = `data:image/png;base64,${await callCharumAI(PROMPT_COLORING + (obj ? ' The main subject is an object, not a person.' : '') + extras(), null, true)}`;
+        // 대상 그림: AI가 그린 팝아트가 있으면 그것(001의 '그림'처럼 이미 단순해진 모양), 없으면 사진
+        raw = `data:image/png;base64,${await callColoringAI(PROMPT_COLORING + (obj ? '\nThe main subject is an object, not a person.' : '') + extras(), popBase || ('data:image/jpeg;base64,' + b64))}`;
         msg('선을 굵고 고르게 다듬는 중…'); await tick();
         raw = await lineArtClean(raw);           // AI 선화 → 굵기 고른 검정 선만 (색·회색·잔선 지움)
       } catch (e) {
@@ -1378,8 +1385,7 @@ async function frameColoring(src) {
   c.beginPath(); c.roundRect(m, m, iw, ih, r); c.stroke();
   return cv.toDataURL('image/png');
 }
-// AI가 그린 선화를 '색칠 도안' 꼴로: 검정 선만 남기고(색·회색 면 지움), 큰 검정 면은 테두리만,
-// 잔선·먼지 지우고, 선을 굵게 해서 굵기를 고르게, 끊긴 틈은 메우고, 가장자리는 둥글게
+// AI가 그린 선화를 인쇄용으로: 검정 선만 남기고(색·회색 면 지움), 큰 검정 면은 테두리만, 먼지 지우고, 가장자리 둥글게
 async function lineArtClean(src) {
   const im = new Image(); im.src = src; await im.decode();
   const sc = 1200 / Math.max(im.naturalWidth, im.naturalHeight);
@@ -1390,18 +1396,16 @@ async function lineArtClean(src) {
   let dark = new Uint8Array(n);
   for (let i = 0; i < n; i++) {
     const r = px[i * 4], g = px[i * 4 + 1], b = px[i * 4 + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b);
-    dark[i] = (0.299 * r + 0.587 * g + 0.114 * b) < 165 && mx - mn < 70 ? 1 : 0;     // 어두운 무채색만 선 (청바지 같은 색 면은 빠짐)
+    dark[i] = (0.299 * r + 0.587 * g + 0.114 * b) < 190 && mx - mn < 70 ? 1 : 0;     // 무채색 선 (흐린 가장자리까지 잡아 끊기지 않게) (청바지 같은 색 면은 빠짐)
   }
-  const u = Math.max(2, Math.round(w / 600));                       // 굵기 단위 (1200px에서 2px, 더 굵으면 안경·눈이 뭉침)
-  const blob = morph(morph(dark, w, h, u * 2, false), w, h, u * 2, true);      // 선보다 훨씬 두꺼운 검정 '면'
+  const u = Math.max(2, Math.round(w / 300));                       // 1200px에서 4px
+  const blob = morph(morph(dark, w, h, u * 2, false), w, h, u * 2, true);      // 선보다 훨씬 두꺼운 검정 '면'(17px 넘게)
   const inner = morph(blob, w, h, u, false);
   for (let i = 0; i < n; i++) if (inner[i]) dark[i] = 0;              // 면은 속을 비우고 테두리만
-  dark = removeSpecks(dark, w, h, Math.round(n * 0.0001));           // 먼지·짧은 잔선 (눈·안경 같은 작은 선은 남을 만큼만)
-  dark = morph(dark, w, h, u, true);                                 // 굵게 (가는 선도 최소 굵기 이상)
-  dark = morph(dark, w, h, Math.max(1, u >> 1), false);              // 살짝 되돌려 틈만 메운 효과(닫기)
+  dark = removeSpecks(dark, w, h, Math.round(n * 0.00006));          // 먼지만 (본보기 방식은 선이 이미 고르므로 굵게 만들지 않음 — 굵히면 책·연필이 뭉침)
   const f = new Float32Array(n); for (let i = 0; i < n; i++) f[i] = dark[i];
-  const sm = blurChannel(f, w, h, Math.max(1, u >> 1));              // 계단 없이 둥근 선 가장자리
-  for (let i = 0; i < n; i++) { const v = sm[i] > 0.5 ? 17 : 255, p = i * 4; px[p] = px[p + 1] = px[p + 2] = v; px[p + 3] = 255; }
+  const sm = blurChannel(f, w, h, 1);                                // 계단 없이 둥근 선 가장자리 (넓게 흐리면 가는 선이 끊김)
+  for (let i = 0; i < n; i++) { const v = sm[i] > 0.34 ? 17 : 255, p = i * 4; px[p] = px[p + 1] = px[p + 2] = v; px[p + 3] = 255; }
   cx.putImageData(id, 0, 0);
   return cv.toDataURL('image/png');
 }
@@ -1732,6 +1736,30 @@ async function callGeminiImage(prompt, guide) {
   const image = (data.candidates?.[0]?.content?.parts || []).find(p => p.inlineData?.data || p.inline_data?.data);
   if (!image) throw new Error('Gemini가 이미지를 반환하지 않았습니다. API 키의 모델 이용 권한과 사용량을 확인해 주세요.');
   return (image.inlineData || image.inline_data).data;
+}
+// 색칠 도안 본보기 짝 (GitHub에서 한 번만 받아 둠)
+let exampleImgs = null;
+async function coloringExamples(max) {
+  if (!exampleImgs) exampleImgs = Promise.all(['shoe-rack/art.jpg', 'shoe-rack/line.png'].map(f => { const im = new Image(); im.crossOrigin = 'anonymous'; im.src = EXAMPLE_BASE + f; return im.decode().then(() => im); }));
+  try { return await Promise.all((await exampleImgs).map(im => toJpegB64(im, max))); }
+  catch (e) { exampleImgs = null; throw new Error('색칠 도안 본보기 그림을 받지 못했어요. 인터넷 연결을 확인해 주세요.'); }
+}
+// 색칠 도안 그리기: Gemini 키가 있으면 Gemini(001과 같은 모델), 막히거나 없으면 Cloudflare에 같은 세 그림을 보냄
+async function callColoringAI(prompt, target) {
+  let geminiMessage = '';
+  if (geminiApiKey) {
+    try {
+      const [a, l] = await coloringExamples(768), t = await toJpegB64(target, 768);
+      const img = p => ({ inline_data: { mime_type: 'image/jpeg', data: p } });
+      const data = await geminiRequest([img(a), img(l), img(t), { text: prompt }], GEMINI_DIRECT_IMAGE_URL, { responseModalities: ['IMAGE'] });
+      const part = (data.candidates?.[0]?.content?.parts || []).find(p => p.inlineData?.data || p.inline_data?.data);
+      if (part) return (part.inlineData || part.inline_data).data;
+      geminiMessage = 'Gemini가 그림을 돌려주지 않았어요.';
+    } catch (e) { geminiMessage = String(e?.message || e); }
+  }
+  const [a, l] = await coloringExamples(500);
+  try { return await callCloudflareAI(prompt, null, false, true, { image: target, examples: [a, l] }); }
+  catch (cf) { throw new Error(`${cf?.message || cf}${geminiMessage ? '\n[Gemini] ' + geminiMessage : ''}`); }
 }
 async function toJpegB64(src, max = 768) {
   let im = src;

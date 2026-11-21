@@ -378,6 +378,25 @@ function withGuideNote(prompt) {
   return GUIDE_NOTE + prompt;
 }
 
+// ---------- 색칠 도안: 본보기 짝(001 신발장 그림 → 도안) + 대상 그림 ----------
+// 웹앱이 examples:[본보기 그림, 본보기 도안]을 보내면 input_image_0·1 = 본보기, input_image_2 = 대상.
+// 프롬프트는 "image 1·2 = 본보기, image 3 = 대상"으로 부름. 이때는 사진 분석을 하지 않음(뉴런 아끼기).
+const EXAMPLE_NOTE = "Reference images: the first reference image is image 1, the second is image 2 and the third is image 3.\n\n";
+const examplesOf = body => Array.isArray(body.examples) && body.examples.length === 2 && body.examples.every(x => typeof x === "string" && x.length > 100) ? body.examples : null;
+
+function appendImages(form, body, hasGuide) {
+  const jpg = (b64, name) => [new Blob([b64ToBytes(b64)], { type: "image/jpeg" }), name];
+  const ex = examplesOf(body);
+  if (ex) {
+    form.append("input_image_0", ...jpg(ex[0], "example-art.jpg"));
+    form.append("input_image_1", ...jpg(ex[1], "example-line.jpg"));
+    form.append("input_image_2", ...jpg(body.image, "target.jpg"));
+    return;
+  }
+  form.append("input_image_0", ...jpg(body.image, "photo.jpg"));
+  if (hasGuide) form.append("input_image_1", ...jpg(body.guide, "guide.jpg"));
+}
+
 // 사진 분석(Cloudflare 비전) 결과를 프롬프트에 반영
 // - 윤곽 없음(AI 모드): 비전이 만든 프롬프트가 기존 프롬프트를 대신함
 // - 윤곽 있음(필터+AI): 기존 프롬프트는 그대로 두고, 사진 특징 설명만 뒤에 덧붙임
@@ -415,7 +434,7 @@ async function cartoonWithUserAccount(body, env) {
   let prompt = String(body.prompt || "").slice(0, 3000);
   let visionText = "";   // 사진 설명: 응답에 실어 보내면 웹앱이 같은 사진의 다음 요청에 재사용(분석 AI를 다시 안 돌림)
 
-  if (body.useCloudflareVision === true || !prompt) {
+  if (!examplesOf(body) && (body.useCloudflareVision === true || !prompt)) {
     const vision = await analyzeVisionWithUserAccount(accountId, token, body.image, keep ? "" : prompt, keep);
     if (keep) visionText = vision;
     prompt = mergeVisionPrompt(prompt, vision, keep);
@@ -428,7 +447,8 @@ async function cartoonWithUserAccount(body, env) {
     };
   }
 
-  if (hasGuide) prompt = withGuideNote(prompt);
+  if (examplesOf(body)) prompt = EXAMPLE_NOTE + prompt;
+  else if (hasGuide) prompt = withGuideNote(prompt);
 
   const W = Math.min(1024, Math.max(256, Math.round(+body.width || 768)));
   const H = Math.min(1024, Math.max(256, Math.round(+body.height || 768)));
@@ -444,19 +464,7 @@ async function cartoonWithUserAccount(body, env) {
   for (const model of models) {
     const form = new FormData();
 
-    form.append(
-      "input_image_0",
-      new Blob([b64ToBytes(body.image)], { type: "image/jpeg" }),
-      "photo.jpg"
-    );
-
-    if (hasGuide) {
-      form.append(
-        "input_image_1",
-        new Blob([b64ToBytes(body.guide)], { type: "image/jpeg" }),
-        "guide.jpg"
-      );
-    }
+    appendImages(form, body, hasGuide);
 
     form.append("prompt", prompt);
     form.append("width", String(W));
@@ -529,7 +537,7 @@ async function cartoon(env, body) {
   let prompt = String(body.prompt || "").slice(0, 3000);
   let visionText = "";   // 사진 설명: 응답에 실어 보내면 웹앱이 같은 사진의 다음 요청에 재사용(분석 AI를 다시 안 돌림)
 
-  if (body.useCloudflareVision === true || !prompt) {
+  if (!examplesOf(body) && (body.useCloudflareVision === true || !prompt)) {
     const vision = await analyzeVisionWithWorker(env, body.image, keep ? "" : prompt, keep);
     if (keep) visionText = vision;
     prompt = mergeVisionPrompt(prompt, vision, keep);
@@ -542,26 +550,15 @@ async function cartoon(env, body) {
     };
   }
 
-  if (hasGuide) prompt = withGuideNote(prompt);
+  if (examplesOf(body)) prompt = EXAMPLE_NOTE + prompt;
+  else if (hasGuide) prompt = withGuideNote(prompt);
 
   const W = Math.min(1024, Math.max(256, Math.round(+body.width || 768)));
   const H = Math.min(1024, Math.max(256, Math.round(+body.height || 768)));
 
   const form = new FormData();
 
-  form.append(
-    "input_image_0",
-    new Blob([b64ToBytes(body.image)], { type: "image/jpeg" }),
-    "photo.jpg"
-  );
-
-  if (hasGuide) {
-    form.append(
-      "input_image_1",
-      new Blob([b64ToBytes(body.guide)], { type: "image/jpeg" }),
-      "guide.jpg"
-    );
-  }
+  appendImages(form, body, hasGuide);
 
   form.append("prompt", prompt);
   form.append("width", String(W));
