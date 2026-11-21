@@ -138,6 +138,86 @@ body.admin #stage{pointer-events:none}
 .bin .body img.new{animation:drop .7s ease-out}
 @keyframes drop{from{transform:translateY(-60%) scale(1.3);opacity:0}to{transform:none;opacity:1}}
 .tray{display:flex;justify-content:center;align-items:center}
+/* 사진 수업 */
+.scene{position:relative;border-radius:16px;overflow:hidden;background:#EEE;flex:0 0 auto;box-shadow:0 2px 10px rgba(40,30,60,.12);touch-action:none}
+.scene>img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none}
+.scene .spot{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(24,18,34,.58);outline:3px solid rgba(255,255,255,.9);transition:all .6s ease;pointer-events:none;z-index:5}
+.scene .fr{position:absolute;border:3px dashed rgba(255,255,255,.95);border-radius:12px;box-shadow:0 0 0 2px rgba(0,0,0,.28),inset 0 0 0 2px rgba(0,0,0,.18);cursor:pointer;transition:opacity .6s,border-color .4s,box-shadow .4s}
+.scene .fr.ghost{border-color:transparent;box-shadow:none}
+.scene .fr.soft{border:2px dashed rgba(255,255,255,.7);box-shadow:none}
+.scene .fr.glow{border:4px solid #E8B84A!important;box-shadow:0 0 0 3px rgba(0,0,0,.2),0 0 22px rgba(232,184,74,.9)}
+.scene .fr.right{border:4px solid var(--ok)!important;box-shadow:0 0 0 3px rgba(255,255,255,.7)}
+.crop{display:block;border-radius:10px;pointer-events:none}
+.oc .crop{margin:auto}
+.bin .body .crop{border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.bin .body .crop.new{animation:drop .7s ease-out}
+.drag img,.drag .crop{width:100%;height:100%;object-fit:contain}
+.pkPh{width:100%;height:100%;object-fit:cover;border-radius:12px;pointer-events:none}
+.wig{animation:wig .45s ease}
+@keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg) scale(1.03)}60%{transform:rotate(3deg)}}
+.badge{position:absolute;left:50%;bottom:6px;transform:translate(-50%,6px);background:rgba(255,255,255,.95);border-radius:10px;padding:1px 12px;font-family:var(--f-display);font-size:clamp(16px,2vw,24px);color:var(--ink);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+.badge.on{opacity:1;transform:translate(-50%,0)}
+.fac{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3vh;width:100%;height:100%}
+.facTop{display:flex;align-items:center;justify-content:center;gap:24px}
+.mach svg{width:100%;height:100%;overflow:visible}
+.mach.run svg{animation:shake .19s linear infinite}
+.mach .gear{transform-origin:84px 114px}
+.mach.run .gear{animation:spin .9s linear infinite}
+.mach.run .lamp{animation:blink .38s steps(2) infinite}.mach.run .lamp.b{animation-delay:.19s}
+@keyframes shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-2px,1px)}75%{transform:translate(2px,-1px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{50%{opacity:.35}}
+.shelf{display:flex;flex-wrap:wrap;gap:10px;align-content:center;justify-content:center;min-height:120px}
+.made{position:relative;background:#fff;border:3px solid #D8D3CC;border-radius:16px;display:flex;align-items:center;justify-content:center;animation:pop .5s cubic-bezier(.3,1.6,.6,1)}
+.made img{object-fit:contain}
+.mtag{position:absolute;left:6px;top:4px;font-size:13px;background:var(--sci-l);color:var(--sci-d);border-radius:8px;padding:0 7px}
+@keyframes pop{from{transform:translateX(-50px) scale(.3);opacity:0}to{transform:none;opacity:1}}
+.facMats{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.mc.fly{position:fixed;z-index:80;margin:0;pointer-events:none;transition:transform .6s ease-in,opacity .6s ease-in}
+.miniMach{display:inline-block;width:clamp(80px,11vw,140px);aspect-ratio:230/200}
+.miniMach svg{width:100%;height:100%}
+.gPics .an.crop{width:clamp(64px,9vw,120px)!important;height:clamp(64px,9vw,120px)!important;border:3px solid #fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.12);background-size:cover}
+/* 설정 — 사진 */
+.phPlan{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.phPlan>img{width:150px;height:110px;object-fit:cover;border-radius:10px;border:1px solid var(--line,#ddd)}
+.phPlan>div{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:180px}
+.phIt{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #E2DDE8;border-radius:10px;padding:3px 10px 3px 3px;font-size:14px}
+.phIt .crop,.phIt img{width:46px;height:46px;border-radius:7px;object-fit:contain}
+.scPick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:8px}
+.scPick>button,.rcWrap>button{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:3px;padding:6px;border:2px solid #E2DDE8;border-radius:12px;background:#fff;cursor:pointer;text-align:left;font:inherit;width:100%}
+.scPick button.on{border-color:var(--sci);background:var(--sci-l)}
+.scPick button img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px}
+.scPick button b{font-size:14px}
+.scPick button .ms{font-size:12px;color:#6F6A78;line-height:1.35}
+.scPick button .ms em{font-style:normal;color:#8A5A12}
+.scPick .ord{position:absolute;left:10px;top:10px;width:26px;height:26px;border-radius:8px;background:var(--sci);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rcTools{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.privacy{background:#FFF6E0;border:1px solid #EBD39A;border-radius:10px;padding:8px 12px;font-size:14px;color:#6A4E12;margin:6px 0 10px}
+.keyOk{color:var(--ok);font-weight:700;font-size:14px;align-self:center}
+.keyIn{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #CFC8D8;border-radius:8px;min-width:220px}
+.keyHow{font-size:14px;align-self:center}
+#chkView{position:fixed;inset:0;z-index:95;background:rgba(30,24,44,.4);display:none;align-items:center;justify-content:center;padding:12px}
+#chkView.on{display:flex}
+#chkView .ck{background:#fff;border-radius:16px;width:min(1180px,100%);max-height:100%;overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.ckHead b{font-size:18px;margin-right:10px}.ckHead span{font-size:14px;color:#6F6A78}
+.ckBody{display:flex;gap:14px;flex-wrap:wrap}
+.ckPh{flex:1 1 420px;min-height:260px;display:flex;align-items:flex-start;justify-content:center}
+.ckList{flex:1 1 340px;display:flex;flex-direction:column;gap:6px}
+.ckBox{position:absolute;border:3px solid #E8B84A;border-radius:6px;cursor:pointer}
+.ckBox.off{border-style:dashed;border-color:rgba(255,255,255,.75)}
+.ckBox.sel{border-color:var(--sci);box-shadow:0 0 0 3px rgba(255,255,255,.8)}
+.ckBox i{position:absolute;left:-2px;top:-2px;background:#E8B84A;color:#fff;font-style:normal;font-weight:700;font-size:13px;padding:0 6px;border-radius:5px 0 6px 0}
+.ckBox.sel i{background:var(--sci)}.ckBox.off i{background:#999}
+.ckRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:5px 6px;border-radius:10px;border:1px solid #EAE5EF}
+.ckRow.sel{border-color:var(--sci);background:var(--sci-l)}.ckRow.off{opacity:.6}
+.ckRow i{font-style:normal;font-weight:700;width:22px;text-align:center}
+.ckRow input{font:inherit;font-size:15px;padding:5px 8px;border:1px solid #CFC8D8;border-radius:8px;width:130px}
+.ckRow select{font:inherit;font-size:15px;padding:5px 6px;border:1px solid #CFC8D8;border-radius:8px}
+.ckRow em{font-style:normal;font-size:12px;color:#B0472E}
+.ckFoot{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.ckMsg{margin-right:auto;font-size:13px;color:#6F6A78}
+.ckModel{font:inherit;font-size:13px;padding:4px;border-radius:8px}
+.ckEmpty{color:#6F6A78;font-size:14px}
 /* 단계 알림 */
 .introBox{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4.5vh;height:100%;width:100%}
 .stepRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;font-size:clamp(13px,1.5vw,16px);color:#9A94A6;max-width:96%}
@@ -258,6 +338,7 @@ body.setup #adminBtn{display:none}
 
   <div class="card" id="c2"><h2><span class="num">2</span>무엇을 할까요?</h2>
     <div class="row" id="lvRow"></div>
+    <div class="row" id="formRow"></div>
     <div class="mode" id="modeRow"></div>
     <div id="pickArea"></div>
   </div>
@@ -487,7 +568,7 @@ const GH='https://shim-sung-hyun.github.io/web_app/';
 const P007=GH+'media/words/', PHO=GH+'media/photos/';
 const MAT={
   wood:{label:'나무'}, metal:{label:'쇠'}, plastic:{label:'플라스틱'}, paper:{label:'종이'}, cloth:{label:'천'}, rubber:{label:'고무'},
-  glass:{label:'유리'}, ceramic:{label:'도자기'}   /* 유리·도자기: 컵 묶음(수준 3)에서 씀 — 그림이 생기기 전에는 그 묶음이 나오지 않음 */
+  glass:{label:'유리'}, ceramic:{label:'도자기'}, stone:{label:'돌'}   /* 유리·도자기: 컵 묶음(수준 3)에서 씀 — 그림이 생기기 전에는 그 묶음이 나오지 않음 */
 };
 const OBJ={'의자':'uija','사다리':'sadari','바구니':'baguni',
   '숟가락':'sutgarak','포크':'pokeu','냄비':'naembi','열쇠':'yeolsoe','쟁반':'jaengban','젓가락':'jeotgarak',
@@ -510,7 +591,7 @@ const LV={
   'wood:의자,사다리|metal:숟가락,냄비','wood:바구니,의자|metal:포크,열쇠','wood:사다리,바구니|metal:쟁반,젓가락']},
  2:{name:'수준 2',desc:'나무 · 쇠 · 플라스틱 (세 가지)',opts:3,bundles:[
   'wood:의자|metal:숟가락,열쇠|plastic:페트병,칫솔','wood:사다리|metal:냄비,포크|plastic:물통,빨대','wood:바구니|metal:쟁반,젓가락|plastic:안전모,칫솔']},
- 3:{name:'수준 3',desc:'나무 · 쇠 · 플라스틱 · 종이 · 천 · 고무',opts:3,bundles:[
+ 3:{name:'수준 3',desc:'나무 · 쇠 · 플라스틱 · 종이 · 천 · 고무 (사진 수업은 + 유리 · 도자기 · 돌)',opts:3,bundles:[
   'paper:상자,종이컵|cloth:양말,모자|rubber:장화,풍선','wood:의자|paper:쇼핑백,상자|cloth:장갑|rubber:풍선','metal:숟가락|plastic:페트병|paper:종이컵|cloth:양말',
   'plastic:물통,빨대|rubber:장화|metal:냄비|cloth:모자','wood:사다리|metal:열쇠|paper:쇼핑백|rubber:풍선,장화',
   'paper:종이컵,상자|glass:유리컵|ceramic:도자기컵|metal:쇠컵,숟가락']}   /* 컵 묶음: 컵 넷 + 물체 찾기에서 함께 낼 다른 물체 */
@@ -518,17 +599,36 @@ const LV={
 /* 생김새가 닮아 한 화면에 보기로 함께 내지 않는 짝 */
 const PAIRS=[['물통','페트병'],['숟가락','포크']];
 /* 실제 사진(일반화): 차름 사진 모음에서 그 물건만 밝게 보여 주고 물질을 고름. box = 사진 픽셀 [왼, 위, 오른, 아래] */
-const PHOTO=[
-  {id:'bell',a:'종',m:'metal',w:1280,h:719,box:[440,40,830,400]},
-  {id:'manhole',a:'맨홀 뚜껑',m:'metal',w:1280,h:719,box:[265,80,855,655]},
-  {id:'bottles',a:'컵',m:'metal',w:576,h:1280,box:[360,735,560,1140]},
-  {id:'mug-monitor',a:'컵',m:'ceramic',w:576,h:1280,box:[50,756,266,976]},
-  {id:'mug-monitor',a:'컵',m:'glass',w:576,h:1280,box:[362,684,576,990]},
-  {id:'shoe-rack',a:'신발장',m:'wood',w:1280,h:719,box:[290,60,830,630]},
-  {id:'milk-basket',a:'우유갑',m:'paper',w:1280,h:576,box:[395,75,775,318]},
-  {id:'tissue',a:'휴지',m:'paper',w:1280,h:719,box:[395,205,800,605]}
+/* 자료실 사진 속 물체(2026-11-21 Claude가 사진을 보고 적음 — 선생님 확인 전). [이름, 물질, 자리] — 자리 = [왼, 위, 오른, 아래] 0~1000(사진 너비·높이 비율).
+   물질이 하나로 분명한 것만(버스·모니터·의자처럼 섞인 것, 사람·동물·식물은 뺌). 이름에 물질 낱말이 든 것(돌담·종이)은 이름을 바꾸거나 뺌.
+   '사진에서' 단계(그림 묶음)와 사진 수업(자료실 자동·골라서)이 함께 씀 */
+const SCENES=[
+ {id:'car-wheel',t:'자동차 바퀴',w:1280,h:719,o:[['타이어','rubber',[355,285,680,800]]]},
+ {id:'bus-wheel',t:'버스 바퀴',w:1280,h:719,o:[['타이어','rubber',[275,40,805,820]]]},
+ {id:'manhole',t:'맨홀 뚜껑',w:1280,h:719,o:[['맨홀 뚜껑','metal',[207,111,668,911]]]},
+ {id:'parking-sign',t:'주차 금지 표지판',w:719,h:1280,o:[['표지판','plastic',[160,40,730,975]]]},
+ {id:'tissue',t:'두루마리 휴지',w:1280,h:719,o:[['휴지','paper',[309,285,625,841]]]},
+ {id:'shoe-rack',t:'신발장',w:1280,h:719,o:[['신발장','wood',[227,83,648,876]],['소화기','metal',[662,318,708,470]]]},
+ {id:'bell',t:'종',w:1280,h:719,o:[['종','metal',[344,56,648,556]]]},
+ {id:'computer-desk',t:'컴퓨터 책상',w:1280,h:576,o:[['꽃병','glass',[365,400,445,645]],['키보드','plastic',[400,680,700,990]],['마우스','plastic',[725,830,800,965]]]},
+ {id:'desks',t:'책상과 의자',w:1280,h:576,o:[['방석','cloth',[515,410,625,540]]]},
+ {id:'bookshelf',t:'책장',w:1280,h:576,o:[['책장','wood',[145,0,800,900]],['바구니','plastic',[175,700,300,840]],['상자','paper',[400,470,460,610]]]},
+ {id:'door',t:'교실 문',w:576,h:1280,o:[['문','wood',[150,60,880,880]],['손잡이','metal',[200,525,330,570]],['창문','glass',[300,200,790,420]]]},
+ {id:'mug-monitor',t:'머그컵과 유리컵',w:576,h:1280,o:[['머그컵','ceramic',[87,590,462,762]],['컵','glass',[628,534,1000,773]],['키보드','plastic',[0,490,860,650]]]},
+ {id:'water-purifier',t:'정수기 옆',w:576,h:1280,o:[['소화기','metal',[30,495,200,700]],['물통','plastic',[320,535,420,720]],['매트','rubber',[100,770,960,1000]]]},
+ {id:'bottles',t:'물병과 컵',w:576,h:1280,o:[['컵','metal',[640,700,965,880]]]},
+ {id:'milk-basket',t:'우유와 바구니',w:1280,h:576,o:[['우유갑','paper',[310,180,600,550]],['바구니','plastic',[200,195,780,870]]]},
+ {id:'street-cat',t:'울타리',w:576,h:1280,o:[['울타리','metal',[380,140,1000,560]],['기둥','metal',[230,90,320,550]]]},
+ {id:'potted-tree',t:'화분과 담장',w:576,h:1280,o:[['화분','plastic',[250,590,710,770]],['담장','stone',[0,450,1000,590]],['창문','glass',[480,30,890,290]]]}
 ];
-const PH_URL=p=>PHO+p.id+'/photo.jpg';
+const SC={};
+function addScene(sc){ sc.src=sc.src||PHO+sc.id+'/photo.jpg'; sc.objs=sc.o.map(([a,m,box])=>({a,m,box})); SC[sc.id]=sc; return sc; }
+SCENES.forEach(addScene);
+const PHOTO=[]; SCENES.forEach(sc=>sc.objs.forEach(o=>PHOTO.push({id:sc.id,a:o.a,m:o.m,w:sc.w,h:sc.h,src:sc.src,box:[o.box[0]*sc.w/1000,o.box[1]*sc.h/1000,o.box[2]*sc.w/1000,o.box[3]*sc.h/1000]})));
+const PH_URL=p=>p.src||PHO+p.id+'/photo.jpg';
+/* 수준별 물질(사진 수업) · 한 장에서 쓸 물체 수 */
+const LVM={1:['wood','metal'],2:['wood','metal','plastic'],3:['wood','metal','plastic','paper','cloth','rubber','glass','ceramic','stone']};
+const OBJN={1:2,2:3,3:4};
 function parseB(s){ const mats=[], items=[]; s.split('|').forEach(g=>{ const [m,as]=g.split(':'); mats.push(m); as.split(',').forEach(a=>items.push({a,m})); }); return {mats,items}; }
 const BUN={}; Object.keys(LV).forEach(l=>{ BUN[l]=LV[l].bundles.map(parseB).filter(b=>!b.items.some(x=>PIC_TODO.has(x.a))); });   /* 그림 없는 묶음은 뺌(맨 끝에만 두어 묶음 번호가 밀리지 않게) */
 const POOL={}, MATS={};
@@ -538,7 +638,7 @@ Object.keys(BUN).forEach(l=>{ const m=new Map(), ms=[]; BUN[l].forEach(b=>{ b.ma
    물체 모양 없이 결만: 나뭇결 · 쇠붙이 광 · 매끈한 플라스틱 · 종이 섬유 · 천 짜임 · 고무 · 유리. 늘 같은 그림(씨앗 고정) */
 function rng(seed){ let s=seed; return ()=>{ s=(s*16807)%2147483647; return (s-1)/2147483646; }; }
 function texSVG(m){
-  const r=rng({wood:11,metal:23,plastic:37,paper:41,cloth:53,rubber:67,glass:79,ceramic:83}[m]||5); let b='';
+  const r=rng({wood:11,metal:23,plastic:37,paper:41,cloth:53,rubber:67,glass:79,ceramic:83,stone:97}[m]||5); let b='';
   const S='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice">';
   if(m==='wood'){
     b+='<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFA06A"/><stop offset=".5" stop-color="#C28F56"/><stop offset="1" stop-color="#CC9B63"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/>';
@@ -578,9 +678,21 @@ function texSVG(m){
       +'<path d="M18 52 C 60 26, 124 22, 182 44 C 128 36, 70 40, 22 62 Z" fill="url(#h)"/><path d="M40 78 C 56 70, 72 68, 84 70" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-opacity=".85"/>';
     for(let i=0;i<14;i++){ const x=r()*200, y=r()*110; b+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(.4+r()*.6).toFixed(2)+'" fill="#B8C2C0" fill-opacity=".5"/>'; }
   }
+  else if(m==='stone'){   /* 돌: 회색 알갱이 + 작은 구멍·금 */
+    b+='<defs><radialGradient id="g" cx=".45" cy=".4" r=".9"><stop offset="0" stop-color="#9A9894"/><stop offset="1" stop-color="#6E6C69"/></radialGradient></defs><rect width="200" height="200" fill="url(#g)"/>';
+    for(let i=0;i<420;i++) b+='<circle cx="'+(r()*200).toFixed(1)+'" cy="'+(r()*200).toFixed(1)+'" r="'+(.4+r()*1.4).toFixed(2)+'" fill="'+['#B5B2AC','#57554F','#86837D','#C9C6C0'][Math.floor(r()*4)]+'" fill-opacity=".6"/>';
+    for(let i=0;i<9;i++){ const x=r()*200, y=r()*200; b+='<ellipse cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" rx="'+(1.6+r()*3).toFixed(1)+'" ry="'+(1.2+r()*2).toFixed(1)+'" fill="#3F3D3A" fill-opacity=".7"/>'; }
+    b+='<path d="M20 150 L60 138 L82 146 L120 128" fill="none" stroke="#45433F" stroke-width="1.4" stroke-opacity=".6"/><path d="M150 30 L162 60 L158 84" fill="none" stroke="#45433F" stroke-width="1.2" stroke-opacity=".5"/>';
+  }
   return 'url("data:image/svg+xml,'+encodeURIComponent(S+b+'</svg>')+'")';
 }
 const TEX={}; Object.keys(MAT).forEach(m=>TEX[m]=texSVG(m));
+/* 물질 카드 사진(빙, 2026-11-21 선생님: 같은 물질 그림 3~4장을 바꿔 가며) — media/materials/물질-1~N.webp. 받은 수만 적음, 없으면 앱이 그린 결 그림.
+   한 문제 안에서는 그대로(카드를 만들 때 한 번 고름), 정리하기 상자 뚜껑은 한 수업 동안 한 장(RUN.lid) */
+const MATIMG={};   /* 예: wood:4, metal:4 */
+const MATDIR=GH+'media/materials/';
+function texOf(m,k){ const n=MATIMG[m]||0; if(!n) return TEX[m]; const i=k==null?Math.floor(Math.random()*n):k%n; return 'url("'+MATDIR+m+'-'+(i+1)+'.webp")'; }
+const lidTex=m=>texOf(m,RUN&&RUN.lid?RUN.lid[m]:0);
 document.getElementById('mark').innerHTML='<svg viewBox="0 0 40 40"><defs><pattern id="mw" width="40" height="40" patternUnits="userSpaceOnUse"><image href="'+TEX.wood.slice(5,-2)+'" width="40" height="40"/></pattern><pattern id="mm" width="40" height="40" patternUnits="userSpaceOnUse"><image href="'+TEX.metal.slice(5,-2)+'" width="40" height="40"/></pattern></defs><rect width="40" height="40" fill="url(#mw)"/><path d="M40 0 L40 40 L0 40 Z" fill="url(#mm)"/></svg>';
 
 /* ================= 한국어 ================= */
@@ -595,11 +707,14 @@ const fullLine=(a,m)=>eun(nm(a))+' '+madeLine(m);
 const askObj=a=>eul(nm(a))+' 찾아 눌러요.';
 const askMat=a=>eun(nm(a))+' 무엇으로 만들었어요?';
 const nameLine=a=>nm(a)+'.';
-const END_LINE='다 했어요.', RUB_LINE='손으로 문질러 봐요.';
+const END_LINE='다 했어요.', RUB_LINE='손으로 문질러 봐요.', TAP_LINE='두드려 봐요.', FACT_LINE='기계에 넣어 봐요.';
+const sameAsk=m=>ro(MAT[m].label)+' 만든 것을 모두 찾아요.';
+const sameDone=m=>'모두 '+madeLine(m);
 function allLines(){ const L=new Set();
   Object.keys(LV).forEach(l=>LV[l].bundles.map(parseB).forEach(b=>b.items.forEach(({a,m})=>{ [isLine(a),madeLine(m),fullLine(a,m),askObj(a),askMat(a),nameLine(a)].forEach(x=>L.add(x)); })));
-  PHOTO.forEach(p=>{ L.add(askMat(p.a)); L.add(fullLine(p.a,p.m)); });
-  L.add(END_LINE); L.add(RUB_LINE); Object.values(INTRO_TITLE).forEach(t=>L.add(t+'.')); return [...L]; }
+  SCENES.forEach(sc=>sc.objs.forEach(({a,m})=>{ [isLine(a),fullLine(a,m),askObj(a),askMat(a),nameLine(a)].forEach(x=>L.add(x)); }));
+  Object.keys(MAT).forEach(m=>{ L.add(madeLine(m)); L.add(sameAsk(m)); L.add(sameDone(m)); });
+  [END_LINE,RUB_LINE,TAP_LINE,FACT_LINE].forEach(x=>L.add(x)); [...Object.values(INTRO_TITLE),...Object.values(GAME_TITLE)].forEach(t=>L.add(t+'.')); return [...L]; }
 
 /* ================= 저장 ================= */
 const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
@@ -610,19 +725,24 @@ const shuffle=a=>{a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Mat
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const jget=(k,d)=>{ try{ const v=JSON.parse(store.get(k)||'null'); return v==null?d:v; }catch(e){ return d; } };
 
-const PHASES=[['show','보기'],['obj','물체 찾기'],['mat','물질 고르기'],['sort','정리하기'],['photo','사진에서']];
+const PHASES=[['show','보기'],['obj','물체 찾기'],['mat','물질 고르기'],['same','같은 물질 찾기'],['sort','정리하기'],['photo','사진에서']];   /* 사진 수업에는 '사진에서'가 없음(모두 사진이라) */
+const FORMS=[['pic','그림 묶음','그림으로 개념 익히기'],['auto','자료실 사진 · 자동','수준에 맞는 사진을 앱이 골라요'],['choose','자료실 사진 · 골라서','선생님이 사진을 골라요'],['recv','사진 받기','찍은 사진을 AI가 살펴봐요']];
+const GAMES=[['끔',0],['문질러 찾기',1],['물질 공장',2],['두드려 보기',3],['돌아가며',4]];
+const GAME_TITLE={rub:'문질러 찾기',factory:'물질 공장',tap:'두드려 보기'};
 const S={
   stu:store.get('stu')||'', who:store.get('who')||'together', level:+(store.get('level')||1),
   steps:jget('steps',{show:1,obj:1,mat:1,sort:1,photo:1}), intro:store.get('intro')!=='0',
   game:+(store.get('game')??1), sound:store.get('sound')!=='0', engine:store.get('engine')||'builtin',
   admin:false, engineNow:'', voiceNote:'',
+  form:store.get('form')||'pic', pn:+(store.get('pn')||3), apick:jget('apick',[]), csel:jget('csel',[]), rsel:jget('rsel',[]),
   mode:store.get('mode')||'bundle', bsel:jget('bsel',[0]), msel:jget('msel',[]), mn:+(store.get('mn')||6), mpick:jget('mpick',[])
 };
 if(!LV[S.level]) S.level=1;
 PHASES.forEach(([k])=>{ if(S.steps[k]==null) S.steps[k]=1; });
 if(!Array.isArray(S.bsel)||!S.bsel.length) S.bsel=[0];
 function saveS(){ store.set('stu',S.stu); store.set('who',S.who); store.set('level',S.level); store.set('steps',JSON.stringify(S.steps)); store.set('mode',S.mode); store.set('bsel',JSON.stringify(S.bsel));
-  store.set('msel',JSON.stringify(S.msel)); store.set('mn',S.mn); store.set('mpick',JSON.stringify(S.mpick)); store.set('game',S.game); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); store.set('intro',S.intro?'1':'0'); }
+  store.set('msel',JSON.stringify(S.msel)); store.set('mn',S.mn); store.set('mpick',JSON.stringify(S.mpick));
+  store.set('form',S.form); store.set('pn',S.pn); store.set('apick',JSON.stringify(S.apick)); store.set('csel',JSON.stringify(S.csel)); store.set('rsel',JSON.stringify(S.rsel)); store.set('game',S.game); store.set('sound',S.sound?'1':'0'); store.set('engine',S.engine); store.set('intro',S.intro?'1':'0'); }
 
 /* ================= 학생 명단·기록 =================
    명단은 공통 모듈 Roster(common/roster.js — 다른 차름 앱과 함께 씀). 기록은 이 기기 브라우저에만, 뺀 학생의 기록은 6개월 보관 뒤 지움.
@@ -801,7 +921,14 @@ function renderSetup(){
   /* ③ 오늘 할 것 */
   const plan=makePlan(), ok=planOk(plan);
   const steps=PHASES.filter(p=>S.steps[p[0]]).map(p=>p[1]);
-  $('today').innerHTML=plan.map(bd=>'<div class="plan">'+(plan.length>1?'<h4>'+esc(bd.label)+'</h4>':'')+'<div class="cols">'+bd.mats.map(m=>'<div class="col"><div class="lid" style="background-image:'+TEX[m].replace(/"/g,"'")+'"><b>'+MAT[m].label+'</b></div>'
+  if(S.form!=='pic') $('today').innerHTML=plan.map(bd=>'<div class="plan"><h4>'+esc(bd.label)+'</h4><div class="phPlan"><img src="'+SC[bd.sid].src+'" alt=""><div>'
+      +bd.items.map(it=>'<span class="phIt">'+thumbHTML(it,46,1)+esc(it.a)+' · '+MAT[it.m].label+'</span>').join('')+'</div></div></div>').join('')
+    +'<div class="steps">'+LV[S.level].name+' · '+FORMS.find(f=>f[0]===S.form)[1]+' · 사진 '+plan.length+'장 · 물체 '+plan.reduce((n,b)=>n+b.items.length,0)+'개'
+    +' · '+(S.who==='alone'?'학생 혼자(사진을 펼쳐 놓고 골라요)':'선생님과 함께')
+    +'<br>단계: '+(PHASES.filter(p=>S.steps[p[0]]&&p[0]!=='photo').map(p=>p[1]).join(' → ')||'(없음)')+(S.game?' → '+GAMES.find(g=>g[1]===S.game)[0]:'')+' → 끝 장면'
+    +'<br>'+(S.stu?'기록: '+esc(nameOf(S.stu)):'연습 — 기록하지 않아요')+'</div>'
+    +(ok?'':'<div class="pickWarn">'+(S.form==='recv'?'받은 사진을 확인하고 골라 주세요(확인한 사진만 쓸 수 있어요).':'사진을 골라 주세요.')+'</div>');
+  else $('today').innerHTML=plan.map(bd=>'<div class="plan">'+(plan.length>1?'<h4>'+esc(bd.label)+'</h4>':'')+'<div class="cols">'+bd.mats.map(m=>'<div class="col"><div class="lid" style="background-image:'+TEX[m].replace(/"/g,"'")+'"><b>'+MAT[m].label+'</b></div>'
       +'<div class="ans">'+bd.items.filter(it=>it.m===m).map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div></div>').join('')+'</div></div>').join('')
     +'<div class="steps">'+LV[S.level].name+' · '+(S.mode==='bundle'?plan.map(b=>b.label).join(', '):'물질 고르기')+' · 물체 '+plan.reduce((n,b)=>n+b.items.length,0)+'개'
     +' · '+(S.who==='alone'?'학생 혼자(묶음을 펼쳐 놓고 골라요)':'선생님과 함께')
@@ -814,7 +941,7 @@ function renderSetup(){
   const st=$('stepRow'); st.innerHTML='';
   PHASES.forEach(([k,n])=>mkBtn(st,'chip sm'+(S.steps[k]?' on':''),n,()=>{ S.steps[k]=S.steps[k]?0:1; if(!PHASES.some(p=>S.steps[p[0]])) S.steps[k]=1; saveS(); renderSetup(); }));
   const gr=$('gameRow'); gr.innerHTML='';
-  [['끔',0],['묶음마다 (문질러 찾기)',1]].forEach(([n,v])=>mkBtn(gr,'chip sm'+(S.game===v?' on':''),n,()=>{ S.game=v; saveS(); renderSetup(); }));
+  GAMES.forEach(([n,v])=>mkBtn(gr,'chip sm'+(S.game===v?' on':''),n,()=>{ S.game=v; saveS(); renderSetup(); }));
   const ir=$('introRow'); ir.innerHTML='';
   [['보여 주기',1],['보여 주지 않기',0]].forEach(([n,v])=>mkBtn(ir,'chip sm'+((S.intro?1:0)===v?' on':''),n,()=>{ S.intro=!!v; saveS(); renderSetup(); }));
   const sn=$('sndRow'); sn.innerHTML='';
@@ -826,6 +953,10 @@ function renderPick(){
   const lv=S.level, mr=$('modeRow'); mr.innerHTML='';
   [['bundle','묶음별'],['mat','물질별']].forEach(([m,n])=>mkBtn(mr,'chip'+(S.mode===m?' on':''),n,()=>{ S.mode=m; if(m==='mat'&&S.msel.filter(x=>MATS[lv].includes(x)).length<2){ S.msel=MATS[lv].slice(0,2); S.mpick=[]; } saveS(); renderSetup(); }));
   const A=$('pickArea'); A.innerHTML='';
+  const fr=$('formRow'); fr.innerHTML='';
+  FORMS.forEach(([v,n,d])=>mkBtn(fr,'chip lv'+(S.form===v?' on':''),'<b>'+n+'</b><span>'+d+'</span>',()=>{ S.form=v; saveS(); renderSetup(); flash('c3'); }));
+  mr.style.display=S.form==='pic'?'':'none';
+  if(S.form!=='pic'){ renderPhotoPick(A); return; }
   const note=(t,warn)=>{ const d=document.createElement('div'); d.className=warn?'pickWarn':'pickNote'; d.textContent=t; A.appendChild(d); return d; };
   if(S.mode==='bundle'){
     note(S.who==='alone'?'학생에게 펼쳐 놓을 묶음을 고르세요(고르지 않은 것은 나오지 않아요).':'묶음을 '+MAXB+'개까지 고를 수 있어요. 고른 차례대로 합니다.');
@@ -875,8 +1006,21 @@ function pickByMat(){
   for(let r=0;out.length<N&&r<40;r++){ shuffle(ms).forEach(m=>{ if(out.length<N&&by[m][r]) out.push(by[m][r].a); }); }
   S.mpick=out;
 }
+/* 사진 한 장 → 수업 한 덩이. 물체는 물질이 고르게, 같은 이름은 하나만(정해진 차례 — 미리 보기와 수업이 같게). 물질 카드·상자는 2가지 이상(모자라면 수준 물질 하나를 더 — 빈 상자도 고를 거리) */
+function sceneUnit(sc,lv){ if(!sc) return null; const allow=LVM[lv], objs=sc.objs.filter(o=>allow.includes(o.m)); if(!objs.length) return null;
+  const pick=[]; objs.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.some(p=>p.m===o.m)&&!pick.some(p=>p.a===o.a)) pick.push(o); });
+  objs.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.includes(o)&&!pick.some(p=>p.a===o.a)) pick.push(o); });
+  const items=pick.map(o=>({a:o.a,m:o.m,sc:sc.id,box:o.box})), ms=[...new Set(items.map(x=>x.m))];
+  const extra=allow.filter(m=>!ms.includes(m)); let k=0; while(ms.length<2&&extra.length){ ms.push(extra[(sc.id.length+k)%extra.length]); extra.splice((sc.id.length+k)%extra.length,1); k++; }
+  return {mats:allow.filter(m=>ms.includes(m)),items,label:sc.t||'사진',sid:sc.id,bi:null,photo:1}; }
+const libScenes=lv=>SCENES.filter(sc=>sceneUnit(sc,lv));
+function pickScenes(){ const L=libScenes(S.level), two=shuffle(L.filter(sc=>sceneUnit(sc,S.level).items.length>1)), one=shuffle(L.filter(sc=>sceneUnit(sc,S.level).items.length<2));
+  S.apick=[...two,...one].slice(0,S.pn).map(sc=>sc.id); }
 function makePlan(){
   const lv=S.level;
+  if(S.form==='auto'){ if(!S.apick.length||S.apick.some(id=>!sceneUnit(SC[id],lv))) pickScenes(); return S.apick.map(id=>sceneUnit(SC[id],lv)).filter(Boolean); }
+  if(S.form==='choose') return S.csel.map(id=>sceneUnit(SC[id],lv)).filter(Boolean);
+  if(S.form==='recv') return S.rsel.filter(id=>RECV.some(r=>r.id===id&&r.ok)).map(id=>sceneUnit(SC[id],3)).filter(Boolean);
   if(S.mode==='mat'){
     const ms=S.msel.filter(m=>MATS[lv].includes(m));
     if(!S.mpick.length||S.mpick.some(a=>!POOL[lv].some(x=>x.a===a&&ms.includes(x.m)))) pickByMat();
@@ -886,7 +1030,7 @@ function makePlan(){
   const sel=(S.bsel||[]).filter(i=>BUN[lv][i]); if(!sel.length) sel.push(0);
   return sel.map(i=>({mats:BUN[lv][i].mats,items:BUN[lv][i].items,label:'묶음 '+(i+1),bi:i}));
 }
-function planOk(plan){ return plan.length&&plan.every(b=>b.mats.length>=2&&b.items.length>=2&&b.mats.length<=MAXM); }
+function planOk(plan){ return plan.length&&plan.every(b=>b.mats.length>=2&&b.items.length>=(b.photo?1:2)&&b.mats.length<=(b.photo?9:MAXM)); }
 
 /* ================= 수업 진행 =================
    한 묶음: 보기(물체마다) → 물체 찾기(이름 듣고 그림) → 물질 고르기(물체 보고 물질) → 정리하기(물질 상자에 넣기) → 사진에서(실제 물건의 물질)
@@ -902,10 +1046,19 @@ function buildRun(lv,plan,idx){
   PHASES.forEach(([k])=>{ if(!S.steps[k]) return;
     let items;
     if(k==='show') items=[...bd.items];
-    else if(k==='photo') items=photosFor(bd).map(p=>({a:p.a,m:p.m,ph:p}));
+    else if(k==='photo'){ if(bd.photo) return; items=photosFor(bd).map(p=>({a:p.a,m:p.m,ph:p})); }
+    else if(k==='same') items=sameQs(bd);
+    else if(k==='obj'&&bd.photo&&new Set(bd.items.map(x=>x.a)).size<2) return;   /* 물체가 하나뿐인 사진은 찾을 것이 없음 */
     else items=shuffleNoRepeat(bd.items);
     if(items.length) phases.push({k,items}); });
-  return {lv,plan,idx,b:bd.bi==null?-1:bd.bi,bd,phases,pi:0,ii:0,g:Date.now(),placed:{},token:0};
+  const lid={}; Object.keys(MAT).forEach(m=>lid[m]=Math.floor(Math.random()*4));
+  return {lv,plan,idx,b:bd.bi==null?-1:bd.bi,bd,phases,pi:0,ii:0,g:Date.now(),placed:{},token:0,lid,gk:nextGame()};
+}
+/* 같은 물질 찾기: 물질 하나를 보여 주고 그 물질로 만든 것을 모두 찾음 — 물질이 두 가지 이상 섞여 있을 때만, 한 덩이에 두 번까지 */
+function sameQs(bd){ const ms=[...new Set(bd.items.map(x=>x.m))]; if(ms.length<2) return []; return shuffle(ms).slice(0,2).map(m=>({m,a:''})); }
+/* 놀이 고르기: 돌아가며(4)는 물질 공장 → 두드려 보기 → 문질러 찾기 차례 */
+function nextGame(){ const g=S.game; if(g===1) return 'rub'; if(g===2) return 'factory'; if(g===3) return 'tap'; if(g!==4) return 'rub';
+  const L=['factory','tap','rub'], n=+(store.get('gturn')||0); store.set('gturn',String(n+1)); return L[n%3];
 }
 function shuffleNoRepeat(items){ /* 같은 물질이 세 번 이어 나오지 않게 */
   for(let t=0;t<30;t++){ const s=shuffle(items); let ok=true; for(let i=2;i<s.length;i++) if(s[i].m===s[i-1].m&&s[i].m===s[i-2].m) ok=false; if(ok) return s; }
@@ -950,14 +1103,20 @@ function runStep(){
   RUN.token++; clearTimers(); stopVoice(); clearStage(); renderProg(); saveSpot();
   const ph=RUN.phases[RUN.pi], it=ph.items[RUN.ii];
   if(S.intro&&RUN.ii===0&&!(RUN.introSeen=RUN.introSeen||{})[ph.k]){ stageIntro(ph.k,RUN.token,()=>{ RUN.introSeen[ph.k]=1; runStep(); }); return; }   /* 단계 알림(2026-11-21, 008과 같은 꼴) */
-  ({show:stepShow,obj:stepObj,mat:stepMat,sort:stepSort,photo:stepPhoto})[ph.k](it,RUN.token);
+  const P=RUN.bd.photo; ({show:P?stepPShow:stepShow,obj:P?stepPObj:stepObj,mat:P?stepPMat:stepMat,same:stepSame,sort:stepSort,photo:stepPhoto})[ph.k](it,RUN.token);
 }
 let TIMERS=[]; function later(fn,ms){ TIMERS.push(setTimeout(fn,ms)); } function clearTimers(){ TIMERS.forEach(clearTimeout); TIMERS=[]; }
 const alive=tok=>RUN&&RUN.token===tok&&!S.admin;
 
 /* 카드 만들기 */
-function objCard(a,s,cls){ const c=document.createElement('div'); c.className='oc'+(cls?' '+cls:''); c.dataset.a=a; c.style.width=c.style.height=s+'px'; c.innerHTML='<img src="'+pic(a)+'" alt="'+esc(a)+'" draggable="false">'; return c; }
-function matCard(m,s,cls){ const c=document.createElement('div'); c.className='mc'+(cls?' '+cls:''); c.dataset.m=m; c.style.width=s+'px'; c.innerHTML='<div class="tex" style="background-image:'+TEX[m].replace(/"/g,"'")+'"></div><div class="lab" style="font-size:'+Math.max(14,Math.min(s*(MAT[m].label.length>2?0.15:0.19),36))+'px">'+MAT[m].label+'</div>'; return c; }
+/* 물체 그림: 그림 물체는 낱말 그림, 사진 물체(it.box)는 사진에서 그 물체 둘레를 정사각형으로 잘라 보여 줌 */
+function cropStyle(it,s){ const sc=SC[it.sc]; if(!sc) return ''; const [x0,y0,x1,y1]=it.box, W=sc.w, H=sc.h;
+  const bw=(x1-x0)*W/1000, bh=(y1-y0)*H/1000, side=Math.max(bw,bh)*1.08, cx=x0*W/1000+bw/2-side/2, cy=y0*H/1000+bh/2-side/2, k=s/side;
+  return "background-image:url('"+sc.src+"');background-size:"+(W*k).toFixed(1)+'px '+(H*k).toFixed(1)+'px;background-position:'+(-cx*k).toFixed(1)+'px '+(-cy*k).toFixed(1)+'px;background-repeat:no-repeat;background-color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact'; }
+function thumbHTML(it,s,sized){ if(typeof it==='string') it={a:it};
+  return it.box?'<span class="crop" style="width:'+s+'px;height:'+s+'px;'+cropStyle(it,s)+'"></span>':'<img src="'+pic(it.a)+'" alt="" draggable="false"'+(sized?' style="width:'+s+'px;height:'+s+'px"':'')+'>'; }
+function objCard(it,s,cls){ if(typeof it==='string') it={a:it}; const c=document.createElement('div'); c.className='oc'+(cls?' '+cls:''); c.dataset.a=it.a; c.style.width=c.style.height=s+'px'; c.innerHTML=thumbHTML(it,s-22); return c; }
+function matCard(m,s,cls){ const c=document.createElement('div'); c.className='mc'+(cls?' '+cls:''); c.dataset.m=m; c.style.width=s+'px'; c.innerHTML='<div class="tex" style="background-image:'+texOf(m).replace(/"/g,"'")+'"></div><div class="lab" style="font-size:'+Math.max(14,Math.min(s*(MAT[m].label.length>2?0.15:0.19),36))+'px">'+MAT[m].label+'</div>'; return c; }
 /* 보기 카드 줄: 세로 화면이고 3장 넘으면 두 줄 */
 function optRow(n,cs,gap){ const row=document.createElement('div'); row.className='opts'; row.style.columnGap=gap+'px';
   if(portrait()&&n>3){ row.style.flexWrap='wrap'; row.style.maxWidth=(cs*2+gap+8)+'px'; row.style.rowGap=gap+'px'; } return row; }
@@ -1055,7 +1214,7 @@ function photoBox(p,maxW,maxH){
     +'<div class="hole" style="left:'+((x0-cx0)*k)+'px;top:'+((y0-cy0)*k)+'px;width:'+(bw*k)+'px;height:'+(bh*k)+'px"></div>';
   return d;
 }
-function stepPhoto(it,tok){
+function stepPhoto(it,tok,kind){
   const st=$('stage'), A=area(), opts=matOptions(it), n=opts.length, gap=Math.max(16,A.w*0.03);
   const cs0=optSize(n,A.w,A.h*0.36,gap,true);
   const bub=document.createElement('div'); bub.className='bubble'; bub.style.padding='8px';
@@ -1064,7 +1223,7 @@ function stepPhoto(it,tok){
   st.appendChild(bub); st.appendChild(row);
   const cards=[...row.children];
   choiceRound(tok,{say:askMat(it.a),cards,isRight:c=>c.dataset.m===it.m,
-    rec:(w,h)=>logRow('photo',it,w&&w.dataset.m,h),
+    rec:(w,h)=>logRow(kind||'photo',it,w&&w.dataset.m,h),
     onRight:async c=>{ dim(cards,c); await speak(fullLine(it.a,it.m)); if(!alive(tok)) return; pb.classList.add('lit'); await wait(1600); if(alive(tok)) nextItem(); }});
 }
 
@@ -1072,12 +1231,14 @@ function stepPhoto(it,tok){
 function binEl(m,w,h){
   const b=document.createElement('div'); b.className='bin'; b.dataset.m=m; b.style.width=w+'px'; b.style.height=h+'px';
   const lh=Math.max(46,h*0.3);
-  b.innerHTML='<div class="lid" style="height:'+lh+'px;background-image:'+TEX[m].replace(/"/g,"'")+'"><b style="font-size:'+Math.max(18,Math.min(lh*0.42,34))+'px">'+MAT[m].label+'</b><span class="slot"></span></div><div class="body"></div>';
+  b.innerHTML='<div class="lid" style="height:'+lh+'px;background-image:'+lidTex(m).replace(/"/g,"'")+'"><b style="font-size:'+Math.max(18,Math.min(lh*0.42,34))+'px">'+MAT[m].label+'</b><span class="slot"></span></div><div class="body"></div>';
   return b;
 }
 function fillBin(b,list,newA){ const body=b.querySelector('.body'), w=b.clientWidth; body.innerHTML='';
   const s=Math.max(28,Math.min(w/3.3,(b.clientHeight-b.querySelector('.lid').offsetHeight)/2.3));
-  list.forEach(a=>{ const im=document.createElement('img'); im.src=pic(a); im.alt=a; im.style.width=im.style.height=s+'px'; if(a===newA) im.className='new'; body.appendChild(im); }); }
+  list.forEach(x=>{ const it=typeof x==='string'?{a:x}:x, isNew=newA&&it.a===(newA.a||newA)&&it.sc===newA.sc;
+    if(it.box){ const sp=document.createElement('span'); sp.innerHTML=thumbHTML(it,s); const c=sp.firstChild; if(isNew) c.classList.add('new'); body.appendChild(c); return; }
+    const im=document.createElement('img'); im.src=pic(it.a); im.alt=it.a; im.style.width=im.style.height=s+'px'; if(isNew) im.className='new'; body.appendChild(im); }); }
 function binRow(mats,A,availH){
   const n=mats.length, gap=Math.max(14,A.w*0.02), cols=(portrait()&&n>2)?2:n, rows=Math.ceil(n/cols);
   const w=Math.min((A.w-gap*(cols-1))/cols-6,330), h=Math.min((availH-gap*(rows-1))/rows, w*1.2);
@@ -1090,7 +1251,7 @@ function stepSort(it,tok){
   const os=Math.min(A.h*0.26,200);
   const row=binRow(mats,A,A.h-os-40);
   const tray=document.createElement('div'); tray.className='tray';
-  const ac=objCard(it.a,os); tray.appendChild(ac); st.appendChild(row); st.appendChild(tray);
+  const ac=objCard(it,os); tray.appendChild(ac); st.appendChild(row); st.appendChild(tray);
   const bins=[...row.children];
   requestAnimationFrame(()=>bins.forEach(b=>fillBin(b,RUN.placed[b.dataset.m]||[])));
   let wrong=null, helped=false, over=false, drag=null;
@@ -1103,13 +1264,13 @@ function stepSort(it,tok){
     if(b.dataset.m!==it.m){ if(!wrong) wrong=b.dataset.m; return; }
     over=true; clearTimers(); b.classList.remove('glow'); chime(); logRow('sort',it,wrong,helped||!!wrong);
     ac.style.visibility='hidden';
-    (RUN.placed[it.m]=RUN.placed[it.m]||[]).push(it.a); fillBin(b,RUN.placed[it.m],it.a);
+    (RUN.placed[it.m]=RUN.placed[it.m]||[]).push({a:it.a,sc:it.sc,box:it.box}); fillBin(b,RUN.placed[it.m],it);
     await speak(fullLine(it.a,it.m)); if(!alive(tok)) return; await wait(700); if(alive(tok)) nextItem();
   };
   bins.forEach(b=>b.addEventListener('pointerdown',()=>{ if(!drag) tryPlace(b); }));
   ac.addEventListener('pointerdown',e=>{ if(over) return; e.preventDefault(); try{ ac.setPointerCapture(e.pointerId); }catch(_){} drag={x:e.clientX,y:e.clientY,on:false,g:null}; });
   ac.addEventListener('pointermove',e=>{ if(!drag) return;
-    if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>10){ drag.on=true; const g=document.createElement('img'); g.className='drag'; g.src=pic(it.a); g.style.width=g.style.height=os*0.8+'px'; document.body.appendChild(g); drag.g=g; ac.style.opacity=.3; }
+    if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>10){ drag.on=true; const g=document.createElement('div'); g.className='drag'; g.innerHTML=thumbHTML(it,os*0.8); g.style.width=g.style.height=os*0.8+'px'; document.body.appendChild(g); drag.g=g; ac.style.opacity=.3; }
     if(drag.on){ drag.g.style.left=e.clientX+'px'; drag.g.style.top=e.clientY+'px'; } });
   const endDrag=e=>{ if(!drag) return; const d=drag; drag=null; if(d.g) d.g.remove(); ac.style.opacity=1;
     if(d.on){ const el=document.elementFromPoint(e.clientX,e.clientY); const b=el&&el.closest('.bin'); if(b) tryPlace(b); } };
@@ -1124,42 +1285,48 @@ function finishBundle(){
   saveResume();
   if(ALONE) ALONE.done.add(RUN.idx);
   /* 정리하기를 안 했으면 끝 장면 상자는 묶음 물체로 채움 */
-  RUN.bd.items.forEach(({a,m})=>{ const l=RUN.placed[m]=RUN.placed[m]||[]; if(!l.includes(a)) l.push(a); });
+  RUN.bd.items.forEach(({a,m,sc,box})=>{ const l=RUN.placed[m]=RUN.placed[m]||[]; if(!l.some(x=>(x.a||x)===a&&x.sc===sc)) l.push({a,sc,box}); });
   RUN.ending=true; RUN.gameDone=!S.game;
   startEnd();
 }
 function startEnd(){
   RUN.token++; const tok=RUN.token; clearTimers(); stopVoice(); clearStage(); renderProg();
-  if(!RUN.gameDone){ if((RUN.introSeen=RUN.introSeen||{}).game) playRub(tok); else stageIntro('game',tok,()=>{ RUN.introSeen.game=1; playRub(tok); }); }   /* 놀이 알림은 늘(008과 같게) */
+  const play=()=>({rub:playRub,factory:playFactory,tap:playTap}[RUN.gk]||playRub)(tok);
+  if(!RUN.gameDone){ if((RUN.introSeen=RUN.introSeen||{}).game) play(); else stageIntro('game',tok,()=>{ RUN.introSeen.game=1; play(); }); }   /* 놀이 알림은 늘(008과 같게) */
   else drawEnd(tok);
 }
 /* 단계 알림(2026-11-21 선생님 — 008처럼): 단계마다 시작 전에 한 장 — 단계 표(마친 ✓·지금 보라) · 큰 제목 · 그 단계를 보여 주는 작은 그림 · 시작.
    보기만 하다가 누르기·끌기로 할 일이 바뀌는 때를 미리 알려 전환을 예측하게(시각적 일과표). 효과·칭찬 소리 없이 매번 같게.
    제목은 한 번 들려줌(내장 목소리에 그 소리가 있을 때만 — 없으면 말 없이). 학생이 시작(또는 제목)을 눌러야 시작.
    한 묶음에서 단계마다 한 번만(RUN.introSeen). 설정 '더 정하기 → 단계 알림'으로 끔(문질러 찾기 알림은 늘) */
-const INTRO_TITLE={show:'보기',obj:'물체 찾기',mat:'물질 고르기',sort:'정리하기',photo:'사진에서',game:'문질러 찾기'};
+const INTRO_TITLE={show:'보기',obj:'물체 찾기',mat:'물질 고르기',same:'같은 물질 찾기',sort:'정리하기',photo:'사진에서'};
+const titleOf=k=>k==='game'?GAME_TITLE[RUN.gk]||'놀이':INTRO_TITLE[k];
 async function sayIfHave(t){ if(S.engineNow==='builtin'){ await voiceReady; if(!VSET||!VSET.has(await sha16(t))) return; } return speak(t); }
 function stageIntro(k,tok,go){
   const st=$('stage'), bd=RUN.bd, arrow='<span class="gArrow">→</span>';
-  const an=a=>'<img class="an" src="'+pic(a)+'" alt="">', mt=(m,c)=>'<span class="mt'+(c?' cover':'')+'" style="background-image:'+TEX[m].replace(/"/g,"'")+'"><b>'+MAT[m].label+'</b></span>';
+  const an=x=>x.box?'<span class="an crop" style="'+cropStyle(x,110)+'"></span>':'<img class="an" src="'+pic(x.a)+'" alt="">', mt=(m,c)=>'<span class="mt'+(c?' cover':'')+'" style="background-image:'+texOf(m).replace(/"/g,"'")+'"><b>'+MAT[m].label+'</b></span>';
   const it0=bd.items[0], ms=bd.mats.slice(0,3);
   /* 보기 칸에 같은 이름('컵')이 둘 나오지 않게 */
   const objs=[]; shuffle(bd.items).forEach(x=>{ if(objs.length<3&&!objs.some(y=>nm(y.a)===nm(x.a))) objs.push(x); });
   const php=RUN.phases.find(p=>p.k==='photo'), ph=php&&php.items[0]?php.items[0].ph:PHOTO.find(p=>bd.mats.includes(p.m));   /* 그 단계 첫 사진 */
-  const fig=k==='show'?an(it0.a)+arrow+mt(it0.m)
-    :k==='obj'?'<span class="wd">'+esc(nm(objs[0].a))+'</span>'+arrow+shuffle(objs).map(x=>an(x.a)).join('')
-    :k==='mat'?an(it0.a)+arrow+ms.map(m=>mt(m)).join('')
-    :k==='sort'?objs.map(x=>an(x.a)).join('')+arrow+ms.map(m=>mt(m)).join('')
+  const scImg=bd.photo?'<img class="ph" src="'+SC[bd.sid].src+'" alt="">':'';
+  const fig=k==='show'?(scImg?scImg+arrow+an(it0)+mt(it0.m):an(it0)+arrow+mt(it0.m))
+    :k==='obj'?'<span class="wd">'+esc(nm(objs[0].a))+'</span>'+arrow+(scImg||shuffle(objs).map(x=>an(x)).join(''))
+    :k==='mat'?an(it0)+arrow+ms.map(m=>mt(m)).join('')
+    :k==='same'?mt(it0.m)+arrow+(scImg||bd.items.filter(x=>x.m===it0.m).slice(0,3).map(x=>an(x)).join(''))
+    :k==='sort'?objs.map(x=>an(x)).join('')+arrow+ms.map(m=>mt(m)).join('')
     :k==='photo'?(ph?'<img class="ph" src="'+PH_URL(ph)+'" alt="">':'')+arrow+ms.map(m=>mt(m)).join('')
+    :RUN.gk==='factory'?ms.map(m=>mt(m)).join('')+arrow+'<span class="miniMach">'+MACH_SVG+'</span>'
+    :RUN.gk==='tap'?(scImg||objs.map(x=>an(x)).join(''))+'<span class="gArrow">♪</span>'
     :ms.map(m=>mt(m,1)).join('');
   const keys=stepKeys().filter(x=>x!=='end'), cur=keys.indexOf(k);
-  const row='<div class="stepRow">'+keys.map((x,i)=>'<span class="'+(i<cur?'done':i===cur?'now':'')+'">'+(i<cur?'✓ ':'')+INTRO_TITLE[x]+'</span>').join('<i></i>')+'</div>';
+  const row='<div class="stepRow">'+keys.map((x,i)=>'<span class="'+(i<cur?'done':i===cur?'now':'')+'">'+(i<cur?'✓ ':'')+titleOf(x)+'</span>').join('<i></i>')+'</div>';
   const box=document.createElement('div'); box.className='introBox';
-  box.innerHTML=row+'<div class="gTitle">'+INTRO_TITLE[k]+'</div><div class="gPics">'+fig+'</div><button type="button" class="gGo">시작</button>';
+  box.innerHTML=row+'<div class="gTitle">'+titleOf(k)+'</div><div class="gPics">'+fig+'</div><button type="button" class="gGo">시작</button>';
   st.appendChild(box);
   let went=false; const g=()=>{ if(went||!alive(tok)) return; went=true; unlockAudio(); stopVoice(); go(); };
   tapper(box.querySelector('.gGo'),g); tapper(box.querySelector('.gTitle'),g);
-  later(()=>{ if(alive(tok)&&!went) sayIfHave(INTRO_TITLE[k]+'.'); },500);
+  later(()=>{ if(alive(tok)&&!went) sayIfHave(titleOf(k)+'.'); },500);
 }
 async function drawEnd(tok){
   const st=$('stage'), A=area();
@@ -1172,6 +1339,286 @@ async function drawEnd(tok){
 }
 
 /* ---- 문질러 찾기(보상 놀이): 물질 결로 덮인 판을 손으로 문지르면 그 물질로 만든 물체가 나타남. 진 것·시간 재기 없음 ---- */
+/* ================= 사진 수업(2026-11-21 선생님): 자료실 사진 · 자동 / 골라서 / 사진 받기 =================
+   사진 한 장 = 한 덩이. 살펴보기(물체 하나만 밝게) → 물체 찾기(사진에서 바로 누름) → 물질 고르기 → 같은 물질 찾기 → 정리하기(사진 조각) → 놀이 */
+function sceneEl(sc,maxW,maxH){ const k=Math.min(maxW/sc.w,maxH/sc.h), w=sc.w*k, h=sc.h*k;
+  const d=document.createElement('div'); d.className='scene'; d.style.width=w+'px'; d.style.height=h+'px';
+  d.innerHTML='<img src="'+sc.src+'" alt="" draggable="false">';
+  const at=(el,b)=>{ el.style.left=b[0]/1000*w+'px'; el.style.top=b[1]/1000*h+'px'; el.style.width=(b[2]-b[0])/1000*w+'px'; el.style.height=(b[3]-b[1])/1000*h+'px'; return el; };
+  return {d,w,h,at}; }
+function spot(V,box){ let s=V.d.querySelector('.spot'); if(!s){ s=document.createElement('div'); s.className='spot'; V.d.appendChild(s); } V.at(s,box); return s; }
+/* 누를 자리: 작은 물체가 큰 물체(문 안의 손잡이) 위에 오게 */
+function frame(V,it,cls){ const f=document.createElement('div'); f.className='fr'+(cls?' '+cls:''); V.at(f,it.box); f.dataset.a=it.a; f.dataset.m=it.m;
+  const b=it.box; f.style.zIndex=String(10+Math.round(1e6/Math.max(400,(b[2]-b[0])*(b[3]-b[1])))); V.d.appendChild(f); return f; }
+const phOf=it=>{ const sc=SC[it.sc]; return {w:sc.w,h:sc.h,src:sc.src,box:[it.box[0]*sc.w/1000,it.box[1]*sc.h/1000,it.box[2]*sc.w/1000,it.box[3]*sc.h/1000]}; };
+
+/* ---- 사진 1. 살펴보기: 사진 전체 → 물체 하나만 밝게 → "탁자예요." → 물질 카드 "나무로 만들었어요." ---- */
+async function stepPShow(it,tok){
+  const st=$('stage'), A=area(), por=portrait(), sc=SC[it.sc];
+  const ms=por?Math.min(A.w*0.42,190):Math.min(A.h*0.46,A.w*0.22,250);
+  const V=sceneEl(sc,por?A.w:A.w-ms-70,por?A.h-ms-120:A.h-80);
+  const pair=document.createElement('div'); pair.className='pair'; pair.style.flexDirection=por?'column':'row'; pair.style.gap=por?'12px':'26px';
+  const L=document.createElement('div'), R=document.createElement('div'); R.className='slideIn';
+  L.appendChild(V.d); const tag=document.createElement('div'); tag.className='nameTag'; tag.textContent=nm(it.a); tag.style.opacity=0; tag.style.transition='opacity .6s'; L.appendChild(tag);
+  R.innerHTML='<div class="cap">물질</div>'; const mc=matCard(it.m,ms); mc.style.cursor='default'; R.appendChild(mc);
+  pair.appendChild(L); pair.appendChild(R); st.appendChild(pair);
+  await wait(800); if(!alive(tok)) return; spot(V,it.box);
+  await wait(700); if(!alive(tok)) return; tag.style.opacity=1;
+  await speak(isLine(it.a)); if(!alive(tok)) return;
+  await wait(500); if(!alive(tok)) return; R.classList.add('on'); await wait(700); if(!alive(tok)) return;
+  await speak(madeLine(it.m)); if(!alive(tok)) return;
+  await wait(1400); if(alive(tok)) nextItem();
+}
+/* ---- 사진 2. 물체 찾기: 이름 → 사진에서 그 물체를 누름. 수준 1 = 테두리 2곳, 2 = 4곳까지, 3 = 테두리 없이 ---- */
+function stepPObj(it,tok){
+  const st=$('stage'), A=area(), sc=SC[it.sc], lv=RUN.lv, fs=Math.min(A.h*0.1,70);
+  const bub=document.createElement('div'); bub.className='bubble'; bub.innerHTML='<div class="word" style="font-size:'+fs+'px">'+esc(nm(it.a))+'</div>';
+  const V=sceneEl(sc,A.w,A.h-fs-90); V.d.style.marginTop='22px';
+  const others=shuffle(RUN.bd.items.filter(x=>x.a!==it.a)), cand=lv===1?[it,...others.slice(0,1)]:lv===2?[it,...others.slice(0,3)]:[it,...others];
+  const cards=cand.map(x=>{ const f=frame(V,x,lv>=3?'ghost':''); f.style.opacity=0; return f; });
+  st.appendChild(bub); st.appendChild(V.d);
+  choiceRound(tok,{say:askObj(it.a),cards,isRight:c=>c.dataset.a===it.a,
+    rec:(w,h)=>logRow('obj',it,w&&w.dataset.a,h),
+    onRight:async c=>{ cards.forEach(f=>{ if(f!==c) f.style.opacity=0; }); spot(V,it.box); await speak(isLine(it.a)); if(!alive(tok)) return; await wait(900); if(alive(tok)) nextItem(); }});
+}
+/* ---- 사진 3. 물질 고르기: '사진에서'와 같은 화면(물체 둘레만 밝게 → 물질 카드), 기록은 물질 고르기로 ---- */
+function stepPMat(it,tok){ stepPhoto(Object.assign({},it,{ph:phOf(it)}),tok,'mat'); }
+
+/* ---- 같은 물질 찾기(그림·사진 모두): 물질 카드 → "나무로 만든 것을 모두 찾아요." → 다 찾으면 "모두 나무로 만들었어요." ---- */
+function stepSame(q,tok){
+  const st=$('stage'), A=area(), bd=RUN.bd, m=q.m, P=!!bd.photo, mcS=Math.min(A.h*0.22,150);
+  const bub=document.createElement('div'); bub.className='bubble'; const mc=matCard(m,mcS); mc.style.cursor='default'; mc.style.border='0'; bub.appendChild(mc);
+  let cards, holder;
+  if(P){ const V=sceneEl(SC[bd.sid],A.w,A.h-mcS-120); V.d.style.marginTop='22px'; cards=bd.items.map(x=>{ const f=frame(V,x,RUN.lv>=3?'ghost':''); f.style.opacity=0; return f; }); holder=V.d; }
+  else { const mine=bd.items.filter(x=>x.m===m), rest=shuffle(bd.items.filter(x=>x.m!==m)).slice(0,Math.max(2,6-mine.length)), its=shuffle([...mine,...rest]);
+    const n=its.length, gap=Math.max(14,A.w*0.025), cols=portrait()?2:(n>4?3:n), rows=Math.ceil(n/cols), hAv=A.h-mcS-120;
+    const cs=Math.max(70,Math.min((A.w-gap*(cols-1))/cols-8,(hAv-gap*(rows-1))/rows,230));
+    const row=document.createElement('div'); row.className='opts'; row.style.cssText='margin-top:22px;flex-wrap:wrap;column-gap:'+gap+'px;row-gap:'+gap+'px;max-width:'+(cs*cols+gap*(cols-1)+8)+'px';
+    its.forEach(x=>{ const c=objCard(x,cs,'fadeIn'); c.dataset.m=x.m; row.appendChild(c); }); cards=[...row.children]; holder=row; }
+  st.appendChild(bub); st.appendChild(holder);
+  const rights=cards.filter(c=>c.dataset.m===m); let left=rights.length, wrong=null, helped=false, over=false, armed=false;
+  const glow=()=>{ helped=true; rights.filter(c=>!c.classList.contains('right')).forEach(c=>c.classList.add('glow')); };
+  later(()=>{ if(alive(tok)&&!over){ cards.forEach(c=>{ c.style.opacity=1; }); armed=true; } },1000);
+  speak(sameAsk(m)).then(()=>{ if(!alive(tok)) return; later(()=>{ if(alive(tok)&&!over) speak(sameAsk(m)); },8000); later(()=>{ if(alive(tok)&&!over) glow(); },16000); });
+  cards.forEach(c=>tapper(c,()=>{
+    if(!armed||over||!alive(tok)||c.classList.contains('right')) return;
+    if(c.dataset.m!==m){ if(!wrong){ wrong=c.dataset.a; glow(); } return; }
+    c.classList.remove('glow'); c.classList.add('right'); chime(); left--;
+    if(left) return;
+    over=true; clearTimers(); logRow('same',{a:rights.map(x=>x.dataset.a).join(','),m},wrong,helped||!!wrong);
+    (async()=>{ cards.forEach(x=>{ if(!x.classList.contains('right')) x.style.opacity=P?0:.25; }); await wait(400); if(!alive(tok)) return;
+      await speak(sameDone(m)); if(!alive(tok)) return; await wait(900); if(alive(tok)) nextItem(); })();
+  }));
+}
+
+/* ================= 놀이 2. 두드려 보기: 물체를 두드리면 그 물질 소리(나무 똑 · 유리 띵 · 종이 바스락). 소리는 작고 부드럽게 — 소리에 예민한 학생 ================= */
+function matSound(m){ if(!S.sound) return; const c=getCtx(); if(!c) return; if(c.state==='suspended') c.resume();
+  const t=c.currentTime+0.01, out=c.createGain(); out.gain.value=0.55; out.connect(c.destination);
+  const tone=(f,d,g,type,bend)=>{ const o=c.createOscillator(), e=c.createGain(); o.type=type||'sine'; o.frequency.setValueAtTime(f,t); if(bend) o.frequency.exponentialRampToValueAtTime(bend,t+d);
+    e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(g,t+0.006); e.gain.exponentialRampToValueAtTime(0.0006,t+d); o.connect(e); e.connect(out); o.start(t); o.stop(t+d+0.05); };
+  const noise=(d,g,ft,f,q,at)=>{ const n=Math.floor(c.sampleRate*d), b=c.createBuffer(1,n,c.sampleRate), x=b.getChannelData(0); for(let i=0;i<n;i++) x[i]=Math.random()*2-1;
+    const sN=c.createBufferSource(); sN.buffer=b; const fl=c.createBiquadFilter(); fl.type=ft; fl.frequency.value=f; fl.Q.value=q||1; const e=c.createGain();
+    e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(g,t+(at||0.004)); e.gain.exponentialRampToValueAtTime(0.0006,t+d); sN.connect(fl); fl.connect(e); e.connect(out); sN.start(t); sN.stop(t+d+0.02); };
+  ({wood:()=>{ tone(430,0.13,0.32,'sine',300); noise(0.05,0.22,'bandpass',950,2.2); },
+    metal:()=>{ tone(880,0.9,0.06); tone(1333,0.7,0.035); tone(2210,0.45,0.02); noise(0.02,0.08,'highpass',4000); },
+    glass:()=>{ tone(2093,0.5,0.07); tone(3140,0.32,0.035); },
+    ceramic:()=>{ tone(1480,0.2,0.11); tone(2620,0.13,0.05); noise(0.03,0.08,'highpass',3200); },
+    plastic:()=>{ tone(720,0.08,0.22,'triangle',520); noise(0.04,0.12,'bandpass',1900,1.6); },
+    paper:()=>{ noise(0.32,0.2,'bandpass',3600,0.6,0.05); },
+    cloth:()=>{ noise(0.2,0.3,'lowpass',480,0.7,0.02); },
+    rubber:()=>{ tone(190,0.24,0.32,'sine',125); },
+    stone:()=>{ tone(150,0.11,0.32,'sine',105); noise(0.09,0.26,'lowpass',650,1); }})[m]?.(); }
+function playTap(tok){
+  const st=$('stage'), A=area(), bd=RUN.bd; let cards;
+  if(bd.photo){ const V=sceneEl(SC[bd.sid],A.w,A.h-10); st.appendChild(V.d); cards=bd.items.map(x=>frame(V,x,'soft')); }
+  else { const its=bd.items.slice(0,8), n=its.length, gap=Math.max(14,A.w*0.02), cols=portrait()?2:Math.min(n,4), rows=Math.ceil(n/cols);
+    const cs=Math.min((A.w-gap*(cols-1))/cols-8,(A.h-gap*(rows-1))/rows-8,240), g=document.createElement('div'); g.className='scr'; g.style.gridTemplateColumns='repeat('+cols+','+cs+'px)'; g.style.gap=gap+'px';
+    its.forEach(x=>{ const c=objCard(x,cs); c.dataset.m=x.m; g.appendChild(c); }); st.appendChild(g); cards=[...g.children]; }
+  const hit=new Set(); let finished=false;
+  const finish=ms=>{ if(finished) return; finished=true; later(()=>{ if(!alive(tok)) return; RUN.gameDone=true; startEnd(); },ms); };
+  cards.forEach((c,i)=>tapper(c,()=>{ if(!alive(tok)) return; matSound(c.dataset.m);
+    c.classList.remove('wig'); void c.offsetWidth; c.classList.add('wig');
+    let b=c.querySelector('.badge'); if(!b){ b=document.createElement('span'); b.className='badge'; c.appendChild(b); } b.textContent=MAT[c.dataset.m].label; b.classList.add('on');
+    clearTimeout(b._t); b._t=setTimeout(()=>b.classList.remove('on'),1400);
+    hit.add(i); if(hit.size===cards.length) finish(5000); }));
+  speak(TAP_LINE);
+  later(()=>{ if(alive(tok)) finish(0); },60000);   /* 1분이 지나면 끝 장면으로 */
+}
+
+/* ================= 놀이 3. 물질 공장: 물질 카드를 기계에 넣으면 덜컹덜컹 → 그 물질로 만든 물건이 하나씩 나옴. 지는 것 없음 ================= */
+const MACH_SVG='<svg viewBox="0 0 230 200" aria-hidden="true"><g stroke="#5E4E3C" stroke-width="3" stroke-linejoin="round">'
+  +'<path class="hop" d="M58 8 L142 8 L124 46 L76 46 Z" fill="#CDBB9E"/><rect x="70" y="44" width="60" height="14" fill="#B9A688"/>'
+  +'<rect x="18" y="56" width="164" height="118" rx="16" fill="#E6D8C1"/><path d="M182 132 L222 150 L222 172 L182 160 Z" fill="#CDBB9E"/>'
+  +'<circle cx="84" cy="114" r="34" fill="#F7F1E6"/><g class="gear"><path d="M84 88 l6 0 2 8 7 3 7-5 4 4-5 7 3 7 8 2 0 6-8 2-3 7 5 7-4 4-7-5-7 3-2 8-6 0-2-8-7-3-7 5-4-4 5-7-3-7-8-2 0-6 8-2 3-7-5-7 4-4 7 5 7-3 z" fill="#B3A07F" stroke-width="2"/><circle cx="84" cy="114" r="7" fill="#F7F1E6" stroke-width="2"/></g>'
+  +'<circle cx="146" cy="84" r="7" fill="#9C86C4" class="lamp"/><circle cx="164" cy="84" r="7" fill="#E6C76A" class="lamp b"/>'
+  +'<rect x="132" y="104" width="38" height="10" rx="5" fill="#CDBB9E"/><rect x="132" y="124" width="38" height="10" rx="5" fill="#CDBB9E"/>'
+  +'<rect x="30" y="172" width="22" height="18" fill="#B9A688"/><rect x="148" y="172" width="22" height="18" fill="#B9A688"/></g></svg>';
+function factoryPool(m){ const seen=new Set(), L=[];
+  RUN.bd.items.filter(x=>x.m===m).forEach(x=>{ const k=x.a+'|'+(x.sc||''); if(!seen.has(k)){ seen.add(k); L.push(x); } });
+  Object.keys(LV).forEach(l=>BUN[l].forEach(b=>b.items.forEach(x=>{ if(x.m===m&&!PIC_TODO.has(x.a)&&!seen.has(x.a)){ seen.add(x.a); L.push({a:x.a,m}); } })));
+  SCENES.forEach(sc=>sc.objs.forEach(o=>{ const k=o.a+'|'+sc.id; if(o.m===m&&!seen.has(k)&&L.length<14){ seen.add(k); L.push({a:o.a,m,sc:sc.id,box:o.box}); } }));
+  return {list:shuffle(L),i:0}; }
+function playFactory(tok){
+  const st=$('stage'), A=area(), bd=RUN.bd, mats=bd.mats, por=portrait();
+  const mh=Math.min(A.h*(por?0.36:0.5),300), mw=mh*1.15, cs=Math.min(A.h*0.24,(A.w-30)/mats.length-22,160), sz=Math.min(mh*0.48,130);
+  const box=document.createElement('div'); box.className='fac';
+  box.innerHTML='<div class="facTop" style="flex-direction:'+(por?'column':'row')+'"><div class="mach" style="width:'+mw+'px;height:'+mh+'px">'+MACH_SVG+'</div><div class="shelf" style="'+(por?'width:'+A.w+'px':'width:'+Math.min(A.w-mw-40,sz*3+40)+'px')+'"></div></div><div class="facMats"></div>';
+  st.appendChild(box);
+  const mach=box.querySelector('.mach'), shelf=box.querySelector('.shelf'), mrow=box.querySelector('.facMats');
+  const pools={}; mats.forEach(m=>pools[m]=factoryPool(m));
+  let busy=false, made=0, finished=false; const used=new Set();
+  const finish=()=>{ if(finished) return; finished=true; later(()=>{ if(!alive(tok)) return; RUN.gameDone=true; startEnd(); },2600); };
+  const clunk=()=>{ if(!S.sound) return; matSound('wood'); };
+  mats.forEach(m=>{ const c=matCard(m,cs); mrow.appendChild(c);
+    tapper(c,async()=>{ if(busy||finished||!alive(tok)) return; busy=true; unlockAudio();
+      const r=c.getBoundingClientRect(), h=mach.querySelector('.hop').getBoundingClientRect(), fly=c.cloneNode(true);
+      fly.classList.add('fly'); fly.style.left=r.left+'px'; fly.style.top=r.top+'px'; document.body.appendChild(fly);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{ fly.style.transform='translate('+(h.left+h.width/2-r.left-r.width/2)+'px,'+(h.top+h.height/2-r.top-r.height/2)+'px) scale(.25)'; fly.style.opacity='.3'; }));
+      await wait(650); fly.remove(); if(!alive(tok)) return;
+      mach.classList.add('run'); clunk(); setTimeout(clunk,380); setTimeout(clunk,760); await wait(1150); mach.classList.remove('run'); if(!alive(tok)) return;
+      const P=pools[m], it=P.list[P.i++%P.list.length]; if(!it){ busy=false; return; }
+      const out=document.createElement('div'); out.className='made'; out.style.width=out.style.height=sz+'px'; out.innerHTML=thumbHTML(it,sz-14,1);
+      const t=document.createElement('span'); t.className='mtag'; t.textContent=MAT[m].label; out.appendChild(t);
+      shelf.prepend(out); while(shelf.children.length>(por?4:6)) shelf.lastChild.remove(); chime();
+      await speak(isLine(it.a)); if(!alive(tok)) return;
+      used.add(m); made++; busy=false; if(used.size===mats.length&&made>=Math.max(4,mats.length*2)) finish(); }); });
+  speak(FACT_LINE);
+  later(()=>{ if(alive(tok)) finish(); },75000);
+}
+
+/* ================= 사진 고르기(설정 ②) ================= */
+function renderPhotoPick(A){
+  const lv=S.level, note=(t,warn)=>{ const d=document.createElement('div'); d.className=warn?'pickWarn':'pickNote'; d.textContent=t; A.appendChild(d); return d; };
+  if(S.form==='auto'){
+    note('수준에 맞는 물체가 있는 자료실 사진을 앱이 골라요. 물체가 둘 이상인 사진을 먼저 골라요.');
+    const r=document.createElement('div'); r.className='opt'; r.innerHTML='<span>사진 수</span>'; const rr=document.createElement('div'); rr.className='row'; r.appendChild(rr); A.appendChild(r);
+    [2,3,4].forEach(v=>mkBtn(rr,'chip sm'+(S.pn===v?' on':''),v+'장',()=>{ S.pn=v; S.apick=[]; saveS(); renderSetup(); }));
+    mkBtn(rr,'chip sm','🔀 다른 사진으로',()=>{ pickScenes(); saveS(); renderSetup(); flash('c3'); });
+    return; }
+  if(S.form==='choose'){
+    note('사진을 4장까지 고르세요. 고른 차례대로 합니다(이 수준의 물질이 있는 사진만 보여요).');
+    const g=document.createElement('div'); g.className='scPick'; A.appendChild(g); const w=note('',true);
+    S.csel=S.csel.filter(id=>sceneUnit(SC[id],lv));
+    libScenes(lv).forEach(sc=>{ const k=S.csel.indexOf(sc.id), u=sceneUnit(sc,lv);
+      mkBtn(g,k>=0?'on':'','<img src="'+sc.src+'" alt="">'+(k>=0?'<span class="ord">'+(k+1)+'</span>':'')+'<b>'+esc(sc.t)+'</b><span class="ms">'+u.items.map(it=>esc(it.a)).join(' · ')+'</span>',()=>{
+        if(k>=0) S.csel.splice(k,1); else if(S.csel.length>=4){ w.textContent='4장까지예요. 먼저 고른 것을 눌러 빼고 고르세요.'; return; } else S.csel.push(sc.id);
+        saveS(); renderSetup(); flash('c3'); }); });
+    return; }
+  /* 사진 받기 */
+  const pv=document.createElement('div'); pv.className='privacy'; pv.innerHTML='⚠ 무료 Gemini에 보낸 사진은 Google이 서비스를 낫게 하는 데 쓸 수 있어요. <b>학생 얼굴이 나온 사진은 보내지 마세요.</b> 사람은 분석에서 빼요.'; A.appendChild(pv);
+  const kr=document.createElement('div'); kr.className='opt'; kr.innerHTML='<span>Gemini 키</span>'; const kk=document.createElement('div'); kk.className='row'; kr.appendChild(kk); A.appendChild(kr);
+  if(gemKey()){ const s0=document.createElement('span'); s0.className='keyOk'; s0.textContent='이 기기에 있어요 ✓'; kk.appendChild(s0); mkBtn(kk,'chip sm','키 지우기',()=>{ if(confirm('이 기기의 Gemini 키를 지울까요? (다른 차름 앱도 같은 키를 써요)')){ setGemKey(''); renderSetup(); } }); }
+  else { const inp=document.createElement('input'); inp.type='password'; inp.placeholder='AIza… 또는 AQ.… 키 붙여 넣기'; inp.className='keyIn'; kk.appendChild(inp);
+    mkBtn(kk,'chip sm on','저장',()=>{ const v=inp.value.trim(); if(!/^(AIza|AQ\.)/.test(v)){ inp.focus(); return; } setGemKey(v); renderSetup(); });
+    const a=document.createElement('a'); a.href='https://www.charum.org/study/doc.html?gemini-key'; a.target='_blank'; a.rel='noopener'; a.textContent='키 받는 법(1~2분)'; a.className='keyHow'; kk.appendChild(a); }
+  const mr=document.createElement('div'); mr.className='opt'; mr.innerHTML='<span>분석 모델</span>'; const mm=document.createElement('div'); mm.className='row'; mr.appendChild(mm); A.appendChild(mr);
+  GEM_MODELS.forEach(md=>mkBtn(mm,'chip sm'+(gemModel()===md?' on':''),md.replace('gemini-','')+(md===GEM_MODELS[0]?' (추천)':''),()=>{ store.set('model',md); renderSetup(); }));
+  const br=document.createElement('div'); br.className='row'; A.appendChild(br);
+  mkBtn(br,'chip on','📱 휴대폰으로 받기',()=>{ if(!window.PhotoRelay){ alert('사진 받기 모듈이 없어요.'); return; }
+    PhotoRelay.receive({want:gemKey()?[]:['gemini'],app:'material',max:6,note:'학생 얼굴이 나온 사진은 보내지 마세요.',onKeys:g=>{ if(g&&g.gemini){ setGemKey(g.gemini.trim()); } },onPhoto:async blob=>{ await addRecv(blob); }}); });
+  const fi=document.createElement('input'); fi.type='file'; fi.accept='image/*'; fi.multiple=true; fi.style.display='none'; A.appendChild(fi);
+  fi.onchange=async()=>{ for(const f of [...fi.files].slice(0,6)) await addRecv(f); fi.value=''; };
+  mkBtn(br,'chip','🖼 이 기기에서 고르기',()=>fi.click());
+  if(!RECV.length){ note('아직 받은 사진이 없어요. 받으면 AI가 물체와 물질을 찾고, 선생님이 확인한 뒤 수업에 써요.'); return; }
+  note('확인한 사진을 눌러 고르세요(고른 차례대로, 4장까지). 받은 사진은 이 기기에만 8장까지 남아요.');
+  const g=document.createElement('div'); g.className='scPick recv'; A.appendChild(g);
+  RECV.forEach(rc=>{ const k=S.rsel.indexOf(rc.id), stT={wait:'분석하는 중…',nokey:'키가 있으면 분석해요',fail:'분석하지 못했어요',check:'확인이 필요해요'}[rc.st]||'';
+    const wrap=document.createElement('div'); wrap.className='rcWrap'; g.appendChild(wrap);
+    const b=mkBtn(wrap,k>=0?'on':'','<img src="'+rc.src+'" alt="">'+(k>=0?'<span class="ord">'+(k+1)+'</span>':'')+'<b>'+esc(rc.t)+'</b><span class="ms">'+(rc.ok?'✓ 확인함 · '+rc.o.map(o=>esc(o[0])).join(' · '):'<em>'+stT+'</em>')+'</span>',()=>{
+      if(!rc.ok){ openCheck(rc); return; }
+      if(k>=0) S.rsel.splice(k,1); else if(S.rsel.length<4) S.rsel.push(rc.id); saveS(); renderSetup(); flash('c3'); });
+    const t=document.createElement('div'); t.className='rcTools';
+    mkBtn(t,'chip sm',rc.ok?'고치기':'확인하기',e=>{ e.stopPropagation(); openCheck(rc); });
+    if(rc.st==='nokey'||rc.st==='fail') mkBtn(t,'chip sm','다시 분석',e=>{ e.stopPropagation(); runGem(rc); });
+    mkBtn(t,'chip sm','지우기',e=>{ e.stopPropagation(); if(!confirm('이 사진을 지울까요?')) return; RECV=RECV.filter(x=>x!==rc); delete SC[rc.id]; S.rsel=S.rsel.filter(x=>x!==rc.id); saveRecv(); saveS(); renderSetup(); });
+    wrap.appendChild(t); });
+}
+
+/* ================= 받은 사진 + Gemini 분석 =================
+   사진은 이 기기에만(줄여서 1280px, 8장까지). 분석은 선생님 키(이 기기, webapp.geminiKey — 001과 같은 칸)로 Google에 바로 보냄.
+   AI가 틀린 물질을 정답으로 가르치지 않게 늘 선생님 확인 화면을 거침(확인한 사진만 수업에) */
+let RECV=jget('recv',[]); RECV.forEach(rc=>{ if(rc.st==='wait') rc.st='fail'; addScene(rc); });
+function saveRecv(){ while(RECV.length>8) RECV.shift(); try{ localStorage.setItem('materialSort.recv',JSON.stringify(RECV.map(({id,t,w,h,src,o,ok,st,model})=>({id,t,w,h,src,o,ok,st,model})))); }catch(e){ alert('기기 저장 칸이 모자라 받은 사진을 다 남기지 못했어요. 오래된 사진을 지워 주세요.'); } }
+const gemKey=()=>{ try{ return localStorage.getItem('webapp.geminiKey')||''; }catch(e){ return ''; } };
+function setGemKey(k){ try{ k?localStorage.setItem('webapp.geminiKey',k):localStorage.removeItem('webapp.geminiKey'); }catch(e){} }
+/* 무료 키로 되는 모델(2026-11-21 선생님 시험). 3.1 flash lite: 미리보기 아닌 정식판, 시험에서 물체를 가장 고르게 찾음. 안 되면 다음 것으로 */
+const GEM_MODELS=['gemini-3.1-flash-lite','gemini-flash-lite-latest','gemini-3.5-flash-lite','gemini-3.5-flash'];
+const gemModel=()=>{ const m=store.get('model'); return GEM_MODELS.includes(m)?m:GEM_MODELS[0]; };
+const GEM_PROMPT='이 사진은 발달장애 학생이 물체를 무엇(어떤 물질)으로 만들었는지 배우는 데 씁니다. 사진 속 물체를 찾아 JSON 배열로만 답하세요.\n'
+ +'- 사람, 사람이 입거나 든 것(옷·가방·안경·신발), 동물, 식물, 하늘·바다·땅·벽면 전체, 글자는 빼세요.\n'
+ +'- 크고 잘 보이는 물체부터 10개까지.\n'
+ +'- material: 그 물체 전체가 한 가지 물질로 만든 것이 분명할 때만 wood(나무) metal(쇠·금속) plastic(플라스틱) paper(종이·종이 상자) cloth(천) rubber(고무) glass(유리) ceramic(도자기·사기) stone(돌·바위) 가운데 하나. 여러 물질이 섞였으면 mixed, 알 수 없으면 unknown.\n'
+ +'- name: 아이가 아는 짧은 한국어 이름. 물질 낱말을 넣지 마세요(나무 탁자→탁자, 종이컵→컵, 돌담→담장, 유리창→창문, 고무장갑→장갑).\n'
+ +'- box_2d: [ymin, xmin, ymax, xmax], 0~1000.';
+async function addRecv(blob){
+  const url=await new Promise((res,rej)=>{ const im=new Image(), u=URL.createObjectURL(blob); im.onload=()=>{ const k=Math.min(1,1280/Math.max(im.naturalWidth,im.naturalHeight)), cv=document.createElement('canvas');
+    cv.width=Math.round(im.naturalWidth*k); cv.height=Math.round(im.naturalHeight*k); cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height); URL.revokeObjectURL(u); res({src:cv.toDataURL('image/jpeg',0.82),w:cv.width,h:cv.height}); }; im.onerror=rej; im.src=u; });
+  const n=(+(store.get('rn')||0))+1; store.set('rn',String(n));
+  const rc={id:'r'+Date.now().toString(36)+n,t:'받은 사진 '+n,w:url.w,h:url.h,src:url.src,o:[],ok:false,st:'wait'}; RECV.push(rc); addScene(rc); saveRecv(); renderSetup();
+  runGem(rc); }
+async function runGem(rc,model){
+  if(!gemKey()){ rc.st='nokey'; saveRecv(); renderSetup(); return; }
+  rc.st='wait'; renderSetup();
+  try{ rc.o=await gemAnalyze(rc,model||gemModel()); rc.st='check'; rc.ok=false; }
+  catch(e){ rc.st='fail'; rc.err=String(e&&e.message||e).slice(0,160); }
+  addScene(rc); saveRecv(); renderSetup(); if($('chkView')&&$('chkView').dataset.id===rc.id) openCheck(rc); }
+async function gemAnalyze(rc,model){
+  const body={contents:[{parts:[{text:GEM_PROMPT},{inline_data:{mime_type:'image/jpeg',data:rc.src.split(',')[1]}}]}],
+    generationConfig:{temperature:0.2,responseMimeType:'application/json',responseSchema:{type:'ARRAY',items:{type:'OBJECT',properties:{name:{type:'STRING'},material:{type:'STRING',enum:[...Object.keys(MAT),'mixed','unknown']},box_2d:{type:'ARRAY',items:{type:'INTEGER'}}},required:['name','material','box_2d']}}}};
+  let last=null;
+  for(const md of [model,...GEM_MODELS.filter(x=>x!==model)]){
+    try{ const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+md+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':gemKey()},body:JSON.stringify(body)});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok){ const e=new Error((j.error&&j.error.message)||('HTTP '+r.status)); e.status=r.status; throw e; }
+      const t=((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(p=>p.text||'').join('').replace(/^\s*```(json)?/,'').replace(/```\s*$/,'');
+      rc.model=md; return parseGem(JSON.parse(t)); }
+    catch(e){ last=e; if(e.status===401||e.status===403||(e.status===400&&/key/i.test(e.message))) throw e; } }   /* 키 문제는 다른 모델로 넘어가도 같음 */
+  throw last||new Error('분석 실패'); }
+function parseGem(arr){ const out=[];
+  (Array.isArray(arr)?arr:[]).forEach(x=>{ const b=x&&x.box_2d; if(!Array.isArray(b)||b.length!==4) return; const [y0,x0,y1,x1]=b.map(v=>Math.max(0,Math.min(1000,Math.round(+v||0))));
+    if(x1-x0<15||y1-y0<15) return; let a=String(x.name||'').trim().slice(0,12); Object.values(MAT).forEach(v=>{ if(a.startsWith(v.label+' ')) a=a.slice(v.label.length+1); });
+    out.push([a,MAT[x.material]?x.material:'',[x0,y0,x1,y1]]); });
+  return out.slice(0,10); }
+const giveAway=a=>Object.values(MAT).some(v=>a.includes(v.label))||/고무|유리|쇠|금속|플라스틱/.test(a);   /* 이름이 물질을 알려 주면 표시 */
+
+/* 확인 화면: 사진 위 번호 상자 + 줄마다 이름·물질(빼기). 사진 위를 끌면 상자를 더함(AI가 못 찾은 물체) */
+function openCheck(rc){
+  let v=$('chkView'); if(!v){ v=document.createElement('div'); v.id='chkView'; document.body.appendChild(v); }
+  v.dataset.id=rc.id; v.className='on';
+  const rows=rc.o.map(o=>o.slice()); let sel=-1;
+  v.innerHTML='<div class="ck"><div class="ckHead"><b>받은 사진 확인</b><span>AI가 찾은 물체예요. 이름과 물질을 확인하고, 틀린 것은 고치거나 빼 주세요. 사진 위를 끌면 물체를 더할 수 있어요.</span></div>'
+    +'<div class="ckBody"><div class="ckPh"></div><div class="ckList"></div></div>'
+    +'<div class="ckFoot"><span class="ckMsg"></span><select class="ckModel">'+GEM_MODELS.map(m=>'<option'+(m===(rc.model||gemModel())?' selected':'')+'>'+m+'</option>').join('')+'</select><button class="chip sm" id="ckRe">다시 분석</button><button class="chip sm" id="ckClose">닫기</button><button class="chip on" id="ckOk">확인했어요</button></div></div>';
+  const ph=v.querySelector('.ckPh'), list=v.querySelector('.ckList'), msg=v.querySelector('.ckMsg');
+  const box=ph.getBoundingClientRect(), sc={w:rc.w,h:rc.h,src:rc.src}, V=sceneEl(sc,Math.max(240,box.width-8),Math.max(200,Math.min(box.height-8,innerHeight*0.62)));
+  ph.appendChild(V.d);
+  msg.textContent=rc.st==='wait'?'분석하는 중…':rc.st==='fail'?'분석하지 못했어요'+(rc.err?': '+rc.err:''):rc.st==='nokey'?'Gemini 키가 없어요(설정 ②에서 넣어요).':(rc.model?'모델: '+rc.model:'');
+  const draw=()=>{ V.d.querySelectorAll('.ckBox').forEach(x=>x.remove()); list.innerHTML='';
+    rows.forEach((o,i)=>{ const [a,m,b]=o, off=!m;
+      const f=document.createElement('div'); f.className='ckBox'+(off?' off':'')+(i===sel?' sel':''); V.at(f,b); f.innerHTML='<i>'+(i+1)+'</i>'; f.onclick=()=>{ sel=i; draw(); }; V.d.appendChild(f);
+      const r=document.createElement('div'); r.className='ckRow'+(off?' off':'')+(i===sel?' sel':'');
+      r.innerHTML='<i>'+(i+1)+'</i><input value="'+esc(a)+'" placeholder="이름"><select><option value="">빼기</option>'+Object.keys(MAT).map(k=>'<option value="'+k+'"'+(k===m?' selected':'')+'>'+MAT[k].label+'</option>').join('')+'</select>'
+        +(a&&giveAway(a)?'<em>이름이 물질을 알려 줘요</em>':'')+'<button class="chip sm">지우기</button>';
+      const [inp,se]=[r.querySelector('input'),r.querySelector('select')];
+      inp.oninput=()=>{ o[0]=inp.value.trim().slice(0,12); }; inp.onchange=draw; se.onchange=()=>{ o[1]=se.value; draw(); };
+      r.querySelector('button').onclick=()=>{ rows.splice(i,1); sel=-1; draw(); }; r.onclick=e=>{ if(e.target.tagName==='DIV'||e.target.tagName==='I'){ sel=i; draw(); } };
+      list.appendChild(r); });
+    if(!rows.length){ const e=document.createElement('p'); e.className='ckEmpty'; e.textContent=rc.st==='wait'?'분석하는 중이에요…':'찾은 물체가 없어요. 사진 위를 끌어 물체를 더하거나 다시 분석해 보세요.'; list.appendChild(e); } };
+  /* 끌어서 상자 더하기 */
+  let dn=null, ghost=null;
+  V.d.addEventListener('pointerdown',e=>{ if(e.target.closest('.ckBox')) return; const r=V.d.getBoundingClientRect(); dn={x:(e.clientX-r.left)/r.width*1000,y:(e.clientY-r.top)/r.height*1000}; ghost=document.createElement('div'); ghost.className='ckBox sel'; V.d.appendChild(ghost); try{ V.d.setPointerCapture(e.pointerId); }catch(_){} });
+  V.d.addEventListener('pointermove',e=>{ if(!dn) return; const r=V.d.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*1000, y=(e.clientY-r.top)/r.height*1000; V.at(ghost,[Math.min(dn.x,x),Math.min(dn.y,y),Math.max(dn.x,x),Math.max(dn.y,y)]); });
+  V.d.addEventListener('pointerup',e=>{ if(!dn) return; const r=V.d.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*1000, y=(e.clientY-r.top)/r.height*1000, b=[Math.min(dn.x,x),Math.min(dn.y,y),Math.max(dn.x,x),Math.max(dn.y,y)].map(Math.round); dn=null; ghost.remove();
+    if(b[2]-b[0]>30&&b[3]-b[1]>30){ rows.push(['','',b]); sel=rows.length-1; draw(); const ins=list.querySelectorAll('input'); if(ins[sel]) ins[sel].focus(); } });
+  draw();
+  const close=()=>{ v.className=''; v.innerHTML=''; delete v.dataset.id; renderSetup(); };
+  $('ckClose').onclick=close;
+  $('ckRe').onclick=()=>{ rc.o=rows; runGem(rc,v.querySelector('.ckModel').value); msg.textContent='분석하는 중…'; };
+  $('ckOk').onclick=()=>{ const use=rows.filter(o=>o[0]&&o[1]);
+    if(!use.length){ msg.textContent='이름과 물질이 있는 물체가 하나는 있어야 해요.'; return; }
+    rc.o=use; rc.ok=true; rc.st='ok'; addScene(rc); if(!S.rsel.includes(rc.id)&&S.rsel.length<4) S.rsel.push(rc.id); saveRecv(); saveS(); close(); };
+}
+
 function playRub(tok){
   const st=$('stage'), A=area(), mats=RUN.bd.mats, n=mats.length, gap=Math.max(14,A.w*0.02);
   const cols=portrait()?Math.min(n,2):n, rows=Math.ceil(n/cols);
@@ -1181,11 +1628,11 @@ function playRub(tok){
   const finish=()=>{ if(finished) return; finished=true; later(()=>{ if(!alive(tok)) return; RUN.gameDone=true; startEnd(); },2200); };
   mats.forEach(m=>{
     const p=document.createElement('div'); p.className='sp'; p.style.width=p.style.height=s+'px';
-    const objs=RUN.bd.items.filter(x=>x.m===m).map(x=>x.a), is=objs.length>2?s*0.36:s*0.42;
-    p.innerHTML='<div class="under">'+objs.map(a=>'<img src="'+pic(a)+'" alt="" style="width:'+is+'px;height:'+is+'px">').join('')+'</div><span class="nm">'+MAT[m].label+'</span>';
+    const objs=RUN.bd.items.filter(x=>x.m===m), is=objs.length>2?s*0.36:s*0.42;
+    p.innerHTML='<div class="under">'+objs.map(x=>thumbHTML(x,is,1)).join('')+'</div><span class="nm">'+MAT[m].label+'</span>';
     const cv=document.createElement('canvas'), dpr=Math.min(2,window.devicePixelRatio||1); cv.width=Math.round(s*dpr); cv.height=Math.round(s*dpr); p.appendChild(cv); g.appendChild(p);
     const cx=cv.getContext('2d'), im=new Image();
-    im.onload=()=>{ cx.drawImage(im,0,0,cv.width,cv.height); }; im.src=TEX[m].slice(5,-2);
+    im.crossOrigin='anonymous'; im.onload=()=>{ cx.drawImage(im,0,0,cv.width,cv.height); }; im.src=lidTex(m).slice(5,-2);
     cx.fillStyle='#bbb'; cx.fillRect(0,0,cv.width,cv.height);
     let down=false, last=null, open=false;
     const R=s*0.11*dpr;
@@ -1215,7 +1662,7 @@ function showPicker(){
   const g=document.createElement('div'); g.className='pickGrid'; g.style.gridTemplateColumns='repeat('+cols+','+s+'px)'; st.appendChild(g);
   ALONE.plan.forEach((bd,i)=>{ const c=document.createElement('div'); c.className='pk'+(ALONE.done.has(i)?' done':''); c.style.width=c.style.height=s+'px';
     const k=bd.items.length, is=s/(k>4?3.4:2.4);
-    c.innerHTML=bd.items.map(x=>'<img src="'+pic(x.a)+'" alt="" style="width:'+is+'px;height:'+is+'px">').join('')+(ALONE.done.has(i)?'<span class="ck">✓</span>':'');
+    c.innerHTML=(bd.photo?'<img class="pkPh" src="'+SC[bd.sid].src+'" alt="">':bd.items.map(x=>thumbHTML(x,is,1)).join(''))+(ALONE.done.has(i)?'<span class="ck">✓</span>':'');
     tapper(c,()=>{ if(S.admin) return; RUN=buildRun(ALONE.lv,ALONE.plan,i); runStep(); });
     g.appendChild(c); });
 }
@@ -1228,7 +1675,7 @@ function printSheet(plan){
   let h='<div style="page-break-after:always;font-family:Noto Sans KR,sans-serif">'+head+'<div style="display:flex;gap:4mm">'
     +mats.map(m=>'<div style="width:'+colW+'mm;border:0.6mm solid #888;border-radius:4mm;overflow:hidden"><div style="height:24mm;background-image:'+TEX[m].replace(/"/g,"'")+';background-size:cover;display:flex;align-items:center;justify-content:center;-webkit-print-color-adjust:exact;print-color-adjust:exact"><b style="font:400 30px Jua,sans-serif;background:#fff;border-radius:3mm;padding:0 5mm">'+MAT[m].label+'</b></div><div style="height:140mm"></div></div>').join('')+'</div></div>';
   h+='<div style="font-family:Noto Sans KR,sans-serif">'+head+'<div style="display:flex;flex-wrap:wrap;gap:4mm">'
-    +items.map(x=>'<div style="width:42mm;height:48mm;border:0.4mm dashed #999;display:flex;flex-direction:column;align-items:center;justify-content:center"><img src="'+pic(x.a)+'" style="width:36mm;height:36mm;object-fit:contain"><div style="font:400 18px Jua,sans-serif">'+esc(nm(x.a))+'</div></div>').join('')+'</div></div>';
+    +items.map(x=>'<div style="width:42mm;height:48mm;border:0.4mm dashed #999;display:flex;flex-direction:column;align-items:center;justify-content:center">'+(x.box?'<span style="display:block;width:136px;height:136px;'+cropStyle(x,136)+'"></span>':'<img src="'+pic(x.a)+'" style="width:36mm;height:36mm;object-fit:contain">')+'<div style="font:400 18px Jua,sans-serif">'+esc(nm(x.a))+'</div></div>').join('')+'</div></div>';
   $('sheet').innerHTML=h; document.body.classList.add('printSheet');
   if(window.PrintFit) PrintFit.page('landscape',10,'');
   const imgs=[...$('sheet').querySelectorAll('img')];
@@ -1254,7 +1701,7 @@ function closeAdmin(){ setAdmin(false); goFull();
   runStep();
 }
 function stepKeys(){ if(!RUN) return []; const k=RUN.phases.map(p=>p.k); if(S.game) k.push('game'); k.push('end'); return k; }
-const STEP_NAME=k=>k==='game'?'문질러 찾기':k==='end'?'끝 장면':(PHASES.find(x=>x[0]===k)||['',''])[1];
+const STEP_NAME=k=>k==='game'?(RUN&&GAME_TITLE[RUN.gk]||'놀이'):k==='end'?'끝 장면':(PHASES.find(x=>x[0]===k)||['',''])[1];
 function curStep(){ if(!RUN) return ''; if(!RUN.ending) return RUN.phases[RUN.pi].k; return RUN.gameDone?'end':'game'; }
 function renderDock(){
   const T=$('dockTopRow'), B=$('dockBotRow'); if(!T) return; T.innerHTML=''; B.innerHTML='';
@@ -1314,13 +1761,13 @@ function showHelp(){
 function hideSpot(){ $('spot').style.display='none'; $('spotTip').style.display='none'; }
 
 /* ================= 학생 기록 보기 ================= */
-const PH_NAME={obj:'물체 찾기',mat:'물질 고르기',sort:'정리하기',photo:'사진에서'};
+const PH_NAME={obj:'물체 찾기',mat:'물질 고르기',same:'같은 물질 찾기',sort:'정리하기',photo:'사진에서'};
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const barH=v=>'<span class="bar100"><b style="width:'+v+'%"></b></span>'+v+'%';
 const dayOf=t=>{ const d=new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
 const weekOf=t=>{ const d=new Date(t); const m=new Date(d); m.setDate(d.getDate()-((d.getDay()+6)%7)); return dayOf(m); };
 const mName=id=>MAT[id]?MAT[id].label:id;
-const wName=r=>r.ph==='obj'?r.w:mName(r.w);
+const wName=r=>r.ph==='obj'||r.ph==='same'?r.w:mName(r.w);   /* 같은 물질 찾기: a = 찾을 물체들, w = 먼저 누른 다른 물체 */
 function exampleLog(){ /* 가상의 학생 홍길동의 한 달(이 기기 기록에 넣지 않음) */
   const rows=[], start=Date.now()-28*864e5; let seed=7; const rnd=()=>{ seed=(seed*9301+49297)%233280; return seed/233280; };
   for(let d=0;d<28;d+=2){ const lv=d<14?1:2, b=(d/2)%BUN[lv].length, bd=BUN[lv][b], g=start+d*864e5+9*36e5;
@@ -1341,16 +1788,16 @@ function renderRecords(){
   else{
     const ok=r=>r.res==='first';
     h+='<h3>단계별 바로 맞힌 비율 (처음 절반 → 최근 절반)</h3><table><tr><th>수준</th><th>단계</th><th>문제 수</th><th>처음</th><th>최근</th></tr>';
-    [1,2,3].forEach(lv=>['obj','mat','sort','photo'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
+    [1,2,3].forEach(lv=>['obj','mat','same','sort','photo'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
       const m=Math.floor(all.length/2), a=all.slice(0,m||all.length), b=all.slice(m);
       h+='<tr><td>'+LV[lv].name+'</td><td>'+PH_NAME[ph]+'</td><td>'+all.length+'</td><td>'+barH(pct(a.filter(ok).length,a.length))+'</td><td>'+barH(pct(b.filter(ok).length,b.length))+'</td></tr>'; }));
     h+='</table>';
     const wk={}; rows.forEach(r=>{ const w=weekOf(r.t); (wk[w]=wk[w]||[]).push(r); });
     h+='<h3>주별 흐름</h3><table><tr><th>주(월요일)</th><th>문제 수</th><th>바로 맞힘</th></tr>'+Object.keys(wk).sort().map(w=>'<tr><td>'+w+'</td><td>'+wk[w].length+'</td><td>'+barH(pct(wk[w].filter(ok).length,wk[w].length))+'</td></tr>').join('')+'</table>';
-    const byA={}; rows.filter(r=>r.ph!=='obj').forEach(r=>{ const k=r.a+'|'+r.m; (byA[k]=byA[k]||[]).push(r); });
+    const byA={}; rows.filter(r=>r.ph!=='obj'&&r.ph!=='same').forEach(r=>{ const k=r.a+'|'+r.m; (byA[k]=byA[k]||[]).push(r); });
     const hard=Object.entries(byA).filter(([k,v])=>v.length>=3&&pct(v.filter(ok).length,v.length)<60).sort((a,b)=>pct(a[1].filter(ok).length,a[1].length)-pct(b[1].filter(ok).length,b[1].length));
     h+='<h3>도움이 더 필요한 물체 (물질 고르기·정리하기·사진, 3번 이상, 바로 맞힘 60% 미만)</h3>'+(hard.length?'<table><tr><th>물체</th><th>물질</th><th>문제 수</th><th>바로 맞힘</th></tr>'+hard.map(([k,v])=>{ const [a,m]=k.split('|'); return '<tr><td>'+esc(a)+'</td><td>'+mName(m)+'</td><td>'+v.length+'</td><td>'+barH(pct(v.filter(ok).length,v.length))+'</td></tr>'; }).join('')+'</table>':'<p class="tip">없습니다.</p>');
-    const conf={}; rows.filter(r=>r.w&&r.ph!=='obj').forEach(r=>{ const k=mName(r.m)+' → '+mName(r.w); conf[k]=(conf[k]||0)+1; });
+    const conf={}; rows.filter(r=>r.w&&r.ph!=='obj'&&r.ph!=='same').forEach(r=>{ const k=mName(r.m)+' → '+mName(r.w); conf[k]=(conf[k]||0)+1; });
     const cf=Object.entries(conf).sort((a,b)=>b[1]-a[1]).slice(0,6);
     h+='<h3>자주 헷갈린 물질 (맞는 물질 → 먼저 누른 물질)</h3>'+(cf.length?'<table><tr><th>짝</th><th>번</th></tr>'+cf.map(([k,v])=>'<tr><td>'+k+'</td><td>'+v+'</td></tr>').join('')+'</table>':'<p class="tip">없습니다.</p>');
     const lvNow=rows[rows.length-1].lv, ses={}; rows.filter(r=>r.lv===lvNow).forEach(r=>{ (ses[r.g]=ses[r.g]||[]).push(r); });
@@ -1446,6 +1893,242 @@ window.AdminGate = (function () {
   dot.addEventListener('pointerup', done); dot.addEventListener('pointercancel', done);   /* 전자칠판은 손을 뗄 때 pointercancel이 오기도 함 */
   dot.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); });
   return { ask(fn) { cb = fn; t0 = performance.now(); ring.style.strokeDashoffset = 0; dot.style.display = 'block'; cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); }, cancel: hide };
+})();
+</script>
+<script id="homeLink">
+/* 차름 공통 모듈: 차름 홈페이지 링크(homeLink) — 원본은 common/homeLink.js. 앱 안의 <script id="homeLink">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   선생님 화면(처음 설정 화면·학습 중 관리 메뉴)에서만 왼쪽 위에 차름 로고를 작게 두고, 누르면 charum.org가 새 탭으로 열림(수업 화면은 그대로).
+   언제 보일지는 앱이 정함: HomeLink.when(() => 참/거짓). 정하지 않으면 body에 setup 또는 admin이 붙었을 때.
+   자리를 옮길 앱만 HomeLink.at(왼쪽px, 위px) — 위 메뉴 줄이 왼쪽 끝까지 닿는 앱(004·006)은 그 아래로.
+   휴대폰처럼 좁으면(600px 이하) 제목과 겹치지 않게 왼쪽 아래 💬 단추 위로 내려감. 좁아도 위에 둘 앱(012처럼 위를 비워 둔 앱)은 HomeLink.keepTop(). 2026-11-21 */
+window.HomeLink = (function () {
+  var URL = 'https://www.charum.org/';
+  var LOGO = 'https://www.charum.org/files/attach/images/59600/cdff757386e72b62ba5fb17ea83df99e.png';
+  var st = document.createElement('style');
+  st.textContent = '#chHome{position:fixed;left:var(--hl-left,14px);top:var(--hl-top,12px);z-index:2147480000;display:none;align-items:center;line-height:0;padding:4px;border-radius:8px;text-decoration:none;opacity:.88;transition:opacity .15s}'
+    + '#chHome.on{display:inline-flex}#chHome:hover,#chHome:focus-visible{opacity:1}#chHome:focus-visible{outline:2px solid currentColor;outline-offset:2px}'
+    + '#chHome img{height:30px;width:auto;display:block}'
+    + '#chHome .hlTxt{display:none;font:700 14px/1 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;color:#555;letter-spacing:.02em}'
+    + '#chHome.noimg img{display:none}#chHome.noimg .hlTxt{display:inline}'
+    + '@media (max-width:600px){#chHome img{height:22px}#chHome:not(.top){top:auto;bottom:60px;left:12px;background:rgba(255,255,255,.85)}}@media print{#chHome{display:none!important}}';
+  document.head.appendChild(st);
+  var show = function () { var c = document.body.classList; return c.contains('setup') || c.contains('admin'); };
+  function make() {
+    if (document.getElementById('chHome')) return;
+    var a = document.createElement('a'); a.id = 'chHome'; a.href = URL; a.target = '_blank'; a.rel = 'noopener';
+    a.title = '차름 홈페이지(charum.org) — 새 탭으로 열려요'; a.setAttribute('aria-label', '차름 홈페이지 charum.org');
+    var img = new Image(); img.alt = ''; img.src = LOGO; img.onerror = function () { a.classList.add('noimg'); };
+    var t = document.createElement('span'); t.className = 'hlTxt'; t.textContent = 'charum.org';
+    a.appendChild(img); a.appendChild(t); document.body.appendChild(a);
+  }
+  function tick() { make(); var a = document.getElementById('chHome'); if (!a) return; var on = false; try { on = !!show(); } catch (e) {} a.classList.toggle('on', on); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tick); else tick();
+  setInterval(tick, 700);
+  return {
+    when: function (fn) { show = fn; tick(); },
+    keepTop: function () { make(); document.getElementById('chHome').classList.add('top'); },
+    at: function (left, top) { var r = document.documentElement.style; if (left != null) r.setProperty('--hl-left', left + 'px'); if (top != null) r.setProperty('--hl-top', top + 'px'); }
+  };
+})();
+</script>
+<script id="photoRelay">
+/* 차름 공통 모듈: 휴대폰에서 사진 받기(photoRelay) — 원본은 common/photoRelay.js. 앱 안의 <script id="photoRelay">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   번호·단추 색은 앱이 :root에 --relay-accent 로 넘겨 준다(없으면 청록 #17766F). */
+/* ===== 휴대폰으로 사진 받기 (전자칠판 쪽) — key-relay와 같은 방식 =====
+   전자칠판이 번호 4자리 + 공개 열쇠를 맡기면, 휴대폰(photo-send.html)이 사진을 잠가서 보내고,
+   전자칠판이 받는 순간 서버에서 지워짐. 서버는 사진을 볼 수 없음.
+   2026-10-26: opts.max(1~12)로 번호 하나에 여러 장 — QR은 한 번만 찍고, 한 장씩 onPhoto(blob, n). 휴대폰이 "다 보냈습니다"를 누르거나
+   max장을 받으면 저절로 닫힘, 한 장이라도 받으면 "다 받았습니다" 단추. */
+(function(){
+const RELAY='https://charum.org/charum-api/photo-relay.php';
+const SEND_PAGE='https://shim-sung-hyun.github.io/web_app/photo-send.html';
+const QR=(function(){
+  const EXP=new Array(512), LOG=new Array(256); let x=1;
+  for(let i=0;i<255;i++){ EXP[i]=x; LOG[x]=i; x<<=1; if(x&256) x^=0x11d; }
+  for(let i=255;i<512;i++) EXP[i]=EXP[i-255];
+  const mul=(a,b)=>a&&b?EXP[LOG[a]+LOG[b]]:0;
+  function rsGen(n){ let g=[1]; for(let i=0;i<n;i++){ const ng=new Array(g.length+1).fill(0); for(let j=0;j<g.length;j++){ ng[j]^=g[j]; ng[j+1]^=mul(g[j],EXP[i]); } g=ng; } return g; }
+  function rsRem(data,n){ const g=rsGen(n), r=new Array(n).fill(0); for(const d of data){ const f=d^r.shift(); r.push(0); for(let i=0;i<n;i++) r[i]^=mul(g[i+1],f); } return r; }
+  /* 판마다 [블록당 오류정정 수, 블록 수 그룹1, 그룹1 데이터 수, 블록 수 그룹2, 그룹2 데이터 수] (M) */
+  const T=[null,[10,1,16,0,0],[16,1,28,0,0],[26,1,44,0,0],[18,2,32,0,0],[24,2,43,0,0],[16,4,27,0,0],[18,4,31,0,0],[22,2,38,2,39],[22,3,36,2,37],[26,4,43,1,44]];
+  const ALIGN=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50]];
+  function make(text){
+    const bytes=Array.from(new TextEncoder().encode(text));
+    let v=1; for(;v<=9;v++){ const t=T[v], cap=t[1]*t[2]+t[3]*t[4]; if(4+(v<10?8:16)+bytes.length*8<=cap*8) break; }
+    if(v>9) throw new Error('too long');
+    const t=T[v], cap=t[1]*t[2]+t[3]*t[4];
+    const bits=[]; const put=(val,n)=>{ for(let i=n-1;i>=0;i--) bits.push((val>>>i)&1); };
+    put(4,4); put(bytes.length,v<10?8:16); bytes.forEach(b=>put(b,8));
+    put(0,Math.min(4,cap*8-bits.length)); while(bits.length%8) bits.push(0);
+    const data=[]; for(let i=0;i<bits.length;i+=8){ let b=0; for(let j=0;j<8;j++) b=(b<<1)|bits[i+j]; data.push(b); }
+    for(let p=0;data.length<cap;p++) data.push(p%2?0x11:0xEC);
+    const blocks=[], ecs=[]; let k=0;
+    for(let g=0;g<2;g++) for(let b=0;b<t[1+g*2];b++){ const d=data.slice(k,k+t[2+g*2]); k+=d.length; blocks.push(d); ecs.push(rsRem(d,t[0])); }
+    const all=[]; const maxD=Math.max(...blocks.map(b=>b.length));
+    for(let i=0;i<maxD;i++) for(const b of blocks) if(i<b.length) all.push(b[i]);
+    for(let i=0;i<t[0];i++) for(const e of ecs) all.push(e[i]);
+    const N=17+v*4, M=[], F=[]; for(let i=0;i<N;i++){ M.push(new Array(N).fill(0)); F.push(new Array(N).fill(false)); }
+    const set=(r,c,val)=>{ M[r][c]=val?1:0; F[r][c]=true; };
+    const finder=(r,c)=>{ for(let i=-1;i<=7;i++) for(let j=-1;j<=7;j++){ const rr=r+i, cc=c+j; if(rr<0||cc<0||rr>=N||cc>=N) continue;
+      const on=(i>=0&&i<=6&&(j===0||j===6))||(j>=0&&j<=6&&(i===0||i===6))||(i>=2&&i<=4&&j>=2&&j<=4); set(rr,cc,on); } };
+    finder(0,0); finder(0,N-7); finder(N-7,0);
+    for(let i=8;i<N-8;i++){ set(6,i,i%2===0); set(i,6,i%2===0); }
+    const al=ALIGN[v], L=al[al.length-1]; for(const r of al) for(const c of al){ if((r===6&&c===6)||(r===6&&c===L)||(r===L&&c===6)) continue; for(let i=-2;i<=2;i++) for(let j=-2;j<=2;j++) set(r+i,c+j,Math.max(Math.abs(i),Math.abs(j))!==1); }
+    set(N-8,8,1);
+    for(let i=0;i<9;i++){ if(!F[8][i]) F[8][i]=true; if(!F[i][8]) F[i][8]=true; }
+    for(let i=0;i<8;i++){ F[8][N-1-i]=true; F[N-1-i][8]=true; }
+    if(v>=7){ for(let i=0;i<6;i++) for(let j=0;j<3;j++){ F[i][N-11+j]=true; F[N-11+j][i]=true; } }
+    const dbits=[]; all.forEach(b=>{ for(let i=7;i>=0;i--) dbits.push((b>>>i)&1); });
+    let bi=0, up=true;
+    for(let c=N-1;c>0;c-=2){ if(c===6) c=5;
+      for(let n=0;n<N;n++){ const r=up?N-1-n:n; for(let d=0;d<2;d++){ const cc=c-d; if(F[r][cc]) continue; M[r][cc]=bi<dbits.length?dbits[bi++]:0; } }
+      up=!up; }
+    const masks=[(r,c)=>(r+c)%2===0,(r)=>r%2===0,(r,c)=>c%3===0,(r,c)=>(r+c)%3===0,(r,c)=>(Math.floor(r/2)+Math.floor(c/3))%2===0,(r,c)=>(r*c)%2+(r*c)%3===0,(r,c)=>((r*c)%2+(r*c)%3)%2===0,(r,c)=>((r+c)%2+(r*c)%3)%2===0];
+    function fmt(Mx,mask){ let d=(0<<3)|mask; /* M = 00 */ let rem=d; for(let i=0;i<10;i++) rem=(rem<<1)^((rem>>>9)*0x537); const f=((d<<10)|rem)^0x5412;
+      const b=i=>(f>>>i)&1;
+      for(let i=0;i<=5;i++) Mx[i][8]=b(i); Mx[7][8]=b(6); Mx[8][8]=b(7); Mx[8][7]=b(8); for(let i=9;i<15;i++) Mx[8][14-i]=b(i);
+      for(let i=0;i<8;i++) Mx[8][N-1-i]=b(i); for(let i=8;i<15;i++) Mx[N-15+i][8]=b(i);
+      Mx[N-8][8]=1;
+      if(v>=7){ let rv=v; for(let i=0;i<12;i++) rv=(rv<<1)^((rv>>>11)*0x1f25); const vb=(v<<12)|rv;
+        for(let i=0;i<18;i++){ const bit=(vb>>>i)&1, a=N-11+(i%3), bb=Math.floor(i/3); Mx[bb][a]=bit; Mx[a][bb]=bit; } } }
+    function penalty(Mx){ let p=0;
+      for(let r=0;r<N;r++){ let run=1; for(let c=1;c<N;c++){ if(Mx[r][c]===Mx[r][c-1]){ run++; if(run===5) p+=3; else if(run>5) p++; } else run=1; } }
+      for(let c=0;c<N;c++){ let run=1; for(let r=1;r<N;r++){ if(Mx[r][c]===Mx[r-1][c]){ run++; if(run===5) p+=3; else if(run>5) p++; } else run=1; } }
+      for(let r=0;r<N-1;r++) for(let c=0;c<N-1;c++){ const s=Mx[r][c]+Mx[r+1][c]+Mx[r][c+1]+Mx[r+1][c+1]; if(s===0||s===4) p+=3; }
+      const pat=[1,0,1,1,1,0,1,0,0,0,0], pat2=[0,0,0,0,1,0,1,1,1,0,1];
+      for(let r=0;r<N;r++) for(let c=0;c+11<=N;c++){ let a=true,b=true,a2=true,b2=true; for(let k=0;k<11;k++){ if(Mx[r][c+k]!==pat[k]) a=false; if(Mx[r][c+k]!==pat2[k]) b=false; if(Mx[c+k][r]!==pat[k]) a2=false; if(Mx[c+k][r]!==pat2[k]) b2=false; } p+=40*(a+b+a2+b2); }
+      let dark=0; for(let r=0;r<N;r++) for(let c=0;c<N;c++) dark+=Mx[r][c]; p+=Math.floor(Math.abs(dark*20-N*N*10)/(N*N))*10; return p; }
+    let best=null, bp=1e9;
+    for(let m=0;m<8;m++){ const Mx=M.map(r=>r.slice()); for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(!F[r][c]&&masks[m](r,c)) Mx[r][c]^=1; fmt(Mx,m); const p=penalty(Mx); if(p<bp){ bp=p; best=Mx; } }
+    return best;
+  }
+  function svg(text,px){ const m=make(text), N=m.length, q=4, S=N+q*2; let d='';
+    for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(m[r][c]) d+=`M${c+q} ${r+q}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}" width="${px}" height="${px}" shape-rendering="crispEdges" role="img" aria-label="QR 코드"><rect width="${S}" height="${S}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`; }
+  return {make,svg};
+})();
+
+const b64u={ enc:b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''),
+  dec:s=>{ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const bin=atob(s), u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return u; } };
+async function aesFrom(priv,pubRaw,code){
+  const pub=await crypto.subtle.importKey('raw',pubRaw,{name:'ECDH',namedCurve:'P-256'},false,[]);
+  const bits=await crypto.subtle.deriveBits({name:'ECDH',public:pub},priv,256);
+  const hk=await crypto.subtle.importKey('raw',bits,'HKDF',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:new TextEncoder().encode('webapp-photo-relay|'+code),info:new TextEncoder().encode('v1')},hk,{name:'AES-GCM',length:256},false,['decrypt']);
+}
+async function call(body){
+  const r=await fetch(RELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
+  let j={}; try{ j=await r.json(); }catch(e){}
+  if(!r.ok||j.error) throw Object.assign(new Error(j.error||('http'+r.status)),{code:j.error||('http '+r.status)});
+  return j;
+}
+const CSS=`
+#prBox{position:fixed;inset:0;z-index:2147483000;background:rgba(20,30,34,.55);display:flex;align-items:center;justify-content:center;font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;color:#1C2A31}
+#prBox .pr-card{background:#fff;border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:26px 30px 22px;width:min(660px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;box-sizing:border-box}
+#prBox h2{margin:0 0 4px;font-size:22px}
+#prBox .pr-sub{margin:0 0 18px;color:#56666E;font-size:15px;line-height:1.55}
+#prBox .pr-note{margin:-8px 0 16px;padding:10px 14px;border-radius:12px;background:#EEF3F6;color:#2F4556;font-size:15px;line-height:1.55}
+#prBox .pr-main{display:flex;gap:26px;align-items:center;justify-content:center;flex-wrap:wrap}
+#prBox .pr-qr{background:#fff;border:1px solid #dde5e7;border-radius:14px;padding:6px;line-height:0;width:196px;height:196px;box-sizing:content-box}
+#prBox .pr-code{font-family:'Jua','Noto Sans KR',sans-serif;font-size:78px;letter-spacing:.14em;line-height:1;color:var(--relay-accent,#17766F);text-align:center;padding-left:.14em}
+#prBox .pr-codebox{display:flex;flex-direction:column;align-items:center;gap:10px}
+#prBox .pr-steps{margin:0;padding-left:20px;font-size:15px;line-height:1.7;color:#30404a}
+#prBox .pr-url{font-size:13px;color:#56666E;word-break:break-all}
+#prBox .pr-state{margin:16px 0 0;font-size:15px;color:#30404a;min-height:1.6em;text-align:center}
+#prBox .pr-state.err{color:#c62828;font-weight:700}
+#prBox .pr-btns{display:flex;justify-content:center;gap:10px;margin-top:14px}
+#prBox button{font:inherit;font-size:16px;padding:10px 22px;border-radius:12px;border:1px solid #c9d4d8;background:#f4f7f8;color:#1C2A31;cursor:pointer;min-height:44px}
+#prBox button.pr-pri{background:var(--relay-accent,#17766F);border-color:var(--relay-accent,#17766F);color:#fff}
+`;
+function ensureCss(){ if(document.getElementById('prCss')) return; const s=document.createElement('style'); s.id='prCss'; s.textContent=CSS; document.head.appendChild(s); }
+let active=null;
+async function receive(opts){
+  opts=opts||{}; ensureCss(); close();
+  const MAX=Math.max(1,Math.min(12,opts.max||1));   /* 번호 하나로 받을 장 수(2026-10-26 여러 장) */
+  const box=document.createElement('div'); box.id='prBox'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true');
+  box.innerHTML=`<div class="pr-card"><h2>휴대폰에서 사진 받기</h2>
+    <p class="pr-sub">휴대폰으로 찍은 사진을 이 화면으로 보냅니다. 사진은 잠가서 보내고, 중계 서버도 사진을 볼 수 없습니다.</p>${opts.note?'<p class="pr-note">'+opts.note+'</p>':''}
+    <div class="pr-main"><div class="pr-qr" id="prQr"></div>
+      <div class="pr-codebox"><div class="pr-code" id="prCode">····</div>
+        <ol class="pr-steps"><li>휴대폰 카메라로 QR을 찍어요.</li><li>사진을 찍거나 골라요.<br><small>잘 나온 사진은 <b>기증(선택)</b>에도 체크해 주세요.</small></li>${(opts.want||[]).includes('gemini')?'<li>처음 한 번은 <b>Gemini 키</b>도 넣어요.<br><small>키가 없으면 그 화면의 "키 받는 법"(1~2분)</small></li>':''}<li><b>보내기</b>를 눌러요.${MAX>1?"<br><small>"+MAX+"장까지 한 번에 보낼 수 있어요.</small>":""}</li></ol></div></div>
+    <p class="pr-state" id="prState">번호를 만들고 있어요…</p>
+    <div class="pr-btns"><button type="button" id="prCancel">닫기</button></div></div>`;
+  document.body.appendChild(box);
+  const st=box.querySelector('#prState'), stop=()=>close();
+  box.querySelector('#prCancel').onclick=stop;
+  box.addEventListener('pointerdown',e=>{ if(e.target===box) stop(); });
+  ['pointerdown','pointerup','click','touchstart','touchend','mousedown','mouseup'].forEach(t=>box.addEventListener(t,e=>e.stopPropagation()));
+  const me=active={box,timer:null,tick:null,code:'',sid:'',dead:false};
+  const say=(t,cls)=>{ st.textContent=t; st.className='pr-state'+(cls?' '+cls:''); };
+  const retry=()=>{ const b=box.querySelector('.pr-btns'); b.innerHTML='<button type="button" class="pr-pri" id="prAgain">새 번호 받기</button><button type="button" id="prCancel2">닫기</button>';
+    b.querySelector('#prAgain').onclick=()=>receive(opts); b.querySelector('#prCancel2').onclick=stop; };
+  try{
+    if(!window.crypto||!crypto.subtle) throw Object.assign(new Error('insecure'),{code:'insecure'});
+    const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},false,['deriveBits']);
+    const pubRaw=await crypto.subtle.exportKey('raw',kp.publicKey);
+    const o=await call({a:'open',pub:b64u.enc(pubRaw),max:MAX});
+    if(me.dead) return;
+    me.code=o.code; me.sid=o.sid;
+    box.querySelector('#prCode').textContent=o.code;
+    const want=(opts.want||[]).filter(x=>x==='gemini'||x==='cloud');
+    box.querySelector('#prQr').innerHTML=QR.svg(SEND_PAGE+'#c='+o.code+(want.length?'&k='+want.join(','):'')+(opts.app?'&app='+opts.app:''),196);
+    let end=Date.now()+(o.ttl||180)*1000, got=0;
+    const left=()=>{ const s=Math.max(0,Math.round((end-Date.now())/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+    const waitMsg=()=>got?`${got}장 받았습니다. 더 보내도 됩니다`+(MAX>1?` (${MAX}장까지)`:'')+` · 남은 시간 ${left()}`:'휴대폰에서 보내기를 기다리고 있어요 · 남은 시간 '+left();
+    const finishBtn=()=>{ const b=box.querySelector('.pr-btns'); if(b.querySelector('#prDone')) return;
+      b.innerHTML='<button type="button" class="pr-pri" id="prDone">다 받았습니다</button>'; b.querySelector('#prDone').onclick=stop; };
+    const finish=()=>{ clearInterval(me.tick); clearTimeout(me.timer); me.dead=true;
+      say(got?`${got}장 받았습니다.`:'휴대폰에서 다 보냈어요.'); setTimeout(()=>{ if(active===me) close(); },got?1200:600); };
+    say(waitMsg());
+    me.tick=setInterval(()=>{ if(Date.now()>end){ clearInterval(me.tick); clearTimeout(me.timer); me.dead=true;
+        if(got){ say(`${got}장 받았습니다. 시간이 다 되어 받기를 마쳤습니다.`); setTimeout(()=>{ if(active===me) close(); },1500); }
+        else { say('시간이 지났어요. 새 번호를 받아 주세요.','err'); retry(); } return; }
+      if(!me.busy) say(waitMsg()); },1000);
+    const poll=async()=>{
+      if(me.dead) return;
+      let r; try{ r=await call({a:'poll',code:me.code,sid:me.sid}); }catch(e){ me.timer=setTimeout(poll,3000); return; }
+      if(me.dead) return;
+      if(r.ttl) end=Date.now()+r.ttl*1000;
+      if(r.status==='wait'){ me.timer=setTimeout(poll,1500); return; }
+      if(r.status==='end'){ finish(); return; }
+      if(r.status!=='done'){ clearInterval(me.tick); me.dead=true; if(got){ finish(); return; } say('번호가 끝났어요. 새 번호를 받아 주세요.','err'); retry(); return; }
+      me.busy=true; say(`사진을 받았어요. 여는 중이에요… (${got+1}장째)`);
+      try{
+        const key=await aesFrom(kp.privateKey,b64u.dec(r.epub),me.code);
+        const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(r.iv)},key,b64u.dec(r.ct));
+        /* 휴대폰이 키도 함께 보냈으면: "CHRM" + 판(1) + JSON 길이(4바이트) + JSON + 사진 */
+        let u=new Uint8Array(plain), keys=null;
+        if(u.length>9&&u[0]===67&&u[1]===72&&u[2]===82&&u[3]===77&&u[4]===1){
+          const n=(u[5]<<24|u[6]<<16|u[7]<<8|u[8])>>>0;
+          try{ keys=JSON.parse(new TextDecoder().decode(u.slice(9,9+n))); }catch(e){}
+          u=u.slice(9+n);
+        }
+        const blob=new Blob([u],{type:'image/jpeg'});
+        got++;
+        try{ if(keys&&opts.onKeys) opts.onKeys(keys); }catch(e){ console.error(e); }
+        try{ if(opts.onPhoto) await opts.onPhoto(blob,got); }catch(e){ console.error(e); }
+      }catch(e){ console.error(e); }
+      me.busy=false;
+      if(me.dead) return;
+      if(MAX===1||r.end||got>=MAX){ finish(); return; }
+      finishBtn(); say(waitMsg());
+      me.timer=setTimeout(poll,r.more?50:1500);
+    };
+    me.timer=setTimeout(poll,1500);
+  }catch(e){
+    const c=e&&e.code;
+    say(c==='insecure'?'이 화면은 https 주소에서만 사진을 받을 수 있어요.':c==='busy'||c===429?'지금은 번호를 만들 수 없어요. 잠시 뒤에 다시 해 주세요.':c==='origin'?'중계 서버가 이 주소의 요청을 받지 않아요(origin).':'중계 서버에 연결할 수 없어요. ('+(c||(e&&e.name)||'network')+')','err');
+    retry();
+  }
+}
+function close(){
+  if(!active) return; const me=active; active=null; me.dead=true;
+  clearInterval(me.tick); clearTimeout(me.timer);
+  if(me.code&&me.sid) call({a:'close',code:me.code,sid:me.sid}).catch(()=>{});
+  me.box.remove();
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&active) close(); },true);
+window.PhotoRelay={receive,close};
 })();
 </script>
 <script id="reportLink">

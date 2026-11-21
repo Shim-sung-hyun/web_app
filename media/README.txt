@@ -15,5 +15,6 @@
   habitats/   사는 곳 배경·소품               008 009          habitats/photos.json (옛 숨은 그림 seek/는 _trash로)
   stage/      무대: 빈 배경·요소를 장소별로   008부터(그림 받는 중) stage/README.txt, index.json
   fonts/      글꼴(학교안심 바른바탕 B)       007
+  materials/  물질 카드 결 사진(빙, 받는 중)    010              materials/README.txt
 
 ■ 앱 폴더에 두는 것: 앱.html, 앱01.jpg~ 캡처, 앱-promo.jpg, 앱_manual.html, 앱_guide.html, README.txt
