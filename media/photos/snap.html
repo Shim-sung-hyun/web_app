@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="사진 넣기">
+<meta name="theme-color" content="#f1f6f6">
+<title>사진 넣기</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d2133;--sub:#5b6077;--line:#d9dcea;--pri:#1F6C75;--pri2:#16525A;--bg:#f1f6f6;--ok:#1b7f3a;--err:#c62828}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:520px;margin:0 auto;padding:18px 16px 40px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:26px;margin:4px 0 14px;color:var(--pri2);display:flex;justify-content:space-between;align-items:center}
+h1 button{font:inherit;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--sub);background:none;border:0;padding:6px 2px;text-decoration:underline}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+label.t{display:block;font-weight:700;margin:0 0 8px;font-size:15px}
+input.f{width:100%;font:inherit;font-size:17px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips button{font:inherit;font-size:15px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#f6f7fb;color:var(--ink)}
+.chips button.on{background:#e3f0f1;border-color:var(--pri);color:var(--pri2);font-weight:700}
+#shoot{width:100%;font:inherit;font-size:21px;font-weight:700;padding:22px 10px;border:0;border-radius:18px;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px}
+#shoot:disabled{opacity:.5}
+#shoot svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.alt{display:block;margin:10px auto 0;font:inherit;font-size:14px;color:var(--sub);background:none;border:0;text-decoration:underline}
+#state{min-height:1.4em;margin:10px 2px 0;font-size:14px;text-align:center;line-height:1.5}#state.err{color:var(--err);font-weight:700}#state.ok{color:var(--ok)}
+.log{list-style:none;margin:0;padding:0}
+.log li{display:flex;gap:10px;align-items:center;padding:7px 0;border-top:1px solid #eef0f5;font-size:14px}
+.log li:first-child{border-top:0}
+.log img{width:46px;height:46px;object-fit:cover;border-radius:8px;flex:none;background:#eee}
+.log .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.log .s{font-size:13px;color:var(--sub);white-space:nowrap}.log .s.ok{color:var(--ok)}.log .s.err{color:var(--err)}
+.hint{font-size:13px;color:var(--sub);margin:8px 0 0;line-height:1.6}
+.hint code{background:#f1f3f8;padding:1px 4px;border-radius:4px;font-size:12px}
+.row2{display:flex;gap:8px}.row2 input{flex:1;min-width:0}
+.sm{font:inherit;font-size:15px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:#f4f5fa;color:var(--ink);white-space:nowrap}
+.sm.pri{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700}
+#setup[hidden],#main[hidden]{display:none}
+ol.steps{margin:6px 0 0;padding-left:20px;font-size:14px;line-height:1.7;color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+  <h1><span>사진 넣기</span><button type="button" id="openSet">설정</button></h1>
+
+  <section id="setup" hidden>
+    <div class="card">
+      <label class="t">처음 한 번만 — GitHub 열쇠 넣기</label>
+      <ol class="steps">
+        <li>컴퓨터에서 GitHub → Settings → Developer settings → <b>Fine-grained tokens</b> → Generate new token</li>
+        <li>Repository access: <b>Only select repositories</b> → 사진을 받을 저장소 하나만</li>
+        <li>Permissions → Repository → <b>Contents: Read and write</b></li>
+        <li>만든 열쇠(github_pat_…)를 아래에 붙여 넣기</li>
+      </ol>
+      <p class="hint">열쇠는 이 휴대폰 안에만 남고, 저장소나 다른 곳으로 가지 않아요. 휴대폰을 잃어버리면 GitHub에서 그 열쇠를 지우면 돼요.</p>
+      <div style="margin-top:12px">
+        <label class="t" for="tok">열쇠</label>
+        <input class="f" id="tok" type="password" autocomplete="off" placeholder="github_pat_…">
+      </div>
+      <div style="margin-top:12px">
+        <label class="t" for="repo">받을 저장소</label>
+        <input class="f" id="repo" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="이름/저장소">
+        <p class="hint">기본은 비공개 <code>Shim-sung-hyun/charum-inbox</code>의 <code>phone/</code> 폴더예요. 공개 저장소(web_app)에는 검토 전 사진을 바로 넣지 않아요 — 얼굴·이름표가 찍혔을 수 있으니까요.</p>
+      </div>
+      <div style="margin-top:12px">
+        <label class="t" for="dir">폴더</label>
+        <input class="f" id="dir" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="phone">
+      </div>
+      <div class="row2" style="margin-top:14px">
+        <button class="sm" type="button" id="cancelSet">닫기</button>
+        <button class="sm pri" type="button" id="saveSet" style="flex:1">확인하고 저장</button>
+      </div>
+      <div id="setState" class="hint" style="text-align:center"></div>
+    </div>
+  </section>
+
+  <section id="main" hidden>
+    <div class="card">
+      <label class="t" for="obj">무엇을 찍나요?</label>
+      <input class="f" id="obj" autocomplete="off" placeholder="예: 컵, 의자, 우산" maxlength="30">
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <button id="shoot" type="button">
+      <svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.6"/></svg>
+      찍어서 넣기
+    </button>
+    <button class="alt" type="button" id="fromAlbum">앨범에서 고르기 (여러 장)</button>
+    <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
+    <input type="file" id="albumIn" accept="image/*" multiple hidden>
+    <div id="state"></div>
+
+    <div class="card" id="logCard" style="margin-top:14px" hidden>
+      <label class="t">오늘 넣은 사진</label>
+      <ul class="log" id="log"></ul>
+    </div>
+  </section>
+</main>
+
+<script>
+(()=>{
+const K={tok:'snap.ghToken',repo:'snap.repo',dir:'snap.dir',recent:'snap.recent'};
+const DEF_REPO='Shim-sung-hyun/charum-inbox', DEF_DIR='phone', MAX=1600;
+const $=id=>document.getElementById(id);
+const get=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
+const put=(k,v)=>{try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}};
+
+function show(setup){$('setup').hidden=!setup;$('main').hidden=setup;$('openSet').hidden=setup}
+function fillSet(){$('tok').value=get(K.tok);$('repo').value=get(K.repo)||DEF_REPO;$('dir').value=get(K.dir)||DEF_DIR;$('setState').textContent=''}
+
+$('openSet').onclick=()=>{fillSet();show(true)};
+$('cancelSet').onclick=()=>{if(get(K.tok))show(false)};
+$('saveSet').onclick=async()=>{
+  const tok=$('tok').value.trim(), repo=$('repo').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/+$/,''), dir=$('dir').value.trim().replace(/^\/+|\/+$/g,'');
+  const st=$('setState');
+  if(!tok||!/^[^/\s]+\/[^/\s]+$/.test(repo)){st.textContent='열쇠와 저장소(이름/저장소)를 넣어 주세요.';return}
+  st.textContent='확인하는 중…';
+  try{
+    const r=await fetch('https://api.github.com/repos/'+repo,{headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'}});
+    if(r.status===401){st.textContent='열쇠가 맞지 않아요.';return}
+    if(r.status===404){st.textContent='저장소를 못 찾았어요. 이름을 보거나, 열쇠에 그 저장소를 골랐는지 봐 주세요.';return}
+    const j=await r.json();
+    if(j.permissions&&!j.permissions.push){st.textContent='이 열쇠로는 넣을 수 없어요. Contents: Read and write를 켜 주세요.';return}
+    put(K.tok,tok);put(K.repo,repo);put(K.dir,dir);
+    show(false);say(j.private?'준비됐어요.':'준비됐어요. 이 저장소는 공개라 넣은 사진을 누구나 볼 수 있어요.', j.private?'ok':'err');
+  }catch(e){st.textContent='인터넷 연결을 확인해 주세요.'}
+};
+
+// 물건 이름
+function recent(){try{return JSON.parse(get(K.recent)||'[]')}catch(e){return []}}
+function drawChips(){
+  const cur=$('obj').value.trim(), c=$('chips'); c.innerHTML='';
+  recent().forEach(n=>{const b=document.createElement('button');b.type='button';b.textContent=n;if(n===cur)b.className='on';
+    b.onclick=()=>{$('obj').value=n;drawChips()};c.appendChild(b)});
+}
+function remember(n){const a=recent().filter(x=>x!==n);a.unshift(n);put(K.recent,JSON.stringify(a.slice(0,12)));drawChips()}
+$('obj').addEventListener('input',drawChips);
+
+function say(t,c){const s=$('state');s.textContent=t;s.className=c||''}
+function safeName(n){return n.replace(/[\\/:*?"<>|#%\s]+/g,'-').replace(/^-+|-+$/g,'')||'기타'}
+function stamp(){const d=new Date(),p=x=>String(x).padStart(2,'0');return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds())}
+
+// 줄이고 다시 그려서 위치 정보 등 메타데이터를 지움
+async function shrink(file){
+  let src;
+  try{src=await createImageBitmap(file,{imageOrientation:'from-image'})}
+  catch(e){src=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=URL.createObjectURL(file)})}
+  const w=src.width||src.naturalWidth,h=src.height||src.naturalHeight,s=Math.min(1,MAX/Math.max(w,h));
+  const cv=document.createElement('canvas');cv.width=Math.round(w*s);cv.height=Math.round(h*s);
+  cv.getContext('2d').drawImage(src,0,0,cv.width,cv.height);
+  return cv.toDataURL('image/jpeg',0.86);
+}
+
+async function upload(file,obj,idx){
+  const li=document.createElement('li'),img=document.createElement('img'),n=document.createElement('span'),s=document.createElement('span');
+  n.className='n';s.className='s';s.textContent='줄이는 중';li.append(img,n,s);$('log').prepend(li);$('logCard').hidden=false;
+  const data=await shrink(file);img.src=data;
+  const fname=stamp()+(idx?'-'+idx:'')+'.jpg', dir=get(K.dir), path=(dir?dir+'/':'')+safeName(obj)+'/'+fname;
+  n.textContent=obj+' · '+fname.slice(9,15).replace(/(\d\d)(\d\d)(\d\d)/,'$1:$2:$3');
+  s.textContent='올리는 중';
+  const url='https://api.github.com/repos/'+get(K.repo)+'/contents/'+path.split('/').map(encodeURIComponent).join('/');
+  const r=await fetch(url,{method:'PUT',headers:{Authorization:'Bearer '+get(K.tok),Accept:'application/vnd.github+json','Content-Type':'application/json'},
+    body:JSON.stringify({message:'휴대폰 사진: '+obj,content:data.split(',')[1]})});
+  if(!r.ok){s.textContent='실패 '+r.status;s.className='s err';throw new Error(r.status===401?'열쇠가 맞지 않아요. 설정에서 다시 넣어 주세요.':'올리지 못했어요('+r.status+').')}
+  s.textContent='들어감';s.className='s ok';
+}
+
+async function handle(files){
+  const obj=$('obj').value.trim();
+  if(!files.length)return;
+  $('shoot').disabled=true;
+  let ok=0;
+  try{
+    for(let i=0;i<files.length;i++){say(files.length>1?(i+1)+' / '+files.length+' 올리는 중…':'올리는 중…');await upload(files[i],obj,files.length>1?i+1:0);ok++}
+    remember(obj);say(ok+'장 넣었어요 — '+obj,'ok');
+  }catch(e){say(e.message||'올리지 못했어요.','err')}
+  $('shoot').disabled=false;
+}
+function need(){if(!$('obj').value.trim()){say('무엇을 찍는지 먼저 써 주세요.','err');$('obj').focus();return false}return true}
+$('shoot').onclick=()=>{if(need())$('camIn').click()};
+$('fromAlbum').onclick=()=>{if(need())$('albumIn').click()};
+$('camIn').onchange=e=>{handle([...e.target.files]);e.target.value=''};
+$('albumIn').onchange=e=>{handle([...e.target.files]);e.target.value=''};
+
+const r0=recent();if(r0[0])$('obj').value=r0[0];
+drawChips();
+if(get(K.tok))show(false);else{fillSet();show(true)}
+})();
+</script>
+</body>
+</html>
