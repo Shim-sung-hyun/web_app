@@ -370,12 +370,11 @@ body.setup #adminBtn{display:none}
 @media (max-width:600px){.title h1{font-size:34px}#startBtn{min-width:200px;font-size:24px}.today .col{width:104px}}
 /* 놀이: 물질 징검다리 */
 #playBtn{min-width:150px;height:62px;margin-left:14px;border-radius:18px 15px 19px 16px;border:3px solid var(--sci);background:#fff;color:var(--sci-d);font-family:var(--f-display);font-size:26px;cursor:pointer}
-.rv{position:absolute;inset:0;overflow:hidden;background:#CFEAF2;touch-action:manipulation;user-select:none}
+.rv{position:absolute;inset:0;overflow:hidden;background:#CFEAF2 center top/cover no-repeat;touch-action:manipulation;user-select:none}
 .rvWorld{position:absolute;top:0;bottom:0;left:0;background-size:cover;background-position:center bottom}
-.rvBankL,.rvBankR{position:absolute;top:0;bottom:0;background:linear-gradient(#CFEAF2 0 54%,#9CCB72 54% 60%,#86B35F 60%)}
+.rvBankL,.rvBankR{position:absolute;top:0;bottom:0;background:linear-gradient(transparent 0 56%,#A6D07A 56% 59%,#8DBA63 59%)}
 .rvBankL{left:0}.rvBankR{right:0}
-.rvWater{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#7FC3DD,#4E9EC2);opacity:.9}
-.rvWorld[style*="background-image"] .rvBankL,.rvWorld[style*="background-image"] .rvBankR,.rvWorld[style*="background-image"] .rvWater{display:none}
+.rvWater{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#8ACBE3,#5AA7CB)}
 .rvBankL{z-index:1}.rvBankR{z-index:1}.rvWater{z-index:0}
 .rvObj{position:absolute;z-index:2;border-radius:22px 18px 24px 20px;background:#fff;box-shadow:0 6px 0 rgba(30,70,90,.25);display:flex;align-items:center;justify-content:center;animation:rvBob 3s ease-in-out infinite;opacity:.55;transition:opacity .3s,transform .3s;cursor:pointer}
 .rvObj img,.rvObj .crop{border-radius:14px;pointer-events:none}
@@ -385,7 +384,7 @@ body.setup #adminBtn{display:none}
 .rvObj.pop{animation:rvPop .35s ease-out forwards;pointer-events:none}
 @keyframes rvBob{50%{transform:translateY(-7px) rotate(-1.5deg)}}
 @keyframes rvPop{40%{transform:scale(1.2)}100%{transform:scale(.2);opacity:0}}
-.rvKid{position:absolute;z-index:4;width:92px;height:110px;margin:-104px 0 0 -46px;pointer-events:none}
+.rvKid{position:absolute;z-index:4;width:110px;height:130px;margin:-124px 0 0 -55px;pointer-events:none}
 .rvKid svg,.rvKid img{width:100%;height:100%;object-fit:contain}
 .rvCastles{position:absolute;z-index:2;display:flex;flex-wrap:wrap-reverse;align-items:flex-end;gap:6px 8px;justify-content:center}
 .rvCastle{display:flex;flex-direction:column;align-items:center;font-family:var(--f-display);font-size:15px;color:#3C4A2E}
@@ -409,7 +408,7 @@ body.setup #adminBtn{display:none}
 .rvStep{font-size:20px;color:#555}
 .rvLvBtn{border:2px solid var(--sci);background:#fff;color:var(--sci-d);border-radius:12px;font:inherit;font-size:18px;padding:4px 12px;cursor:pointer}
 .rvFish{position:absolute;z-index:5;left:12px;top:64px;display:flex;align-items:center;gap:10px;pointer-events:none}
-.rvFishPic{width:120px;height:80px}.rvFishPic svg,.rvFishPic img{width:100%;height:100%;object-fit:contain}
+.rvFishPic{width:130px;height:100px}.rvFishPic svg,.rvFishPic img{width:100%;height:100%;object-fit:contain}
 .rvFishPic.hop{animation:rvRise .8s}
 .rvSay{display:flex;align-items:center;gap:10px;background:#fff;border-radius:20px 18px 22px 6px;padding:8px 16px 8px 8px;box-shadow:0 3px 0 rgba(0,0,0,.08);font-family:var(--f-display);font-size:clamp(18px,2.6vw,28px)}
 .rvMat{width:64px;height:64px;border-radius:14px;background-size:cover;background-position:center;display:flex;align-items:flex-end;justify-content:center;color:#fff;font-size:15px;text-shadow:0 1px 2px #000}
@@ -424,7 +423,7 @@ body.setup #adminBtn{display:none}
 .gGo.alt{background:#fff;color:var(--sci-d);border:3px solid var(--sci)}
 .gGo.no{background:#ECE8E3;color:#555}
 .rvAsk,.rvBye{display:flex;flex-direction:column;align-items:center;gap:22px}
-.rvAskPic{display:flex;align-items:flex-end;gap:16px}.rvAskPic>svg{width:110px;height:130px}
+.rvAskPic{display:flex;align-items:flex-end;gap:16px}.rvAskPic>svg,.rvAskPic>img{width:auto;height:150px}
 .rvWave{width:90px;height:22px;border-radius:11px;background:#7FC3DD}
 .rvAskBtns{display:flex;gap:18px}
 @media (max-width:600px){.rvLv,.rvStep{display:none}.rvFishPic{width:80px;height:54px}.rvMat{width:48px;height:48px}#playBtn{min-width:110px;font-size:22px}}
@@ -2059,7 +2058,7 @@ function playRub(tok){
    물체: 하·중 = 그림(낱말 그림·일상 그림), 상·스페셜 = 실물 사진. 하 한 가지 물질 / 중 한·두 가지 / 상 두 가지 이상 / 스페셜 속 물질까지.
    그림(아이·물고기·배경·성)은 media/play/river/ — 오기 전에는 앱이 그린 임시 그림. 학습 기록에 안 남김, 성과 가장 빠른 기록만 이 기기에(materialSort.river) */
 const RV_LV={1:{name:'하',steps:4,hearts:5,sec:120,per:2},2:{name:'중',steps:6,hearts:4,sec:120,per:3},3:{name:'상',steps:8,hearts:3,sec:120,per:3},4:{name:'스페셜',steps:10,hearts:2,sec:100,per:4}};
-const RV_DIR=GH+'media/play/river/', RV_READY=new Set();   /* 받은 그림 이름(kid-stand·kid-jump·kid-splash·fish-talk·fish-happy·river-bg·castle-<물질>) */
+const RV_DIR=GH+'media/play/river/', RV_READY=new Set(['kid-stand','kid-jump','kid-splash','fish-talk','fish-happy','river-bg',...['wood','stone','metal','glass','ceramic','plastic','paper','cloth','rubber'].map(m=>'castle-'+m)]);   /* 2026-11-22 빙 그림 15장 넣음. 받은 그림 이름(kid-stand·kid-jump·kid-splash·fish-talk·fish-happy·river-bg·castle-<물질>) */
 const rvImg=n=>RV_READY.has(n)?RV_DIR+n+'.webp':'';
 const ga=w=>w+(batchim(w)?'이':'가');
 const riverAsk=m=>ga(MAT[m].label)+' 들어 있는 물체를 밟고 건너요.';
@@ -2106,7 +2105,7 @@ function castleEl(m,stage,size){ const d=document.createElement('div'); d.classN
 /* 놀이할까요? (수업이 다 끝나면) */
 function askPlay(){ RUN=null; clearTimers(); stopVoice(); clearStage(); $('prog').innerHTML=''; $('prog').className='';
   const st=$('stage'), box=document.createElement('div'); box.className='rvAsk';
-  box.innerHTML='<div class="gTitle">놀이할까요?</div><div class="rvAskPic">'+KID_SVG('jump')+'<span class="rvWave"></span>'+castleEl('glass',4,90).outerHTML+'</div><div class="rvAskBtns"><button type="button" class="gGo">네</button><button type="button" class="gGo no">아니요</button></div>';
+  box.innerHTML='<div class="gTitle">놀이할까요?</div><div class="rvAskPic">'+(rvImg('kid-jump')?'<img src="'+rvImg('kid-jump')+'" alt="">':KID_SVG('jump'))+'<span class="rvWave"></span>'+castleEl('glass',4,120).outerHTML+'</div><div class="rvAskBtns"><button type="button" class="gGo">네</button><button type="button" class="gGo no">아니요</button></div>';
   st.appendChild(box); const [y,n]=box.querySelectorAll('button');
   tapper(y,()=>{ unlockAudio(); stopVoice(); RV=null; rvStart(Math.max(1,Math.min(4,S.level))); });
   tapper(n,()=>{ stopVoice(); clearStage(); const e=document.createElement('div'); e.className='rvBye'; e.innerHTML='<div class="gTitle">다 했어요</div>'; st.appendChild(e); });
@@ -2122,9 +2121,9 @@ function rvStart(lv,keepMat){
   RV.gap=gap; RV.bankL=bankL; RV.worldW=bankL+gap*L.steps+bankR; RV.W=W; RV.H=H; RV.waterY=H*0.58;
   const box=document.createElement('div'); box.className='rv'; const bg=rvImg('river-bg');
   box.innerHTML='<div class="rvHud"><span class="rvLv">물질 징검다리 · '+L.name+'</span><span class="rvHearts"></span><span class="rvTime"><b></b><em></em></span><span class="rvStep"></span><button type="button" class="rvLvBtn">단계</button></div>'
-    +'<div class="rvWorld" style="width:'+RV.worldW+'px'+(bg?';background-image:url('+bg+')':'')+'"><div class="rvBankL" style="width:'+bankL+'px"></div><div class="rvBankR" style="width:'+bankR+'px"></div><div class="rvWater" style="top:'+RV.waterY+'px"></div><div class="rvCastles"></div></div>'
+    +'<div class="rvWorld" style="width:'+RV.worldW+'px"><div class="rvBankL" style="width:'+bankL+'px"></div><div class="rvBankR" style="width:'+bankR+'px"></div><div class="rvWater" style="top:'+RV.waterY+'px"></div><div class="rvCastles"></div></div>'
     +'<div class="rvFish"><div class="rvFishPic">'+(rvImg('fish-talk')?'<img src="'+rvImg('fish-talk')+'" alt="">':FISH_SVG(false))+'</div><div class="rvSay"><span class="rvMat"></span><b></b></div></div>';
-  st.appendChild(box); RV.box=box; RV.world=box.querySelector('.rvWorld');
+  if(bg) box.style.backgroundImage='url('+bg+')'; st.appendChild(box); RV.box=box; RV.world=box.querySelector('.rvWorld');
   const ms=box.querySelector('.rvMat'); ms.style.backgroundImage=texOf(m).replace(/"/g,"'"); ms.textContent=MAT[m].label; box.querySelector('.rvSay b').textContent=riverAsk(m);
   /* 강 건너 성 줄 */
   const cs=box.querySelector('.rvCastles'); cs.style.left=(bankL+gap*L.steps+30)+'px'; cs.style.width=(bankR-50)+'px'; cs.style.bottom=(H-RV.waterY+6)+'px';
