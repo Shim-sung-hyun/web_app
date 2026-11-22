@@ -1109,7 +1109,7 @@ function renderSetup(){
     +'<br>'+(S.stu?'기록: '+esc(nameOf(S.stu)):'연습 — 기록하지 않아요')+'</div>'
     +(ok?'':'<div class="pickWarn">'+(S.form==='recv'?'받은 사진을 확인하고 골라 주세요(확인한 사진만 쓸 수 있어요).':'사진을 골라 주세요.')+'</div>');
   else $('today').innerHTML=plan.map(bd=>'<div class="plan">'+(plan.length>1?'<h4>'+esc(bd.label)+'</h4>':'')+'<div class="cols">'+bd.mats.map(m=>'<div class="col"><div class="lid" style="background-image:'+TEX[m].replace(/"/g,"'")+'"><b>'+MAT[m].label+'</b></div>'
-      +'<div class="ans">'+bd.items.filter(it=>it.m===m).map(it=>'<span class="tIt"><img src="'+pic(it.a)+'" alt="'+esc(it.a)+'"><small>'+esc(it.a)+'</small></span>').join('')+'</div></div>').join('')+'</div></div>').join('')
+      +'<div class="ans">'+bd.items.filter(it=>it.m===m).map(it=>'<span class="tIt">'+(it.box?'<span class="crop" style="width:38px;height:38px;'+cropStyle(it,38)+'"></span>':'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'">')+'<small>'+esc(it.a)+(it.box?' 📷':'')+'</small></span>').join('')+'</div></div>').join('')+'</div></div>').join('')
     +'<div class="steps">'+LV[S.level].name+' · '+(S.mode==='bundle'?plan.map(b=>b.label).join(', '):'물질 고르기')+' · 물체 '+plan.reduce((n,b)=>n+b.items.length,0)+'개'
     +' · '+(S.who==='alone'?'학생 혼자(묶음을 펼쳐 놓고 골라요)':'선생님과 함께')
     +'<br>단계: '+(steps.join(' → ')||'(없음)')+(S.game?' → 문질러 찾기':'')+' → 끝 장면'
@@ -1237,6 +1237,13 @@ function pickScenes(){ const lv=S.level, mix=MIX[lv], L=shuffle(libScenes(lv)), 
   const err=scs=>{ const c={}; let t=0; sceneUnits(scs,lv).forEach(u=>u.objs.forEach(o=>{ c[o.cat]=(c[o.cat]||0)+1; t++; })); return t?Object.keys(mix).reduce((e,k)=>e+Math.abs((c[k]||0)/t-mix[k]),0)-t*0.01:9; };
   while(chosen.length<S.pn){ let best=null, be=1e9; L.filter(sc=>!chosen.includes(sc)).forEach(sc=>{ const e=err([...chosen,sc]); if(e<be){ be=e; best=sc; } }); if(!best) break; chosen.push(best); }
   S.apick=chosen.map(sc=>sc.id); }
+/* 묶음 자료 수준 3·4(2026-11-22 선생님): 실물 사진이 있는 물체는 사진으로 — 자료실 사진에서 이름이 같고(유리컵·쇠컵 = '컵', 도자기컵 = '머그컵')
+   한 가지 물질이 같은 물체를 찾아 그 둘레를 잘라 씀. 사진이 없으면 그림 그대로 */
+const PHOTO_NAME={'유리컵':'컵','쇠컵':'컵','도자기컵':'머그컵'};
+function realPhoto(it){ const want=PHOTO_NAME[it.a]||it.a;
+  for(const sc of SCENES){ const o=sc.objs.find(o=>o.a===want&&o.parts.length===1&&o.ms.length===1&&o.ms[0]===it.m); if(o) return Object.assign({},it,{sc:sc.id,box:o.box}); }
+  return it; }
+const realItems=(items,lv)=>lv>=3?items.map(realPhoto):items;
 function makePlan(){
   const lv=S.level;
   if(S.form==='auto'){ if(!S.apick.length||S.apick.some(id=>!SC[id]||!lvObjs(SC[id],lv).length||(artLv()&&!ART_IDS.has(id)))) pickScenes(); return sceneUnits(S.apick.map(id=>viewOf(SC[id])),lv); }
@@ -1246,10 +1253,10 @@ function makePlan(){
     const ms=S.msel.filter(m=>MATS[lv].includes(m));
     if(!S.mpick.length||S.mpick.some(a=>!POOL[lv].some(x=>x.a===a&&ms.includes(x.m)))) pickByMat();
     const items=S.mpick.map(a=>POOL[lv].find(x=>x.a===a)).filter(Boolean);
-    return [{mats:MATS[lv].filter(m=>items.some(x=>x.m===m)),items,label:'물질 고르기',bi:null}];
+    return [{mats:MATS[lv].filter(m=>items.some(x=>x.m===m)),items:realItems(items,lv),label:'물질 고르기',bi:null}];
   }
   const sel=(S.bsel||[]).filter(i=>BUN[lv][i]); if(!sel.length) sel.push(0);
-  return sel.map(i=>({mats:BUN[lv][i].mats,items:BUN[lv][i].items,label:'묶음 '+(i+1),bi:i}));
+  return sel.map(i=>({mats:BUN[lv][i].mats,items:realItems(BUN[lv][i].items,lv),label:'묶음 '+(i+1),bi:i}));
 }
 function planOk(plan){ return plan.length&&plan.every(b=>b.mats.length>=2&&b.items.length>=(b.photo?1:2)&&b.mats.length<=(b.photo?9:MAXM)); }
 
@@ -1419,7 +1426,7 @@ function matOptions(it){ const k=LV[RUN.lv].opts-1; const others=shuffle(RUN.bd.
 function stepMat(it,tok){
   const st=$('stage'), A=area(), opts=matOptions(it), n=opts.length, gap=Math.max(16,A.w*0.03);
   const sh=Math.min(A.h*0.28,210);
-  const bub=document.createElement('div'); bub.className='bubble'; bub.innerHTML='<img class="o" src="'+pic(it.a)+'" alt="'+esc(it.a)+'" style="width:'+sh+'px;height:'+sh+'px">';
+  const bub=document.createElement('div'); bub.className='bubble'; bub.innerHTML=it.box?'<span class="crop o" style="width:'+sh+'px;height:'+sh+'px;'+cropStyle(it,sh)+'"></span>':'<img class="o" src="'+pic(it.a)+'" alt="'+esc(it.a)+'" style="width:'+sh+'px;height:'+sh+'px">';
   const cs=optSize(n,A.w,A.h-sh-80,gap,true), row=optRow(n,cs,gap);
   opts.forEach(m=>row.appendChild(matCard(m,cs,'fadeIn')));
   st.appendChild(bub); st.appendChild(row);
