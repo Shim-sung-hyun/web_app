@@ -3696,6 +3696,392 @@
     "puzzle": false
    },
    "from": "d261022234840fad3abc9"
+  },
+  {
+   "id": "laptop",
+   "title": "노트북",
+   "category": "가전·전자기기",
+   "objects": [
+    "노트북",
+    "자판",
+    "화면"
+   ],
+   "place": "집",
+   "colors": [
+    "은색",
+    "검정"
+   ],
+   "shapes": [
+    "네모"
+   ],
+   "tags": [
+    "집",
+    "가전·전자기기"
+   ],
+   "source": "maker",
+   "added": "2026-11-22",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
+    "review": "2026-11-22 Claude 검토",
+    "status": "ok",
+    "notes": "노트북 화면(문서·대화창)은 흐리게 함. 사람·이름 없음"
+   },
+   "files": {
+    "photo": "laptop/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "shampoo-bottles",
+   "title": "샴푸와 바디워시 통",
+   "category": "생활용품",
+   "objects": [
+    "샴푸 통",
+    "바디워시 통",
+    "욕조"
+   ],
+   "place": "화장실",
+   "colors": [
+    "보라",
+    "흰색",
+    "주황"
+   ],
+   "shapes": [
+    "원기둥"
+   ],
+   "tags": [
+    "화장실",
+    "생활용품"
+   ],
+   "source": "maker",
+   "added": "2026-11-22",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
+    "review": "2026-11-22 Claude 검토",
+    "status": "ok",
+    "notes": "통의 큰 상표 글자는 흐리게 함"
+   },
+   "files": {
+    "photo": "shampoo-bottles/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "washbasin",
+   "title": "세면대",
+   "category": "생활용품",
+   "objects": [
+    "세면대",
+    "수도꼭지"
+   ],
+   "place": "화장실",
+   "colors": [
+    "흰색",
+    "은색"
+   ],
+   "shapes": [
+    "네모",
+    "원"
+   ],
+   "tags": [
+    "화장실",
+    "생활용품"
+   ],
+   "source": "maker",
+   "added": "2026-11-22",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
+    "review": "2026-11-22 Claude 검토",
+    "status": "ok",
+    "notes": "사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "washbasin/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "towel",
+   "title": "수건",
+   "category": "생활용품",
+   "objects": [
+    "수건",
+    "수건걸이"
+   ],
+   "place": "화장실",
+   "colors": [
+    "흰색",
+    "회색"
+   ],
+   "shapes": [
+    "네모"
+   ],
+   "tags": [
+    "화장실",
+    "생활용품"
+   ],
+   "source": "maker",
+   "added": "2026-11-22",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
+    "review": "2026-11-22 Claude 검토",
+    "status": "ok",
+    "notes": "사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "towel/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "ukulele",
+   "title": "우쿨렐레",
+   "category": "놀이",
+   "objects": [
+    "우쿨렐레",
+    "받침대"
+   ],
+   "place": "집",
+   "colors": [
+    "갈색",
+    "검정"
+   ],
+   "shapes": [
+    "원"
+   ],
+   "tags": [
+    "집",
+    "놀이"
+   ],
+   "source": "maker",
+   "added": "2026-11-22",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
+    "review": "2026-11-22 Claude 검토",
+    "status": "ok",
+    "notes": "사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "ukulele/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "wall-clock-2",
+   "title": "벽시계",
+   "category": "생활용품",
+   "objects": [
+    "벽시계",
+    "시곗바늘"
+   ],
+   "place": "집",
+   "colors": [
+    "갈색",
+    "흰색",
+    "베이지"
+   ],
+   "shapes": [
+    "원"
+   ],
+   "tags": [
+    "집",
+    "생활용품"
+   ],
+   "source": "maker",
+   "added": "2026-11-22",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
+    "review": "2026-11-22 Claude 검토",
+    "status": "ok",
+    "notes": "아래에 매달린 캐릭터 인형은 잘라 냄"
+   },
+   "files": {
+    "photo": "wall-clock-2/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "toilet",
+   "title": "좌변기",
+   "category": "생활용품",
+   "objects": [
+    "좌변기",
+    "뚜껑"
+   ],
+   "place": "화장실",
+   "colors": [
+    "흰색"
+   ],
+   "shapes": [
+    "원"
+   ],
+   "tags": [
+    "화장실",
+    "생활용품"
+   ],
+   "source": "maker",
+   "added": "2026-11-22",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
+    "review": "2026-11-22 Claude 검토",
+    "status": "ok",
+    "notes": "사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "toilet/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "toothbrushes",
+   "title": "칫솔",
+   "category": "생활용품",
+   "objects": [
+    "칫솔",
+    "칫솔꽂이"
+   ],
+   "place": "화장실",
+   "colors": [
+    "빨강",
+    "초록",
+    "검정"
+   ],
+   "shapes": [
+    "원기둥"
+   ],
+   "tags": [
+    "화장실",
+    "생활용품"
+   ],
+   "source": "maker",
+   "added": "2026-11-22",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
+    "review": "2026-11-22 Claude 검토",
+    "status": "ok",
+    "notes": "손잡이의 작은 상표 글자는 그대로(작게 보임)"
+   },
+   "files": {
+    "photo": "toothbrushes/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   }
+  },
+  {
+   "id": "basket-plant",
+   "title": "화분",
+   "category": "식물",
+   "objects": [
+    "화분",
+    "받침대",
+    "식물"
+   ],
+   "place": "집",
+   "colors": [
+    "초록",
+    "베이지",
+    "검정"
+   ],
+   "shapes": [
+    "원기둥",
+    "원"
+   ],
+   "tags": [
+    "집",
+    "식물"
+   ],
+   "source": "maker",
+   "added": "2026-11-22",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "제작자",
+    "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
+    "review": "2026-11-22 Claude 검토",
+    "status": "ok",
+    "notes": "사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "basket-plant/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   }
   }
  ]
 }
