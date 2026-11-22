@@ -935,10 +935,13 @@ function chooseEngine(){ if(S.engineNow) return; S.engineNow=(S.engine==='builti
 /* 그 수업에 나올 말(문장 조각) */
 function lessonParts(plan){ const L=new Set(), add=t=>{ if(t) splitSay(t).forEach(x=>L.add(x)); };
   [END_LINE,RUB_LINE,TAP_LINE,FACT_LINE,INSIDE_ASK].forEach(add); [...Object.values(INTRO_TITLE),...Object.values(GAME_TITLE)].forEach(t=>add(t+'.'));
-  plan.forEach(bd=>{ bd.items.forEach(it=>[isLine(it.a),askObj(it.a),askMat(it.a),fullLine(it.a,it.m),nameLine(it.a),madeLine(it.m)].forEach(add));
-    (bd.objs||[]).forEach(o=>{ const vms=[...new Set(o.parts.filter(p=>p.box).map(p=>p.m))];
-      [isLine(o.a),askObj(o.a),askMat(o.a),inAsk(o.a),o.ms.length>1?allLine(o.a,o.ms):fullLine(o.a,o.ms[0]),vms.length>1?allLine(o.a,vms):vms.length?fullLine(o.a,vms[0]):''].forEach(add);
-      o.parts.forEach(p=>add(fullLine(p.a,p.m))); });
+  plan.forEach(bd=>{
+    if(bd.photo) bd.items.forEach(it=>[askMat(it.a),fullLine(it.a,it.m),nameLine(it.a),madeLine(it.m)].forEach(add));   /* 사진의 부분: 물질 고르기·정리하기 */
+    else bd.items.forEach(it=>[isLine(it.a),askObj(it.a),askMat(it.a),fullLine(it.a,it.m),nameLine(it.a),madeLine(it.m)].forEach(add));
+    (bd.objs||[]).forEach(o=>{ const vms=[...new Set(o.parts.filter(p=>p.box).map(p=>p.m))], hid=o.parts.some(p=>!p.box);
+      [isLine(o.a),askObj(o.a),askMat(o.a),o.ms.length>1?allLine(o.a,o.ms):fullLine(o.a,o.ms[0])].forEach(add);
+      if(hid){ add(inAsk(o.a)); add(vms.length>1?allLine(o.a,vms):vms.length?fullLine(o.a,vms[0]):''); }
+      o.parts.forEach(p=>{ add(fullLine(p.a,p.m)); if(p.box) add(madeLine(p.m)); }); });
     bd.mats.forEach(m=>[sameAsk(m),sameDone(m),madeLine(m)].forEach(add));
     if(!bd.photo) PHOTO.filter(p=>bd.mats.includes(p.m)).forEach(p=>{ add(askMat(p.a)); add(fullLine(p.a,p.m)); }); });
   return [...L]; }
@@ -1746,7 +1749,7 @@ function playFactory(tok){
       const out=document.createElement('div'); out.className='made'; out.style.width=out.style.height=sz+'px'; out.innerHTML=thumbHTML(it,sz-14,1);
       const t=document.createElement('span'); t.className='mtag'; t.textContent=MAT[m].label; out.appendChild(t);
       shelf.prepend(out); while(shelf.children.length>(por?4:6)) shelf.lastChild.remove(); chime();
-      await speak(isLine(it.a)); if(!alive(tok)) return;
+      await speak(it.box?nameLine(it.a):isLine(it.a)); if(!alive(tok)) return;   /* 사진 조각은 이름만(그 말이 내장에 있음) */
       used.add(m); made++; busy=false; if(used.size===mats.length&&made>=Math.max(4,mats.length*2)) finish(); }); });
   speak(FACT_LINE);
   later(()=>{ if(alive(tok)) finish(); },75000);
