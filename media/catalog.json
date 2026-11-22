@@ -1,6 +1,6 @@
 {
 "about": "차름 자료 전체 목록 — tools/media-index.py가 만듦(손으로 고치지 않음). 찾기: python3 tools/find-media.py 낱말",
-"count": 2773,
+"count": 2774,
 "base": "https://shim-sung-hyun.github.io/web_app/media/",
 "items": [
 {"path": "animals/akeo.webp", "names": ["akeo", "악어"], "kind": "그림", "style": "빙 연필풍", "group": "animals", "used_by": ["008", "009"]},
@@ -766,6 +766,7 @@
 {"path": "archive/unused/voice/007-leda/fd3f39225f4857e7.mp3", "names": ["fd3f39225f4857e"], "kind": "소리", "style": "안 쓰게 된 것", "group": "archive", "archived": true, "why": "007에서 안 쓰게 된 Leda 목소리 — 관리 버튼 누르는 표시를 부드럽게(버튼 위 투명한 아쿠아 원이 세 번 깜빡). 007 기본 목소리: 한 글자 소리 모두 또렷하게 다시 만듦"},
 {"path": "archive/unused/voice/007-leda/fe749a55f6228077.mp3", "names": ["fe749a55f6228077"], "kind": "소리", "style": "안 쓰게 된 것", "group": "archive", "archived": true, "why": "007에서 안 쓰게 된 Leda 목소리 — 관리 버튼 누르는 표시를 부드럽게(버튼 위 투명한 아쿠아 원이 세 번 깜빡). 007 기본 목소리: 한 글자 소리 모두 또렷하게 다시 만듦"},
 {"path": "archive/unused/voice/tts-samples/ElevenLabs_2026-11-04T06_21_26_Roger_-_Laid-Back_Casual_Resonant_pre_s50_sim75_v4.mp3", "names": ["elevenlabs_2026-11-04t06_21_26_roger_-_laid-back_casual_resonant_pre_s50_sim75_v"], "kind": "소리", "style": "안 쓰게 된 것", "group": "archive", "archived": true, "why": "목소리 고를 때 들어 본 견본 — Delete tools/tts-samples directory"},
+{"path": "brand/cdff757386e72b62ba5fb17ea83df99e.png", "names": ["cdff757386e72b62ba5fb17ea83df99e"], "kind": "그림", "style": "차름 로고", "group": "brand", "used_by": ["001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "011", "012"]},
 {"path": "code:001/shape-finder.html", "names": ["도형", "동그라미", "원", "세모", "삼각형", "네모", "사각형", "별"], "kind": "코드 그림", "style": "앱 코드로 그린 도형(SVG)", "group": "code", "used_by": ["001"]},
 {"path": "code:002/picture-puzzle.html", "names": ["퍼즐", "퍼즐 조각", "조각"], "kind": "코드 그림", "style": "앱 코드로 자른 퍼즐 조각(SVG)", "group": "code", "used_by": ["002"]},
 {"path": "code:007/word-learn.html", "names": ["단추 그림", "아이콘"], "kind": "코드 그림", "style": "앱 코드로 그린 작은 그림(SVG)", "group": "code", "used_by": ["007"]},

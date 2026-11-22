@@ -62,7 +62,8 @@
 수준·묶음 (물체 그림은 media/words)
 (2026-11-22) 그림으로 수준 1~4: 자료실 사진 수업(자동·골라서)에 '보기: 사진 / 그림' — 그림은 001·002가 쓰는 일상 그림(media/photos/<id>/art.jpg, 사진과 같은 짜임)이라
   물체 자리(0~1000)가 그대로 맞음. SC['<id>~a'] = 같은 물체·자리 + art.jpg. 일상 그림이 있는 22장만(ART_IDS). 없는 11장(laptop·shampoo-bottles·washbasin·towel·ukulele·
-  wall-clock-2·toilet·toothbrushes·basket-plant·potted-tree·street-cat)은 001/art-maker.html(결제 Gemini 키)로 그리면 zip(<id>/art.jpg) → photos.json files.art · ART_IDS에 더함.
+  wall-clock-2·toilet·toothbrushes·basket-plant·potted-tree·street-cat)은 선생님이 Gemini로 받기로(2026-11-22): 복사 화면 media/prompts/copy.html?f=PROMPTS-010-art-gemini.txt
+  (사진 주소 + 001 art-maker와 같은 프롬프트 + 같은 비율). 받은 zip → media/photos/<id>/art.jpg · photos.json files.art · ART_IDS에 더함(001 art-maker도 됨).
   낱말 그림 그림 묶음(007 그림)은 그대로 한 가지 물질 개념 익히기. 빙 그림 43가지 프롬프트는 필요 없어져 _trash로
 컵 넷: 학생 화면·말은 '컵', 선생님 화면(오늘 할 것·묶음 고르기)에는 그림 아래에 종이컵·유리컵·도자기컵·쇠컵을 적음(2026-11-22)
 - 1 나무·쇠: 의자·사다리·바구니 / 숟가락·포크·냄비·열쇠·쟁반·젓가락 (3묶음)

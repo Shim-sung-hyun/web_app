@@ -1,0 +1,117 @@
+010 무엇으로 만들었을까 — 일상 그림 만들기(사진 → 그림, Gemini) 11장 (2026-11-22)
+010이 쓰는 자료실 사진 가운데 일상 그림(art.jpg)이 아직 없는 11장입니다. 001·002의 끝 그림·일상 그림과 같은 프롬프트(001 art-maker)로, 같은 그림체가 되게 했습니다.
+하는 법: ① 사진 주소를 눌러 사진을 내려받음 → ② Gemini에 그 사진을 붙이고 아래 프롬프트를 복사해 붙여 보냄 → ③ 나온 그림을 내려받음.
+그림은 사진과 같은 짜임·같은 가로세로 비율이어야 010의 물체 자리가 맞아요(물건이 옮겨지거나 잘리면 다시 받기). 사람·글자·상표가 생기면 다시 받기.
+받은 그림 11장을 사진 이름(예: laptop.jpg)으로 저장해 zip 하나로 이 세션에 올려 주세요 → Claude가 media/photos/<이름>/art.jpg로 넣고 001·002·010에 함께 씀.
+
+━━━━━━━━ 사진 → 그림 (11장)
+
+■ 1 노트북 (laptop)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/laptop/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 노트북.
+▲
+
+■ 2 샴푸와 바디워시 통 (shampoo-bottles)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/shampoo-bottles/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 샴푸와 바디워시 통.
+▲
+
+■ 3 세면대 (washbasin)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/washbasin/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 세면대.
+▲
+
+■ 4 수건 (towel)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/towel/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 수건.
+▲
+
+■ 5 우쿨렐레 (ukulele)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/ukulele/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 우쿨렐레.
+▲
+
+■ 6 벽시계 (wall-clock-2)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/wall-clock-2/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 720:1060); do not crop, zoom or move anything. This photo: 벽시계.
+▲
+
+■ 7 좌변기 (toilet)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/toilet/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 좌변기.
+▲
+
+■ 8 칫솔 (toothbrushes)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/toothbrushes/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 칫솔.
+▲
+
+■ 9 화분 (basket-plant)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/basket-plant/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 화분.
+▲
+
+■ 10 화분 (potted-tree)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/potted-tree/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 화분.
+▲
+
+■ 11 고양이 (street-cat)
+사진 내려받기: https://shim-sung-hyun.github.io/web_app/media/photos/street-cat/photo.jpg
+▼
+Redraw this photo as a bright, friendly illustration in a clean modern animation style: soft rounded forms, smooth simple shading, cheerful clear colors, crisp dark outlines around every object (so it could also be used as a coloring page).
+Keep the same scene, camera angle, objects, positions and sizes, so the original photo is easy to recognize.
+Make round, oval, triangular and four-sided objects look clean and simple so their shapes are easy to see, but do not mark, label, highlight, glow or outline them differently from everything else.
+Not babyish: it should also suit teenagers. Do not add characters, people, animals, faces, eyes, text, letters, numbers or logos. Remove any writing or brand names.
+Keep exactly the same aspect ratio and framing as the attached photo (portrait, 576:1280); do not crop, zoom or move anything. This photo: 고양이.
+▲
