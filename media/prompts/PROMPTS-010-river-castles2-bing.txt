@@ -1,0 +1,15 @@
+010 무엇으로 만들었을까 — 물질 징검다리 성 다시 받기 2장 (빙, 2026-11-22)
+고무 성은 풍선 아트로, 종이 성은 종이 질감을 더 살려서. 이미 받은 성과 같은 그림체·크기로 나오게, 붙일 그림에 적힌 돌 성 그림을 빙에 함께 붙여 주세요(빙에서 붙일 수 없으면 글만 붙여도 됨).
+장마다 4장 중 마음에 드는 한 장을 골라, 그림 이름(castle-rubber.jpg, castle-paper.jpg)으로 저장해 zip 하나로 올려 주세요. 들어갈 자리: media/play/river/ (Claude가 흰 바탕을 지워 지금 그림과 바꿈).
+
+■ 1 고무 성 — 풍선 아트 (castle-rubber.webp)
+붙일 그림: https://shim-sung-hyun.github.io/web_app/media/play/river/castle-stone.webp (그림체·크기)
+▼
+Simple children's picture-card illustration in the same style as the attached reference castle: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle made entirely of twisted balloons, like balloon art: the walls are built from rows of round shiny rubber balloons, the towers are stacks of long twisted balloons with balloon-dog style twists, little knotted balloon ends visible, a balloon flag on top, in a few bright colours (red, yellow, blue, green) with small white shine marks so they clearly look like shiny rubber balloons. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with the flag on top, centred and filling most of the image with a small margin, about as wide as tall, the same size and framing as the reference castle. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame.
+▲
+
+■ 2 종이 성 — 종이 질감 살리기 (castle-paper.webp)
+붙일 그림: https://shim-sung-hyun.github.io/web_app/media/play/river/castle-stone.webp (그림체·크기)
+▼
+Simple children's picture-card illustration in the same style as the attached reference castle: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle clearly made of paper: walls of cream and light-brown corrugated cardboard with the wavy cardboard layers visible at the cut edges, towers of rolled paper tubes, roofs of folded origami paper cones with sharp crisp fold lines, slightly torn and uneven paper edges, a visible fibrous paper grain texture, a little tape strip and a paper-clip on one wall, a folded paper flag on a paper-straw pole. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with the flag on top, centred and filling most of the image with a small margin, about as wide as tall, the same size and framing as the reference castle. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame.
+▲
