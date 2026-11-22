@@ -1,0 +1,101 @@
+010 무엇으로 만들었을까 — 놀이 '물질 징검다리' 그림 (빙, 2026-11-22)
+강을 건너 성을 짓는 놀이의 그림 15장. 모두 낱말 그림체(만화풍)로, 붙일 그림이 적힌 장은 그 그림을 빙에 함께 붙여 주세요(빙에서 붙일 수 없으면 글만 붙여도 됨).
+장마다 4장 중 마음에 드는 한 장을 골라, 그림 이름(예: kid-stand.jpg)으로 저장해 zip 하나로 올려 주세요. 들어갈 자리: media/play/river/ (Claude가 흰 바탕을 지워 넣음).
+
+━━━━━━━━ 1. 차름 친구 아이 (주인공, 3장 — 1번을 먼저 받고, 마음에 드는 1번 그림을 2·3번에 함께 붙이면 같은 아이로 나와요)
+
+■ 1 서 있기 (kid-stand.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw the Charum friend: one cheerful Korean elementary-school child about 9 years old with short black hair and a small side fringe, round friendly eyes, wearing a plain mustard-yellow T-shirt, blue shorts and white sneakers with red laces, no logo or letters on the clothes, standing and facing slightly to the right with a big smile, ready to jump, arms a little bent, whole body visible, centred, filling most of the square. Plain pure white background, no shadow on the ground, no text, no logo, no frame. Square image.
+▲
+
+■ 2 뛰는 중 (kid-jump.webp)
+붙일 그림: 1번에서 고른 아이 그림
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw exactly the same child as the attached picture (the Charum friend: one cheerful Korean elementary-school child about 9 years old with short black hair and a small side fringe, round friendly eyes, wearing a plain mustard-yellow T-shirt, blue shorts and white sneakers with red laces, no logo or letters on the clothes), now jumping to the right in the air: knees bent up, arms raised happily, mouth open in a joyful 'yahoo!', whole body visible, centred, filling most of the square. Plain pure white background, no shadow on the ground, no text, no logo, no frame. Square image.
+▲
+
+■ 3 튜브 끼고 물에서 (kid-splash.webp)
+붙일 그림: 1번에서 고른 아이 그림
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw exactly the same child as the attached picture (the Charum friend: one cheerful Korean elementary-school child about 9 years old with short black hair and a small side fringe, round friendly eyes, wearing a plain mustard-yellow T-shirt, blue shorts and white sneakers with red laces, no logo or letters on the clothes), wearing a round red-and-white swim ring around the waist, popping up from water with a small splash of light blue water drops around, wet hair, a surprised but funny face (not scared), shown from the waist up above a little light-blue water patch at the bottom. Centred, filling most of the square. Plain pure white background, no shadow on the ground, no text, no logo, no frame. Square image.
+▲
+
+━━━━━━━━ 2. 강의 물고기 (안내자, 2장 — 지금 낱말 그림 물고기를 그림체 본보기로)
+
+■ 4 말하기 (fish-talk.webp)
+붙일 그림: media/words/mulgogi.webp(물고기 낱말 그림)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one friendly river fish guide based on the attached fish, a bit bigger and wiser: soft blue-green scales, a kind smile, big round eyes, a small fin raised as if pointing and talking, half jumping out of the water with a few small light-blue water drops below. Whole fish visible, centred, filling most of the square. Plain pure white background, no shadow on the ground, no text, no logo, no frame. Square image.
+▲
+
+■ 5 기뻐하기 (fish-happy.webp)
+붙일 그림: 4번에서 고른 물고기 그림
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw exactly the same fish as the attached picture, now very happy: eyes curved shut with joy, tail flicking, jumping in a small arc with sparkling water drops around. Whole fish visible, centred, filling most of the square. Plain pure white background, no shadow on the ground, no text, no logo, no frame. Square image.
+▲
+
+━━━━━━━━ 3. 강 배경 (1장, 가로 16:9)
+
+■ 6 강 배경 (river-bg.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one wide, calm, empty landscape seen from the side, as a wide 16:9 picture: on the far left a small grassy riverbank (about 15% of the width) where a child can stand; in the middle a wide gentle blue river (about 55% of the width) with soft small waves and light reflections, its water surface at about 60% of the height; on the right a wide flat green meadow (about 30% of the width) with nothing on it, where castles will be built later. A soft blue sky with two or three small clouds, distant low hills. No bridge, no stones, no boats, no people, no animals, no buildings, no text, no logo.
+▲
+
+━━━━━━━━ 4. 물질 성 (9장 — 같은 크기·같은 짜임으로, 앱이 아래부터 네 단계로 지어 올려요)
+
+■ 7 나무 성 (castle-wood.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle: a wooden castle built of logs and planks with a wooden gate, two round log towers with pointed wooden roofs, visible wood grain. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with a flag on top, centred and filling most of the square with a small margin. The same size and framing as a set of castles: about as wide as tall. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame. Square image.
+▲
+
+■ 8 돌 성 (castle-stone.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle: a stone castle built of grey stone blocks with a stone gate, two strong round stone towers with flat battlements. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with a flag on top, centred and filling most of the square with a small margin. The same size and framing as a set of castles: about as wide as tall. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame. Square image.
+▲
+
+■ 9 쇠 성 (castle-metal.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle: a shiny silver metal castle made of steel plates with rivets, a metal gate and two tall metal towers with pointed silver roofs, bright metallic reflections. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with a flag on top, centred and filling most of the square with a small margin. The same size and framing as a set of castles: about as wide as tall. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame. Square image.
+▲
+
+■ 10 유리 성 (castle-glass.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle: a sparkling clear glass castle: see-through light blue glass walls and two tall glass towers with pointed glass roofs, bright highlights and reflections so it clearly looks like glass. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with a flag on top, centred and filling most of the square with a small margin. The same size and framing as a set of castles: about as wide as tall. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame. Square image.
+▲
+
+■ 11 도자기 성 (castle-ceramic.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle: a white porcelain castle with glossy glazed walls painted with blue flower patterns, a round porcelain tower like a tall vase with a blue roof, shiny highlights. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with a flag on top, centred and filling most of the square with a small margin. The same size and framing as a set of castles: about as wide as tall. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame. Square image.
+▲
+
+■ 12 플라스틱 성 (castle-plastic.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle: a colourful plastic castle built of big toy blocks in red, yellow, blue and green, with a block gate and two block towers, smooth shiny plastic. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with a flag on top, centred and filling most of the square with a small margin. The same size and framing as a set of castles: about as wide as tall. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame. Square image.
+▲
+
+■ 13 종이 성 (castle-paper.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle: a paper castle made of folded paper and cardboard like origami, with folded paper towers, visible folds and creases, a paper flag. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with a flag on top, centred and filling most of the square with a small margin. The same size and framing as a set of castles: about as wide as tall. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame. Square image.
+▲
+
+■ 14 천 성 (castle-cloth.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle: a cloth tent castle made of colourful striped fabric tents with poles, soft folds, a fabric gate curtain and cloth flags waving. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with a flag on top, centred and filling most of the square with a small margin. The same size and framing as a set of castles: about as wide as tall. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame. Square image.
+▲
+
+■ 15 고무 성 (castle-rubber.webp)
+붙일 그림: media/words/jongikeop.webp(그림체)
+▼
+Simple children's picture-card illustration in the same style as the attached reference: flat soft colours with gentle shading, a soft dark-brown outline of even thickness, gently rounded shapes, friendly but not babyish (it should also suit teenagers). Draw one small fairy-tale castle: a bouncy inflatable castle (bouncy house) made of shiny rubber, puffy red and yellow walls and round puffy towers, looking soft and bouncy. Front view, standing on a flat little patch of green grass at the bottom, the whole castle visible with a flag on top, centred and filling most of the square with a small margin. The same size and framing as a set of castles: about as wide as tall. Plain pure white background, no shadow, no people, no animals, no text, no logo, no frame. Square image.
+▲
