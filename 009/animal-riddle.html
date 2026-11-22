@@ -620,7 +620,7 @@ window.AdminHold = (function () {
    동물 그림은 1편(008)과 같은 것(media/words, media/animals — 배경 없이 동물만, 가장자리 정리함),
    사는 곳 그림은 media/habitats, 먹이 그림은 007 먹이 주기 놀이의 것(media/play/feed/food). 앱 안의 자료는 GitHub 절대 주소로 */
 const GH='https://shim-sung-hyun.github.io/web_app/';
-const P007=GH+'media/words/', PNEW=GH+'media/animals/', HAB=GH+'media/habitats/', STB=GH+'media/stage-beta/nature/new-',   /* 장면은 무대의 연필풍 빈 배경(2026-11-15) */ FOODP=GH+'media/play/feed/food/';
+const P007=GH+'media/words/', PNEW=GH+'media/animals/', HAB=GH+'media/habitats/', STB=GH+'media/stage/nature/',   /* 장면은 무대의 연필풍 빈 배경(2026-11-15) */ FOODP=GH+'media/play/feed/food/';
 const OLD={'돼지':'dwaeji','말':'mal_dongmul','물고기':'mulgogi','붕어':'bungeo','조개':'jogae','새우':'saeu','달팽이':'dalpaengi','거미':'geomi','참새':'chamsae','까치':'kkachi','잠자리':'jamjari',
  '다람쥐':'daramjwi','여우':'yeou','개구리':'gaeguri','악어':'akeo'};
 const NEW={'원숭이':'wonsungi','펭귄':'penggwin','토끼':'tokki','개':'gae','고양이':'goyangi','독수리':'doksuri','나비':'nabi','소':'so','사자':'saja','코끼리':'kokkiri','기린':'girin','곰':'gom','낙타':'nakta','하마':'hama','사슴':'saseum','호랑이':'horangi','고래':'gorae','상어':'sangeo','문어':'muneo','오징어':'ojingeo','해파리':'haepari','불가사리':'bulgasari','바다표범':'badapyobeom','북극곰':'bukgeukgom',
@@ -1690,7 +1690,9 @@ window.AdminGate = (function () {
    - 고정 로고 자리를 옮길 앱만 HomeLink.at(왼쪽px, 위px)(004·006: 왼쪽 끝까지 닿는 위 메뉴 줄 아래). 2026-11-21 */
 window.HomeLink = (function () {
   var URL = 'https://www.charum.org/';
-  var LOGO = 'https://www.charum.org/files/attach/images/59600/cdff757386e72b62ba5fb17ea83df99e.png';
+  /* 로고(2026-11-22): 저장소 사본(media/brand/charum-logo.png)을 먼저, 없으면 charum.org 원본 — 서버 주소가 바뀌어도 깨지지 않게 */
+  var LOGO = 'https://shim-sung-hyun.github.io/web_app/media/brand/charum-logo.png';
+  var LOGO2 = 'https://www.charum.org/files/attach/images/59600/cdff757386e72b62ba5fb17ea83df99e.png';
   var st = document.createElement('style');
   st.textContent = '.chHomeA{display:inline-flex;align-items:center;line-height:0;padding:4px;border-radius:8px;text-decoration:none;opacity:.9;transition:opacity .15s}'
     + '.chHomeA:hover,.chHomeA:focus-visible{opacity:1}.chHomeA:focus-visible{outline:2px solid currentColor;outline-offset:2px}'
@@ -1707,7 +1709,7 @@ window.HomeLink = (function () {
   function link(id) {
     var a = document.createElement('a'); if (id) a.id = id; a.className = 'chHomeA'; a.href = URL; a.target = '_blank'; a.rel = 'noopener';
     a.title = '차름 홈페이지(charum.org) — 새 탭으로 열려요'; a.setAttribute('aria-label', '차름 홈페이지 charum.org');
-    var img = new Image(); img.alt = ''; img.src = LOGO; img.onerror = function () { a.classList.add('noimg'); };
+    var img = new Image(); img.alt = ''; img.src = LOGO; img.onerror = function () { if (img.src !== LOGO2) { img.src = LOGO2; return; } a.classList.add('noimg'); };
     img.onload = function () { tick(); };
     var t = document.createElement('span'); t.className = 'hlTxt'; t.textContent = 'charum.org';
     a.appendChild(img); a.appendChild(t); return a;

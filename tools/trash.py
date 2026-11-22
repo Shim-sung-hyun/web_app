@@ -9,19 +9,45 @@
 - 앱·도구는 _trash 안을 보지 않는다(check-files·sync-modules·check-modules가 건너뜀). 앱에서 아직 부르는 파일은 넣지 않는다.
 - 세션을 시작할 때 한 번 그냥 돌려 보고, 비울 때가 된 것이 있으면 --empty 로 비운 뒤 커밋한다.
 
+그림·소리는 버리지 않는다(2026-11-22 선생님) — 그림·사진·소리 파일(webp·jpg·png·mp3 …)은 _trash가 아니라
+media/archive/<까닭>/<원래 media 안 자리> 로 가고 media/archive/list.json 에 한 줄 남는다(비우지 않음).
+    --kind cartoon   만화풍 등 그림풍을 바꾸기 전 판
+    --kind replaced  같은 풍으로 다시 받기 전·모양이 이상했던 그림 (--why에 '다시·바꿈'이 있으면 저절로)
+    --kind unused    안 쓰게 된 것(기본)
+  폴더를 넣으면 안의 그림·소리는 보관함으로, 나머지는 _trash로 나뉜다.
+
 버린 도구 보관함(2026-11-14 선생님) — 안 쓰게 된 도구는 tools/attic/ 에 6개월(180일) 두고, 목록 tools/attic/LIST.txt 에는 계속 남긴다.
     python3 tools/trash.py --tool 이름.py --why "이유"   # tools/이름.py → tools/attic/ (목록에 '날짜 · 이름 · 이유' 한 줄)
     python3 tools/trash.py --revive 이름.py              # 다시 살림(tools/ 로 되돌리고 목록에 되살린 날 적음)
   --empty 는 보관 180일이 지난 도구도 지운다. 목록 줄은 남기고 '지움 + 되살릴 커밋'을 적어 두므로, 지운 뒤에도
   git show 커밋:tools/attic/이름.py > tools/이름.py 로 되살릴 수 있다.
 """
-import datetime, os, subprocess, sys
+import datetime, hashlib, json, os, re, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BOX = os.path.join(ROOT, '_trash')
 DAYS = 90
 ATTIC = os.path.join(ROOT, 'tools', 'attic'); LIST = os.path.join(ATTIC, 'LIST.txt'); TOOL_DAYS = 180
 today = datetime.date.today()
+ARCH = os.path.join(ROOT, 'media', 'archive'); ALIST = os.path.join(ARCH, 'list.json')
+MEDIA = re.compile(r'\.(webp|jpe?g|png|gif|svg|mp3|wav|ogg|m4a|mp4)$', re.I)
+
+
+def keep(rel, why, kind):
+    """그림·소리 한 파일을 보관함으로(git mv) — list.json에 한 줄"""
+    if not kind:
+        kind = 'cartoon' if re.search(r'만화풍|연필풍', why) else 'replaced' if re.search(r'다시|바꿈|바꿔|바꾸|고침', why) else 'unused'
+    sub = rel[len('media/'):] if rel.startswith('media/') else rel
+    dst = os.path.join(ARCH, kind, sub); base, ext = os.path.splitext(dst); n = 2
+    while os.path.exists(dst): dst = f'{base}-{n}{ext}'; n += 1
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    h = hashlib.sha1(open(os.path.join(ROOT, rel), 'rb').read()).hexdigest()
+    git('mv', rel, os.path.relpath(dst, ROOT))
+    L = json.load(open(ALIST, encoding='utf-8')) if os.path.exists(ALIST) else []
+    L.append({'file': os.path.relpath(dst, ARCH), 'from': rel, 'kind': kind, 'date': today.isoformat(), 'why': why, 'source': 'trash.py', 'sha': h})
+    open(ALIST, 'w', encoding='utf-8').write('[\n' + ',\n'.join(json.dumps(e, ensure_ascii=False) for e in L) + '\n]\n')   # 한 줄에 하나
+    git('add', os.path.relpath(ALIST, ROOT))
+    print('보관함에 넣음:', rel, '→', os.path.relpath(dst, ROOT))
 
 
 def git(*a):
@@ -60,6 +86,10 @@ args = sys.argv[1:]
 why = ''
 if '--why' in args:
     i = args.index('--why'); why = ' '.join(args[i + 1:i + 2]); args = args[:i] + args[i + 2:]
+kind = ''
+if '--kind' in args:
+    i = args.index('--kind'); kind = args[i + 1]; args = args[:i] + args[i + 2:]
+    if kind not in ('cartoon', 'replaced', 'unused'): sys.exit('--kind 는 cartoon · replaced · unused 중 하나')
 if '--tool' in args:
     names = [a for a in args if a != '--tool']
     if not why: sys.exit('--why "이유" 를 꼭 적어 주세요.')
@@ -98,17 +128,25 @@ elif args:
     if not why:
         sys.exit('--why "이유" 를 꼭 적어 주세요.')
     day = os.path.join(BOX, today.isoformat())
+    todo = []
     for p in args:
         rel = os.path.relpath(os.path.abspath(p), ROOT)
-        if rel.startswith('..') or rel.startswith('_trash'):
-            sys.exit('저장소 안의 파일만 넣을 수 있어요: ' + p)
+        if rel.startswith('..') or rel.startswith('_trash') or rel.startswith(os.path.join('media', 'archive')):
+            sys.exit('저장소 안의 파일만 넣을 수 있어요(보관함·상자 안은 안 됨): ' + p)
+        if os.path.isdir(os.path.join(ROOT, rel)):   # 폴더: 그림·소리는 보관함, 나머지는 상자
+            for r, _, fs in os.walk(os.path.join(ROOT, rel)):
+                for f in sorted(fs): todo.append(os.path.relpath(os.path.join(r, f), ROOT))
+        else: todo.append(rel)
+    for rel in todo:
+        if MEDIA.search(rel):
+            keep(rel, why, kind); continue
         dst = os.path.join(day, rel)
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         git('mv', rel, os.path.relpath(dst, ROOT))
         with open(os.path.join(day, 'WHY.txt'), 'a', encoding='utf-8') as f:
             f.write(f'{rel} — {why}\n')
         print('넣음:', rel, '→', os.path.relpath(dst, ROOT))
-    print(f'{(today + datetime.timedelta(days=DAYS)).isoformat()} 뒤에 --empty 로 비울 수 있어요.')
+    if any(not MEDIA.search(r) for r in todo): print(f'{(today + datetime.timedelta(days=DAYS)).isoformat()} 뒤에 --empty 로 비울 수 있어요.')
 else:
     fs = folders()
     if not fs:

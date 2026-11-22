@@ -1,7 +1,7 @@
 {
  "nature/forest": {
   "name": "숲(산)",
-  "slug": "new-forest",
+  "slug": "forest",
   "horizon": 36,
   "setting": "a Korean mountain forest: tall trees and thick green bushes far away, soft misty light between the trunks, and an open, empty forest floor of light-brown soil in the front half",
   "animals": [
@@ -163,7 +163,7 @@
  },
  "nature/grassland": {
   "name": "초원",
-  "slug": "new-grassland",
+  "slug": "grassland",
   "horizon": 40,
   "setting": "a wide African savanna: flat golden grassland, a few low hills and flat-topped trees very far away, and open, empty dry ground with short grass in the front half",
   "animals": [
@@ -324,7 +324,7 @@
  },
  "nature/desert": {
   "name": "사막",
-  "slug": "new-desert",
+  "slug": "desert",
   "horizon": 40,
   "setting": "a hot sand desert: soft orange dunes and tall red rock towers very far away, pale sky, and open, empty flat sand in the front half",
   "animals": [
@@ -490,7 +490,7 @@
  },
  "nature/polar": {
   "name": "북극",
-  "slug": "new-polar",
+  "slug": "polar",
   "horizon": 40,
   "setting": "an Arctic snow field (the North Pole region): white snowy plains and pale blue ice cliffs very far away, a cold light sky, and open, empty flat snow in the front half",
   "animals": [
@@ -610,7 +610,7 @@
  },
  "nature/mudflat": {
   "name": "갯벌",
-  "slug": "new-mudflat",
+  "slug": "mudflat",
   "horizon": 40,
   "setting": "a wide Korean tidal mudflat: shiny grey-brown mud with shallow water pools, a low green island and calm sea far away, and open, empty wet mud in the front half",
   "animals": [
@@ -725,7 +725,7 @@
  },
  "nature/ground": {
   "name": "땅 위(들판)",
-  "slug": "new-ground",
+  "slug": "ground",
   "horizon": 38,
   "setting": "a gentle Korean countryside field: green hills and a few trees far away, and open, empty light-brown ground with short grass in the front half",
   "animals": [
@@ -870,7 +870,7 @@
  },
  "nature/wetland": {
   "name": "논·습지",
-  "slug": "new-wetland",
+  "slug": "wetland",
   "horizon": 40,
   "setting": "a Korean rice paddy and wetland: low hills far away, flat green rice fields with thin earth paths between them, and shallow still water",
   "animals": [
@@ -916,7 +916,7 @@
  },
  "nature/pond": {
   "name": "강·호수",
-  "slug": "new-pond",
+  "slug": "pond",
   "horizon": 39,
   "setting": "a calm Korean river and lake: soft green hills and trees far away, a wide still lake, and a sandy grassy shore in front",
   "animals": [
@@ -977,7 +977,7 @@
  },
  "nature/sea": {
   "name": "바닷속",
-  "slug": "new-sea",
+  "slug": "sea",
   "horizon": 0,
   "setting": "under the sea: blue water fading darker far away, soft light rays from above, and an open, empty sandy sea floor in the front half",
   "animals": [
@@ -1062,7 +1062,7 @@
  },
  "nature/water": {
   "name": "물속",
-  "slug": "new-water",
+  "slug": "water",
   "horizon": 0,
   "setting": "under fresh water in a river: green-blue water fading far away, soft light from above, and an open, empty pebbly river bed in the front half",
   "animals": [
@@ -1135,7 +1135,7 @@
  },
  "nature/underground": {
   "name": "땅속",
-  "slug": "new-underground",
+  "slug": "underground",
   "horizon": 0,
   "setting": "a cut-away view of soil underground: layers of brown earth with small stones, a thin strip of grass and sky at the very top",
   "animals": [
@@ -1208,7 +1208,7 @@
  },
  "nature/sky": {
   "name": "하늘",
-  "slug": "new-sky",
+  "slug": "sky",
   "horizon": 90,
   "setting": "a bright open sky: soft white clouds, a far green treeline and rooftops at the very bottom",
   "animals": [

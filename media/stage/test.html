@@ -851,16 +851,16 @@
 </script>
 <script>
 /* 무대 보기(2026-11-09 다시 씀 — 번호·멘트·옮기기는 없앰, 선생님: 판 하나하나가 아니라 원리로).
-   ?root=stage-beta: 설치도구로 다시 만드는 새 무대(media/stage-beta). #nature/forest/123: 그 곳의 그 판 하나만 */
-const ROOT=new URLSearchParams(location.search).get('root')==='stage-beta'?'../stage-beta/':'./';
+   ?root=stage: 설치도구로 다시 만드는 새 무대(media/stage). #nature/forest/123: 그 곳의 그 판 하나만 */
+const ROOT=new URLSearchParams(location.search).get('root')==='stage'?'../stage/':'./';
 const $=id=>document.getElementById(id); let pl=null, seeds=[];
 async function start(){
   const beta=ROOT!=='./';
-  $('rootLink').textContent=beta?'← 기존 무대 보기':'베타 무대 보기 →'; $('rootLink').href=beta?'?':'?root=stage-beta';
+  $('rootLink').textContent=beta?'← 기존 무대 보기':'베타 무대 보기 →'; $('rootLink').href=beta?'?':'?root=stage';
   if(beta) document.querySelector('h1').textContent='무대 보기 (베타)';
   let idx={}; try{ idx=await fetch(ROOT+'index.json',{cache:'no-cache'}).then(r=>r.json()); }catch(e){}
   for(const [k,v] of Object.entries(idx)) $('pl').add(new Option((v.name||k)+' · '+k,k));
-  if(!$('pl').options.length){ $('msg').textContent=beta?'아직 베타 무대가 없어요 — 무대 설치도구로 만들어 media/stage-beta 에 넣어 주세요.':'무대가 없어요'; return; }
+  if(!$('pl').options.length){ $('msg').textContent=beta?'아직 베타 무대가 없어요 — 무대 설치도구로 만들어 media/stage 에 넣어 주세요.':'무대가 없어요'; return; }
   const h=location.hash.slice(1).split('/'); if(h.length>=2&&idx[h[0]+'/'+h[1]]) $('pl').value=h[0]+'/'+h[1];
   if(h[2]) seeds=[+h[2]];
   $('pl').onchange=()=>{ seeds=[]; open(); }; $('again').onclick=()=>{ seeds=[]; draw(); };

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """줄기 늘이기(2026-11-14 땅속, 선생님: 뿌리만 덩그러니 — 땅 위로 나가는 줄기가 없음)
 
-    python3 tools/trunk-extend.py <곳> 종류 [--up 2]      예) python3 tools/trunk-extend.py nature/new-underground treeroots
+    python3 tools/trunk-extend.py <곳> 종류 [--up 2]      예) python3 tools/trunk-extend.py nature/underground treeroots
     python3 tools/trunk-extend.py <곳> 종류 --green       풀 포기: 늘이지 않고 풀잎이 끝나는 줄만 hangAt으로
 
 빙이 준 '줄기+뿌리' 그림은 줄기가 위 끝에서 잘리지만 짧아서, 그대로 매달면 뿌리 갈라지는 자리가 흙 위로 올라감.
@@ -21,7 +21,7 @@ args = [a for a in sys.argv[1:] if not a.startswith('--')]
 if len(args) != 2: sys.exit(__doc__)
 up = float(sys.argv[sys.argv.index('--up') + 1]) if '--up' in sys.argv else 2.0
 green = '--green' in sys.argv
-pdir = os.path.join(ROOT, 'media', 'stage-beta', args[0]); sj = os.path.join(pdir, 'stage.json'); st = json.load(open(sj, encoding='utf-8'))
+pdir = os.path.join(ROOT, 'media', 'stage', args[0]); sj = os.path.join(pdir, 'stage.json'); st = json.load(open(sj, encoding='utf-8'))
 for name, it in st['items'].items():
     if it.get('kind') != args[1] or it.get('hangAt') is not None: continue
     p = os.path.join(pdir, 'items', name + '.webp'); im = Image.open(p).convert('RGBA'); im = im.crop(im.getbbox()); a = np.asarray(im)

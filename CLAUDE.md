@@ -8,9 +8,11 @@
 - **비밀**: API 키·`$REVIEW_TOKEN`·`$ADMIN_TOKEN`·GitHub 토큰을 코드·저장소·대화에 넣지 않는다. `server/charum-api/donate-config.php`는 서버에만 있다(저장소에는 `.sample`만).
 - 사용량이 넉넉하지 않다. 큰 파일은 필요한 부분만 읽고(Grep으로 자리를 찾은 뒤 offset/limit), 확인도 고친 부분만.
 - **도구 창고**(2026-11-14): 그림·소리·파일 일을 하기 전에 `tools/README.txt` 맨 위 목록부터 보고 있는 도구를 쓴다. 모자라면 선택지를 덧붙이고, 새 도구는 정말 다른 일일 때만 만들어 목록에 올린다. 안 쓰게 된 도구는 `python3 tools/trash.py --tool 이름.py --why "이유"`(6개월 보관, `--revive`로 되살림).
-- **소품실**(2026-11-16): 무대 소품을 새로 받기 전에 `media/stage/prop-room.html`(목록 `media/stage-beta/props.json`)부터 보고, 밑동 땅이 같으면 `python3 tools/prop-room.py --borrow 받을무대 소품`으로 빌려 쓴다. 새로 받은 소품은 stage-intake가 소품실에 올림. 새로 만드는 무대·앱부터 적용.
+- **자료 찾기 먼저**(2026-11-22): 그림·사진·소리를 새로 구하자고 하거나 프롬프트를 쓰기 전에 `python3 tools/find-media.py 낱말`(프롬프트는 `--prompt 파일`, 목소리는 `--say "문장"`)부터. 그림 모음 한 장(`/tmp/charum-find/…jpg`)을 Read로 보고 선생님께 보여 드린다. 있는데 새로 받아야 하면 까닭(그림풍·모양)을 붙여 말한다. 전체 목록 `media/catalog.json`은 `tools/media-index.py`가 만든다(그림·소리를 넣거나 옮긴 뒤 다시 돌림, `check-files.py`가 낡았는지 봄). 이름을 놓치면 `media/synonyms.json`에 한 줄. 이 저장소의 `.claude/settings.json` hook이 세션 시작과 프롬프트 글을 쓸 때 저절로 알려 준다.
+- **그림·소리는 버리지 않는다**(2026-11-22): 안 쓰게 된 그림·사진·소리는 `tools/trash.py`가 저절로 보관함 `media/archive/`(비우지 않음, 목록 `list.json`)로 보낸다 — 옛 그림풍(만화풍)·다시 받기 전 그림도 나중에 쓸 수 있게. `_trash/`에는 html·글 같은 나머지만.
+- **소품실**(2026-11-16): 무대 소품을 새로 받기 전에 `media/stage/prop-room.html`(목록 `media/stage/props.json`)부터 보고, 밑동 땅이 같으면 `python3 tools/prop-room.py --borrow 받을무대 소품`으로 빌려 쓴다. 새로 받은 소품은 stage-intake가 소품실에 올림. 새로 만드는 무대·앱부터 적용.
 - **차름 홈페이지 링크**(2026-11-21): 모든 웹앱(새 앱 포함)의 선생님 화면 왼쪽 위에 차름 로고 → charum.org 새 탭. 공통 모듈 `homeLink`, 자세한 것은 지침 3절.
-- **프롬프트를 드릴 때**(2026-11-13, 2026-11-21 다시 강조): 어떤 프롬프트든 대화에 붙이지 않고(짧아도) `media/stage/prompts/`에 글로 두고 복사 화면 주소(`https://shim-sung-hyun.github.io/web_app/media/stage/prompts/copy.html?f=파일이름`)를 드린다 — 단추로 복사, 복사한 장은 노랗게 표시. 새 글은 `copy.html`의 `FILES`에 한 줄.
+- **프롬프트를 드릴 때**(2026-11-13, 2026-11-21 다시 강조): 어떤 프롬프트든 대화에 붙이지 않고(짧아도) `media/prompts/`에 글로 두고 복사 화면 주소(`https://shim-sung-hyun.github.io/web_app/media/prompts/copy.html?f=파일이름`)를 드린다 — 단추로 복사, 복사한 장은 노랗게 표시. 새 글은 `copy.html`의 `FILES`에 한 줄.
 
 ## Copilot과 함께 (2026-11-09)
 - 선생님은 VS Code의 GitHub Copilot도 쓴다. **주 조정자는 Claude**다. Copilot은 `.github/copilot-instructions.md`를 읽고 같은 규칙(이 파일·지침·README 기록)을 따른다.
@@ -24,7 +26,7 @@
 - `common/` 공통 모듈 원본(`roster.js` 학생 명단, `keyRelay.js` 휴대폰으로 키 받기, `photoRelay.js` 휴대폰에서 사진 받기, `stagekit.js` 무대, `adminHold.js`·`adminGate.js`·`holdBubble.js` 관리 버튼). 고친 뒤 `python3 tools/sync-modules.py`로 앱마다 넣는다. 앱 안의 모듈 칸은 손으로 고치지 않는다.
 - `server/` charum.org 서버에 올리는 파일의 원본(토큰 칸은 비움). `relay/` 사진 다리.
 - `교과-과학/` 과학 교과서·지도서 정리(기본교육과정: 초5, 중·고 과학② Ⅲ단원 / 공통교육과정: 초3-1 2단원). 폴더 이름으로 기본/공통교육과정을 나눈다. 앱 내용을 교과와 맞출 때 `README.md` 색인부터 본다.
-- `media/stage/` 무대(빈 배경·요소를 장소별로, 차림표 `index.json`, 모듈 `common/stagekit.js`). `_trash/` 버릴 자료 상자(3개월 뒤 비움, `tools/trash.py`) — 세션 시작 때 `python3 tools/trash.py`로 비울 때가 됐는지 본다.
+- `media/stage/` 무대(지금 12곳 `nature/<곳>/`, 차림표 `index.json`, 옛 덮개 방식은 `legacy/` — 2026-11-22 stage-beta를 합침, 모듈 `common/stagekit.js`). `media/prompts/` 모든 프롬프트 글과 복사 화면. `media/archive/` 보관함. `_trash/` 버릴 파일 상자(html·글만, 3개월 뒤 비움, `tools/trash.py`) — 세션 시작 때 `python3 tools/trash.py`로 비울 때가 됐는지 본다.
 - `docs/` 지침. `guidelines.md`가 기준, `guidelines-full.md`는 앱마다의 자세한 사정·저장 칸·기록 꼴(필요한 절만 찾아 읽음).
 
 ## 007 낱말 익히기 만드는 법

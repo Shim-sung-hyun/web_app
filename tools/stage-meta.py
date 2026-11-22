@@ -44,12 +44,12 @@ def shadow_top(path):
 
 
 n = 0
-BETA = os.path.join(os.path.dirname(ST), 'stage-beta')
+BETA = os.path.join(ST, 'legacy')   # 옛 덮개 방식 무대(008 옛 길)
 for sj in sorted(glob.glob(os.path.join(ST, '*', '*', 'stage.json')) + glob.glob(os.path.join(BETA, '*', '*', 'stage.json'))):
     d = os.path.dirname(sj)
     c = json.load(open(sj, encoding='utf-8'))
     for k, it in c.get('items', {}).items():
-        src = os.path.join(os.path.dirname(os.path.dirname(d)), it['from'], 'items', it.get('file', k) + '.webp') if it.get('from') else os.path.join(d, 'items', k + '.webp')   # from은 그 무대 뿌리(stage·stage-beta) 기준, file은 빌린 그림 이름(소품실)
+        src = os.path.join(os.path.dirname(os.path.dirname(d)), it['from'], 'items', it.get('file', k) + '.webp') if it.get('from') else os.path.join(d, 'items', k + '.webp')   # from은 그 무대 뿌리(stage·stage) 기준, file은 빌린 그림 이름(소품실)
         if os.path.exists(src) and not it.get('soak'):   # 밑동 스며들기 한 것은 스며들기 전에 잰 밑동을 지킴(tools/soak-base.py)
             it.update(meta(src)); n += 1
             it['bottom'] = bottom_line(src)   # 밑동 선(2026-11-12): 가로 48칸마다 가장 아래 불투명 줄의 몫 — 무대가 앞 바위 모서리와 뒤 소품 바닥을 맞춤(stagekit settle). 모든 소품(뒤에 서는 나무·쓰러진 나무도)

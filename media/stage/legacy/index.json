@@ -1,0 +1,458 @@
+{
+ "nature/desert": {
+  "name": "사막",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "saguaro",
+   "pricklypear",
+   "barrelcacti",
+   "sandstone",
+   "rocks",
+   "drybush",
+   "drygrass",
+   "agave",
+   "butte",
+   "boulderpile",
+   "organpipe",
+   "deadtree",
+   "tumbleweed",
+   "creosote",
+   "stones"
+  ],
+  "front": [
+   "sand"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [],
+  "missing": [],
+  "skirt": [
+   "sanddrift",
+   "sandpebbles"
+  ]
+ },
+ "nature/grassland": {
+  "name": "초원",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "acacia",
+   "termite",
+   "kopje",
+   "thornbush",
+   "tussock",
+   "lowshrub",
+   "stones",
+   "drygrass",
+   "thicket",
+   "baobab",
+   "elephantgrass",
+   "termitegroup",
+   "acaciabush",
+   "granite",
+   "deadtrunk",
+   "tallgrass",
+   "rockpile",
+   "acaciagrove",
+   "thorntrees",
+   "kopjebig"
+  ],
+  "front": [
+   "goldgrass"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [
+   "bush"
+  ],
+  "missing": [],
+  "skirt": [
+   "drygrass",
+   "redearth",
+   "trampled"
+  ]
+ },
+ "nature/forest": {
+  "name": "숲(산)",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "oak",
+   "pine",
+   "stump",
+   "log",
+   "fern",
+   "bush",
+   "mossrock",
+   "mushrooms",
+   "oaktrunk",
+   "pinetrunk",
+   "bigboulder",
+   "thicket",
+   "fallengiant",
+   "fir",
+   "tallfern",
+   "bramble",
+   "branchpile",
+   "rottenlog"
+  ],
+  "front": [
+   "ferns"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [
+   "trees"
+  ],
+  "missing": [],
+  "skirt": [
+   "leafmound",
+   "mossroots",
+   "leaves"
+  ]
+ },
+ "nature/ground": {
+  "name": "땅 위(들판)",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "meadowtree",
+   "bush",
+   "rock",
+   "flowers",
+   "grassclump",
+   "stones",
+   "dandelions",
+   "clover",
+   "hedge",
+   "boulders",
+   "silvergrass",
+   "bramble",
+   "azalea",
+   "log",
+   "mossrock",
+   "cosmos",
+   "talltree",
+   "tallpine",
+   "treehedge"
+  ],
+  "front": [
+   "grass"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [
+   "hedge"
+  ],
+  "missing": [],
+  "skirt": [
+   "grasstuft",
+   "clover",
+   "dirtmound"
+  ]
+ },
+ "nature/polar": {
+  "name": "극지방",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "iceberg",
+   "iceridge",
+   "snowmound",
+   "snowrock",
+   "icechunks",
+   "snowridge",
+   "iceslab",
+   "snowboulder",
+   "floes",
+   "icyrock",
+   "lowmound",
+   "icefield",
+   "icepieces"
+  ],
+  "front": [
+   "snow"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [],
+  "missing": [],
+  "skirt": [
+   "snowdrift",
+   "snowcrumbs"
+  ]
+ },
+ "nature/wetland": {
+  "name": "논·습지",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "willow",
+   "reeds",
+   "cattails",
+   "rice",
+   "sedge",
+   "lotus",
+   "dryreeds",
+   "paddybank",
+   "reedbed",
+   "silvergrass",
+   "iris",
+   "ripe",
+   "plantain",
+   "willowshrub",
+   "tallsedge"
+  ],
+  "front": [
+   "reedsedge"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [
+   "reeds"
+  ],
+  "missing": [],
+  "skirt": [
+   "ripples",
+   "mudsprouts",
+   "reedripple"
+  ]
+ },
+ "nature/mudflat": {
+  "name": "갯벌",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "mudmound",
+   "saltreeds",
+   "glasswort",
+   "oysterrock",
+   "shellpile",
+   "mudpost",
+   "weedrock",
+   "pebbles",
+   "barnaclerock",
+   "shorereeds",
+   "crabmound",
+   "weedrocks",
+   "oysters",
+   "marshgrass",
+   "posts"
+  ],
+  "front": [
+   "mud"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [],
+  "missing": [],
+  "skirt": [
+   "mudmound",
+   "mudwort"
+  ]
+ },
+ "nature/sea": {
+  "name": "바닷속",
+  "group": "nature",
+  "view": "flat",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "kelp",
+   "reefrock",
+   "coral",
+   "seafan",
+   "seagrass",
+   "anemone",
+   "braincoral",
+   "pebbles",
+   "rockarch",
+   "rockwall",
+   "kelpforest",
+   "tablecoral",
+   "tubecoral",
+   "weedboulder",
+   "grassbed",
+   "shellpile",
+   "reeflow"
+  ],
+  "front": [
+   "seafloor"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [],
+  "missing": [],
+  "skirt": [
+   "sandmound",
+   "seasprigs",
+   "rubble"
+  ]
+ },
+ "nature/water": {
+  "name": "물속",
+  "group": "nature",
+  "view": "flat",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "kelp",
+   "reefrock",
+   "coral",
+   "seafan",
+   "seagrass",
+   "anemone",
+   "braincoral",
+   "pebbles",
+   "rockarch",
+   "rockwall",
+   "kelpforest",
+   "tablecoral",
+   "tubecoral",
+   "weedboulder",
+   "grassbed",
+   "shellpile",
+   "reeflow"
+  ],
+  "front": [],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [],
+  "missing": [],
+  "skirt": []
+ },
+ "nature/pond": {
+  "name": "강·호수",
+  "group": "nature",
+  "view": "flat",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "cattails",
+   "waterweed",
+   "lilypads",
+   "rock",
+   "sunkenlog",
+   "pebbles",
+   "hornwort"
+  ],
+  "front": [
+   "pondbed"
+  ],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [],
+  "missing": [],
+  "skirt": [
+   "silt"
+  ]
+ },
+ "nature/underground": {
+  "name": "땅속",
+  "group": "nature",
+  "view": "flat",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "rootball",
+   "buriedrock",
+   "stones",
+   "clod",
+   "gravel",
+   "rootlets",
+   "slate",
+   "clay",
+   "rocklayer",
+   "rootmass",
+   "roundstones",
+   "stump",
+   "rootclay",
+   "bulbs",
+   "sandlump"
+  ],
+  "front": [],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [],
+  "missing": [],
+  "skirt": []
+ },
+ "nature/sky": {
+  "name": "하늘",
+  "group": "nature",
+  "view": "ground",
+  "bg": [
+   "bg"
+  ],
+  "items": [
+   "cloud",
+   "cloud2",
+   "cloudbank",
+   "cloudpuffs",
+   "meadowtree",
+   "sunflower",
+   "tallgrass",
+   "daisies",
+   "lavender"
+  ],
+  "front": [],
+  "used_by": [
+   "008"
+  ],
+  "ready": true,
+  "far": [],
+  "missing": [],
+  "skirt": [
+   "grasstuft",
+   "clover"
+  ]
+ }
+}

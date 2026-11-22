@@ -1,0 +1,1620 @@
+{
+ "about": "차름 비슷한 말 사전 — find-media.py가 찾을 때 함께 찾음. groups: 같은 것을 가리키는 말 묶음(놓친 일이 생기면 한 줄 더함). en: 파일 이름(영어·로마자) → 한글. code: 파일이 아닌 그림(앱 코드로 그림).",
+ "groups": [
+  [
+   "컵",
+   "잔",
+   "머그",
+   "머그잔",
+   "유리컵",
+   "유리 컵",
+   "종이컵",
+   "cup",
+   "mug"
+  ],
+  [
+   "책상",
+   "데스크",
+   "desk",
+   "desks"
+  ],
+  [
+   "의자",
+   "걸상",
+   "chair"
+  ],
+  [
+   "칠판",
+   "보드",
+   "전자칠판",
+   "board",
+   "smart-board"
+  ],
+  [
+   "시계",
+   "벽시계",
+   "clock",
+   "wall-clock"
+  ],
+  [
+   "바위",
+   "돌",
+   "암석",
+   "rock",
+   "boulder",
+   "stone"
+  ],
+  [
+   "나무",
+   "나뭇가지",
+   "tree",
+   "branch"
+  ],
+  [
+   "풀",
+   "잡초",
+   "grass"
+  ],
+  [
+   "꽃",
+   "flower"
+  ],
+  [
+   "물고기",
+   "생선",
+   "fish"
+  ],
+  [
+   "새",
+   "bird",
+   "sae"
+  ],
+  [
+   "강아지",
+   "개",
+   "gae",
+   "gangaji",
+   "dog"
+  ],
+  [
+   "고양이",
+   "goyangi",
+   "cat"
+  ],
+  [
+   "자동차",
+   "차",
+   "car"
+  ],
+  [
+   "버스",
+   "통학버스",
+   "school-bus",
+   "bus"
+  ],
+  [
+   "휴지",
+   "화장지",
+   "tissue"
+  ],
+  [
+   "물병",
+   "병",
+   "bottle",
+   "bottles"
+  ],
+  [
+   "신발",
+   "신",
+   "shoe"
+  ],
+  [
+   "신발장",
+   "shoe-rack"
+  ],
+  [
+   "가방",
+   "책가방"
+  ],
+  [
+   "연필",
+   "pencil"
+  ],
+  [
+   "책",
+   "book"
+  ],
+  [
+   "책장",
+   "책꽂이",
+   "bookshelf"
+  ],
+  [
+   "문",
+   "door"
+  ],
+  [
+   "쓰레기통",
+   "분리수거함",
+   "recycle-bins"
+  ],
+  [
+   "바퀴",
+   "wheel"
+  ],
+  [
+   "배경",
+   "장면",
+   "bg",
+   "scene"
+  ],
+  [
+   "곰",
+   "gom"
+  ],
+  [
+   "토끼",
+   "tokki"
+  ],
+  [
+   "늑대",
+   "nukdae"
+  ],
+  [
+   "여우",
+   "yeou"
+  ],
+  [
+   "물",
+   "water",
+   "mul"
+  ],
+  [
+   "우유",
+   "milk"
+  ],
+  [
+   "밥",
+   "rice"
+  ],
+  [
+   "갈대",
+   "reeds"
+  ],
+  [
+   "얼음",
+   "ice"
+  ],
+  [
+   "눈",
+   "snow"
+  ],
+  [
+   "모래",
+   "sand"
+  ],
+  [
+   "진흙",
+   "mud"
+  ],
+  [
+   "산호",
+   "coral"
+  ],
+  [
+   "해초",
+   "seaweed",
+   "seagrass"
+  ],
+  [
+   "덤불",
+   "bush",
+   "thicket"
+  ],
+  [
+   "선인장",
+   "cactus"
+  ],
+  [
+   "버섯",
+   "mushroom"
+  ],
+  [
+   "통나무",
+   "log"
+  ],
+  [
+   "뿌리",
+   "root"
+  ],
+  [
+   "유리",
+   "glass"
+  ],
+  [
+   "쇠",
+   "금속",
+   "metal"
+  ],
+  [
+   "플라스틱",
+   "plastic"
+  ],
+  [
+   "종이",
+   "paper"
+  ],
+  [
+   "천",
+   "옷감",
+   "cloth"
+  ],
+  [
+   "고무",
+   "rubber"
+  ],
+  [
+   "도자기",
+   "ceramic"
+  ],
+  [
+   "목소리",
+   "소리",
+   "voice"
+  ]
+ ],
+ "en": {
+  "acacia": [
+   "아카시아 나무"
+  ],
+  "acaciathicket": [
+   "아카시아 덤불"
+  ],
+  "acorn": [
+   "도토리"
+  ],
+  "agave": [
+   "용설란"
+  ],
+  "algaepebbles": [
+   "이끼 자갈"
+  ],
+  "algaerock": [
+   "이끼 바위"
+  ],
+  "anchovies": [
+   "멸치"
+  ],
+  "anemone": [
+   "말미잘"
+  ],
+  "apple": [
+   "사과"
+  ],
+  "applebranch": [
+   "사과나무 가지"
+  ],
+  "arrowhead": [
+   "벗풀"
+  ],
+  "arrowleaves": [
+   "벗풀 잎"
+  ],
+  "asters": [
+   "쑥부쟁이 꽃"
+  ],
+  "azalea": [
+   "진달래"
+  ],
+  "badageobuk": [
+   "바다거북"
+  ],
+  "badakokkiri": [
+   "바다코끼리"
+  ],
+  "baksae": [
+   "박새"
+  ],
+  "baltop": [
+   "발톱"
+  ],
+  "bamboobranch": [
+   "대나무 가지"
+  ],
+  "bananas": [
+   "바나나"
+  ],
+  "bangge": [
+   "방게"
+  ],
+  "bangulbaem": [
+   "방울뱀"
+  ],
+  "baobab": [
+   "바오바브 나무"
+  ],
+  "bareonbatang": [
+   "학교안심 바른바탕 글꼴"
+  ],
+  "barrelcactus": [
+   "통 선인장"
+  ],
+  "barrelcacti": [
+   "통 선인장"
+  ],
+  "bg": [
+   "배경"
+  ],
+  "bigboulder": [
+   "큰 바위"
+  ],
+  "bigmudrock": [
+   "큰 진흙 바위"
+  ],
+  "blackberries": [
+   "블랙베리"
+  ],
+  "blueberries": [
+   "블루베리"
+  ],
+  "body": [
+   "몸"
+  ],
+  "bone": [
+   "뼈"
+  ],
+  "boulder": [
+   "바위"
+  ],
+  "bouldergroup": [
+   "바위 무리"
+  ],
+  "bowl": [
+   "그릇"
+  ],
+  "braincoral": [
+   "뇌산호"
+  ],
+  "bramble": [
+   "가시덤불"
+  ],
+  "branch": [
+   "나뭇가지"
+  ],
+  "branchpile": [
+   "나뭇가지 더미"
+  ],
+  "bread": [
+   "빵"
+  ],
+  "bread_slice": [
+   "빵 조각"
+  ],
+  "brokenbush": [
+   "부러진 덤불"
+  ],
+  "bukgeuknukdae": [
+   "북극늑대"
+  ],
+  "bukgeuktokki": [
+   "북극토끼"
+  ],
+  "bukgeukyeou": [
+   "북극여우"
+  ],
+  "bulrush": [
+   "부들"
+  ],
+  "buriedrock": [
+   "묻힌 바위"
+  ],
+  "bus": [
+   "버스"
+  ],
+  "bush": [
+   "덤불"
+  ],
+  "buttercups": [
+   "미나리아재비 꽃"
+  ],
+  "cabbage": [
+   "양배추"
+  ],
+  "cabbage_leaf": [
+   "양배추 잎"
+  ],
+  "cactus": [
+   "선인장"
+  ],
+  "cake": [
+   "케이크"
+  ],
+  "cake_slice": [
+   "케이크 조각"
+  ],
+  "candy": [
+   "사탕"
+  ],
+  "car": [
+   "자동차"
+  ],
+  "carrot": [
+   "당근"
+  ],
+  "cat_food": [
+   "고양이 먹이"
+  ],
+  "ceiling": [
+   "천장"
+  ],
+  "light": [
+   "전등"
+  ],
+  "celery": [
+   "셀러리"
+  ],
+  "ceramic": [
+   "도자기"
+  ],
+  "cheese": [
+   "치즈"
+  ],
+  "cheongdungori": [
+   "청둥오리"
+  ],
+  "cherrybranch": [
+   "벚나무 가지"
+  ],
+  "chestnut": [
+   "밤"
+  ],
+  "chilge": [
+   "칠게"
+  ],
+  "clay": [
+   "찰흙"
+  ],
+  "clod": [
+   "흙덩이"
+  ],
+  "cloth": [
+   "천"
+  ],
+  "cloud": [
+   "구름"
+  ],
+  "cloudbank": [
+   "구름 띠"
+  ],
+  "cloudpuffs": [
+   "뭉게구름"
+  ],
+  "cloudtall": [
+   "높은 구름"
+  ],
+  "clover": [
+   "클로버"
+  ],
+  "clovers": [
+   "클로버"
+  ],
+  "computer": [
+   "컴퓨터"
+  ],
+  "cookie": [
+   "과자"
+  ],
+  "coral": [
+   "산호"
+  ],
+  "corn": [
+   "옥수수"
+  ],
+  "corn_kernels": [
+   "옥수수 알갱이"
+  ],
+  "cosmos": [
+   "코스모스"
+  ],
+  "cracker": [
+   "크래커"
+  ],
+  "crackrock": [
+   "갈라진 바위"
+  ],
+  "cricket": [
+   "귀뚜라미"
+  ],
+  "crumbs": [
+   "부스러기"
+  ],
+  "cubes": [
+   "얼음 덩이"
+  ],
+  "cucumber": [
+   "오이"
+  ],
+  "daisies": [
+   "데이지 꽃"
+  ],
+  "dandelion": [
+   "민들레"
+  ],
+  "darkbush": [
+   "짙은 덤불"
+  ],
+  "daseulgi": [
+   "다슬기"
+  ],
+  "dates": [
+   "대추야자"
+  ],
+  "deer_cracker": [
+   "사슴 과자"
+  ],
+  "desertpebbles": [
+   "사막 자갈"
+  ],
+  "deuljwi": [
+   "들쥐"
+  ],
+  "dog_food": [
+   "강아지 먹이"
+  ],
+  "dojagikeop": [
+   "도자기 컵"
+  ],
+  "dolgorae": [
+   "돌고래"
+  ],
+  "domabaem": [
+   "도마뱀"
+  ],
+  "doyosae": [
+   "도요새"
+  ],
+  "dragonfly": [
+   "잠자리"
+  ],
+  "drumstick": [
+   "닭다리"
+  ],
+  "dry_grass": [
+   "마른 풀"
+  ],
+  "dryleaf": [
+   "마른 잎"
+  ],
+  "dryreeds": [
+   "마른 갈대"
+  ],
+  "drytuft": [
+   "마른 풀포기"
+  ],
+  "drybush": [
+   "마른 덤불"
+  ],
+  "drygrass": [
+   "마른 풀"
+  ],
+  "dune": [
+   "모래 언덕"
+  ],
+  "duneridge": [
+   "모래 언덕 등성이"
+  ],
+  "eelgrass": [
+   "잘피"
+  ],
+  "egg": [
+   "달걀"
+  ],
+  "evergreen": [
+   "늘푸른나무"
+  ],
+  "fallengiant": [
+   "쓰러진 큰 나무"
+  ],
+  "fallentree": [
+   "쓰러진 나무"
+  ],
+  "fern": [
+   "고사리"
+  ],
+  "fish": [
+   "물고기"
+  ],
+  "fish_food": [
+   "물고기 먹이"
+  ],
+  "flatrock": [
+   "넓적 바위"
+  ],
+  "floatleaf": [
+   "물에 뜬 잎"
+  ],
+  "floattwig": [
+   "물에 뜬 가지"
+  ],
+  "floes": [
+   "얼음 조각"
+  ],
+  "flower": [
+   "꽃"
+  ],
+  "flowerclump": [
+   "꽃 무더기"
+  ],
+  "fly": [
+   "파리"
+  ],
+  "food": [
+   "먹이"
+  ],
+  "gaetjireongi": [
+   "갯지렁이"
+  ],
+  "gaeturengi": [
+   "갯우렁이"
+  ],
+  "gajae": [
+   "가재"
+  ],
+  "gajel": [
+   "가젤"
+  ],
+  "galmaegi": [
+   "갈매기"
+  ],
+  "gaori": [
+   "가오리"
+  ],
+  "ginkgobranch": [
+   "은행나무 가지"
+  ],
+  "gireogi": [
+   "기러기"
+  ],
+  "glass": [
+   "유리"
+  ],
+  "glasses": [
+   "안경"
+  ],
+  "glasswort": [
+   "퉁퉁마디"
+  ],
+  "gnarlroot": [
+   "울퉁불퉁 뿌리"
+  ],
+  "godeungeo": [
+   "고등어"
+  ],
+  "goldgrass": [
+   "누런 풀"
+  ],
+  "gongbeolle": [
+   "공벌레"
+  ],
+  "goseumdochi": [
+   "고슴도치"
+  ],
+  "grain": [
+   "곡식"
+  ],
+  "grapes": [
+   "포도"
+  ],
+  "grass": [
+   "풀"
+  ],
+  "grassbuds": [
+   "풀싹"
+  ],
+  "gravel": [
+   "자갈"
+  ],
+  "gravelvein": [
+   "자갈 줄"
+  ],
+  "gumbengi": [
+   "굼벵이"
+  ],
+  "haiena": [
+   "하이에나"
+  ],
+  "halfstone": [
+   "반쯤 묻힌 돌"
+  ],
+  "ham": [
+   "햄"
+  ],
+  "hay": [
+   "건초"
+  ],
+  "honey_pot": [
+   "꿀단지"
+  ],
+  "hornwort": [
+   "붕어마름"
+  ],
+  "hosta": [
+   "비비추"
+  ],
+  "huindonggari": [
+   "흰동가리"
+  ],
+  "huinolppaemi": [
+   "흰올빼미"
+  ],
+  "ice": [
+   "얼음"
+  ],
+  "iceberg": [
+   "빙산"
+  ],
+  "iceblocks": [
+   "얼음 덩이"
+  ],
+  "icechunks": [
+   "얼음 덩이"
+  ],
+  "icecliff": [
+   "얼음 절벽"
+  ],
+  "icedrift": [
+   "떠다니는 얼음"
+  ],
+  "icefield": [
+   "얼음 벌판"
+  ],
+  "icepieces": [
+   "얼음 조각"
+  ],
+  "icepile": [
+   "얼음 더미"
+  ],
+  "iceridge": [
+   "얼음 등성이"
+  ],
+  "iceslab": [
+   "얼음 판"
+  ],
+  "icyrock": [
+   "얼음 바위"
+  ],
+  "iris": [
+   "붓꽃"
+  ],
+  "jara": [
+   "자라"
+  ],
+  "jebi": [
+   "제비"
+  ],
+  "jjangttungeo": [
+   "짱뚱어"
+  ],
+  "juniper": [
+   "향나무"
+  ],
+  "kelp": [
+   "다시마"
+  ],
+  "kelpbrown": [
+   "갈색 다시마"
+  ],
+  "kelpgold": [
+   "누런 다시마"
+  ],
+  "kelpstalks": [
+   "다시마 줄기"
+  ],
+  "keyboard": [
+   "키보드"
+  ],
+  "kkwong": [
+   "꿩"
+  ],
+  "kopje": [
+   "바위 언덕"
+  ],
+  "koppulso": [
+   "코뿔소"
+  ],
+  "laptop": [
+   "노트북"
+  ],
+  "lavender": [
+   "라벤더"
+  ],
+  "leafpile": [
+   "낙엽 더미"
+  ],
+  "leafy_branch": [
+   "잎 달린 가지"
+  ],
+  "ledge": [
+   "바위 턱"
+  ],
+  "lettuce": [
+   "상추"
+  ],
+  "lilybud": [
+   "연꽃 봉오리"
+  ],
+  "lilypad": [
+   "연잎"
+  ],
+  "lilypads": [
+   "연잎"
+  ],
+  "lindenbranch": [
+   "피나무 가지"
+  ],
+  "log": [
+   "통나무"
+  ],
+  "lotus": [
+   "연꽃"
+  ],
+  "lotusleaves": [
+   "연잎"
+  ],
+  "lowmound": [
+   "낮은 둔덕"
+  ],
+  "maemiaebeolle": [
+   "매미 애벌레"
+  ],
+  "mal": [
+   "말"
+  ],
+  "mango": [
+   "망고"
+  ],
+  "mangrove": [
+   "맹그로브"
+  ],
+  "maple": [
+   "단풍나무"
+  ],
+  "maple_leaves": [
+   "단풍잎"
+  ],
+  "maplebranch": [
+   "단풍나무 가지"
+  ],
+  "marsh": [
+   "늪"
+  ],
+  "matjogae": [
+   "맛조개"
+  ],
+  "meadowtree": [
+   "들판 나무"
+  ],
+  "meat_slab": [
+   "고기"
+  ],
+  "meat": [
+   "고기"
+  ],
+  "megi": [
+   "메기"
+  ],
+  "melon": [
+   "멜론"
+  ],
+  "metal": [
+   "쇠"
+  ],
+  "metdwaeji": [
+   "멧돼지"
+  ],
+  "mettugi": [
+   "메뚜기"
+  ],
+  "mieokaet": [
+   "미어캣"
+  ],
+  "milk_saucer": [
+   "우유 접시"
+  ],
+  "monitor": [
+   "모니터"
+  ],
+  "moss": [
+   "이끼"
+  ],
+  "mossmound": [
+   "이끼 둔덕"
+  ],
+  "mossrock": [
+   "이끼 바위"
+  ],
+  "mossstump": [
+   "이끼 그루터기"
+  ],
+  "mound": [
+   "둔덕"
+  ],
+  "mouse": [
+   "마우스"
+  ],
+  "mudbank": [
+   "진흙 둑"
+  ],
+  "mudlog": [
+   "진흙 통나무"
+  ],
+  "mudmound": [
+   "진흙 둔덕"
+  ],
+  "mudpost": [
+   "진흙 말뚝"
+  ],
+  "mudsprouts": [
+   "진흙 새싹"
+  ],
+  "mulchongsae": [
+   "물총새"
+  ],
+  "mulso": [
+   "물소"
+  ],
+  "mushroom": [
+   "버섯"
+  ],
+  "mushrooms": [
+   "버섯"
+  ],
+  "nakji": [
+   "낙지"
+  ],
+  "namsaengi": [
+   "남생이"
+  ],
+  "neartrunk": [
+   "가까운 나무줄기"
+  ],
+  "oak": [
+   "참나무"
+  ],
+  "pine": [
+   "소나무"
+  ],
+  "noejo": [
+   "뇌조"
+  ],
+  "nongge": [
+   "농게"
+  ],
+  "oakboulder": [
+   "참나무와 바위"
+  ],
+  "oakbranch": [
+   "참나무 가지"
+  ],
+  "oats": [
+   "귀리"
+  ],
+  "olchaengi": [
+   "올챙이"
+  ],
+  "oldlog": [
+   "썩은 통나무"
+  ],
+  "onebud": [
+   "꽃봉오리 하나"
+  ],
+  "onebuttercup": [
+   "미나리아재비 한 송이"
+  ],
+  "oneclover": [
+   "클로버 하나"
+  ],
+  "onecosmos": [
+   "코스모스 한 송이"
+  ],
+  "onedaisy": [
+   "데이지 한 송이"
+  ],
+  "oneleaf": [
+   "잎 하나"
+  ],
+  "onepoppy": [
+   "양귀비 한 송이"
+  ],
+  "oriks": [
+   "오릭스"
+  ],
+  "osori": [
+   "오소리"
+  ],
+  "oysterrock": [
+   "굴 바위"
+  ],
+  "palm": [
+   "야자나무"
+  ],
+  "palms": [
+   "야자나무"
+  ],
+  "paper": [
+   "종이"
+  ],
+  "cup": [
+   "컵"
+  ],
+  "papyrus": [
+   "파피루스"
+  ],
+  "peanuts": [
+   "땅콩"
+  ],
+  "peas": [
+   "완두콩"
+  ],
+  "pebbleclod": [
+   "자갈 흙덩이"
+  ],
+  "pebblemound": [
+   "자갈 둔덕"
+  ],
+  "pebbles": [
+   "자갈"
+  ],
+  "pellets": [
+   "사료 알갱이"
+  ],
+  "peopin": [
+   "퍼핀"
+  ],
+  "peureridogeu": [
+   "프레리도그"
+  ],
+  "pillar": [
+   "바위 기둥"
+  ],
+  "pineapple": [
+   "파인애플"
+  ],
+  "pinebranch": [
+   "소나무 가지"
+  ],
+  "pinecone": [
+   "솔방울"
+  ],
+  "pink_flower": [
+   "분홍 꽃"
+  ],
+  "pinkbloom": [
+   "분홍 꽃"
+  ],
+  "plastic": [
+   "플라스틱"
+  ],
+  "pondcattails": [
+   "연못 부들"
+  ],
+  "pondreeds": [
+   "연못 갈대"
+  ],
+  "pondsedge": [
+   "연못 사초"
+  ],
+  "pondweed": [
+   "물풀"
+  ],
+  "potato": [
+   "감자"
+  ],
+  "pumpkin": [
+   "호박"
+  ],
+  "puzzle": [
+   "퍼즐"
+  ],
+  "demo": [
+   "예시"
+  ],
+  "radish": [
+   "무"
+  ],
+  "raspberry": [
+   "산딸기"
+  ],
+  "red_berries": [
+   "빨간 열매"
+  ],
+  "redcoral": [
+   "붉은 산호"
+  ],
+  "reedbase": [
+   "갈대 밑동"
+  ],
+  "reedbed": [
+   "갈대밭"
+  ],
+  "reedisland": [
+   "갈대 섬"
+  ],
+  "reeds": [
+   "갈대"
+  ],
+  "reedtips": [
+   "갈대 끝"
+  ],
+  "reedwide1": [
+   "넓은 갈대밭"
+  ],
+  "reedwide2": [
+   "넓은 갈대밭"
+  ],
+  "reefrock": [
+   "산호초 바위"
+  ],
+  "ribs": [
+   "갈비"
+  ],
+  "rice": [
+   "쌀"
+  ],
+  "riverbank": [
+   "강둑"
+  ],
+  "roast_chicken": [
+   "통닭"
+  ],
+  "rockarch": [
+   "바위 아치"
+  ],
+  "rockoutcrop": [
+   "바위 노두"
+  ],
+  "rockstep": [
+   "바위 계단"
+  ],
+  "rootarch": [
+   "뿌리 아치"
+  ],
+  "rootball": [
+   "뿌리 덩이"
+  ],
+  "rootcut": [
+   "잘린 뿌리"
+  ],
+  "rootlets": [
+   "잔뿌리"
+  ],
+  "rootmass": [
+   "뿌리 덩이"
+  ],
+  "rubber": [
+   "고무"
+  ],
+  "sahyangso": [
+   "사향소"
+  ],
+  "salmon": [
+   "연어"
+  ],
+  "saltbush": [
+   "소금풀"
+  ],
+  "saltreeds": [
+   "갯갈대"
+  ],
+  "samakgeobuk": [
+   "사막거북"
+  ],
+  "samakjwi": [
+   "사막쥐"
+  ],
+  "sandmound": [
+   "모래 둔덕"
+  ],
+  "sandrocks": [
+   "모래 바위"
+  ],
+  "sandstone": [
+   "사암"
+  ],
+  "sanyang": [
+   "산양"
+  ],
+  "sausage": [
+   "소시지"
+  ],
+  "seacliff": [
+   "바다 절벽"
+  ],
+  "seafan": [
+   "부채산호"
+  ],
+  "seagrass": [
+   "해초"
+  ],
+  "sealettuce": [
+   "파래"
+  ],
+  "seapebbles": [
+   "바다 자갈"
+  ],
+  "searibbons": [
+   "미역"
+  ],
+  "seaweed": [
+   "해초"
+  ],
+  "seawhip": [
+   "채찍산호"
+  ],
+  "sedge": [
+   "사초"
+  ],
+  "seedlings": [
+   "새싹"
+  ],
+  "shape": [
+   "도형"
+  ],
+  "shellpile": [
+   "조개껍데기 더미"
+  ],
+  "shoe": [
+   "신발"
+  ],
+  "rack": [
+   "신발장"
+  ],
+  "shrimp": [
+   "새우"
+  ],
+  "shrub": [
+   "떨기나무"
+  ],
+  "slab": [
+   "판돌"
+  ],
+  "slate": [
+   "판암"
+  ],
+  "smallflowers": [
+   "작은 꽃"
+  ],
+  "smallpine": [
+   "작은 소나무"
+  ],
+  "smart": [
+   "스마트"
+  ],
+  "board": [
+   "칠판"
+  ],
+  "snailshell": [
+   "달팽이 껍데기"
+  ],
+  "snow": [
+   "눈"
+  ],
+  "snowboulder": [
+   "눈 덮인 바위"
+  ],
+  "snowdrift": [
+   "눈 더미"
+  ],
+  "snowmound": [
+   "눈 둔덕"
+  ],
+  "snowridge": [
+   "눈 등성이"
+  ],
+  "snowrock": [
+   "눈 바위"
+  ],
+  "soekeop": [
+   "쇠 컵"
+  ],
+  "soettongguri": [
+   "쇠똥구리"
+  ],
+  "softcoral": [
+   "연산호"
+  ],
+  "soillump": [
+   "흙덩이"
+  ],
+  "soilstones": [
+   "흙과 돌"
+  ],
+  "songsari": [
+   "송사리"
+  ],
+  "sora": [
+   "소라"
+  ],
+  "squid": [
+   "오징어"
+  ],
+  "standard": [
+   "표준"
+  ],
+  "steak": [
+   "스테이크"
+  ],
+  "stone": [
+   "돌"
+  ],
+  "stones": [
+   "돌"
+  ],
+  "strawberry": [
+   "딸기"
+  ],
+  "style": [
+   "그림풍"
+  ],
+  "ref": [
+   "견본"
+  ],
+  "sugar_cane": [
+   "사탕수수"
+  ],
+  "sugar_cubes": [
+   "각설탕"
+  ],
+  "sullok": [
+   "순록"
+  ],
+  "sunflower": [
+   "해바라기"
+  ],
+  "sunflower_seeds": [
+   "해바라기씨"
+  ],
+  "sunkenleaf": [
+   "가라앉은 잎"
+  ],
+  "sunkenlog": [
+   "가라앉은 통나무"
+  ],
+  "sweet_potato": [
+   "고구마"
+  ],
+  "tajo": [
+   "타조"
+  ],
+  "tallferns": [
+   "큰 고사리"
+  ],
+  "tallgrass": [
+   "키 큰 풀"
+  ],
+  "termite": [
+   "흰개미"
+  ],
+  "thicket": [
+   "덤불숲"
+  ],
+  "thistle": [
+   "엉겅퀴"
+  ],
+  "thornbush": [
+   "가시덤불"
+  ],
+  "tinypebbles": [
+   "잔자갈"
+  ],
+  "tire": [
+   "타이어"
+  ],
+  "treeroots": [
+   "나무뿌리"
+  ],
+  "trunk": [
+   "나무줄기"
+  ],
+  "tubecoral": [
+   "관산호"
+  ],
+  "tumble": [
+   "회전초"
+  ],
+  "tumbleweed": [
+   "회전초"
+  ],
+  "tussock": [
+   "풀포기"
+  ],
+  "twigbush": [
+   "잔가지 덤불"
+  ],
+  "twigleft1": [
+   "잔가지"
+  ],
+  "twigs": [
+   "잔가지"
+  ],
+  "twoleaves": [
+   "잎 두 장"
+  ],
+  "veg_bucket": [
+   "채소 양동이"
+  ],
+  "violets": [
+   "제비꽃"
+  ],
+  "waegari": [
+   "왜가리"
+  ],
+  "wall": [
+   "벽"
+  ],
+  "clock": [
+   "시계"
+  ],
+  "walnut": [
+   "호두"
+  ],
+  "watergrass": [
+   "물풀"
+  ],
+  "watering": [
+   "물뿌리개"
+  ],
+  "can": [
+   "깡통"
+  ],
+  "watermelon": [
+   "수박"
+  ],
+  "waterpatch": [
+   "물웅덩이"
+  ],
+  "waterrock": [
+   "물속 바위"
+  ],
+  "watertuft": [
+   "물풀 포기"
+  ],
+  "weedrock": [
+   "물풀 바위"
+  ],
+  "weedsprig": [
+   "물풀 줄기"
+  ],
+  "wildflowers": [
+   "들꽃"
+  ],
+  "willow": [
+   "버드나무"
+  ],
+  "wonang": [
+   "원앙"
+  ],
+  "wood": [
+   "나무"
+  ],
+  "yang": [
+   "양"
+  ],
+  "yeomso": [
+   "염소"
+  ],
+  "yurikeop": [
+   "유리 컵"
+  ],
+  "wheel": [
+   "바퀴"
+  ],
+  "item": [
+   "소품"
+  ],
+  "edge": [
+   "가장자리"
+  ],
+  "word": [
+   "낱말"
+  ],
+  "semple": [
+   "예시 사진"
+  ],
+  "saguaro": [
+   "사와로 선인장"
+  ],
+  "pricklypear": [
+   "부채 선인장"
+  ],
+  "rocks": [
+   "바위"
+  ],
+  "butte": [
+   "바위산"
+  ],
+  "boulderpile": [
+   "바위 더미"
+  ],
+  "organpipe": [
+   "오르간파이프 선인장"
+  ],
+  "deadtree": [
+   "죽은 나무"
+  ],
+  "creosote": [
+   "크레오소트 덤불"
+  ],
+  "sand": [
+   "모래"
+  ],
+  "sky": [
+   "하늘"
+  ]
+ },
+ "code": [
+  {
+   "where": "001/shape-finder.html",
+   "names": [
+    "도형",
+    "동그라미",
+    "원",
+    "세모",
+    "삼각형",
+    "네모",
+    "사각형",
+    "별"
+   ],
+   "style": "앱 코드로 그린 도형(SVG)",
+   "used_by": [
+    "001"
+   ]
+  },
+  {
+   "where": "002/picture-puzzle.html",
+   "names": [
+    "퍼즐",
+    "퍼즐 조각",
+    "조각"
+   ],
+   "style": "앱 코드로 자른 퍼즐 조각(SVG)",
+   "used_by": [
+    "002"
+   ]
+  },
+  {
+   "where": "007/word-learn.html",
+   "names": [
+    "단추 그림",
+    "아이콘"
+   ],
+   "style": "앱 코드로 그린 작은 그림(SVG)",
+   "used_by": [
+    "007"
+   ]
+  },
+  {
+   "where": "010/voice-lines.json",
+   "names": [
+    "010 대사",
+    "대사 목록",
+    "목소리 대사"
+   ],
+   "style": "010 앱 말 목록(소리는 media/voice/azure-sunhi-0.92)",
+   "used_by": [
+    "010"
+   ]
+  },
+  {
+   "where": "010/voice-lines-beta.json",
+   "names": [
+    "010 베타 대사",
+    "대사 목록"
+   ],
+   "style": "010 베타 말 목록(소리는 media/voice/azure-sunhi-0.92)",
+   "used_by": [
+    "010"
+   ]
+  }
+ ]
+}

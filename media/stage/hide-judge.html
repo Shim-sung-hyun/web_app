@@ -33,12 +33,12 @@
 <header>
  <h1>숨기기 평가 (무대 베타)</h1>
 <select id="place" aria-label="곳">
-   <option value="nature/new-grassland">초원</option><option value="nature/new-desert">사막</option>
-   <option value="nature/new-polar">북극</option><option value="nature/new-forest">숲</option>
-   <option value="nature/new-ground">땅</option><option value="nature/new-mudflat">갯벌</option>
-   <option value="nature/new-pond">연못</option><option value="nature/new-wetland">습지</option>
-   <option value="nature/new-sea">바다</option><option value="nature/new-sky">하늘</option>
-   <option value="nature/new-underground">땅속</option><option value="nature/new-water">물속</option>
+   <option value="nature/grassland">초원</option><option value="nature/desert">사막</option>
+   <option value="nature/polar">북극</option><option value="nature/forest">숲</option>
+   <option value="nature/ground">땅</option><option value="nature/mudflat">갯벌</option>
+   <option value="nature/pond">연못</option><option value="nature/wetland">습지</option>
+   <option value="nature/sea">바다</option><option value="nature/sky">하늘</option>
+   <option value="nature/underground">땅속</option><option value="nature/water">물속</option>
   </select>
  <label>단계 <select id="lv"><option value="1">하</option><option value="2">중</option><option value="3" selected>상</option><option value="4">스페셜</option></select></label>
  <button id="again" class="main">새 묶음</button>
@@ -889,7 +889,7 @@ const count=()=>$('cnt').textContent=saved.length;
 async function loadPlace(){
   const place=$('place').value; if(place===placeNow&&pl) return; placeNow=place;
   $('msg').textContent='무대를 불러오는 중…';
-  pl=await Stage.load(place,{base:'../stage-beta/'});
+  pl=await Stage.load(place,{base:'../stage/'});
   AN=(await Promise.all((pl.animals||[]).map(async a=>({name:a.name,src:base()+a.src,real:a.real,face:a.face,swim:a.swim,swimP:a.swimP,img:await img(base()+a.src)})))).filter(a=>a.img);
 }
 /* 한 묶음: 판 하나(스페셜은 여러 판)에서 후보를 모아 까닭마다 고루 12장 */

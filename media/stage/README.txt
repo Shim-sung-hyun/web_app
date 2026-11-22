@@ -1,3 +1,14 @@
+<2026-11-22 총괄: stage-beta를 stage로 합침>
+■ 폴더 지도(2026-11-22 합침 — 예전 media/stage-beta/ 는 없어짐)
+  media/stage/nature/<곳>/   지금 무대 12곳(빙 연필풍, 예전 stage-beta/nature/new-<곳>) — bg.jpg · items/ · src/ · in/ · stage.json
+  media/stage/index.json     지금 무대 차림표(키 "nature/<곳>"), props.json 소품실 목록
+  media/stage/legacy/        옛 덮개 방식 무대(2026-11-04~06, 예전 media/stage/nature/) — 008 숨은 동물 찾기 '옛 길'(새 무대에 없는 동물 판)이 아직 씀.
+                             legacy/index.json · legacy/hide-index.json(tools/stage-index.py)
+  media/stage/*.html          무대 도구 화면(install·arrange·touchup·prop-room·test·hide-test·hide-judge)
+  README-beta.txt             12곳 무대를 만든 자세한 기록(예전 stage-beta/README.txt — 글 속 'new-<곳>'은 지금 '<곳>')
+  프롬프트는 media/prompts/ 로 옮김(2026-11-22).
+  옛 그림(만화풍·다시 받기 전)은 버리지 않고 media/archive/ 에.
+
 <제작자 심승현 수정 2026.11.09 · Claude 정리 2026.11.09 — 덮개·번호·옮기기 등 옛 방식 기록은 덜어냄(git 기록에 남아 있음)>
 
 무대(stage) — 장면을 레이어로 쌓아 만드는 공통 자료·모듈
@@ -11,18 +22,18 @@
 서식지만이 아니라 다른 앱(교실·가게·길·집 안 등)에서도 쓸 수 있게 공통으로 만든다.
 
 ■ 지금 하는 일(2026-11-09)
-- 12곳을 무대 설치도구(media/stage/install.html)로 새로 만들어 media/stage-beta/ 에 모은다. 숲(nature/new-forest)이 견본 — 끝남.
+- 12곳을 무대 설치도구(media/stage/install.html)로 새로 만들어 media/stage/ 에 모은다. 숲(nature/forest)이 견본 — 끝남.
 - 기존 media/stage/nature/<12곳>(덮개 방식, 2026-11-04~06)은 다 될 때까지 건드리지 않는다. 다 되면 새 판으로 바꾸고, 기존 소품을 더 쓸지는 그때 정함.
 - 008 숨은 동물 찾기를 새 무대 위에서 짬(2026-11-15, 008 베타 buildStage — 008 README '새 무대 숨은 동물 찾기'). 모듈에 쉬어 가며 숨기기(Stage.hideLevelAsync·hideManyAsync)·미리 재기(Stage.warm), 그림자 나누기(splitShadow)도 하나씩 쉬어 가며 — 앱이 다음 판을 미리 짜는 동안 화면이 멈추지 않게(결과는 같음).
-- 소품실(2026-11-16 선생님: 무대마다 소품을 따로 만들어 쓰지 말고 체계적으로 — 새로 만드는 무대·앱부터): 목록 media/stage-beta/props.json(tools/prop-room.py, stage-intake가 끝에 다시 짬), 보기 media/stage/prop-room.html.
+- 소품실(2026-11-16 선생님: 무대마다 소품을 따로 만들어 쓰지 말고 체계적으로 — 새로 만드는 무대·앱부터): 목록 media/stage/props.json(tools/prop-room.py, stage-intake가 끝에 다시 짬), 보기 media/stage/prop-room.html.
   지금 541장·223종류 중 22종류(통나무·돌·갈대·덤불…)가 여러 무대에 따로 그려짐, 빌려 쓴 것 0. 그림을 한곳으로 옮기지 않은 까닭: 소품 밑동에 그 무대 땅(낙엽 흙·진흙·모래)이 그려져 있고
   그림자도 무대마다 달라(사막 해 그림자·물속 없음) 아무 데나 놓으면 오려 붙인 티 — 그래서 밑동 땅 묶음(prop-room.py GROUND, 무대 stage.json "groundKind"로 바꿀 수 있음) 안에서만 빌려 씀.
-  빌려 쓰기: stage.json items에 {"from": "nature/new-pond", "file": "reeds-1", ...} — 모듈 load·stage-meta가 from(그 무대 뿌리 기준)·file을 따름. 손질은 원래 무대에서 하면 함께 바뀜.
+  빌려 쓰기: stage.json items에 {"from": "nature/pond", "file": "reeds-1", ...} — 모듈 load·stage-meta가 from(그 무대 뿌리 기준)·file을 따름. 손질은 원래 무대에서 하면 함께 바뀜.
 - 동물마다 키워도 되는 가림(2026-11-16): stage.json animals[].growBehind — 작은 동물을 키우면 scalefree 소품 뒤에만 숨던 것을, 그 동물은 이 종류 뒤에서도(숲 딱따구리·부엉이 = 나무들).
 - 확인(2026-11-16 총괄): 초원 큰 동물이 어려움에서 먼 곳에만 숨는 까닭 — 동물과 가림 소품이 같은 깊이에서 같은 비율로 커져 가까이선 둘 다 화면보다 커지거나 밑동이 발을 덮음(원근 그대로라 고치지 않음, 쉬움은 0.5~0.95·보통 0.42~0.75로 고르게).
   사막 쉬움 끝 숨김은 풀려 있음(20판 60마리 중 0 — 예전 34), 다른 곳 쉬움도 30마리 중 0~2.
-- 다음: 12곳 무대를 media/stage/nature/로 옮길지(선생님), 소금쟁이 물낯 자리.
-- 배치 고치기(2026-11-12): media/stage/arrange.html?place=nature/new-desert&seed=판번호 — 무대가 짠 판에서 선생님이 소품을 끌어 옮기고(깊이 따라 크기도)·크게/작게·빼기·더하기, 까닭과 함께 저장 → '모두 내려받기' JSON(before·after·changes·why)을 대화에 올리면 Claude가 견줘 원리(모듈·stage.json)로 바꿈. 무대 보기의 판 번호를 넣으면 같은 판.
+- 다음: 소금쟁이 물낯 자리. (12곳 무대를 media/stage/nature/로 옮기는 일은 2026-11-22 총괄이 함 — 옛 것은 legacy/)
+- 배치 고치기(2026-11-12): media/stage/arrange.html?place=nature/desert&seed=판번호 — 무대가 짠 판에서 선생님이 소품을 끌어 옮기고(깊이 따라 크기도)·크게/작게·빼기·더하기, 까닭과 함께 저장 → '모두 내려받기' JSON(before·after·changes·why)을 대화에 올리면 Claude가 견줘 원리(모듈·stage.json)로 바꿈. 무대 보기의 판 번호를 넣으면 같은 판.
   익힌 원리(2026-11-12, 사막 32판 — stagekit settle·compose, stage.json compose):
    ① 앞뒤 분명히: 큰 소품 둘의 밑동이 가로로 30% 넘게 겹치면 밑동 높이 차이 stackGap(.04) 이상 — 같은 줄에 겹치면 앞의 것이 떠 보임(고치기 전 .00~.03 → 고친 뒤 .03~.08). 200판에서 842 → 26.
    ② 그림자는 하늘로 안 감: ownShadow 소품은 그림자 꼭대기(stage.json shadowTop — stage-meta가 잼)가 지평선 아래. 원근상 옮겨도 안 바뀌니 크기만 줄임(바위 기둥이 3m쯤으로 작아짐).
@@ -42,11 +53,11 @@
    ⑥ 같은 종류가 가까이(가로 .2·밑동 .08 안) 비슷한 크기(15% 안)면 하나를 .78배나 1.25배로.
    ② 고침: 그림자 꼭대기는 지평선보다 밑동 깊이(y−지평선)의 10%만큼 아래(compose.shadowSky .1) — 2차에서 선생님이 .013~.024 아래까지 줄임. 크기 정하기(⑥·②) → 자리 맞추기(①④⑤)를 3번 되풀이, 끝에 ② 한 번 더.
    무작위 200판: 언덕 밑동 뜸 0 · 그림자 하늘 0 · 깔고 앉음 0.
-- 보기: 무대 보기 media/stage/test.html?root=stage-beta · 숨기기 시험 media/stage/hide-test.html?place=nature/new-forest
+- 보기: 무대 보기 media/stage/test.html?root=stage · 숨기기 시험 media/stage/hide-test.html?place=nature/forest
   (GitHub 주소 https://shim-sung-hyun.github.io/web_app/media/stage/… — 올린 뒤 1~2분)
 
 ■ 보관 구조(장소별, 3단: 갈래 / 장소 / 파일)
-media/stage/ (기존) · media/stage-beta/ (새로 만드는 중, 구조 같음)
+media/stage/ (기존) · media/stage/ (새로 만드는 중, 구조 같음)
   index.json   모든 장소의 차림표. 다른 앱은 이것 하나만 읽고 찾는다
   places.json  자연 12곳 프리셋(이름·폴더·배경 설명·지평선·소품·가장자리 큰 것·그곳 동물·블록) — 설치도구 풀다운과 숨기기 시험이 씀
   nature/ 자연 · town/ 마을 바깥 · school/ 학교 · home/ 집 · public/ 가게·기관 · _common/ 여기저기 놓이는 요소(items/만)
@@ -80,21 +91,21 @@ media/stage/ (기존) · media/stage-beta/ (새로 만드는 중, 구조 같음)
        stage.json noShadow:true 인 곳(숲·초원), 스며들기 한 소품(soak), 그림자가 든 소품(ownShadow)은 안 그림. 기존 media/stage(008 베타가 씀)는 그대로.
      · 곳마다 특징(2026-11-11 선생님 확정): 사막만 해 방향 그림자, 나머지(숲·초원·북극)는 원본 그림 그대로 — 규칙(스며들기·묻기·선 맞추기·그림자) 적용 안 함, noShadow.
        북극(옛 극지방)은 2026-11-11 그림풍을 통째로 바꿈: 동물(가는 연필풍)에 맞춰 배경·소품 23개를 빙 연필풍으로 다시 받음
-       (프롬프트 media/stage/prompts/PROMPTS-new-polar-bing*.txt). 자르기는 python3 tools/pencil-cut.py(미색 종이→배경 눈색, 선을 벽 삼아 바깥 종이 지움, 눈 소품 몸 안 불투명, --ice 얼음만 옅은 푸른 기).
+       (프롬프트 media/prompts/PROMPTS-new-polar-bing*.txt). 자르기는 python3 tools/pencil-cut.py(미색 종이→배경 눈색, 선을 벽 삼아 바깥 종이 지움, 눈 소품 몸 안 불투명, --ice 얼음만 옅은 푸른 기).
        밑동을 그림에서부터 땅 색으로 녹아들게 받으면 규칙이 필요 없음 — 다음 곳도 이렇게 받는 게 좋음. 빙 프롬프트에는 "가로 3분의 2까지, 좌우 여백 6분의 1"(잘림 방지)을 넣음.
      · 보관: tools/soak-base.py·bury-base.py·line-unify.py·cast-shadow.py·shadow-split.py 는 다른 장면에서 쓸 수 있으니 12곳 작업이 끝날 때까지 지우지 않음(선생님).
        → 2026-11-14 선생님: 상황이 바뀌어 위 말씀은 끝남 — 이제 도구 창고 규칙(tools/README.txt 맨 위)대로. 이 다섯과 pencil-cut.py는 tools/attic/(6개월 보관)으로 옮김, 필요하면 python3 tools/trash.py --revive 이름.py. 까닭은 tools/attic/LIST.txt.
    → 적용 범위(2026-11-10 선생님): 그림자는 지금 사막만. 다른 곳은 밑동 스며들기(1번)만 하고, 그림자는 필요할 때 아래 도구를 가져와 씀.
      · 그림자 색 나눠 받기(2026-11-12 선생님 — 그림자 세션에서 세팅, 사막 소품에는 아직 적용 안 함): 빙의 회색 그림자는 얼룩·흰 점·푸른 자국이 따라와 손질이 안 됨 →
        받을 때부터 그림자만 한 가지 색(파랑, 소품이 파랗면 빨강)으로 받아 그 색인 곳만 떼고 검정 20%로 고르게 채움. 프롬프트 틀·시험 결과·자르는 법·남은 것은 모두
-       media/stage/prompts/PROMPTS-shadow-key.txt, 도구는 python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key blue [--plant] (scipy 필요). 나온 꼴은 bing-cut.py 와 같음(ownShadow).
+       media/prompts/PROMPTS-shadow-key.txt, 도구는 python3 tools/flat-shadow.py 받은.jpg 나갈.webp --key blue [--plant] (scipy 필요). 나온 꼴은 bing-cut.py 와 같음(ownShadow).
      · 빙 그림 자르기(2026-11-12 선생님: 원본 모양·테두리는 그대로, 그림자는 소품만·동물엔 없음): python3 tools/bing-cut.py 받은.jpg 나갈.webp [--plant | --animal [--holes]]
        — 진한 테두리선 안은 모두 불투명(돌 테두리 원본 그대로), 가는 선·잎은 물체, 테두리 밖 매끈한 면만 그림자(알파 92까지, 계단 없이), 둘레에 흰 줄 남기지 않음.
        --plant 가지·잎 사이 종이도 투명, --animal 그림자·바닥 자국 없이(다리 사이처럼 진한 선으로 둘러싸인 흰 틈만 뚫음 — 흰 털은 남음), --holes 뱀 똬리 안.
        shadow-split.py·pencil-cut.py는 옅은 잎·가지·돌 그늘을 그림자로 봐서 반투명해지고 낙타에 흰 줄·그림자가 남았음 → 연필풍은 bing-cut.py로.
-     · (예전) 그려 받은 그림자(사막 만화풍): 빙에 '물체 + 회색 그림자, 흰 바탕'으로 받음(media/stage/prompts/PROMPTS-new-desert-bing.txt) → python3 tools/shadow-split.py 로
+     · (예전) 그려 받은 그림자(사막 만화풍): 빙에 '물체 + 회색 그림자, 흰 바탕'으로 받음(media/prompts/PROMPTS-new-desert-bing.txt) → python3 tools/shadow-split.py 로
        물체와 그림자를 갈라 한 장(그림자 반투명, 알파 92까지)으로 → stage.json ownShadow:true·flip:false — 무대는 뒤집지 않고 그림자를 따로 그리지 않음.
-       제미나이는 이 빛(해가 등 뒤)을 거듭 반대로 그려서 빙을 씀. 식물 밑의 연한 모래 자국은 따로 지움(stage-beta README 사막 절).
+       제미나이는 이 빛(해가 등 뒤)을 거듭 반대로 그려서 빙을 씀. 식물 밑의 연한 모래 자국은 따로 지움(stage README 사막 절).
      · 셈한 그림자(선생님 방식, 보관): python3 tools/cast-shadow.py — 실루엣의 땅에 닿는 줄은 제자리, 위만 오른쪽 안쪽으로 눕힌 그림자 레이어 위에 물체.
        서 있는 것은 잘 맞음(물체가 그림자 시작을 조금 밟게), 누운 것은 땅에 닿은 곳을 그림 한 장으로 몰라 어긋나기 쉬움 → 그려 받는 쪽이 나음.
  2 제 자리에만: 소품마다 자리(땅·물속 바닥·물가·흙 속·하늘)가 있고 그 밖에는 놓이지 않는게 원칙이나, 두 장소를 이어 표현하는 경우도 있다.(예: 물 속에서 시작해 물 밖으로 삐져나온 식물, 땅 위에서 시작해 하늘로 향하는 해바라기 등 일상의 자연을 고려한다.) 땅이나 물 등 바닥이 있는 경우, 그 바닥 위에 뜨지 않는다.(하늘의 구름 등 하늘 구성품 제외)
@@ -230,21 +241,21 @@ media/stage/ (기존) · media/stage-beta/ (새로 만드는 중, 구조 같음)
 - '적용' 뒤 무작위 판 3장을 보여 줌. 다음: 여러 곳에서 익힌 것을 소품 종류별 공통 원리(rules.json)로 모으기.
 
 ■ 소품 손질 media/stage/touchup.html (2026-11-15 선생님: 설치도구 3단계만 떼어, 모든 장면을 골라 직접 손보고 저장)
-- 장면 고르기(stage-beta index.json) → 소품 목록(stage.json items) → 흰색만 지우는 붓·흰 틈 지우기·지우개·복구 붓(처음 불러온 그림), 붓 크기·흰색 기준, 되돌리기(Ctrl+Z)·확대(Ctrl/⌘+휠).
+- 장면 고르기(stage index.json) → 소품 목록(stage.json items) → 흰색만 지우는 붓·흰 틈 지우기·지우개·복구 붓(처음 불러온 그림), 붓 크기·흰색 기준, 되돌리기(Ctrl+Z)·확대(Ctrl/⌘+휠).
 - 바탕: 장면 땅색(bg.jpg 아래 띠)·어두운 색·체크무늬 — 남은 흰색이 잘 보이게.
 - 선생님이 손질한 파일을 받으면(2026-11-15 — 모든 장면 세션이 같은 순서로): ① 파일 이름과 그림 크기로 어느 장면 것인지 확인(폴더 이름은 틀릴 수 있음 — 초원 것을 '숲손질'로 보낸 적 있음,
   boulder·stones·reedwall처럼 여러 장면에 같은 이름이 있으니 크기가 같은 곳) ② 같은 이름이 둘이면 나중에 받은 것('이름 (1).webp') ③ 그 장면 items/에 덮어쓰기
   ④ python3 tools/stage-meta.py · tools/stage-index.py · tools/webp-slim.py 그 장면/items/*.webp(손질 화면은 품질 .95로 저장 — 가볍게, 2026-11-16)(다른 장면 stage.json이 줄바꿈만 바뀌면 되돌림) ⑤ 커밋·main에 올리고 그 장면 README에 한 줄.
 - 지워진 색 되살리기(2026-11-15 선생님): '원본 색 붓'은 장소폴더/src/이름.jpg(받은 원본을 소품과 같은 자리·크기로 자른 것 — tools/src-align.py)의 색으로 칠함. 초원 74장·강·호수 23장(모두)·땅속 29장(모두)·사막 40장(나중 넣은 15장은 원본 없음)·물속 31장(전부)에 있음. 숲은 5장만(진달래 2·덤불 2·고사리 1 — 나머지는 원본이 아무 데도 없음). 앞으로 stage-intake.py가 넣을 때 src/를 함께 남김. 원본이 없으면 '구멍 메우기 붓'(둘레 색으로 채움).
-- 저장: '저장소 폴더 연결'(크롬, web_app이나 media/stage-beta 폴더)이면 items/이름.webp를 바로 덮어씀(연결하면 그림도 내 컴퓨터 파일에서 읽음), 아니면 파일로 받음.
+- 저장: '저장소 폴더 연결'(크롬, web_app이나 media/stage 폴더)이면 items/이름.webp를 바로 덮어씀(연결하면 그림도 내 컴퓨터 파일에서 읽음), 아니면 파일로 받음.
   저장한 뒤 선생님이 VS Code로 커밋·올리기 하거나 Claude에게 '손질한 것 올려 줘' — Claude는 올릴 때 stage-meta.py·stage-index.py·webp-slim.py를 돌림(밑동 자리·그림 가볍게).
 
-■ 무대 설치도구 media/stage/install.html (만드는 순서는 media/stage-beta/README.txt 맨 위)
+■ 무대 설치도구 media/stage/install.html (만드는 순서는 media/stage/README.txt 맨 위)
 - 1 장면 구상: '자연 장소 고르기'(places.json)로 이름·폴더·배경 설명·지평선·소품(판 1·3)·가장자리 큰 것·동물·블록이 들어감 → 표준 장면·빈 배경·소품 판·큰 그림·가장자리 프롬프트.
   큰 그림이 필요한 소품(맨 앞에서 1.2배 넘게 늘어날 것)은 도구가 셈해 한 장에 하나씩 받게 함. 모든 프롬프트에 '밑동의 흙·풀을 소품에 그려 넣기'가 들어 있음.
 - 2 그림 준비: 배경 별 표시 지우기 · 흰 바탕 기준(미리 보기) · 판 1~3과 큰 그림 불러오기 · 칸 나누기(작은 조각·땅 높이 가는 가로줄·테두리 흰 기 저절로 정리). 칸마다 입력한 여백을 둘러 잘라낸다. 그림 자체가 잘려 있으면 원본 그림을 다시 준비해야 한다.
 - 3 소품 손질: 소품을 골라 새 그림 파일로 바꾸기(흰 바탕은 자동으로 지우고, 되돌리기로 이전 그림 복구) · 구역 남기기(김프식 손잡이) · 흰 틈 지우기 · 흰색만 지우는 붓 · 이름·파일 이름·실제 높이. Ctrl+마우스 휠로 확대·축소하고 '확대 초기화'로 되돌린다.
-- 4 배치 시안·이 배치에서 익히기. 5 검토·확정: 확인(무섭거나 훼손된 꼴 포함) · 잘린 끝·흐림 경고 · stage-beta에 직접 저장 또는 ZIP · 저장 뒤 '무대 보기·숨기기 시험' 링크.
+- 4 배치 시안·이 배치에서 익히기. 5 검토·확정: 확인(무섭거나 훼손된 꼴 포함) · 잘린 끝·흐림 경고 · stage에 직접 저장 또는 ZIP · 저장 뒤 '무대 보기·숨기기 시험' 링크.
 - 원본 그림을 Claude에게 주면 Claude가 같은 순서로 잘라 넣는다(tools/stage-meta.py → tools/stage-index.py → 화면 확인).
 
 ■ 모듈 common/stagekit.js (원본 한 곳, python3 tools/sync-modules.py로 <script id="stagekit"> 칸에 복사)
@@ -257,7 +268,7 @@ stage.json 꼴(장소마다)
   선택 값: sharpPx(1200) · maxStretch(1.2) · smallFront(.7) · compose.backBias(1 — 1보다 크면 자리를 먼 쪽에서 더 자주, 2026-11-14 강·호수·물속 1.8) · nestSmall(.6) · rootSmall(1.2) · groundTol(48)
 
 ■ 그림 받는 법
-- 프롬프트는 media/stage/prompts/에 앱(묶음)마다 한 파일, 그림마다 ▼~▲ 글을 통째로(공통 글을 따로 두지 않음). Gemini가 안 되면 Bing Image Creator(같은 글 + 본보기).
+- 프롬프트는 media/prompts/에 앱(묶음)마다 한 파일, 그림마다 ▼~▲ 글을 통째로(공통 글을 따로 두지 않음). Gemini가 안 되면 Bing Image Creator(같은 글 + 본보기).
 - 마음에 안 드는 그림은 저장소에 넣지 않는다. 안 쓰게 된 것은 python3 tools/trash.py 경로 --why "이유" (3개월 뒤 비움).
 
 ■ 기존 무대(media/stage/nature, 2026-11-04~06)와 008

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """webp 줄이기 — 다 만든 소품·동물 그림을 마지막에 한 번 가볍게(2026-11-16, 008 학교 와이파이에서 무대 그림 100MB가 목소리를 밀어냄)
-    python3 tools/webp-slim.py media/stage-beta/nature/new-*/items/*.webp     # 제자리에서
+    python3 tools/webp-slim.py media/stage/nature/*/items/*.webp     # 제자리에서
     python3 tools/webp-slim.py 그림.webp --dry                                  # 줄어들 크기만
     python3 tools/webp-slim.py 그림.webp --q 85                                 # 품질(기본 80)
 

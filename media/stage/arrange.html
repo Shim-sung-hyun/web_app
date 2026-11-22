@@ -34,8 +34,8 @@
 <header>
  <h1>배치 고치기 (무대 베타)</h1>
  <select id="place" aria-label="곳">
-  <option value="nature/new-desert">사막</option><option value="nature/new-polar">북극</option>
-  <option value="nature/new-forest">숲</option><option value="nature/new-grassland">초원</option>
+  <option value="nature/desert">사막</option><option value="nature/polar">북극</option>
+  <option value="nature/forest">숲</option><option value="nature/grassland">초원</option>
  </select>
  <label>판 <input id="seed" type="number" min="1" step="1"></label>
  <button id="go">이 판</button>
@@ -903,7 +903,7 @@ const snap=o=>({id:o.id,name:(pl.items[o.id]||{}).name||o.id,kind:(pl.items[o.id
 const name=o=>(pl.items[o.id]||{}).name||o.id;
 
 async function loadPlace(){
-  const place=$('place').value; pl=await Stage.load(place,{base:'../stage-beta/'});
+  const place=$('place').value; pl=await Stage.load(place,{base:'../stage/'});
   const opts=Object.entries(pl.items).filter(([,it])=>it.role!=='frame').map(([id,it])=>`<option value="${id}">${it.name}</option>`);
   $('addSel').innerHTML=opts.join('');
 }

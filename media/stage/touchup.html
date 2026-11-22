@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>소품 손질</title>
 <!-- 무대 설치도구 3단계(소품 손질)만 떼어 낸 것(2026-11-15 선생님: 남은 흰 점을 직접 손보고 바로 저장 — 모든 장면을 고를 수 있게).
-     장면(stage-beta)을 고르면 소품이 나오고, 붓으로 손질한 뒤 저장소 폴더에 바로 덮어쓰거나 파일로 받음. 손질 방법은 install.html 3단계와 같음. -->
+     장면(stage)을 고르면 소품이 나오고, 붓으로 손질한 뒤 저장소 폴더에 바로 덮어쓰거나 파일로 받음. 손질 방법은 install.html 3단계와 같음. -->
 <style>
 :root{color-scheme:light;--ink:#24352c;--muted:#607067;--line:#d5dfd8;--paper:#f4f7f3;--green:#315c48;--pale:#e7f0e9;--orange:#a44c28}
 *{box-sizing:border-box}
@@ -78,13 +78,13 @@ aside input[type=range]{width:100%}
   <div class="row"><button id="undo" class="btn" type="button">되돌리기</button><button id="reset" class="btn" type="button">처음 그림으로</button></div>
   <div class="row"><button id="save" class="btn primary" type="button" disabled>저장</button></div>
   <p id="saveMsg" class="hint" role="status"></p>
-  <p class="hint">폴더를 연결하면 저장소의 그림 파일(media/stage-beta/…/items/이름.webp)을 바로 덮어써요. 저장한 뒤 VS Code에서 커밋·올리기 하거나 Claude에게 “손질한 것 올려 줘”라고 하면 돼요. 밑동 자리 다시 재기(stage-meta)는 Claude가 올릴 때 함께 해요.</p>
+  <p class="hint">폴더를 연결하면 저장소의 그림 파일(media/stage/…/items/이름.webp)을 바로 덮어써요. 저장한 뒤 VS Code에서 커밋·올리기 하거나 Claude에게 “손질한 것 올려 줘”라고 하면 돼요. 밑동 자리 다시 재기(stage-meta)는 Claude가 올릴 때 함께 해요.</p>
  </aside>
 </main>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const BETA='../stage-beta/';
-let dirRoot=null;          // 연결한 폴더(media/stage-beta 를 가리키게 맞춤)
+const BETA='../stage/';
+let dirRoot=null;          // 연결한 폴더(media/stage 를 가리키게 맞춤)
 let place='',stage=null,groundRGB=[200,160,90];
 let cur=null;              // {id,name,img(ImageData),src(ImageData 처음),orig(ImageData 받은 원본 — 있을 때만),undo:[]}
 const edited=new Set();    // 'place/id' 저장 안 한 손질
@@ -94,7 +94,7 @@ const cv=$('#cv'),cx=cv.getContext('2d',{willReadFrequently:true});
 /* 장면 목록 */
 async function loadIndex(){const ix=await (await fetch(BETA+'index.json',{cache:'no-store'})).json();
  $('#place').innerHTML=Object.entries(ix).map(([k,v])=>`<option value="${k}">${v.name||k}</option>`).join('');
- const last=localStore('touchup-place');if(last&&ix[last])$('#place').value=last;else if(ix['nature/new-grassland'])$('#place').value='nature/new-grassland';
+ const last=localStore('touchup-place');if(last&&ix[last])$('#place').value=last;else if(ix['nature/grassland'])$('#place').value='nature/grassland';
  await loadPlace($('#place').value)}
 function localStore(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
 
@@ -182,18 +182,18 @@ $('#reset').onclick=()=>{if(!cur)return;pushUndo();cur.img.data.set(cur.src.data
 addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();$('#undo').click()}
  if(e.key==='['||e.key===']'){const b=$('#brush');b.value=Math.max(2,Math.min(80,+b.value+(e.key===']'?2:-2)));$('#brushVal').value=b.value}});
 
-/* 폴더 연결: media/stage-beta(또는 그 위 web_app·media)를 골라도 stage-beta를 찾아 맞춤 */
-async function findBeta(h){for(const path of ['', 'stage-beta','media/stage-beta']){try{let d=h;for(const p of path.split('/').filter(Boolean))d=await d.getDirectoryHandle(p);await d.getFileHandle('index.json');await d.getDirectoryHandle('nature');return d}catch(e){}}return null}
+/* 폴더 연결: media/stage(또는 그 위 web_app·media)를 골라도 stage를 찾아 맞춤 */
+async function findBeta(h){for(const path of ['', 'stage','media/stage']){try{let d=h;for(const p of path.split('/').filter(Boolean))d=await d.getDirectoryHandle(p);await d.getFileHandle('index.json');await d.getDirectoryHandle('nature');return d}catch(e){}}return null}
 $('#connect').onclick=async()=>{if(!window.showDirectoryPicker){alert('이 브라우저는 폴더 바로 저장을 못 해요. 크롬에서 열어 주세요. (저장하면 파일로 받아요.)');return}
- try{const h=await window.showDirectoryPicker({mode:'readwrite'}),b=await findBeta(h);if(!b){alert('media/stage-beta 폴더를 찾지 못했어요. 저장소(web_app) 폴더나 media/stage-beta 폴더를 골라 주세요.');return}
+ try{const h=await window.showDirectoryPicker({mode:'readwrite'}),b=await findBeta(h);if(!b){alert('media/stage 폴더를 찾지 못했어요. 저장소(web_app) 폴더나 media/stage 폴더를 골라 주세요.');return}
   dirRoot=b;$('#folder').textContent='연결됨: '+h.name+' — 저장하면 그 파일을 덮어써요';$('#connect').textContent='폴더 다시 연결';await loadPlace(place)}catch(e){if(e.name!=='AbortError')alert('폴더를 열지 못했어요: '+e.message)}};
 
 /* 저장 */
 $('#save').onclick=async()=>{if(!cur)return;draw();
  const blob=await new Promise(ok=>cv.toBlob(ok,'image/webp',.95));const fn=cur.id+'.webp';
  try{if(dirRoot){const d=await dirFor(place+'/items'),fh=await d.getFileHandle(fn,{create:true}),w=await fh.createWritable();await w.write(blob);await w.close();
-   $('#saveMsg').textContent=`저장했어요: media/stage-beta/${place}/items/${fn}`}
-  else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;a.click();$('#saveMsg').textContent=`파일로 받았어요: ${fn} — media/stage-beta/${place}/items/ 에 넣으면 돼요(같은 이름으로 덮어쓰기).`}
+   $('#saveMsg').textContent=`저장했어요: media/stage/${place}/items/${fn}`}
+  else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;a.click();$('#saveMsg').textContent=`파일로 받았어요: ${fn} — media/stage/${place}/items/ 에 넣으면 돼요(같은 이름으로 덮어쓰기).`}
   edited.delete(place+'/'+cur.id);mark(cur.id,false);cur.src=new ImageData(new Uint8ClampedArray(cur.img.data),cv.width,cv.height);cur.undo=[];
   const t=$(`#list .item[data-id="${cur.id}"] img`);if(t)t.src=URL.createObjectURL(blob)}catch(e){$('#saveMsg').textContent='저장하지 못했어요: '+e.message}};
 addEventListener('beforeunload',e=>{if(edited.size){e.preventDefault();e.returnValue=''}});

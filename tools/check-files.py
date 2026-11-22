@@ -10,7 +10,8 @@
      BASE+'이름.webp', BASE+표[…]+'.webp', BASE+표[…].scene+'.jpg' (표는 같은 파일의 const 표={…})
   3. media/photos/photos.json 의 files
   4. media/voice/*/index.json 의 files (파일 이름 + .mp3)
-끝에 "없는 파일 0"이 나오면 통과. 하나라도 없으면 끝 상태가 1.
+  5. 자료 전체 목록 media/catalog.json 이 최신인지(2026-11-22) — 목록에 없는 그림·사진이 있으면 "목록에 없는 파일 N"
+끝에 "없는 파일 0"과 "목록에 없는 파일 0"이 나오면 통과. 하나라도 걸리면 끝 상태가 1.
 """
 import json, os, re, sys
 
@@ -20,6 +21,7 @@ PREFIXES = ('https://shim-sung-hyun.github.io/web_app/',
 VERBOSE = '-v' in sys.argv
 
 missing = {}   # 저장소 안 경로 → 처음 본 곳
+OPTIONAL = {'media/brand/charum-logo.png'}   # 없으면 앱이 다른 주소로 대신 씀(homeLink: charum.org 로고) — 선생님이 올리면 저절로 씀
 seen = 0
 
 
@@ -33,7 +35,7 @@ def to_path(url):
 def need(rel, where):
     """rel: 저장소 안 경로. 끝이 / 이면 폴더가 있어야 함."""
     global seen
-    if not rel or '*' in rel or '${' in rel:
+    if not rel or '*' in rel or '${' in rel or rel in OPTIONAL:
         return
     seen += 1
     full = os.path.join(ROOT, rel)
@@ -145,9 +147,15 @@ for d in sorted(os.listdir(vroot)):
     if VERBOSE:
         print(f'voice/{d}: 파일 {seen - n0}개 봄')
 
+# 5. 자료 전체 목록이 최신인지(tools/media-index.py --check)
+import subprocess
+cat_ok = subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'media-index.py'), '--check'], capture_output=True, text=True)
+print(cat_ok.stdout.rstrip().replace('자료 목록 최신(목록에 없는 파일 0)', '목록에 없는 파일 0 (media/catalog.json 최신)'))
+
 if missing:
     print(f'없는 파일 {len(missing)}')
     for rel, where in sorted(missing.items()):
         print(f'  {rel}   ← {where}')
     sys.exit(1)
 print(f'없는 파일 0 (모두 {seen}곳 확인)')
+if cat_ok.returncode: sys.exit(1)

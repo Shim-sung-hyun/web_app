@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """소품실 — 무대 소품을 한 목록으로 모으고, 다른 무대의 소품을 빌려 쓰기(2026-11-16 선생님)
 
-    python3 tools/prop-room.py                                   # 목록 다시 짜기 → media/stage-beta/props.json
-    python3 tools/prop-room.py --borrow nature/new-wetland nature/new-pond/reeds-1          # 빌려 쓰기
-    python3 tools/prop-room.py --borrow nature/new-wetland nature/new-pond/reeds-1 --as reeds-pond   # 이름이 겹치면 새 이름
+    python3 tools/prop-room.py                                   # 목록 다시 짜기 → media/stage/props.json
+    python3 tools/prop-room.py --borrow nature/wetland nature/pond/reeds-1          # 빌려 쓰기
+    python3 tools/prop-room.py --borrow nature/wetland nature/pond/reeds-1 --as reeds-pond   # 이름이 겹치면 새 이름
     python3 tools/prop-room.py --borrow ... --force              # 밑동 땅이 달라도(보통은 하지 말 것)
 
 왜: 무대마다 소품을 따로 그려 같은 종류(통나무·돌·갈대…)가 여러 번 그려졌음. 그림 파일은 옮기지 않고(소품 손질·원본 색 붓·stage.json 주소가 묶여 있음)
-  목록(소품실)으로 모아 보고, 밑동 땅이 같은 무대끼리는 그림을 옮기지 않고 가져다 씀 — stage.json items에 {"from": "nature/new-pond", "file": "reeds-1"}.
+  목록(소품실)으로 모아 보고, 밑동 땅이 같은 무대끼리는 그림을 옮기지 않고 가져다 씀 — stage.json items에 {"from": "nature/pond", "file": "reeds-1"}.
   모듈(stagekit load)·stage-meta가 from·file을 따라 그림을 찾음. 소품 손질(touchup)은 원래 무대에서 하면 빌린 무대에도 함께 바뀜.
 밑동 땅: 소품 그림 밑동에 그 무대의 땅(낙엽 흙·모래·진흙…)이 그려져 있어, 땅이 다른 무대에 놓으면 오려 붙인 티가 남. 무대마다 GROUND(아래)나 stage.json "groundKind".
 보기: media/stage/prop-room.html (그림으로 둘러보기 — 밑동 땅·종류·무대로 고르기)
@@ -17,10 +17,10 @@ import json, os, sys
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BETA = os.path.join(ROOT, 'media', 'stage-beta')
-GROUND = {'new-forest': '흙·풀', 'new-grassland': '흙·풀', 'new-ground': '흙·풀', 'new-desert': '모래', 'new-polar': '눈·얼음',   # 비슷한 땅끼리 한 묶음 — 묶음 안에서는 빌려 씀
-          'new-mudflat': '진흙·물가', 'new-wetland': '진흙·물가', 'new-pond': '진흙·물가', 'new-sea': '물속 바닥', 'new-water': '물속 바닥',
-          'new-underground': '흙 속(단면)', 'new-sky': '하늘(땅 없음)'}
+BETA = os.path.join(ROOT, 'media', 'stage')
+GROUND = {'forest': '흙·풀', 'grassland': '흙·풀', 'ground': '흙·풀', 'desert': '모래', 'polar': '눈·얼음',   # 비슷한 땅끼리 한 묶음 — 묶음 안에서는 빌려 씀
+          'mudflat': '진흙·물가', 'wetland': '진흙·물가', 'pond': '진흙·물가', 'sea': '물속 바닥', 'water': '물속 바닥',
+          'underground': '흙 속(단면)', 'sky': '하늘(땅 없음)'}
 
 
 def load(p): return json.load(open(p, encoding='utf-8'))
@@ -62,7 +62,7 @@ def build():
         fh.write('{\n' + ',\n'.join(json.dumps(k, ensure_ascii=False) + ': ' + json.dumps(v, ensure_ascii=False, separators=(',', ':')) for k, v in sorted(out.items())) + '\n}\n')
     kinds = {}
     for v in out.values(): kinds.setdefault(v['kind'], set()).add(v['place'])
-    print('소품실', len(out), '장 ·', len(kinds), '종류 · 여러 무대에 그린 종류', sum(1 for s in kinds.values() if len(s) > 1), '→ media/stage-beta/props.json')
+    print('소품실', len(out), '장 ·', len(kinds), '종류 · 여러 무대에 그린 종류', sum(1 for s in kinds.values() if len(s) > 1), '→ media/stage/props.json')
 
 
 def borrow(to, item, as_name=None, force=False):

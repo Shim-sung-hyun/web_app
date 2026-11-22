@@ -15,7 +15,7 @@ import importlib.util, json, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 spec = importlib.util.spec_from_file_location('pi', os.path.join(ROOT, 'tools', 'props-index.py'))
 PI = importlib.util.module_from_spec(spec); spec.loader.exec_module(PI)
-ST = os.path.join(ROOT, 'media', 'stage')
+ST = os.path.join(ROOT, 'media', 'stage', 'legacy')   # 옛 덮개 방식 무대(008 옛 길이 hide-index.json을 씀)
 SCALEFREE = {'rocks', 'stones', 'pebbles', 'drygrass', 'grassclump', 'clover', 'tussock', 'sedge', 'seagrass', 'waterweed', 'hornwort',
              'mudmound', 'saltreeds', 'glasswort', 'snowmound', 'snowdrift', 'icechunks', 'gravel', 'clod', 'slate', 'clay', 'tallgrass', 'mossrock', 'rock', 'bush', 'lowshrub'}
 

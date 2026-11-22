@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>소품실</title>
-<!-- 소품실(2026-11-16 선생님): 무대 소품을 한곳에서 둘러보고, 다른 무대에 빌려 쓸 소품을 고름. 목록은 media/stage-beta/props.json(tools/prop-room.py가 짬).
+<!-- 소품실(2026-11-16 선생님): 무대 소품을 한곳에서 둘러보고, 다른 무대에 빌려 쓸 소품을 고름. 목록은 media/stage/props.json(tools/prop-room.py가 짬).
      소품을 누르면 빌려 쓰는 줄(python3 tools/prop-room.py --borrow 받을무대 소품)을 복사 — Claude 대화에 붙이면 됨. 그림 파일은 옮기지 않음. -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
 <style>
@@ -42,7 +42,7 @@ figure.got figcaption .n{background:linear-gradient(transparent 50%,var(--mark) 
 <main id="grid"></main>
 <div id="tip"></div>
 <script>
-const $=id=>document.getElementById(id), ROOT='../stage-beta/';
+const $=id=>document.getElementById(id), ROOT='../stage/';
 let P=[], g='', pl='';
 const tip=t=>{ const e=$('tip'); e.textContent=t; e.classList.add('on'); clearTimeout(tip.t); tip.t=setTimeout(()=>e.classList.remove('on'),2600); };
 const chips=(box,vals,cur,set)=>{ box.querySelectorAll('a').forEach(a=>a.remove());
@@ -61,6 +61,6 @@ function draw(){
     $('grid').appendChild(f); });
 }
 fetch(ROOT+'props.json',{cache:'no-cache'}).then(r=>r.json()).then(j=>{ P=Object.entries(j).map(([id,v])=>Object.assign({id},v)).sort((a,b)=>a.kind.localeCompare(b.kind)||a.place.localeCompare(b.place)); $('q').oninput=draw; draw(); })
-  .catch(()=>{ $('count').textContent='목록을 못 읽었어요(media/stage-beta/props.json).'; });
+  .catch(()=>{ $('count').textContent='목록을 못 읽었어요(media/stage/props.json).'; });
 </script>
 </body></html>

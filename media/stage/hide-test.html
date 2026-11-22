@@ -855,9 +855,9 @@ const img=src=>new Promise(ok=>{const i=new Image();i.crossOrigin='anonymous';i.
 let pl=null, AN=[];
 const base=()=>location.hostname.endsWith('github.io')?GH+'media/':'../';
 async function start(){
-  /* ?place=nature/new-grassland — 어느 베타 무대든(2026-11-09). 동물은 그 무대 stage.json의 animals(설치도구가 places.json에서 넣음), 없으면 숲 동물 */
-  const place=new URLSearchParams(location.search).get('place')||'nature/new-forest';
-  pl=await Stage.load(place,{base:'../stage-beta/'});
+  /* ?place=nature/grassland — 어느 베타 무대든(2026-11-09). 동물은 그 무대 stage.json의 animals(설치도구가 places.json에서 넣음), 없으면 숲 동물 */
+  const place=new URLSearchParams(location.search).get('place')||'nature/forest';
+  pl=await Stage.load(place,{base:'../stage/'});
   const h=document.querySelector('h1'); if(h) h.textContent='숨기기 시험 (무대 베타 · '+(pl.name||place)+')';
   const list=(pl.animals&&pl.animals.length)?pl.animals.map(a=>[a.name,a.src,a.real,a.face,a.swim,a.swimP]):ANIMALS;
   AN=(await Promise.all(list.map(async([n,f,r,fc,sw,sp])=>({name:n,src:base()+f,real:r,face:fc,swim:sw,swimP:sp,img:await img(base()+f)})))).filter(a=>a.img);

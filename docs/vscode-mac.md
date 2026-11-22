@@ -19,10 +19,10 @@
 
 ## 무대 만들기
 - 설치도구: VS Code에서 `media/stage/install.html` 오른쪽 클릭 → **Reveal in Finder** → 크롬으로 열기(또는 `https://shim-sung-hyun.github.io/web_app/media/stage/install.html`).
-  - 크롬이면 5단계 **'media/stage-beta에 직접 저장'** → 폴더 고르기에서 저장소의 `media/stage-beta` → 커밋·푸시.
+  - 크롬이면 5단계 **'media/stage에 직접 저장'** → 폴더 고르기에서 저장소의 `media/stage` → 커밋·푸시.
   - 직접 저장이 어렵거나, 원본 그림을 넘길 때는 ZIP·그림을 Claude 대화에 올리면 Claude가 넣음(기존 소품 고르기·흰 구멍 검사·지평선·빽빽함 맞추기도 Claude가 함).
-- 순서는 `media/stage-beta/README.txt` 맨 위 '무대 하나를 완성하는 순서', 원리는 `media/stage/README.txt` '장면의 원리'.
-- 보기: `media/stage/test.html?root=stage-beta`, 숨기기 시험대 `media/stage/hide-test.html`(올린 뒤 1~2분이면 GitHub 주소에서 열림).
+- 순서는 `media/stage/README.txt` 맨 위 '무대 하나를 완성하는 순서', 원리는 `media/stage/README.txt` '장면의 원리'.
+- 보기: `media/stage/test.html?root=stage`, 숨기기 시험대 `media/stage/hide-test.html`(올린 뒤 1~2분이면 GitHub 주소에서 열림).
 
 ## 맥에서 알아 둘 것
 - 파일 이름의 한글이 맥과 윈도에서 다르게 저장될 수 있음 — 저장소 파일 이름은 영문만(지침).

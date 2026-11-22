@@ -1881,7 +1881,9 @@ document.querySelectorAll('.xf').forEach(c => c.addEventListener('change', () =>
    - 고정 로고 자리를 옮길 앱만 HomeLink.at(왼쪽px, 위px)(004·006: 왼쪽 끝까지 닿는 위 메뉴 줄 아래). 2026-11-21 */
 window.HomeLink = (function () {
   var URL = 'https://www.charum.org/';
-  var LOGO = 'https://www.charum.org/files/attach/images/59600/cdff757386e72b62ba5fb17ea83df99e.png';
+  /* 로고(2026-11-22): 저장소 사본(media/brand/charum-logo.png)을 먼저, 없으면 charum.org 원본 — 서버 주소가 바뀌어도 깨지지 않게 */
+  var LOGO = 'https://shim-sung-hyun.github.io/web_app/media/brand/charum-logo.png';
+  var LOGO2 = 'https://www.charum.org/files/attach/images/59600/cdff757386e72b62ba5fb17ea83df99e.png';
   var st = document.createElement('style');
   st.textContent = '.chHomeA{display:inline-flex;align-items:center;line-height:0;padding:4px;border-radius:8px;text-decoration:none;opacity:.9;transition:opacity .15s}'
     + '.chHomeA:hover,.chHomeA:focus-visible{opacity:1}.chHomeA:focus-visible{outline:2px solid currentColor;outline-offset:2px}'
@@ -1898,7 +1900,7 @@ window.HomeLink = (function () {
   function link(id) {
     var a = document.createElement('a'); if (id) a.id = id; a.className = 'chHomeA'; a.href = URL; a.target = '_blank'; a.rel = 'noopener';
     a.title = '차름 홈페이지(charum.org) — 새 탭으로 열려요'; a.setAttribute('aria-label', '차름 홈페이지 charum.org');
-    var img = new Image(); img.alt = ''; img.src = LOGO; img.onerror = function () { a.classList.add('noimg'); };
+    var img = new Image(); img.alt = ''; img.src = LOGO; img.onerror = function () { if (img.src !== LOGO2) { img.src = LOGO2; return; } a.classList.add('noimg'); };
     img.onload = function () { tick(); };
     var t = document.createElement('span'); t.className = 'hlTxt'; t.textContent = 'charum.org';
     a.appendChild(img); a.appendChild(t); return a;

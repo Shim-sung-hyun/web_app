@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """받은 빙 연필풍 그림을 무대 베타에 한 번에 넣기(2026-11-13, 선생님: 숲을 한 번에 바꾸기 — 초원·사막·북극에서 손으로 하던 순서를 한 줄로)
 
-    python3 tools/stage-intake.py nature/new-forest 받은폴더          # 넣기
-    python3 tools/stage-intake.py nature/new-forest 받은폴더 --dry    # 무엇을 할지만 보여 줌(아무것도 안 바꿈)
+    python3 tools/stage-intake.py nature/forest 받은폴더          # 넣기
+    python3 tools/stage-intake.py nature/forest 받은폴더 --dry    # 무엇을 할지만 보여 줌(아무것도 안 바꿈)
 
 받은폴더 안 파일 이름(확장자는 jpg·jpeg·png·webp 아무거나):
     bg.jpg                 배경 — 가운데를 4:3으로 잘라 1200×900
@@ -10,14 +10,14 @@
                            (intake.json "shadow": false인 곳 — 땅속·물속·하늘 — 은 그림자 없이 bing-cut.py로, view·beds·bed·hangTop도 intake.json에서)
     동물파일이름.jpg       동물(예: saseum.jpg) — intake.json의 animals[].file
 
-하는 일(무대 폴더 media/stage-beta/<곳>/, 설정 intake.json):
+하는 일(무대 폴더 media/stage/<곳>/, 설정 intake.json):
   0) 처음 한 번(stage.json에 "pencil": true가 없을 때, 배경을 받았을 때만): 옛 그림(items/·bg·standard)을 버릴 자료 상자로(tools/trash.py), stage.json을 intake.json으로 새로 짬
   1) 배경: 4:3 가운데 자르기 → bg.jpg
   2) 소품: flat-shadow.py --key blue [--plant] → defringe.py [--plant] → items/종류-번호.webp, stage.json items에 적음
      (plant·big·scalefree·baseMatch·ground는 intake.json kinds — softKinds·scalefree·compose.baseMatch가 받은 종류로 채워짐)
   3) 동물: bing-cut.py --animal → defringe.py --depth 3 → defringe.py --rim → 1024칸에 긴 쪽 91% 가운데 → media/animals/이름.webp
      (같은 이름의 옛 그림은 버릴 자료 상자로 — 008·009가 함께 바뀜). stage.json animals는 그림이 있는 동물만(hide: false는 숨기기에 안 씀)
-  4) stage-beta/index.json 목록, stage-meta.py(밑동), stage-index.py(가림 목록), props-index.py(동물 모양 표), webp-slim.py(소품 그림 가볍게)
+  4) stage/index.json 목록, stage-meta.py(밑동), stage-index.py(가림 목록), props-index.py(동물 모양 표), webp-slim.py(소품 그림 가볍게)
 끝에 모자란 것(2장이 안 되는 종류·안 받은 동물·모르는 파일)을 알려 줌. 받은폴더의 원본은 건드리지 않음(다 넣은 뒤 지우면 됨).
 넣은 뒤: 숨기기 시험 media/stage/hide-test.html?place=<곳> 으로 보고, 지평선(horizon·groundTop)이 배경과 맞는지 확인.
 """
@@ -45,7 +45,7 @@ def main():
     args = [a for a in sys.argv[1:] if not a.startswith('--')]; dry = '--dry' in sys.argv
     if len(args) != 2: sys.exit(__doc__)
     place, src = args[0], os.path.abspath(args[1])
-    rel = os.path.join('media', 'stage-beta', place); pdir = os.path.join(ROOT, rel)
+    rel = os.path.join('media', 'stage', place); pdir = os.path.join(ROOT, rel)
     spec = json.load(open(os.path.join(pdir, 'intake.json'), encoding='utf-8'))
     sj = os.path.join(pdir, 'stage.json'); st = json.load(open(sj, encoding='utf-8')) if os.path.exists(sj) else {}   # 새 무대(들판처럼 아직 없는 곳)는 빈 것에서
     kinds, animals = spec['kinds'], {a['file']: a for a in spec['animals']}
@@ -135,13 +135,13 @@ def main():
         if got and a.get('swim'): st['animals'][-1].update({k: a[k] for k in ('swim', 'swimP') if k in a})   # 떠 있는 동물: 바닥에서 [최소, 최대] m 위(바닷속 고래·상어)
     open(sj, "w", encoding="utf-8").write(json.dumps(st, ensure_ascii=False, indent=1) + "\n")
 
-    ix = os.path.join(ROOT, 'media', 'stage-beta', 'index.json'); I = json.load(open(ix, encoding='utf-8'))
+    ix = os.path.join(ROOT, 'media', 'stage', 'index.json'); I = json.load(open(ix, encoding='utf-8'))
     I.setdefault(place, {'name': spec['name'], 'group': place.split('/')[0], 'view': spec.get('view', 'ground'), 'bg': ['bg'], 'used_by': [], 'ready': False, 'far': [], 'front': [], 'missing': [], 'skirt': []})
     I[place]['items'] = list(st['items']); I[place]['animals'] = list(dict.fromkeys(a['name'] for a in st.get('animals', [])))   # 008이 판마다 무대를 고를 때 씀(2026-11-15)
     if '008' not in I[place]['used_by']: I[place]['used_by'].append('008')
     json.dump(I, open(ix, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     run(tool('stage-meta.py')); run(tool('stage-index.py')); run(tool('prop-room.py'))   # 소품실 목록도(2026-11-16)
-    run(tool('webp-slim.py'), *sorted(glob.glob(os.path.join(ROOT, 'media', 'stage-beta', place, 'items', '*.webp'))))   # 마지막에 가볍게(품질 80, 알파·크기 그대로 — 2026-11-16)
+    run(tool('webp-slim.py'), *sorted(glob.glob(os.path.join(ROOT, 'media', 'stage', place, 'items', '*.webp'))))   # 마지막에 가볍게(품질 80, 알파·크기 그대로 — 2026-11-16)
     if anis: run(tool('props-index.py'))
     report(spec, st, [], [])
     print('다음: 숨기기 시험 media/stage/hide-test.html?place=%s · 지평선이 배경과 맞는지 · README 기록 · 커밋' % place)

@@ -120,7 +120,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   <div class="toolbar"><button id="makePrompts" class="secondary">프롬프트 초안 만들기</button></div>
   <div id="prompts" class="hidden">
    <p class="notice">배경은 두 번에 나눠 받아요(2026-11-09 선생님 — 빈 배경을 바로 받는 것보다 잘 됨): ① 그 곳의 <b>표준 장면</b>(나무·바위 등이 자연스럽게 있는 그림)을 먼저 받고, ② 그 그림을 붙여 <b>같은 자리·같은 그림풍의 빈 배경</b>을 받아요. 그림풍은 첫 장소인 <b>숲의 표준 장면</b>을 기준으로 삼아, 다른 곳을 만들 때는 숲 표준 장면을 본보기로 붙여요.</p>
-   <div class="prompt-box"><h3>① 표준 장면 프롬프트</h3><p class="hint">붙일 그림: 숲 표준 장면(숲을 처음 만들 때는 붙이지 않음 · 숲 다음부터는 media/stage-beta/nature/new-forest/standard.jpg)</p><textarea id="stdPrompt" readonly></textarea><button class="secondary copy" data-copy="stdPrompt">복사</button></div>
+   <div class="prompt-box"><h3>① 표준 장면 프롬프트</h3><p class="hint">붙일 그림: 숲 표준 장면(숲을 처음 만들 때는 붙이지 않음 · 숲 다음부터는 media/stage/nature/forest/standard.jpg)</p><textarea id="stdPrompt" readonly></textarea><button class="secondary copy" data-copy="stdPrompt">복사</button></div>
    <div class="prompt-box"><h3>② 빈 배경 프롬프트</h3><p class="hint">붙일 그림: ①에서 받은 표준 장면 — 같은 창에서 이어서 부탁해도 돼요</p><textarea id="bgPrompt" readonly></textarea><button class="secondary copy" data-copy="bgPrompt">복사</button></div>
    <p class="notice">소품은 <b>판 여러 장</b>으로 받아 한 종류를 여러 모양으로 써요(같은 나무가 똑같이 되풀이되면 찍어 붙인 티 — 2026-11-09 선생님). 판마다 같은 종류를 같은 칸 차례로, 모양만 다르게 그려요.
    <label style="display:inline;font-weight:400;margin-left:6px">판 수 <select id="sheetCount" style="width:auto"><option value="1">1장</option><option value="2">2장</option><option value="3" selected>3장</option></select></label></p>
@@ -231,9 +231,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <label><input type="checkbox" class="finalCheck">이 시안과 이름을 최종 자료로 내보낼 준비가 되었어요.</label>
   </div>
   <label for="reviewNotes">검토 메모 (다음 수정이나 만든 사람에게 전할 내용)</label><textarea id="reviewNotes" placeholder="예: 덤불을 조금 더 앞으로, 전나무 밑동은 땅에 붙이기"></textarea>
-  <p class="notice">지금은 새 무대를 <b>베타 자리 `media/stage-beta`</b>에 모아요(기존 무대는 그대로, 2026-11-09). 지원되는 브라우저에서는 `media/stage-beta` 폴더를 골라 직접 저장할 수 있어요. 이미 있는 무대 자료를 바꿀 때는 한 번 더 확인해요. 직접 저장을 지원하지 않는 브라우저에서는 기존 파일을 덮어쓰지 않는 ZIP으로 내보내고, `index-entry.json`을 차림표에 합쳐 주세요.</p>
+  <p class="notice">지금은 새 무대를 <b>베타 자리 `media/stage`</b>에 모아요(기존 무대는 그대로, 2026-11-09). 지원되는 브라우저에서는 `media/stage` 폴더를 골라 직접 저장할 수 있어요. 이미 있는 무대 자료를 바꿀 때는 한 번 더 확인해요. 직접 저장을 지원하지 않는 브라우저에서는 기존 파일을 덮어쓰지 않는 ZIP으로 내보내고, `index-entry.json`을 차림표에 합쳐 주세요.</p>
   <p><label style="display:inline;font-weight:400"><input type="checkbox" id="soak" checked> 밑동 스며들기 — 밑동 흙·모래를 그라데이션으로 바닥에 스며들게(가장자리 큰 것은 빼고)</label> · 띠 높이 <input id="soakBand" type="number" min="4" max="40" value="16" style="width:4em">% <span class="hint">(배치 시안에도 보임)</span></p>
-  <div class="toolbar"><button id="directSave" class="secondary hidden">media/stage-beta에 직접 저장</button><button id="confirm" class="primary" disabled>확정 ZIP 받기</button><span id="finalStatus" class="status" role="status"></span></div>
+  <div class="toolbar"><button id="directSave" class="secondary hidden">media/stage에 직접 저장</button><button id="confirm" class="primary" disabled>확정 ZIP 받기</button><span id="finalStatus" class="status" role="status"></span></div>
   <p id="viewLinks" class="hint"></p>
   <div class="nav"><button class="secondary back">← 배치 시안</button><span></span></div>
  </section>
@@ -1084,7 +1084,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   if(n===1){renderSheetPicks();renderBigFiles();threshPreview()}
   if(n===2)renderPropCards();
   if(n===3){renderLayoutCards();drawScene();setStatus($('#layoutStatus'),state.props.length?'소품을 눌러 고르거나 시안에서 직접 끌어 옮겨요.':'소품이 없어요. 2단계로 돌아가 소품 판을 불러와 주세요.',!state.props.length);const sr=stretchReport();if(sr)setStatus($('#layoutStatus'),sr,true)}
-  if(n===4){const key=$('#sceneGroup').value+'/'+$('#sceneSlug').value,G='https://shim-sung-hyun.github.io/web_app/media/stage/';$('#viewLinks').innerHTML=`저장해 올린 뒤(1~2분) 보기: <a href="${G}test.html?root=stage-beta#${key}" target="_blank">무대 보기</a> · <a href="${G}hide-test.html?place=${key}" target="_blank">숨기기 시험</a>${state.preset&&!state.preset.hide?' (이 곳은 숨기기 시험이 아직 안 맞을 수 있어요 — 물·하늘·땅속 자리는 다음에)':''}`;const ce=cutEdges(),sr=stretchReport();setStatus($('#finalStatus'),[ce.length?'끝이 세로로 잘린 그림이 있어요: '+ce.join(' · ')+' (통나무처럼 원래 반듯한 것이 아니면 다시 받아 주세요)':'',sr].filter(Boolean).join(' / '),Boolean(ce.length||sr));drawScene($('#finalCanvas'));$('#confirm').disabled=!canConfirm();$('#directSave').disabled=!canConfirm()}
+  if(n===4){const key=$('#sceneGroup').value+'/'+$('#sceneSlug').value,G='https://shim-sung-hyun.github.io/web_app/media/stage/';$('#viewLinks').innerHTML=`저장해 올린 뒤(1~2분) 보기: <a href="${G}test.html?root=stage#${key}" target="_blank">무대 보기</a> · <a href="${G}hide-test.html?place=${key}" target="_blank">숨기기 시험</a>${state.preset&&!state.preset.hide?' (이 곳은 숨기기 시험이 아직 안 맞을 수 있어요 — 물·하늘·땅속 자리는 다음에)':''}`;const ce=cutEdges(),sr=stretchReport();setStatus($('#finalStatus'),[ce.length?'끝이 세로로 잘린 그림이 있어요: '+ce.join(' · ')+' (통나무처럼 원래 반듯한 것이 아니면 다시 받아 주세요)':'',sr].filter(Boolean).join(' / '),Boolean(ce.length||sr));drawScene($('#finalCanvas'));$('#confirm').disabled=!canConfirm();$('#directSave').disabled=!canConfirm()}
  }
  $$('.step').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.step))));
  $$('.next').forEach((b,i)=>b.addEventListener('click',()=>{if(i===0&&$('#prompts').classList.contains('hidden'))$('#makePrompts').click();showStep(i+1)}));
@@ -1491,7 +1491,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   const buttons=[directSave,confirmButton];buttons.forEach(b=>b.disabled=true);setStatus($('#finalStatus'),'확정 파일을 준비하고 있어요…');
   try{
    const files=await packageFiles();
-   download(await makeZip(files),`${state.slug}-stage.zip`);setStatus($('#finalStatus'),'확정 묶음을 내려받았어요. ZIP을 풀어 media/stage-beta/에 넣고, index-entry.json 내용을 index.json에 합쳐 주세요.');
+   download(await makeZip(files),`${state.slug}-stage.zip`);setStatus($('#finalStatus'),'확정 묶음을 내려받았어요. ZIP을 풀어 media/stage/에 넣고, index-entry.json 내용을 index.json에 합쳐 주세요.');
   }catch(err){setStatus($('#finalStatus'),err.message||'파일을 만드는 중 문제가 생겼어요.',true)}finally{buttons.forEach(b=>b.disabled=!canConfirm())}
  });
  function validProps(){

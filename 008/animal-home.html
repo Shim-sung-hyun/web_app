@@ -1427,16 +1427,16 @@ const P007=GH+'media/words/', PNEW=GH+'media/animals/', HAB=GH+'media/habitats/'
    가림 소품은 무대 요소(media/stage/hide-index.json, tools/stage-index.py), 숨기기 규칙(보이는 넓이·ZONE·FACE)은 그대로.
    동물·소품과 겹치지 않는 자리에 무대 꾸밈(나무·바위 덩어리·먼 띠)을 더하고, 소품 아랫단을 흐리게 하던 것 대신 밑동 덮개(낙엽·흙더미·모래)를 덮음.
    하늘은 가림 소품이 가지·꽃이라 옛 장면 그대로. 강·호수 물낯 높이는 무대 stage.json 의 waterline */
-const STG=GH+'media/stage/', STGP={ground:1,forest:1,grassland:1,desert:1,polar:1,sea:1,water:1,wetland:1,mudflat:1,underground:1,pond:1};
+const STG=GH+'media/stage/legacy/', STGP={ground:1,forest:1,grassland:1,desert:1,polar:1,sea:1,water:1,wetland:1,mudflat:1,underground:1,pond:1};
 const stgOn=p=>!!(window.Stage&&PL[p]&&STGP[PL[p].scene]);
 const STGL={}; let STGCUR=null;   /* STGCUR: 지금 장면의 무대(밑동 덮개를 고를 때) */
 const stgLoad=p=>STGL[p]||(STGL[p]=Stage.load('nature/'+PL[p].scene,{base:STG}).catch(()=>null));
-/* 새 무대(2026-11-15 무대 마무리): 숨은 동물 찾기를 무대 엔진 위에서 — media/stage-beta/nature/new-(곳), Stage.hideLevel(단계·보호색·바닥 앞뒤·특징 원리는 모두 모듈 몫).
+/* 새 무대(2026-11-15 무대 마무리): 숨은 동물 찾기를 무대 엔진 위에서 — media/stage/nature/(곳), Stage.hideLevel(단계·보호색·바닥 앞뒤·특징 원리는 모두 모듈 몫).
    곳마다 쓸 무대(앞의 것부터), 판의 동물이 모두 그 무대 동물(차림표 index.json의 animals)이면 새 무대, 아니면 옛 길(buildHide 아래 — 딱따구리·부엉이 나무 위, 소금쟁이 등).
    '땅'·'물'처럼 넓은 곳은 동물이 사는 무대로 판을 나눔(hideRounds) — 붕어는 강 물속, 고래는 바닷속 */
-const STB=GH+'media/stage-beta/', STB_LAND=['new-ground','new-forest','new-grassland'];
-const STB_OF={land:STB_LAND,ground:STB_LAND,water:['new-water','new-sea'],underground:['new-underground'],sky:['new-sky'],forest:['new-forest'],grassland:['new-grassland'],
-  desert:['new-desert'],polar:['new-polar'],sea:['new-sea'],pond:['new-pond','new-water'],mudflat:['new-mudflat'],wetland:['new-wetland']};
+const STB=GH+'media/stage/', STB_LAND=['ground','forest','grassland'];
+const STB_OF={land:STB_LAND,ground:STB_LAND,water:['water','sea'],underground:['underground'],sky:['sky'],forest:['forest'],grassland:['grassland'],
+  desert:['desert'],polar:['polar'],sea:['sea'],pond:['pond','water'],mudflat:['mudflat'],wetland:['wetland']};
 let STBI={}; const stbReady=fetch(STB+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{ STBI=j||{}; }).catch(()=>{});
 const stbHas=(sc,a)=>((STBI['nature/'+sc]||{}).animals||[]).includes(a);
 const stbOf=(p,a)=>(STB_OF[p]||[]).find(sc=>stbHas(sc,a))||'';
@@ -1453,9 +1453,9 @@ const NEW={'조개':'jogae','개':'gae','고양이':'goyangi','닭':'dak','돼�
  '낙지':'nakji','갯지렁이':'gaetjireongi','산양':'sanyang','도마뱀':'domabaem','사막거북':'samakgeobuk','미어캣':'mieokaet','제비':'jebi','박새':'baksae','붕어':'bungeo','새우':'saeu','참새':'chamsae','까치':'kkachi','독수리':'doksuri','나비':'nabi'};
 const pic=a=>OLD[a]?P007+OLD[a]+'.webp':PNEW+NEW[a]+'.webp';
 /* 곳: label 카드 글자 · live 들려줄 말 · find 곳 보고 동물 찾기 말 · y 장면 안에서 동물을 놓는 높이(위~아래) */
-/* 학습 장면의 장소 그림(2026-11-15 연필풍): 무대의 빈 배경 media/stage-beta/nature/new-(곳)/bg.jpg(1200×900). 숨은 동물 찾기는 무대 세션 몫이라 그대로 */
-const SCN={land:'new-ground',ground:'new-ground',water:'new-water',underground:'new-underground',sky:'new-sky',forest:'new-forest',grassland:'new-grassland',desert:'new-desert',polar:'new-polar',sea:'new-sea',pond:'new-pond',mudflat:'new-mudflat',wetland:'new-wetland'};
-const scn=p=>GH+'media/stage-beta/nature/'+(SCN[p]||'new-ground')+'/bg.jpg';
+/* 학습 장면의 장소 그림(2026-11-15 연필풍): 무대의 빈 배경 media/stage/nature/(곳)/bg.jpg(1200×900). 숨은 동물 찾기는 무대 세션 몫이라 그대로 */
+const SCN={land:'ground',ground:'ground',water:'water',underground:'underground',sky:'sky',forest:'forest',grassland:'grassland',desert:'desert',polar:'polar',sea:'sea',pond:'pond',mudflat:'mudflat',wetland:'wetland'};
+const scn=p=>GH+'media/stage/nature/'+(SCN[p]||'ground')+'/bg.jpg';
 const PL={
   land:{label:'땅',scene:'ground',live:'땅에 살아요',find:'땅에 사는 동물을',y:[.6,.9]},
   water:{label:'물',scene:'water',live:'물에 살아요',find:'물에 사는 동물을',y:[.3,.8]},
@@ -3252,7 +3252,9 @@ window.AdminGate = (function () {
    - 고정 로고 자리를 옮길 앱만 HomeLink.at(왼쪽px, 위px)(004·006: 왼쪽 끝까지 닿는 위 메뉴 줄 아래). 2026-11-21 */
 window.HomeLink = (function () {
   var URL = 'https://www.charum.org/';
-  var LOGO = 'https://www.charum.org/files/attach/images/59600/cdff757386e72b62ba5fb17ea83df99e.png';
+  /* 로고(2026-11-22): 저장소 사본(media/brand/charum-logo.png)을 먼저, 없으면 charum.org 원본 — 서버 주소가 바뀌어도 깨지지 않게 */
+  var LOGO = 'https://shim-sung-hyun.github.io/web_app/media/brand/charum-logo.png';
+  var LOGO2 = 'https://www.charum.org/files/attach/images/59600/cdff757386e72b62ba5fb17ea83df99e.png';
   var st = document.createElement('style');
   st.textContent = '.chHomeA{display:inline-flex;align-items:center;line-height:0;padding:4px;border-radius:8px;text-decoration:none;opacity:.9;transition:opacity .15s}'
     + '.chHomeA:hover,.chHomeA:focus-visible{opacity:1}.chHomeA:focus-visible{outline:2px solid currentColor;outline-offset:2px}'
@@ -3269,7 +3271,7 @@ window.HomeLink = (function () {
   function link(id) {
     var a = document.createElement('a'); if (id) a.id = id; a.className = 'chHomeA'; a.href = URL; a.target = '_blank'; a.rel = 'noopener';
     a.title = '차름 홈페이지(charum.org) — 새 탭으로 열려요'; a.setAttribute('aria-label', '차름 홈페이지 charum.org');
-    var img = new Image(); img.alt = ''; img.src = LOGO; img.onerror = function () { a.classList.add('noimg'); };
+    var img = new Image(); img.alt = ''; img.src = LOGO; img.onerror = function () { if (img.src !== LOGO2) { img.src = LOGO2; return; } a.classList.add('noimg'); };
     img.onload = function () { tick(); };
     var t = document.createElement('span'); t.className = 'hlTxt'; t.textContent = 'charum.org';
     a.appendChild(img); a.appendChild(t); return a;

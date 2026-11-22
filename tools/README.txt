@@ -12,6 +12,12 @@
  그림 도구는 numpy·Pillow·scipy가 필요(없으면 pip install scipy).
 
 ■ 목록 — 무엇을 할 때 무엇을
+ [자료 찾기 — 그림·소리를 새로 구하기 전에 꼭(2026-11-22)]
+  find-media.py    낱말로 찾기(비슷한 말·영어 이름·보관함까지) → 번호 붙인 그림 모음 한 장(/tmp/charum-find/) · --prompt 글(■ 항목마다 있는지)
+                   · --say "문장"(목소리 있는지) · --style 연필 · --all(받은 원본까지)
+  media-index.py   전체 목록 media/catalog.json 만들기(폴더마다의 목록·보관함·목소리 묶음·코드 그림을 모음) · --check 낡았는지만
+                   비슷한 말·파일 이름 한글은 media/synonyms.json. 그림·소리를 넣거나 옮긴 뒤 돌림
+  hooks/media-guard.py  Claude Code hook(.claude/settings.json) — 세션 시작·프롬프트 글 쓸 때 위 둘을 저절로 돌려 알려 줌(사람이 돌릴 일 없음)
  [그림 자르기 — 받은 jpg에서 투명 webp로]
   bing-cut.py      빙 연필풍(흰 종이) 그림 자르기. 소품(기본, 회색 그림자 함께) · --animal 몸만 · --plant 가지 사이도 투명
                    · --holes 몸 안 큰 틈 · --white 흰색을 통째로 투명(가는 물풀)
@@ -21,20 +27,20 @@
   defringe.py      빙 연필풍 그림(지금 무대): 흰 테두리·잎 사이·갇힌 종이. --plant · --gaps · --pockets · --rim · --fill · --paper(뿌리처럼 촘촘한 틈의 회백색 종이까지, --below) · --tint --bg(흰 곳을 배경색으로 물들임 — 잔뿌리·풀·수풀) · --halo(빽빽한 풀·덤불 둘레 흰 조각, 옅은 풀잎엔 쓰지 말 것) · --edge .03(가장자리 띠 안의 두꺼운 흰 종이만 — 가운데 흰 잔가지는 그대로) · --zone x0,y0,x1,y1(정한 사각형 안 갈래 사이 흰 종이 — 나무마다 구역을 눈으로)
   clean-edges.py   옛 만화풍(흰 바탕 지운 동물·낱말·008 소품): 섞인 점을 선 색 + 투명도로, 좁은 틈 마무리까지 한 번에. --check · --specks
                    (두 도구는 그림 종류가 달라 따로 둠 — 빙 연필풍은 defringe, 굵은 윤곽선 만화풍은 clean-edges)
- [무대 — media/stage-beta/]
+ [무대 — media/stage/]
   stage-intake.py  받은 폴더를 무대에 한 번에(자르기·정리·stage.json·밑동·목록까지 위 도구들을 차례로 부름). 새 무대는 이것부터
   src-align.py     받은 원본에서 소품 자리를 찾아 src/이름.jpg로(소품 손질 touchup.html의 '원본 색 붓'이 지워진 색을 되살림) · --dir 받은폴더 장소폴더(이름째 한 번에) · --paper(북극처럼 미색 종이를 눈색으로 맞춰 자른 소품 — 원본도 같게 맞추고 얼음 푸른 기는 저절로 고름). stage-intake가 넣을 때 자동으로 부름 · 줄기를 늘인 뿌리(trunk-extend)도 저절로
   trunk-extend.py  매다는 줄기+뿌리 그림의 줄기를 세로로 늘이고 hangAt 적음(땅속) · --up 줄기 길이 배 · --green 풀 포기(풀잎 끝만 잼, 안 늘임)
-  prop-room.py     소품실 — 모든 무대 소품 목록(media/stage-beta/props.json, 보기 media/stage/prop-room.html) · --borrow 받을무대 소품 [--as 새이름] 다른 무대 소품을 그림 옮기지 않고 빌려 씀(밑동 땅 묶음이 다르면 멈춤). stage-intake가 끝에 부름
-  stage-meta.py    그림마다 밑동 자리를 재어 stage.json에 · stage-index.py 008 가림 목록 media/stage/hide-index.json
+  prop-room.py     소품실 — 모든 무대 소품 목록(media/stage/props.json, 보기 media/stage/prop-room.html) · --borrow 받을무대 소품 [--as 새이름] 다른 무대 소품을 그림 옮기지 않고 빌려 씀(밑동 땅 묶음이 다르면 멈춤). stage-intake가 끝에 부름
+  stage-meta.py    그림마다 밑동 자리를 재어 stage.json에(지금 무대 + legacy) · stage-index.py 008 옛 길 가림 목록 media/stage/legacy/hide-index.json
   props-index.py   008 가림 소품 목록·동물 모양 표(masks.json)
  [검사·캡처]
-  check-files.py   앱이 부르는 파일이 저장소에 다 있는지 · check-modules.py 앱마다 같아야 할 모듈 비교
+  check-files.py   앱이 부르는 파일이 저장소에 다 있는지 + 전체 목록이 최신인지("목록에 없는 파일 0") · check-modules.py 앱마다 같아야 할 모듈 비교
   shot.js          앱을 네 크기로 캡처 · hide-check.js 008 숨은 동물이 너무 가려지는지
   webp-slim.py     다 만든 소품·동물 webp를 마지막에 가볍게 — 색 품질 80, 알파·가로세로 그대로(밑동·모양 지도·touchup 원본 붓이 그대로 맞음), 8% 넘게 줄 때만. stage-intake가 부름, touchup 손질 뒤에도
   promo-pencil.html 연필풍 앱(008·009)의 홍보 그림 — ?app=009(캡처 폴더 cap=008/release, 대신 쓸 캡처 shots=03,05,09,11)를 1366×768로 찍어 앱-promo.jpg
  [공통 모듈·자료]
-  sync-modules.py  common/의 모듈 원본을 앱마다 넣기 · voice-add.py 목소리 zip을 mp3로 넣기 · trash.py 버릴 자료·버린 도구 보관함
+  sync-modules.py  common/의 모듈 원본을 앱마다 넣기 · voice-add.py 목소리 zip을 mp3로 넣기 · trash.py 버릴 파일(그림·사진·소리는 저절로 media/archive 보관함 — 비우지 않음)·버린 도구 보관함
   (007/tools/split.py 는 007 편 판 만들기 — 007 README)
 
 ■ 보관함(tools/attic/, 2026-11-14 넣음 — 2027-05-13 뒤 지울 수 있음): 자세한 까닭은 tools/attic/LIST.txt
@@ -158,7 +164,7 @@
    동물·소품 그림을 바꾸거나 새로 넣으면 꼭 다시 돌림.
  새 소품: 흰 바탕을 지운 webp를 넣고 → clean-edges.py로 가장자리 정리 → 이 도구를 돌림
    → "places가 비어 있는 소품"으로 나온 것은 index.json에서 쓰는 곳을 채우고 다시 돌림. 앱은 고치지 않아도 됩니다.
- Gemini 프롬프트와 그림체 본보기: media/habitats/props/prompts/
+ Gemini 프롬프트와 그림체 본보기: media/prompts/
 
 
 6. 목소리 넣기 — voice-add.py (목소리 만들기 도구 media/voice/voice-maker.html 과 짝)
@@ -171,7 +177,7 @@
 
 - trash.py : 버릴 자료 상자. 안 쓰는 파일을 _trash/<날짜>/로 옮기고(--why 이유), 90일 지나면 --empty로 비움. 도구는 --tool(tools/attic/, 180일)·--revive
 - defringe.py : 흰 테두리·틈 지우기(2026-11-13). 동물·소품 둘레의 흰 테두리, 가지·갈기 사이 흰 종이를 지움(안쪽 흰 곳은 남김). 풀·나무는 --plant(잎 사이 종이도, 잎 속 흰 점은 잎 색으로), 줄기가 하얗지 않은 나무는 --gaps(가지 사이 종이), 바위·흙은 --depth 3 --fill(몸 안 작은 구멍 메움). 잔뿌리 사이처럼 촘촘한 틈의 살짝 회색인 종이는 --paper [185] --below <줄기 몫>(2026-11-15 땅속 뿌리 — 흰 바위·흰 털에는 쓰지 말 것). 지우면 끊기는 잔뿌리·풀·수풀의 흰 기는 --tint --bg 배경.jpg [--band y0,y1](흰 곳을 그 무대 배경색으로 물들임). 초원(2026-11-15): 빽빽한 풀·덤불 둘레는 --halo, 회백색 잔가지 덤불처럼 가운데 흰 곳이 필요한 것은 --edge .03(바깥에서 3% 띠 안만). 제자리에서 고침, --dry는 셈만.
-- stage-intake.py : 받은 빙 연필풍 그림(배경·소품·동물)을 무대 베타에 한 번에 넣기(2026-11-13). 무대 폴더의 intake.json을 읽어 옛 그림 버리기·자르기·흰 종이 지우기·stage.json·밑동·차림표까지. python3 tools/stage-intake.py nature/new-forest 받은폴더 [--dry]
+- stage-intake.py : 받은 빙 연필풍 그림(배경·소품·동물)을 무대 베타에 한 번에 넣기(2026-11-13). 무대 폴더의 intake.json을 읽어 옛 그림 버리기·자르기·흰 종이 지우기·stage.json·밑동·차림표까지. python3 tools/stage-intake.py nature/forest 받은폴더 [--dry]
   그림자 없이 받은 곳(땅속·물속·바닷속·하늘)은 intake.json "shadow": false — 소품을 bing-cut.py로 자름. view·beds·bed·hangTop·dim·hideWeight 같은 무대 값도 intake.json에서 stage.json으로 옮김
-- trunk-extend.py : 줄기+뿌리 그림(2026-11-14 땅속). 줄기가 뿌리로 갈라지는 줄(줄기 폭이 위 끝보다 30% 넓어지는 곳)을 찾아 그 위 줄기를 세로로 늘이고(이어 붙이면 이음매가 사다리처럼 보였음) stage.json에 hangAt·hangUp·real을 적음 — 무대가 그 줄을 흙 맨 위에 붙임. 풀 포기는 --green(풀잎 끝 줄만). python3 tools/trunk-extend.py nature/new-underground treeroots
+- trunk-extend.py : 줄기+뿌리 그림(2026-11-14 땅속). 줄기가 뿌리로 갈라지는 줄(줄기 폭이 위 끝보다 30% 넓어지는 곳)을 찾아 그 위 줄기를 세로로 늘이고(이어 붙이면 이음매가 사다리처럼 보였음) stage.json에 hangAt·hangUp·real을 적음 — 무대가 그 줄을 흙 맨 위에 붙임. 풀 포기는 --green(풀잎 끝 줄만). python3 tools/trunk-extend.py nature/underground treeroots
 - bing-cut.py --white: 흰 종이를 완전히 투명하게(가늘고 촘촘한 물풀의 흰 테두리 없애기, 2026-11-14 물속 검정말·붕어마름 — 옛 white-to-alpha.py)
