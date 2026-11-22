@@ -1,0 +1,28 @@
+010 무엇으로 만들었을까 — 컵 3장 다시 · 도자기 깨진 조각 (빙, 2026-11-22)
+선생님: 유리·쇠·도자기 컵은 '이 컵은 …'으로 묻기 때문에, 그림만 보고도 물질이 충분히 보여야 해요. 지금 그림(유리·쇠는 괜찮음, 도자기는 종이·플라스틱처럼 보일 수 있음)보다 물질이 더 또렷하게.
+컵: 4장 중 물질이 가장 잘 보이는 한 장 → media/words/이름.webp (Claude가 흰 바탕 지움, 지금 그림은 보관함으로). 붙일 그림(되면): media/words/jongikeop.webp(그림체 기준).
+도자기 조각: 물질 카드(조각 사진)의 도자기를 '깨진 조각'으로 — 깨진 단면에 흰 속살과 반짝이는 유약이 같이 보여 도자기인 것을 알기 쉬움. 4장 모두 → media/materials/ceramic-s1~4.webp.
+
+━━━━━━━━ 컵 그림 (낱말 그림체, 3장)
+
+■ 1 유리컵 (yurikeop.webp)
+▼
+A simple children's picture-card illustration of one clear drinking glass made of thick glass: you can see right through it, the thick heavy glass bottom shows a light-blue tint, the rim is thick and shiny, there are bright white reflection streaks on the side and a little water inside so it clearly looks like GLASS, not plastic. Next to nothing else. Flat soft colours with gentle shading that makes the material obvious. Soft dark-brown outline of even thickness, gently rounded. One cup only, standing upright, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 2 쇠컵 (soekeop.webp)
+▼
+A simple children's picture-card illustration of one stainless steel cup like a Korean school metal water cup: straight sides and a rolled rim, strongly shiny silver metal with clear bright and dark reflection bands and a soft mirror-like glow, so it clearly looks like METAL. Empty. Flat soft colours with gentle shading that makes the material obvious. Soft dark-brown outline of even thickness, gently rounded. One cup only, standing upright, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 3 도자기컵 (dojagikeop.webp)
+▼
+A simple children's picture-card illustration of one ceramic cup (a traditional Korean porcelain cup without a handle, slightly rounded), thick white porcelain with a glossy glaze that shines with one bright highlight, a hand-painted blue flower pattern, and a slightly visible unglazed rough ring at the very bottom, so it clearly looks like CERAMIC (not paper or plastic). Empty. Flat soft colours with gentle shading that makes the material obvious. Soft dark-brown outline of even thickness, gently rounded. One cup only, standing upright, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+━━━━━━━━ 도자기 물질 카드 (사진풍, 4장)
+
+■ 4 도자기 깨진 조각 (ceramic-s1~4.webp)
+▼
+Real photograph of three or four broken pieces of a white glazed porcelain bowl lying together on a plain white table in front of a plain white background. The outside of each piece is smooth and shiny with a glossy glaze and a little hand-painted blue line, and the broken edges are sharp and show the plain matte white inside of the ceramic, so it is easy to see that it is ceramic. Seen slightly from above, soft natural daylight from the upper left, soft natural shadows. The pieces are centred and fill about two thirds of the square picture. No whole bowl, no hands, no other objects, no text, no logo. Honest everyday photo, not CGI, not a render. Square image.
+▲

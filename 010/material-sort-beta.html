@@ -630,8 +630,11 @@ const OBJ={'의자':'uija','사다리':'sadari','바구니':'baguni',
 const pic=a=>P007+OBJ[a]+'.webp';
 /* 컵 넷(2026-11-21 선생님): 종이·유리·도자기·쇠로 만든 컵. 학생에게는 모두 '컵'(이름이 물질을 알려 주지 않게 — 같은 물체도 여러 물질로 만듦).
    안에서 쓰는 이름(종이컵·유리컵…)은 기록·선생님 화면에만. 물체 찾기 한 화면에는 '컵'이 하나만 나옴 */
-const NM={'종이컵':'컵','유리컵':'컵','도자기컵':'컵','쇠컵':'컵'};
+/* 2026-11-22 선생님: 종이컵은 '종이컵'이라 부르고, 유리·도자기·쇠컵은 '컵' — 물질을 묻고 알려 줄 때는 "이 컵은 …"(그림이 물질을 보여 줌) */
+const NM={'유리컵':'컵','도자기컵':'컵','쇠컵':'컵'};
 const nm=a=>NM[a]||a;
+const CUPS=new Set(['종이컵','유리컵','도자기컵','쇠컵','컵']), fam=a=>CUPS.has(a)||nm(a)==='컵'?'컵':nm(a);   /* 물체 찾기 한 화면에 컵 종류는 하나만 */
+const isThisCup=a=>nm(a)==='컵';
 /* 그림이 아직 없는 물체 — 이 물체가 든 묶음은 나오지 않음. 그림(media/words/이름.webp)을 넣으면 여기서 지움 */
 const PIC_TODO=new Set();   /* 컵 그림 셋 넣음(2026-11-21, 빙) */
 /* 수준과 묶음: '물질:물체,물체|…'. 한 화면의 물질 카드는 2~4장(수준 3 묶음도 물질은 4가지까지) */
@@ -800,15 +803,15 @@ const eul=w=>w+(batchim(w)?'을':'를');
 const ro=w=>w+(batchim(w)&&!rieul(w)?'으로':'로');
 const isLine=a=>{ a=nm(a); return a+(batchim(a)?'이에요.':'예요.'); };
 const madeLine=m=>ro(MAT[m].label)+' 만들었어요.';
-const fullLine=(a,m)=>eun(nm(a))+' '+madeLine(m);
+const fullLine=(a,m)=>(isThisCup(a)?'이 컵은':eun(nm(a)))+' '+madeLine(m);
 const askObj=a=>eul(nm(a))+' 찾아 눌러요.';
-const askMat=a=>eun(nm(a))+' 무엇으로 만들었을까요?';   /* 2026-11-22 선생님: '만들었어요?' → '만들었을까요?' */
+const askMat=a=>(isThisCup(a)?'이 컵은':eun(nm(a)))+' 무엇으로 만들었을까요?';   /* 2026-11-22 선생님: '만들었어요?' → '만들었을까요?' */
 const raneun=w=>w+(batchim(w)?'이라는':'라는'), iran=w=>w+(batchim(w)?'이란':'란');
 /* 이름 뒤에 '이'가 붙으면 다른 낱말로 들리는 이름(종 + 이란 → '종이란')은 '이란/이라는 물체' 대신 '은/는'으로 */
 const AMBIG=new Set(['종']);
-const sortAsk=a=>AMBIG.has(nm(a))?eun(nm(a))+' 어떤 물질로 만들었을까요?':raneun(nm(a))+' 물체는 어떤 물질로 만들었을까요?';   /* 정리하기 */
-const sortDone=(a,m)=>(AMBIG.has(nm(a))?eun(nm(a)):raneun(nm(a))+' 물체는')+' '+raneun(MAT[m].label)+' 물질로 만들었어요.';
-const photoAsk=a=>AMBIG.has(nm(a))?eun(nm(a))+' 어떤 물질로 만들었을까요?':iran(nm(a))+' 물체는 어떤 물질로 만들었을까요?';   /* 사진에서 */
+const sortAsk=a=>isThisCup(a)?'이 컵은 어떤 물질로 만들었을까요?':AMBIG.has(nm(a))?eun(nm(a))+' 어떤 물질로 만들었을까요?':raneun(nm(a))+' 물체는 어떤 물질로 만들었을까요?';   /* 정리하기 */
+const sortDone=(a,m)=>(isThisCup(a)?'이 컵은':AMBIG.has(nm(a))?eun(nm(a)):raneun(nm(a))+' 물체는')+' '+raneun(MAT[m].label)+' 물질로 만들었어요.';
+const photoAsk=a=>isThisCup(a)?'이 컵은 어떤 물질로 만들었을까요?':AMBIG.has(nm(a))?eun(nm(a))+' 어떤 물질로 만들었을까요?':iran(nm(a))+' 물체는 어떤 물질로 만들었을까요?';   /* 사진에서 */
 const PRAISE=['맞아요.','잘했어요.','좋아요.','훌륭해요.','멋져요.'];   /* 정리하기에서 맞히면 하나를 골라 */
 const praise=()=>PRAISE[Math.floor(Math.random()*PRAISE.length)];
 const nameLine=a=>nm(a)+'.';
@@ -818,7 +821,7 @@ const sameDone=m=>'모두 '+madeLine(m);
 /* 여러 물질: "문은 나무, 쇠, 유리로 만들었어요." */
 const INSIDE_ASK='속을 볼까요?', inAsk=a=>nm(a)+' 안에는 무엇이 있을까요?';
 const visLine=o=>{ const v=[...new Set(o.parts.filter(p=>p.box).map(p=>p.m))]; return v.length>1?allLine(o.a,v):fullLine(o.a,v[0]); };   /* 보이는 물질만(속은 속 보기에서) */
-const allLine=(a,ms)=>{ const L=ms.map(m=>MAT[m].label); return eun(nm(a))+' '+L.slice(0,-1).map(x=>x+', ').join('')+ro(L[L.length-1])+' 만들었어요.'; };
+const allLine=(a,ms)=>{ const L=ms.map(m=>MAT[m].label); return (isThisCup(a)?'이 컵은':eun(nm(a)))+' '+L.slice(0,-1).map(x=>x+', ').join('')+ro(L[L.length-1])+' 만들었어요.'; };
 function allLines(){ const L=new Set();
   Object.keys(LV).forEach(l=>LV[l].bundles.map(parseB).forEach(b=>b.items.forEach(({a,m})=>{ [isLine(a),madeLine(m),fullLine(a,m),askObj(a),askMat(a),nameLine(a)].forEach(x=>L.add(x)); })));
   SCENES.forEach(sc=>sc.objs.forEach(o=>{ [isLine(o.a),askObj(o.a),askMat(o.a),o.ms.length>1?allLine(o.a,o.ms):fullLine(o.a,o.ms[0])].forEach(x=>L.add(x));
@@ -1397,8 +1400,8 @@ const dim=(cards,c)=>cards.forEach(x=>{ if(x!==c) x.style.opacity=.25; });
 /* ---- 2. 물체 찾기: 견본 = 이름 글자(말풍선), 보기 = 물체 그림 2~4장 ---- */
 function stepObj(it,tok){
   const st=$('stage'), A=area(), k=Math.min(LV[RUN.lv].opts+1,4)-1;
-  const pool=RUN.bd.items.filter(x=>x.a!==it.a&&nm(x.a)!==nm(it.a)&&!PAIRS.some(p=>p.includes(x.a)&&p.includes(it.a)));
-  const dup=x=>picks.some(y=>nm(y.a)===nm(x.a));   /* 컵 넷: 한 화면에 '컵'은 하나만 */
+  const pool=RUN.bd.items.filter(x=>x.a!==it.a&&fam(x.a)!==fam(it.a)&&!PAIRS.some(p=>p.includes(x.a)&&p.includes(it.a)));
+  const dup=x=>picks.some(y=>fam(y.a)===fam(x.a));   /* 컵 넷: 한 화면에 '컵'은 하나만 */
   const picks=[]; shuffle(pool).forEach(x=>{ if(picks.length<k&&!picks.some(y=>y.m===x.m)&&!dup(x)) picks.push(x); }); shuffle(pool).forEach(x=>{ if(picks.length<k&&!picks.includes(x)&&!dup(x)) picks.push(x); });
   const opts=shuffle([it,...picks]), n=opts.length, gap=Math.max(16,A.w*0.03);
   const bub=document.createElement('div'); bub.className='bubble'; bub.innerHTML='<div class="word" style="font-size:'+Math.min(A.h*0.1,70)+'px">'+esc(nm(it.a))+'</div>';
@@ -1536,7 +1539,7 @@ function stageIntro(k,tok,go){
   const an=x=>x.box?'<span class="an crop" style="'+cropStyle(x,110)+'"></span>':'<img class="an" src="'+pic(x.a)+'" alt="">', mt=(m,c)=>'<span class="mt'+(c?' cover':'')+'" style="background-image:'+texOf(m).replace(/"/g,"'")+'"><b>'+MAT[m].label+'</b></span>';
   const it0=bd.items[0], ms=bd.mats.slice(0,3);
   /* 보기 칸에 같은 이름('컵')이 둘 나오지 않게 */
-  const objs=[]; shuffle(bd.items).forEach(x=>{ if(objs.length<3&&!objs.some(y=>nm(y.a)===nm(x.a))) objs.push(x); });
+  const objs=[]; shuffle(bd.items).forEach(x=>{ if(objs.length<3&&!objs.some(y=>fam(y.a)===fam(x.a))) objs.push(x); });
   const php=RUN.phases.find(p=>p.k==='photo'), ph=php&&php.items[0]?php.items[0].ph:PHOTO.find(p=>bd.mats.includes(p.m));   /* 그 단계 첫 사진 */
   const scImg=bd.photo?'<img class="ph" src="'+SC[bd.sid].src+'" alt="">':'';
   const fig=k==='show'?(scImg?scImg+arrow+an(it0)+mt(it0.m):an(it0)+arrow+mt(it0.m))
