@@ -627,11 +627,10 @@ const LV={
   'wood:의자,사다리|metal:숟가락,냄비','wood:바구니,의자|metal:포크,열쇠','wood:사다리,바구니|metal:쟁반,젓가락']},
  2:{name:'수준 2',desc:'나무 · 쇠 · 플라스틱 (세 가지)',opts:3,bundles:[
   'wood:의자|metal:숟가락,열쇠|plastic:페트병,칫솔','wood:사다리|metal:냄비,포크|plastic:물통,빨대','wood:바구니|metal:쟁반,젓가락|plastic:안전모,칫솔']},
- 3:{name:'수준 3',desc:'나무 · 쇠 · 플라스틱 · 종이 · 천 · 고무 (사진 수업은 + 유리 · 도자기 · 돌)',opts:3,bundles:[
+ 3:{name:'수준 3',desc:'나무 · 쇠 · 플라스틱 · 종이 · 천 · 고무 (사진 수업은 + 유리 · 도자기 · 돌, 물질 3가지 이상인 물체 중심)',opts:3,bundles:[
   'paper:상자,종이컵|cloth:양말,모자|rubber:장화,풍선','wood:의자|paper:쇼핑백,상자|cloth:장갑|rubber:풍선','metal:숟가락|plastic:페트병|paper:종이컵|cloth:양말',
   'plastic:물통,빨대|rubber:장화|metal:냄비|cloth:모자','wood:사다리|metal:열쇠|paper:쇼핑백|rubber:풍선,장화',
-  'paper:종이컵,상자|glass:유리컵|ceramic:도자기컵|metal:쇠컵,숟가락']},   /* 컵 묶음: 컵 넷 + 물체 찾기에서 함께 낼 다른 물체 */
- 4:{name:'수준 4',desc:'눈에 보이지 않는 물질까지 (사진 수업 — 그림 묶음은 수준 3과 같음)',opts:3,bundles:null}   /* 2026-11-21 선생님: 인지력이 좋은 학생 */
+  'paper:종이컵,상자|glass:유리컵|ceramic:도자기컵|metal:쇠컵,숟가락']}   /* 컵 묶음: 컵 넷 + 물체 찾기에서 함께 낼 다른 물체 */   /* 수준 4는 없앰(2026-11-22 선생님) */
 };
 /* 생김새가 닮아 한 화면에 보기로 함께 내지 않는 짝 */
 const PAIRS=[['물통','페트병'],['숟가락','포크']];
@@ -639,7 +638,7 @@ const PAIRS=[['물통','페트병'],['숟가락','포크']];
 /* 자료실 사진 속 물체(2026-11-21 Claude가 사진을 보고 적음 — 선생님 확인 전). 자리 = [왼, 위, 오른, 아래] 0~1000(사진 너비·높이 비율).
    한 가지 물질: [이름, 물질, 자리]. 여러 물질(2026-11-21 선생님: 문 = 나무 + 쇠(손잡이) + 유리(창)): [이름, [[부분, 물질, 자리 또는 null], …], 물체 자리]
    부분은 물질마다 대표 하나. 자리가 null = 겉에서 안 보이는 부분(정수기 안쪽 쇠) — 말로만 알려 주고 누르지 않음.
-   수준: 보이는 물질 한 가지 1 · 두 가지 2 · 세 가지 이상 3 · 안 보이는 물질(속)이 있으면 4(2026-11-21 선생님). 수준 1~3에서는 속을 빼고 보이는 부분으로만 씀. 사람·동물·식물은 뺌, 이름에 물질 낱말 넣지 않음(유리창 → 창) */
+   수준: 물질 한 가지 1 · 두 가지 2 · 세 가지 이상이거나 속 물질이 있으면 3(2026-11-22 선생님 — 수준 4는 없앰). 수준 1·2에서는 속을 빼고 보이는 부분으로만 씀. 수준 3은 물질 3가지 이상 물체 중심. 사람·동물·식물은 뺌, 이름에 물질 낱말 넣지 않음(유리창 → 창) */
 const SCENES=[
  {id:'car-wheel',t:'자동차 바퀴',w:1280,h:719,o:[['바퀴',[['타이어','rubber',[355,285,680,800]],['휠','metal',[415,385,615,705]],['타이어 안쪽','metal',null]],[355,285,680,800]]]},
  {id:'bus-wheel',t:'버스 바퀴',w:1280,h:719,o:[['바퀴',[['타이어','rubber',[275,40,805,820]],['휠','metal',[395,300,690,700]],['타이어 안쪽','metal',null]],[275,40,805,820]]]},
@@ -672,7 +671,7 @@ const SC={};
 function mkObj(o){ let [a,ps,box]=o; if(typeof ps==='string') ps=[[a,ps,box]];
   const parts=ps.map(([p,m,b])=>({a:p,m,box:b||null})), vis=parts.filter(x=>x.box);
   box=box||(vis.length?[Math.min(...vis.map(x=>x.box[0])),Math.min(...vis.map(x=>x.box[1])),Math.max(...vis.map(x=>x.box[2])),Math.max(...vis.map(x=>x.box[3]))]:null);
-  const ms=[...new Set(parts.map(x=>x.m))], vms=[...new Set(vis.map(x=>x.m))], lv=parts.some(x=>!x.box)?4:Math.min(3,vms.length);
+  const ms=[...new Set(parts.map(x=>x.m))], vms=[...new Set(vis.map(x=>x.m))], lv=parts.some(x=>!x.box)?3:Math.min(3,ms.length);   /* 속 물질이 있거나 물질 3가지 이상 = 수준 3 */
   return {a,box,parts,ms,lv}; }
 function addScene(sc){ sc.src=sc.src||PHO+sc.id+'/photo.jpg'; sc.objs=sc.o.map(mkObj).filter(o=>o.box&&o.parts.length); SC[sc.id]=sc; return sc; }
 SCENES.forEach(addScene);
@@ -680,15 +679,14 @@ SCENES.forEach(addScene);
 const PHOTO=[]; SCENES.forEach(sc=>sc.objs.forEach(o=>{ if(o.parts.length===1) PHOTO.push({id:sc.id,a:o.a,m:o.ms[0],w:sc.w,h:sc.h,src:sc.src,box:[o.box[0]*sc.w/1000,o.box[1]*sc.h/1000,o.box[2]*sc.w/1000,o.box[3]*sc.h/1000]}); }));
 const PH_URL=p=>p.src||PHO+p.id+'/photo.jpg';
 /* 수준별 물질(사진 수업) · 한 장에서 쓸 물체 수 */
-const LVM={1:['wood','metal'],2:['wood','metal','plastic'],3:['wood','metal','plastic','paper','cloth','rubber','glass','ceramic','stone']}; LVM[4]=LVM[3];
-const OBJN={1:2,2:3,3:4,4:4};
-/* 수준 4 속 보기 '반쯤 열린 그림'(빙, media/materials/inside/) — 물체 이름 → 그림 이름. 그림을 넣으면 INSIDE_READY에 이름을 더함.
+const LVM={1:['wood','metal'],2:['wood','metal','plastic'],3:['wood','metal','plastic','paper','cloth','rubber','glass','ceramic','stone']}; 
+const OBJN={1:2,2:3,3:4};
+/* 속 보기(수준 3, 속 물질이 있는 물체) '반쯤 열린 그림'(빙, media/materials/inside/) — 물체 이름 → 그림 이름. 그림을 넣으면 INSIDE_READY에 이름을 더함.
    그림이 있으면: 열어 본 그림을 보고 속 물질을 미루어 고름. 없으면: 먼저 말로 알려 주고 고름 */
 const INSIDE={'정수기':'water-purifier','우유갑':'milk-carton','바퀴':'tire','물병':'bottle-lid','키보드':'keyboard'};
 const INSIDE_READY=new Set();
 const insideSrc=a=>INSIDE[a]&&INSIDE_READY.has(INSIDE[a])?GH+'media/materials/inside/'+INSIDE[a]+'.webp':'';
 function parseB(s){ const mats=[], items=[]; s.split('|').forEach(g=>{ const [m,as]=g.split(':'); mats.push(m); as.split(',').forEach(a=>items.push({a,m})); }); return {mats,items}; }
-LV[4].bundles=LV[3].bundles;
 const BUN={}; Object.keys(LV).forEach(l=>{ BUN[l]=LV[l].bundles.map(parseB).filter(b=>!b.items.some(x=>PIC_TODO.has(x.a))); });   /* 그림 없는 묶음은 뺌(맨 끝에만 두어 묶음 번호가 밀리지 않게) */
 const POOL={}, MATS={};
 Object.keys(BUN).forEach(l=>{ const m=new Map(), ms=[]; BUN[l].forEach(b=>{ b.mats.forEach(x=>{ if(!ms.includes(x)) ms.push(x); }); b.items.forEach(x=>{ if(!m.has(x.a)) m.set(x.a,x); }); }); POOL[l]=[...m.values()]; MATS[l]=ms; });
@@ -1081,10 +1079,12 @@ function pickByMat(){
 }
 /* 사진 한 장 → 수업 한 덩이. 물체는 물질이 고르게, 같은 이름은 하나만(정해진 차례 — 미리 보기와 수업이 같게). 물질 카드·상자는 2가지 이상(모자라면 수준 물질 하나를 더 — 빈 상자도 고를 거리) */
 function sceneUnit(sc,lv){ if(!sc) return null; const allow=LVM[lv];
-  const objs=sc.objs.map(o=>{ if(lv>=4||o.parts.every(p=>p.box)) return o; const parts=o.parts.filter(p=>p.box), ms=[...new Set(parts.map(p=>p.m))]; return {a:o.a,box:o.box,parts,ms,lv:Math.min(3,ms.length)}; })
+  const objs=sc.objs.map(o=>{ if(lv>=3||o.parts.every(p=>p.box)) return o; const parts=o.parts.filter(p=>p.box), ms=[...new Set(parts.map(p=>p.m))]; return {a:o.a,box:o.box,parts,ms,lv:Math.min(3,ms.length)}; })
     .filter(o=>o.parts.length&&o.lv<=lv&&o.ms.every(m=>allow.includes(m))); if(!objs.length) return null;
   /* 물체 고르기(정해진 차례 — 미리 보기와 수업이 같게): 여러 물질 물체를 먼저, 물질이 고르게, 같은 이름은 하나 */
-  const order=[...objs].sort((x,y)=>(lv>=4?(y.lv===4)-(x.lv===4):0)||y.ms.length-x.ms.length), pick=[];   /* 수준 4는 속이 있는 물체 먼저 */
+  /* 수준 3은 물질 3가지 이상인 물체를 주로(2026-11-22 선생님): 물질이 많은 물체부터, 한 가지 물질 물체는 하나까지 */
+  const order=[...objs].sort((x,y)=>y.ms.length-x.ms.length), pick=[];
+  if(lv>=3){ let single=0; for(let i=order.length-1;i>=0;i--){ if(order[i].ms.length===1){ if(single>=1&&order.some(o=>o.ms.length>1)) order.splice(i,1); else single++; } } }
   order.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.some(p=>p.a===o.a)&&o.ms.some(m=>!pick.some(p=>p.ms.includes(m)))) pick.push(o); });
   order.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.includes(o)&&!pick.some(p=>p.a===o.a)) pick.push(o); });
   const os=pick.map(o=>({a:o.a,box:o.box,sc:sc.id,ms:o.ms,parts:o.parts}));
@@ -1095,14 +1095,13 @@ function sceneUnit(sc,lv){ if(!sc) return null; const allow=LVM[lv];
 const libScenes=lv=>SCENES.filter(sc=>sceneUnit(sc,lv));
 function pickScenes(){ const L=libScenes(S.level), two=shuffle(L.filter(sc=>sceneUnit(sc,S.level).items.length>1)), one=shuffle(L.filter(sc=>sceneUnit(sc,S.level).items.length<2));
   /* 수준 3은 여러 물질 물체가 있는 사진을 먼저 */
-  if(S.level===3){ const multi=x=>sceneUnit(x,3).objs.some(o=>o.ms.length>1); two.sort((x,y)=>multi(y)-multi(x)); }
-  if(S.level===4){ const hid=x=>sceneUnit(x,4).objs.some(o=>o.parts.some(p=>!p.box)); const L4=[...two,...one]; L4.sort((x,y)=>hid(y)-hid(x)); two.length=0; one.length=0; two.push(...L4); }
+  if(S.level===3){ const best=x=>Math.max(...sceneUnit(x,3).objs.map(o=>o.ms.length)); const L3=[...two,...one]; L3.sort((x,y)=>best(y)-best(x)); two.length=0; one.length=0; two.push(...L3); }   /* 물질 3가지 이상 물체가 있는 사진 먼저 */
   S.apick=[...two,...one].slice(0,S.pn).map(sc=>sc.id); }
 function makePlan(){
   const lv=S.level;
   if(S.form==='auto'){ if(!S.apick.length||S.apick.some(id=>!sceneUnit(SC[id],lv))) pickScenes(); return S.apick.map(id=>sceneUnit(SC[id],lv)).filter(Boolean); }
   if(S.form==='choose') return S.csel.map(id=>sceneUnit(SC[id],lv)).filter(Boolean);
-  if(S.form==='recv') return S.rsel.filter(id=>RECV.some(r=>r.id===id&&r.ok)).map(id=>sceneUnit(SC[id],Math.max(3,S.level))).filter(Boolean);
+  if(S.form==='recv') return S.rsel.filter(id=>RECV.some(r=>r.id===id&&r.ok)).map(id=>sceneUnit(SC[id],3)).filter(Boolean);
   if(S.mode==='mat'){
     const ms=S.msel.filter(m=>MATS[lv].includes(m));
     if(!S.mpick.length||S.mpick.some(a=>!POOL[lv].some(x=>x.a===a&&ms.includes(x.m)))) pickByMat();
@@ -1131,7 +1130,7 @@ function buildRun(lv,plan,idx){
       if(k==='photo') return;
       if(k==='show') items=[...bd.objs];
       else if(k==='obj'){ if(new Set(bd.objs.map(o=>o.a)).size<2) return; items=shuffle(bd.objs); }
-      else if(k==='in') items=lv>=4?bd.objs.filter(o=>o.parts.some(p=>!p.box)).slice(0,3):[];
+      else if(k==='in') items=lv>=3?bd.objs.filter(o=>o.parts.some(p=>!p.box)).slice(0,3):[];
       else if(k==='all') items=shuffle(bd.objs.filter(o=>o.ms.length>1)).slice(0,3);
       else if(k==='same') items=sameQs(bd);
       else items=shuffleNoRepeat(bd.items).slice(0,6); }
@@ -1513,7 +1512,7 @@ function stepAll(o,tok){
   }));
 }
 
-/* ---- 수준 4. 속 보기(2026-11-21 선생님): 겉 물질을 다시 말함 → "속을 볼까요?" → 학생이 '열어 보기'를 누름 → 반쯤 열린 그림(한 그림에 겉과 속)
+/* ---- 속 보기(수준 3, 2026-11-21 선생님 — 수준 4는 2026-11-22에 없애고 수준 3으로): 겉 물질을 다시 말함 → "속을 볼까요?" → 학생이 '열어 보기'를 누름 → 반쯤 열린 그림(한 그림에 겉과 속)
    → "정수기 안에는 무엇이 있을까요?" → 물질 고르기 → "안쪽은 쇠로 만들었어요." → "정수기는 플라스틱, 쇠로 만들었어요."
    그림이 있으면 그림을 보고 미루어 고름. 그림이 아직 없으면 먼저 말과 카드로 알려 준 뒤 고름(틀리지 않게) ---- */
 async function stepIn(o,tok){
@@ -1657,7 +1656,8 @@ function renderPhotoPick(A){
     note('사진을 4장까지 고르세요. 고른 차례대로 합니다(이 수준의 물질이 있는 사진만 보여요).');
     const g=document.createElement('div'); g.className='scPick'; A.appendChild(g); const w=note('',true);
     S.csel=S.csel.filter(id=>sceneUnit(SC[id],lv));
-    libScenes(lv).forEach(sc=>{ const k=S.csel.indexOf(sc.id), u=sceneUnit(sc,lv);
+    const L=libScenes(lv); if(lv===3){ const best=x=>Math.max(...sceneUnit(x,3).objs.map(o=>o.ms.length)); L.sort((x,y)=>best(y)-best(x)); }   /* 수준 3: 물질이 많은 사진 먼저 */
+    L.forEach(sc=>{ const k=S.csel.indexOf(sc.id), u=sceneUnit(sc,lv);
       mkBtn(g,k>=0?'on':'','<img src="'+sc.src+'" alt="">'+(k>=0?'<span class="ord">'+(k+1)+'</span>':'')+'<b>'+esc(sc.t)+'</b><span class="ms">'+u.objs.map(o=>esc(o.a)+(o.ms.length>1?'('+o.ms.map(m=>MAT[m].label).join('·')+(o.parts.some(p=>!p.box)?' · 속':'')+')':'')).join(' · ')+'</span>',()=>{
         if(k>=0) S.csel.splice(k,1); else if(S.csel.length>=4){ w.textContent='4장까지예요. 먼저 고른 것을 눌러 빼고 고르세요.'; return; } else S.csel.push(sc.id);
         saveS(); renderSetup(); flash('c3'); }); });
@@ -1977,7 +1977,7 @@ function renderRecords(){
   else{
     const ok=r=>r.res==='first';
     h+='<h3>단계별 바로 맞힌 비율 (처음 절반 → 최근 절반)</h3><table><tr><th>수준</th><th>단계</th><th>문제 수</th><th>처음</th><th>최근</th></tr>';
-    [1,2,3,4].forEach(lv=>['obj','mat','in','all','same','sort','photo'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
+    [1,2,3].forEach(lv=>['obj','mat','in','all','same','sort','photo'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
       const m=Math.floor(all.length/2), a=all.slice(0,m||all.length), b=all.slice(m);
       h+='<tr><td>'+LV[lv].name+'</td><td>'+PH_NAME[ph]+'</td><td>'+all.length+'</td><td>'+barH(pct(a.filter(ok).length,a.length))+'</td><td>'+barH(pct(b.filter(ok).length,b.length))+'</td></tr>'; }));
     h+='</table>';
