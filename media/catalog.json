@@ -2438,7 +2438,7 @@
 {"path": "stage/nature/wetland/src/waterstones-2.jpg", "names": ["waterstones", "논·습지"], "kind": "원본", "style": "받은 원본(손질용)", "group": "stage", "used_by": ["008", "009"]},
 {"path": "stage/nature/wetland/src/willow-1.jpg", "names": ["willow", "버드나무", "논·습지"], "kind": "원본", "style": "받은 원본(손질용)", "group": "stage", "used_by": ["008", "009"]},
 {"path": "stage/nature/wetland/src/willow-2.jpg", "names": ["willow", "버드나무", "논·습지"], "kind": "원본", "style": "받은 원본(손질용)", "group": "stage", "used_by": ["008", "009"]},
-{"path": "voice/azure-sunhi-0.92/", "names": ["azure-sunhi-0.92", "Azure ko-KR-SunHiNeural"], "kind": "소리 묶음", "style": "Azure ko-KR-SunHiNeural 빠르기 0.92", "group": "voice", "count": 1151, "used_by": ["008", "010"]},
+{"path": "voice/azure-sunhi-0.92/", "names": ["azure-sunhi-0.92", "Azure ko-KR-SunHiNeural"], "kind": "소리 묶음", "style": "Azure ko-KR-SunHiNeural 빠르기 0.92", "group": "voice", "count": 1168, "used_by": ["008", "010"]},
 {"path": "voice/elevenlabs-roger/", "names": ["elevenlabs-roger", "ElevenLabs Roger - Laid-Back Casual Resonant"], "kind": "소리 묶음", "style": "ElevenLabs Roger - Laid-Back Casual Resonant 빠르기", "group": "voice", "count": 708, "used_by": ["008", "009"]},
 {"path": "voice/leda-0.90/", "names": ["leda-0.90", "Leda"], "kind": "소리 묶음", "style": "Leda 빠르기 0.9", "group": "voice", "count": 3339, "used_by": ["007"]},
 {"path": "voice/leda-0.92/", "names": ["leda-0.92", "Leda"], "kind": "소리 묶음", "style": "Leda 빠르기 0.92", "group": "voice", "count": 1138, "used_by": ["001", "003", "005", "006", "008", "009"]},
