@@ -9,8 +9,13 @@
 - material-sort.html : 앱. 물체·묶음·사진 자료(OBJ·LV·PHOTO·PAIRS)도 이 안에
 - server-loader.html : 서버 study/010/에 material-sort.html 이름으로 올리는 불러오기 파일
 - material-sort-beta.html · server-loader-beta.html : 베타(2026-11-21 — 단계 알림·컵 넷·도자기·돌·사진 수업 세 가지·같은 물질 찾기·놀이 둘·Gemini 사진 받기). 서버 study/010/에 material-sort-beta.html 이름으로. 저장 칸은 정식판과 같음
-- voice-lines.json   : 정식판 말 129마디 / voice-lines-beta.json : 베타 말 373마디(정식판 + 단계·놀이 제목 · 유리·도자기·돌 · 사진 물체 · 같은 물질 찾기). 소리 모음에 거의 없음 → 기기 목소리로 수업
-- voice-maker.html   : 제작자용 일회용 목소리 만들기(Cloud 키 → 없는 말만 Leda 0.92 → zip). 지금은 베타 목록을 읽음. zip을 넣은 뒤 이 파일은 지움
+- voice-lines.json   : 정식판 말 129마디 / voice-lines-beta.json : 베타 말 502마디(콘솔 __voiceLines()와 같음)
+- 목소리(2026-11-22 선생님, 베타): ① 내장 = Azure 선희 0.92 묶음 media/voice/azure-sunhi-0.92/(008과 같은 목소리, 제작자가 만듦) → ② 그 수업에 내장에 없는 말이 있으면
+  선생님 Azure 키(같은 선희로 없는 말만 채움) · 없으면 Google 음성 키(그 수업 전체를 Google Leda로 — 섞지 않음) → ③ 둘 다 없으면 기기 목소리.
+  수업 시작 때 그 수업의 말을 모아(lessonParts) 정하고, 키로 만들 말은 미리 만들어 이 기기 IndexedDB(materialSort.voice)에 남김(Azure 무료는 1분 20마디 — 3.1초 간격, 429면 쉬고 다시). '기기 목소리로 바로 시작'으로 건너뜀
+  키 칸: 설정 '더 정하기 → 목소리'(webapp.azureKey·webapp.azureRegion·webapp.cloudKey — voice-maker와 같은 칸)
+  내장 만들기: https://shim-sung-hyun.github.io/web_app/media/voice/voice-maker.html?app=010 (없는 문장 찾기 → Azure 키 → 만들기 → zip) → 세션에 zip → python3 tools/voice-add.py
+  옛 010/voice-maker.html(Leda 일회용)은 _trash로(2026-11-22)
 - material-sort01~07.jpg : 캡처(설정(01은 2026-11-02 다시 찍음)·보기·물체 찾기·물질 고르기·정리하기·사진에서·문질러 찾기)
 
 흐름(한 묶음) — 할 단계는 '더 정하기'에서 끄고 켬
@@ -95,7 +100,7 @@
    (check-files의 '없는 파일 5'는 이 그림 — 그림이 오기 전에는 앱이 부르지 않음). 그림이 있으면 그림을 보고 미루어 고르기로 바뀜
    선생님이 베타(사진 수업·놀이·사진 받기)를 써 보고 의견 → 고침. 자료실 사진 물체 목록 확인받기. 실제 Gemini 키로 분석이 잘 되는지 확인
    → 정식판에 합칠지 여쭘(합칠 때 voice-lines.json도 베타 목록으로)
-1. 제작자: voice-maker.html로 목소리 128마디 만들기 → zip을 세션에 올리면 media/voice/leda-0.92/에 넣고 voice-maker.html 지움
+1. 제작자: media/voice/voice-maker.html?app=010 으로 Azure 선희 목소리 만들기(베타 말 502마디) → zip을 세션에 올리면 tools/voice-add.py로 azure-sunhi-0.92에 넣음
 2. 선생님이 써 보고 의견(바구니, 물질 카드 결 그림, 사진 자리, 혼자 고르기)
 3. 그림 더 넣기: 나무(도마·나무 숟가락·나무 상자), 유리(유리병·유리컵) → 수준 3에 유리
 4. 설명서 _manual·_guide, 홍보 그림, 게시판 글 → 글 번호 넣기

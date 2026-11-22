@@ -191,6 +191,14 @@ body.admin #stage{pointer-events:none}
 .inPan img{width:100%;height:100%;object-fit:contain;pointer-events:none}
 .inCap{font-family:var(--f-display);font-size:48px;color:var(--sci-m)}
 .inGo{margin-top:16px}
+.vKeys{flex-basis:100%;font-size:13px;color:#5F5A6B;display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.vKeys p{margin:0;line-height:1.6}
+.vk{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.vk span{width:4.5em;font-weight:700;color:var(--ink)}.vk em{font-style:normal;color:var(--ok);font-weight:700}
+.vk input{font:inherit;font-size:13px;padding:5px 8px;border:1px solid #CFC8D8;border-radius:8px;min-width:170px}
+.vPrep{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;height:100%;width:100%}
+.vpT{font-family:var(--f-display);font-size:clamp(26px,3.6vw,40px);color:var(--sci-d)}
+.vpBar{width:min(420px,80%);height:12px;border-radius:99px;background:var(--sci-l);overflow:hidden}.vpBar b{display:block;height:100%;width:0;background:var(--sci);transition:width .4s}
+.vpN{font-size:14px;color:#6F6A78;font-variant-numeric:tabular-nums}
 /* 설정 — 사진 */
 .subh{font-weight:700;font-size:15px;color:var(--sci-d);margin:14px 0 6px}.card h2+.subh{margin-top:4px}
 .formRow .chip.lv{border-style:solid}
@@ -872,10 +880,6 @@ function playClip(clip){ return new Promise(res=>{ const c=getCtx(); if(!c){res(
     x.onended=()=>{ if(curSrc&&curSrc.src===x) curSrc=null; res((performance.now()-t0)/1000<dur-0.15?'cut':''); }; curSrc={src:x,g,res}; x.start(); }); }
 function stopVoice(){ try{speechSynthesis.cancel();}catch(e){}
   if(curSrc){ const {src,g,res}=curSrc; curSrc=null; try{ src.onended=null; const t=actx.currentTime; g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+0.05); src.stop(t+0.06); }catch(e){} if(res) res(); } }
-/* 내장 목소리: 차름 소리 모음 media/voice/leda-0.92/ (이름 = 문장 조각 SHA-1 앞 16자리) */
-const VBASE=GH+'media/voice/leda-0.92/';
-let VSET=null;
-const voiceReady=fetch(VBASE+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>{ VSET=new Set((j.files||[]).map(f=>String(f).replace(/\.mp3$/,''))); }).catch(()=>{ VSET=new Set(); });
 function sha1Bytes(msg){
   const l=msg.length, w=[], H=[0x67452301,0xEFCDAB89,0x98BADCFE,0x10325476,0xC3D2E1F0];
   const m=new Uint8Array(((l+9+63)>>6)<<6); m.set(msg); m[l]=0x80; const bl=l*8; const dv=new DataView(m.buffer); dv.setUint32(m.length-4,bl>>>0); dv.setUint32(m.length-8,Math.floor(bl/4294967296));
@@ -893,21 +897,83 @@ async function sha16(t){ const u=new TextEncoder().encode(t); const d=window.cry
 function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim()).filter(Boolean); }
 /* 말 목록 뽑기(제작자용): 콘솔에서 __voiceLines() → 010/voice-lines.json 과 같은 목록 */
 window.__voiceLines=()=>{ const parts=[]; allLines().forEach(t=>splitSay(t).forEach(x=>{ if(!parts.includes(x)) parts.push(x); })); return parts; };
-let BUILTIN_OK=false;
-const builtinCheck=voiceReady.then(async()=>{ const hs=await Promise.all(window.__voiceLines().map(sha16)); BUILTIN_OK=hs.length>0&&hs.every(h=>VSET.has(h)); renderVoiceRow(); });
-function chooseEngine(){ S.engineNow=(S.engine==='builtin'&&BUILTIN_OK)?'builtin':'device';
-  S.voiceNote=(S.engine==='builtin'&&!BUILTIN_OK)?'내장 목소리가 아직 다 준비되지 않아, 이번 수업은 기기 목소리로 해요.':''; }
+/* 목소리 차례(2026-11-22 선생님)
+   ① 내장 목소리: 제작자가 media/voice/voice-maker.html(?app=010)로 Azure 선희(빠르기 0.92)를 미리 만들어 둔 묶음 azure-sunhi-0.92 — 기본
+   ② 그 수업에 내장에 없는 말이 있으면(받은 사진의 물체 이름 등): 선생님 Azure 키 → 같은 선희 목소리로 없는 말만 채움(섞여도 같은 목소리)
+      Azure 키가 없고 Google 음성 키가 있으면 → 그 수업 전체를 Google Leda로(목소리를 섞지 않게)
+   ③ 키도 없으면 그 수업 전체를 기기 목소리로. 키는 이 기기에만(webapp.azureKey·webapp.azureRegion·webapp.cloudKey — voice-maker와 같은 칸)
+   만든 소리는 이 기기 IndexedDB(materialSort.voice)에 남겨 다음 수업에 다시 씀 */
+const VPACK='azure-sunhi-0.92', VBASE=GH+'media/voice/'+VPACK+'/';
+let VSET=null;
+const voiceReady=fetch(VBASE+'index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>{ VSET=new Set((j.files||[]).map(f=>String(f).replace(/\.mp3$/,''))); }).catch(()=>{ VSET=new Set(); });
+const vkey={az:()=>(ls.get('webapp.azureKey')||'').trim(), reg:()=>(ls.get('webapp.azureRegion')||'').trim(), gg:()=>(ls.get('webapp.cloudKey')||'').trim()};
+const vdb=(()=>{ let p=null; const open=()=>p||(p=new Promise(res=>{ try{ const r=indexedDB.open('materialSort.voice',1); r.onupgradeneeded=()=>r.result.createObjectStore('v'); r.onsuccess=()=>res(r.result); r.onerror=()=>res(null); }catch(e){ res(null); } }));
+  return { get:async k=>{ const d=await open(); if(!d) return null; return new Promise(res=>{ try{ const q=d.transaction('v').objectStore('v').get(k); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }catch(e){ res(null); } }); },
+           set:async(k,v)=>{ const d=await open(); if(!d) return; try{ d.transaction('v','readwrite').objectStore('v').put(v,k); }catch(e){} } }; })();
+async function synthAz(t){
+  const ssml='<speak version="1.0" xml:lang="ko-KR"><voice name="ko-KR-SunHiNeural"><prosody rate="-8%">'+t.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</prosody></voice></speak>';
+  const r=await fetch('https://'+vkey.reg()+'.tts.speech.microsoft.com/cognitiveservices/v1',{method:'POST',headers:{'Ocp-Apim-Subscription-Key':vkey.az(),'Content-Type':'application/ssml+xml','X-Microsoft-OutputFormat':'audio-24khz-48kbitrate-mono-mp3'},body:ssml});
+  if(!r.ok){ const e=new Error('Azure '+r.status); e.status=r.status; throw e; } return await r.arrayBuffer(); }
+async function synthGg(t){
+  const r=await fetch('https://texttospeech.googleapis.com/v1/text:synthesize',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':vkey.gg()},
+    body:JSON.stringify({input:{text:t},voice:{languageCode:'ko-KR',name:'ko-KR-Chirp3-HD-Leda'},audioConfig:{audioEncoding:'MP3',speakingRate:0.92}})});
+  if(!r.ok){ const e=new Error('Google '+r.status); e.status=r.status; throw e; }
+  const j=await r.json(), bin=atob(j.audioContent), u8=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i); return u8.buffer; }
+const kindNow=()=>S.engineNow==='google'?'gg':'az';
+/* 한 소리(문장 조각)의 mp3: 내장에 있으면 내장, 아니면(키 모드에서) 이 기기에 남긴 것 → 없으면 지금 만듦 */
+async function clipBytes(text){ const h=await sha16(text);
+  if(S.engineNow!=='google'&&VSET&&VSET.has(h)){ const r=await fetch(VBASE+h+'.mp3'); if(!r.ok) throw new Error('voice '+r.status); return await r.arrayBuffer(); }
+  if(S.engineNow==='builtin') throw new Error('missing');
+  const k=kindNow()+':'+h; let ab=await vdb.get(k);
+  if(!ab){ ab=kindNow()==='gg'?await synthGg(text):await synthAz(text); vdb.set(k,ab.slice(0)); }
+  return ab; }
+let BUILTIN_OK=false, BUILTIN_N=[0,0];
+const builtinCheck=voiceReady.then(async()=>{ const L=window.__voiceLines(), hs=await Promise.all(L.map(sha16)); const n=hs.filter(h=>VSET.has(h)).length; BUILTIN_N=[n,L.length]; BUILTIN_OK=L.length>0&&n===L.length; renderVoiceRow(); });
+function chooseEngine(){ if(S.engineNow) return; S.engineNow=(S.engine==='builtin'&&BUILTIN_OK)?'builtin':'device'; }
+/* 그 수업에 나올 말(문장 조각) */
+function lessonParts(plan){ const L=new Set(), add=t=>{ if(t) splitSay(t).forEach(x=>L.add(x)); };
+  [END_LINE,RUB_LINE,TAP_LINE,FACT_LINE,INSIDE_ASK].forEach(add); [...Object.values(INTRO_TITLE),...Object.values(GAME_TITLE)].forEach(t=>add(t+'.'));
+  plan.forEach(bd=>{ bd.items.forEach(it=>[isLine(it.a),askObj(it.a),askMat(it.a),fullLine(it.a,it.m),nameLine(it.a),madeLine(it.m)].forEach(add));
+    (bd.objs||[]).forEach(o=>{ const vms=[...new Set(o.parts.filter(p=>p.box).map(p=>p.m))];
+      [isLine(o.a),askObj(o.a),askMat(o.a),inAsk(o.a),o.ms.length>1?allLine(o.a,o.ms):fullLine(o.a,o.ms[0]),vms.length>1?allLine(o.a,vms):vms.length?fullLine(o.a,vms[0]):''].forEach(add);
+      o.parts.forEach(p=>add(fullLine(p.a,p.m))); });
+    bd.mats.forEach(m=>[sameAsk(m),sameDone(m),madeLine(m)].forEach(add));
+    if(!bd.photo) PHOTO.filter(p=>bd.mats.includes(p.m)).forEach(p=>{ add(askMat(p.a)); add(fullLine(p.a,p.m)); }); });
+  return [...L]; }
+/* 수업 시작 전에 목소리를 정하고, 키로 만들 말은 미리 만들어 둠(수업 중에 끊기지 않게). '기기 목소리로 바로 시작'으로 건너뛸 수 있음 */
+async function prepareVoice(plan){
+  S.engineNow=''; S.voiceNote='';
+  if(S.engine==='device'||!S.sound){ S.engineNow='device'; return; }
+  await voiceReady;
+  const parts=lessonParts(plan), hs=await Promise.all(parts.map(sha16)), miss=parts.filter((t,i)=>!VSET.has(hs[i]));
+  if(!miss.length){ S.engineNow='builtin'; return; }
+  if(vkey.az()&&vkey.reg()) S.engineNow='builtin+az';
+  else if(vkey.gg()) S.engineNow='google';
+  else { S.engineNow='device'; S.voiceNote='내장 목소리에 없는 말이 '+miss.length+'마디 있어, 이번 수업은 기기 목소리로 해요(설정 → 목소리에 Azure나 Google 키를 넣으면 그 목소리로).'; return; }
+  const todo=S.engineNow==='google'?parts:miss, kind=kindNow();
+  const need=[]; for(const t of todo){ if(!(await vdb.get(kind+':'+await sha16(t)))) need.push(t); }
+  if(!need.length) return;
+  const st=$('stage'); clearStage(); const box=document.createElement('div'); box.className='vPrep';
+  box.innerHTML='<div class="vpT">목소리를 준비하고 있어요</div><div class="vpBar"><b></b></div><div class="vpN"></div><button type="button" class="chip sm">기기 목소리로 바로 시작</button>';
+  st.appendChild(box); let skip=false; box.querySelector('button').onclick=()=>{ skip=true; };
+  for(let i=0;i<need.length&&!skip;i++){
+    box.querySelector('.vpN').textContent=(i+1)+' / '+need.length+(kind==='az'?' · Azure 선희':' · Google Leda'); box.querySelector('.vpBar b').style.width=Math.round((i+1)/need.length*100)+'%';
+    try{ const ab=kind==='gg'?await synthGg(need[i]):await synthAz(need[i]); await vdb.set(kind+':'+await sha16(need[i]),ab); }
+    catch(e){ if(e.status===429){ await wait(8000); i--; continue; }   /* 무료 키는 1분에 보낼 수 있는 수가 정해져 있음 — 잠시 쉬고 다시 */
+      S.engineNow='device'; S.voiceNote=(kind==='az'?'Azure':'Google')+' 키로 목소리를 만들지 못해('+(e.status||e.message)+') 이번 수업은 기기 목소리로 해요.'; break; }
+    if(kind==='az') await wait(3100);   /* Azure 무료(F0)는 1분에 20마디 */ }
+  if(skip){ S.engineNow='device'; S.voiceNote='선생님이 기기 목소리로 시작했어요.'; }
+  box.remove();
+}
 const CLIPS=new Map();
-function getClip(text){
-  if(!CLIPS.has(text)){
-    const p=(async()=>{ const h=await sha16(text); if(!VSET||!VSET.has(h)) throw new Error('missing');
-      const r=await fetch(VBASE+h+'.mp3'); if(!r.ok) throw new Error('voice '+r.status);
-      const ab=await r.arrayBuffer(), c=getCtx(); if(!c) throw new Error('audio');
+function getClip(text){ const key=S.engineNow+'|'+text;
+  if(!CLIPS.has(key)){
+    const p=(async()=>{ const ab=await clipBytes(text), c=getCtx(); if(!c) throw new Error('audio');
       const buf=await new Promise((res,rej)=>{ const q=c.decodeAudioData(ab,res,rej); if(q&&q.then) q.then(res,rej); });
       return cleanF(buf.getChannelData(0).slice(0),buf.sampleRate); })();
-    p.catch(()=>CLIPS.delete(text)); CLIPS.set(text,p);
+    p.catch(()=>CLIPS.delete(key)); CLIPS.set(key,p);
   }
-  return CLIPS.get(text);
+  return CLIPS.get(key);
 }
 let koVoice=null;
 function pickKoVoice(){ const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.replace('_','-').toLowerCase().startsWith('ko')):[];
@@ -951,7 +1017,7 @@ function speak(text){ return new Promise(resolve=>{
     for(let i=0;i<parts.length;i++){
       let clip=null; try{ clip=await Promise.race([ps[i],new Promise((_,rj)=>setTimeout(()=>rj(new Error('slow')),8000))]); }catch(e){}
       if(id!==speakSeq) return done();
-      if(!clip){ S.engineNow='device'; S.voiceNote='내장 목소리를 받지 못해, 이번 수업은 기기 목소리로 바꿨어요.'; renderDock(); deviceSay(parts.slice(i).join(' '),id,done); return; }
+      if(!clip){ S.voiceNote=S.engineNow==='builtin'?'내장 목소리를 받지 못해, 이번 수업은 기기 목소리로 바꿨어요.':'목소리를 받지 못해, 이번 수업은 기기 목소리로 바꿨어요.'; S.engineNow='device'; renderDock(); deviceSay(parts.slice(i).join(' '),id,done); return; }
       if(await playClip(clip)==='cut') return done(id===speakSeq?'cut':''); if(id!==speakSeq) return done();
       if(i<parts.length-1) await wait(/,$/.test(parts[i])?220:320);
     }
@@ -1077,8 +1143,19 @@ function renderPick(){
 }
 function renderVoiceRow(){
   const vr=$('voiceRow'); if(!vr) return; vr.innerHTML='';
-  [['내장 목소리','builtin'],['기기 목소리','device']].forEach(([n,v])=>mkBtn(vr,'chip sm'+(S.engine===v?' on':''),n,()=>{ S.engine=v; saveS(); renderVoiceRow(); }));
-  if(VSET&&!BUILTIN_OK&&S.engine==='builtin'){ const s=document.createElement('span'); s.style.cssText='font-size:13px;color:#8A5A12'; s.textContent='내장 목소리를 준비하는 중이라 지금은 기기 목소리로 해요.'; vr.appendChild(s); }
+  [['내장 목소리 (기본)','builtin'],['기기 목소리','device']].forEach(([n,v])=>mkBtn(vr,'chip sm'+(S.engine===v?' on':''),n,()=>{ S.engine=v; saveS(); renderVoiceRow(); }));
+  const box=document.createElement('div'); box.className='vKeys'; vr.appendChild(box);
+  if(S.engine==='device'){ box.textContent='모든 말을 이 기기의 목소리로 읽어요.'; return; }
+  const k=vkey;
+  box.innerHTML='<p>내장 목소리(Azure 선희): '+(VSET?BUILTIN_N[0]+' / '+BUILTIN_N[1]+'마디 준비됨':'확인하는 중…')+'. 내장에 없는 말(받은 사진의 물체 이름 등)이 있으면 '
+    +'<b>선생님 Azure 키</b>(같은 선희 목소리로 채움) → 없으면 <b>Google 음성 키</b>(그 수업 전체를 Google 목소리로) → 둘 다 없으면 <b>기기 목소리</b>로 읽어요. 키는 이 기기에만 남아요.</p>'
+    +'<div class="vk"><span>Azure</span>'+(k.az()&&k.reg()?'<em>있음 ✓ ('+esc(k.reg())+')</em><button type="button" class="chip sm" id="azDel">지우기</button>':'<input id="azKey" type="password" placeholder="Azure Speech 키 1"><input id="azReg" placeholder="지역 예: koreacentral"><button type="button" class="chip sm on" id="azSave">저장</button>')+'</div>'
+    +'<div class="vk"><span>Google</span>'+(k.gg()?'<em>있음 ✓</em><button type="button" class="chip sm" id="ggDel">지우기</button>':'<input id="ggKey" type="password" placeholder="Google Cloud 음성 키"><button type="button" class="chip sm on" id="ggSave">저장</button>')+'</div>';
+  const on=(id,f)=>{ const e=$(id); if(e) e.onclick=f; };
+  on('azSave',()=>{ const a=$('azKey').value.trim(), r=$('azReg').value.trim().toLowerCase(); if(!a||!/^[a-z0-9]+$/.test(r)) return; ls.set('webapp.azureKey',a); ls.set('webapp.azureRegion',r); renderVoiceRow(); });
+  on('azDel',()=>{ ls.set('webapp.azureKey',null); renderVoiceRow(); });
+  on('ggSave',()=>{ const g=$('ggKey').value.trim(); if(!g) return; ls.set('webapp.cloudKey',g); renderVoiceRow(); });
+  on('ggDel',()=>{ ls.set('webapp.cloudKey',null); renderVoiceRow(); });
 }
 function flash(id){ const c=$(id); if(!c) return; c.scrollIntoView({behavior:'smooth',block:'nearest'}); c.classList.add('flash'); setTimeout(()=>c.classList.remove('flash'),900); }
 $('startBtn').onclick=()=>{ unlockAudio(); const plan=makePlan(); if(!planOk(plan)){ flash('c2'); renderSetup(); return; } startLesson(null); };
@@ -1171,10 +1248,11 @@ function shuffleNoRepeat(items){ /* 같은 물질이 세 번 이어 나오지 �
   return shuffle(items);
 }
 let ALONE=null;   /* 학생 혼자: {plan, done:Set} */
-function startLesson(rs){
-  unlockAudio(); chooseEngine();
+async function startLesson(rs){
+  unlockAudio();
   const plan=rs&&rs.plan?rs.plan:makePlan();
   document.body.classList.remove('setup'); goFull();
+  await prepareVoice(plan);   /* 내장 → 선생님 키(Azure·Google) → 기기 */
   if(!rs&&S.who==='alone'&&plan.length>1){ ALONE={plan,done:new Set(),lv:S.level}; RUN=null; setTimeout(()=>showPicker(),350); return; }
   ALONE=null;
   RUN=buildRun(rs?rs.lv:S.level,plan,rs&&rs.plan?Math.min(rs.idx||0,plan.length-1):0);

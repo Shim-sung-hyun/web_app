@@ -94,6 +94,11 @@ function keyName(){ return $('svc').value==='azure'?'webapp.azureKey':'webapp.cl
 function syncSvc(){ const az=$('svc').value==='azure'; $('azRegionBox').hidden=!az; $('azVoiceBox').hidden=!az; $('azWarn').hidden=!az; $('key').value=store.get(keyName()); $('azRegion').value=store.get('webapp.azureRegion'); }
 $('svc').onchange=syncSvc;
 function syncPack(){ const az=$('pack').value.startsWith('azure-'); $('svc').value=az?'azure':'google'; $('svc').disabled=true; if(az) $('azVoice').value='ko-KR-SunHiNeural'; $('azVoice').disabled=az; syncSvc(); }
+/* 주소로 바로 채우기(2026-11-22): voice-maker.html?app=010 → 그 앱의 말 목록·묶음. ?pack=·?url=로 따로 정해도 됨 */
+{ const q=new URLSearchParams(location.search), APPS={'010':{pack:'azure-sunhi-0.92',url:'https://shim-sung-hyun.github.io/web_app/010/voice-lines-beta.json'},'008':{pack:'azure-sunhi-0.92',url:'https://shim-sung-hyun.github.io/web_app/008/voice-lines-beta.json'}};
+  const a=q.get('app'), d=APPS[a]||{}; if(a&&/^\d{3}$/.test(a)) $('app').value=a;
+  const pk=q.get('pack')||d.pack; if(pk&&[...$('pack').options].some(o=>o.value===pk)) $('pack').value=pk;
+  const u=q.get('url')||d.url; if(u&&/^https:\/\/shim-sung-hyun\.github\.io\//.test(u)) $('url').value=u; }
 $('pack').onchange=syncPack; syncPack();
 $('key').onchange=()=>store.set(keyName(),$('key').value.trim());
 $('azRegion').onchange=()=>store.set('webapp.azureRegion',$('azRegion').value.trim());
