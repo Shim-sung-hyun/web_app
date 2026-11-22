@@ -3484,11 +3484,11 @@
   },
   {
    "id": "cup-drawings",
-   "title": "컵과 그림",
+   "title": "컵과 수채용지",
    "category": "작품",
    "objects": [
     "컵",
-    "그림"
+    "수채용지"
    ],
    "place": "교실",
    "colors": [
