@@ -4,7 +4,7 @@
 물체는 자료실 사진에 있고, 속 물질이 확실하고 널리 알려진 것만 골랐습니다(5가지). 받은 그림은 속이 실제와 맞는지 보고 고르세요.
 물체마다 4장이 나오면 마음에 드는 것만 대화에 올려 주세요(1~2장). 들어갈 자리: media/materials/inside/영어이름.webp (Claude가 정리).
 
-━━━━━━━━ 반쯤 열린 그림 (5가지)
+━━━━━━━━ 반쯤 열린 그림 (처음 5가지)
 
 ■ 1 정수기 (water-purifier.webp)
 사진: 자료실 사진 water-purifier(정수기 옆) · 겉 = 흰 플라스틱 몸 / 속 = 쇠(스테인리스) 물통과 관
@@ -34,4 +34,55 @@ A clear, simple educational cutaway illustration for children with learning diff
 사진: 자료실 사진 computer-desk·mug-monitor(키보드) · 겉 = 플라스틱 / 속 = 쇠판
 ▼
 A clear, simple educational cutaway illustration for children with learning difficulties: one plain grey computer keyboard seen from slightly above. The right half of the keyboard is shown cut open like a layered cake: the plastic keys and the plastic top case are lifted away there, showing one flat silver metal plate inside under the keys. The left half still shows the normal plastic keys. Draw the metal plate large, flat and simple with a soft shine, with no wires, chips or small parts. The keys have no letters or symbols. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+━━━━━━━━ 더 받을 것(2026-11-22, 선생님 체크표에서 속 물질이 생긴 물체 8가지)
+위 2 우유갑·4 물병 뚜껑은 체크표에서 속 물질이 빠져 받지 않아도 됩니다. 이 8가지의 속은 대개 나사·볼트(쇠), 회로판·전선 겉(플라스틱)입니다.
+
+■ 6 노트북 (laptop.webp)
+사진: 자료실 사진 laptop(노트북) · 겉 = 유리 화면 · 쇠 몸 · 플라스틱 자판 / 속 = 쇠(나사)·플라스틱(회로판)
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one open silver laptop on a table. The bottom part of the laptop is shown cut open on the RIGHT HALF only, like a layered cake: the top case and keys are lifted away there, showing the inside: a few large silver metal screws, one flat green plastic circuit board, and one or two wires with plastic coating. Draw the inside large and simple with only these few parts, no tiny chips or text. The left half still shows the normal keyboard, and the screen is plain and dark. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 7 모니터 (monitor.webp)
+사진: 자료실 사진 computer-desk(모니터) · 겉 = 유리 화면 · 쇠 받침 · 플라스틱 테두리 / 속 = 플라스틱·쇠
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one computer monitor on a silver metal stand, seen from slightly behind and to the side. The black plastic back cover is removed from the LOWER HALF only, so the upper half still shows the smooth plastic cover, and the lower half shows the inside: one flat silver metal plate, a few large silver screws, and one flat green plastic circuit board with a short wire. Draw the inside large and simple, no tiny parts. The screen front is plain and dark. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 8 컴퓨터 (computer.webp)
+사진: 자료실 사진 computer-desk(컴퓨터 본체) · 겉 = 플라스틱 앞면 · 쇠 옆면 / 속 = 쇠·플라스틱
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one black desktop computer tower standing upright, seen from the side. The metal side panel is removed, showing the inside: one large flat green plastic circuit board, a silver metal frame with a few big screws, one round plastic fan, and a few wires with plastic coating. Draw the inside large, neat and simple with only these parts, no tiny chips or text. The plastic front panel is still visible at the edge. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 9 마우스 (mouse.webp)
+사진: 자료실 사진 computer-desk(마우스) · 겉 = 플라스틱 / 속 = 쇠·플라스틱
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one computer mouse, drawn large. The top plastic shell is lifted up and floats just above the mouse, tilted, so we can see the inside of the base: one small flat green plastic circuit board, one small silver metal spring or screw, and one short wire. Draw the inside large and simple, no tiny parts. The mouse is plain grey with no logo. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 10 전자칠판 (smart-board.webp)
+사진: 자료실 사진 board(전자칠판) · 겉 = 유리 화면 · 쇠 테두리 · 플라스틱 아래 띠 / 속 = 쇠·플라스틱
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one large electronic classroom board (a big flat touch screen on a wall) with a thin metal frame. The lower right corner of the board is shown cut away like a window into it, so we can see the inside behind the screen: one flat silver metal plate, a few large silver screws, and one flat green plastic circuit board with a short wire. Draw the inside large and simple. The rest of the screen is plain and dark, with nothing displayed. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 11 벽시계 (wall-clock.webp)
+사진: 자료실 사진 wall-clock·wall-clock-2(벽시계) · 겉 = 테두리 · 유리 · 쇠 바늘 / 속 = 쇠·플라스틱
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one round wall clock seen from the back and slightly to the side. The back cover is removed, showing the inside: one small black plastic clock movement box in the middle and, beside it, its silver metal battery and one silver metal hook for hanging. Draw the inside large and simple with only these parts. From the side we can still see the glass front and the metal hands. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 12 전등 (ceiling-light.webp)
+사진: 자료실 사진 hallway(복도 전등) · 겉 = 플라스틱 덮개 · 쇠 테두리 / 속 = 플라스틱·쇠
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one flat rectangular ceiling light panel, seen from below and slightly to the side. The milky white plastic cover is removed from ONE HALF only, so the other half still shows the plastic cover, and the open half shows the inside: one long strip of light (LED strip) on a silver metal plate, a few silver screws, and one short wire with plastic coating. Draw the inside large and simple, no tiny parts. The light is switched off. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
+▲
+
+■ 13 버스 (bus.webp)
+사진: 자료실 사진 school-bus(통학 버스) · 겉 = 쇠 몸 · 유리 창 · 고무 타이어 · 플라스틱 전조등 / 속 = 쇠·플라스틱·고무·천(의자)
+▼
+A clear, simple educational cutaway illustration for children with learning difficulties: one yellow school bus seen from the side. Part of the side wall in the middle is shown cut away like a big window, so we can see inside the bus: two rows of seats covered with soft blue fabric, silver metal seat frames and one metal handrail, grey plastic inside wall panels, and a dark grey rubber floor. Draw the inside large and simple with only these parts. No people, no driver, no text, no logo, no number plate. Style: clean flat illustration with soft colours, a soft dark-brown outline of even thickness, gentle shading, realistic proportions, not cute. One object only, centred, filling most of the square picture with a small margin. Plain pure white background. No text, no labels, no arrows, no numbers, no hands, no people. Square image.
 ▲

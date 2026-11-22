@@ -708,7 +708,7 @@ const LVM={1:['wood','metal'],2:['wood','metal','plastic'],3:['wood','metal','pl
 const OBJN={1:2,2:3,3:4};
 /* 속 보기(수준 3, 속 물질이 있는 물체) '반쯤 열린 그림'(빙, media/materials/inside/) — 물체 이름 → 그림 이름. 그림을 넣으면 INSIDE_READY에 이름을 더함.
    그림이 있으면: 열어 본 그림을 보고 속 물질을 미루어 고름. 없으면: 먼저 말로 알려 주고 고름 */
-const INSIDE={'정수기':'water-purifier','우유갑':'milk-carton','바퀴':'tire','물병':'bottle-lid','키보드':'keyboard'};
+const INSIDE={'정수기':'water-purifier','바퀴':'tire','키보드':'keyboard','노트북':'laptop','모니터':'monitor','컴퓨터':'computer','마우스':'mouse','전자칠판':'smart-board','벽시계':'wall-clock','전등':'ceiling-light','버스':'bus'};
 const INSIDE_READY=new Set();
 const insideSrc=a=>INSIDE[a]&&INSIDE_READY.has(INSIDE[a])?GH+'media/materials/inside/'+INSIDE[a]+'.webp':'';
 function parseB(s){ const mats=[], items=[]; s.split('|').forEach(g=>{ const [m,as]=g.split(':'); mats.push(m); as.split(',').forEach(a=>items.push({a,m})); }); return {mats,items}; }
