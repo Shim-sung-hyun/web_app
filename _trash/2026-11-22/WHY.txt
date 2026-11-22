@@ -1,1 +1,2 @@
 010/voice-maker.html — 010 일회용 목소리 만들기(Leda) — 공용 media/voice/voice-maker.html?app=010(Azure 선희)로 바꿈
+media/stage/prompts/PROMPTS-010-pictures-bing.txt — 010 그림 묶음용 물체 그림 43가지 — 001·002의 일상 그림(art.jpg)을 같은 자리로 잘라 쓰기로 해서 필요 없어짐(2026-11-22 선생님)
