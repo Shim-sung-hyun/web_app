@@ -4,6 +4,9 @@
  1. 그림·소리·파일 일을 하기 전에 이 목록부터 본다. 맞는 도구가 있으면 그것을 쓴다.
  2. 조금 모자라면 새로 만들지 말고 그 도구에 선택지(--무엇)를 덧붙인다. 머리글 설명과 이 목록 줄도 함께 고친다.
  3. 정말 다른 일일 때만 새 도구를 만들고, 만들면 아래 목록의 알맞은 무리에 한 줄 올린다.
+    선생님이 브라우저로 쓰는 화면(html)도 도구다(2026-11-22) — 새 화면을 만들기 전에 아래 [선생님 화면 도구]를 보고,
+    있으면 주소(?app= 같은 선택지)만 드리거나 그 화면에 기능을 덧붙인다. 화면 하나 새로 만드는 데 드는 사용량이 커서
+    (수백~천 줄 + 시험), 있는 것을 다시 쓰는 것이 훨씬 싸고 품질도 같다. 새로 만들면 이 무리에 한 줄.
     한 번 쓰고 말 셈은 도구로 남기지 않는다(스크래치에서 돌리고 끝).
  4. 안 쓰게 된 도구는 지우지 않고 보관함으로: python3 tools/trash.py --tool 이름.py --why "이유"
     → tools/attic/ 에 6개월. 목록 tools/attic/LIST.txt 에는 계속 남음. 다시 쓰려면 --revive 이름.py,
@@ -42,6 +45,15 @@
  [공통 모듈·자료]
   sync-modules.py  common/의 모듈 원본을 앱마다 넣기 · voice-add.py 목소리 zip을 mp3로 넣기 · trash.py 버릴 파일(그림·사진·소리는 저절로 media/archive 보관함 — 비우지 않음)·버린 도구 보관함
   (007/tools/split.py 는 007 편 판 만들기 — 007 README)
+
+ [선생님 화면 도구 — 브라우저로 여는 html(주소: https://shim-sung-hyun.github.io/web_app/ + 경로). 자리는 옮기지 않음(주소가 바뀌면 불편)]
+  media/voice/voice-maker.html      목소리 만들기(?app=010처럼 앱 고르기) → 받은 zip은 voice-add.py
+  media/prompts/copy.html           프롬프트 복사(?f=파일이름, 단추로 복사·복사한 장은 노랗게) — 새 글은 FILES에 한 줄
+  media/photos/collect.html         사진 모으기 · snap.html 사진 넣기 · review.html 사진 검토(절차 media/photos/REVIEW.md)
+  media/stage/install.html          무대 설치(장소 고르기부터) · arrange.html 배치 고치기 · touchup.html 소품 손질(짝 src-align.py)
+  media/stage/prop-room.html        소품실 보기(짝 prop-room.py) · test.html 무대 보기 · hide-test.html 숨기기 시험(?place=) · hide-judge.html 숨기기 평가
+  tools/promo-pencil.html           홍보 그림 찍기(위 [검사·캡처]) · tools/gemini-model-test.html Gemini 키·모델 연결 시험
+  (relay/·server/study/의 화면은 수업용 사진 다리 — 앱의 일부라 여기 넣지 않음)
 
 ■ 보관함(tools/attic/, 2026-11-14 넣음 — 2027-05-13 뒤 지울 수 있음): 자세한 까닭은 tools/attic/LIST.txt
   cast-shadow · shadow-split · pencil-cut(→ bing-cut·flat-shadow가 대신) · soak-base · bury-base · line-unify(연필풍 무대에서 안 씀)

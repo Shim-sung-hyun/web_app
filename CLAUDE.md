@@ -7,7 +7,7 @@
 - "답만" 하라고 하면 파일을 바꾸지 않는다. 이상하면 멈춰서 묻는다. 큰 수정은 고칠 목록을 먼저 보여 주고 확인받는다.
 - **비밀**: API 키·`$REVIEW_TOKEN`·`$ADMIN_TOKEN`·GitHub 토큰을 코드·저장소·대화에 넣지 않는다. `server/charum-api/donate-config.php`는 서버에만 있다(저장소에는 `.sample`만).
 - 사용량이 넉넉하지 않다. 큰 파일은 필요한 부분만 읽고(Grep으로 자리를 찾은 뒤 offset/limit), 확인도 고친 부분만.
-- **도구 창고**(2026-11-14): 그림·소리·파일 일을 하기 전에 `tools/README.txt` 맨 위 목록부터 보고 있는 도구를 쓴다. 모자라면 선택지를 덧붙이고, 새 도구는 정말 다른 일일 때만 만들어 목록에 올린다. 안 쓰게 된 도구는 `python3 tools/trash.py --tool 이름.py --why "이유"`(6개월 보관, `--revive`로 되살림).
+- **도구 창고**(2026-11-14): 그림·소리·파일 일을 하기 전에 `tools/README.txt` 맨 위 목록부터 보고 있는 도구를 쓴다. 모자라면 선택지를 덧붙이고, 새 도구는 정말 다른 일일 때만 만들어 목록에 올린다. 선생님이 쓰는 브라우저 화면(html)도 도구다 — 새로 만들기 전에 목록의 [선생님 화면 도구]부터(2026-11-22). 안 쓰게 된 도구는 `python3 tools/trash.py --tool 이름.py --why "이유"`(6개월 보관, `--revive`로 되살림).
 - **자료 찾기 먼저**(2026-11-22): 그림·사진·소리를 새로 구하자고 하거나 프롬프트를 쓰기 전에 `python3 tools/find-media.py 낱말`(프롬프트는 `--prompt 파일`, 목소리는 `--say "문장"`)부터. 그림 모음 한 장(`/tmp/charum-find/…jpg`)을 Read로 보고 선생님께 보여 드린다. 있는데 새로 받아야 하면 까닭(그림풍·모양)을 붙여 말한다. 전체 목록 `media/catalog.json`은 `tools/media-index.py`가 만든다(그림·소리를 넣거나 옮긴 뒤 다시 돌림, `check-files.py`가 낡았는지 봄). 이름을 놓치면 `media/synonyms.json`에 한 줄. 이 저장소의 `.claude/settings.json` hook이 세션 시작과 프롬프트 글을 쓸 때 저절로 알려 준다.
 - **그림·소리는 버리지 않는다**(2026-11-22): 안 쓰게 된 그림·사진·소리는 `tools/trash.py`가 저절로 보관함 `media/archive/`(비우지 않음, 목록 `list.json`)로 보낸다 — 옛 그림풍(만화풍)·다시 받기 전 그림도 나중에 쓸 수 있게. `_trash/`에는 html·글 같은 나머지만.
 - **소품실**(2026-11-16): 무대 소품을 새로 받기 전에 `media/stage/prop-room.html`(목록 `media/stage/props.json`)부터 보고, 밑동 땅이 같으면 `python3 tools/prop-room.py --borrow 받을무대 소품`으로 빌려 쓴다. 새로 받은 소품은 stage-intake가 소품실에 올림. 새로 만드는 무대·앱부터 적용.
