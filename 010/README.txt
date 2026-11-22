@@ -89,7 +89,7 @@
    물질 체크표(2026-11-22): https://claude.ai/artifact/EziyNsZ7bvjeWEbBDjp68N — 자료실 사진 25장의 물체마다 보이는 물질·속 물질을 선생님이 체크(db 모음 checks, 문서 = 사진 id:
    {objs:[{a, vis[], hid[], off}], note, done}). 선생님이 다 하면 ArtifactData list로 읽어 SCENES에 적용(물질만 정해짐 — 새 물체·새 부분의 사진 속 자리는 Claude가 사진을 보고 정함)
    2026-11-22 1차 적용 끝(24장). 같은 날 선생님 휴대폰 사진 9장(charum-inbox/phone → media/photos: laptop·shampoo-bottles·washbasin·towel·ukulele·wall-clock-2·toilet·toothbrushes·basket-plant,
-   노트북 화면·샴푸 상표는 흐리게, 벽시계 아래 캐릭터 인형은 잘라 냄)을 SCENES와 체크표(26~34번)에 Claude가 먼저 적어 넣음 → 선생님 체크 뒤 2차 적용.
+   노트북 화면·샴푸 상표는 흐리게, 벽시계 아래 캐릭터 인형은 잘라 냄)을 SCENES와 체크표(26~34번)에 넣고 선생님 체크로 2차 적용 끝(화분 = 플라스틱, 받침대 = 쇠·나무, 샴푸·바디워시 통 = 플라스틱만, 칫솔꽂이 = 플라스틱).
    책장의 쇠(옆면 나사)는 사진에 안 보여 뺌(선생님) — 체크표 bookshelf 문서에 '쇠'가 남아 있어도 적용하지 않음
    속 보기(수준 3): 속 보기 그림 5장(PROMPTS-010-inside-bing.txt)이 오면 media/materials/inside/영어이름.webp로 넣고 INSIDE_READY에 이름을 더함
    (check-files의 '없는 파일 5'는 이 그림 — 그림이 오기 전에는 앱이 부르지 않음). 그림이 있으면 그림을 보고 미루어 고르기로 바뀜
