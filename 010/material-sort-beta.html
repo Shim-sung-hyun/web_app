@@ -631,14 +631,15 @@ const nm=a=>NM[a]||a;
 const PIC_TODO=new Set();   /* 컵 그림 셋 넣음(2026-11-21, 빙) */
 /* 수준과 묶음: '물질:물체,물체|…'. 한 화면의 물질 카드는 2~4장(수준 3 묶음도 물질은 4가지까지) */
 const LV={
- 1:{name:'수준 1',desc:'나무 · 쇠 (두 가지)',opts:2,bundles:[
+ 1:{name:'수준 1',desc:'물질 한 가지 물체 (그림 묶음: 나무 · 쇠)',opts:2,bundles:[
   'wood:의자,사다리|metal:숟가락,냄비','wood:바구니,의자|metal:포크,열쇠','wood:사다리,바구니|metal:쟁반,젓가락']},
- 2:{name:'수준 2',desc:'나무 · 쇠 · 플라스틱 (세 가지)',opts:3,bundles:[
+ 2:{name:'수준 2',desc:'한 가지 30 : 두 가지 70 (그림 묶음: + 플라스틱)',opts:3,bundles:[
   'wood:의자|metal:숟가락,열쇠|plastic:페트병,칫솔','wood:사다리|metal:냄비,포크|plastic:물통,빨대','wood:바구니|metal:쟁반,젓가락|plastic:안전모,칫솔']},
- 3:{name:'수준 3',desc:'나무 · 쇠 · 플라스틱 · 종이 · 천 · 고무 (사진 수업은 + 유리 · 도자기 · 돌, 물질 3가지 이상인 물체 중심)',opts:3,bundles:[
+ 3:{name:'수준 3',desc:'두 가지 50 : 세 가지 이상 50 (그림 묶음: 여섯 가지 물질)',opts:3,bundles:[
   'paper:상자,종이컵|cloth:양말,모자|rubber:장화,풍선','wood:의자|paper:쇼핑백,상자|cloth:장갑|rubber:풍선','metal:숟가락|plastic:페트병|paper:종이컵|cloth:양말',
   'plastic:물통,빨대|rubber:장화|metal:냄비|cloth:모자','wood:사다리|metal:열쇠|paper:쇼핑백|rubber:풍선,장화',
-  'paper:종이컵,상자|glass:유리컵|ceramic:도자기컵|metal:쇠컵,숟가락']}   /* 컵 묶음: 컵 넷 + 물체 찾기에서 함께 낼 다른 물체 */   /* 수준 4는 없앰(2026-11-22 선생님) */
+  'paper:종이컵,상자|glass:유리컵|ceramic:도자기컵|metal:쇠컵,숟가락']},
+ 4:{name:'수준 4',desc:'여러 물질 30 : 속 물질까지 70 (그림 묶음은 수준 3과 같음)',opts:3,bundles:null}   /* 2026-11-22 선생님 다시 만듦 */   /* 컵 묶음: 컵 넷 + 물체 찾기에서 함께 낼 다른 물체 */   /* 수준 4는 없앰(2026-11-22 선생님) */
 };
 /* 생김새가 닮아 한 화면에 보기로 함께 내지 않는 짝 */
 const PAIRS=[['물통','페트병'],['숟가락','포크']];
@@ -705,13 +706,14 @@ const PHOTO=[]; SCENES.forEach(sc=>sc.objs.forEach(o=>{ if(o.parts.length===1) P
 const PH_URL=p=>p.src||PHO+p.id+'/photo.jpg';
 /* 수준별 물질(사진 수업) · 한 장에서 쓸 물체 수 */
 const LVM={1:['wood','metal'],2:['wood','metal','plastic'],3:['wood','metal','plastic','paper','cloth','rubber','glass','ceramic','stone']}; 
-const OBJN={1:2,2:3,3:4};
+const OBJN={1:3,2:3,3:3,4:3};   /* 사진 한 장에서 쓰는 물체 수 */
 /* 속 보기(수준 3, 속 물질이 있는 물체) '반쯤 열린 그림'(빙, media/materials/inside/) — 물체 이름 → 그림 이름. 그림을 넣으면 INSIDE_READY에 이름을 더함.
    그림이 있으면: 열어 본 그림을 보고 속 물질을 미루어 고름. 없으면: 먼저 말로 알려 주고 고름 */
 const INSIDE={'정수기':'water-purifier','바퀴':'tire','키보드':'keyboard','노트북':'laptop','모니터':'monitor','컴퓨터':'computer','마우스':'mouse','전자칠판':'smart-board','벽시계':'wall-clock','전등':'ceiling-light','버스':'bus'};
-const INSIDE_READY=new Set();
+const INSIDE_READY=new Set(['water-purifier','tire','keyboard','laptop','monitor','computer','mouse','smart-board','wall-clock','ceiling-light','bus']);   /* 2026-11-22 빙 그림 넣음 */
 const insideSrc=a=>INSIDE[a]&&INSIDE_READY.has(INSIDE[a])?GH+'media/materials/inside/'+INSIDE[a]+'.webp':'';
 function parseB(s){ const mats=[], items=[]; s.split('|').forEach(g=>{ const [m,as]=g.split(':'); mats.push(m); as.split(',').forEach(a=>items.push({a,m})); }); return {mats,items}; }
+LV[4].bundles=LV[3].bundles;
 const BUN={}; Object.keys(LV).forEach(l=>{ BUN[l]=LV[l].bundles.map(parseB).filter(b=>!b.items.some(x=>PIC_TODO.has(x.a))); });   /* 그림 없는 묶음은 뺌(맨 끝에만 두어 묶음 번호가 밀리지 않게) */
 const POOL={}, MATS={};
 Object.keys(BUN).forEach(l=>{ const m=new Map(), ms=[]; BUN[l].forEach(b=>{ b.mats.forEach(x=>{ if(!ms.includes(x)) ms.push(x); }); b.items.forEach(x=>{ if(!m.has(x.a)) m.set(x.a,x); }); }); POOL[l]=[...m.values()]; MATS[l]=ms; });
@@ -1077,7 +1079,7 @@ function renderSetup(){
   const steps=PHASES.filter(p=>S.steps[p[0]]).map(p=>p[1]);
   if(S.form!=='pic') $('today').innerHTML=plan.map(bd=>'<div class="plan"><h4>'+esc(bd.label)+'</h4><div class="phPlan"><img src="'+SC[bd.sid].src+'" alt=""><div>'
       +bd.objs.map(o=>'<span class="phIt">'+thumbHTML(o,46,1)+'<span><b>'+esc(o.a)+'</b> · '+o.ms.map(m=>MAT[m].label).join('·')+(o.parts.some(x=>!x.box)?' <em>(안쪽 포함)</em>':'')+'</span></span>').join('')+'</div></div></div>').join('')
-    +'<div class="steps">'+LV[S.level].name+' · '+FORMS.find(f=>f[0]===S.form)[1]+' · 사진 '+plan.length+'장 · 물체 '+plan.reduce((n,b)=>n+b.items.length,0)+'개'
+    +'<div class="steps">'+LV[S.level].name+' · '+FORMS.find(f=>f[0]===S.form)[1]+' · 사진 '+plan.length+'장 · 물체 '+plan.reduce((n,b)=>n+b.objs.length,0)+'개 ('+mixCount(plan,S.level)+')'
     +' · '+(S.who==='alone'?'학생 혼자(사진을 펼쳐 놓고 골라요)':'선생님과 함께')
     +'<br>단계: '+(PHASES.filter(p=>S.steps[p[0]]&&p[0]!=='photo').map(p=>p[1]).join(' → ')||'(없음)')+(S.game?' → '+GAMES.find(g=>g[1]===S.game)[0]:'')+' → 끝 장면'
     +'<br>'+(S.stu?'기록: '+esc(nameOf(S.stu)):'연습 — 기록하지 않아요')+'</div>'
@@ -1172,30 +1174,42 @@ function pickByMat(){
   S.mpick=out;
 }
 /* 사진 한 장 → 수업 한 덩이. 물체는 물질이 고르게, 같은 이름은 하나만(정해진 차례 — 미리 보기와 수업이 같게). 물질 카드·상자는 2가지 이상(모자라면 수준 물질 하나를 더 — 빈 상자도 고를 거리) */
-function sceneUnit(sc,lv){ if(!sc) return null; const allow=LVM[lv];
-  const objs=sc.objs.map(o=>{ if(lv>=3||o.parts.every(p=>p.box)) return o; const parts=o.parts.filter(p=>p.box), ms=[...new Set(parts.map(p=>p.m))]; return {a:o.a,box:o.box,parts,ms,lv:Math.min(3,ms.length)}; })
-    .filter(o=>o.parts.length&&o.lv<=lv&&o.ms.every(m=>allow.includes(m))); if(!objs.length) return null;
-  /* 물체 고르기(정해진 차례 — 미리 보기와 수업이 같게): 여러 물질 물체를 먼저, 물질이 고르게, 같은 이름은 하나 */
-  /* 수준 3은 물질 3가지 이상인 물체를 주로(2026-11-22 선생님): 물질이 많은 물체부터, 한 가지 물질 물체는 하나까지 */
-  const order=[...objs].sort((x,y)=>y.ms.length-x.ms.length), pick=[];
-  if(lv>=3){ let single=0; for(let i=order.length-1;i>=0;i--){ if(order[i].ms.length===1){ if(single>=1&&order.some(o=>o.ms.length>1)) order.splice(i,1); else single++; } } }
-  order.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.some(p=>p.a===o.a)&&o.ms.some(m=>!pick.some(p=>p.ms.includes(m)))) pick.push(o); });
-  order.forEach(o=>{ if(pick.length<OBJN[lv]&&!pick.includes(o)&&!pick.some(p=>p.a===o.a)) pick.push(o); });
-  const os=pick.map(o=>({a:o.a,box:o.box,sc:sc.id,ms:o.ms,parts:o.parts}));
+/* 사진 수업의 수준(2026-11-22 선생님 다시 정함) — 물체 하나에 든 물질 수로 나누고, 수준마다 섞는 비율을 맞춤
+   1: 한 가지 물질 물체만 · 2: 한 가지 30 : 두 가지 70 · 3: 두 가지 50 : 세 가지 이상 50 · 4: 여러 물질(겉만) 30 : 속 물질까지 70
+   수준 1~3에서는 속(안 보이는 물질)을 빼고 보이는 부분으로만 셈. 사진 수업은 물질 종류를 수준으로 막지 않음(9가지 모두) */
+const MIX={1:{one:1},2:{one:.3,two:.7},3:{two:.5,many:.5},4:{vis:.3,hid:.7}};
+const CAT_NAME={one:'한 가지',two:'두 가지',many:'세 가지 이상',vis:'여러 물질(겉)',hid:'속 물질까지'};
+const ALLMAT=['wood','metal','plastic','paper','cloth','rubber','glass','ceramic','stone'];
+function catOf(o,lv){ if(lv>=4) return o.parts.some(p=>!p.box)?'hid':o.ms.length>=2?'vis':'one'; return o.ms.length>=3?'many':o.ms.length===2?'two':'one'; }
+function lvObjs(sc,lv){ return sc.objs.map(o=>{ if(lv>=4||o.parts.every(p=>p.box)) return o; const parts=o.parts.filter(p=>p.box); return {a:o.a,box:o.box,parts,ms:[...new Set(parts.map(p=>p.m))]}; })
+  .filter(o=>o.parts.length&&MIX[lv][catOf(o,lv)]); }
+function unitFrom(sc,lv,pick){
+  const os=pick.map(o=>({a:o.a,box:o.box,sc:sc.id,ms:o.ms,parts:o.parts,cat:catOf(o,lv)}));
   const items=[]; os.forEach(o=>o.parts.forEach(pt=>{ if(pt.box) items.push({a:pt.a,m:pt.m,sc:sc.id,box:pt.box,of:o.a}); }));
-  const ms=[...new Set(os.flatMap(o=>o.ms))];
-  const extra=allow.filter(m=>!ms.includes(m)); let k=0; while(ms.length<2&&extra.length){ const i=(sc.id.length+k)%extra.length; ms.push(extra[i]); extra.splice(i,1); k++; }
-  return {mats:allow.filter(m=>ms.includes(m)),items,objs:os,label:sc.t||'사진',sid:sc.id,bi:null,photo:1}; }
-const libScenes=lv=>SCENES.filter(sc=>sceneUnit(sc,lv));
-function pickScenes(){ const L=libScenes(S.level), two=shuffle(L.filter(sc=>sceneUnit(sc,S.level).items.length>1)), one=shuffle(L.filter(sc=>sceneUnit(sc,S.level).items.length<2));
-  /* 수준 3은 여러 물질 물체가 있는 사진을 먼저 */
-  if(S.level===3){ const best=x=>Math.max(...sceneUnit(x,3).objs.map(o=>o.ms.length)); const L3=[...two,...one]; L3.sort((x,y)=>best(y)-best(x)); two.length=0; one.length=0; two.push(...L3); }   /* 물질 3가지 이상 물체가 있는 사진 먼저 */
-  S.apick=[...two,...one].slice(0,S.pn).map(sc=>sc.id); }
+  const ms=[...new Set(os.flatMap(o=>o.ms))], extra=ALLMAT.filter(m=>!ms.includes(m)); let k=0;
+  while(ms.length<2&&extra.length){ const i=(sc.id.length+k)%extra.length; ms.push(extra[i]); extra.splice(i,1); k++; }   /* 물질 카드·상자는 2가지 이상 */
+  return {mats:ALLMAT.filter(m=>ms.includes(m)),items,objs:os,label:sc.t||'사진',sid:sc.id,bi:null,photo:1}; }
+/* 여러 사진에 걸쳐 비율을 맞춰 물체를 고름: 물체를 하나 고를 때마다 지금 가장 모자란 종류를 고름(정해진 차례 — 미리 보기와 수업이 같게) */
+function sceneUnits(scs,lv){ const mix=MIX[lv], cnt={}; let tot=0; const out=[];
+  scs.forEach(sc=>{ if(!sc) return; const cand=lvObjs(sc,lv).sort((x,y)=>y.ms.length-x.ms.length); if(!cand.length) return; const pick=[];
+    while(pick.length<OBJN[lv]){ const avail=cand.filter(o=>!pick.includes(o)&&!pick.some(p=>p.a===o.a)); if(!avail.length) break;
+      let best=null, bd=-1e9; avail.forEach(o=>{ const c=catOf(o,lv), d=mix[c]*(tot+1)-(cnt[c]||0); if(d>bd+1e-9){ bd=d; best=o; } });
+      pick.push(best); const c=catOf(best,lv); cnt[c]=(cnt[c]||0)+1; tot++; }
+    out.push(unitFrom(sc,lv,pick)); });
+  return out; }
+function sceneUnit(sc,lv){ return sceneUnits([sc],lv)[0]||null; }
+function mixCount(units,lv){ const c={}; units.forEach(u=>u.objs.forEach(o=>{ c[o.cat]=(c[o.cat]||0)+1; })); return Object.keys(MIX[lv]).map(k=>CAT_NAME[k]+' '+(c[k]||0)).join(' · '); }
+const libScenes=lv=>SCENES.filter(sc=>lvObjs(sc,lv).length);
+/* 자동: 사진을 한 장씩 더하며 비율에 가장 가까워지는 사진을 고름(같으면 무작위) */
+function pickScenes(){ const lv=S.level, mix=MIX[lv], L=shuffle(libScenes(lv)), chosen=[];
+  const err=scs=>{ const c={}; let t=0; sceneUnits(scs,lv).forEach(u=>u.objs.forEach(o=>{ c[o.cat]=(c[o.cat]||0)+1; t++; })); return t?Object.keys(mix).reduce((e,k)=>e+Math.abs((c[k]||0)/t-mix[k]),0)-t*0.01:9; };
+  while(chosen.length<S.pn){ let best=null, be=1e9; L.filter(sc=>!chosen.includes(sc)).forEach(sc=>{ const e=err([...chosen,sc]); if(e<be){ be=e; best=sc; } }); if(!best) break; chosen.push(best); }
+  S.apick=chosen.map(sc=>sc.id); }
 function makePlan(){
   const lv=S.level;
-  if(S.form==='auto'){ if(!S.apick.length||S.apick.some(id=>!sceneUnit(SC[id],lv))) pickScenes(); return S.apick.map(id=>sceneUnit(SC[id],lv)).filter(Boolean); }
-  if(S.form==='choose') return S.csel.map(id=>sceneUnit(SC[id],lv)).filter(Boolean);
-  if(S.form==='recv') return S.rsel.filter(id=>RECV.some(r=>r.id===id&&r.ok)).map(id=>sceneUnit(SC[id],3)).filter(Boolean);
+  if(S.form==='auto'){ if(!S.apick.length||S.apick.some(id=>!SC[id]||!lvObjs(SC[id],lv).length)) pickScenes(); return sceneUnits(S.apick.map(id=>SC[id]),lv); }
+  if(S.form==='choose') return sceneUnits(S.csel.map(id=>SC[id]),lv);
+  if(S.form==='recv') return sceneUnits(S.rsel.filter(id=>RECV.some(r=>r.id===id&&r.ok)).map(id=>SC[id]),lv);
   if(S.mode==='mat'){
     const ms=S.msel.filter(m=>MATS[lv].includes(m));
     if(!S.mpick.length||S.mpick.some(a=>!POOL[lv].some(x=>x.a===a&&ms.includes(x.m)))) pickByMat();
@@ -1224,7 +1238,7 @@ function buildRun(lv,plan,idx){
       if(k==='photo') return;
       if(k==='show') items=[...bd.objs];
       else if(k==='obj'){ if(new Set(bd.objs.map(o=>o.a)).size<2) return; items=shuffle(bd.objs); }
-      else if(k==='in') items=lv>=3?bd.objs.filter(o=>o.parts.some(p=>!p.box)).slice(0,3):[];
+      else if(k==='in') items=lv>=4?bd.objs.filter(o=>o.parts.some(p=>!p.box)).slice(0,3):[];
       else if(k==='all') items=shuffle(bd.objs.filter(o=>o.ms.length>1)).slice(0,3);
       else if(k==='same') items=sameQs(bd);
       else items=shuffleNoRepeat(bd.items).slice(0,6); }
@@ -1585,7 +1599,7 @@ function stepPMat(it,tok){ stepPhoto(Object.assign({},it,{ph:phOf(it)}),tok,'mat
    찾을 수만큼 빈 칸(○○○)을 보여 주어 몇 개인지 눈으로 알게. '다 했어요' 단추 없이 다 찾으면 끝. 틀리면 남은 답이 빛남(도움) ---- */
 function stepAll(o,tok){
   const st=$('stage'), A=area(), sc=SC[o.sc], n=o.ms.length;
-  const pool=shuffle([...new Set([...RUN.bd.mats,...LVM[RUN.lv]])].filter(m=>!o.ms.includes(m))).slice(0,Math.max(1,Math.min(5-n,2)));
+  const pool=shuffle([...new Set([...RUN.bd.mats,...ALLMAT])].filter(m=>!o.ms.includes(m))).slice(0,Math.max(1,Math.min(5-n,2)));
   const opts=shuffle([...o.ms,...pool]), k=opts.length, gap=Math.max(14,A.w*0.02);
   const cs=Math.min(optSize(k,A.w,A.h*0.3,gap,true),190), V=sceneEl(sc,A.w*0.9,A.h-cs-150);
   const slots=document.createElement('div'); slots.className='slots'; for(let i=0;i<n;i++){ const d=document.createElement('i'); slots.appendChild(d); }
@@ -1751,7 +1765,7 @@ function renderPhotoPick(A){
     note('사진을 4장까지 고르세요. 고른 차례대로 합니다(이 수준의 물질이 있는 사진만 보여요).');
     const g=document.createElement('div'); g.className='scPick'; A.appendChild(g); const w=note('',true);
     S.csel=S.csel.filter(id=>sceneUnit(SC[id],lv));
-    const L=libScenes(lv); if(lv===3){ const best=x=>Math.max(...sceneUnit(x,3).objs.map(o=>o.ms.length)); L.sort((x,y)=>best(y)-best(x)); }   /* 수준 3: 물질이 많은 사진 먼저 */
+    const L=libScenes(lv), main=Object.keys(MIX[lv]).sort((x,y)=>MIX[lv][y]-MIX[lv][x])[0]; L.sort((x,y)=>lvObjs(y,lv).filter(o=>catOf(o,lv)===main).length-lvObjs(x,lv).filter(o=>catOf(o,lv)===main).length);   /* 그 수준의 주된 물체가 많은 사진 먼저 */   /* 수준 3: 물질이 많은 사진 먼저 */
     L.forEach(sc=>{ const k=S.csel.indexOf(sc.id), u=sceneUnit(sc,lv);
       mkBtn(g,k>=0?'on':'','<img src="'+sc.src+'" alt="">'+(k>=0?'<span class="ord">'+(k+1)+'</span>':'')+'<b>'+esc(sc.t)+'</b><span class="ms">'+u.objs.map(o=>esc(o.a)+(o.ms.length>1?'('+o.ms.map(m=>MAT[m].label).join('·')+(o.parts.some(p=>!p.box)?' · 속':'')+')':'')).join(' · ')+'</span>',()=>{
         if(k>=0) S.csel.splice(k,1); else if(S.csel.length>=4){ w.textContent='4장까지예요. 먼저 고른 것을 눌러 빼고 고르세요.'; return; } else S.csel.push(sc.id);
@@ -2072,7 +2086,7 @@ function renderRecords(){
   else{
     const ok=r=>r.res==='first';
     h+='<h3>단계별 바로 맞힌 비율 (처음 절반 → 최근 절반)</h3><table><tr><th>수준</th><th>단계</th><th>문제 수</th><th>처음</th><th>최근</th></tr>';
-    [1,2,3].forEach(lv=>['obj','mat','in','all','same','sort','photo'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
+    [1,2,3,4].forEach(lv=>['obj','mat','in','all','same','sort','photo'].forEach(ph=>{ const all=rows.filter(r=>r.lv===lv&&r.ph===ph); if(!all.length) return;
       const m=Math.floor(all.length/2), a=all.slice(0,m||all.length), b=all.slice(m);
       h+='<tr><td>'+LV[lv].name+'</td><td>'+PH_NAME[ph]+'</td><td>'+all.length+'</td><td>'+barH(pct(a.filter(ok).length,a.length))+'</td><td>'+barH(pct(b.filter(ok).length,b.length))+'</td></tr>'; }));
     h+='</table>';
