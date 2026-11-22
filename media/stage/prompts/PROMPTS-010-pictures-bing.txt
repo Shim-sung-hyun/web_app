@@ -1,0 +1,267 @@
+010 무엇으로 만들었을까 — 그림 묶음 물체 그림 (빙, 2026-11-22)
+사진 수업에만 있고 낱말 그림(media/words)이 없는 물체를 007 낱말 그림체로 받습니다. 받은 그림으로 그림 묶음도 수준 1~4(한 가지 · 두 가지 · 세 가지 이상 · 속)를 할 수 있게 됩니다.
+물체마다 4장이 나오면, 물질이 그림에서 잘 보이는 한 장만 골라 올려 주세요. 들어갈 자리: media/words/파일이름.webp (Claude가 흰 바탕을 지워 넣음).
+붙일 그림(빙에서 붙일 수 있으면): media/words/jongikeop.webp (종이컵 — 그림체 기준).
+
+━━━━━━━━ 사진에만 있는 물체 (37가지)
+
+■ 1 바퀴 (bakwi.webp)
+물질: 타이어 고무 · 휠 쇠
+▼
+A simple children's picture-card illustration of one car wheel standing upright: a thick black rubber tyre with a simple tread, and in the middle a shiny silver metal wheel with five spokes. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 2 맨홀 뚜껑 (maenholttukkeong.webp)
+물질: 쇠
+▼
+A simple children's picture-card illustration of one round iron manhole cover seen from slightly above, dark brown-grey metal with a simple raised pattern and a few small holes, lying flat. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 3 표지판 (pyojipan.webp)
+물질: 플라스틱 · 쇠 나사
+▼
+A simple children's picture-card illustration of one standing orange plastic sign stand like a traffic cone with a flat rectangular white board on top and one small silver metal screw where they join; the board is blank with no words. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 4 정리장 (jeongrijang.webp)
+물질: 나무
+▼
+A simple children's picture-card illustration of one small low wooden storage cabinet with two shelves, light brown wood with visible wood grain, no doors. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 5 신발장 (sinbaljang.webp)
+물질: 나무
+▼
+A simple children's picture-card illustration of one wooden shoe rack with three open shelves, light brown wood with visible wood grain, empty, no shoes. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 6 전자 체중기 (jeonjachejunggi.webp)
+물질: 플라스틱 발판 · 쇠 기둥
+▼
+A simple children's picture-card illustration of one standing height-and-weight scale: a white plastic foot platform on the floor and a tall thin silver metal pole rising from it, with a small white plastic head piece at the top. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 7 종 (jong.webp)
+물질: 쇠
+▼
+A simple children's picture-card illustration of one old bronze school bell hanging from a short metal ring, dark greenish-brown metal with a soft shine. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 8 꽃병 (kkotbyeong.webp)
+물질: 유리
+▼
+A simple children's picture-card illustration of one empty clear glass vase, tall and slightly round, see-through with light blue-grey glass tones and two small white highlight lines. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 9 키보드 (kibodeu.webp)
+물질: 플라스틱
+▼
+A simple children's picture-card illustration of one plain grey computer keyboard seen from slightly above, plastic keys with no letters or symbols. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 10 마우스 (mauseu.webp)
+물질: 플라스틱
+▼
+A simple children's picture-card illustration of one plain grey computer mouse with a short cable, smooth plastic, no logo. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 11 모니터 (moniteo.webp)
+물질: 유리 화면 · 쇠 받침 · 플라스틱 테두리
+▼
+A simple children's picture-card illustration of one computer monitor: a dark shiny glass screen with a black plastic frame around it, standing on a silver metal stand and base; the screen is blank. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 12 방석 (bangseok.webp)
+물질: 천
+▼
+A simple children's picture-card illustration of one square soft floor cushion made of pink cotton fabric with a few soft folds and visible stitching. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 13 책장 (chaekjang.webp)
+물질: 나무
+▼
+A simple children's picture-card illustration of one wooden bookshelf with three shelves and a few plain books with blank spines, light brown wood with visible wood grain. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 14 수납함 (sunapham.webp)
+물질: 플라스틱
+▼
+A simple children's picture-card illustration of one yellow plastic storage drawer box with two drawers and small handles, smooth shiny plastic. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 15 전자칠판 (jeonjachilpan.webp)
+물질: 유리 화면 · 쇠 테두리 · 플라스틱 아래 띠
+▼
+A simple children's picture-card illustration of one large flat electronic classroom board on a wall: a big dark glass screen, a thin silver metal frame, and a grey plastic bar along the bottom with a few small buttons; nothing on the screen. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 16 머그컵 (meogeukeop.webp)
+물질: 도자기
+▼
+A simple children's picture-card illustration of one blue ceramic mug with a round handle and a shiny glaze, white inside. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 17 정수기 (jeongsugi.webp)
+물질: 플라스틱 (속 쇠)
+▼
+A simple children's picture-card illustration of one white standing water purifier (water dispenser) with two taps and a small drip tray, smooth white plastic body. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 18 매트 (maeteu.webp)
+물질: 플라스틱
+▼
+A simple children's picture-card illustration of one rectangular dark grey plastic floor mat with a fine bumpy texture, lying flat, seen from slightly above. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 19 분리수거함 (bunrisugeoham.webp)
+물질: 쇠 몸 · 나무 옆판
+▼
+A simple children's picture-card illustration of one navy-blue metal recycling cabinet with two small silver metal flaps for putting things in, and a light wooden side panel; no words or symbols. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 20 물병 (mulbyeong.webp)
+물질: 플라스틱 뚜껑 · 쇠 몸 · 고무 패킹
+▼
+A simple children's picture-card illustration of one water bottle (tumbler) with a white metal body and a pink plastic screw lid; a thin grey rubber ring is visible just under the lid. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 21 우유갑 (uyugap.webp)
+물질: 종이
+▼
+A simple children's picture-card illustration of one small school milk carton with a gable top, white and light blue paper, no words or logo. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 22 그림 (geurim.webp)
+물질: 종이
+▼
+A simple children's picture-card illustration of one sheet of drawing paper with a child's simple crayon drawing of green trees under a blue sky, the paper slightly curled at one corner. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 23 울타리 (ultari.webp)
+물질: 쇠
+▼
+A simple children's picture-card illustration of one short section of green painted metal fence with straight bars and round rings along the bottom. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 24 기둥 (gidung.webp)
+물질: 쇠
+▼
+A simple children's picture-card illustration of one tall green painted metal pole standing upright on a small base. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 25 화분 (hwabun.webp)
+물질: 플라스틱
+▼
+A simple children's picture-card illustration of one round brown plastic flower pot with a few ribs around it, empty, no plant. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 26 담장 (damjang.webp)
+물질: 돌
+▼
+A simple children's picture-card illustration of one short low wall made of grey stones stacked neatly, seen from the front. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 27 벽시계 (byeoksigye.webp)
+물질: 나무 테두리 · 유리 · 쇠 바늘
+▼
+A simple children's picture-card illustration of one round wall clock with a brown wooden frame, a clear glass cover over a white face with simple numbers, and thin black metal hands. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 28 싱크대 (singkeudae.webp)
+물질: 나무 문 · 쇠 개수대 · 플라스틱 손잡이
+▼
+A simple children's picture-card illustration of one kitchen sink cabinet: white wooden doors and drawers below, a shiny silver metal sink basin with a tap on top, and small round plastic knobs. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 29 노트북 (noteubuk.webp)
+물질: 유리 화면 · 쇠 몸 · 플라스틱 자판
+▼
+A simple children's picture-card illustration of one open silver laptop: a dark glass screen, a silver metal body, and black plastic keys with no letters; the screen is blank. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 30 샴푸 통 (syampu-tong.webp)
+물질: 플라스틱
+▼
+A simple children's picture-card illustration of one tall dark purple plastic shampoo bottle with a white pump top, no words or logo. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 31 바디워시 통 (badiwosi-tong.webp)
+물질: 플라스틱
+▼
+A simple children's picture-card illustration of one round white plastic body-wash bottle with a black pump top, no words or logo. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 32 세면대 (semyeondae.webp)
+물질: 도자기 그릇 · 쇠 수도꼭지
+▼
+A simple children's picture-card illustration of one white ceramic washbasin with a shiny glaze, and a shiny silver metal tap above it. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 33 수건걸이 (sugeongeori.webp)
+물질: 쇠
+▼
+A simple children's picture-card illustration of one straight silver metal towel bar fixed to the wall with two round brackets, empty. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 34 우쿨렐레 (ukulelle.webp)
+물질: 나무 몸 · 쇠 줄감개 · 플라스틱 줄
+▼
+A simple children's picture-card illustration of one ukulele standing upright: a brown wooden body with wood grain, four silver metal tuning pegs at the top, and four thin white nylon (plastic) strings. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 35 좌변기 (jwabyeongi.webp)
+물질: 도자기 변기 · 플라스틱 뚜껑
+▼
+A simple children's picture-card illustration of one white toilet: a shiny white ceramic bowl and tank, with a white plastic seat and lid lifted up. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 36 칫솔꽂이 (chitsolkkoji.webp)
+물질: 플라스틱
+▼
+A simple children's picture-card illustration of one small round white plastic toothbrush holder cup, empty, smooth plastic. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 37 받침대 (batchimdae.webp)
+물질: 쇠 다리 · 나무 받침
+▼
+A simple children's picture-card illustration of one plant stand: a round wooden top plate on thin black metal legs shaped like a simple cage, empty, no pot. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+━━━━━━━━ 낱말 그림은 있지만 사진과 물질이 다른 것 — 다시 그릴 것 (6가지)
+지금 낱말 그림: 컴퓨터 = 모니터와 자판, 전등 = 전구, 문 = 파란 문, 수건 = 사람 손이 함께, 바구니 = 짚 바구니(나무), 의자 = 나무 의자. 사진 수업의 물체와 맞게 새로 받고, 옛 그림은 007에서 그대로 씁니다.
+
+■ 38 컴퓨터 (keompyuteo-bonche.webp)
+물질: 플라스틱 앞면 · 쇠 옆면
+▼
+A simple children's picture-card illustration of one black desktop computer tower standing upright, seen from the front and side: a black plastic front panel with a small power button, and a dark grey metal side panel. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 39 전등 (pyeongpan-jeondeung.webp)
+물질: 플라스틱 덮개 · 쇠 테두리
+▼
+A simple children's picture-card illustration of one flat rectangular ceiling light panel: a milky white plastic cover inside a thin silver metal frame, seen from slightly below; switched off. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 40 문 (namu-mun.webp)
+물질: 나무 문짝 · 쇠 손잡이 · 유리 창
+▼
+A simple children's picture-card illustration of one classroom door: a light wooden door with wood grain, a silver metal lever handle, and a small clear glass window near the top. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 41 수건 (sugeon.webp)
+물질: 천
+▼
+A simple children's picture-card illustration of one white folded cotton towel with a soft fluffy texture, no hands or people. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 42 바구니 (peullaseutik-baguni.webp)
+물질: 플라스틱
+▼
+A simple children's picture-card illustration of one beige rectangular plastic basket with many small square holes on the sides, empty. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲
+
+■ 43 의자 (peullaseutik-uija.webp)
+물질: 플라스틱 앉는 곳 · 쇠 다리
+▼
+A simple children's picture-card illustration of one school chair: a green plastic seat and backrest on grey metal legs. Flat soft colours with gentle shading that clearly shows what each part is made of. Soft dark-brown outline of even thickness, gently rounded. One object only, seen slightly from above, centred and filling most of the square with a small margin. Plain pure white background, no shadow, no table, no text, no logo, no frame. Square image.
+▲

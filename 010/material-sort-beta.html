@@ -199,6 +199,9 @@ body.admin #stage{pointer-events:none}
 .vpT{font-family:var(--f-display);font-size:clamp(26px,3.6vw,40px);color:var(--sci-d)}
 .vpBar{width:min(420px,80%);height:12px;border-radius:99px;background:var(--sci-l);overflow:hidden}.vpBar b{display:block;height:100%;width:0;background:var(--sci);transition:width .4s}
 .vpN{font-size:14px;color:#6F6A78;font-variant-numeric:tabular-nums}
+/* 선생님 화면에서는 그림 이름을 정확히(컵 넷: 종이컵·유리컵·도자기컵·쇠컵 — 학생 화면과 말은 '컵') */
+.tIt{display:inline-flex;flex-direction:column;align-items:center;gap:1px}.tIt small{font-size:11px;color:#6F6A78;line-height:1.1}
+.cupN{font-size:12px;color:#6F6A78;margin-top:2px}
 /* 설정 — 사진 */
 .subh{font-weight:700;font-size:15px;color:var(--sci-d);margin:14px 0 6px}.card h2+.subh{margin-top:4px}
 .formRow .chip.lv{border-style:solid}
@@ -1088,7 +1091,7 @@ function renderSetup(){
     +'<br>'+(S.stu?'기록: '+esc(nameOf(S.stu)):'연습 — 기록하지 않아요')+'</div>'
     +(ok?'':'<div class="pickWarn">'+(S.form==='recv'?'받은 사진을 확인하고 골라 주세요(확인한 사진만 쓸 수 있어요).':'사진을 골라 주세요.')+'</div>');
   else $('today').innerHTML=plan.map(bd=>'<div class="plan">'+(plan.length>1?'<h4>'+esc(bd.label)+'</h4>':'')+'<div class="cols">'+bd.mats.map(m=>'<div class="col"><div class="lid" style="background-image:'+TEX[m].replace(/"/g,"'")+'"><b>'+MAT[m].label+'</b></div>'
-      +'<div class="ans">'+bd.items.filter(it=>it.m===m).map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div></div>').join('')+'</div></div>').join('')
+      +'<div class="ans">'+bd.items.filter(it=>it.m===m).map(it=>'<span class="tIt"><img src="'+pic(it.a)+'" alt="'+esc(it.a)+'"><small>'+esc(it.a)+'</small></span>').join('')+'</div></div>').join('')+'</div></div>').join('')
     +'<div class="steps">'+LV[S.level].name+' · '+(S.mode==='bundle'?plan.map(b=>b.label).join(', '):'물질 고르기')+' · 물체 '+plan.reduce((n,b)=>n+b.items.length,0)+'개'
     +' · '+(S.who==='alone'?'학생 혼자(묶음을 펼쳐 놓고 골라요)':'선생님과 함께')
     +'<br>단계: '+(steps.join(' → ')||'(없음)')+(S.game?' → 문질러 찾기':'')+' → 끝 장면'
@@ -1125,6 +1128,7 @@ function renderPick(){
       const b=mkBtn(g,'bd'+(k>=0?' on':''),'<div class="bh"><span>'+(k>=0?'<span class="ord">'+(k+1)+'</span>':'')+'묶음 '+(i+1)+'</span></div>'
         +'<div class="ms">'+bd.mats.map(tchip).join('')+'</div>'
         +'<div class="an">'+bd.items.map(it=>'<img src="'+pic(it.a)+'" alt="'+esc(it.a)+'" title="'+esc(it.a)+'">').join('')+'</div>'
+        +(bd.items.some(it=>NM[it.a])?'<div class="cupN">'+bd.items.filter(it=>NM[it.a]).map(it=>esc(it.a)).join(' · ')+'</div>':'')
         +(done[key]?'<div class="done">✓ 마침 '+done[key]+'번</div>':''),()=>{
         if(k>=0){ if(S.bsel.length>1) S.bsel.splice(k,1); }
         else if(S.bsel.length>=lim){ w.textContent='묶음은 '+lim+'개까지예요. 먼저 고른 것을 눌러 빼고 고르세요.'; return; }
