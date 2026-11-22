@@ -62,3 +62,4 @@
 - 소품 손질(2026-11-15): `media/stage/touchup.html` — 장면을 골라 소품의 남은 흰 점을 붓으로 지우고 저장소 폴더에 바로 저장. 선생님이 손질해 올린 뒤에는 `python3 tools/stage-meta.py`·`tools/stage-index.py`를 돌림.
 - 선생님이 소품 손질 화면에서 고친 파일을 주면: 이름·크기로 장면 확인 → items에 덮어쓰기 → stage-meta.py·stage-index.py → 올리기(media/stage/README.txt '소품 손질' 절).
 - 008·009 연필풍(2026-11-15 선생님): 화면·게시판 본문·홍보 그림을 연필풍으로(지침 2절). 2026-11-16 008 정식 발행(정식판 = 베타 — 베타를 고치면 정식판도 통째로), 009 발행 준비 끝(목소리 ElevenLabs, 원숭이·펭귄 이름 둘만 Leda — 009 README ★).
+- Gemini 그림 로고는 `python3 tools/gemini-logo.py 그림 --inplace`로 지움(2026-11-22, tools/README 목록).

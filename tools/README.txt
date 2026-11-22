@@ -22,6 +22,8 @@
                    비슷한 말·파일 이름 한글은 media/synonyms.json. 그림·소리를 넣거나 옮긴 뒤 돌림
   hooks/media-guard.py  Claude Code hook(.claude/settings.json) — 세션 시작·프롬프트 글 쓸 때 위 둘을 저절로 돌려 알려 줌(사람이 돌릴 일 없음)
  [그림 자르기 — 받은 jpg에서 투명 webp로]
+  gemini-logo.py   Gemini 그림 오른쪽 아래 흰 반짝이 로고 지우기(2026-11-22) — 덮어 그린 투명도를 거꾸로 셈해 원래 색으로(결·선이 그대로).
+                   자리는 저절로 찾음(보통 오른쪽·아래 96점, 48 크기) · --inplace · --out 폴더 · --check · --force(흰 바탕이라 못 찾을 때 기본 자리). 투명도 지도 gemini-logo-alpha48.png
   bing-cut.py      빙 연필풍(흰 종이) 그림 자르기. 소품(기본, 회색 그림자 함께) · --animal 몸만 · --plant 가지 사이도 투명
                    · --holes 몸 안 큰 틈 · --white 흰색을 통째로 투명(가는 물풀)
   flat-shadow.py   그림자를 파랑(빨강)으로 받은 소품: 그림자 모양만 써서 검정 20%로 고르게. --key blue|red · --plant · --alpha

@@ -3635,17 +3635,18 @@
     "consent": "제작자 사진 모으기(차름 학습 자료로 계속 씀)",
     "review": "2026-10-25 Claude 검토",
     "status": "ok",
-    "notes": "길고양이·울타리. 사람·글자·번호 없음"
+    "notes": "길고양이·울타리. 사람·글자·번호 없음 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "street-cat/photo.jpg"
+    "photo": "street-cat/photo.jpg",
+    "art": "street-cat/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    },
    "from": "d2610222348409b44b647"
   },
@@ -3683,17 +3684,18 @@
     "consent": "제작자 사진 모으기(차름 학습 자료로 계속 씀)",
     "review": "2026-10-25 Claude 검토",
     "status": "ok",
-    "notes": "뒤 건물 벽·창은 누구 집인지 알 수 없을 만큼만 보임. 사람·글자·번호 없음"
+    "notes": "뒤 건물 벽·창은 누구 집인지 알 수 없을 만큼만 보임. 사람·글자·번호 없음 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "potted-tree/photo.jpg"
+    "photo": "potted-tree/photo.jpg",
+    "art": "potted-tree/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    },
    "from": "d261022234840fad3abc9"
   },
@@ -3727,17 +3729,18 @@
     "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
     "review": "2026-11-22 Claude 검토",
     "status": "ok",
-    "notes": "노트북 화면(문서·대화창)은 흐리게 함. 사람·이름 없음"
+    "notes": "노트북 화면(문서·대화창)은 흐리게 함. 사람·이름 없음 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "laptop/photo.jpg"
+    "photo": "laptop/photo.jpg",
+    "art": "laptop/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    }
   },
   {
@@ -3771,17 +3774,18 @@
     "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
     "review": "2026-11-22 Claude 검토",
     "status": "ok",
-    "notes": "통의 큰 상표 글자는 흐리게 함"
+    "notes": "통의 큰 상표 글자는 흐리게 함 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "shampoo-bottles/photo.jpg"
+    "photo": "shampoo-bottles/photo.jpg",
+    "art": "shampoo-bottles/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    }
   },
   {
@@ -3814,17 +3818,18 @@
     "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
     "review": "2026-11-22 Claude 검토",
     "status": "ok",
-    "notes": "사람·글자·번호 없음"
+    "notes": "사람·글자·번호 없음 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "washbasin/photo.jpg"
+    "photo": "washbasin/photo.jpg",
+    "art": "washbasin/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    }
   },
   {
@@ -3856,17 +3861,18 @@
     "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
     "review": "2026-11-22 Claude 검토",
     "status": "ok",
-    "notes": "사람·글자·번호 없음"
+    "notes": "사람·글자·번호 없음 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "towel/photo.jpg"
+    "photo": "towel/photo.jpg",
+    "art": "towel/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    }
   },
   {
@@ -3898,17 +3904,18 @@
     "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
     "review": "2026-11-22 Claude 검토",
     "status": "ok",
-    "notes": "사람·글자·번호 없음"
+    "notes": "사람·글자·번호 없음 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "ukulele/photo.jpg"
+    "photo": "ukulele/photo.jpg",
+    "art": "ukulele/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    }
   },
   {
@@ -3941,17 +3948,18 @@
     "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
     "review": "2026-11-22 Claude 검토",
     "status": "ok",
-    "notes": "아래에 매달린 캐릭터 인형은 잘라 냄"
+    "notes": "아래에 매달린 캐릭터 인형은 잘라 냄 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "wall-clock-2/photo.jpg"
+    "photo": "wall-clock-2/photo.jpg",
+    "art": "wall-clock-2/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    }
   },
   {
@@ -3982,17 +3990,18 @@
     "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
     "review": "2026-11-22 Claude 검토",
     "status": "ok",
-    "notes": "사람·글자·번호 없음"
+    "notes": "사람·글자·번호 없음 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "toilet/photo.jpg"
+    "photo": "toilet/photo.jpg",
+    "art": "toilet/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    }
   },
   {
@@ -4025,17 +4034,18 @@
     "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
     "review": "2026-11-22 Claude 검토",
     "status": "ok",
-    "notes": "손잡이의 작은 상표 글자는 그대로(작게 보임)"
+    "notes": "손잡이의 작은 상표 글자는 그대로(작게 보임) · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "toothbrushes/photo.jpg"
+    "photo": "toothbrushes/photo.jpg",
+    "art": "toothbrushes/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    }
   },
   {
@@ -4070,17 +4080,18 @@
     "consent": "제작자 휴대폰 사진(charum-inbox/phone, 차름 학습 자료로 씀)",
     "review": "2026-11-22 Claude 검토",
     "status": "ok",
-    "notes": "사람·글자·번호 없음"
+    "notes": "사람·글자·번호 없음 · 일상 그림(art.jpg) 2026-11-22 Gemini(선생님), 로고는 tools/gemini-logo.py로 지움"
    },
    "files": {
-    "photo": "basket-plant/photo.jpg"
+    "photo": "basket-plant/photo.jpg",
+    "art": "basket-plant/art.jpg"
    },
    "uses": {
     "shape": {
      "ok": false,
      "shapes": []
     },
-    "puzzle": false
+    "puzzle": true
    }
   }
  ]

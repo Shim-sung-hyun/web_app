@@ -1208,7 +1208,7 @@ function sceneUnit(sc,lv){ return sceneUnits([sc],lv)[0]||null; }
 function mixCount(units,lv){ const c={}; units.forEach(u=>u.objs.forEach(o=>{ c[o.cat]=(c[o.cat]||0)+1; })); return Object.keys(MIX[lv]).map(k=>CAT_NAME[k]+' '+(c[k]||0)).join(' · '); }
 /* 그림으로 보기(2026-11-22 선생님): 001·002가 쓰는 '일상 그림'(media/photos/<id>/art.jpg — 사진과 같은 짜임으로 그린 그림)으로 같은 수업을 함.
    물체 자리(0~1000 비율)가 그대로 맞아 사진 수업과 똑같이 돎. 일상 그림이 있는 사진만(없는 사진은 001 art-maker로 만들면 ART_IDS에 더함) */
-const ART_IDS=new Set(['bell','board','bookshelf','bottles','bus-wheel','car-wheel','computer-desk','cup-drawings','desks','door','hallway','manhole','milk-basket','mug-monitor','parking-sign','recycle-bins','school-bus','shoe-rack','sink-cabinet','tissue','wall-clock','water-purifier']);
+const ART_IDS=new Set(['laptop','shampoo-bottles','washbasin','towel','ukulele','wall-clock-2','toilet','toothbrushes','basket-plant','potted-tree','street-cat','bell','board','bookshelf','bottles','bus-wheel','car-wheel','computer-desk','cup-drawings','desks','door','hallway','manhole','milk-basket','mug-monitor','parking-sign','recycle-bins','school-bus','shoe-rack','sink-cabinet','tissue','wall-clock','water-purifier']);
 SCENES.forEach(sc=>{ if(ART_IDS.has(sc.id)) SC[sc.id+'~a']=Object.assign({},sc,{id:sc.id+'~a',src:PHO+sc.id+'/art.jpg',art:true}); });
 const viewOf=sc=>S.view==='art'?SC[sc.id+'~a']:sc;
 const libScenes=lv=>SCENES.filter(sc=>lvObjs(sc,lv).length&&(S.view!=='art'||ART_IDS.has(sc.id)));
