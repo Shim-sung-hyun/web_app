@@ -312,6 +312,10 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .cf-lead b { color:#0057A8; }
 .gem-fold summary { cursor:pointer; font-size:11px; font-weight:800; color:#444; list-style:none; padding:2px 0; }
 .gem-fold summary::-webkit-details-marker { display:none; }
+.api-credentials.key-nudge { background:#fff6c7; border-color:#E8A800; animation:keyNudge 1s ease-in-out 3; }
+.api-credentials.key-nudge input#cf-account-id, .api-credentials.key-nudge input#cf-api-token { border:2px solid #E8A800; }
+@keyframes keyNudge { 50% { box-shadow:0 0 0 6px rgba(255,215,0,.55); } }
+#ph { cursor:pointer; }
 .key-link { font-size:10px; font-weight:800; color:#0057A8; margin-left:4px; white-space:nowrap; }
 .gem-fold .credential-row { margin-top:6px; }
 #ai-route-info { font-size:10px; line-height:1.45; color:#555; }
@@ -421,7 +425,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
   <div class="canvas" id="canvas">
     <div class="placeholder" id="ph">
       <h1>POP ART!</h1>
-      <p>우편함을 눌러<br>사진을 넣어 주세요!</p>
+      <p>여기를 눌러<br>사진을 넣어 주세요!</p>
     </div>
     <div class="loading" id="loading">
       <div class="spinner"></div>
@@ -692,14 +696,21 @@ function setButtons(on){ document.querySelectorAll('.mbtn, #btn-detect').forEach
 
 function openPanel() { document.querySelector('.app').classList.add('settings-open'); document.getElementById('control-panel').classList.add('open'); document.getElementById('panel-toggle').setAttribute('aria-expanded', 'true'); }
 function togglePanel() { document.querySelector('.app').classList.contains('settings-open') ? closePanel(true) : openPanel(); }
-document.getElementById('canvas').addEventListener('click', () => closePanel());
-openPanel();                                   // 처음에는 펼친 채로 시작 (사진 넣기)
+document.getElementById('canvas').addEventListener('click', () => { if (!srcImg && !busy && !document.querySelector('.app').classList.contains('settings-open')) pickNewPhoto(); else closePanel(); });   // 사진 전 접힌 첫 화면: 그림판을 누르면 사진 고르기
+// 처음에는 접힌 채로 시작 (2026-11-23, 선생님 요청). 사진은 그림판 글·화살표·우편함으로 넣음.
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
 function closePanel(force) {
   if (!force && !srcImg) return;               // 사진을 넣기 전에는 그림판을 눌러도 접지 않음 (화살표로는 접힘)
   document.querySelector('.app').classList.remove('settings-open'); document.getElementById('control-panel').classList.remove('open');
   document.getElementById('panel-toggle').setAttribute('aria-expanded', 'false');
 }
+function keyNudge() {                          // 기본 계정 3회를 다 쓰면: 설정 창을 열고 Cloudflare 칸을 노랗게 짚음
+  openPanel();
+  const box = document.querySelector('.api-credentials'), id = document.getElementById('cf-account-id');
+  box.classList.remove('key-nudge'); void box.offsetWidth; box.classList.add('key-nudge');
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => id.focus({ preventScroll: true }), 400);
+}
+['cf-account-id', 'cf-api-token'].forEach(k => document.getElementById(k).addEventListener('input', () => document.querySelector('.api-credentials').classList.remove('key-nudge')));
 function openSettingsOnly() {
   openPanel();
 }
@@ -1301,6 +1312,7 @@ async function generate(mode) {
       : rawError;
     document.getElementById('error-box').innerHTML = `오류 😢<br><br><strong>${displayError.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}</strong><br><br><small>${quotaZero ? '사진 분석용 Gemini 모델과 그림 생성 모델은 별도입니다.' : /모두 사용했|소진/.test(rawError) ? '' : '잠시 후 다시 시도해 주세요.'}</small>`;
     show('error');
+    if (/모두 사용했|소진|daily limit/i.test(rawError)) keyNudge();
   } finally {
     busy = false;
     setButtons(!!b64);
