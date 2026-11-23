@@ -1,6 +1,6 @@
 {
 "about": "차름 자료 전체 목록 — tools/media-index.py가 만듦(손으로 고치지 않음). 찾기: python3 tools/find-media.py 낱말",
-"count": 2807,
+"count": 2809,
 "base": "https://shim-sung-hyun.github.io/web_app/media/",
 "items": [
 {"path": "animals/akeo.webp", "names": ["akeo", "악어"], "kind": "그림", "style": "빙 연필풍", "group": "animals", "used_by": ["008", "009"]},
@@ -331,6 +331,8 @@
 {"path": "archive/replaced/materials/ceramic-s2.webp", "names": ["ceramic", "도자기"], "kind": "그림", "style": "다시 받기 전", "group": "archive", "archived": true, "why": "010 컵 3장·도자기 조각을 물질이 더 또렷한 그림으로 바꿈(2026-11-22 선생님 — 도자기는 깨진 조각)"},
 {"path": "archive/replaced/materials/ceramic-s3.webp", "names": ["ceramic", "도자기"], "kind": "그림", "style": "다시 받기 전", "group": "archive", "archived": true, "why": "010 컵 3장·도자기 조각을 물질이 더 또렷한 그림으로 바꿈(2026-11-22 선생님 — 도자기는 깨진 조각)"},
 {"path": "archive/replaced/materials/ceramic-s4.webp", "names": ["ceramic", "도자기"], "kind": "그림", "style": "다시 받기 전", "group": "archive", "archived": true, "why": "010 컵 3장·도자기 조각을 물질이 더 또렷한 그림으로 바꿈(2026-11-22 선생님 — 도자기는 깨진 조각)"},
+{"path": "archive/replaced/play/river/castle-paper.webp", "names": ["castle-paper", "종이"], "kind": "그림", "style": "다시 받기 전", "group": "archive", "archived": true, "why": "다시 받음: 고무 성 = 풍선 아트, 종이 성 = 종이 질감(선생님 2026-11-23)"},
+{"path": "archive/replaced/play/river/castle-rubber.webp", "names": ["castle-rubber", "고무"], "kind": "그림", "style": "다시 받기 전", "group": "archive", "archived": true, "why": "다시 받음: 고무 성 = 풍선 아트, 종이 성 = 종이 질감(선생님 2026-11-23)"},
 {"path": "archive/replaced/stage/legacy/nature/polar/items/cubes.webp", "names": ["cubes", "얼음 덩이"], "kind": "그림", "style": "다시 받기 전", "group": "archive", "archived": true, "why": "얼음을 벽돌·정육면체로 쌓은 꼴이라 사람이 만든 것처럼 보임(자연스러운 꼴 아님) — 66번으로 다시"},
 {"path": "archive/replaced/stage/legacy/nature/polar/items/iceblocks.webp", "names": ["iceblocks", "얼음 덩이"], "kind": "그림", "style": "다시 받기 전", "group": "archive", "archived": true, "why": "얼음을 벽돌·정육면체로 쌓은 꼴이라 사람이 만든 것처럼 보임(자연스러운 꼴 아님) — 66번으로 다시"},
 {"path": "archive/replaced/stage/legacy/nature/polar/items/icecliff.webp", "names": ["icecliff", "얼음 절벽"], "kind": "그림", "style": "다시 받기 전", "group": "archive", "archived": true, "why": "얼음을 벽돌·정육면체로 쌓은 꼴이라 사람이 만든 것처럼 보임(자연스러운 꼴 아님) — 66번으로 다시"},
@@ -2453,7 +2455,7 @@
 {"path": "stage/nature/wetland/src/waterstones-2.jpg", "names": ["waterstones", "논·습지"], "kind": "원본", "style": "받은 원본(손질용)", "group": "stage", "used_by": ["008", "009"]},
 {"path": "stage/nature/wetland/src/willow-1.jpg", "names": ["willow", "버드나무", "논·습지"], "kind": "원본", "style": "받은 원본(손질용)", "group": "stage", "used_by": ["008", "009"]},
 {"path": "stage/nature/wetland/src/willow-2.jpg", "names": ["willow", "버드나무", "논·습지"], "kind": "원본", "style": "받은 원본(손질용)", "group": "stage", "used_by": ["008", "009"]},
-{"path": "voice/azure-sunhi-0.92/", "names": ["azure-sunhi-0.92", "Azure ko-KR-SunHiNeural"], "kind": "소리 묶음", "style": "Azure ko-KR-SunHiNeural 빠르기 0.92", "group": "voice", "count": 1168, "used_by": ["008", "010"]},
+{"path": "voice/azure-sunhi-0.92/", "names": ["azure-sunhi-0.92", "Azure ko-KR-SunHiNeural"], "kind": "소리 묶음", "style": "Azure ko-KR-SunHiNeural 빠르기 0.92", "group": "voice", "count": 1198, "used_by": ["008", "010"]},
 {"path": "voice/elevenlabs-roger/", "names": ["elevenlabs-roger", "ElevenLabs Roger - Laid-Back Casual Resonant"], "kind": "소리 묶음", "style": "ElevenLabs Roger - Laid-Back Casual Resonant 빠르기", "group": "voice", "count": 708, "used_by": ["008", "009"]},
 {"path": "voice/leda-0.90/", "names": ["leda-0.90", "Leda"], "kind": "소리 묶음", "style": "Leda 빠르기 0.9", "group": "voice", "count": 3339, "used_by": ["007"]},
 {"path": "voice/leda-0.92/", "names": ["leda-0.92", "Leda"], "kind": "소리 묶음", "style": "Leda 빠르기 0.92", "group": "voice", "count": 1138, "used_by": ["001", "003", "005", "006", "008", "009"]},
