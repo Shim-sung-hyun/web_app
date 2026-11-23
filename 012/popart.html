@@ -504,13 +504,13 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
         <div class="help-body">
           <b>Cloudflare AI (필수 입력은 아닙니다)</b>
           <p>본인 계정으로 사용하려면 Account ID와 API Token을 모두 입력하세요. 두 항목을 비워 두면 기본 제공 계정으로 하루 3회 이용합니다. Gemini 키가 없으면 Cloudflare의 비전 AI가 사진을 분석하고, 이미지 AI가 팝아트를 생성합니다.</p>
-          <p><a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener noreferrer">Cloudflare 토큰 받기 ↗</a></p>
+          <p><a href="https://www.charum.org/study/doc.html?cloudflare_guide" target="_blank" rel="noopener noreferrer">Cloudflare 토큰 받는 법 ↗</a></p>
           <p>토큰은 Workers AI 권한을 부여한 API Token을 사용하세요. Global API Key는 입력하지 마세요. 입력값은 브라우저 저장소에 저장하지 않으며 페이지가 열려 있는 동안 메모리에만 보관합니다.</p>
           <p><b>토큰 전달 안내:</b> Gemini 키와 달리 Cloudflare Account ID와 API Token은 변환 요청을 처리하기 위해 이 서비스의 변환 서버(Worker)를 거쳐 Cloudflare로 전달됩니다. 이 서비스 전용으로 Workers AI 권한만 가진 토큰을 새로 만들어 쓰시고, 사용이 끝나면 Cloudflare 대시보드에서 삭제하세요.</p>
           <hr style="border:0;border-top:1px solid #d7e1ee;margin:9px 0;">
           <b>Gemini API (선택 사항)</b>
           <p>Gemini 키를 입력하면 Gemini가 사진을 분석합니다. 키가 없거나 입력하지 않아도 Cloudflare AI가 분석하므로 필수는 아닙니다.</p>
-          <p><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio에서 API 키 받기 ↗</a></p>
+          <p><a href="https://www.charum.org/study/doc.html?gemini_guide" target="_blank" rel="noopener noreferrer">Gemini 키 받는 법 ↗</a></p>
           <p>Gemini 키는 이 브라우저에서 Google로 직접 전송되며 Cloudflare Worker로 보내지지 않습니다.</p>
           <p><b>한도 초과·오류 시 안내:</b> Gemini가 한도 초과나 오류로 막히면 Cloudflare AI로 자동 전환됩니다. 이때 Cloudflare Account ID와 API Token을 입력하지 않았다면 기본 제공 계정(하루 3회)이 사용됩니다. 전환 후에도 본인 계정의 한도만 쓰려면 Cloudflare 정보도 함께 입력하세요.</p>
         </div>

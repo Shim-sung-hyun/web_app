@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cloudflare 토큰 받는 법</title>
+<!-- Cloudflare Workers AI 토큰 안내 — 차름에서 이것이 필요한 곳은 모두 이 한 페이지에 링크한다(2026-11-23, 새로 만들지 않음).
+     내 도메인: https://www.charum.org/study/doc.html?cloudflare_guide · 원본: 저장소 cloudflare_guide.html -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#24302B;--sub:#5D6A64;--line:#D6DDD8;--pri:#2E6B57;--paper:#F6F4EE;--card:#FFFEFB;--mark:#FFF1B8;--warn:#7A4E00;--warnbg:#FFF6DE}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%;line-height:1.75;word-break:keep-all}
+.wrap{max-width:680px;margin:0 auto;padding:26px 16px 60px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:31px;margin:0 0 4px;color:var(--pri)}
+.lead{margin:0 0 22px;color:var(--sub);font-size:16px}
+h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:25px;margin:0 0 2px;color:var(--pri)}
+h3{font-size:17px;margin:20px 0 6px}
+.who{color:var(--sub);font-size:15px;margin:2px 0 12px}
+p{margin:8px 0}
+ol,ul{margin:6px 0;padding-left:22px}
+li{margin:5px 0}
+ol.steps>li{padding-left:4px}
+ol.steps>li::marker{font-weight:700;color:var(--pri)}
+.note{color:var(--sub);font-size:14.5px}
+a{color:var(--pri)}
+a.go{display:inline-block;font-weight:700;text-decoration:none;border-bottom:2px solid var(--pri);margin:2px 0}
+a.go::after{content:" ↗";font-weight:400}
+.ui{border:1px solid #AEB9B3;border-radius:5px;padding:0 5px;background:#FAFBF9;font-weight:700;white-space:nowrap;font-size:.95em}
+code{background:#ECEFEA;border-radius:4px;padding:1px 5px;font-size:14.5px;word-break:break-all}
+.warnline{background:var(--warnbg);color:var(--warn);padding:10px 14px;border-left:4px solid #E2B44A;margin:12px 0;font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{width:38%;font-weight:700}
+.where li b:first-child{color:var(--pri)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Cloudflare 토큰 받는 법</h1>
+<p class="who">[차름 미술] 팝아트는 아무것도 넣지 않아도 기기마다 하루 3번 됩니다. 더 많이 쓰려면 선생님의 Cloudflare 계정(무료)을 넣습니다. Account ID와 API Token, 두 가지가 필요합니다.</p>
+<ol class="steps">
+  <li><a class="go" href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noopener">Cloudflare 가입</a> <span class="note">(이미 있으면 <a href="https://dash.cloudflare.com/" target="_blank" rel="noopener">로그인</a>)</span> — 무료 요금제로 충분합니다.</li>
+  <li><b>Account ID 복사</b>: 로그인한 첫 화면에서 계정 이름 옆 <span class="ui">⋯</span> → <span class="ui">Copy account ID</span>를 누르거나, 왼쪽 메뉴 <span class="ui">AI</span> → <span class="ui">Workers AI</span> 화면에 보이는 Account ID를 복사합니다(32자리 영문·숫자).</li>
+  <li><a class="go" href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener">API 토큰 화면 열기</a><br><span class="ui">Create Token</span> → 본보기 목록에서 <b>Workers AI</b>의 <span class="ui">Use template</span> → <span class="ui">Continue to summary</span> → <span class="ui">Create Token</span>. 나온 토큰을 복사합니다(이 화면을 닫으면 다시 볼 수 없음).
+    <p class="note"><b>Global API Key는 넣지 마세요.</b> Workers AI 권한만 있는 토큰을 이 일 전용으로 새로 만듭니다.</p></li>
+  <li>팝아트 오른쪽 <span class="ui">⚙ 편집 설정</span>의 ① Account ID, ② API Token 칸에 붙여 넣습니다.</li>
+</ol>
+<p class="note">처음 개인 계정으로 사진 분석을 쓸 때 모델 사용 동의가 한 번 필요할 수 있습니다 — <a href="https://developers.cloudflare.com/workers-ai/models/llama-3.2-11b-vision-instruct/" target="_blank" rel="noopener">모델 안내 페이지</a>의 동의(agree) 절차를 따릅니다.</p>
+<div class="warnline">Cloudflare 정보는 브라우저에 저장하지 않고 페이지가 열려 있는 동안만 씁니다(창을 닫으면 다시 넣음). Gemini 키와 달리 차름 변환 서버를 거쳐 Cloudflare로 가므로, 다 쓰면 토큰 화면에서 지우세요.</div>
+<div class="warnline">키는 비밀번호와 같습니다. 남에게 보내거나 화면을 찍어 올리지 마세요. 손으로 옮겨 적지 말고 <b>복사 단추</b>로 복사합니다. 학교·교육청 계정은 막혀 있는 일이 많아 <b>개인 계정</b>을 씁니다.</div>
+</div>
+</body>
+</html>

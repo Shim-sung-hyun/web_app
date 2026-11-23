@@ -21,7 +21,7 @@ GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-find
   art-maker.html             (제작자) 예시 끝 그림 한꺼번에 그리기(결제 Gemini 키)
   line-maker.html            (제작자) 색칠 도안 한꺼번에 그리기(결제 Gemini 키, 신발장 도안이 본보기)
   donate-review.html         (제작자) 기증 사진 확인(donate.php 맨 위 확인 글자)
-  cloud-key.html             Google 음성 키 만드는 법
+  cloud-key.html             옛 주소 — google-tts_guide.html(맨 위)로 넘겨 줌. 키 안내는 gemini_guide·google-tts_guide에 링크
 
 서버(charum.org 의 charum-api/ 폴더 — 원본은 저장소 server/charum-api/): key-relay.php · photo-relay.php · donate.php
   받는 주소: https://shim-sung-hyun.github.io, https://www.charum.org, https://charum.org

@@ -1874,7 +1874,7 @@ function renderPhotoPick(A){
     return; }
   /* 사진 받기 */
   /* 사진 받기는 선생님 개인 Gemini API 키가 있어야 함(2026-11-21 선생님) — 늘 위에 알리고 받는 법을 자세히 */
-  const KEYDOC='https://www.charum.org/study/doc.html?010/gemini-key';
+  const KEYDOC='https://www.charum.org/study/doc.html?gemini_guide';
   const ki=document.createElement('div'); ki.className='keyInfo'+(gemKey()?' have':'');
   ki.innerHTML=gemKey()?'사진 받기는 <b>선생님 개인 Gemini API 키</b>로 해요. 이 기기에는 키가 있어요 ✓'
     :'<b>사진 받기는 선생님 개인 Gemini API 키가 있어야 해요.</b> Google AI Studio에서 개인 Gmail로 무료로 받을 수 있어요(처음 한 번, 5분쯤).<br>'

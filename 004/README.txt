@@ -18,8 +18,8 @@
   poem-recite01~10.jpg      화면 그림 1366×768 (첫 화면, 첫 화면 위 관리 메뉴, 시 전체, 반 가리기, 낱말 첫 글자, 들려주기,
                             따라 읽기, 둥근 글씨, 줄 첫 글자, 새 시 넣기)
   poem-recite-promo.jpg     게시판 맨 위 홍보 그림 (1366×768)
-  cloud-key.html            Cloud 키 넣는 방법 안내 페이지 (앱의 관리 메뉴에서 연결)
-                            주소: https://www.charum.org/study/doc.html?004/cloud-key
+  cloud-key.html            옛 주소 — google-tts_guide.html로 넘겨 줌(2026-11-23)
+                            키 안내: https://www.charum.org/study/doc.html?google-tts_guide
   poem-recite_manual.html   게시판 본문용 짧은 소개
   poem-recite_guide.html    자세한 설명 페이지
                             주소: https://www.charum.org/study/doc.html?004/poem-recite_guide
@@ -35,7 +35,7 @@
 [내 도메인에서 열기] (2026-10-21)
 - 주소: https://www.charum.org/study/004/poem-recite.html (게시판 app_url도 이 주소로)
 - 서버 study/004/ 폴더에는 server-loader.html(1KB)을 poem-recite.html 이름으로 한 번만 올린다. 열릴 때마다 GitHub의 최신 poem-recite.html을 받아 그 주소에서 펼친다 → 앱을 고쳐도 GitHub에만 올리면 된다.
-- 앱이 읽는 자료(목소리·예시 사진·cloud-key.html 등)는 GitHub 절대 주소로 읽는다. 상대 주소를 새로 쓰지 말 것.
+- 앱이 읽는 자료(목소리·예시 사진·키 안내 *_guide.html 등)는 GitHub 절대 주소로 읽는다. 상대 주소를 새로 쓰지 말 것.
 - 기록·키는 그 기기 브라우저에 주소(도메인)별로 저장된다. 서버에는 아무것도 저장되지 않는다.
 - 휴대폰으로 키 받기(key-relay.php)·사진 보내기·AI 중계는 받는 주소 목록에 https://www.charum.org 가 있어야 한다.
 

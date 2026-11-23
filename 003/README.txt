@@ -19,7 +19,7 @@
   키 없이 내장 목소리 24마디(2026-10-22 모두 넣음, 만들기 화면은 지움. 새 말이 생기면 001처럼 만들기 화면을 다시 만들어 쓰고 지움).
   말 24마디 가운데 하나라도 없으면 그 수업 전체를 기기 목소리로(섞지 않음).
   Cloud 키·휴대폰으로 키 받기·목소리 세 가지는 앱에서 뺐다.
-  cloud-key.html은 이 앱에선 안 쓰지만 공통 key-send.html·photo-send.html이 링크하므로 지우지 않는다.
+  cloud-key.html은 옛 주소 — google-tts_guide.html로 넘겨 줌(게시판 옛 링크 때문에 지우지 않음).
 
 저장 칸
   localStorage colorFind.* (설정, rec = 기록 중 학생, log = 기록), 명단 webapp.students(다른 앱과 함께)

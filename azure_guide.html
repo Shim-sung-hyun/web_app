@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Azure 음성 키 받는 법</title>
+<!-- Azure Speech 키 안내 — 차름에서 이것이 필요한 곳은 모두 이 한 페이지에 링크한다(2026-11-23, 새로 만들지 않음).
+     내 도메인: https://www.charum.org/study/doc.html?azure_guide · 원본: 저장소 azure_guide.html -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#24302B;--sub:#5D6A64;--line:#D6DDD8;--pri:#2E6B57;--paper:#F6F4EE;--card:#FFFEFB;--mark:#FFF1B8;--warn:#7A4E00;--warnbg:#FFF6DE}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%;line-height:1.75;word-break:keep-all}
+.wrap{max-width:680px;margin:0 auto;padding:26px 16px 60px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:31px;margin:0 0 4px;color:var(--pri)}
+.lead{margin:0 0 22px;color:var(--sub);font-size:16px}
+h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:25px;margin:0 0 2px;color:var(--pri)}
+h3{font-size:17px;margin:20px 0 6px}
+.who{color:var(--sub);font-size:15px;margin:2px 0 12px}
+p{margin:8px 0}
+ol,ul{margin:6px 0;padding-left:22px}
+li{margin:5px 0}
+ol.steps>li{padding-left:4px}
+ol.steps>li::marker{font-weight:700;color:var(--pri)}
+.note{color:var(--sub);font-size:14.5px}
+a{color:var(--pri)}
+a.go{display:inline-block;font-weight:700;text-decoration:none;border-bottom:2px solid var(--pri);margin:2px 0}
+a.go::after{content:" ↗";font-weight:400}
+.ui{border:1px solid #AEB9B3;border-radius:5px;padding:0 5px;background:#FAFBF9;font-weight:700;white-space:nowrap;font-size:.95em}
+code{background:#ECEFEA;border-radius:4px;padding:1px 5px;font-size:14.5px;word-break:break-all}
+.warnline{background:var(--warnbg);color:var(--warn);padding:10px 14px;border-left:4px solid #E2B44A;margin:12px 0;font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{width:38%;font-weight:700}
+.where li b:first-child{color:var(--pri)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Azure 음성 키 받는 법</h1>
+<p class="who">앱 목소리 묶음 <code>azure-sunhi-0.92</code>(선희 목소리)을 만들 때 씁니다. 키는 <a href="https://shim-sung-hyun.github.io/web_app/media/voice/voice-maker.html" target="_blank" rel="noopener">목소리 만들기</a> 화면에 넣습니다.</p>
+<ol class="steps">
+  <li><a class="go" href="https://azure.microsoft.com/ko-kr/free/" target="_blank" rel="noopener">Azure 무료 계정 만들기</a> <span class="note">(이미 있으면 <a href="https://portal.azure.com/" target="_blank" rel="noopener">Azure 포털</a>)</span> — 카드 확인이 있지만 무료(F0)로 쓰면 요금이 나가지 않습니다.</li>
+  <li><a class="go" href="https://portal.azure.com/#create/Microsoft.CognitiveServicesSpeechServices" target="_blank" rel="noopener">Speech 리소스 만들기</a><br>리소스 그룹은 <span class="ui">새로 만들기</span>로 <code>charum</code>, 지역은 <b>Korea Central</b>, 이름은 아무거나, 가격 책정 계층은 <b>Free F0</b> → <span class="ui">검토 + 만들기</span> → <span class="ui">만들기</span>.</li>
+  <li>다 만들어지면 <span class="ui">리소스로 이동</span> → 왼쪽 <span class="ui">키 및 엔드포인트</span>에서 <b>키 1</b>과 <b>지역</b>(<code>koreacentral</code>)을 복사합니다.</li>
+  <li>목소리 만들기 화면에서 서비스 <span class="ui">Azure Speech</span>를 고르고 키와 지역을 넣습니다.</li>
+</ol>
+<p class="note">무료(F0)는 1분에 20문장까지라 목소리 만들기가 문장 사이에 3초씩 쉽니다. 목소리 미리 듣기: <a href="https://speech.microsoft.com/portal/voicegallery" target="_blank" rel="noopener">Speech Studio 목소리 모음</a></p>
+<div class="warnline">키는 비밀번호와 같습니다. 남에게 보내거나 화면을 찍어 올리지 마세요. 손으로 옮겨 적지 말고 <b>복사 단추</b>로 복사합니다. 학교·교육청 계정은 막혀 있는 일이 많아 <b>개인 계정</b>을 씁니다.</div>
+</div>
+</body>
+</html>

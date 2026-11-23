@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Google 음성 키 받는 법</title>
+<!-- Google Cloud Text-to-Speech API 키 안내 — 차름에서 이것이 필요한 곳은 모두 이 한 페이지에 링크한다(2026-11-23, 새로 만들지 않음).
+     내 도메인: https://www.charum.org/study/doc.html?google-tts_guide · 원본: 저장소 google-tts_guide.html -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#24302B;--sub:#5D6A64;--line:#D6DDD8;--pri:#2E6B57;--paper:#F6F4EE;--card:#FFFEFB;--mark:#FFF1B8;--warn:#7A4E00;--warnbg:#FFF6DE}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%;line-height:1.75;word-break:keep-all}
+.wrap{max-width:680px;margin:0 auto;padding:26px 16px 60px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:31px;margin:0 0 4px;color:var(--pri)}
+.lead{margin:0 0 22px;color:var(--sub);font-size:16px}
+h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:25px;margin:0 0 2px;color:var(--pri)}
+h3{font-size:17px;margin:20px 0 6px}
+.who{color:var(--sub);font-size:15px;margin:2px 0 12px}
+p{margin:8px 0}
+ol,ul{margin:6px 0;padding-left:22px}
+li{margin:5px 0}
+ol.steps>li{padding-left:4px}
+ol.steps>li::marker{font-weight:700;color:var(--pri)}
+.note{color:var(--sub);font-size:14.5px}
+a{color:var(--pri)}
+a.go{display:inline-block;font-weight:700;text-decoration:none;border-bottom:2px solid var(--pri);margin:2px 0}
+a.go::after{content:" ↗";font-weight:400}
+.ui{border:1px solid #AEB9B3;border-radius:5px;padding:0 5px;background:#FAFBF9;font-weight:700;white-space:nowrap;font-size:.95em}
+code{background:#ECEFEA;border-radius:4px;padding:1px 5px;font-size:14.5px;word-break:break-all}
+.warnline{background:var(--warnbg);color:var(--warn);padding:10px 14px;border-left:4px solid #E2B44A;margin:12px 0;font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{width:38%;font-weight:700}
+.where li b:first-child{color:var(--pri)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Google 음성 키 받는 법</h1>
+<p class="who">선생님이 넣은 시·낱말, 내 사진의 물건 이름을 앱에 들어 있는 목소리와 <b>같은 목소리</b>로 읽을 때만 필요합니다. 없으면 그런 말은 기기 목소리로 읽습니다. 카드 등록이 필요하고, 컴퓨터에서 15분쯤 걸립니다.</p>
+<p class="note">매달 일정량은 요금이 나가지 않고, 한 번 만든 목소리는 기기에 저장해 다시 씁니다. 최신 요금: <a href="https://cloud.google.com/text-to-speech/pricing" target="_blank" rel="noopener">Text-to-Speech 가격</a></p>
+
+<h3>만들기</h3>
+<ol class="steps">
+  <li><a class="go" href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud 콘솔 열기</a><br>개인 구글 계정으로 로그인합니다. 처음이면 나라(대한민국)를 고르고 약관에 동의합니다.</li>
+  <li>맨 위 <span class="ui">프로젝트 선택</span> → <span class="ui">새 프로젝트</span> → 이름 <code>차름 목소리</code> → <span class="ui">만들기</span>. 맨 위 칸에 이 프로젝트 이름이 보이는지 확인합니다. 아래 단계는 모두 이 프로젝트에서 합니다.</li>
+  <li><a class="go" href="https://console.cloud.google.com/billing" target="_blank" rel="noopener">결제 화면 열기</a><br>결제 계정을 만들어 카드를 등록하고 <b>이 프로젝트에 연결</b>합니다. 이미 있으면 <span class="ui">결제 계정 연결</span>만.</li>
+  <li><a class="go" href="https://console.cloud.google.com/apis/library/texttospeech.googleapis.com" target="_blank" rel="noopener">Text-to-Speech 화면 열기</a><br>프로젝트 이름이 맞는지 보고 <span class="ui">사용</span>(<span class="ui">Enable</span>)을 누릅니다. <span class="ui">관리</span>가 보이면 이미 켜져 있습니다.</li>
+  <li><a class="go" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">사용자 인증 정보 열기</a><br><span class="ui">+ 사용자 인증 정보 만들기</span> → <span class="ui">API 키</span>. 만드는 창에서:
+    <ul>
+      <li><b>API 제한사항</b>: <span class="ui">키 제한</span> → <b>Cloud Text-to-Speech API</b> 하나만 체크.</li>
+      <li><b>애플리케이션 제한사항</b>: <span class="ui">웹사이트</span> → 아래 세 줄을 하나씩 <span class="ui">추가</span>. 세 줄 모두 넣어야 어느 주소에서 열어도 됩니다.<br><code>https://www.charum.org/*</code><br><code>https://charum.org/*</code><br><code>https://shim-sung-hyun.github.io/*</code></li>
+      <li>"서비스 계정을 통해 API 호출 인증" 칸은 체크하지 않습니다.</li>
+    </ul>
+    <span class="ui">만들기</span>를 누르면 <code>AIza</code>로 시작하는 키가 나옵니다. 복사 단추로 복사합니다.
+    <p class="note">나중에도 목록에서 키 이름 → <span class="ui">키 표시</span>로 다시 복사할 수 있습니다. 창에 제한 칸이 없으면 만든 뒤 키 이름을 눌러 넣고 저장합니다.</p></li>
+  <li>(권장) <a href="https://console.cloud.google.com/billing/budgets" target="_blank" rel="noopener">예산 및 알림</a> → <span class="ui">예산 만들기</span>에서 <code>1,000원</code>처럼 작게 정해 두면 혹시 요금이 생길 때 메일로 알려 줍니다.</li>
+</ol>
+
+<h3>앱에 넣기</h3>
+<ul class="where">
+  <li><b>[차름 국어] 시 외우기</b> — 첫 화면 제목을 눌러 메뉴 → <span class="ui">더 정하기</span> → 목소리 <span class="ui">Google (키)</span> → 키 칸</li>
+  <li><b>[차름 국어] 낱말 익히기</b> — 설정 화면 <span class="ui">목소리</span> → <span class="ui">Google 음성 (키)</span> → 키 칸</li>
+  <li><b>[차름 수학] 도형 찾기</b> — 설정 화면 <span class="ui">더 정하기</span>의 목소리 <span class="ui">내 Google 음성</span> → 키 칸(휴대폰에서 사진 받을 때 함께 물어보기도 함)</li>
+</ul>
+<p>✔️ <span class="ui">들어 보기</span>로 목소리가 나오면 끝입니다.</p>
+
+<h3>잘 안 될 때</h3>
+<table>
+  <tr><th>기기 목소리로만 나와요</th><td>5번의 웹사이트 세 줄과 API 제한(Cloud Text-to-Speech API)을 확인하세요. 고친 뒤 몇 분 지나야 적용됩니다.</td></tr>
+  <tr><th>"API가 사용 설정되지 않음"</th><td>4번을 같은 프로젝트에서 했는지 맨 위 프로젝트 이름을 보세요.</td></tr>
+  <tr><th>"결제를 사용 설정하세요"</th><td>3번 결제 연결이 이 프로젝트에 되어 있는지 보세요.</td></tr>
+  <tr><th>"사용량을 넘었어요"</th><td>그 수업은 기기 목소리로 이어집니다. 다음 날 다시 되거나 결제 화면에서 사용량을 보세요.</td></tr>
+  <tr><th>키를 지우고 싶어요</th><td>앱의 키 칸 옆 <span class="ui">키 지우기</span>. 콘솔에서 지우면 어디에서도 못 씁니다.</td></tr>
+</table>
+<div class="warnline">이 프로젝트(결제 연결)에서 Gemini 키를 만들지 마세요. Gemini 키는 <a href="https://shim-sung-hyun.github.io/web_app/gemini_guide.html">따로 받습니다</a>.</div>
+<div class="warnline">키는 비밀번호와 같습니다. 남에게 보내거나 화면을 찍어 올리지 마세요. 손으로 옮겨 적지 말고 <b>복사 단추</b>로 복사합니다. 학교·교육청 계정은 막혀 있는 일이 많아 <b>개인 계정</b>을 씁니다.</div>
+</div>
+</body>
+</html>

@@ -18,7 +18,7 @@
 - word-learn-promo.jpg     게시판 맨 위 홍보 그림 (1366×768)
 - record-guide.html        기록 활용법(가상의 학생 홍길동의 한 달 기록 예시, 설정 화면·교사용 기록에서 연결)
 - word-learn-rec1~2.jpg   기록 활용법 그림(한 장 요약 · 수준 알림과 다시 넣은 낱말)
-- cloud-key.html           Cloud 키 넣는 방법 (앱에서 연결)
+- cloud-key.html           옛 주소 — google-tts_guide.html로 넘겨 줌. 앱의 키 안내는 세 줄을 한 줄로 줄이고 google-tts_guide에 링크(2026-11-23)
 - (그림은 media/로 옮김, 2026-11-04) media/words/  낱말 그림 349장 (webp) + pics.json
                            몸 부위(손·발·눈·코·입·귀·머리·이·다리, 2편 얼굴·배·팔·무릎·손톱·발톱)는 같은 틀로 다시 그림(Gemini, 2026-10-20).
                            보기에서 그 부위만 비춤(스포트라이트, 한 번), 고르기·놀이에서는 비추지 않음.

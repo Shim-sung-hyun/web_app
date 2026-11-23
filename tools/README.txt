@@ -55,6 +55,7 @@
   media/stage/install.html          무대 설치(장소 고르기부터) · arrange.html 배치 고치기 · touchup.html 소품 손질(짝 src-align.py)
   media/stage/prop-room.html        소품실 보기(짝 prop-room.py) · test.html 무대 보기 · hide-test.html 숨기기 시험(?place=) · hide-judge.html 숨기기 평가
   tools/promo-pencil.html           홍보 그림 찍기(위 [검사·캡처]) · tools/gemini-model-test.html Gemini 키·모델 연결 시험
+  gemini_guide · google-tts_guide · cloudflare_guide · azure_guide · bing_guide .html  키·서비스 받는 법(서비스마다 하나, 저장소 맨 위) — 필요한 곳은 여기에 링크만(2026-11-23)
   (relay/·server/study/의 화면은 수업용 사진 다리 — 앱의 일부라 여기 넣지 않음)
 
 ■ 보관함(tools/attic/, 2026-11-14 넣음 — 2027-05-13 뒤 지울 수 있음): 자세한 까닭은 tools/attic/LIST.txt

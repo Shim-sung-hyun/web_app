@@ -534,12 +534,8 @@ body.tmode #stage,body.tmode #game{pointer-events:none}
      <div class="row keybar" style="margin:10px 0 4px"><button class="kr-open" data-kr="1" type="button" id="krBoth">📱 휴대폰으로 받기</button><span class="note">전자칠판이라면 휴대폰에서 Google 음성 키를 보내요.</span></div>
      <details class="keyhelp">
       <summary>Google 음성 키 받는 법</summary>
-      <ol>
-       <li><a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud 콘솔</a>에서 프로젝트를 고르고(없으면 만들기), <a href="https://console.cloud.google.com/billing" target="_blank" rel="noopener">결제 계정</a>을 연결해요. 매달 100만 자까지 무료예요.</li>
-       <li><a href="https://console.cloud.google.com/apis/library/texttospeech.googleapis.com" target="_blank" rel="noopener">Cloud Text-to-Speech API</a> 화면에서 <b>사용</b>을 눌러요.</li>
-       <li><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">사용자 인증 정보</a> → <b>사용자 인증 정보 만들기</b> → <b>API 키</b>를 눌러 키를 복사하고, 아래 칸에 붙여 넣어요.</li>
-      </ol>
-      <a href="https://www.charum.org/study/doc.html?007/cloud-key" target="_blank" rel="noopener">Cloud 키 넣는 방법 (자세히)</a>
+      <p style="margin:6px 0">Google Cloud에서 결제를 연결하고 Text-to-Speech를 켠 뒤 키를 만들어요(처음 한 번, 컴퓨터로 15분쯤).</p>
+      <a href="https://www.charum.org/study/doc.html?google-tts_guide" target="_blank" rel="noopener">키 받는 법 자세히 보기</a>
      </details>
      <div class="keyline" style="margin-top:6px">
       <input id="ttsKey" type="password" placeholder="Cloud 키를 넣어 주세요" autocomplete="off" spellcheck="false">

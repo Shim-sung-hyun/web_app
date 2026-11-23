@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>빙 이미지 크리에이터 쓰는 법</title>
+<!-- Bing Image Creator 안내 — 차름에서 이것이 필요한 곳은 모두 이 한 페이지에 링크한다(2026-11-23, 새로 만들지 않음).
+     내 도메인: https://www.charum.org/study/doc.html?bing_guide · 원본: 저장소 bing_guide.html -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#24302B;--sub:#5D6A64;--line:#D6DDD8;--pri:#2E6B57;--paper:#F6F4EE;--card:#FFFEFB;--mark:#FFF1B8;--warn:#7A4E00;--warnbg:#FFF6DE}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-text-size-adjust:100%;line-height:1.75;word-break:keep-all}
+.wrap{max-width:680px;margin:0 auto;padding:26px 16px 60px}
+h1{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:31px;margin:0 0 4px;color:var(--pri)}
+.lead{margin:0 0 22px;color:var(--sub);font-size:16px}
+h2{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;font-size:25px;margin:0 0 2px;color:var(--pri)}
+h3{font-size:17px;margin:20px 0 6px}
+.who{color:var(--sub);font-size:15px;margin:2px 0 12px}
+p{margin:8px 0}
+ol,ul{margin:6px 0;padding-left:22px}
+li{margin:5px 0}
+ol.steps>li{padding-left:4px}
+ol.steps>li::marker{font-weight:700;color:var(--pri)}
+.note{color:var(--sub);font-size:14.5px}
+a{color:var(--pri)}
+a.go{display:inline-block;font-weight:700;text-decoration:none;border-bottom:2px solid var(--pri);margin:2px 0}
+a.go::after{content:" ↗";font-weight:400}
+.ui{border:1px solid #AEB9B3;border-radius:5px;padding:0 5px;background:#FAFBF9;font-weight:700;white-space:nowrap;font-size:.95em}
+code{background:#ECEFEA;border-radius:4px;padding:1px 5px;font-size:14.5px;word-break:break-all}
+.warnline{background:var(--warnbg);color:var(--warn);padding:10px 14px;border-left:4px solid #E2B44A;margin:12px 0;font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{width:38%;font-weight:700}
+.where li b:first-child{color:var(--pri)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>빙 이미지 크리에이터 쓰는 법</h1>
+<p class="who">무대·동물·낱말 그림을 받을 때 씁니다. 키는 없고 Microsoft 계정으로 로그인만 합니다.</p>
+<ol class="steps">
+  <li><a class="go" href="https://www.bing.com/images/create" target="_blank" rel="noopener">빙 이미지 크리에이터 열기</a> <span class="note">(직접 칠 때 <code>bing.com/images/create</code>)</span><br>오른쪽 위 <span class="ui">로그인</span>으로 개인 Microsoft 계정(Outlook·Hotmail)에 들어갑니다. 계정이 없으면 <a href="https://signup.live.com/" target="_blank" rel="noopener">Microsoft 계정 만들기</a>.</li>
+  <li>Claude가 드린 <a href="https://shim-sung-hyun.github.io/web_app/media/prompts/copy.html" target="_blank" rel="noopener">프롬프트 복사 화면</a>에서 장마다 <span class="ui">복사</span>를 누르고, 빙의 글 칸에 붙여 넣어 <span class="ui">만들기</span>를 누릅니다.</li>
+  <li>나온 그림 가운데 마음에 드는 것을 눌러 <span class="ui">다운로드</span>합니다. 받은 파일은 이름을 바꾸지 말고 Claude에게 건넵니다(자르기·가장자리 정리는 Claude가 함).</li>
+</ol>
+<p class="note">한 장의 프롬프트는 <b>2000자 안</b>이어야 합니다(복사 화면에서 넘는 장은 빨갛게 표시). 그림을 새로 받기 전에 이미 있는지 Claude가 자료 창고에서 먼저 찾아 보여 드립니다.</p>
+
+</div>
+</body>
+</html>
