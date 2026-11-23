@@ -387,8 +387,8 @@ body.setup #adminBtn{display:none}
 .rvKid{position:absolute;z-index:4;width:110px;height:130px;margin:-124px 0 0 -55px;pointer-events:none}
 .rvKid svg,.rvKid img{width:100%;height:100%;object-fit:contain}
 .rvKid img{transform:scaleX(-1)}.rvKid img.jump{transform:none}   /* 서 있기·빠지기 그림은 왼쪽을 봄 → 뒤집음, 뛰기 그림은 원래 오른쪽 */
-.rvGoal{position:absolute;z-index:1;pointer-events:none;transform-origin:50% 100%}
-.rvGoal img,.rvGoal i{display:block;width:auto;transform:translateY(12%);transition:clip-path .9s ease}   /* 성은 둑 뒤에 두고 12% 내려 밑동 풀밭 조각이 둑 풀에 묻히게(떠 보이지 않게). 살짝 묻히게 */
+.rvGoal{position:absolute;z-index:3;pointer-events:none;transform-origin:50% 100%}
+.rvGoal img,.rvGoal i{display:block;width:auto;transition:clip-path .9s ease}   /* 성은 둑 뒤에 두고 12% 내려 밑동 풀밭 조각이 둑 풀에 묻히게(떠 보이지 않게). 살짝 묻히게 */
 .rvGoal.grow{animation:rvGrow .6s ease}.rvGoal.done{animation:rvDone 1s ease}
 @keyframes rvGrow{40%{transform:scale(1.03)}}
 @keyframes rvDone{30%{transform:scale(1.08) translateY(-8px)}60%{transform:scale(.98)}}
@@ -2121,6 +2121,8 @@ const KID_SVG=pose=>'<svg viewBox="0 0 100 120" aria-hidden="true"><g stroke="#5
 const FISH_SVG=happy=>'<svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="#2F5D63" stroke-width="3" stroke-linejoin="round"><path d="M92 40 L116 20 L112 40 L116 60 Z" fill="#6FB7A8"/><ellipse cx="56" cy="40" rx="42" ry="27" fill="#8FD0C0"/>'
   +'<path d="M40 18 Q56 4 70 16" fill="#6FB7A8"/>'+(happy?'<path d="M28 34 q6 -6 12 0" fill="none"/>':'<circle cx="34" cy="34" r="5" fill="#fff"/><circle cx="33" cy="34" r="2.6" fill="#2B2A30" stroke="none"/>')+'<path d="M20 46 Q28 54 38 48" fill="none"/></g></svg>';
 const CASTLE_MASK='url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M8 100 V44 h8 v-8 h8 v8 h8 V30 l10 -18 10 18 v14 h8 v-8 h8 v8 h8 v-8 h8 v8 h8 V100 Z M44 100 V78 q6 -8 12 0 V100Z" fill-rule="evenodd"/></svg>')+'")';
+/* 성 그림 밑 풀밭 조각의 두께(그림 높이 비율, 2026-11-23 잼) — 그만큼 내려 풀밭 조각 윗선이 둑 풀밭 선에 오게: 성은 둑 앞에 서고 뜨지도 묻히지도 않음 */
+const CASTLE_BASE={ceramic:.083,cloth:.072,glass:.084,metal:.09,paper:.105,plastic:.099,rubber:.088,stone:.105,wood:.111};
 function castlePic(m,h){ const src=rvImg('castle-'+m), mk="-webkit-mask-image:"+CASTLE_MASK.replace(/"/g,"'")+";mask-image:"+CASTLE_MASK.replace(/"/g,"'");
   return src?'<img src="'+src+'" alt="" style="height:'+h+'px">':'<i style="display:block;width:'+h+'px;height:'+h+'px;background-image:'+texOf(m,0).replace(/"/g,"'")+';background-size:cover;'+mk+'"></i>'; }
 function castleEl(m,stage,size){ const d=document.createElement('div'); d.className='rvMini'; d.innerHTML=castlePic(m,size); return d; }
@@ -2139,12 +2141,12 @@ function askPlay(){ RUN=null; clearTimers(); stopVoice(); clearStage(); $('prog'
   tapper(n,()=>{ stopVoice(); clearStage(); const e=document.createElement('div'); e.className='rvBye'; e.innerHTML='<div class="gTitle">다 했어요</div>'; st.appendChild(e); });
   rvPrep().then(()=>{ if(!RUN&&!RV&&box.isConnected) speak(RV_ASK); }); }
 /* 한 판 */
-function rvStart(lv,keepMat){
+function rvStart(lv,keepMat,keep){
   if(RV){ cancelAnimationFrame(RV.raf); }
-  RUN=null; ALONE=null; clearTimers(); stopVoice(); clearStage(); $('prog').innerHTML=''; $('prog').className='';
+  RUN=null; ALONE=null; clearTimers(); if(!keep) stopVoice(); clearStage(); $('prog').innerHTML=''; $('prog').className='';
   const L=RV_LV[lv], pool=rvPool(lv), m=keepMat&&pool.some(o=>rvHas(o,keepMat))?keepMat:rvPickMat(lv,pool);
   if(!m){ const e=document.createElement('div'); e.className='rvBye'; e.textContent='이 단계에 쓸 물체가 모자라요.'; $('stage').appendChild(e); return; }
-  RV={lv,L,m,pool,col:0,hearts:L.hearts,left:L.sec,t0:performance.now(),last:performance.now(),busy:false,over:false,raf:0,cols:[],tok:Math.random()};
+  RV={lv,L,m,pool,col:0,hearts:keep?keep.hearts:L.hearts,left:keep?keep.left:L.sec,quietStart:!!keep,t0:performance.now(),last:performance.now(),busy:false,over:false,raf:0,cols:[],tok:Math.random()};
   const st=$('stage'), W=st.clientWidth, H=st.clientHeight, bankL=Math.max(130,W*0.16), waterY=H*0.58;
   /* 성은 강 건너 둑 위(2026-11-23 선생님): 처음엔 화면 밖 → 건널수록 화면이 따라가며 왼쪽부터 빼꼼 → 다 건너면 다 보임.
      강이 화면보다 좁으면 처음부터 보이므로, 성이 화면 밖에서 시작하도록 칸 사이를 넓힘 */
@@ -2160,7 +2162,7 @@ function rvStart(lv,keepMat){
   if(bg) box.style.backgroundImage='url('+bg+')'; st.appendChild(box); RV.box=box; RV.world=box.querySelector('.rvWorld');
   const ms=box.querySelector('.rvMat'); ms.style.backgroundImage=texOf(m).replace(/"/g,"'"); ms.textContent=MAT[m].label; box.querySelector('.rvSay b').textContent=riverAsk(m);
   /* 목표 성 하나(2026-11-23 선생님): 오른쪽에 크게, 한 칸 건널 때마다 아래부터 조금씩 드러남(실루엣·이름 없음, 처음엔 땅만) */
-  const goal=document.createElement('div'); goal.className='rvGoal'; goal.style.left=RV.goalX+'px'; goal.style.bottom=(H*(1-0.556)-1)+'px';   /* 밑을 둑 풀밭 선에 맞춤(그림 크기와 상관없이) */ goal.innerHTML=castlePic(m,gh); RV.world.appendChild(goal); rvGoalClip(true);
+  const goal=document.createElement('div'); goal.className='rvGoal'; goal.style.left=RV.goalX+'px'; goal.style.bottom=(H*(1-0.556)-1)+'px';   /* 밑을 둑 풀밭 선에 맞춤(그림 크기와 상관없이) */ goal.innerHTML=castlePic(m,gh); goal.firstChild.style.transform='translateY('+(((CASTLE_BASE[m]||0.09)+0.035)*100).toFixed(1)+'%)'; RV.world.appendChild(goal); rvGoalClip(true);
   /* 아이 */
   const kid=document.createElement('div'); kid.className='rvKid'; RV.kid=kid; RV.world.appendChild(kid); rvKidPose('stand'); rvPlaceKid(bankL*0.55,RV.waterY-6);
   for(let c=1;c<=L.steps;c++) rvFillCol(c);
@@ -2171,7 +2173,7 @@ function rvStart(lv,keepMat){
   BGM.fast=false; bgmStart();
   const tick=now=>{ if(!RV||RV.over) return; const dt=(now-RV.last)/1000; RV.last=now; const go=!S.admin&&!document.hidden&&!RV.busyPause; if(go) bgmStart(); else bgmStop(); BGM.fast=RV.left<RV.L.sec*0.25; if(go) RV.left=Math.max(0,RV.left-dt); rvHud(); if(RV.left<=0){ rvLose('time'); return; } RV.raf=requestAnimationFrame(tick); };
   RV.raf=requestAnimationFrame(tick);
-  setTimeout(()=>{ if(RV&&!RV.over) rvFishSay(); },500);
+  if(!RV.quietStart) setTimeout(()=>{ if(RV&&!RV.over) rvFishSay(); },500);
 }
 function rvFishSay(){ if(!RV||RV.over) return; const f=RV.box.querySelector('.rvFishPic'); f.classList.remove('hop'); void f.offsetWidth; f.classList.add('hop'); speak(riverAsk(RV.m)); }
 function rvKidPose(p){ const src=rvImg('kid-'+p); RV.kid.innerHTML=src?'<img class="'+p+'" src="'+src+'" alt="">':KID_SVG(p); }
@@ -2195,7 +2197,7 @@ function rvHud(){ if(!RV) return; const b=RV.box, L=RV.L;
   const p=RV.left/L.sec, bar=b.querySelector('.rvTime b'); bar.style.width=(p*100).toFixed(1)+'%'; bar.className=p>0.5?'g':p>0.2?'y':'r';
   b.querySelector('.rvTime em').textContent=Math.ceil(RV.left)+'초'; b.querySelector('.rvStep').textContent=RV.col+' / '+L.steps+' 칸'; }
 /* 한 칸 건널 때마다 성이 아래부터 조금씩(2026-11-23 선생님 — 화면이 따라가며 왼쪽부터 보이는 것과 함께). 밑 12%는 둑에 묻혀 있어 그만큼 먼저 보임 */
-function rvGoalClip(now){ const el=RV.world.querySelector('.rvGoal')?.firstChild; if(!el) return; const p=0.14+0.86*RV.col/RV.L.steps;
+function rvGoalClip(now){ const el=RV.world.querySelector('.rvGoal')?.firstChild; if(!el) return; const p=0.12+0.88*RV.col/RV.L.steps;
   if(now) el.style.transition='none'; else el.style.transition=''; el.style.clipPath='inset('+((1-p)*100).toFixed(1)+'% 0 0 0)'; }
 function rvCamera(now){ const want=RV.goalX+RV.goalW*RV.col/RV.L.steps-RV.W+20;   /* 성은 건넌 만큼만 화면에 */
   const x=Math.max(0,Math.min(RV.worldW-RV.W,Math.max(RV.kx-RV.W*0.3,Math.min(want,RV.kx-90)))); RV.world.style.transition=now?'none':'transform .7s ease'; RV.world.style.transform='translateX('+(-x)+'px)'; }
@@ -2241,7 +2243,10 @@ function rvLevelPick(){ if(!RV) return; RV.busyPause=true; const d=document.crea
   RV.box.appendChild(d); d.querySelectorAll('button').forEach(b=>tapper(b,()=>{ if(b.dataset.l) rvStart(+b.dataset.l); else { d.remove(); if(RV) RV.busyPause=false; } })); }
 function rvQuit(){ bgmStop(); if(RV) cancelAnimationFrame(RV.raf); RV=null; clearStage(); const e=document.createElement('div'); e.className='rvBye'; e.innerHTML='<div class="gTitle">다 했어요</div>'; $('stage').appendChild(e); }
 /* 설정 화면 ★ 놀이 */
-async function playFromSetup(){ unlockAudio(); document.body.classList.remove('setup'); goFull(); RUN=null; ALONE=null; await rvPrep(); RV=null; rvStart(Math.max(1,Math.min(4,S.level))); }
+async function playFromSetup(){ unlockAudio(); document.body.classList.remove('setup'); goFull(); RUN=null; ALONE=null; await rvPrep(); await new Promise(r=>afterFull(r)); await wait(250); RV=null; rvStart(Math.max(1,Math.min(4,S.level))); }
+/* 화면 크기가 바뀌면(전체 화면 들어가기·나가기, 돌리기) 자리를 다시 셈 — 아직 한 칸도 안 건넜으면 같은 물질·남은 시간·하트 그대로 다시 놓음 */
+window.addEventListener('resize',()=>{ clearTimeout(window.__rvz); window.__rvz=setTimeout(()=>{ if(!RV||RV.over||RV.busy||RV.col>0) return; const st=$('stage'); if(Math.abs(st.clientWidth-RV.W)<4&&Math.abs(st.clientHeight-RV.H)<4) return;
+  const k={hearts:RV.hearts,left:RV.left}; RV.quiet=1; rvStart(RV.lv,RV.m,k); },300); });
 function rvStop(){ bgmStop(); if(RV){ cancelAnimationFrame(RV.raf); RV.over=true; } RV=null; }
 
 function showPicker(){
