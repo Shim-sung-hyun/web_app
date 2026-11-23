@@ -372,10 +372,10 @@ body.setup #adminBtn{display:none}
 #playBtn{min-width:150px;height:62px;margin-left:14px;border-radius:18px 15px 19px 16px;border:3px solid var(--sci);background:#fff;color:var(--sci-d);font-family:var(--f-display);font-size:26px;cursor:pointer}
 .rv{position:absolute;inset:0;overflow:hidden;background:#CFEAF2 center top/cover no-repeat;touch-action:manipulation;user-select:none}
 .rvWorld{position:absolute;top:0;bottom:0;left:0;background-size:cover;background-position:center bottom}
-.rvBankL,.rvBankR{position:absolute;top:0;bottom:0;background:linear-gradient(transparent 0 56%,#A6D07A 56% 59%,#8DBA63 59%)}
-.rvBankL{left:0}.rvBankR{right:0}
-.rvWater{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#8ACBE3,#5AA7CB)}
-.rvBankL{z-index:1}.rvBankR{z-index:1}.rvWater{z-index:0}
+.rvBankL,.rvBankR{position:absolute;top:0;bottom:0;z-index:1;pointer-events:none}.rvBankL{left:0}.rvBankR{right:0}.rvBankR svg{transform:scaleX(-1)}
+.rvBankL svg,.rvBankR svg{display:block;width:100%;height:100%}
+.rvWater{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#B4E0EF,#8ACBE3 18px,#5AA7CB)}
+.rvWater{z-index:0}
 .rvObj{position:absolute;z-index:2;border-radius:22px 18px 24px 20px;background:#fff;box-shadow:0 6px 0 rgba(30,70,90,.25);display:flex;align-items:center;justify-content:center;animation:rvBob 3s ease-in-out infinite;opacity:.55;transition:opacity .3s,transform .3s;cursor:pointer}
 .rvObj img,.rvObj .crop{border-radius:14px;pointer-events:none}
 .rvObj.next{opacity:1;outline:4px dashed rgba(255,255,255,.9);outline-offset:4px}
@@ -386,14 +386,14 @@ body.setup #adminBtn{display:none}
 @keyframes rvPop{40%{transform:scale(1.2)}100%{transform:scale(.2);opacity:0}}
 .rvKid{position:absolute;z-index:4;width:110px;height:130px;margin:-124px 0 0 -55px;pointer-events:none}
 .rvKid svg,.rvKid img{width:100%;height:100%;object-fit:contain}
-.rvCastles{position:absolute;z-index:2;display:flex;flex-wrap:wrap-reverse;align-items:flex-end;gap:6px 8px;justify-content:center}
-.rvCastle{display:flex;flex-direction:column;align-items:center;font-family:var(--f-display);font-size:15px;color:#3C4A2E}
-.rvCastle .cBox{position:relative;width:100%}
-.rvCastle .cBox>*{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background-size:cover}
-.rvCastle .ghost{opacity:.18;filter:grayscale(1)}
-.rvCastle .built{transition:clip-path 1.2s ease}
-.rvCastle.now span{background:#fff;border-radius:8px;padding:0 6px}
-.rvCastle.hi .cBox{animation:rvRise 1.2s ease}
+.rvKid img{transform:scaleX(-1)}   /* 받은 아이 그림이 왼쪽을 봄 — 가는 쪽(오른쪽)으로 */
+.rvGoal{position:absolute;right:2%;z-index:3;pointer-events:none;transform-origin:50% 100%}
+.rvGoal img,.rvGoal i{display:block;width:auto;max-width:44vw;object-fit:contain;object-position:50% 100%;transition:clip-path .9s ease}
+.rvGoal.grow{animation:rvGrow .6s ease}.rvGoal.done{animation:rvDone 1s ease}
+@keyframes rvGrow{40%{transform:scale(1.03)}}
+@keyframes rvDone{30%{transform:scale(1.08) translateY(-8px)}60%{transform:scale(.98)}}
+.rvKing{margin:0 0 16px}.rvKingRow{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:flex-end}.rvKing small{font-size:18px;color:#666}
+.rvMini{display:flex;align-items:flex-end}
 @keyframes rvRise{30%{transform:translateY(-10px)}}
 .rvHud{position:absolute;z-index:6;top:0;left:0;right:0;display:flex;align-items:center;gap:14px;padding:8px 14px;background:rgba(255,255,255,.88);font-family:var(--f-display)}
 .rvLv{font-size:20px;color:var(--sci-d)}
@@ -407,7 +407,7 @@ body.setup #adminBtn{display:none}
 .rvTime em{font-style:normal;font-size:22px;min-width:56px}
 .rvStep{font-size:20px;color:#555}
 .rvBgm{width:44px;height:36px;border:2px solid var(--sci);background:#fff;color:var(--sci-d);border-radius:12px;font-size:20px;cursor:pointer}.rvBgm.off{opacity:.5}
-.rvLvBtn{border:2px solid var(--sci);background:#fff;color:var(--sci-d);border-radius:12px;font:inherit;font-size:18px;padding:4px 12px;cursor:pointer}
+.rvLvBtn{white-space:nowrap;border:2px solid var(--sci);background:#fff;color:var(--sci-d);border-radius:12px;font:inherit;font-size:18px;padding:4px 12px;cursor:pointer}
 .rvFish{position:absolute;z-index:5;left:12px;top:64px;display:flex;align-items:center;gap:10px;pointer-events:none}
 .rvFishPic{width:130px;height:100px}.rvFishPic svg,.rvFishPic img{width:100%;height:100%;object-fit:contain}
 .rvFishPic.hop{animation:rvRise .8s}
@@ -2087,7 +2087,7 @@ const ga=w=>w+(batchim(w)?'이':'가');
 const riverAsk=m=>ga(MAT[m].label)+' 들어 있는 물체를 밟고 건너요.';
 const castleUp=m=>MAT[m].label+' 성이 한 층 올라갔어요.', castleDone=m=>MAT[m].label+' 성을 다 지었어요.';
 const RV_ASK='놀이할까요?', RV_AGAIN='다시 해 볼까요?', RV_WIN='강을 건넜어요.';
-const rvLines=()=>[RV_ASK,RV_AGAIN,RV_WIN,...Object.keys(MAT).flatMap(m=>[riverAsk(m),castleUp(m),castleDone(m)])];
+const rvLines=()=>[RV_ASK,RV_AGAIN,RV_WIN,...Object.keys(MAT).flatMap(m=>[riverAsk(m),castleDone(m)])];   /* castleUp(한 층)은 2026-11-23부터 안 씀(소리는 내장에 남음) */
 /* 놀이 목소리: 놀이 말이 모두 내장돼 있으면 내장, 아니면 기기 목소리(놀이 말은 아직 녹음 전 — 받으면 내장으로) */
 async function rvPrep(){ if(S.engine==='device'||!S.sound){ S.engineNow='device'; return; } await voiceReady; const hs=await Promise.all(rvLines().map(sha16)); S.engineNow=hs.every(h=>VSET.has(h))?'builtin':'device'; }
 let RVS=jget('river',{});   /* {학생:{castle:{wood:2…}, best:{1:초…}}} */
@@ -2104,7 +2104,7 @@ function rvPool(lv){ const out=[], art=lv<=2;
   return out; }
 const rvHas=(o,m)=>o.ms.includes(m)||o.hid.includes(m);
 function rvPickMat(lv,pool){ const me=rvMe(), ok=Object.keys(MAT).filter(m=>pool.filter(o=>rvHas(o,m)).length>=2&&pool.filter(o=>!rvHas(o,m)).length>=3);
-  const notDone=ok.filter(m=>(me.castle[m]||0)<4); const L=notDone.length?notDone:ok; return L[Math.floor(Math.random()*L.length)]; }
+  const notDone=ok.filter(m=>!me.castle[m]);   /* 아직 안 지은 성부터 */ const L=notDone.length?notDone:ok; return L[Math.floor(Math.random()*L.length)]; }
 /* 소리(작고 부드럽게) */
 function rvSound(k){ if(!S.sound) return; const c=getCtx(); if(!c) return; if(c.state==='suspended') c.resume(); const t=c.currentTime+0.01, g=c.createGain(); g.gain.value=0.5; g.connect(c.destination);
   const tone=(f,d,v,f2,ty)=>{ const o=c.createOscillator(), e=c.createGain(); o.type=ty||'sine'; o.frequency.setValueAtTime(f,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+d); e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(v,t+0.01); e.gain.exponentialRampToValueAtTime(0.0006,t+d); o.connect(e); e.connect(g); o.start(t); o.stop(t+d+0.05); };
@@ -2121,14 +2121,19 @@ const KID_SVG=pose=>'<svg viewBox="0 0 100 120" aria-hidden="true"><g stroke="#5
 const FISH_SVG=happy=>'<svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="#2F5D63" stroke-width="3" stroke-linejoin="round"><path d="M92 40 L116 20 L112 40 L116 60 Z" fill="#6FB7A8"/><ellipse cx="56" cy="40" rx="42" ry="27" fill="#8FD0C0"/>'
   +'<path d="M40 18 Q56 4 70 16" fill="#6FB7A8"/>'+(happy?'<path d="M28 34 q6 -6 12 0" fill="none"/>':'<circle cx="34" cy="34" r="5" fill="#fff"/><circle cx="33" cy="34" r="2.6" fill="#2B2A30" stroke="none"/>')+'<path d="M20 46 Q28 54 38 48" fill="none"/></g></svg>';
 const CASTLE_MASK='url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M8 100 V44 h8 v-8 h8 v8 h8 V30 l10 -18 10 18 v14 h8 v-8 h8 v8 h8 v-8 h8 v8 h8 V100 Z M44 100 V78 q6 -8 12 0 V100Z" fill-rule="evenodd"/></svg>')+'")';
-function castleEl(m,stage,size){ const d=document.createElement('div'); d.className='rvCastle'+(stage?'':' empty'); d.style.width=size+'px'; d.dataset.m=m;
-  const src=rvImg('castle-'+m), cut=(4-Math.max(0,Math.min(4,stage)))*25, mk="-webkit-mask-image:"+CASTLE_MASK.replace(/"/g,"'")+";mask-image:"+CASTLE_MASK.replace(/"/g,"'");
-  const pic=(cls,st)=>src?'<img class="'+cls+'" src="'+src+'" alt="" style="'+st+'">':'<i class="'+cls+'" style="background-image:'+texOf(m,0).replace(/"/g,"'")+';'+mk+';'+st+'"></i>';
-  d.innerHTML='<div class="cBox" style="height:'+size+'px">'+pic('ghost','')+pic('built','clip-path:inset('+cut+'% 0 0 0)')+'</div><span>'+MAT[m].label+'</span>'; return d; }
+function castlePic(m,h){ const src=rvImg('castle-'+m), mk="-webkit-mask-image:"+CASTLE_MASK.replace(/"/g,"'")+";mask-image:"+CASTLE_MASK.replace(/"/g,"'");
+  return src?'<img src="'+src+'" alt="" style="height:'+h+'px">':'<i style="display:block;width:'+h+'px;height:'+h+'px;background-image:'+texOf(m,0).replace(/"/g,"'")+';background-size:cover;'+mk+'"></i>'; }
+function castleEl(m,stage,size){ const d=document.createElement('div'); d.className='rvMini'; d.innerHTML=castlePic(m,size); return d; }
+/* 강기슭(2026-11-23 선생님 — 땅과 물이 따로 놀지 않게): 모래톱이 물 쪽으로 구불구불 나간 둑. 왼쪽 그림을 오른쪽은 뒤집어 씀 */
+const BANK_SVG='<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="rvG" x1="0" y1="55" x2="0" y2="64" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#A9D27C"/><stop offset="1" stop-color="#8CB962"/></linearGradient></defs>'
+  +'<path d="M0,57.6 L80,57.6 C90,58.4 99,61 95,66 C91,72 100,80 96,88 C93,94 99,97 97,100 L0,100Z" fill="#9FCBDD" opacity=".55"/>'
+  +'<path d="M0,55.6 L70,55.6 C81,56.1 93,59.6 89,65.5 C85,71.5 94,79 90,87 C87,93 92,97 90,100 L0,100Z" fill="#E4D29E"/>'
+  +'<path d="M0,55.6 L64,55.6 C73,56 82,59 79,64.5 C76,70 84,78 80,86 C77,92 82,96 80,100 L0,100Z" fill="url(#rvG)"/>'
+  +'<path d="M64,55.6 C73,56 82,59 79,64.5 C76,70 84,78 80,86 C77,92 82,96 80,100" fill="none" stroke="#7FA857" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>';
 /* 놀이할까요? (수업이 다 끝나면) */
 function askPlay(){ RUN=null; clearTimers(); stopVoice(); clearStage(); $('prog').innerHTML=''; $('prog').className='';
   const st=$('stage'), box=document.createElement('div'); box.className='rvAsk';
-  box.innerHTML='<div class="gTitle">놀이할까요?</div><div class="rvAskPic">'+(rvImg('kid-jump')?'<img src="'+rvImg('kid-jump')+'" alt="">':KID_SVG('jump'))+'<span class="rvWave"></span>'+castleEl('glass',4,120).outerHTML+'</div><div class="rvAskBtns"><button type="button" class="gGo">네</button><button type="button" class="gGo no">아니요</button></div>';
+  box.innerHTML='<div class="gTitle">놀이할까요?</div><div class="rvAskPic">'+(rvImg('kid-jump')?'<img src="'+rvImg('kid-jump')+'" alt="">':KID_SVG('jump'))+'<span class="rvWave"></span>'+castleEl('glass',4,140).outerHTML+'</div><div class="rvAskBtns"><button type="button" class="gGo">네</button><button type="button" class="gGo no">아니요</button></div>';
   st.appendChild(box); const [y,n]=box.querySelectorAll('button');
   tapper(y,()=>{ unlockAudio(); stopVoice(); RV=null; rvStart(Math.max(1,Math.min(4,S.level))); });
   tapper(n,()=>{ stopVoice(); clearStage(); const e=document.createElement('div'); e.className='rvBye'; e.innerHTML='<div class="gTitle">다 했어요</div>'; st.appendChild(e); });
@@ -2144,13 +2149,14 @@ function rvStart(lv,keepMat){
   RV.gap=gap; RV.bankL=bankL; RV.worldW=bankL+gap*L.steps+bankR; RV.W=W; RV.H=H; RV.waterY=H*0.58;
   const box=document.createElement('div'); box.className='rv'; const bg=rvImg('river-bg');
   box.innerHTML='<div class="rvHud"><span class="rvLv">물질 징검다리 · '+L.name+'</span><span class="rvHearts"></span><span class="rvTime"><b></b><em></em></span><span class="rvStep"></span><button type="button" class="rvBgm"></button><button type="button" class="rvLvBtn">단계</button></div>'
-    +'<div class="rvWorld" style="width:'+RV.worldW+'px"><div class="rvBankL" style="width:'+bankL+'px"></div><div class="rvBankR" style="width:'+bankR+'px"></div><div class="rvWater" style="top:'+RV.waterY+'px"></div><div class="rvCastles"></div></div>'
+    +'<div class="rvWorld" style="width:'+RV.worldW+'px"><div class="rvBankL" style="width:'+(bankL+60)+'px">'+BANK_SVG+'</div><div class="rvBankR" style="width:'+(bankR+60)+'px">'+BANK_SVG+'</div><div class="rvWater" style="top:'+RV.waterY+'px"></div></div>'
+    +'<div class="rvGoal"></div>'
     +'<div class="rvFish"><div class="rvFishPic">'+(rvImg('fish-talk')?'<img src="'+rvImg('fish-talk')+'" alt="">':FISH_SVG(false))+'</div><div class="rvSay"><span class="rvMat"></span><b></b></div></div>';
   if(bg) box.style.backgroundImage='url('+bg+')'; st.appendChild(box); RV.box=box; RV.world=box.querySelector('.rvWorld');
   const ms=box.querySelector('.rvMat'); ms.style.backgroundImage=texOf(m).replace(/"/g,"'"); ms.textContent=MAT[m].label; box.querySelector('.rvSay b').textContent=riverAsk(m);
-  /* 강 건너 성 줄 */
-  const cs=box.querySelector('.rvCastles'); cs.style.left=(bankL+gap*L.steps+30)+'px'; cs.style.width=(bankR-50)+'px'; cs.style.bottom=(H-RV.waterY+6)+'px';
-  rvDrawCastles();
+  /* 목표 성 하나(2026-11-23 선생님): 오른쪽에 크게, 한 칸 건널 때마다 아래부터 조금씩 드러남(실루엣·이름 없음, 처음엔 땅만) */
+  const goal=box.querySelector('.rvGoal'), gh=Math.round(Math.max(120,Math.min(RV.waterY-110,460,W*0.4)));
+  goal.style.bottom=(H-RV.waterY-Math.round(gh*0.04))+'px'; goal.innerHTML=castlePic(m,gh); rvGoal(true);
   /* 아이 */
   const kid=document.createElement('div'); kid.className='rvKid'; RV.kid=kid; RV.world.appendChild(kid); rvKidPose('stand'); rvPlaceKid(bankL*0.55,RV.waterY-6);
   for(let c=1;c<=L.steps;c++) rvFillCol(c);
@@ -2191,7 +2197,7 @@ async function rvTap(c,o,e){ if(!RV||RV.over||RV.busy||S.admin||c!==RV.col+1) re
   if(rvHas(o,RV.m)){
     await rvJump(tx,ty,520); if(RV!==me) return; rvSound('land'); rvKidPose('stand'); e.classList.add('stood'); RV.cols[c].els.forEach(x=>{ if(x!==e) x.classList.add('sink'); });
     if(!o.ms.includes(RV.m)&&o.hid.includes(RV.m)) rvInside(o,e);   /* 스페셜: 속에 든 물질 — 반쯤 열린 그림을 잠깐 */
-    rvFishHappy(); RV.col++; rvHud(); rvCamera(); rvActivate();
+    rvFishHappy(); RV.col++; rvHud(); rvCamera(); rvActivate(); rvGoal(); rvSound('build');
     if(RV.col>=RV.L.steps){ await wait(400); if(RV!==me) return; await rvJump(RV.bankL+RV.gap*RV.L.steps+70,RV.waterY-6,620); if(RV!==me) return; rvKidPose('stand'); rvWin(); return; }
   } else {
     e.classList.add('pop'); rvSound('pop'); await rvJump(tx,ty+20,480); if(RV!==me) return; rvSound('splash'); rvKidPose('splash'); RV.hearts--; rvHud(); RV.box.querySelector('.rvHearts').classList.add('lost');
@@ -2205,18 +2211,19 @@ async function rvTap(c,o,e){ if(!RV||RV.over||RV.busy||S.admin||c!==RV.col+1) re
 function rvFishHappy(){ const f=RV.box.querySelector('.rvFishPic'); const src=rvImg('fish-happy'); f.innerHTML=src?'<img src="'+src+'" alt="">':FISH_SVG(true); f.classList.remove('hop'); void f.offsetWidth; f.classList.add('hop');
   setTimeout(()=>{ if(!RV) return; const s2=rvImg('fish-talk'); f.innerHTML=s2?'<img src="'+s2+'" alt="">':FISH_SVG(false); },900); }
 function rvInside(o,e){ const src=insideSrc(o.a); if(!src) return; const d=document.createElement('div'); d.className='rvInside'; d.innerHTML='<img src="'+src+'" alt=""><span>속에 '+MAT[RV.m].label+'</span>'; RV.box.appendChild(d); setTimeout(()=>d.remove(),2200); }
-function rvDrawCastles(hi){ const cs=RV.box.querySelector('.rvCastles'), me=rvMe(); cs.innerHTML='';
-  const order=Object.keys(MAT), size=Math.max(32,Math.min(88,((parseFloat(cs.style.width)||300)-40)/5));
-  order.forEach(m=>{ const el=castleEl(m,me.castle[m]||0,size); if(m===hi) el.classList.add('hi'); if(m===RV.m) el.classList.add('now'); cs.appendChild(el); }); }
+function rvGoal(now){ const g=RV.box.querySelector('.rvGoal'), p=0.06+0.94*RV.col/RV.L.steps, el=g.firstChild; if(!el) return;
+  el.style.transition=now?'none':''; el.style.clipPath='inset('+((1-p)*100).toFixed(1)+'% 0 0 0)'; if(!now){ g.classList.remove('grow'); void g.offsetWidth; g.classList.add('grow'); } }
 async function rvWin(){ const me0=RV; RV.over=true; bgmStop(); cancelAnimationFrame(RV.raf); const me=rvMe(), m=RV.m, used=RV.L.sec-RV.left, lv=RV.lv;
-  const before=me.castle[m]||0; me.castle[m]=Math.min(4,before+1); const best=me.best[lv]; const rec=!best||used<best; if(rec) me.best[lv]=Math.round(used); rvSave();
-  rvSound('win'); await speak(RV_WIN); if(RV!==me0) return; rvSound('build'); rvDrawCastles(m);
-  await speak(me.castle[m]>=4&&before<4?castleDone(m):castleUp(m)); if(RV!==me0) return;
-  rvEnd(true,'성이 '+(me.castle[m]>=4?'다 지어졌어요! 🏰':me.castle[m]+'층이 되었어요')+' · '+Math.round(used)+'초'+(rec?' · 가장 빨랐어요!':''),m); }
+  me.castle[m]=(me.castle[m]||0)+1; const best=me.best[lv]; const rec=!best||used<best; if(rec) me.best[lv]=Math.round(used); rvSave();   /* castle = 물질마다 다 지은 횟수 */
+  RV.box.querySelector('.rvGoal').classList.add('done'); rvSound('win'); await speak(RV_WIN); if(RV!==me0) return;
+  await speak(castleDone(m)); if(RV!==me0) return;
+  rvEnd(true,MAT[m].label+' 성을 다 지었어요 · '+Math.round(used)+'초'+(rec?' · 가장 빨랐어요!':''),m); }
 function rvLose(why){ if(!RV||RV.over) return; RV.over=true; bgmStop(); cancelAnimationFrame(RV.raf); RV.busy=true;
   rvEnd(false,why==='time'?'시간이 다 됐어요. 거의 다 왔어요!':'하트를 다 썼어요. 거의 다 왔어요!',RV.m); speak(RV_AGAIN); }
+function rvKingdom(){ const me=rvMe(), built=Object.keys(MAT).filter(m=>me.castle[m]); if(!built.length) return '';
+  return '<div class="rvKing"><div class="rvKingRow">'+built.map(m=>castlePic(m,54)).join('')+'</div><small>내 성 '+built.length+' / 9</small></div>'; }
 function rvEnd(win,msg,m){ const lv=RV.lv, d=document.createElement('div'); d.className='rvEnd';
-  d.innerHTML='<div class="rvEndCard"><b>'+(win?'강을 건넜어요!':'다시 해 볼까요?')+'</b><p>'+esc(msg)+'</p><div class="rvEndBtns">'
+  d.innerHTML='<div class="rvEndCard"><b>'+(win?'강을 건넜어요!':'다시 해 볼까요?')+'</b><p>'+esc(msg)+'</p>'+(win?rvKingdom():'')+'<div class="rvEndBtns">'
     +'<button type="button" class="gGo">'+(win?'한 번 더':'다시 하기')+'</button>'+(win?'<button type="button" class="gGo alt">다른 물질</button>':'')+'<button type="button" class="gGo no">그만하기</button></div></div>';
   RV.box.appendChild(d); const B=d.querySelectorAll('button');
   tapper(B[0],()=>rvStart(lv,win?null:m)); if(win) tapper(B[1],()=>rvStart(lv,null));
