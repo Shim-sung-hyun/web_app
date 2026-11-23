@@ -34,7 +34,7 @@
 - 주소: https://www.charum.org/study/002/picture-puzzle.html (게시판 app_url도 이 주소로)
 - 서버 study/002/ 폴더에는 server-loader.html(1KB)을 picture-puzzle.html 이름으로 한 번만 올린다. 열릴 때마다 GitHub의 최신 picture-puzzle.html을 받아 그 주소에서 펼친다 → 앱을 고쳐도 GitHub에만 올리면 된다.
 - 앱이 읽는 자료(목소리·예시 사진·키 안내 *_guide.html 등)는 GitHub 절대 주소로 읽는다. 상대 주소를 새로 쓰지 말 것.
-- 기록·키는 그 기기 브라우저에 주소(도메인)별로 저장된다. 서버에는 아무것도 저장되지 않는다.
+- 기록·키는 그 기기 브라우저에 주소(도메인)별로 저장된다. 학생 기록은 서버에 저장하지 않는다(서버에는 앱 사용 횟수 합계만 — usage 모듈).
 - 휴대폰으로 키 받기(key-relay.php)·사진 보내기·AI 중계는 받는 주소 목록에 https://www.charum.org 가 있어야 한다.
 
 2026-10-25  수퍼 단계 S(50조각)·S+(50조각, 조각이 돌아가 있고 몰려 있음, 살짝 누르면 90도). 초시계, S·S+ 기록 보기(이 기기 + 모든 학교 순위표 — 별명만, 서버 puzzle-rank.php).
@@ -46,3 +46,5 @@
 관리 버튼(2026-11-11)
   누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
   눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리는 이 앱 CSS 그대로.
+
+- 사용 횟수(2026-11-23): 공통 모듈 usage. 열 때 Usage.open('002'), 다 함 = complete()(퍼즐 완성)에서 Usage.done(). 보기: charum.org/charum-api/usage-admin.php

@@ -30,3 +30,5 @@
 관리 버튼(2026-11-11)
   누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
   눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리는 이 앱 CSS 그대로.
+
+- 사용 횟수(2026-11-23): 공통 모듈 usage. 열 때 Usage.open('003'), 다 함 = endGame()(한 판 끝)에서 Usage.done(). 보기: charum.org/charum-api/usage-admin.php

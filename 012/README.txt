@@ -89,6 +89,8 @@ Cloudflare 사용량 아끼기 (2026-11-21 선생님 정함)
 - 기본 계정 3회를 다 쓰면(오류 글 "모두 사용했/소진/daily limit") keyNudge(): 설정 창을 열고 Cloudflare 칸을 노랗게
   3번 깜빡이며 ① 칸에 커서. 칸에 입력하면 노란 표시 꺼짐. 실제 4번째 시도로는 아직 확인 못 함.
 
+- 사용 횟수(2026-11-23): 공통 모듈 usage. 열 때 Usage.open('012'), 다 함 = AI 그림 완성(generate 성공)에서 Usage.done(). 보기: charum.org/charum-api/usage-admin.php
+
 다음 할 일
 1. (끝남 2026-11-21) 새 워커 배포 확인(/ping에 "그림 모델: klein-4b"). 선생님이 LIMIT_OFF=0으로 바꿔 지금은 "사용자별 제한: 적용 중"(기기당 하루 3회).
    다시 테스트하려면 대시보드 변수 LIMIT_OFF=1.

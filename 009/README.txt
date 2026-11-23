@@ -66,6 +66,8 @@
     ② 게시판 글 59934 올림(2026-11-16), 💬·⏻ 주소에 넣음. (선생님) 서버 study/009/에 server-loader.html을 animal-riddle.html 이름으로 올렸는지 확인
   · 캡처 01~14·홍보 그림(tools/promo-pencil.html?app=009)은 연필풍으로 새로 찍음(2026-11-15).
 
+- 사용 횟수(2026-11-23): 공통 모듈 usage. 열 때 Usage.open('009'), 다 함 = finishLesson(수업 끝)에서 Usage.done(). 보기: charum.org/charum-api/usage-admin.php
+
 다음 할 일 (2026-10-31 "009 만들기" 세션)
 지금 상태: main에 있음(https://shim-sung-hyun.github.io/web_app/009/animal-riddle.html). 목소리 392마디 모두 내장.
   선생님 의견으로 고친 것: 하 보기는 그림에서 보기에도 확실히 다른 동물만 / 하·중은 동물 하나가 한 묶음 / 상은 그림 단서 없이 서식지 배경만 / 중·상 '패스'

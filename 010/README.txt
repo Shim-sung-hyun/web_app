@@ -119,6 +119,8 @@
 기록 요약: 단계별 처음↔최근 · 주별 · 도움이 더 필요한 물체 · 자주 헷갈린 물질(맞는 → 먼저 누른) · 다음에 해 볼 것(수준 알림, 단추로만)
 게시판 글: 아직 없음 → 생기면 reportLink·endLesson의 주소를 webapp/글번호로
 
+- 사용 횟수(2026-11-23): 공통 모듈 usage. 열 때 Usage.open('010'), 다 함 = finishBundle(묶음 끝, RUN.b>=0)에서 Usage.done(). 보기: charum.org/charum-api/usage-admin.php
+
 다음 할 일
 0. (끝남 2026-11-21) 물질 사진·컵 그림 넣음.
    물질 체크표(2026-11-22): https://claude.ai/artifact/EziyNsZ7bvjeWEbBDjp68N — 자료실 사진 25장의 물체마다 보이는 물질·속 물질을 선생님이 체크(db 모음 checks, 문서 = 사진 id:

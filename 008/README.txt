@@ -146,6 +146,8 @@
 - 고친 것(2026-11-03, 정식판·베타): 숨은 동물 찾기에서 고래 머리가 세로로 반듯하게 잘려 보임(선생님 기기 사진). 크롬에선 재현 안 됨 — 사파리가 filter(그림자)와
   transform(옮김·좌우 뒤집기)을 함께 그릴 때 생기는 그리기 문제로 봄. 숨은 동물 찾기 장면(.hideCard)의 동물은 그림자 필터 없이, will-change:transform. 다시 보이면 기기·브라우저 확인
 
+- 사용 횟수(2026-11-23): 공통 모듈 usage. 열 때 Usage.open('008'), 다 함 = finishBundle(묶음 끝, RUN.b>=0)에서 Usage.done(). 보기: charum.org/charum-api/usage-admin.php
+
 다음 할 일
 - 새 무대 숨은 동물 찾기(2026-11-15, 베타 — 무대 마무리): buildHide가 먼저 buildStage(새 무대 media/stage/nature/(곳), Stage.hideLevelAsync)를 씀.
     곳마다 쓸 무대 STB_OF(땅=들판·숲·초원, 물=강 물속·바닷속, 강·호수=강·호수·강 물속), 판의 동물이 모두 그 무대 동물(stage/index.json의 animals — stage-intake.py가 적음)일 때만.

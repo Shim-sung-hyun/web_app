@@ -86,8 +86,10 @@
 - 기록·학생 명단은 주소(도메인)마다 따로 저장된다: 옮길 때 교사용 기록 → 내보내기(CSV) → 새 주소에서 불러오기.
 - 앱을 고치면 GitHub의 word-learn.html과 내 서버의 word-learn.html을 함께 바꾼다.
 - 지금 내 도메인: https://www.charum.org/study/007/word-learn.html (https). 혹시 http 주소에서 열려도 SHA-1을 직접 계산해 미리 만든 목소리를 찾는다(sha1Bytes). 휴대폰으로 키 받기(ECDH)는 https에서만 된다.
-- 내 서버에는 server-loader.html(약 1KB)을 word-learn.html 이름으로 한 번만 올려 둔다(2026-10-21). 열릴 때마다 GitHub의 최신 word-learn.html을 받아 그 주소에서 펼치므로, 앞으로 앱을 고쳐도 서버에 다시 올릴 필요가 없다(GitHub에 올리면 몇 분 안에 반영). 주소창은 내 도메인, 기록은 이 기기 브라우저(내 도메인 주소)에, 서버에는 아무것도 저장되지 않는다.
+- 내 서버에는 server-loader.html(약 1KB)을 word-learn.html 이름으로 한 번만 올려 둔다(2026-10-21). 열릴 때마다 GitHub의 최신 word-learn.html을 받아 그 주소에서 펼치므로, 앞으로 앱을 고쳐도 서버에 다시 올릴 필요가 없다(GitHub에 올리면 몇 분 안에 반영). 주소창은 내 도메인, 기록은 이 기기 브라우저(내 도메인 주소)에, 학생 기록은 서버에 저장하지 않는다(서버에는 앱 사용 횟수 합계만 — usage 모듈).
 - 2026-10-31(009 세션): 먹이 주기 그림 (지금 media/play/feed/food) 80장 모두 tools/clean-edges.py → edge-specks.py로 테두리 정리. 블랙베리·블루베리·당근 잎·셀러리·클로버·포도·단풍잎·사탕수수·채소 통·물풀·귀뚜라미는 그림 안에 갇힌 흰 바탕도 투명하게. 동물 그림 (지금 media/play/feed/animal) 62장(입 벌림·먹음)도 같은 방법으로 정리, 갇힌 흰 바탕은 없었음.
+
+- 사용 횟수(2026-11-23): 공통 모듈 usage. 열 때 Usage.open('007'), 다 함 = endScreen(수업 끝, 시연 빼고) — 통합본에 넣고 split.py에서 Usage.done(). 보기: charum.org/charum-api/usage-admin.php
 
 [다음 할 일] (2026-11-04)
 - 2편 공개(OPEN_BOOKS = [1, 2]) — 선생님 확인 뒤

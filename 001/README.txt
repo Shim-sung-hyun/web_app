@@ -46,3 +46,5 @@ GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-find
   관리 3초·교사용 기록·수업 끝내기. 멈춤·앱 오류·없는 파일 없음.
   고친 것: 휴대폰 세로에서 색칠 팔레트가 화면 밖으로 잘림 → 6칸(46px). 캡처 01 새로 찍음(예시 사진 "바로 쓰기").
   다음 할 일: 없음(내 사진·Gemini 키 길은 진짜 키로 선생님이 한 번 확인).
+
+- 사용 횟수(2026-11-23): 공통 모듈 usage. 열 때 Usage.open('001'), 다 함 = showEnd(도형 한 장 마침)에서 Usage.done(). 보기: charum.org/charum-api/usage-admin.php
