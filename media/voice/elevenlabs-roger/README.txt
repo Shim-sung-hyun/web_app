@@ -1,6 +1,7 @@
 ElevenLabs 목소리 묶음 (2026-11-11 시작)
 
 목소리: Roger - Laid-Back Casual Resonant (ElevenLabs 기본 목소리)
+받는 법(선생님용): https://www.charum.org/study/doc.html?elevenlabs_guide (원본 elevenlabs_guide.html)
 만든 법: 21문장을 줄바꿈해 한꺼번에 넣고 태그로 말투를 줌
   [calm, clear, slow] 찾아 눌러요 4문장 / [warm, gentle, slow] 북극에 살아요 3문장
   [curious, friendly, slow] 어디에 살까요 3문장 / [clear, steady, falling tone] 이름 11개

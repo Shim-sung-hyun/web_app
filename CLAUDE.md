@@ -12,7 +12,7 @@
 - **그림·소리는 버리지 않는다**(2026-11-22): 안 쓰게 된 그림·사진·소리는 `tools/trash.py`가 저절로 보관함 `media/archive/`(비우지 않음, 목록 `list.json`)로 보낸다 — 옛 그림풍(만화풍)·다시 받기 전 그림도 나중에 쓸 수 있게. `_trash/`에는 html·글 같은 나머지만.
 - **소품실**(2026-11-16): 무대 소품을 새로 받기 전에 `media/stage/prop-room.html`(목록 `media/stage/props.json`)부터 보고, 밑동 땅이 같으면 `python3 tools/prop-room.py --borrow 받을무대 소품`으로 빌려 쓴다. 새로 받은 소품은 stage-intake가 소품실에 올림. 새로 만드는 무대·앱부터 적용.
 - **차름 홈페이지 링크**(2026-11-21): 모든 웹앱(새 앱 포함)의 선생님 화면 왼쪽 위에 차름 로고 → charum.org 새 탭. 공통 모듈 `homeLink`, 자세한 것은 지침 3절.
-- **키 안내는 서비스마다 한 페이지**(2026-11-23): Gemini(AI Studio) `gemini_guide` · Google 음성(Cloud TTS) `google-tts_guide` · Cloudflare `cloudflare_guide` · Azure 음성 `azure_guide` · 빙 이미지 크리에이터 `bing_guide`(저장소 맨 위 `이름.html`, 주소 `https://www.charum.org/study/doc.html?이름`). 그 서비스가 필요한 곳(앱·설명서·게시판 글·도구 화면)은 새 안내를 만들거나 앱 안에 받는 법을 길게 쓰지 말고 이 페이지에 링크만 한다(앱에 따라 다른 "넣는 곳"은 그 페이지의 "앱에 넣기"에 한 줄 더함). 옛 `gemini-key`·`010/gemini-key`·`NNN/cloud-key`는 넘겨 주기만 함.
+- **키 안내는 서비스마다 한 페이지**(2026-11-23): Gemini(AI Studio) `gemini_guide` · Google 음성(Cloud TTS) `google-tts_guide` · Cloudflare `cloudflare_guide` · Azure 음성 `azure_guide` · ElevenLabs `elevenlabs_guide` · 빙 이미지 크리에이터 `bing_guide`(저장소 맨 위 `이름.html`, 주소 `https://www.charum.org/study/doc.html?이름`). 그 서비스가 필요한 곳(앱·설명서·게시판 글·도구 화면)은 새 안내를 만들거나 앱 안에 받는 법을 길게 쓰지 말고 이 페이지에 링크만 한다(앱에 따라 다른 "넣는 곳"은 그 페이지의 "앱에 넣기"에 한 줄 더함). 옛 `gemini-key`·`010/gemini-key`·`NNN/cloud-key`는 넘겨 주기만 함.
 - **프롬프트를 드릴 때**(2026-11-13, 2026-11-21 다시 강조): 어떤 프롬프트든 대화에 붙이지 않고(짧아도) `media/prompts/`에 글로 두고 복사 화면 주소(`https://shim-sung-hyun.github.io/web_app/media/prompts/copy.html?f=파일이름`)를 드린다 — 단추로 복사, 복사한 장은 노랗게 표시. 새 글은 `copy.html`의 `FILES`에 한 줄.
 
 ## Copilot과 함께 (2026-11-09)

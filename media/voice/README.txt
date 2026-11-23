@@ -12,7 +12,7 @@
               이름 = sha1("시|줄 번호|줄 글") 앞 16자리, index.json에 만든 설정
   azure-sunhi-0.92/  Azure ko-KR-SunHiNeural, 빠르기 -8% — 008 베타부터(2026-11-02), 010 베타(2026-11-22). Google Leda와 섞지 않음
                      voice-maker.html?app=010 처럼 앱 번호를 주소에 붙이면 말 목록·묶음이 채워짐
-  elevenlabs-roger/  ElevenLabs Roger — 008 북극 21문장부터(2026-11-11). 모든 앱을 이 목소리로 천천히 옮길 계획. 다른 묶음과 섞지 않음, 자세한 것은 그 폴더 README
+  elevenlabs-roger/  ElevenLabs Roger — 008 북극 21문장부터(2026-11-11). 모든 앱을 이 목소리로 천천히 옮길 계획. 다른 묶음과 섞지 않음, 자세한 것은 그 폴더 README, 받는 법 elevenlabs_guide.html
   leda-0.90/  빠르기 0.90 — 007 낱말 익히기(3,339개, 2026-10-22에 007/voice/leda/에서 옮김)
               이름 = 말(낱말·문장) SHA-1 앞 16자리 .mp3, 한 글자는 "글자. ○." 속에서 만들어 마지막 마디만 씀
               "다 했어요."·"잘했어요." 등 일부는 빠르기 0.78이거나 고쳐 만든 소리 → fixes.json
