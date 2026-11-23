@@ -386,9 +386,9 @@ body.setup #adminBtn{display:none}
 @keyframes rvPop{40%{transform:scale(1.2)}100%{transform:scale(.2);opacity:0}}
 .rvKid{position:absolute;z-index:4;width:110px;height:130px;margin:-124px 0 0 -55px;pointer-events:none}
 .rvKid svg,.rvKid img{width:100%;height:100%;object-fit:contain}
-.rvKid img{transform:scaleX(-1)}   /* 받은 아이 그림이 왼쪽을 봄 — 가는 쪽(오른쪽)으로 */
+.rvKid img{transform:scaleX(-1)}.rvKid img.jump{transform:none}   /* 서 있기·빠지기 그림은 왼쪽을 봄 → 뒤집음, 뛰기 그림은 원래 오른쪽 */
 .rvGoal{position:absolute;z-index:3;pointer-events:none;transform-origin:50% 100%}
-.rvGoal img,.rvGoal i{display:block;width:auto}
+.rvGoal img,.rvGoal i{display:block;width:auto;transform:translateY(4%)}   /* 그림 밑 풀밭 조각이 둑에 살짝 묻히게 */
 .rvGoal.grow{animation:rvGrow .6s ease}.rvGoal.done{animation:rvDone 1s ease}
 @keyframes rvGrow{40%{transform:scale(1.03)}}
 @keyframes rvDone{30%{transform:scale(1.08) translateY(-8px)}60%{transform:scale(.98)}}
@@ -2160,7 +2160,7 @@ function rvStart(lv,keepMat){
   if(bg) box.style.backgroundImage='url('+bg+')'; st.appendChild(box); RV.box=box; RV.world=box.querySelector('.rvWorld');
   const ms=box.querySelector('.rvMat'); ms.style.backgroundImage=texOf(m).replace(/"/g,"'"); ms.textContent=MAT[m].label; box.querySelector('.rvSay b').textContent=riverAsk(m);
   /* 목표 성 하나(2026-11-23 선생님): 오른쪽에 크게, 한 칸 건널 때마다 아래부터 조금씩 드러남(실루엣·이름 없음, 처음엔 땅만) */
-  const goal=document.createElement('div'); goal.className='rvGoal'; goal.style.left=RV.goalX+'px'; goal.style.top=(H*0.556-gh*0.96)+'px'; goal.innerHTML=castlePic(m,gh); RV.world.appendChild(goal);
+  const goal=document.createElement('div'); goal.className='rvGoal'; goal.style.left=RV.goalX+'px'; goal.style.bottom=(H*(1-0.556)-1)+'px';   /* 밑을 둑 풀밭 선에 맞춤(그림 크기와 상관없이) */ goal.innerHTML=castlePic(m,gh); RV.world.appendChild(goal);
   /* 아이 */
   const kid=document.createElement('div'); kid.className='rvKid'; RV.kid=kid; RV.world.appendChild(kid); rvKidPose('stand'); rvPlaceKid(bankL*0.55,RV.waterY-6);
   for(let c=1;c<=L.steps;c++) rvFillCol(c);
@@ -2174,7 +2174,7 @@ function rvStart(lv,keepMat){
   setTimeout(()=>{ if(RV&&!RV.over) rvFishSay(); },500);
 }
 function rvFishSay(){ if(!RV||RV.over) return; const f=RV.box.querySelector('.rvFishPic'); f.classList.remove('hop'); void f.offsetWidth; f.classList.add('hop'); speak(riverAsk(RV.m)); }
-function rvKidPose(p){ const src=rvImg('kid-'+p); RV.kid.innerHTML=src?'<img src="'+src+'" alt="">':KID_SVG(p); }
+function rvKidPose(p){ const src=rvImg('kid-'+p); RV.kid.innerHTML=src?'<img class="'+p+'" src="'+src+'" alt="">':KID_SVG(p); }
 function rvPlaceKid(x,y){ RV.kx=x; RV.ky=y; RV.kid.style.left=x+'px'; RV.kid.style.top=y+'px'; }
 function rvColX(c){ return RV.bankL+RV.gap*(c-0.5); }
 /* 한 칸에 물체 L.per개(그 물질이 든 것이 하나 이상, 바로 앞에 쓴 물체는 피함) */
