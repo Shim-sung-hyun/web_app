@@ -5,6 +5,8 @@
     python3 tools/clean-edges.py --from a555b70^ 그림.webp ...        # git의 그 판(정리 전 원본)에서 다시 만들어 그 자리에 씀
     python3 tools/clean-edges.py --check 그림.webp ...                # 고치지 않고 '어두운 배경에서 보이는 흰 점'·좁은 틈 점 수만
     python3 tools/clean-edges.py --specks 그림.webp ...               # 이미 정리한 그림에 마지막 단계(좁은 틈 마무리)만
+    python3 tools/clean-edges.py --keep-white 그림.webp ...           # 흰 몸이 많은 그림(흰 도자기 성·얼음 유리 성): 2단계(바깥과 이어진 흰 점 지우기)를 건너뜀
+                                                                      #   — 윤곽선 틈으로 흰 벽까지 지워지는 것을 막음. 바깥 흰 테두리는 3단계 띠가 지움(2026-11-23 010 성)
 
 왜(2026-10-31 다시 씀):
   흰 바탕을 지우면 윤곽선 바깥의 '선과 흰 바탕이 섞인 점'(회색·연한 갈색)이 불투명하게 남아,
@@ -95,6 +97,9 @@ def key_of(path):
     return p
 
 
+KEEP_WHITE = False
+
+
 def matte(im, key=''):
     """RGBA 배열(흰 바탕을 지운 그림) → 정리한 RGBA 배열"""
     im = im.astype(float)
@@ -104,7 +109,7 @@ def matte(im, key=''):
     obj = im[..., 3] > 8
     white = (C.min(-1) > 238) & (np.ptp(C, -1) < 14)
     # 바깥과 이어진 거의 흰 점, 갇힌 흰 바탕
-    bg = grow(~obj, obj & white)
+    bg = np.zeros_like(obj) if KEEP_WHITE else grow(~obj, obj & white)
     name = os.path.splitext(os.path.basename(key))[0]
     if name in ALL_WHITE_IS_BG:   # 풀 사이에 갇힌 바탕은 살짝 누렇게 바랜 것도 있음
         bg |= obj & (L > 232) & (np.ptp(C, -1) < 40)
@@ -189,6 +194,7 @@ if __name__ == '__main__':
     args = sys.argv[1:]; rev = None; check = False; only_specks = False
     if '--check' in args: check = True; args.remove('--check')
     if '--specks' in args: only_specks = True; args.remove('--specks')
+    if '--keep-white' in args: KEEP_WHITE = True; args.remove('--keep-white')
     if '--from' in args:
         i = args.index('--from'); rev = args[i + 1]; del args[i:i + 2]
     for p in args:
