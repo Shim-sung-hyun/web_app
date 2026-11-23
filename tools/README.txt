@@ -50,6 +50,7 @@
   (007/tools/split.py 는 007 편 판 만들기 — 007 README)
 
  [선생님 화면 도구 — 브라우저로 여는 html(주소: https://shim-sung-hyun.github.io/web_app/ + 경로). 자리는 옮기지 않음(주소가 바뀌면 불편)]
+  tools/index.html                  도구 모음 한 장(선생님이 열어 보는 곳, https://shim-sung-hyun.github.io/web_app/tools/) — 아래 화면을 새로 만들거나 바꾸면 여기도 함께 고침
   media/voice/voice-maker.html      목소리 만들기(?app=010처럼 앱 고르기) → 받은 zip은 voice-add.py
   media/prompts/copy.html           프롬프트 복사(?f=파일이름, 단추로 복사·복사한 장은 노랗게) — 새 글은 FILES에 한 줄
   media/photos/collect.html         사진 모으기 · snap.html 사진 넣기 · review.html 사진 검토(절차 media/photos/REVIEW.md)
