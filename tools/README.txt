@@ -42,6 +42,7 @@
  [검사·캡처]
   check-files.py   앱이 부르는 파일이 저장소에 다 있는지 + 전체 목록이 최신인지("목록에 없는 파일 0") · check-modules.py 앱마다 같아야 할 모듈 비교
   shot.js          앱을 네 크기로 캡처 · hide-check.js 008 숨은 동물이 너무 가려지는지
+  learn-scene.js   학습용 장면 learn.jpg(무대 소품을 채운 한 장, 동물 서는 앞 땅은 비움 — 008 학습 장면) · 곳 이름과 --seed로 다시, 고른 seed는 media/stage/learn-scene.json
   webp-slim.py     다 만든 소품·동물 webp를 마지막에 가볍게 — 색 품질 80, 알파·가로세로 그대로(밑동·모양 지도·touchup 원본 붓이 그대로 맞음), 8% 넘게 줄 때만. stage-intake가 부름, touchup 손질 뒤에도
   promo-pencil.html 연필풍 앱(008·009)의 홍보 그림 — ?app=009(캡처 폴더 cap=008/release, 대신 쓸 캡처 shots=03,05,09,11)를 1366×768로 찍어 앱-promo.jpg
  [공통 모듈·자료]

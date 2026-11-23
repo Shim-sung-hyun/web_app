@@ -1453,9 +1453,9 @@ const NEW={'조개':'jogae','개':'gae','고양이':'goyangi','닭':'dak','돼�
  '낙지':'nakji','갯지렁이':'gaetjireongi','산양':'sanyang','도마뱀':'domabaem','사막거북':'samakgeobuk','미어캣':'mieokaet','제비':'jebi','박새':'baksae','붕어':'bungeo','새우':'saeu','참새':'chamsae','까치':'kkachi','독수리':'doksuri','나비':'nabi'};
 const pic=a=>OLD[a]?P007+OLD[a]+'.webp':PNEW+NEW[a]+'.webp';
 /* 곳: label 카드 글자 · live 들려줄 말 · find 곳 보고 동물 찾기 말 · y 장면 안에서 동물을 놓는 높이(위~아래) */
-/* 학습 장면의 장소 그림(2026-11-15 연필풍): 무대의 빈 배경 media/stage/nature/(곳)/bg.jpg(1200×900). 숨은 동물 찾기는 무대 세션 몫이라 그대로 */
+/* 학습 장면의 장소 그림(2026-11-15 연필풍, 11-16 learn.jpg): 무대 소품을 채운 media/stage/nature/(곳)/learn.jpg(1200×900). 숨은 동물 찾기는 무대 세션 몫이라 그대로 */
 const SCN={land:'ground',ground:'ground',water:'water',underground:'underground',sky:'sky',forest:'forest',grassland:'grassland',desert:'desert',polar:'polar',sea:'sea',pond:'pond',mudflat:'mudflat',wetland:'wetland'};
-const scn=p=>GH+'media/stage/nature/'+(SCN[p]||'ground')+'/bg.jpg';
+const scn=p=>GH+'media/stage/nature/'+(SCN[p]||'ground')+'/learn.jpg';   /* 학습용 장면(2026-11-16 선생님: 빈 배경은 너무 단순) — 무대 소품을 채운 한 장, 동물 서는 앞 땅은 비움(tools/learn-scene.js) */
 const PL={
   land:{label:'땅',scene:'ground',live:'땅에 살아요',find:'땅에 사는 동물을',y:[.6,.9]},
   water:{label:'물',scene:'water',live:'물에 살아요',find:'물에 사는 동물을',y:[.3,.8]},
@@ -2728,23 +2728,23 @@ async function playHide(p,lvG,targets,tok,o={}){   /* o: 스페셜(o.special, wm
     items.forEach(x=>x.im.style.pointerEvents=x===t?'auto':'none');
     unblock(t); t.z0=t.im.style.zIndex;
     /* 흔들기: 동물을 가린 소품이 아래를 축으로 살짝 두 번 흔들림(번쩍임 없이 0.7초) + 바스락 */
-    /* 흔들기 크기는 각도가 아니라 화면에서 움직이는 거리로(2026-11-16 선생님: 화면 아래 끝에 걸린 동물은 소리만 났음 — 작은 풀·돌은 밑동이 화면 밖이라 같은 각도로는 몇 점만 움직임).
-       윗부분이 14점 × 세기만큼 움직이게 기울이고 좌우로도 조금. 앞 소품 없이 화면 끝에만 걸린 동물은 보이는 몸이 살짝 흔들림 */
-    const shake=(g=1)=>{ rustle(); const el=t.pr&&t.pr.animate?t.pr:t.im; if(!el.animate) return; const b=el.style.transform||'', hh=Math.max(20,el.getBoundingClientRect().height||100);
-      const deg=el===t.pr?Math.min(12,Math.max(2.5,Math.atan(14*g/hh)*180/Math.PI)):0, px=(el===t.pr?3:5)*g;
-      if(el===t.pr) el.style.transformOrigin='50% 95%';
-      el.animate([[0,0],[-1,-1],[.8,.9],[-.6,-.7],[.35,.4],[0,0]].map(([r,x])=>({transform:b+' translateX('+(x*px).toFixed(1)+'px) rotate('+(r*deg).toFixed(2)+'deg)'})),{duration:700*Math.min(g,1.5),easing:'ease-in-out',iterations:g>1?2:1}); };
-    /* 도움(2026-11-16 선생님): 동물을 조금 내밀던 것을 그만두고 가린 소품을 흔듦 — 화면 아래쪽에 숨은 동물은 내밀어도 안 보였음. 18초 조금 세게 · 32초 더 세게, 24초부터 10초마다 살짝 */
-    /* 세 번째 도움부터(2026-11-16 선생님): 동물이 위나 옆으로 '보이게' 나왔다가 들어가기를 두 번 — 나올 길(ox·oy, 앞 소품에서 벗어나는 쪽)로,
-       화면 끝에 걸렸으면 화면 안쪽으로 더. 나오는 동안만 앞으로(z) */
-    const peek=async()=>{ const c=card.getBoundingClientRect(), q=t.im.getBoundingClientRect(); let dx=t.ox||0, dy=t.oy||0;
-      if(q.bottom>c.bottom) dy=Math.min(dy,-(q.bottom-c.bottom)-q.height*.25); if(q.top<c.top) dy=Math.max(dy,c.top-q.top+q.height*.25);
-      if(q.left<c.left) dx=Math.max(dx,c.left-q.left+q.width*.25); if(q.right>c.right) dx=Math.min(dx,-(q.right-c.right)-q.width*.25);
-      if(Math.hypot(dx,dy)<Math.max(q.height,q.width)*.3) dy=-Math.max(q.height*.5,Math.min(q.top-c.top,q.height));
-      const z0=t.im.style.zIndex, tr=t.im.style.transition, mk=t.im.style.maskImage; t.im.style.zIndex=4900; t.im.style.transition='transform .55s ease-in-out';
-      if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage='';
-      for(let i=0;i<2;i++){ if(!alive(tok)||t.done) break; t.im.style.transform=XF(dx,dy,1,t.flip); await wait(1000); t.im.style.transform=XF(0,0,1,t.flip); await wait(750); }
-      if(!t.done){ t.im.style.zIndex=z0; if(t.sub) t.im.style.webkitMaskImage=t.im.style.maskImage=mk; t.im.style.transition=tr; } };
+    /* 흔들기(2026-11-16 선생님 셋째: 안 보임 — 무대 소품은 transform이 'none'이라 'none rotate(…)'처럼 잘못된 값이 되어 브라우저가 무시했음).
+       흔드는 그 순간 화면에서 이 동물을 덮고 있는 맨 위 소품(겹친 넓이가 가장 큰 것의 20% 넘게 겹친 것 가운데 z가 가장 높은 것)을 흔듦 — 앞가림 띠(장면 폭 전체)는 뺌.
+       크기는 화면 거리로: 윗부분이 24점 × 세기, 좌우로 6점 × 세기. 덮은 소품이 없으면(화면 끝에만 걸림) 보이는 몸이 흔들림 */
+    const topCover=()=>{ const q=t.im.getBoundingClientRect(), c=card.getBoundingClientRect(), r=[Math.max(q.left,c.left),Math.max(q.top,c.top),Math.min(q.right,c.right),Math.min(q.bottom,c.bottom)];
+      const zA=+getComputedStyle(t.im).zIndex||0, L=[];
+      card.querySelectorAll('img').forEach(e=>{ if(e===t.im||e.classList.contains('placed')||e.classList.contains('bg')) return; const z=+getComputedStyle(e).zIndex||0; if(z<=zA||z<=5) return;
+        const s=e.getBoundingClientRect(); if(s.width>c.width*.95) return; const o=Math.max(0,Math.min(r[2],s.right)-Math.max(r[0],s.left))*Math.max(0,Math.min(r[3],s.bottom)-Math.max(r[1],s.top)); if(o>0) L.push({e,z,o}); });
+      if(!L.length) return t.pr||null; const mx=Math.max(...L.map(x=>x.o)); return L.filter(x=>x.o>=mx*.2).sort((u,v)=>v.z-u.z)[0].e; };
+    const shake=(g=1)=>{ rustle(); const pr=topCover(), el=pr&&pr.animate?pr:t.im; if(!el.animate) return; const tr=el.style.transform, b=tr&&tr!=='none'?tr+' ':'', hh=Math.max(20,el.getBoundingClientRect().height||100);
+      const deg=el!==t.im?Math.min(16,Math.max(3,Math.atan(24*g/hh)*180/Math.PI)):0, px=6*g;
+      if(el!==t.im) el.style.transformOrigin='50% 95%';
+      el.animate([[0,0],[-1,-1],[.8,.9],[-.6,-.7],[.35,.4],[0,0]].map(([r,x])=>({transform:b+'translateX('+(x*px).toFixed(1)+'px) rotate('+(r*deg).toFixed(2)+'deg)'})),{duration:800*Math.min(g,1.5),easing:'ease-in-out',iterations:g>1?2:1}); };
+    /* 세 번째 도움부터(2026-11-16 선생님 둘째): 은폐된 채로(앞뒤 순서·물 가림 그대로) 좌-제자리-우-제자리(또는 반대) — 진폭은 나올 길 거리의 절반 */
+    const peek=async()=>{ const q=t.im.getBoundingClientRect(); const A=Math.max(10,Math.min(q.width*.5,.5*Math.hypot(t.ox||0,t.oy||0)||q.width*.25)), d=Math.random()<.5?-1:1, tr=t.im.style.transition;
+      t.im.style.transition='transform .45s ease-in-out';
+      for(const x of [d*A,0,-d*A,0]){ if(!alive(tok)||t.done) break; t.im.style.transform=XF(x,0,1,t.flip); await wait(480); }
+      if(!t.done) t.im.style.transition=tr; };
     const hint=n=>n===3?peek():shake(n==='shake'?1:n===1?1.6:2.2);
     if(o.special){   /* 스페셜: 찾으면 소품 뒤에서 조금 나와 그 자리에 남음(가운데로 오지 않음 — 다음 동물을 바로 찾게) */
       await findIt(tok,a,p,t.im,hint,

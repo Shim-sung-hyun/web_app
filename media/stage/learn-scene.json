@@ -1,0 +1,14 @@
+{
+ "ground": 7,
+ "forest": 7,
+ "grassland": 7,
+ "desert": 7,
+ "polar": 7,
+ "mudflat": 7,
+ "underground": 7,
+ "sky": 7,
+ "water": 7,
+ "sea": 11,
+ "pond": 7,
+ "wetland": 7
+}
