@@ -1235,7 +1235,12 @@ function popLayers(img, o, maxSide) {
 function makeGuide(o) {
   return popLayers(srcImg, { ...o, guide: true, ly: { bg: false, f1: false, f2: false, big: false, star: false } }, 512).toDataURL('image/jpeg', 0.9).split(',')[1];
 }
-function renderFilter(img, o, maxSide) { return o.style === 'layers' ? popLayers(img, o, maxSide) : popFilter(img, o, maxSide); }
+function renderFilter(img, o, maxSide) {
+  if (o.style === 'layers') return popLayers(img, o, maxSide);
+  const cv = popFilter(img, o, maxSide);                 // 단순 점에도 꾸미기(별·큰 원)를 올림 (2026-11-23)
+  if (o.ly.big || o.ly.star) { const Lr = prepLayers(img, maxSide); drawDecor(cv.getContext('2d'), cv.width, cv.height, o.ly, o.seed, makeAvoid(Lr, subjectFace(Lr, o), o)); }
+  return cv;
+}
 
 function filterOpts() {
   const P = { classic: ['#FFFFFF', '#FFD700', '#E8001C', '#0057A8', '#111111'],
