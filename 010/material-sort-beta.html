@@ -387,8 +387,8 @@ body.setup #adminBtn{display:none}
 .rvKid{position:absolute;z-index:4;width:110px;height:130px;margin:-124px 0 0 -55px;pointer-events:none}
 .rvKid svg,.rvKid img{width:100%;height:100%;object-fit:contain}
 .rvKid img{transform:scaleX(-1)}   /* 받은 아이 그림이 왼쪽을 봄 — 가는 쪽(오른쪽)으로 */
-.rvGoal{position:absolute;right:2%;z-index:3;pointer-events:none;transform-origin:50% 100%}
-.rvGoal img,.rvGoal i{display:block;width:auto;max-width:44vw;object-fit:contain;object-position:50% 100%;transition:clip-path .9s ease}
+.rvGoal{position:absolute;z-index:3;pointer-events:none;transform-origin:50% 100%}
+.rvGoal img,.rvGoal i{display:block;width:auto}
 .rvGoal.grow{animation:rvGrow .6s ease}.rvGoal.done{animation:rvDone 1s ease}
 @keyframes rvGrow{40%{transform:scale(1.03)}}
 @keyframes rvDone{30%{transform:scale(1.08) translateY(-8px)}60%{transform:scale(.98)}}
@@ -408,7 +408,7 @@ body.setup #adminBtn{display:none}
 .rvStep{font-size:20px;color:#555}
 .rvBgm{width:44px;height:36px;border:2px solid var(--sci);background:#fff;color:var(--sci-d);border-radius:12px;font-size:20px;cursor:pointer}.rvBgm.off{opacity:.5}
 .rvLvBtn{white-space:nowrap;border:2px solid var(--sci);background:#fff;color:var(--sci-d);border-radius:12px;font:inherit;font-size:18px;padding:4px 12px;cursor:pointer}
-.rvFish{position:absolute;z-index:5;left:12px;top:64px;display:flex;align-items:center;gap:10px;pointer-events:none}
+.rvFish{position:absolute;z-index:5;left:12px;top:64px;display:flex;align-items:center;gap:10px;cursor:pointer}
 .rvFishPic{width:130px;height:100px}.rvFishPic svg,.rvFishPic img{width:100%;height:100%;object-fit:contain}
 .rvFishPic.hop{animation:rvRise .8s}
 .rvSay{display:flex;align-items:center;gap:10px;background:#fff;border-radius:20px 18px 22px 6px;padding:8px 16px 8px 8px;box-shadow:0 3px 0 rgba(0,0,0,.08);font-family:var(--f-display);font-size:clamp(18px,2.6vw,28px)}
@@ -2069,7 +2069,7 @@ function bgmNote(c,t,f,d,v,ty){ const o=c.createOscillator(), e=c.createGain(); 
 function bgmHit(c,t,kind){ if(kind==='k'){ const o=c.createOscillator(), e=c.createGain(); o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(45,t+0.12); e.gain.setValueAtTime(0.5,t); e.gain.exponentialRampToValueAtTime(0.0005,t+0.13); o.connect(e); e.connect(BGM.g); o.start(t); o.stop(t+0.15); return; }
   const d=kind==='s'?0.09:0.03, n=Math.floor(c.sampleRate*d), b=c.createBuffer(1,n,c.sampleRate), x=b.getChannelData(0); for(let i=0;i<n;i++) x[i]=Math.random()*2-1;
   const s=c.createBufferSource(); s.buffer=b; const fl=c.createBiquadFilter(); fl.type='highpass'; fl.frequency.value=kind==='s'?1500:6000; const e=c.createGain(); e.gain.setValueAtTime(kind==='s'?0.22:0.1,t); e.gain.exponentialRampToValueAtTime(0.0005,t+d); s.connect(fl); fl.connect(e); e.connect(BGM.g); s.start(t); s.stop(t+d); }
-function bgmTick(){ const c=getCtx(); if(!c||!BGM.run) return; const sp=60/(BGM.fast?156:136)/2;   /* 8분음표 */
+function bgmTick(){ const c=getCtx(); if(!c||!BGM.run) return; { let talk=!!curSrc; try{ talk=talk||speechSynthesis.speaking; }catch(e){} if(BGM.g&&talk!==BGM.talk){ BGM.talk=talk; BGM.g.gain.setTargetAtTime(talk?0.035:0.12,c.currentTime,0.15); } }   /* 말할 때 작게 */ const sp=60/(BGM.fast?156:136)/2;   /* 8분음표 */
   while(BGM.next<c.currentTime+0.15){ const i=BGM.step%64, t=BGM.next, m=BGM.mel[i];
     if(m) bgmNote(c,t,midiF(m),sp*0.9,0.16,'square');
     if(i%2===0) bgmNote(c,t,midiF(BGM.bass[(i>>2)%8]),sp*1.8,0.32,'triangle');
@@ -2077,7 +2077,7 @@ function bgmTick(){ const c=getCtx(); if(!c||!BGM.run) return; const sp=60/(BGM.
     BGM.step++; BGM.next+=sp; } }
 function bgmStart(){ if(BGM.run||!BGM.on||!S.sound) return; const c=getCtx(); if(!c) return; if(c.state==='suspended') c.resume();
   BGM.g=c.createGain(); BGM.g.gain.value=0.0001; BGM.g.gain.linearRampToValueAtTime(0.12,c.currentTime+0.6); BGM.g.connect(c.destination);
-  BGM.run=true; BGM.step=0; BGM.next=c.currentTime+0.1; BGM.iv=setInterval(bgmTick,30); bgmTick(); }
+  BGM.run=true; BGM.talk=false; BGM.step=0; BGM.next=c.currentTime+0.1; BGM.iv=setInterval(bgmTick,30); bgmTick(); }
 function bgmStop(){ if(!BGM.run) return; BGM.run=false; clearInterval(BGM.iv); const c=getCtx(), g=BGM.g; if(c&&g){ g.gain.cancelScheduledValues(c.currentTime); g.gain.setValueAtTime(g.gain.value,c.currentTime); g.gain.linearRampToValueAtTime(0.0001,c.currentTime+0.3); setTimeout(()=>{ try{ g.disconnect(); }catch(e){} },500); } BGM.g=null; }
 function bgmBtn(b){ b.textContent=BGM.on?'♪':'♪̸'; b.classList.toggle('off',!BGM.on); b.setAttribute('aria-label',BGM.on?'배경음악 끄기':'배경음악 켜기'); }
 const RV_LV={1:{name:'하',steps:4,hearts:5,sec:120,per:2},2:{name:'중',steps:6,hearts:4,sec:120,per:3},3:{name:'상',steps:8,hearts:3,sec:120,per:3},4:{name:'스페셜',steps:10,hearts:2,sec:100,per:4}};
@@ -2145,29 +2145,35 @@ function rvStart(lv,keepMat){
   const L=RV_LV[lv], pool=rvPool(lv), m=keepMat&&pool.some(o=>rvHas(o,keepMat))?keepMat:rvPickMat(lv,pool);
   if(!m){ const e=document.createElement('div'); e.className='rvBye'; e.textContent='이 단계에 쓸 물체가 모자라요.'; $('stage').appendChild(e); return; }
   RV={lv,L,m,pool,col:0,hearts:L.hearts,left:L.sec,t0:performance.now(),last:performance.now(),busy:false,over:false,raf:0,cols:[],tok:Math.random()};
-  const st=$('stage'), W=st.clientWidth, H=st.clientHeight, gap=Math.max(150,Math.min(230,W/4.2)), bankL=Math.max(130,W*0.16), bankR=Math.max(260,W*0.42);
-  RV.gap=gap; RV.bankL=bankL; RV.worldW=bankL+gap*L.steps+bankR; RV.W=W; RV.H=H; RV.waterY=H*0.58;
+  const st=$('stage'), W=st.clientWidth, H=st.clientHeight, bankL=Math.max(130,W*0.16), waterY=H*0.58;
+  /* 성은 강 건너 둑 위(2026-11-23 선생님): 처음엔 화면 밖 → 건널수록 화면이 따라가며 왼쪽부터 빼꼼 → 다 건너면 다 보임.
+     강이 화면보다 좁으면 처음부터 보이므로, 성이 화면 밖에서 시작하도록 칸 사이를 넓힘 */
+  const gh=Math.round(Math.max(120,Math.min(waterY-110,460,W*0.4))), cw=Math.round(gh*1.45), bankR=Math.max(260,Math.round((cw+40)/0.64-60));
+  const gap=Math.max(150,Math.min(230,W/4.2),(W+30-bankL)/L.steps);
+  RV.gap=gap; RV.bankL=bankL; RV.worldW=bankL+gap*L.steps+bankR; RV.W=W; RV.H=H; RV.waterY=waterY;
+  RV.rDiv=bankL+gap*L.steps-60; RV.goalX=RV.rDiv+0.36*(bankR+60)+10; RV.goalW=cw;
   const box=document.createElement('div'); box.className='rv'; const bg=rvImg('river-bg');
   box.innerHTML='<div class="rvHud"><span class="rvLv">물질 징검다리 · '+L.name+'</span><span class="rvHearts"></span><span class="rvTime"><b></b><em></em></span><span class="rvStep"></span><button type="button" class="rvBgm"></button><button type="button" class="rvLvBtn">단계</button></div>'
     +'<div class="rvWorld" style="width:'+RV.worldW+'px"><div class="rvBankL" style="width:'+(bankL+60)+'px">'+BANK_SVG+'</div><div class="rvBankR" style="width:'+(bankR+60)+'px">'+BANK_SVG+'</div><div class="rvWater" style="top:'+RV.waterY+'px"></div></div>'
-    +'<div class="rvGoal"></div>'
+    
     +'<div class="rvFish"><div class="rvFishPic">'+(rvImg('fish-talk')?'<img src="'+rvImg('fish-talk')+'" alt="">':FISH_SVG(false))+'</div><div class="rvSay"><span class="rvMat"></span><b></b></div></div>';
   if(bg) box.style.backgroundImage='url('+bg+')'; st.appendChild(box); RV.box=box; RV.world=box.querySelector('.rvWorld');
   const ms=box.querySelector('.rvMat'); ms.style.backgroundImage=texOf(m).replace(/"/g,"'"); ms.textContent=MAT[m].label; box.querySelector('.rvSay b').textContent=riverAsk(m);
   /* 목표 성 하나(2026-11-23 선생님): 오른쪽에 크게, 한 칸 건널 때마다 아래부터 조금씩 드러남(실루엣·이름 없음, 처음엔 땅만) */
-  const goal=box.querySelector('.rvGoal'), gh=Math.round(Math.max(120,Math.min(RV.waterY-110,460,W*0.4)));
-  goal.style.bottom=(H-RV.waterY-Math.round(gh*0.04))+'px'; goal.innerHTML=castlePic(m,gh); rvGoal(true);
+  const goal=document.createElement('div'); goal.className='rvGoal'; goal.style.left=RV.goalX+'px'; goal.style.top=(H*0.556-gh*0.96)+'px'; goal.innerHTML=castlePic(m,gh); RV.world.appendChild(goal);
   /* 아이 */
   const kid=document.createElement('div'); kid.className='rvKid'; RV.kid=kid; RV.world.appendChild(kid); rvKidPose('stand'); rvPlaceKid(bankL*0.55,RV.waterY-6);
   for(let c=1;c<=L.steps;c++) rvFillCol(c);
   rvHud(); rvActivate(); rvCamera(true);
   box.querySelector('.rvLvBtn').onclick=()=>rvLevelPick();
+  tapper(box.querySelector('.rvFish'),()=>{ unlockAudio(); rvFishSay(); });
   { const bb=box.querySelector('.rvBgm'); bgmBtn(bb); bb.onclick=()=>{ BGM.on=!BGM.on; store.set('bgm',BGM.on?'1':'0'); bgmBtn(bb); if(BGM.on) bgmStart(); else bgmStop(); }; }
   BGM.fast=false; bgmStart();
   const tick=now=>{ if(!RV||RV.over) return; const dt=(now-RV.last)/1000; RV.last=now; const go=!S.admin&&!document.hidden&&!RV.busyPause; if(go) bgmStart(); else bgmStop(); BGM.fast=RV.left<RV.L.sec*0.25; if(go) RV.left=Math.max(0,RV.left-dt); rvHud(); if(RV.left<=0){ rvLose('time'); return; } RV.raf=requestAnimationFrame(tick); };
   RV.raf=requestAnimationFrame(tick);
-  setTimeout(()=>{ if(RV&&!RV.over) speak(riverAsk(m)); },500);
+  setTimeout(()=>{ if(RV&&!RV.over) rvFishSay(); },500);
 }
+function rvFishSay(){ if(!RV||RV.over) return; const f=RV.box.querySelector('.rvFishPic'); f.classList.remove('hop'); void f.offsetWidth; f.classList.add('hop'); speak(riverAsk(RV.m)); }
 function rvKidPose(p){ const src=rvImg('kid-'+p); RV.kid.innerHTML=src?'<img src="'+src+'" alt="">':KID_SVG(p); }
 function rvPlaceKid(x,y){ RV.kx=x; RV.ky=y; RV.kid.style.left=x+'px'; RV.kid.style.top=y+'px'; }
 function rvColX(c){ return RV.bankL+RV.gap*(c-0.5); }
@@ -2188,7 +2194,8 @@ function rvHud(){ if(!RV) return; const b=RV.box, L=RV.L;
   b.querySelector('.rvHearts').innerHTML=Array.from({length:L.hearts},(_,i)=>'<i class="'+(i<RV.hearts?'on':'')+'">♥</i>').join('');
   const p=RV.left/L.sec, bar=b.querySelector('.rvTime b'); bar.style.width=(p*100).toFixed(1)+'%'; bar.className=p>0.5?'g':p>0.2?'y':'r';
   b.querySelector('.rvTime em').textContent=Math.ceil(RV.left)+'초'; b.querySelector('.rvStep').textContent=RV.col+' / '+L.steps+' 칸'; }
-function rvCamera(now){ const x=Math.max(0,Math.min(RV.worldW-RV.W,RV.kx-RV.W*0.3)); RV.world.style.transition=now?'none':'transform .7s ease'; RV.world.style.transform='translateX('+(-x)+'px)'; }
+function rvCamera(now){ const want=RV.goalX+RV.goalW*RV.col/RV.L.steps-RV.W+20;   /* 성은 건넌 만큼만 화면에 */
+  const x=Math.max(0,Math.min(RV.worldW-RV.W,Math.max(RV.kx-RV.W*0.3,Math.min(want,RV.kx-90)))); RV.world.style.transition=now?'none':'transform .7s ease'; RV.world.style.transform='translateX('+(-x)+'px)'; }
 /* 통통 뛰기(포물선) */
 function rvJump(x2,y2,ms){ return new Promise(res=>{ const me=RV, x1=RV.kx, y1=RV.ky, h=Math.max(70,Math.abs(x2-x1)*0.45), t0=performance.now(); rvKidPose('jump'); rvSound('jump');
   const f=now=>{ if(RV!==me) return res(); const p=Math.min(1,(now-t0)/ms), x=x1+(x2-x1)*p, y=y1+(y2-y1)*p-h*4*p*(1-p); me.kid.style.left=x+'px'; me.kid.style.top=y+'px'; if(p<1) requestAnimationFrame(f); else { me.kx=x2; me.ky=y2; res(); } }; requestAnimationFrame(f); }); }
@@ -2197,22 +2204,20 @@ async function rvTap(c,o,e){ if(!RV||RV.over||RV.busy||S.admin||c!==RV.col+1) re
   if(rvHas(o,RV.m)){
     await rvJump(tx,ty,520); if(RV!==me) return; rvSound('land'); rvKidPose('stand'); e.classList.add('stood'); RV.cols[c].els.forEach(x=>{ if(x!==e) x.classList.add('sink'); });
     if(!o.ms.includes(RV.m)&&o.hid.includes(RV.m)) rvInside(o,e);   /* 스페셜: 속에 든 물질 — 반쯤 열린 그림을 잠깐 */
-    rvFishHappy(); RV.col++; rvHud(); rvCamera(); rvActivate(); rvGoal(); rvSound('build');
-    if(RV.col>=RV.L.steps){ await wait(400); if(RV!==me) return; await rvJump(RV.bankL+RV.gap*RV.L.steps+70,RV.waterY-6,620); if(RV!==me) return; rvKidPose('stand'); rvWin(); return; }
+    rvFishHappy(); RV.col++; rvHud(); rvCamera(); rvActivate(); rvSound('build');
+    if(RV.col>=RV.L.steps){ await wait(400); if(RV!==me) return; await rvJump(RV.rDiv+0.3*(RV.worldW-RV.rDiv),RV.H*0.556+4,620); if(RV!==me) return; rvKidPose('stand'); rvWin(); return; }
   } else {
     e.classList.add('pop'); rvSound('pop'); await rvJump(tx,ty+20,480); if(RV!==me) return; rvSound('splash'); rvKidPose('splash'); RV.hearts--; rvHud(); RV.box.querySelector('.rvHearts').classList.add('lost');
     setTimeout(()=>RV&&RV.box.querySelector('.rvHearts').classList.remove('lost'),700);
     await wait(900); if(RV!==me) return; e.remove();
     if(RV.hearts<=0){ rvLose('hearts'); return; }
     const back=RV.col===0?[RV.bankL*0.55,RV.waterY-6]:(()=>{ const s2=RV.cols[RV.col].els.find(x=>x.classList.contains('stood')); const a=s2.getBoundingClientRect(), w=RV.world.getBoundingClientRect(); return [a.left-w.left+a.width/2,a.top-w.top+a.height*0.15]; })();
-    rvKidPose('splash'); await rvJump(back[0],back[1],420); if(RV!==me) return; rvKidPose('stand'); rvFillCol(c); rvActivate();
+    rvKidPose('splash'); await rvJump(back[0],back[1],420); if(RV!==me) return; rvKidPose('stand'); rvFillCol(c); rvActivate(); rvFishSay();
   }
   RV.busy=false; }
 function rvFishHappy(){ const f=RV.box.querySelector('.rvFishPic'); const src=rvImg('fish-happy'); f.innerHTML=src?'<img src="'+src+'" alt="">':FISH_SVG(true); f.classList.remove('hop'); void f.offsetWidth; f.classList.add('hop');
   setTimeout(()=>{ if(!RV) return; const s2=rvImg('fish-talk'); f.innerHTML=s2?'<img src="'+s2+'" alt="">':FISH_SVG(false); },900); }
 function rvInside(o,e){ const src=insideSrc(o.a); if(!src) return; const d=document.createElement('div'); d.className='rvInside'; d.innerHTML='<img src="'+src+'" alt=""><span>속에 '+MAT[RV.m].label+'</span>'; RV.box.appendChild(d); setTimeout(()=>d.remove(),2200); }
-function rvGoal(now){ const g=RV.box.querySelector('.rvGoal'), p=0.06+0.94*RV.col/RV.L.steps, el=g.firstChild; if(!el) return;
-  el.style.transition=now?'none':''; el.style.clipPath='inset('+((1-p)*100).toFixed(1)+'% 0 0 0)'; if(!now){ g.classList.remove('grow'); void g.offsetWidth; g.classList.add('grow'); } }
 async function rvWin(){ const me0=RV; RV.over=true; bgmStop(); cancelAnimationFrame(RV.raf); const me=rvMe(), m=RV.m, used=RV.L.sec-RV.left, lv=RV.lv;
   me.castle[m]=(me.castle[m]||0)+1; const best=me.best[lv]; const rec=!best||used<best; if(rec) me.best[lv]=Math.round(used); rvSave();   /* castle = 물질마다 다 지은 횟수 */
   RV.box.querySelector('.rvGoal').classList.add('done'); rvSound('win'); await speak(RV_WIN); if(RV!==me0) return;
