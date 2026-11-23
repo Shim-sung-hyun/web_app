@@ -254,7 +254,9 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .quick-actions button:first-child { background:#FFD700; }
 .quick-actions button:hover { transform:translateY(-1px); }
 .cp-file { display:none !important; }
-.app.settings-open { grid-template-columns:minmax(300px,33.333%) minmax(0,1fr); }
+.app.settings-open { grid-template-columns:340px minmax(0,1fr); }   /* 설정 창은 팝아트 단추 폭만큼 (2026-11-23) */
+.app.settings-open .control-panel > .mode-btns { grid-template-columns:1fr; }
+.app.settings-open .cp-head .mailbox-btn svg { width:84px; }
 .app.settings-open .control-panel { width:auto; padding:18px 20px; }
 .app.settings-open .control-panel > .mode-btns, .app.settings-open .control-panel > .opts { display:grid; animation:settingsFade .28s ease both; }
 .app.settings-open .control-panel > .smart { display:flex; animation:settingsFade .28s ease both; }
@@ -304,19 +306,14 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .api-credentials .credential-row { display:flex; flex-direction:column; gap:4px; }
 .api-credentials label { font-size:11px; font-weight:800; }
 .api-credentials input { width:100%; min-width:0; padding:9px; border:1px solid #9bb8d8; border-radius:7px; font:inherit; font-size:12px; background:#fff; }
-.api-help { width:100%; border:1px solid #b8cde6; border-radius:9px; background:#fff; }
-.api-help summary { cursor:pointer; padding:9px 11px; font-size:12px; font-weight:800; color:#0057A8; list-style:none; }
-.api-help summary::-webkit-details-marker { display:none; }
-.api-help summary::before, .gem-fold summary::before { content:''; display:inline-block; width:0; height:0; margin-right:7px; vertical-align:1px; border-style:solid; border-width:5px 0 5px 8px; border-color:transparent transparent transparent currentColor; transition:transform .15s; }
-.api-help[open] summary::before, .gem-fold[open] summary::before { transform:rotate(90deg); }   /* 닫힘 ▶ · 열림 ▼ */
+.gem-fold summary::before { content:''; display:inline-block; width:0; height:0; margin-right:7px; vertical-align:1px; border-style:solid; border-width:5px 0 5px 8px; border-color:transparent transparent transparent currentColor; transition:transform .15s; }
+.gem-fold[open] summary::before { transform:rotate(90deg); }   /* 닫힘 ▶ · 열림 ▼ */
 .cf-lead { font-size:12px; line-height:1.5; color:#123; background:#fff6c7; border-left:4px solid #FFD700; padding:7px 9px; border-radius:6px; }
 .cf-lead b { color:#0057A8; }
 .gem-fold summary { cursor:pointer; font-size:11px; font-weight:800; color:#444; list-style:none; padding:2px 0; }
 .gem-fold summary::-webkit-details-marker { display:none; }
+.key-link { font-size:10px; font-weight:800; color:#0057A8; margin-left:4px; white-space:nowrap; }
 .gem-fold .credential-row { margin-top:6px; }
-.api-help .help-body { padding:0 11px 11px; font-size:11px; line-height:1.55; color:#444; }
-.api-help .help-body p { margin:6px 0; }
-.api-help a { color:#0057A8; font-weight:800; }
 #ai-route-info { font-size:10px; line-height:1.45; color:#555; }
 .app:not(.settings-open) .cp-head { display:flex; flex-direction:column; align-items:center; gap:8px; }
 .app:not(.settings-open) .cp-head .mailbox-btn { align-self:center; }
@@ -485,9 +482,9 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
     <div class="smart" style="width:100%;align-items:stretch;flex-direction:column;">
       <button class="chip" id="btn-detect" disabled onclick="autoDetect()" style="align-self:flex-start;">🔍 사진 보고 자동 설정</button>
       <div class="api-credentials">
-        <div class="cf-lead"><b>내 Cloudflare 키를 넣으면 이 앱을 제대로 쓸 수 있어요.</b><br>기본 계정은 하루 3회뿐이에요. ①·②를 넣으면 내 계정 한도만큼 마음껏 만들 수 있어요.</div>
+        <div class="cf-lead"><b>Cloudflare 키가 있으면 제대로 쓸 수 있어요.</b><br>기본 계정은 하루 3회뿐. ①·②를 넣으면 마음껏 만들어요.</div>
         <div class="credential-row">
-          <label for="cf-account-id">① Cloudflare AI · Account ID</label>
+          <label for="cf-account-id">① Cloudflare AI · Account ID <a class="key-link" href="https://www.charum.org/study/doc.html?cloudflare_guide" target="_blank" rel="noopener noreferrer">Cloudflare 토큰 받는 법 ↗</a></label>
           <input id="cf-account-id" type="text" autocomplete="off" spellcheck="false" placeholder="Cloudflare Account ID">
         </div>
         <div class="credential-row">
@@ -500,7 +497,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
           <button type="button" class="chip" style="padding:5px 9px;" onclick="clearCloudflareCredentials()">Cloudflare 정보 지우기</button>
         </div>
         <details class="gem-fold">
-          <summary>③ Gemini API Key (선택 사항)</summary>
+          <summary>③ Gemini API Key (선택 사항) <a class="key-link" href="https://www.charum.org/study/doc.html?gemini_guide" target="_blank" rel="noopener noreferrer">Gemini 키 받는 법 ↗</a></summary>
           <div class="credential-row">
             <input id="gemini-key" type="password" autocomplete="off" placeholder="Gemini API 키 붙여넣기 · 없어도 사용 가능" aria-label="Gemini API Key">
             <small style="font-size:10px;color:#555;line-height:1.45;">없어도 괜찮아요. 넣으면 Gemini가 사진을 살펴보고, 막히면 Cloudflare로 넘어가요(①·②가 비어 있으면 기본 계정 하루 3회).</small>
@@ -508,22 +505,6 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
           </div>
         </details>
       </div>
-      <details class="api-help">
-        <summary>API 설명 및 키 발급 안내</summary>
-        <div class="help-body">
-          <b>Cloudflare AI — 있으면 이 앱을 제대로 활용할 수 있습니다</b>
-          <p>기본 제공 계정은 하루 3회로 제한되어 수업에서 여러 번 쓰기에는 부족합니다. 본인 계정의 Account ID와 API Token을 모두 넣으면 하루 3회 제한 없이 쓸 수 있습니다. 두 항목을 비워 두면 기본 제공 계정으로 하루 3회 이용합니다. Gemini 키가 없으면 Cloudflare의 비전 AI가 사진을 분석하고, 이미지 AI가 팝아트를 생성합니다.</p>
-          <p><a href="https://www.charum.org/study/doc.html?cloudflare_guide" target="_blank" rel="noopener noreferrer">Cloudflare 토큰 받는 법 ↗</a></p>
-          <p>토큰은 Workers AI 권한을 부여한 API Token을 사용하세요. Global API Key는 입력하지 마세요. 입력값은 브라우저 저장소에 저장하지 않으며 페이지가 열려 있는 동안 메모리에만 보관합니다.</p>
-          <p><b>토큰 전달 안내:</b> Gemini 키와 달리 Cloudflare Account ID와 API Token은 변환 요청을 처리하기 위해 이 서비스의 변환 서버(Worker)를 거쳐 Cloudflare로 전달됩니다. 이 서비스 전용으로 Workers AI 권한만 가진 토큰을 새로 만들어 쓰시고, 사용이 끝나면 Cloudflare 대시보드에서 삭제하세요.</p>
-          <hr style="border:0;border-top:1px solid #d7e1ee;margin:9px 0;">
-          <b>Gemini API (선택 사항)</b>
-          <p>Gemini 키를 입력하면 Gemini가 사진을 분석합니다. 키가 없거나 입력하지 않아도 Cloudflare AI가 분석하므로 필수는 아닙니다.</p>
-          <p><a href="https://www.charum.org/study/doc.html?gemini_guide" target="_blank" rel="noopener noreferrer">Gemini 키 받는 법 ↗</a></p>
-          <p>Gemini 키는 이 브라우저에서 Google로 직접 전송되며 Cloudflare Worker로 보내지지 않습니다.</p>
-          <p><b>한도 초과·오류 시 안내:</b> Gemini가 한도 초과나 오류로 막히면 Cloudflare AI로 자동 전환됩니다. 이때 Cloudflare Account ID와 API Token을 입력하지 않았다면 기본 제공 계정(하루 3회)이 사용됩니다. 전환 후에도 본인 계정의 한도만 쓰려면 Cloudflare 정보도 함께 입력하세요.</p>
-        </div>
-      </details>
     </div>
     <div class="opts">
       <label>AI 방식 <select class="mode-select" id="mode"><option value="faithful">얼굴 그대로</option><option value="balanced">균형</option><option value="bold">과감하게</option></select></label>
@@ -544,7 +525,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
         <input type="checkbox" id="L-f2" checked> 얼굴 점2
         <input type="checkbox" id="L-big" checked> 큰 원
         <input type="checkbox" id="L-star" checked> 별
-        <button class="chip" id="btn-shuffle" type="button">🎲 배치</button></label>
+        <button class="chip" id="btn-shuffle" type="button" title="AI를 다시 부르지 않고 별·큰 원의 자리만 새로 섞어요">🎲 별·원 자리 바꾸기</button></label>
     </div>
     <a class="report-link" href="https://www.charum.org/webapp/59987#write" target="_blank" rel="noopener" title="이 도구의 오류나 의견을 게시판 댓글로 남겨요">💬 오류·의견 알리기</a>
   </div>
