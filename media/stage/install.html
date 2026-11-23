@@ -117,9 +117,15 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   <p class="hint">장소를 고르면 이름·폴더·배경 설명·지평선·소품(판 1·3)·가장자리 큰 것·그곳 동물·블록 소품이 미리 들어가요(media/stage/places.json). 고친 뒤 써도 돼요.</p>
   <div id="hidePlan" class="notice hidden"></div>
   <div class="row">
-   <div style="flex:1"><label for="sceneSetting">장소와 배경 설명</label><input id="sceneSetting" type="text" placeholder="예: 먼 산과 빈 숲 바닥, 지평선은 위에서 36%"></div>
+   <div style="flex:1"><label for="sceneSetting">장소와 배경 설명</label><input id="sceneSetting" type="text" placeholder="예: 동네 마당 — 낮은 돌담 너머 집들, 흙 마당"></div>
   </div>
-  <label for="objectNames">소품 이름과 실제 높이 (한 줄에 하나: <code>이름 높이m</code> 또는 <code>이름 낮게~높게</code> — 영어로 적으면 AI가 더 정확해요)</label>
+  <div class="prompt-box" id="aiBox"><h3>AI에게 맡기기 (제미나이)</h3>
+   <p class="hint">장소를 한국어로 적고(소품도 적으면 그대로, 비워 두면 AI가 그 곳에 어울리는 소품을 골라요) 누르면, AI가 영어 장소 설명·소품 목록(실제 높이)을 채우고 프롬프트까지 만들어요. 아래 '그림풍'에 샘플 그림을 넣었으면 그 그림풍도 글로 옮겨요. 모델: Gemini 3.5 Flash Lite(무료 키로 돼요).</p>
+   <div class="row"><div style="flex:1"><label for="gemKey">제미나이 키 — 이 기기에만 저장(다른 차름 앱과 같은 칸)</label><input id="gemKey" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…"></div></div>
+   <div class="toolbar"><button id="aiFill" class="primary" type="button">AI로 채우기</button><a href="https://www.charum.org/study/doc.html?gemini_guide" target="_blank" rel="noopener">제미나이 키 받는 법 ↗</a><button id="gemKeyClear" class="secondary" type="button">이 기기의 키 지우기</button></div>
+   <p id="aiStatus" class="status" role="status"></p>
+  </div>
+  <label for="objectNames">소품 이름과 실제 높이 (한 줄에 하나: <code>이름 높이m</code> 또는 <code>이름 낮게~높게</code> · AI로 채우면 <code>한국어 | english 낮게~높게</code>)</label>
   <textarea id="objectNames">참나무 10~16
 전나무 6~10
 통나무 0.4~0.7
@@ -1098,8 +1104,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function specs(){return parseSpecs($('#objectNames').value)}
  function parseSpecs(txt){return String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,16).map(l=>{
   const m=l.match(/^(.*?)\s+(\d+(?:\.\d+)?)(?:\s*[~\-–]\s*(\d+(?:\.\d+)?))?\s*m?$/);
-  if(!m)return {name:l,h:null};
-  const a=Number(m[2]),b=m[3]!=null?Number(m[3]):null;return {name:m[1].trim(),h:b!=null?[Math.min(a,b),Math.max(a,b)]:[+(a*.7).toFixed(2),a]}})}
+  const nm=(m?m[1]:l).split('|'),name=nm[0].trim(),en=(nm[1]||'').trim()||undefined;   /* '평상 | a low wooden platform 0.4~0.5' — 화면은 한국어, 프롬프트는 영어(AI로 채우기, 2026-11-23) */
+  if(!m)return {name,en,h:null};
+  const a=Number(m[2]),b=m[3]!=null?Number(m[3]):null;return {name,en,h:b!=null?[Math.min(a,b),Math.max(a,b)]:[+(a*.7).toFixed(2),a]}})}
  function names(){return specs().map(x=>x.name)}
  /* 큰 그림이 필요한가(2026-11-09): 무대에서 맨 앞(화면 아래 끝)에 놓이면 1m = 장면 높이의 UNIT. 흔한 큰 화면에서 장면 높이 SCENE_PX점.
     판에서 자른 그림 한 칸은 CELL_PX점쯤 → 장면 1200점 높이에서 소품 그림이 늘어나면(1배 넘게) 흐려 보이므로(무대 원리 21) 그 소품은 한 장에 하나씩 큰 그림으로 받음 */
@@ -1136,8 +1143,8 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  const remake=()=>{if(!$('#prompts').classList.contains('hidden'))$('#makePrompts').click()};
  $('#styleKind').addEventListener('change',()=>{$('#styleCustom').classList.toggle('hidden',$('#styleKind').value!=='custom');remake()});
  $('#styleCustom').addEventListener('change',remake);
- $('#styleSample').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{state.sample=await readImage(f);state.sampleName=f.name;$('#styleSampleImg').src=canvasDataUrl(state.sample);$('#styleSampleImg').classList.remove('hidden');$('#styleSampleClear').classList.remove('hidden');$('#styleKind').disabled=true;$('#styleSampleInfo').textContent=`${f.name} — 이 그림풍대로 지어요. AI에 부탁할 때 이 샘플을 함께 붙여 주세요.`;remake()}catch(err){$('#styleSampleInfo').textContent=err.message}});
- $('#styleSampleClear').addEventListener('click',()=>{state.sample=null;$('#styleSample').value='';$('#styleSampleImg').classList.add('hidden');$('#styleSampleClear').classList.add('hidden');$('#styleKind').disabled=false;$('#styleSampleInfo').textContent='샘플이 없으면 오른쪽에서 고른 그림풍으로 지어요.';remake()});
+ $('#styleSample').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{state.sample=await readImage(f);state.sampleStyle='';state.sampleName=f.name;$('#styleSampleImg').src=canvasDataUrl(state.sample);$('#styleSampleImg').classList.remove('hidden');$('#styleSampleClear').classList.remove('hidden');$('#styleKind').disabled=true;$('#styleSampleInfo').textContent=`${f.name} — 이 그림풍대로 지어요. AI에 부탁할 때 이 샘플을 함께 붙여 주세요.`;remake()}catch(err){$('#styleSampleInfo').textContent=err.message}});
+ $('#styleSampleClear').addEventListener('click',()=>{state.sample=null;state.sampleStyle='';$('#styleSample').value='';$('#styleSampleImg').classList.add('hidden');$('#styleSampleClear').classList.add('hidden');$('#styleKind').disabled=false;$('#styleSampleInfo').textContent='샘플이 없으면 오른쪽에서 고른 그림풍으로 지어요.';remake()});
  $('#blueShadow').addEventListener('change',()=>{if(!$('#prompts').classList.contains('hidden'))$('#makePrompts').click()});
  /* 그림풍(2026-11-11~ 지금 무대들): 가는 연필·잉크 선, 짧은 옅은 빗금, 아주 옅은 수채 — 무대 프롬프트(media/stage/prompts)와 같은 말 */
  const PEN='fine, thin dark-grey pencil-and-ink lines, short light hatching and only very pale watercolour washes';
@@ -1149,32 +1156,81 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   murim:'a Korean martial-arts (murim) comic style: bold expressive black ink-brush lines, strong strokes, muted earthy colours and ink-wash shading',
   real:'a realistic painting style: natural colours, accurate light and shadow and fine realistic detail'};
  const hasSample=()=>Boolean(state.sample);
- const STY=()=>hasSample()?'exactly the drawing style of the attached sample picture (its lines, colours, shading and level of detail)':(($('#styleKind').value==='custom'?$('#styleCustom').value.trim():STYLES[$('#styleKind').value])||STYLES.pencil);
+ const STY=()=>hasSample()?`exactly the drawing style of the attached sample picture (${state.sampleStyle||'its lines, colours, shading and level of detail'})`:(($('#styleKind').value==='custom'?$('#styleCustom').value.trim():STYLES[$('#styleKind').value])||STYLES.pencil);
  const plainStyle=()=>!hasSample()&&['pencil','real'].includes($('#styleKind').value);
  const CALM0='Realistic proportions, calm and natural, not cute and not cartoon-like.', CALM1='Natural proportions, calm and gentle, never scary.';
  const WHITE='IMPORTANT: plain pure white (#FFFFFF) background — not cream, no paper texture, no ground, no horizon.';
  const NORING='Its outer edge is only its natural edge — no extra line, ring or frame around it.';
- const NOFACE='Cracks, knots, holes and lumps form no face or face-like shape anywhere, and no roots look like fingers or claws.';
+ const NOFACE0='Cracks, knots, holes and lumps form no face or face-like shape anywhere, and no roots look like fingers or claws.', NOFACE1='No part, pattern or shadow forms a face or a face-like shape anywhere.';
+ const isNature=()=>$('#sceneGroup').value==='nature', noFace=()=>isNature()?NOFACE0:NOFACE1;
+ /* 갈래(마을·학교·집·가게)면 밑동을 흙·풀 대신 그 곳 바닥에 맞게(2026-11-23 선생님: 동네 마당 같은 곳도 바로 쓰이게) */
+ const baseRule=()=>isNature()?BASE_RULE:`At the bottom it stands on ${(state.aiScene&&state.aiScene.base)||'the ground of this place'} along one flat, level line, with only a soft, small contact edge — no separate ground patch, slab, box-shaped base or soil cross-section.`;
  const ref=what=>hasSample()?'The attached picture is the style sample: follow its drawing style exactly, but do not copy its objects.':`The attached picture is ${what}: use it ONLY as the reference for the drawing style and the strength of colour; do not copy its objects.`;
  const shade=one=>$('#blueShadow').checked?[[`SHADOW: daylight from the upper LEFT behind the viewer (sun not drawn). ${one?'One shadow':'One shadow per object'}, ONLY on the RIGHT: from the bottom-right where it touches the ground toward the UPPER RIGHT (like a clock hand at 2), about half as long as the object is tall. No shadow on the left or in front.`,1],
   ['The shadow is one flat shape of solid pure bright blue (#0000FF) with a sharp clean edge — no gradient, hatching or outline. Blue is ONLY in the shadow.',1]]:[['No shadow at all.',1]];
  const hTxt=h=>h?` (about ${h[0]}–${h[1]} m tall in real life)`:'';
  const H100=()=>Math.round(state.horizon*100), PLACE=()=>state.setting||state.name||'the place';
  const bgEmpty=()=>aiText([[hasSample()?'The attached picture is the style sample: follow its drawing style exactly, but do not copy its place or objects.':'',1],
-  [`In ${STY()}, draw an EMPTY landscape of this place as a wide 4:3 picture: ${PLACE()}.`,1],
+  [`In ${STY()}, draw ${isNature()?'an EMPTY landscape of this place':'this place as an EMPTY stage'} as a wide 4:3 picture: ${PLACE()}.`,1],
   [`The edge where the open ground ends is an almost straight, level line about ${H100()}% from the top, so the empty ground fills the rest of the picture below it.`,1],
-  ['Above that line: the far scenery, drawn small and light, paler and mistier the farther away it is, brighter toward the upper-left corner.',0],
-  ['Below the line: one wide, flat, open ground in a clear watercolour wash of its natural colour (clearly coloured, not white or grey), with fine sparse marks that get a little larger toward the bottom. Keep the ground empty and calm: no trees, trunks, roots, rocks, logs, bushes, plants, paths, puddles, shadows, animals or objects on it, so things can be placed on it later.',1],
+  [state.aiScene&&state.aiScene.far?`Above that line: ${state.aiScene.far}, drawn small and light, paler the farther away it is.`:'Above that line: the far scenery, drawn small and light, paler and mistier the farther away it is, brighter toward the upper-left corner.',state.aiScene&&state.aiScene.far?1:0],
+  [`Below the line: ${state.aiScene&&state.aiScene.ground?state.aiScene.ground+', ':''}one wide, flat, open ground in a clear wash of its natural colour (clearly coloured, not white or grey), with fine sparse marks that get a little larger toward the bottom. Keep the ground empty and calm: no trees, trunks, roots, rocks, logs, bushes, plants, paths, puddles, shadows, animals or objects on it, so things can be placed on it later.`,1],
   ['Bright, soft daylight from the upper left behind the viewer; do not draw the sun. No people, no animals, no text, no frame, no watermark.',1]]);
  const stdText=()=>aiText([[ref('the empty background of this place'),1],[`In ${STY()}, draw the same place as a typical, natural 4:3 scene: ${PLACE()}. Add the things usually found there, placed naturally in groups, some near and some far, seen at a child's standing eye level, with the same horizon.`,1],[plainStyle()?CALM0:CALM1,0],['Soft daylight from the upper left. No animals, no people, no text, no frame, no watermark.',1]]);
  function propText(name,h,extra=''){return aiText([[WHITE,1],[ref('the background of the place where this object will stand'),1],[`Draw ONE object and ${$('#blueShadow').checked?'its shadow':'nothing else'} in ${STY()}, inside the middle two-thirds of the picture width, with wide white margins on all four sides — nothing touches the edge.`,1],
-  [`The object: ${name}${hTxt(h)}. The whole object is in the picture.${extra}`,1],[plainStyle()?CALM0:CALM1,0],[BASE_RULE,1],[NORING,1],[NOFACE,0],['Nothing else in the picture: no loose leaves, pebbles or ground patch around it, no other objects, no animals, no people, no text, no frame.',1],...shade(true),
+  [`The object: ${name}${hTxt(h)}. The whole object is in the picture.${extra}`,1],[plainStyle()?CALM0:CALM1,0],[baseRule(),1],[NORING,1],[noFace(),0],['Nothing else in the picture: no loose leaves, pebbles or ground patch around it, no other objects, no animals, no people, no text, no frame.',1],...shade(true),
   ['Draw fine detail: this picture will be shown large. Choose a picture shape that suits the object (tall objects in a tall picture, wide objects in a wide picture).',0]])}
  function sheetText(list,v,N,same){return aiText([[WHITE,1],[v?ref('sheet 1 of this set of object sheets'):ref('the background of the place where these objects will stand'),1],
   [`Draw a 3×3 arrangement of nine equal cells on the white paper — do NOT draw any grid lines — in ${STY()}.`,1],
   [`Fill the cells from the top-left, one clearly different object per cell, in this order:\n${list}\nLeave every unused cell, and always the bottom-right cell, completely empty and white.`,1],
   same&&v?[`This is sheet ${v+1} of ${N}: the SAME kinds in the SAME cell order as the attached sheet, but every object must look clearly different from the same cell there — a different individual of the same kind (different shape, pose, proportions or details) with a similar real size.`,1]:null,
-  ['Each object is centred in its cell with a clear white gap to its neighbours, seen from the front at eye level.',1],[plainStyle()?CALM0:CALM1,0],[BASE_RULE,1],[NORING,1],[NOFACE,0],['No animals, no people, no text, no frame.',1],...shade(false)])}
+  ['Each object is centred in its cell with a clear white gap to its neighbours, seen from the front at eye level.',1],[plainStyle()?CALM0:CALM1,0],[baseRule(),1],[NORING,1],[noFace(),0],['No animals, no people, no text, no frame.',1],...shade(false)])}
+ /* AI로 채우기(2026-11-23 선생님): 선생님 제미나이 키(이 기기 webapp.geminiKey — 001·010과 같은 칸)로 Gemini 3.5 Flash Lite(무료 키)에 바로 보냄.
+    AI는 한국어로 적은 장소·소품을 영어 장소 설명·먼 배경·바닥·소품 목록(실제 높이)으로 바꾸는 일만 하고, 프롬프트는 도구가 규칙대로(흰 바탕·그림풍·2000자·그림자) 지음 */
+ const GEM_MODELS=['gemini-3.5-flash-lite','gemini-flash-lite-latest'];
+ const gemKey=()=>{try{return localStorage.getItem('webapp.geminiKey')||''}catch(e){return ''}};
+ function setGemKey(k){try{k?localStorage.setItem('webapp.geminiKey',k):localStorage.removeItem('webapp.geminiKey')}catch(e){}}
+ const keyShow=()=>{$('#gemKey').value='';$('#gemKey').placeholder=gemKey()?'저장된 키가 있어요 (바꾸려면 새 키를 넣기)':'AIza…'};
+ $('#gemKey').addEventListener('change',e=>{const k=e.target.value.trim();if(k){setGemKey(k);keyShow();setStatus($('#aiStatus'),'키를 이 기기에 저장했어요.')}});
+ $('#gemKeyClear').addEventListener('click',()=>{setGemKey('');keyShow();setStatus($('#aiStatus'),'이 기기의 제미나이 키를 지웠어요.')});
+ const GROUP_KO={nature:'자연',town:'마을',school:'학교',home:'집',public:'가게·기관'};
+ function sampleB64(){const im=state.sample,k=Math.min(1,640/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.85).split(',')[1]}
+ $('#aiFill').addEventListener('click',async()=>{const st=$('#aiStatus'),key=gemKey();
+  if(!key){setStatus(st,'제미나이 키를 먼저 넣어 주세요(오른쪽 \'키 받는 법\').',true);return}
+  const name=$('#sceneName').value.trim(),setting=$('#sceneSetting').value.trim(),given=specs();
+  if(!name&&!setting){setStatus(st,'장면 이름이나 장소 설명을 먼저 적어 주세요.',true);return}
+  const ask=`특수학교 발달장애 학생용 학습 앱의 그림 장면(무대)을 만듭니다. 빈 배경 위에 소품 그림을 따로 받아 겹쳐 놓습니다.
+갈래: ${GROUP_KO[$('#sceneGroup').value]||''}
+장면 이름: ${name}
+선생님이 적은 장소 설명: ${setting||'(없음)'}
+선생님이 적은 소품: ${given.length?given.map(g=>g.name+(g.h?` ${g.h[0]}~${g.h[1]}m`:'')).join(', '):'(없음 — 제안해 주세요)'}
+JSON으로만 답하세요.
+- place_en: 사람·동물·소품 없이 빈 무대 배경을 그릴 영어 설명 한두 문장(이 곳이 어디인지 알 수 있게).
+- far_en: 땅이 끝나는 줄 너머 먼 배경을 영어 한 구절로(예: low stone walls and tiled roofs of houses across the yard).
+- ground_en: 비어 있는 바닥을 영어 짧은 구절로(예: a packed-earth yard).
+- base_en: 소품의 밑동이 닿는 그 바닥을 영어 짧은 구절로(예: the packed earth of the yard).
+- props: 선생님이 적은 소품이 있으면 그 차례와 높이를 그대로 두고 en만 붙이세요. 없으면 이 곳에 흔한 소품 10~12가지(작은 것과 큰 것을 고루, 큰 것 2~3가지). ko는 짧은 한국어, en은 물건만 짧은 영어(12단어 안, 사람·동물·글자 없이), h는 실제 높이 [낮게, 높게] 미터. 위험하거나 무서운 물건은 빼세요.
+- style_en: ${hasSample()?'붙인 샘플 그림의 그림풍을 영어로(선·색·명암·세밀함, 25단어 안). 그림 속 물건은 적지 마세요.':'빈 글자.'}`;
+  const parts=[{text:ask}];if(hasSample())parts.push({inline_data:{mime_type:'image/jpeg',data:sampleB64()}});
+  const S={type:'OBJECT',properties:{place_en:{type:'STRING'},far_en:{type:'STRING'},ground_en:{type:'STRING'},base_en:{type:'STRING'},style_en:{type:'STRING'},props:{type:'ARRAY',items:{type:'OBJECT',properties:{ko:{type:'STRING'},en:{type:'STRING'},h:{type:'ARRAY',items:{type:'NUMBER'}}},required:['ko','en','h']}}},required:['place_en','far_en','ground_en','base_en','props']};
+  const body={contents:[{role:'user',parts}],generationConfig:{responseMimeType:'application/json',responseSchema:S,temperature:.4}};
+  const btn=$('#aiFill');btn.disabled=true;setStatus(st,'AI에게 묻는 중…');let out=null,last='';
+  for(const md of GEM_MODELS){try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+md+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(body)});
+    if(r.status===429){last='오늘 무료 사용 한도를 다 썼거나 너무 자주 눌렀어요. 잠시 뒤 다시 눌러 주세요.';break}
+    if(r.status===400||r.status===403){const t=await r.text();last=/API key|API_KEY|permission/i.test(t)?'키가 맞지 않아요. 키를 다시 넣어 주세요.':'AI가 부탁을 받지 못했어요('+r.status+').';if(/API key|API_KEY|permission/i.test(t))break;continue}
+    if(!r.ok){last='AI 연결이 안 됐어요('+r.status+').';continue}
+    const j=await r.json(),t=(((j.candidates||[])[0]||{}).content||{}).parts;const txt=(t||[]).map(x=>x.text||'').join('');out=JSON.parse(txt);out.model=md;break}catch(e){last='AI 답을 읽지 못했어요: '+String(e.message||e).slice(0,80)}}
+  btn.disabled=false;
+  if(!out||!Array.isArray(out.props)||!out.props.length){setStatus(st,last||'AI 답이 비어 있어요. 다시 눌러 주세요.',true);return}
+  const num=x=>Math.max(.01,Math.round(Number(x)*100)/100||.5);
+  $('#objectNames').value=out.props.slice(0,16).map(p=>{const h=(Array.isArray(p.h)?p.h:[]).map(num),a=h[0]||.5,b=h[1]||a;return `${String(p.ko||p.en).replace(/[|\n]/g,' ').trim()} | ${String(p.en||'').replace(/[|\n]/g,' ').trim()} ${Math.min(a,b)}~${Math.max(a,b)}`}).join('\n');
+  state.aiScene={far:String(out.far_en||'').trim(),ground:String(out.ground_en||'').trim(),base:String(out.base_en||'').trim()};
+  if(out.place_en)$('#sceneSetting').value=String(out.place_en).trim();
+  if(hasSample()&&out.style_en)state.sampleStyle=String(out.style_en).trim();
+  ['sceneSetting','objectNames'].forEach(id=>$('#'+id).dispatchEvent(new Event('input')));renderSizePlan();
+  if(!$('#sceneName').value.trim())$('#sceneName').value=name||'새 장면';
+  if(/^[a-z0-9-]+$/.test($('#sceneSlug').value))$('#makePrompts').click();
+  setStatus(st,`채웠어요(${out.model}) — 소품 ${Math.min(16,out.props.length)}가지${hasSample()&&out.style_en?' · 샘플 그림풍을 글로 옮김':''}. 이름·높이는 고쳐도 되고, 고치면 '프롬프트 초안 만들기'를 다시 눌러 주세요.`)});
  /* 그림 크기(2026-11-17 선생님): 작은 소품은 3×3 판, 큰 소품은 한 장에 하나 — 높이로 저절로(needBig), 선생님이 바꾸면 그대로(state.single) */
  const isSingle=sp=>{const o=(state.single||{})[sp.name];return o?o==='one':needBig(sp)};
  const smallOf=v=>specsOf(v).filter(sp=>!isSingle(sp));
@@ -1204,7 +1260,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   state.name=$('#sceneName').value.trim();state.slug=$('#sceneSlug').value.trim();state.group=$('#sceneGroup').value;state.setting=$('#sceneSetting').value.trim();syncAI();
   const ns=names();if(!state.name||!state.slug||!/^[a-z0-9-]+$/.test(state.slug)||!ns.length){alert('장면 이름, 영문 폴더 이름, 소품 이름을 확인해 주세요.');return}
   $('#stdPrompt').value=stdText();$('#bgPrompt').value=bgEmpty();
-  const N=sheetCount();saveSheetCfg();const listOf=(v,h=true)=>smallOf(v).slice(0,8).map((x,i)=>`${i+1}. ${x.name}${h?hTxt(x.h):''}`).join('\n'),sheetFit=(v,same)=>{const t=sheetText(listOf(v),v,N,same);return aiOf().limit&&t.length>aiOf().limit?sheetText(listOf(v,false),v,N,same):t};
+  const N=sheetCount();saveSheetCfg();const listOf=(v,h=true)=>smallOf(v).slice(0,8).map((x,i)=>`${i+1}. ${x.en||x.name}${h?hTxt(x.h):''}`).join('\n'),sheetFit=(v,same)=>{const t=sheetText(listOf(v),v,N,same);return aiOf().limit&&t.length>aiOf().limit?sheetText(listOf(v,false),v,N,same):t};
   $('#propsPrompt').value=smallOf(0).length?sheetFit(0,false):'';
   $('#moreSheetPrompts').innerHTML='';for(let v=2;v<=N;v++){const cfg=sheetCfg(v-1);$('#moreSheetPrompts').insertAdjacentHTML('beforeend',`<div class="prompt-box"><h3>작은 소품 3×3 판 ${v} 프롬프트</h3>
     <label style="display:inline;margin-right:6px">이 판은</label><select id="sheetMode${v-1}" style="width:auto"><option value="same"${cfg.mode==='same'?' selected':''}>판 1과 같은 종류 — 모양만 다르게</option><option value="new"${cfg.mode==='new'?' selected':''}>새 종류</option></select>
@@ -1218,7 +1274,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   const bigAll=[...Array(N)].flatMap((_,v)=>bigOf(v));
   $('#bigPlan').classList.toggle('hidden',!bigAll.length);$('#bigPlan').innerHTML=bigAll.length?`<b>큰 소품 — 한 장에 하나씩, 모두 ${bigAll.length}장${N>1?` (벌마다 모양을 달리)`:''}</b>: `+bigAll.map(b=>`${esc(b.name)}${N>1?' '+(b.v+1):''}`).join(' · ')+'. 아래 프롬프트로 한 장씩 받아 2단계에서 불러와 주세요.':'';
   $('#bigPrompts').innerHTML=bigAll.map(b=>{const v=b.v;return `<div class="prompt-box"><h3>③ 큰 소품 한 장 — ${esc(b.name)}${N>1?` · ${v+1}벌`:''}</h3><p class="hint">붙일 그림: ①에서 받은 빈 배경${v&&sheetCfg(v).mode!=='new'?` · 앞 벌에서 받은 같은 소품(모양만 다르게)`:''}</p><textarea id="bigPrompt${v}-${b.i}" readonly></textarea><button class="secondary copy" data-copy="bigPrompt${v}-${b.i}">복사</button></div>`}).join('');
-  bigAll.forEach(b=>{const v=b.v,again=v&&sheetCfg(v).mode!=='new';$(`#bigPrompt${v}-${b.i}`).value=propText(b.name,b.h,again?' If a second picture of the same kind of object is attached, draw a clearly different individual (different shape, pose or proportions) with a similar real size.':'')});
+  bigAll.forEach(b=>{const v=b.v,again=v&&sheetCfg(v).mode!=='new';$(`#bigPrompt${v}-${b.i}`).value=propText(b.en||b.name,b.h,again?' If a second picture of the same kind of object is attached, draw a clearly different individual (different shape, pose or proportions) with a similar real size.':'')});
   $$('#bigPrompts .copy').forEach(wireCopy);
   renderBigFiles();renderFrames();renderSheetArea();
   $('#prompts').classList.remove('hidden');countPrompts();
@@ -1229,7 +1285,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
     그 밑동은 양옆으로 엷어지며 땅과 만나야 함(세로로 잘린 끝·네모 받침·흙 단면이면 어디에 놓아도 오려 붙인 티) */
  const BASE_RULE='At the bottom draw its own natural base as part of it: a little soil, grass, moss, sand or fallen leaves that thins out softly to both sides and meets the ground on one flat, level line — never a vertical cut, a slab, a box-shaped base or a soil cross-section.';
  /* 가장자리 큰 것(2026-11-09 숲 '가까운 줄기'): 위만 그림 테두리에 닿고, 밑동은 흙·이끼에 스며들어 한 줄에서 땅과 만남 */
- function framePromptText(name){return aiText([[WHITE,1],[ref('the background of the place where this object will stand'),1],[`In ${STY()}, draw ONE object in a TALL portrait picture (about 2:3): a very close view of the lower part of ${name}, running straight out of the TOP edge of the picture (no crown or top visible).`,1],['At the bottom it flares out and sinks into the ground: soil, moss and fallen leaves gather over its base and thin out softly to the left and right, meeting the ground on ONE flat, level line. Only the top edge may touch the border; leave a clear white margin on the left, right and bottom.',1],[NOFACE,1],[plainStyle()?CALM0:CALM1,0],['Draw fine detail: this picture will be shown very large at the edge of the scene. No animals, no people, no text, no frame.',1],...shade(true)])}
+ function framePromptText(name){return aiText([[WHITE,1],[ref('the background of the place where this object will stand'),1],[`In ${STY()}, draw ONE object in a TALL portrait picture (about 2:3): a very close view of the lower part of ${name}, running straight out of the TOP edge of the picture (no crown or top visible).`,1],['At the bottom it flares out and sinks into the ground: soil, moss and fallen leaves gather over its base and thin out softly to the left and right, meeting the ground on ONE flat, level line. Only the top edge may touch the border; leave a clear white margin on the left, right and bottom.',1],[noFace(),1],[plainStyle()?CALM0:CALM1,0],['Draw fine detail: this picture will be shown very large at the edge of the scene. No animals, no people, no text, no frame.',1],...shade(true)])}
  const frameNames=()=>$('#frameNames').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,3);
  function renderFrames(){const fs=frameNames();$('#framePrompts').innerHTML=fs.map((n,j)=>`<div style="margin-top:8px"><b>가장자리 ${j+1}</b><textarea id="framePrompt${j}" readonly></textarea><button class="secondary copy" data-copy="framePrompt${j}">복사</button></div>`).join('');fs.forEach((n,j)=>$('#framePrompt'+j).value=framePromptText(n));$$('#framePrompts .copy').forEach(wireCopy);renderBigFiles();countPrompts()}
  function bigPromptText(name,h){return propText(name,h)}
@@ -1255,7 +1311,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
  function canvasDataUrl(im){const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);return c.toDataURL('image/png')}
  async function saveDraft(){
   const props=state.props.map(p=>({name:p.name,slug:p.slug,width:p.width,x:p.x,y:p.y,height:p.height,image:imageDataUrl(p.image),source:imageDataUrl(p.source)}));
-  const draft={version:1,scene:{name:$('#sceneName').value,slug:$('#sceneSlug').value,group:$('#sceneGroup').value,setting:$('#sceneSetting').value,objectNames:$('#objectNames').value,horizon:$('#horizon').value,threshold:$('#threshold').value,neutral:$('#neutral').value,cellMargin:$('#cellMargin').value,brushSize:$('#brushSize').value,brushMode:$('#brushMode').value,step:state.step,notes:$('#reviewNotes').value,checks:$$('.finalCheck').map(c=>c.checked),ai:state.ai,single:state.single||{},blueShadow:$('#blueShadow').checked,styleKind:$('#styleKind').value,styleCustom:$('#styleCustom').value,bgPrompt:$('#bgPrompt').value,preset:$('#placePreset').value,frameNames:$('#frameNames').value,density:$('#density').value,stdPrompt:$('#stdPrompt').value,propsPrompt:$('#propsPrompt').value},bg:state.bg?canvasDataUrl(state.bg):null,bgName:state.bgName,sheet:state.sheet?canvasDataUrl(state.sheet):null,sheetName:state.sheetName,props,sheets:(state.sheets||[]).map(x=>x?canvasDataUrl(x):null),sheetCount:sheetCount(),sheetCfg:(saveSheetCfg(),state.sheetCfg||{}),std:state.std?canvasDataUrl(state.std):null,big:Object.fromEntries(Object.entries(state.big).map(([k,im])=>[k,canvasDataUrl(im)]))};
+  const draft={version:1,scene:{name:$('#sceneName').value,slug:$('#sceneSlug').value,group:$('#sceneGroup').value,setting:$('#sceneSetting').value,objectNames:$('#objectNames').value,horizon:$('#horizon').value,threshold:$('#threshold').value,neutral:$('#neutral').value,cellMargin:$('#cellMargin').value,brushSize:$('#brushSize').value,brushMode:$('#brushMode').value,step:state.step,notes:$('#reviewNotes').value,checks:$$('.finalCheck').map(c=>c.checked),ai:state.ai,single:state.single||{},blueShadow:$('#blueShadow').checked,styleKind:$('#styleKind').value,styleCustom:$('#styleCustom').value,aiScene:state.aiScene||null,sampleStyle:state.sampleStyle||'',bgPrompt:$('#bgPrompt').value,preset:$('#placePreset').value,frameNames:$('#frameNames').value,density:$('#density').value,stdPrompt:$('#stdPrompt').value,propsPrompt:$('#propsPrompt').value},bg:state.bg?canvasDataUrl(state.bg):null,bgName:state.bgName,sheet:state.sheet?canvasDataUrl(state.sheet):null,sheetName:state.sheetName,props,sheets:(state.sheets||[]).map(x=>x?canvasDataUrl(x):null),sheetCount:sheetCount(),sheetCfg:(saveSheetCfg(),state.sheetCfg||{}),std:state.std?canvasDataUrl(state.std):null,big:Object.fromEntries(Object.entries(state.big).map(([k,im])=>[k,canvasDataUrl(im)]))};
   download(new Blob([JSON.stringify(draft)],{type:'application/json'}),`${state.slug||'stage'}-work.json`);
  }
  $('#saveDraft').addEventListener('click',async()=>{try{await saveDraft()}catch(err){alert(`작업을 저장하지 못했어요: ${err.message}`)}});
@@ -1265,7 +1321,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   try{
    const d=JSON.parse(await f.text());if(d.version!==1||!d.scene||!Array.isArray(d.props))throw new Error('이 도구에서 저장한 작업 파일이 아니에요.');
    const s=d.scene;$('#sceneName').value=s.name||'';$('#sceneSlug').value=s.slug||'new-stage';$('#sceneGroup').value=s.group||'nature';$('#sceneSetting').value=s.setting||'';$('#objectNames').value=s.objectNames||'';$('#horizon').value=s.horizon||36;$('#threshold').value=s.threshold||238;$('#thresholdValue').value=$('#threshold').value;$('#neutral').value=s.neutral||32;$('#neutralValue').value=$('#neutral').value;$('#cellMargin').value=s.cellMargin||4;$('#brushSize').value=s.brushSize||16;$('#brushValue').value=$('#brushSize').value;$('#brushMode').value=s.brushMode||'erase';$('#reviewNotes').value=s.notes||'';
-   state.single=s.single||{};if(s.ai){const r=$$('#aiPick input').find(x=>x.value===s.ai);if(r)r.checked=true}if(s.blueShadow!=null)$('#blueShadow').checked=s.blueShadow;if(s.styleKind){$('#styleKind').value=s.styleKind;$('#styleCustom').value=s.styleCustom||'';$('#styleCustom').classList.toggle('hidden',s.styleKind!=='custom')}syncAI();renderSizePlan();state.name=s.name||'';state.slug=s.slug||'new-stage';state.group=s.group||'nature';state.setting=s.setting||'';state.horizon=(Number(s.horizon)||36)/100;state.bg=d.bg?await imageFromUrl(d.bg):null;state.bgName=d.bgName||'';state.sheet=d.sheet?await imageFromUrl(d.sheet):null;state.sheetName=d.sheetName||'';state.std=d.std?await imageFromUrl(d.std):null;state.sheets=[];for(const [k,u] of (d.sheets||[]).entries())state.sheets[k]=u?await imageFromUrl(u):null;if(d.sheetCount)$('#sheetCount').value=d.sheetCount;state.sheetCfg=d.sheetCfg||{};state.big={};for(const [k,u] of Object.entries(d.big||{}))state.big[k]=await imageFromUrl(u);
+   state.single=s.single||{};if(s.ai){const r=$$('#aiPick input').find(x=>x.value===s.ai);if(r)r.checked=true}if(s.blueShadow!=null)$('#blueShadow').checked=s.blueShadow;state.aiScene=s.aiScene||null;state.sampleStyle=s.sampleStyle||'';if(s.styleKind){$('#styleKind').value=s.styleKind;$('#styleCustom').value=s.styleCustom||'';$('#styleCustom').classList.toggle('hidden',s.styleKind!=='custom')}syncAI();renderSizePlan();state.name=s.name||'';state.slug=s.slug||'new-stage';state.group=s.group||'nature';state.setting=s.setting||'';state.horizon=(Number(s.horizon)||36)/100;state.bg=d.bg?await imageFromUrl(d.bg):null;state.bgName=d.bgName||'';state.sheet=d.sheet?await imageFromUrl(d.sheet):null;state.sheetName=d.sheetName||'';state.std=d.std?await imageFromUrl(d.std):null;state.sheets=[];for(const [k,u] of (d.sheets||[]).entries())state.sheets[k]=u?await imageFromUrl(u):null;if(d.sheetCount)$('#sheetCount').value=d.sheetCount;state.sheetCfg=d.sheetCfg||{};state.big={};for(const [k,u] of Object.entries(d.big||{}))state.big[k]=await imageFromUrl(u);
    state.props=[];for(const p of d.props){const im=await imageFromUrl(p.image),src=await imageFromUrl(p.source),c=document.createElement('canvas'),cx=c.getContext('2d',{willReadFrequently:true});c.width=im.naturalWidth;c.height=im.naturalHeight;cx.drawImage(im,0,0);const image=cx.getImageData(0,0,c.width,c.height),sc=document.createElement('canvas'),sx=sc.getContext('2d',{willReadFrequently:true});sc.width=src.naturalWidth;sc.height=src.naturalHeight;sx.drawImage(src,0,0);const source=sx.getImageData(0,0,sc.width,sc.height);state.props.push({...p,image,source,height:p.height||[.5,1]})}
    state.selected=0;state.drag=null;$('#bgInfo').textContent=state.bg?bgDescription(state.bg,state.bgName):'무대 배경은 4:3 가로 그림이어야 해요.';$('#sheetInfo').textContent=state.sheet?`${state.sheetName} · ${state.sheet.naturalWidth}×${state.sheet.naturalHeight}`:'이름 순서대로 왼쪽 위부터 채워 주세요. 오른쪽 아래는 비워 둬요.';
    $('#bgPrompt').value=s.bgPrompt||'';if(s.preset){$('#placePreset').value=s.preset;state.preset=PLACES[s.preset]||null;hidePlan(state.preset)}$('#frameNames').value=s.frameNames||'';$('#density').value=s.density||'normal';$('#stdPrompt').value=s.stdPrompt||'';$('#propsPrompt').value=s.propsPrompt||'';$('#prompts').classList.toggle('hidden',!s.bgPrompt&&!s.propsPrompt);$$('.finalCheck').forEach((c,i)=>c.checked=Boolean(s.checks&&s.checks[i]));
@@ -1692,7 +1748,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   for(let i=0;i<3;i++){const d=document.createElement('div');d.style.cssText='border-radius:8px;overflow:hidden';wrap.appendChild(d);Stage.render(d,pl,Stage.compose(pl,{seed:seed++}),{shadow:.25,haze:.3})}}
  if(location.hash==='#test')window.__install={state,drawScene,learn};   /* 시험용(주소 끝 #test일 때만) */
  showStep(0);
- syncAI();renderSizePlan();renderSheetArea();   /* 처음 화면(2026-11-17) */
+ syncAI();renderSizePlan();renderSheetArea();keyShow();   /* 처음 화면(2026-11-17, 키 2026-11-23) */
 })();
 </script>
 </body>
