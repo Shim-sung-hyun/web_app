@@ -3591,7 +3591,7 @@ window.AdminGate = (function () {
    Usage.done()       한 판을 마쳤을 때(앱마다 정한 순간, 앱 README) — 모아 두었다가 1분마다·창을 닫을 때 한꺼번에 보냄
    내 컴퓨터 파일(file:)·localhost·자동 시험 브라우저에서는 보내지 않음. 보는 곳: charum.org/charum-api/usage-admin.php(관리자) */
 (function () {
-  var ON = false;   /* 2026-11-23 잠시 끔: 서버에 usage.php를 올리고 ?ping이 ok인 것을 확인한 뒤 true로 (없는 주소로 보내면 라이믹스가 DB를 열어 연결 한도를 먹음) */
+  var ON = true;   /* 서버 usage.php ?ping ok 확인 뒤 켬(2026-11-23). 서버 파일이 없어지면 false로 — 없는 주소로 보내면 라이믹스가 DB를 열어 연결 한도를 먹음 */
   var URL = 'https://www.charum.org/charum-api/usage.php', app = '', n = 0, timer = 0;
   function off() {
     var h = location.hostname;
