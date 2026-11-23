@@ -260,6 +260,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .app.settings-open .control-panel { width:auto; padding:18px 20px; }
 .app.settings-open .control-panel > .mode-btns, .app.settings-open .control-panel > .opts { display:grid; animation:settingsFade .28s ease both; }
 .app.settings-open .control-panel > .smart { display:flex; animation:settingsFade .28s ease both; }
+.app.settings-open .control-panel > .filter-fold { display:block; animation:settingsFade .28s ease both; }
 .app.settings-open .cp-head { flex-direction:row; align-items:center; }
 .app.settings-open .mailbox-btn svg { width:clamp(84px,13vmin,140px); }
 .app.settings-open .mailbox-description { display:none; }
@@ -306,8 +307,8 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .api-credentials .credential-row { display:flex; flex-direction:column; gap:4px; }
 .api-credentials label { font-size:11px; font-weight:800; }
 .api-credentials input { width:100%; min-width:0; padding:9px; border:1px solid #9bb8d8; border-radius:7px; font:inherit; font-size:12px; background:#fff; }
-.gem-fold summary::before { content:''; display:inline-block; width:0; height:0; margin-right:7px; vertical-align:1px; border-style:solid; border-width:5px 0 5px 8px; border-color:transparent transparent transparent currentColor; transition:transform .15s; }
-.gem-fold[open] summary::before { transform:rotate(90deg); }   /* 닫힘 ▶ · 열림 ▼ */
+.gem-fold summary::before, .filter-fold summary::before { content:''; display:inline-block; width:0; height:0; margin-right:7px; vertical-align:1px; border-style:solid; border-width:5px 0 5px 8px; border-color:transparent transparent transparent currentColor; transition:transform .15s; }
+.gem-fold[open] summary::before, .filter-fold[open] summary::before { transform:rotate(90deg); }   /* 닫힘 ▶ · 열림 ▼ */
 .cf-lead { font-size:12px; line-height:1.5; color:#123; background:#fff6c7; border-left:4px solid #FFD700; padding:7px 9px; border-radius:6px; }
 .cf-lead b { color:#0057A8; }
 .gem-fold summary { cursor:pointer; font-size:11px; font-weight:800; color:#444; list-style:none; padding:2px 0; }
@@ -319,6 +320,13 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .ph-mailbox { margin:6px 0 -4px; transition:transform .15s; }
 .ph-mailbox svg { width:clamp(110px,16vmin,170px); height:auto; display:block; }
 #ph:hover .ph-mailbox { transform:translateY(-3px) rotate(-2deg); }
+.filter-fold { width:100%; border:1px dashed #9aa3ad; border-radius:10px; background:#fafafa; padding:0 10px; }
+.filter-fold summary { cursor:pointer; list-style:none; padding:9px 0; font-size:12px; font-weight:800; color:#333; }
+.filter-fold summary::-webkit-details-marker { display:none; }
+.filter-fold summary small { font-weight:400; color:#777; margin-left:4px; }
+.filter-fold[open] { padding-bottom:10px; }
+.filter-fold .ff-note { margin:0 0 8px; font-size:11px; color:#666; line-height:1.5; }
+.filter-fold .m-filter { width:100%; margin-bottom:10px; background:#fff; color:#111; }
 .key-link { font-size:10px; font-weight:800; color:#0057A8; margin-left:4px; white-space:nowrap; }
 .gem-fold .credential-row { margin-top:6px; }
 #ai-route-info { font-size:10px; line-height:1.45; color:#555; }
@@ -515,32 +523,40 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
       </div>
     </div>
     <div class="opts">
-      <label>AI 방식 <select class="mode-select" id="mode"><option value="faithful">얼굴 그대로</option><option value="balanced">균형</option><option value="bold">과감하게</option></select></label>
       <label>대상 <select class="mode-select" id="target"><option value="person">사람</option><option value="object">사물</option></select></label>
       <label>색 조합 <select class="mode-select" id="pal"><option value="classic">원색(자연)</option><option value="vivid">강한 원색</option><option value="warm">따뜻한 팝</option><option value="mono">흑백</option></select></label>
-      <label>점 크기 <input type="range" id="dot" min="3" max="16" value="3"></label>
       <label>선 굵기 <input type="range" id="line" min="0" max="3" value="0"></label>
       <label>디테일 <input type="range" id="edge" min="3" max="18" value="3"></label>
-      <label>점 많이 <input type="range" id="mix" min="0" max="10" value="0"></label>
       <label class="wide">AI에게 알림:
         <input type="checkbox" class="xf" id="x-glasses"> 안경
         <input type="checkbox" class="xf" id="x-hat"> 모자
         <input type="checkbox" class="xf" id="x-beard"> 수염</label>
-      <label>필터 방식 <select class="mode-select" id="fstyle"><option value="layers">레이어 (만화+점)</option><option value="dots">단순 점</option></select></label>
-      <label class="wide">레이어:
-        <input type="checkbox" id="L-bg" checked> 바탕 점
-        <input type="checkbox" id="L-f1" checked> 얼굴 점1
-        <input type="checkbox" id="L-f2" checked> 얼굴 점2
+      <label class="wide">꾸미기:
         <input type="checkbox" id="L-big" checked> 큰 원
         <input type="checkbox" id="L-star" checked> 별
         <button class="chip" id="btn-shuffle" type="button" title="AI를 다시 부르지 않고 별·큰 원의 자리만 새로 섞어요">🎲 별·원 자리 바꾸기</button></label>
     </div>
+    <details class="filter-fold">
+      <summary>필터로 만들기 <small>AI를 쓸 수 없을 때</small></summary>
+      <p class="ff-note">AI 없이 이 기기에서 바로 만들어요. 횟수 제한이 없고, 설정을 바꾸면 바로 다시 그려요.</p>
+      <button class="mbtn m-filter" id="btn-filter" disabled onclick="generate('filter')"><b>▦ 필터로 그리기</b><small>AI 없이 바로 만들어요</small></button>
+      <div class="opts">
+        <label>필터 방식 <select class="mode-select" id="fstyle"><option value="layers">레이어 (만화+점)</option><option value="dots">단순 점</option></select></label>
+        <label>점 크기 <input type="range" id="dot" min="3" max="16" value="3"></label>
+        <label>점 많이 <input type="range" id="mix" min="0" max="10" value="0"></label>
+        <label class="wide">점 넣기:
+          <input type="checkbox" id="L-bg" checked> 바탕
+          <input type="checkbox" id="L-f1" checked> 얼굴1
+          <input type="checkbox" id="L-f2" checked> 얼굴2</label>
+      </div>
+    </details>
     <a class="report-link" href="https://www.charum.org/webapp/59987#write" target="_blank" rel="noopener" title="이 도구의 오류나 의견을 게시판 댓글로 남겨요">💬 오류·의견 알리기</a>
   </div>
 
   <div class="hint-tab" id="hint-tab">▼ 여기를 클릭해서 사진 투입</div>
   <div class="tray" id="tabs">
     <button class="card" data-mode="pop" onclick="generate('pop')"><span class="tw"><img alt=""><span>눌러서 만들기</span></span><b>🎨 팝아트</b></button>
+    <button class="card" data-mode="filter" onclick="generate('filter')" hidden><span class="tw"><img alt=""><span>눌러서 만들기</span></span><b>▦ 필터</b></button>
     <button class="card" data-mode="comic" onclick="if (results.comic) showResult('comic')"><span class="tw"><img alt=""><span>말풍선을 넣으면 생겨요</span></span><b>💬 만화</b></button>
     <div class="acts">
       <button class="act print" onclick="printResult()">🖨 인쇄</button>
@@ -1266,7 +1282,7 @@ async function generate(mode) {
       results.filter = renderFilter(srcImg, filterOpts(), 1000).toDataURL('image/png');
     } else if (mode === 'ai') {
       msg('AI가 사진을 팝아트로 그리는 중…');
-      const base = obj ? PROMPT_OBJECT + PROMPT_RENDER : (PROMPTS[document.getElementById('mode').value] || PROMPTS.faithful);
+      const base = obj ? PROMPT_OBJECT + PROMPT_RENDER : PROMPTS.faithful;
       results.ai = `data:image/png;base64,${await callCharumAI(base + extras())}`;
     } else if (mode === 'pop') {                // 팝아트 = 필터(윤곽) + AI, 마지막에 별·큰 원
       layoutSeed = (Math.random() * 1e9) | 0;
@@ -1328,6 +1344,7 @@ async function generate(mode) {
 function refreshTray() {
   document.querySelectorAll('#tabs .card').forEach(c => {
     const m = c.dataset.mode;
+    if (m === 'filter') c.hidden = !results[m];
     c.classList.toggle('has', !!results[m]); c.classList.toggle('on', m === current); c.classList.toggle('fail', !!errs[m]);
     if (results[m]) c.querySelector('img').src = results[m];
     c.querySelector('.tw span').textContent = errs[m] ? '실패 · 다시 시도' : m === 'comic' ? '말풍선을 넣으면 생겨요' : '눌러서 만들기';
@@ -1867,8 +1884,11 @@ async function redecor(dotOnly) {
 // 윤곽판(AI가 따라 그리는 것)이 달라지는 값만 AI 그림을 지움. 점 설정은 AI 그림에 쓰이지 않으므로 지우지 않음(하루 횟수 아끼기)
 ['pal', 'line', 'edge'].forEach(id => document.getElementById(id).addEventListener('input', () => invalidatePop()));
 ['dot', 'mix', 'fstyle', 'L-bg', 'L-f1', 'L-f2', 'L-big', 'L-star'].forEach(id => document.getElementById(id).addEventListener('input', () => { clearTimeout(decorTimer); decorTimer = setTimeout(() => redecor(!/^L-(big|star)$/.test(id)), 120); }));
-document.getElementById('mode').addEventListener('change', () => invalidatePop());
-document.getElementById('btn-shuffle').addEventListener('click', () => { layoutSeed = (Math.random() * 1e9) | 0; redecor(); });
+document.getElementById('btn-shuffle').addEventListener('click', () => { layoutSeed = (Math.random() * 1e9) | 0; redecor(); refilter(); });
+// 필터 그림은 AI를 부르지 않으므로 설정을 바꾸면 바로 다시 그림 (2026-11-23)
+let filterTimer;
+function refilter() { if (!srcImg || busy || !results.filter) return; clearTimeout(filterTimer); filterTimer = setTimeout(() => { results.filter = renderFilter(srcImg, filterOpts(), 1000).toDataURL('image/png'); if (current === 'filter') showResult('filter'); else refreshTray(); }, 150); }
+['target', 'pal', 'line', 'edge', 'dot', 'mix', 'fstyle', 'L-bg', 'L-f1', 'L-f2', 'L-big', 'L-star'].forEach(id => document.getElementById(id).addEventListener('input', refilter));
 document.getElementById('target').addEventListener('change', () => invalidatePop(true));
 document.querySelectorAll('.xf').forEach(c => c.addEventListener('change', () => invalidatePop()));
 
