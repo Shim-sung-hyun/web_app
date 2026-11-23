@@ -1573,15 +1573,12 @@ function hitBubble(px, py, W, H) {
   }
   return -1;
 }
-function updateSel() {                                  // 선택한 말풍선 둘레에 점선 상자 (저장·인쇄에는 안 들어감)
-  const box = document.getElementById('selbox');
-  if (current !== 'comic' || selected == null || !bubbles[selected] || !baseImgCache.img) { box.style.display = 'none'; return; }
-  const W = baseImgCache.img.naturalWidth, H = baseImgCache.img.naturalHeight, b = bubbles[selected], g = bubbleGeom(mctx, W, H, b), [ex, ey] = hitBox(g, b);
-  const ir = rimg.getBoundingClientRect(), cr = rimg.parentElement.getBoundingClientRect(), sx = rimg.clientWidth / W, sy = rimg.clientHeight / H;
-  const ox = ir.left + rimg.clientLeft - cr.left, oy = ir.top + rimg.clientTop - cr.top;
-  Object.assign(box.style, { display: 'block', left: ox + (g.cx - ex) * sx + 'px', top: oy + (g.cy - ey) * sy + 'px', width: 2 * ex * sx + 'px', height: 2 * ey * sy + 'px' });
+function updateSel() { document.getElementById('selbox').style.display = 'none'; }   // 선택 점선 상자는 쓰지 않음(2026-11-23)
+function imgRect() {                                    // object-fit:contain — 실제 그림이 그려진 자리
+  const r = rimg.getBoundingClientRect(), cw = rimg.clientWidth, ch = rimg.clientHeight, W = rimg.naturalWidth || 1, H = rimg.naturalHeight || 1, k = Math.min(cw / W, ch / H), w = W * k, h = H * k;
+  return { left: r.left + rimg.clientLeft + (cw - w) / 2, top: r.top + rimg.clientTop + (ch - h) / 2, w, h };
 }
-const ptr = e => { const r = rimg.getBoundingClientRect(); return { fx: (e.clientX - r.left - rimg.clientLeft) / rimg.clientWidth, fy: (e.clientY - r.top - rimg.clientTop) / rimg.clientHeight }; };
+const ptr = e => { const r = imgRect(); return { fx: (e.clientX - r.left) / r.w, fy: (e.clientY - r.top) / r.h }; };
 rimg.addEventListener('pointerdown', e => {
   if (placing || current !== 'comic' || !baseImgCache.img) return;
   const { fx, fy } = ptr(e), W = baseImgCache.img.naturalWidth, H = baseImgCache.img.naturalHeight, i = hitBubble(fx * W, fy * H, W, H);
