@@ -1684,8 +1684,9 @@ function stepPObj(it,tok){
   const st=$('stage'), A=area(), sc=SC[it.sc], lv=RUN.lv, fs=Math.min(A.h*0.1,70);
   const bub=document.createElement('div'); bub.className='bubble'; bub.innerHTML='<div class="word" style="font-size:'+fs+'px">'+esc(nm(it.a))+'</div>';
   const V=sceneEl(sc,A.w,A.h-fs-90); V.d.style.marginTop='22px';
-  const others=shuffle(RUN.bd.objs.filter(x=>x.a!==it.a)), cand=lv===1?[it,...others.slice(0,1)]:lv===2?[it,...others.slice(0,3)]:[it,...others];
-  const cards=cand.map(x=>{ const f=frame(V,x,lv>=3?'ghost':''); f.style.opacity=0; return f; });
+  /* 테두리는 처음엔 안 보임(모든 수준, 2026-11-23 선생님) — 사진 전체에서 스스로 찾고, 틀리면(또는 16초 지나면) 찾을 물체에만 노란 테두리(choiceRound의 glow) */
+  const cand=[it,...shuffle(RUN.bd.objs.filter(x=>x.a!==it.a))];
+  const cards=cand.map(x=>{ const f=frame(V,x,'ghost'); f.style.opacity=0; return f; });
   st.appendChild(bub); st.appendChild(V.d);
   choiceRound(tok,{say:askObj(it.a),cards,isRight:c=>c.dataset.a===it.a,
     rec:(w,h)=>logRow('obj',{a:it.a,m:it.ms.join('+')},w&&w.dataset.a,h),
