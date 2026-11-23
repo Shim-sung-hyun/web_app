@@ -372,11 +372,11 @@ body.setup #adminBtn{display:none}
 #playBtn{min-width:150px;height:62px;margin-left:14px;border-radius:18px 15px 19px 16px;border:3px solid var(--sci);background:#fff;color:var(--sci-d);font-family:var(--f-display);font-size:26px;cursor:pointer}
 .rv{position:absolute;inset:0;overflow:hidden;background:#CFEAF2 center top/cover no-repeat;touch-action:manipulation;user-select:none}
 .rvWorld{position:absolute;top:0;bottom:0;left:0;background-size:cover;background-position:center bottom}
-.rvBankL,.rvBankR{position:absolute;top:0;bottom:0;z-index:1;pointer-events:none}.rvBankL{left:0}.rvBankR{right:0}.rvBankR svg{transform:scaleX(-1)}
+.rvBankL,.rvBankR{position:absolute;top:0;bottom:0;z-index:2;pointer-events:none}.rvBankL{left:0}.rvBankR{right:0}.rvBankR svg{transform:scaleX(-1)}
 .rvBankL svg,.rvBankR svg{display:block;width:100%;height:100%}
 .rvWater{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#B4E0EF,#8ACBE3 18px,#5AA7CB)}
 .rvWater{z-index:0}
-.rvObj{position:absolute;z-index:2;border-radius:22px 18px 24px 20px;background:#fff;box-shadow:0 6px 0 rgba(30,70,90,.25);display:flex;align-items:center;justify-content:center;animation:rvBob 3s ease-in-out infinite;opacity:.55;transition:opacity .3s,transform .3s;cursor:pointer}
+.rvObj{position:absolute;z-index:3;border-radius:22px 18px 24px 20px;background:#fff;box-shadow:0 6px 0 rgba(30,70,90,.25);display:flex;align-items:center;justify-content:center;animation:rvBob 3s ease-in-out infinite;opacity:.55;transition:opacity .3s,transform .3s;cursor:pointer}
 .rvObj img,.rvObj .crop{border-radius:14px;pointer-events:none}
 .rvObj.next{opacity:1;outline:4px dashed rgba(255,255,255,.9);outline-offset:4px}
 .rvObj.stood{opacity:1;outline:0;animation:none}
@@ -387,8 +387,8 @@ body.setup #adminBtn{display:none}
 .rvKid{position:absolute;z-index:4;width:110px;height:130px;margin:-124px 0 0 -55px;pointer-events:none}
 .rvKid svg,.rvKid img{width:100%;height:100%;object-fit:contain}
 .rvKid img{transform:scaleX(-1)}.rvKid img.jump{transform:none}   /* 서 있기·빠지기 그림은 왼쪽을 봄 → 뒤집음, 뛰기 그림은 원래 오른쪽 */
-.rvGoal{position:absolute;z-index:3;pointer-events:none;transform-origin:50% 100%}
-.rvGoal img,.rvGoal i{display:block;width:auto;transform:translateY(4%)}   /* 그림 밑 풀밭 조각이 둑에 살짝 묻히게 */
+.rvGoal{position:absolute;z-index:1;pointer-events:none;transform-origin:50% 100%}
+.rvGoal img,.rvGoal i{display:block;width:auto;transform:translateY(12%);transition:clip-path .9s ease}   /* 성은 둑 뒤에 두고 12% 내려 밑동 풀밭 조각이 둑 풀에 묻히게(떠 보이지 않게). 살짝 묻히게 */
 .rvGoal.grow{animation:rvGrow .6s ease}.rvGoal.done{animation:rvDone 1s ease}
 @keyframes rvGrow{40%{transform:scale(1.03)}}
 @keyframes rvDone{30%{transform:scale(1.08) translateY(-8px)}60%{transform:scale(.98)}}
@@ -2160,7 +2160,7 @@ function rvStart(lv,keepMat){
   if(bg) box.style.backgroundImage='url('+bg+')'; st.appendChild(box); RV.box=box; RV.world=box.querySelector('.rvWorld');
   const ms=box.querySelector('.rvMat'); ms.style.backgroundImage=texOf(m).replace(/"/g,"'"); ms.textContent=MAT[m].label; box.querySelector('.rvSay b').textContent=riverAsk(m);
   /* 목표 성 하나(2026-11-23 선생님): 오른쪽에 크게, 한 칸 건널 때마다 아래부터 조금씩 드러남(실루엣·이름 없음, 처음엔 땅만) */
-  const goal=document.createElement('div'); goal.className='rvGoal'; goal.style.left=RV.goalX+'px'; goal.style.bottom=(H*(1-0.556)-1)+'px';   /* 밑을 둑 풀밭 선에 맞춤(그림 크기와 상관없이) */ goal.innerHTML=castlePic(m,gh); RV.world.appendChild(goal);
+  const goal=document.createElement('div'); goal.className='rvGoal'; goal.style.left=RV.goalX+'px'; goal.style.bottom=(H*(1-0.556)-1)+'px';   /* 밑을 둑 풀밭 선에 맞춤(그림 크기와 상관없이) */ goal.innerHTML=castlePic(m,gh); RV.world.appendChild(goal); rvGoalClip(true);
   /* 아이 */
   const kid=document.createElement('div'); kid.className='rvKid'; RV.kid=kid; RV.world.appendChild(kid); rvKidPose('stand'); rvPlaceKid(bankL*0.55,RV.waterY-6);
   for(let c=1;c<=L.steps;c++) rvFillCol(c);
@@ -2194,6 +2194,9 @@ function rvHud(){ if(!RV) return; const b=RV.box, L=RV.L;
   b.querySelector('.rvHearts').innerHTML=Array.from({length:L.hearts},(_,i)=>'<i class="'+(i<RV.hearts?'on':'')+'">♥</i>').join('');
   const p=RV.left/L.sec, bar=b.querySelector('.rvTime b'); bar.style.width=(p*100).toFixed(1)+'%'; bar.className=p>0.5?'g':p>0.2?'y':'r';
   b.querySelector('.rvTime em').textContent=Math.ceil(RV.left)+'초'; b.querySelector('.rvStep').textContent=RV.col+' / '+L.steps+' 칸'; }
+/* 한 칸 건널 때마다 성이 아래부터 조금씩(2026-11-23 선생님 — 화면이 따라가며 왼쪽부터 보이는 것과 함께). 밑 12%는 둑에 묻혀 있어 그만큼 먼저 보임 */
+function rvGoalClip(now){ const el=RV.world.querySelector('.rvGoal')?.firstChild; if(!el) return; const p=0.14+0.86*RV.col/RV.L.steps;
+  if(now) el.style.transition='none'; else el.style.transition=''; el.style.clipPath='inset('+((1-p)*100).toFixed(1)+'% 0 0 0)'; }
 function rvCamera(now){ const want=RV.goalX+RV.goalW*RV.col/RV.L.steps-RV.W+20;   /* 성은 건넌 만큼만 화면에 */
   const x=Math.max(0,Math.min(RV.worldW-RV.W,Math.max(RV.kx-RV.W*0.3,Math.min(want,RV.kx-90)))); RV.world.style.transition=now?'none':'transform .7s ease'; RV.world.style.transform='translateX('+(-x)+'px)'; }
 /* 통통 뛰기(포물선) */
@@ -2204,7 +2207,7 @@ async function rvTap(c,o,e){ if(!RV||RV.over||RV.busy||S.admin||c!==RV.col+1) re
   if(rvHas(o,RV.m)){
     await rvJump(tx,ty,520); if(RV!==me) return; rvSound('land'); rvKidPose('stand'); e.classList.add('stood'); RV.cols[c].els.forEach(x=>{ if(x!==e) x.classList.add('sink'); });
     if(!o.ms.includes(RV.m)&&o.hid.includes(RV.m)) rvInside(o,e);   /* 스페셜: 속에 든 물질 — 반쯤 열린 그림을 잠깐 */
-    rvFishHappy(); RV.col++; rvHud(); rvCamera(); rvActivate(); rvSound('build');
+    rvFishHappy(); RV.col++; rvHud(); rvCamera(); rvActivate(); rvSound('build'); rvGoalClip();
     if(RV.col>=RV.L.steps){ await wait(400); if(RV!==me) return; await rvJump(RV.rDiv+0.3*(RV.worldW-RV.rDiv),RV.H*0.556+4,620); if(RV!==me) return; rvKidPose('stand'); rvWin(); return; }
   } else {
     e.classList.add('pop'); rvSound('pop'); await rvJump(tx,ty+20,480); if(RV!==me) return; rvSound('splash'); rvKidPose('splash'); RV.hearts--; rvHud(); RV.box.querySelector('.rvHearts').classList.add('lost');
