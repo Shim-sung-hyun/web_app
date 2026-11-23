@@ -406,6 +406,7 @@ body.setup #adminBtn{display:none}
 .rvTime b.g{background:#5DBB63}.rvTime b.y{background:#F2C230}.rvTime b.r{background:#E5604F}
 .rvTime em{font-style:normal;font-size:22px;min-width:56px}
 .rvStep{font-size:20px;color:#555}
+.rvBgm{width:44px;height:36px;border:2px solid var(--sci);background:#fff;color:var(--sci-d);border-radius:12px;font-size:20px;cursor:pointer}.rvBgm.off{opacity:.5}
 .rvLvBtn{border:2px solid var(--sci);background:#fff;color:var(--sci-d);border-radius:12px;font:inherit;font-size:18px;padding:4px 12px;cursor:pointer}
 .rvFish{position:absolute;z-index:5;left:12px;top:64px;display:flex;align-items:center;gap:10px;pointer-events:none}
 .rvFishPic{width:130px;height:100px}.rvFishPic svg,.rvFishPic img{width:100%;height:100%;object-fit:contain}
@@ -2057,6 +2058,28 @@ function playRub(tok){
    단계: 하 4칸·하트 5·2분 · 중 6칸·4·2분 · 상 8칸·3·2분 · 스페셜 10칸·2·1분 40초. 하트와 남은 시간은 맨 위에 크게(긴장감), 겁주는 소리는 없음.
    물체: 하·중 = 그림(낱말 그림·일상 그림), 상·스페셜 = 실물 사진. 하 한 가지 물질 / 중 한·두 가지 / 상 두 가지 이상 / 스페셜 속 물질까지.
    그림(아이·물고기·배경·성)은 media/play/river/ — 오기 전에는 앱이 그린 임시 그림. 학습 기록에 안 남김, 성과 가장 빠른 기록만 이 기기에(materialSort.river) */
+/* 놀이 배경음악(2026-11-23 선생님 — 전자 게임 같은 배경음): 앱이 직접 만드는 8비트 소리(네모파 가락 + 세모파 베이스 + 작은 북), 4마디 되풀이(C–Am–F–G, 새로 지은 가락).
+   작게(말소리를 가리지 않게), 시간이 4분의 1 남으면 조금 빨라짐(긴장감), 판이 끝나거나 관리 모드·화면을 떠나면 멈춤. 위 ♪ 단추로 끄고 켬(materialSort.bgm), 소리 끔이면 안 남 */
+const BGM={on:store.get('bgm')!=='0',run:false,step:0,next:0,iv:0,fast:false,g:null,
+  mel:[72,0,76,79,84,79,76,0, 69,0,72,76,81,76,72,0, 77,0,76,74,72,0,74,76, 79,0,77,76,74,71,74,0,
+       72,0,79,0,76,0,72,74, 76,0,72,0,69,0,72,0, 74,0,77,0,81,79,77,76, 74,76,74,71,67,0,0,0],
+  bass:[48,55,45,52,41,48,43,50]};
+const midiF=n=>440*Math.pow(2,(n-69)/12);
+function bgmNote(c,t,f,d,v,ty){ const o=c.createOscillator(), e=c.createGain(); o.type=ty; o.frequency.value=f; e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(v,t+0.005); e.gain.setValueAtTime(v*0.8,t+d*0.6); e.gain.exponentialRampToValueAtTime(0.0005,t+d); o.connect(e); e.connect(BGM.g); o.start(t); o.stop(t+d+0.02); }
+function bgmHit(c,t,kind){ if(kind==='k'){ const o=c.createOscillator(), e=c.createGain(); o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(45,t+0.12); e.gain.setValueAtTime(0.5,t); e.gain.exponentialRampToValueAtTime(0.0005,t+0.13); o.connect(e); e.connect(BGM.g); o.start(t); o.stop(t+0.15); return; }
+  const d=kind==='s'?0.09:0.03, n=Math.floor(c.sampleRate*d), b=c.createBuffer(1,n,c.sampleRate), x=b.getChannelData(0); for(let i=0;i<n;i++) x[i]=Math.random()*2-1;
+  const s=c.createBufferSource(); s.buffer=b; const fl=c.createBiquadFilter(); fl.type='highpass'; fl.frequency.value=kind==='s'?1500:6000; const e=c.createGain(); e.gain.setValueAtTime(kind==='s'?0.22:0.1,t); e.gain.exponentialRampToValueAtTime(0.0005,t+d); s.connect(fl); fl.connect(e); e.connect(BGM.g); s.start(t); s.stop(t+d); }
+function bgmTick(){ const c=getCtx(); if(!c||!BGM.run) return; const sp=60/(BGM.fast?156:136)/2;   /* 8분음표 */
+  while(BGM.next<c.currentTime+0.15){ const i=BGM.step%64, t=BGM.next, m=BGM.mel[i];
+    if(m) bgmNote(c,t,midiF(m),sp*0.9,0.16,'square');
+    if(i%2===0) bgmNote(c,t,midiF(BGM.bass[(i>>2)%8]),sp*1.8,0.32,'triangle');
+    if(i%4===0) bgmHit(c,t,'k'); if(i%8===4) bgmHit(c,t,'s'); if(i%2===1) bgmHit(c,t,'h');
+    BGM.step++; BGM.next+=sp; } }
+function bgmStart(){ if(BGM.run||!BGM.on||!S.sound) return; const c=getCtx(); if(!c) return; if(c.state==='suspended') c.resume();
+  BGM.g=c.createGain(); BGM.g.gain.value=0.0001; BGM.g.gain.linearRampToValueAtTime(0.12,c.currentTime+0.6); BGM.g.connect(c.destination);
+  BGM.run=true; BGM.step=0; BGM.next=c.currentTime+0.1; BGM.iv=setInterval(bgmTick,30); bgmTick(); }
+function bgmStop(){ if(!BGM.run) return; BGM.run=false; clearInterval(BGM.iv); const c=getCtx(), g=BGM.g; if(c&&g){ g.gain.cancelScheduledValues(c.currentTime); g.gain.setValueAtTime(g.gain.value,c.currentTime); g.gain.linearRampToValueAtTime(0.0001,c.currentTime+0.3); setTimeout(()=>{ try{ g.disconnect(); }catch(e){} },500); } BGM.g=null; }
+function bgmBtn(b){ b.textContent=BGM.on?'♪':'♪̸'; b.classList.toggle('off',!BGM.on); b.setAttribute('aria-label',BGM.on?'배경음악 끄기':'배경음악 켜기'); }
 const RV_LV={1:{name:'하',steps:4,hearts:5,sec:120,per:2},2:{name:'중',steps:6,hearts:4,sec:120,per:3},3:{name:'상',steps:8,hearts:3,sec:120,per:3},4:{name:'스페셜',steps:10,hearts:2,sec:100,per:4}};
 const RV_DIR=GH+'media/play/river/', RV_READY=new Set(['kid-stand','kid-jump','kid-splash','fish-talk','fish-happy','river-bg',...['wood','stone','metal','glass','ceramic','plastic','paper','cloth','rubber'].map(m=>'castle-'+m)]);   /* 2026-11-22 빙 그림 15장 넣음. 받은 그림 이름(kid-stand·kid-jump·kid-splash·fish-talk·fish-happy·river-bg·castle-<물질>) */
 const rvImg=n=>RV_READY.has(n)?RV_DIR+n+'.webp':'';
@@ -2120,7 +2143,7 @@ function rvStart(lv,keepMat){
   const st=$('stage'), W=st.clientWidth, H=st.clientHeight, gap=Math.max(150,Math.min(230,W/4.2)), bankL=Math.max(130,W*0.16), bankR=Math.max(260,W*0.42);
   RV.gap=gap; RV.bankL=bankL; RV.worldW=bankL+gap*L.steps+bankR; RV.W=W; RV.H=H; RV.waterY=H*0.58;
   const box=document.createElement('div'); box.className='rv'; const bg=rvImg('river-bg');
-  box.innerHTML='<div class="rvHud"><span class="rvLv">물질 징검다리 · '+L.name+'</span><span class="rvHearts"></span><span class="rvTime"><b></b><em></em></span><span class="rvStep"></span><button type="button" class="rvLvBtn">단계</button></div>'
+  box.innerHTML='<div class="rvHud"><span class="rvLv">물질 징검다리 · '+L.name+'</span><span class="rvHearts"></span><span class="rvTime"><b></b><em></em></span><span class="rvStep"></span><button type="button" class="rvBgm"></button><button type="button" class="rvLvBtn">단계</button></div>'
     +'<div class="rvWorld" style="width:'+RV.worldW+'px"><div class="rvBankL" style="width:'+bankL+'px"></div><div class="rvBankR" style="width:'+bankR+'px"></div><div class="rvWater" style="top:'+RV.waterY+'px"></div><div class="rvCastles"></div></div>'
     +'<div class="rvFish"><div class="rvFishPic">'+(rvImg('fish-talk')?'<img src="'+rvImg('fish-talk')+'" alt="">':FISH_SVG(false))+'</div><div class="rvSay"><span class="rvMat"></span><b></b></div></div>';
   if(bg) box.style.backgroundImage='url('+bg+')'; st.appendChild(box); RV.box=box; RV.world=box.querySelector('.rvWorld');
@@ -2133,7 +2156,9 @@ function rvStart(lv,keepMat){
   for(let c=1;c<=L.steps;c++) rvFillCol(c);
   rvHud(); rvActivate(); rvCamera(true);
   box.querySelector('.rvLvBtn').onclick=()=>rvLevelPick();
-  const tick=now=>{ if(!RV||RV.over) return; const dt=(now-RV.last)/1000; RV.last=now; if(!S.admin&&!document.hidden&&!RV.busyPause) RV.left=Math.max(0,RV.left-dt); rvHud(); if(RV.left<=0){ rvLose('time'); return; } RV.raf=requestAnimationFrame(tick); };
+  { const bb=box.querySelector('.rvBgm'); bgmBtn(bb); bb.onclick=()=>{ BGM.on=!BGM.on; store.set('bgm',BGM.on?'1':'0'); bgmBtn(bb); if(BGM.on) bgmStart(); else bgmStop(); }; }
+  BGM.fast=false; bgmStart();
+  const tick=now=>{ if(!RV||RV.over) return; const dt=(now-RV.last)/1000; RV.last=now; const go=!S.admin&&!document.hidden&&!RV.busyPause; if(go) bgmStart(); else bgmStop(); BGM.fast=RV.left<RV.L.sec*0.25; if(go) RV.left=Math.max(0,RV.left-dt); rvHud(); if(RV.left<=0){ rvLose('time'); return; } RV.raf=requestAnimationFrame(tick); };
   RV.raf=requestAnimationFrame(tick);
   setTimeout(()=>{ if(RV&&!RV.over) speak(riverAsk(m)); },500);
 }
@@ -2183,12 +2208,12 @@ function rvInside(o,e){ const src=insideSrc(o.a); if(!src) return; const d=docum
 function rvDrawCastles(hi){ const cs=RV.box.querySelector('.rvCastles'), me=rvMe(); cs.innerHTML='';
   const order=Object.keys(MAT), size=Math.max(32,Math.min(88,((parseFloat(cs.style.width)||300)-40)/5));
   order.forEach(m=>{ const el=castleEl(m,me.castle[m]||0,size); if(m===hi) el.classList.add('hi'); if(m===RV.m) el.classList.add('now'); cs.appendChild(el); }); }
-async function rvWin(){ const me0=RV; RV.over=true; cancelAnimationFrame(RV.raf); const me=rvMe(), m=RV.m, used=RV.L.sec-RV.left, lv=RV.lv;
+async function rvWin(){ const me0=RV; RV.over=true; bgmStop(); cancelAnimationFrame(RV.raf); const me=rvMe(), m=RV.m, used=RV.L.sec-RV.left, lv=RV.lv;
   const before=me.castle[m]||0; me.castle[m]=Math.min(4,before+1); const best=me.best[lv]; const rec=!best||used<best; if(rec) me.best[lv]=Math.round(used); rvSave();
   rvSound('win'); await speak(RV_WIN); if(RV!==me0) return; rvSound('build'); rvDrawCastles(m);
   await speak(me.castle[m]>=4&&before<4?castleDone(m):castleUp(m)); if(RV!==me0) return;
   rvEnd(true,'성이 '+(me.castle[m]>=4?'다 지어졌어요! 🏰':me.castle[m]+'층이 되었어요')+' · '+Math.round(used)+'초'+(rec?' · 가장 빨랐어요!':''),m); }
-function rvLose(why){ if(!RV||RV.over) return; RV.over=true; cancelAnimationFrame(RV.raf); RV.busy=true;
+function rvLose(why){ if(!RV||RV.over) return; RV.over=true; bgmStop(); cancelAnimationFrame(RV.raf); RV.busy=true;
   rvEnd(false,why==='time'?'시간이 다 됐어요. 거의 다 왔어요!':'하트를 다 썼어요. 거의 다 왔어요!',RV.m); speak(RV_AGAIN); }
 function rvEnd(win,msg,m){ const lv=RV.lv, d=document.createElement('div'); d.className='rvEnd';
   d.innerHTML='<div class="rvEndCard"><b>'+(win?'강을 건넜어요!':'다시 해 볼까요?')+'</b><p>'+esc(msg)+'</p><div class="rvEndBtns">'
@@ -2199,10 +2224,10 @@ function rvEnd(win,msg,m){ const lv=RV.lv, d=document.createElement('div'); d.cl
 function rvLevelPick(){ if(!RV) return; RV.busyPause=true; const d=document.createElement('div'); d.className='rvEnd';
   d.innerHTML='<div class="rvEndCard"><b>단계 고르기</b><div class="rvEndBtns">'+Object.keys(RV_LV).map(k=>'<button type="button" class="gGo'+(+k===RV.lv?'':' alt')+'" data-l="'+k+'">'+RV_LV[k].name+'</button>').join('')+'<button type="button" class="gGo no">닫기</button></div></div>';
   RV.box.appendChild(d); d.querySelectorAll('button').forEach(b=>tapper(b,()=>{ if(b.dataset.l) rvStart(+b.dataset.l); else { d.remove(); if(RV) RV.busyPause=false; } })); }
-function rvQuit(){ if(RV) cancelAnimationFrame(RV.raf); RV=null; clearStage(); const e=document.createElement('div'); e.className='rvBye'; e.innerHTML='<div class="gTitle">다 했어요</div>'; $('stage').appendChild(e); }
+function rvQuit(){ bgmStop(); if(RV) cancelAnimationFrame(RV.raf); RV=null; clearStage(); const e=document.createElement('div'); e.className='rvBye'; e.innerHTML='<div class="gTitle">다 했어요</div>'; $('stage').appendChild(e); }
 /* 설정 화면 ★ 놀이 */
 async function playFromSetup(){ unlockAudio(); document.body.classList.remove('setup'); goFull(); RUN=null; ALONE=null; await rvPrep(); RV=null; rvStart(Math.max(1,Math.min(4,S.level))); }
-function rvStop(){ if(RV){ cancelAnimationFrame(RV.raf); RV.over=true; } RV=null; }
+function rvStop(){ bgmStop(); if(RV){ cancelAnimationFrame(RV.raf); RV.over=true; } RV=null; }
 
 function showPicker(){
   if(!ALONE) return;
