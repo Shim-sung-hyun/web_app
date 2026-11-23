@@ -316,6 +316,9 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .api-credentials.key-nudge input#cf-account-id, .api-credentials.key-nudge input#cf-api-token { border:2px solid #E8A800; }
 @keyframes keyNudge { 50% { box-shadow:0 0 0 6px rgba(255,215,0,.55); } }
 #ph { cursor:pointer; }
+.ph-mailbox { margin:6px 0 -4px; transition:transform .15s; }
+.ph-mailbox svg { width:clamp(110px,16vmin,170px); height:auto; display:block; }
+#ph:hover .ph-mailbox { transform:translateY(-3px) rotate(-2deg); }
 .key-link { font-size:10px; font-weight:800; color:#0057A8; margin-left:4px; white-space:nowrap; }
 .gem-fold .credential-row { margin-top:6px; }
 #ai-route-info { font-size:10px; line-height:1.45; color:#555; }
@@ -425,6 +428,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
   <div class="canvas" id="canvas">
     <div class="placeholder" id="ph">
       <h1>POP ART!</h1>
+      <div class="ph-mailbox" id="ph-mailbox" aria-hidden="true"></div>
       <p>여기를 눌러<br>사진을 넣어 주세요!</p>
     </div>
     <div class="loading" id="loading">
@@ -696,7 +700,8 @@ function setButtons(on){ document.querySelectorAll('.mbtn, #btn-detect').forEach
 
 function openPanel() { document.querySelector('.app').classList.add('settings-open'); document.getElementById('control-panel').classList.add('open'); document.getElementById('panel-toggle').setAttribute('aria-expanded', 'true'); }
 function togglePanel() { document.querySelector('.app').classList.contains('settings-open') ? closePanel(true) : openPanel(); }
-document.getElementById('canvas').addEventListener('click', () => { if (!srcImg && !busy && !document.querySelector('.app').classList.contains('settings-open')) pickNewPhoto(); else closePanel(); });   // 사진 전 접힌 첫 화면: 그림판을 누르면 사진 고르기
+document.getElementById('canvas').addEventListener('click', () => { if (!srcImg && !busy) pickNewPhoto(); else closePanel(); });   // 사진이 없을 때는 그림판을 눌러도 사진 고르기, 사진이 있으면 설정 창 우편함으로만
+document.getElementById('ph-mailbox').innerHTML = document.querySelector('.mailbox-btn svg').outerHTML.replace(/id="(\w[\w-]*)"/g, 'id="ph-$1"').replace(/url\(#/g, 'url(#ph-');   // 첫 화면 그림판에도 같은 우편함
 // 처음에는 접힌 채로 시작 (2026-11-23, 선생님 요청). 사진은 그림판 글·화살표·우편함으로 넣음.
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
 function closePanel(force) {
