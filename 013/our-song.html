@@ -870,7 +870,7 @@ function buildAbc(song,barsPerLine){
         if(ni<mel.notes.length) map.push({bi:u.bi,rows:u.rows,li,ni,els});
       });
       barsOnLine++; mus+='| ';
-      if(barsOnLine>=barsPerLine) flush();
+      if(barsOnLine>=barsPerLine||barsPerLine>=99) flush();   /* 넓은 화면: 가사 한 줄 = 악보 한 단(2026-11-24 선생님) */
     });
     if(mus.trim()) flush();
     function flushLine(){ /* 줄 안에서 넘칠 때(좁은 화면) */ const m=mus.replace(/\n$/,''); mus=m; flush(); }
@@ -887,7 +887,7 @@ let noteMap=[], noteEls=[], SONG=null;
 function drawScore(){
   const song=SONG, el=$('score');
   const w=Math.max(320,Math.min(1172,el.clientWidth||1000)), narrow=w<700;
-  const {abc,map}=buildAbc(song,(song.meter||4)===12?(narrow?1:2):(narrow?2:4));
+  const {abc,map}=buildAbc(song,narrow?((song.meter||4)===12?1:2):99);
   ABCJS.renderAbc('score',abc,{add_classes:true,responsive:'resize',staffwidth:narrow?(w<450?500:640):1060,visualTranspose:S.tr,paddingleft:0,paddingright:0,paddingtop:6,paddingbottom:4,scale:narrow?1.0:1.12});
   noteEls=[...el.querySelectorAll('.abcjs-note, .abcjs-rest')]; noteMap=map;
   const k=((S.tr)%12+12)%12;
