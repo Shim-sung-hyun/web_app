@@ -104,6 +104,12 @@ header{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;padding:14px 24
 .stTab .nud button{padding:4px 6px;margin-left:2px}
 .stFoot{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px;align-items:center}
 .stFoot .sp{flex:1}
+.studio .stNote{margin:4px 0 0;color:var(--ink-2);font-size:13px;line-height:1.6}
+.rxWrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+#rxQr svg{display:block;background:#fff;padding:6px;border:1px solid var(--line)}
+.rxCode{font-size:44px;letter-spacing:.06em;font-variant-numeric:tabular-nums;color:var(--pink-d);line-height:1.1}
+.rxState{color:var(--ink-2);font-size:14px;min-height:1.5em;margin:8px 0 0}
+.txCode{border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:22px;letter-spacing:.08em;width:160px;background:#fff}
 #studioBtn.on{background:var(--pink);border-color:var(--pink);color:#fff}
 .recBar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#2b2622;color:#fff;border-radius:10px;padding:10px 12px 10px 16px;display:none;align-items:center;gap:12px;z-index:2147480050;font-size:16px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
 .recBar.on{display:flex}
@@ -112,6 +118,18 @@ header{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;padding:14px 24
 .recBar .meter i{display:block;height:100%;width:0;background:#7fd38a}
 .recBar button{border:0;background:#fff;color:#2b2622;border-radius:7px;padding:7px 14px;font-size:15px;cursor:pointer}
 @media (max-width:820px){ .studio{padding:0 16px} .stTab .st{display:none} .stTab .who{width:96px} .stTab .act button{padding:4px 7px} }
+@media (max-width:600px){
+  .stTab,.stTab tbody{display:block}
+  .stTab tr{display:grid;grid-template-columns:28px 1fr;gap:4px 8px;padding:8px 6px;border-top:1px solid #efe7db}
+  .stTab tr.blk{display:block;padding:0}
+  .stTab td{border:0;padding:0}
+  .stTab .n{grid-row:span 3;padding-top:6px}
+  .stTab .who{width:auto}
+  .stTab .act{text-align:left;white-space:normal}
+  .stTab .act button{padding:8px 12px;font-size:15px;margin:2px 4px 2px 0}
+  .studio .row>b{min-width:0;width:100%}
+  .rxCode{font-size:36px}
+}
 @media print{ .studio,.recBar{display:none!important} }
 
 /* 창 */
@@ -232,6 +250,23 @@ header{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;padding:14px 24
     <button type="button" class="btn" id="edAll">모두 새로 짓기</button>
     <button type="button" class="btn main" id="edGo">고친 곳만 반영</button>
   </div>
+</div></div>
+
+<!-- 받기(휴대폰 → 이 기기, 또는 전자칠판 → 휴대폰) -->
+<div class="dlg" id="rx"><div class="box rxBox">
+  <h3>받기</h3>
+  <p>보내는 기기에서 QR을 찍거나, 보내는 기기 녹음실의 "📤 보내기"에 이 번호를 넣어요. 잠가서 오가고, 받는 순간 서버에서 지워져요.</p>
+  <div class="rxWrap"><div id="rxQr"></div><div><div class="rxCode" id="rxCode">······</div><p id="rxState" class="rxState"></p></div></div>
+  <div class="acts"><button type="button" class="btn quiet left" id="rxNew">새 번호</button><button type="button" class="btn main" data-close>다 받았어요</button></div>
+</div></div>
+<!-- 보내기 -->
+<div class="dlg" id="tx"><div class="box">
+  <h3>보내기</h3>
+  <p id="txInfo"></p>
+  <div class="row"><b>받는 번호</b><input type="text" id="txCode" inputmode="numeric" maxlength="7" placeholder="000 000" class="txCode"></div>
+  <div class="row"><b>보낼 것</b><div class="seg" id="txWhat"><button type="button" data-v="rec" class="on">녹음(곡과 함께)</button><button type="button" data-v="song">곡만</button></div><button type="button" class="tog" id="txAll">보낸 것도 다시</button></div>
+  <p id="txState" class="rxState"></p>
+  <div class="acts"><button type="button" class="btn" data-close>닫기</button><button type="button" class="btn main" id="txGo">보내기</button></div>
 </div></div>
 
 <!-- 곡 파일 -->
@@ -1284,7 +1319,8 @@ function drawStudio(){
      +'<td class="act"><button type="button" class="rb" data-rec="'+i+'">● 녹음</button>'+(t?'<button type="button" class="pb" data-play="'+i+'">▶ 듣기</button><span class="nud">자리<button type="button" class="nb" data-nudge="'+t.k+'|-0.02" title="목소리가 늦게 들리면 앞으로">◀</button><button type="button" class="nb" data-nudge="'+t.k+'|0.02" title="목소리가 빨리 들리면 뒤로">▶</button></span><button type="button" class="xb" data-del="'+t.k+'">지우기</button>':'')+'</td></tr>';
   });
   h+='</table><div class="stFoot"><button type="button" class="btn main" id="mixPlay">▶ 완성곡 듣기</button><button type="button" class="btn" id="mixSave">완성곡 파일로 받기</button>'
-   +'<span class="sp"></span><button type="button" class="btn quiet" id="workSave">작업 파일로 저장(옮기기)</button><button type="button" class="btn quiet" id="workLoad">작업 파일 불러오기</button></div>';
+   +'<span class="sp"></span><button type="button" class="btn" id="rxOpen">📲 받기</button><button type="button" class="btn" id="txOpen">📤 보내기</button><button type="button" class="btn quiet" id="workSave">작업 파일로 저장</button><button type="button" class="btn quiet" id="workLoad">작업 파일 불러오기</button></div>'
+   +'<p class="stNote">휴대폰으로 녹음하기: 휴대폰에서 이 앱을 열고 → 곡이 없으면 휴대폰 "📲 받기"의 번호를 이 화면 "📤 보내기"(곡만)에 넣어 곡을 넘김 → 휴대폰 녹음실에서 녹음 → 이 화면 "📲 받기"의 QR을 휴대폰으로 찍고 보내기.</p>';
   box.innerHTML=h;
 }
 async function studioClick(e){
@@ -1300,6 +1336,8 @@ async function studioClick(e){
   if(b.id==='mixSave'){ await saveMix(); return; }
   if(b.id==='workSave'){ await saveWork(); return; }
   if(b.id==='workLoad'){ $('wIn').click(); return; }
+  if(b.id==='rxOpen'){ stop(); relayReceive(); return; }
+  if(b.id==='txOpen'){ stop(); openTx(''); return; }
 }
 async function studioPlay(i,isGuide){
   if(playing){ stop(); return; }
@@ -1321,11 +1359,12 @@ async function saveMix(){
 
 /* ── 작업 파일: 곡 + 녹음을 한 파일로(.charum). 기기를 옮길 때 ──
    생김새: 'CHRM' + 머리 길이(4바이트) + 머리 JSON + 녹음들(16비트) 차례로 */
-async function workBlob(){
-  const takes=STU.takes.map(t=>({...t,pcm:undefined,bytes:t.pcm.byteLength}));
+async function workBlob(list){
+  list=list||STU.takes;
+  const takes=list.map(t=>({...t,pcm:undefined,sent:undefined,bytes:t.pcm.byteLength}));
   const head=new TextEncoder().encode(JSON.stringify({type:'charum-work',v:1,song:{...SONG,builtin:undefined,edited:undefined},meta:STU.meta,takes}));
   const len=new Uint8Array(4); new DataView(len.buffer).setUint32(0,head.length,true);
-  return new Blob([new TextEncoder().encode('CHRM'),len,head,...STU.takes.map(t=>t.pcm)],{type:'application/octet-stream'});
+  return new Blob([new TextEncoder().encode('CHRM'),len,head,...list.map(t=>t.pcm)],{type:'application/octet-stream'});
 }
 async function saveWork(){
   const blob=await workBlob(), name=safeName(SONG.title)+' 작업.charum';
@@ -1336,30 +1375,241 @@ async function saveWork(){
   saveBlob(blob,name);
   note('작업 파일을 저장했어요('+(blob.size/1048576).toFixed(1)+'MB). USB·구글 드라이브·카톡 "나에게 보내기"로 옮긴 뒤 그 기기에서 "작업 파일 불러오기"를 누르세요.');
 }
-async function loadWork(file){
+/* merge: 휴대폰↔전자칠판 주고받기 — 이 기기의 곡·녹음은 두고 새 녹음만 더함(곡이 없으면 곡도). 아니면(파일 불러오기) 묻고 바꿈 */
+async function loadWork(file,opt={}){
   try{
     const ab=await file.arrayBuffer(), u=new Uint8Array(ab);
     if(new TextDecoder().decode(u.subarray(0,4))!=='CHRM') throw new Error('magic');
     const hl=new DataView(ab).getUint32(4,true), head=JSON.parse(new TextDecoder().decode(u.subarray(8,8+hl)));
-    if(head.type!=='charum-work'||!validSong(head.song)) throw new Error('form');
+    if(head.type!=='charum-work'||!validSong(head.song)||!Array.isArray(head.takes)) throw new Error('form');
     let s=head.song; s.mood=MOODS[s.mood]?s.mood:'bright'; s.meter=(s.meter===3||s.meter===4)?s.meter:MOODS[s.mood].meter;
     if(BUILTIN.some(b=>b.id===s.id)) s.builtin=true; else if(!/^[\w-]{1,40}$/.test(s.id||'')) s.id='my'+Date.now().toString(36);
     const exists=allSongs().some(x=>x.id===s.id);
-    if(exists&&!confirm('"'+s.title+'"이(가) 이 기기에 이미 있어요. 불러온 것으로 바꿀까요? (이 기기의 녹음도 바뀌어요)')) return;
-    for(const v of await dbList(s.id)) await dbDel(v.k);
-    let p=8+hl;
-    for(const t of head.takes){ const pcm=ab.slice(p,p+t.bytes); p+=t.bytes; const k=s.id+'|take|'+String(t.k).split('|').pop(); await dbPut({...t,k,pcm,bytes:undefined}); }
-    await dbPut({k:s.id+'|meta',assign:head.meta&&head.meta.assign||{},set:head.meta&&head.meta.set||{}});
-    storeSong(s); S.songId=s.id; save(); STU.pcmCache.clear(); $('fd').classList.remove('on');
-    drawAll(); if(!STU.on){ await loadStudio(); } note('작업 파일을 불러왔어요: '+s.title+' · 녹음 '+head.takes.length+'개');
-  }catch(e){ console.error(e); note('작업 파일을 읽지 못했어요. 이 앱에서 저장한 .charum 파일인지 확인해 주세요.',true); }
+    let added=0;
+    if(opt.merge){
+      if(!exists) storeSong(s);
+      const have=new Set((await dbList(s.id)).map(v=>v.k));
+      let p=8+hl;
+      for(const t of head.takes){ const pcm=ab.slice(p,p+t.bytes); p+=t.bytes; const k=s.id+'|take|'+String(t.k).split('|').pop(); if(have.has(k)) continue; await dbPut({...t,k,pcm,bytes:undefined,sent:true}); added++; }
+      const old=(await dbList(s.id)).find(v=>v.k.endsWith('|meta'));
+      const assign={...(head.meta&&head.meta.assign||{}),...Object.fromEntries(Object.entries(old&&old.assign||{}).filter(([k,v])=>v))};
+      await dbPut({k:s.id+'|meta',assign,set:old&&old.set||head.meta&&head.meta.set||{}});
+    }else{
+      if(exists&&!confirm('"'+s.title+'"이(가) 이 기기에 이미 있어요. 불러온 것으로 바꿀까요? (이 기기의 녹음도 바뀌어요)')) return;
+      for(const v of await dbList(s.id)) await dbDel(v.k);
+      let p=8+hl;
+      for(const t of head.takes){ const pcm=ab.slice(p,p+t.bytes); p+=t.bytes; const k=s.id+'|take|'+String(t.k).split('|').pop(); await dbPut({...t,k,pcm,bytes:undefined}); added++; }
+      await dbPut({k:s.id+'|meta',assign:head.meta&&head.meta.assign||{},set:head.meta&&head.meta.set||{}});
+      storeSong(s);
+    }
+    S.songId=s.id; save(); STU.pcmCache.clear(); $('fd').classList.remove('on');
+    drawAll(); if(!STU.on){ await loadStudio(); }
+    const msg=opt.merge?(head.takes.length?'「'+s.title+'」 녹음 '+added+'개를 받았어요'+(head.takes.length>added?'(이미 있던 '+(head.takes.length-added)+'개는 그대로)':'')+'.':'「'+s.title+'」 곡을 받았어요.'+(exists?'(이미 있던 곡은 그대로 둠)':'')):'작업 파일을 불러왔어요: '+s.title+' · 녹음 '+added+'개';
+    if(!opt.quiet) note(msg);
+    return msg;
+  }catch(e){ console.error(e); const m='작업 파일을 읽지 못했어요. 이 앱에서 만든 .charum 파일인지 확인해 주세요.'; note(m,true); return m; }
 }
+
+/* ═════════ 휴대폰 ↔ 전자칠판 주고받기 ═════════
+   차름 파일 보내기 다리(charum-api/file-relay.php, relay/file.html과 같은 잠금)를 그대로 씀:
+   받는 쪽이 번호 6자리 + 공개 열쇠를 맡기면, 보내는 쪽이 파일을 잠가 1MB씩 올리고, 받는 쪽이 다 풀면 서버에서 지움(서버는 내용을 못 봄).
+   주고받는 것은 늘 작업 파일(.charum) — 받는 쪽은 합침(있는 녹음은 두고 새 녹음만 더함, 곡이 없으면 곡도 더함).
+   QR 주소: 이 앱 주소#send=번호&s=곡id → 휴대폰에서 열면 그 곡의 '보내기'가 번호와 함께 바로 열림. */
+const FRELAY='https://charum.org/charum-api/file-relay.php', FCHUNK=1024*1024, FMAX=9*1024*1024;
+/* QR 만들기(차름 공통, 바깥 라이브러리 없이) */
+const QR=(function(){
+  const EXP=new Array(512), LOG=new Array(256); let x=1;
+  for(let i=0;i<255;i++){ EXP[i]=x; LOG[x]=i; x<<=1; if(x&256) x^=0x11d; }
+  for(let i=255;i<512;i++) EXP[i]=EXP[i-255];
+  const mul=(a,b)=>a&&b?EXP[LOG[a]+LOG[b]]:0;
+  function rsGen(n){ let g=[1]; for(let i=0;i<n;i++){ const ng=new Array(g.length+1).fill(0); for(let j=0;j<g.length;j++){ ng[j]^=g[j]; ng[j+1]^=mul(g[j],EXP[i]); } g=ng; } return g; }
+  function rsRem(data,n){ const g=rsGen(n), r=new Array(n).fill(0); for(const d of data){ const f=d^r.shift(); r.push(0); for(let i=0;i<n;i++) r[i]^=mul(g[i+1],f); } return r; }
+  /* 판마다 [블록당 오류정정 수, 블록 수 그룹1, 그룹1 데이터 수, 블록 수 그룹2, 그룹2 데이터 수] (M) */
+  const T=[null,[10,1,16,0,0],[16,1,28,0,0],[26,1,44,0,0],[18,2,32,0,0],[24,2,43,0,0],[16,4,27,0,0],[18,4,31,0,0],[22,2,38,2,39],[22,3,36,2,37],[26,4,43,1,44]];
+  const ALIGN=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50]];
+  function make(text){
+    const bytes=Array.from(new TextEncoder().encode(text));
+    let v=1; for(;v<=9;v++){ const t=T[v], cap=t[1]*t[2]+t[3]*t[4]; if(4+(v<10?8:16)+bytes.length*8<=cap*8) break; }
+    if(v>9) throw new Error('too long');
+    const t=T[v], cap=t[1]*t[2]+t[3]*t[4];
+    const bits=[]; const put=(val,n)=>{ for(let i=n-1;i>=0;i--) bits.push((val>>>i)&1); };
+    put(4,4); put(bytes.length,v<10?8:16); bytes.forEach(b=>put(b,8));
+    put(0,Math.min(4,cap*8-bits.length)); while(bits.length%8) bits.push(0);
+    const data=[]; for(let i=0;i<bits.length;i+=8){ let b=0; for(let j=0;j<8;j++) b=(b<<1)|bits[i+j]; data.push(b); }
+    for(let p=0;data.length<cap;p++) data.push(p%2?0x11:0xEC);
+    const blocks=[], ecs=[]; let k=0;
+    for(let g=0;g<2;g++) for(let b=0;b<t[1+g*2];b++){ const d=data.slice(k,k+t[2+g*2]); k+=d.length; blocks.push(d); ecs.push(rsRem(d,t[0])); }
+    const all=[]; const maxD=Math.max(...blocks.map(b=>b.length));
+    for(let i=0;i<maxD;i++) for(const b of blocks) if(i<b.length) all.push(b[i]);
+    for(let i=0;i<t[0];i++) for(const e of ecs) all.push(e[i]);
+    const N=17+v*4, M=[], F=[]; for(let i=0;i<N;i++){ M.push(new Array(N).fill(0)); F.push(new Array(N).fill(false)); }
+    const set=(r,c,val)=>{ M[r][c]=val?1:0; F[r][c]=true; };
+    const finder=(r,c)=>{ for(let i=-1;i<=7;i++) for(let j=-1;j<=7;j++){ const rr=r+i, cc=c+j; if(rr<0||cc<0||rr>=N||cc>=N) continue;
+      const on=(i>=0&&i<=6&&(j===0||j===6))||(j>=0&&j<=6&&(i===0||i===6))||(i>=2&&i<=4&&j>=2&&j<=4); set(rr,cc,on); } };
+    finder(0,0); finder(0,N-7); finder(N-7,0);
+    for(let i=8;i<N-8;i++){ set(6,i,i%2===0); set(i,6,i%2===0); }
+    const al=ALIGN[v], L=al[al.length-1]; for(const r of al) for(const c of al){ if((r===6&&c===6)||(r===6&&c===L)||(r===L&&c===6)) continue; for(let i=-2;i<=2;i++) for(let j=-2;j<=2;j++) set(r+i,c+j,Math.max(Math.abs(i),Math.abs(j))!==1); }
+    set(N-8,8,1);
+    for(let i=0;i<9;i++){ if(!F[8][i]) F[8][i]=true; if(!F[i][8]) F[i][8]=true; }
+    for(let i=0;i<8;i++){ F[8][N-1-i]=true; F[N-1-i][8]=true; }
+    if(v>=7){ for(let i=0;i<6;i++) for(let j=0;j<3;j++){ F[i][N-11+j]=true; F[N-11+j][i]=true; } }
+    const dbits=[]; all.forEach(b=>{ for(let i=7;i>=0;i--) dbits.push((b>>>i)&1); });
+    let bi=0, up=true;
+    for(let c=N-1;c>0;c-=2){ if(c===6) c=5;
+      for(let n=0;n<N;n++){ const r=up?N-1-n:n; for(let d=0;d<2;d++){ const cc=c-d; if(F[r][cc]) continue; M[r][cc]=bi<dbits.length?dbits[bi++]:0; } }
+      up=!up; }
+    const masks=[(r,c)=>(r+c)%2===0,(r)=>r%2===0,(r,c)=>c%3===0,(r,c)=>(r+c)%3===0,(r,c)=>(Math.floor(r/2)+Math.floor(c/3))%2===0,(r,c)=>(r*c)%2+(r*c)%3===0,(r,c)=>((r*c)%2+(r*c)%3)%2===0,(r,c)=>((r+c)%2+(r*c)%3)%2===0];
+    function fmt(Mx,mask){ let d=(0<<3)|mask; /* M = 00 */ let rem=d; for(let i=0;i<10;i++) rem=(rem<<1)^((rem>>>9)*0x537); const f=((d<<10)|rem)^0x5412;
+      const b=i=>(f>>>i)&1;
+      for(let i=0;i<=5;i++) Mx[i][8]=b(i); Mx[7][8]=b(6); Mx[8][8]=b(7); Mx[8][7]=b(8); for(let i=9;i<15;i++) Mx[8][14-i]=b(i);
+      for(let i=0;i<8;i++) Mx[8][N-1-i]=b(i); for(let i=8;i<15;i++) Mx[N-15+i][8]=b(i);
+      Mx[N-8][8]=1;
+      if(v>=7){ let rv=v; for(let i=0;i<12;i++) rv=(rv<<1)^((rv>>>11)*0x1f25); const vb=(v<<12)|rv;
+        for(let i=0;i<18;i++){ const bit=(vb>>>i)&1, a=N-11+(i%3), bb=Math.floor(i/3); Mx[bb][a]=bit; Mx[a][bb]=bit; } } }
+    function penalty(Mx){ let p=0;
+      for(let r=0;r<N;r++){ let run=1; for(let c=1;c<N;c++){ if(Mx[r][c]===Mx[r][c-1]){ run++; if(run===5) p+=3; else if(run>5) p++; } else run=1; } }
+      for(let c=0;c<N;c++){ let run=1; for(let r=1;r<N;r++){ if(Mx[r][c]===Mx[r-1][c]){ run++; if(run===5) p+=3; else if(run>5) p++; } else run=1; } }
+      for(let r=0;r<N-1;r++) for(let c=0;c<N-1;c++){ const s=Mx[r][c]+Mx[r+1][c]+Mx[r][c+1]+Mx[r+1][c+1]; if(s===0||s===4) p+=3; }
+      const pat=[1,0,1,1,1,0,1,0,0,0,0], pat2=[0,0,0,0,1,0,1,1,1,0,1];
+      for(let r=0;r<N;r++) for(let c=0;c+11<=N;c++){ let a=true,b=true,a2=true,b2=true; for(let k=0;k<11;k++){ if(Mx[r][c+k]!==pat[k]) a=false; if(Mx[r][c+k]!==pat2[k]) b=false; if(Mx[c+k][r]!==pat[k]) a2=false; if(Mx[c+k][r]!==pat2[k]) b2=false; } p+=40*(a+b+a2+b2); }
+      let dark=0; for(let r=0;r<N;r++) for(let c=0;c<N;c++) dark+=Mx[r][c]; p+=Math.floor(Math.abs(dark*20-N*N*10)/(N*N))*10; return p; }
+    let best=null, bp=1e9;
+    for(let m=0;m<8;m++){ const Mx=M.map(r=>r.slice()); for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(!F[r][c]&&masks[m](r,c)) Mx[r][c]^=1; fmt(Mx,m); const p=penalty(Mx); if(p<bp){ bp=p; best=Mx; } }
+    return best;
+  }
+  function svg(text,px){ const m=make(text), N=m.length, q=4, S=N+q*2; let d='';
+    for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(m[r][c]) d+=`M${c+q} ${r+q}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}" width="${px}" height="${px}" shape-rendering="crispEdges" role="img" aria-label="QR 코드"><rect width="${S}" height="${S}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`; }
+  return {make,svg};
+})();
+const b64u={ enc:b=>{ const u=new Uint8Array(b); let s=''; for(let i=0;i<u.length;i+=0x8000) s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
+  dec:s=>{ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const bin=atob(s), u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return u; } };
+async function fcall(body){
+  const r=await fetch(FRELAY,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),cache:'no-store'});
+  let j={}; try{ j=await r.json(); }catch(e){}
+  if(!r.ok||j.error) throw Object.assign(new Error(j.error||('http '+r.status)),{code:j.error||('http '+r.status)});
+  return j;
+}
+async function aesKey(priv,pubRaw,code,use){
+  const pub=await crypto.subtle.importKey('raw',pubRaw,{name:'ECDH',namedCurve:'P-256'},false,[]);
+  const bits=await crypto.subtle.deriveBits({name:'ECDH',public:pub},priv,256);
+  const hk=await crypto.subtle.importKey('raw',bits,'HKDF',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:new TextEncoder().encode('charum-file|'+code),info:new TextEncoder().encode('v1')},hk,{name:'AES-GCM',length:256},false,[use]);
+}
+const relayErr=c=>c==='month'?'이번 달 서버 전송량이 다 찼어요. 다음 달에 다시 쓸 수 있어요.':c==='busy'?'지금은 서버가 바빠요. 잠시 뒤에 다시 해 주세요.':c==='nocode'?'번호가 맞지 않거나 시간이 끝났어요. 받는 쪽에서 새 번호를 받아 주세요.':c==='day'?'오늘 이 학교에서 보낼 수 있는 수를 넘었어요. 내일 다시 해 주세요.':c==='insecure'?'https 주소에서만 주고받을 수 있어요.':'중계 서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요. ('+(c||'network')+')';
+
+/* ── 받기(QR·번호를 보여 주고 기다림) ── */
+let RX=null;
+async function relayReceive(){
+  relayClose();
+  const m=RX={dead:false,t:null,n:0};
+  $('rxCode').textContent='······'; $('rxQr').innerHTML=''; $('rxState').textContent='번호를 만드는 중…'; $('rx').classList.add('on');
+  try{
+    if(!window.crypto||!crypto.subtle) throw Object.assign(new Error('insecure'),{code:'insecure'});
+    m.kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},false,['deriveBits']);
+    const o=await fcall({a:'open',pub:b64u.enc(await crypto.subtle.exportKey('raw',m.kp.publicKey))});
+    if(m.dead) return;
+    m.code=o.code; m.sid=o.sid;
+    $('rxCode').textContent=o.code.slice(0,3)+' '+o.code.slice(3);
+    const url=location.href.split('#')[0]+'#send='+o.code+'&s='+encodeURIComponent(SONG.id);
+    try{ $('rxQr').innerHTML=QR.svg(url,190); }catch(e){ $('rxQr').innerHTML=''; }
+    $('rxState').textContent='보내는 기기를 기다리는 중… (카메라로 QR을 찍거나, 보내는 기기 녹음실의 "📤 보내기"에 번호를 넣어요)';
+    rxPoll(m);
+  }catch(e){ $('rxState').textContent=relayErr(e.code); }
+}
+async function rxPoll(m){
+  if(m.dead) return;
+  let r; try{ r=await fcall({a:'poll',code:m.code,sid:m.sid}); }catch(e){ m.t=setTimeout(()=>rxPoll(m),3000); return; }
+  if(m.dead) return;
+  if(r.status==='gone'){ $('rxState').textContent='번호 시간이 끝났어요(받은 것 '+m.n+'개). 더 받으려면 "새 번호"를 눌러 주세요.'; return; }
+  if(r.status!=='file'){ $('rxState').textContent=(m.n?m.n+'개 받았어요. 더 기다리는 중…':'보내는 기기를 기다리는 중…')+(r.up?' ('+r.up+'개 올라오는 중)':''); m.t=setTimeout(()=>rxPoll(m),1500); return; }
+  try{
+    const key=await aesKey(m.kp.privateKey,b64u.dec(r.epub),m.code,'decrypt');
+    const head=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(r.hiv)},key,b64u.dec(r.hct))));
+    const parts=[];
+    for(let i=0;i<r.n;i++){
+      $('rxState').textContent='받는 중… '+Math.round(i/r.n*100)+'%';
+      let p, tries=0; for(;;){ try{ p=await fcall({a:'get',code:m.code,sid:m.sid,fid:r.fid,i}); break; }catch(e){ if(++tries>3||e.code==='nofile') throw e; await new Promise(z=>setTimeout(z,1500)); } }
+      parts.push(new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(p.iv)},key,b64u.dec(p.ct))));
+    }
+    await fcall({a:'ack',code:m.code,sid:m.sid,fid:r.fid}).catch(()=>{});
+    const res=await loadWork(new Blob(parts),{merge:true,quiet:true});
+    m.n++; $('rxState').textContent=res?res:'받았어요.';
+  }catch(e){ console.error(e); $('rxState').textContent='하나를 열지 못했어요. 보내는 쪽에서 다시 보내 주세요.'; await fcall({a:'ack',code:m.code,sid:m.sid,fid:r.fid}).catch(()=>{}); }
+  if(!m.dead) m.t=setTimeout(()=>rxPoll(m),400);
+}
+function relayClose(){ if(RX){ RX.dead=true; clearTimeout(RX.t); if(RX.code) fcall({a:'close',code:RX.code,sid:RX.sid}).catch(()=>{}); RX=null; } }
+
+/* ── 보내기(번호를 넣고 작업 파일을 잠가 올림) ── */
+async function sendBlob(code,pub,blob,name){
+  const n=Math.ceil(blob.size/FCHUNK);
+  const kp=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+  const key=await aesKey(kp.privateKey,pub,code,'encrypt');
+  const hiv=crypto.getRandomValues(new Uint8Array(12));
+  const hct=await crypto.subtle.encrypt({name:'AES-GCM',iv:hiv},key,new TextEncoder().encode(JSON.stringify({name,type:'application/octet-stream',size:blob.size})));
+  const b=await fcall({a:'begin',code,n,size:blob.size,epub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),hiv:b64u.enc(hiv),hct:b64u.enc(hct)});
+  for(let i=0;i<n;i++){
+    const buf=await blob.slice(i*FCHUNK,Math.min(blob.size,(i+1)*FCHUNK)).arrayBuffer();
+    const iv=crypto.getRandomValues(new Uint8Array(12)), ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,buf);
+    let tries=0; for(;;){ try{ await fcall({a:'part',code,fid:b.fid,i,iv:b64u.enc(iv),ct:b64u.enc(ct)}); break; }catch(e){ if(++tries>3||/nocode|nofile|bad|toolarge/.test(e.code)) throw e; await new Promise(z=>setTimeout(z,1500)); } }
+    $('txState').textContent='보내는 중… '+Math.round((i+1)/n*100)+'%';
+  }
+  return b.fid;
+}
+function openTx(code){
+  relayClose(); $('txCode').value=code?code.slice(0,3)+' '+code.slice(3):'';
+  const unsent=STU.takes.filter(t=>!t.sent).length;
+  $('txWhat').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===(STU.takes.length?'rec':'song')));
+  $('txInfo').textContent='「'+SONG.title+'」 — 녹음 '+STU.takes.length+'개 (아직 안 보낸 것 '+unsent+'개)';
+  $('txState').textContent=''; $('tx').classList.add('on'); if(!code) setTimeout(()=>$('txCode').focus(),50);
+}
+async function doTx(){
+  const code=$('txCode').value.replace(/\D/g,''); if(code.length!==6){ $('txState').textContent='받는 쪽 화면의 번호 6자리를 넣어 주세요.'; return; }
+  const what=$('txWhat').querySelector('.on').dataset.v, all=$('txAll').classList.contains('on');
+  const go=$('txGo'); go.disabled=true;
+  try{
+    if(!window.crypto||!crypto.subtle) throw Object.assign(new Error('insecure'),{code:'insecure'});
+    const r=await fcall({a:'pub',code}); const pub=b64u.dec(r.pub);
+    let takes=what==='song'?[]:STU.takes.filter(t=>all||!t.sent);
+    if(what==='rec'&&!takes.length){ $('txState').textContent='새로 보낼 녹음이 없어요. 다시 보내려면 "보낸 것도 다시"를 켜 주세요.'; go.disabled=false; return; }
+    /* 9MB씩 나눠 여러 번 */
+    const batches=[]; let cur=[], size=0;
+    for(const t of takes){ if(cur.length&&size+t.pcm.byteLength>FMAX){ batches.push(cur); cur=[]; size=0; } cur.push(t); size+=t.pcm.byteLength; }
+    if(cur.length||!batches.length) batches.push(cur);
+    for(let i=0;i<batches.length;i++){
+      $('txState').textContent='보내는 중… ('+(i+1)+'/'+batches.length+')';
+      await sendBlob(code,pub,await workBlob(batches[i]),safeName(SONG.title)+'.charum');
+      for(const t of batches[i]){ t.sent=true; await dbPut(t); }
+    }
+    $('txState').textContent=what==='song'?'곡을 보냈어요. 받는 쪽에서 곡이 열려요.':'녹음 '+takes.length+'개를 보냈어요. 받는 쪽 녹음실에 들어가요.';
+    drawStudio();
+  }catch(e){ console.error(e); $('txState').textContent=relayErr(e.code); }
+  go.disabled=false;
+}
+/* QR로 열었을 때(#send=번호&s=곡id) */
+async function relayFromHash(){
+  const h=new URLSearchParams(location.hash.slice(1)); const code=h.get('send'); if(!code||!/^\d{6}$/.test(code)) return;
+  history.replaceState(null,'',location.href.split('#')[0]);
+  const sid=h.get('s'); const has=sid&&allSongs().some(s=>s.id===sid);
+  if(sid&&!has){ note('이 기기에는 받는 쪽의 노래가 없어요. 먼저 전자칠판에서 이 기기로 곡을 보내 주세요(이 기기 녹음실 "받기" → 번호를 전자칠판 "보내기"에).',true); return; }
+  if(has&&sid!==SONG.id){ S.songId=sid; save(); drawAll(); }
+  if(!STU.on){ STU.on=true; $('studioBtn').classList.add('on'); await loadStudio(); drawStudio(); }
+  openTx(code);
+}
+
 
 /* ── 단추 ── */
 $('studioBtn').onclick=async()=>{ STU.on=!STU.on; $('studioBtn').classList.toggle('on',STU.on); stop(); if(STU.on){ await loadStudio(); } drawStudio(); if(STU.on) $('studio').scrollIntoView({behavior:'smooth',block:'start'}); };
 $('studio').addEventListener('click',studioClick);
 $('studio').addEventListener('change',e=>{ const i=e.target.closest('[data-who]'); if(i){ STU.meta.assign[i.dataset.who]=i.value.trim(); saveMeta(); } });
 $('recStop').onclick=()=>stopRec();
+$('rxNew').onclick=relayReceive;
+$('txGo').onclick=doTx;
+$('txWhat').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; $('txWhat').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); };
+$('txAll').onclick=()=>$('txAll').classList.toggle('on');
+document.querySelectorAll('#rx [data-close]').forEach(b=>b.addEventListener('click',relayClose));
+$('rx').addEventListener('click',e=>{ if(e.target===$('rx')) relayClose(); });
+setTimeout(()=>relayFromHash(),0); addEventListener('hashchange',()=>relayFromHash());
 $('wIn').onchange=e=>{ const f=e.target.files[0]; if(f) loadWork(f); e.target.value=''; };
 $('fWork').onclick=async()=>{ if(!STU.songId||STU.songId!==SONG.id) await loadStudio(); await saveWork(); $('fd').classList.remove('on'); };
 $('fWorkLoad').onclick=()=>$('wIn').click();
