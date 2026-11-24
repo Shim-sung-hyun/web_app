@@ -53,6 +53,12 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
 #editCanvas{display:block;cursor:crosshair;touch-action:none;width:auto;max-width:none;height:auto;image-rendering:auto;margin:0 auto}
 .canvas-zoom{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:6px 0;font-size:13px}
 .checker{background-color:#3a443e!important;background-image:linear-gradient(45deg,#465149 25%,transparent 25%),linear-gradient(-45deg,#465149 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#465149 75%),linear-gradient(-45deg,transparent 75%,#465149 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+.repo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin:8px 0;max-height:60vh;overflow:auto}
+.repo-grid figure{margin:0;cursor:pointer;border-radius:8px;padding:4px;background:#fff;border:2px solid transparent;text-align:center}
+.repo-grid figure img{width:100%;height:90px;object-fit:contain;background:#f1f3f1}
+.repo-grid figcaption{font-size:11px;word-break:break-all;color:#607067}
+.repo-grid figure.prop{border-color:#315c48}.repo-grid figure.bg{border-color:#a44c28}
+.repo-grid figure b{display:block;font-size:12px;color:#315c48}.repo-grid figure.bg b{color:#a44c28}
 .size-plan{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 18px;margin:4px 0 8px}
 .size-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:400;margin:0}
 .size-row select{width:auto;max-width:150px;font-size:13px;padding:4px 6px}
@@ -89,10 +95,19 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
 <body>
 <header>
  <h1>무대 설치도구</h1>
- <p>처음 장면 구상부터 그림 손질, 배치 검토, 최종 자료 내보내기까지 한 흐름으로 진행해요.</p>
+ <p>누구나 쓰는 무대(그림 장면) 설치도구 — 장소를 적으면 AI가 그림 프롬프트를 지어 주고, 받은 그림을 잘라 손질하고, 배경 위에 놓아 보고, 무대 자료로 내보내요.</p>
  <div class="toolbar"><button id="saveDraft" class="secondary">작업 저장</button><button id="loadDraft" class="secondary">저장한 작업 열기</button><button id="openRepo" class="secondary">내 저장소 그림 열기</button><input id="draftFile" class="hidden" type="file" accept="application/json,.json"></div>
- <div id="repoBox" class="notice hidden" style="margin-top:8px"><label for="repoPlace" style="display:inline;margin-right:6px">저장소의 무대</label><select id="repoPlace" style="width:auto"></select> <button id="repoGo" class="primary" type="button">불러와서 소품 손질로</button> <button id="repoCancel" class="secondary" type="button">닫기</button>
-  <p class="hint" style="margin:6px 0 0">media/stage의 무대(배경·소품·자리)를 불러와 <b>3. 소품 손질</b>부터 해요. 확정할 때는 <b>손질한 소품 그림만</b> 덮어써요 — 무대 설정(stage.json)·배경·차림표는 그대로. 저장한 뒤 Claude에게 알려 주면 밑동 자리를 다시 재요(stage-meta.py).</p><p id="repoStatus" class="status" role="status"></p></div>
+ <div id="repoBox" class="notice hidden" style="margin-top:8px">
+  <div class="row"><div style="flex:3"><label for="repoUrl">GitHub 저장소 주소 (공개 저장소)</label><input id="repoUrl" type="text" spellcheck="false" placeholder="예: https://github.com/이름/저장소  또는  이름/저장소"></div><div style="flex:1"><label for="repoBranch">가지 (비우면 기본)</label><input id="repoBranch" type="text" spellcheck="false" placeholder="main"></div></div>
+  <div class="toolbar"><button id="repoList" class="primary" type="button">저장소 그림 찾기</button><button id="repoCancel" class="secondary" type="button">닫기</button></div>
+  <p id="repoStatus" class="status" role="status"></p>
+  <div id="repoStages" class="hidden"><h3 style="margin:10px 0 4px">만들던 무대 (stage.json이 있는 폴더)</h3><select id="repoPlace" style="width:auto;max-width:100%"></select> <button id="repoGo" class="primary" type="button">불러와서 소품 손질로</button>
+   <p class="hint">배경·소품·자리를 불러와 <b>3. 소품 손질</b>부터 해요. 확정할 때는 <b>손질한 소품 그림만</b> 덮어써요 — 무대 설정(stage.json)·배경·차림표는 그대로.</p></div>
+  <div id="repoFolders" class="hidden"><h3 style="margin:10px 0 4px">그림 폴더 — 그림만 있으면 골라서 새 무대로</h3><select id="repoFolder" style="width:auto;max-width:100%"></select> <button id="repoShow" class="secondary" type="button">그림 보기</button>
+   <p class="hint">그림을 한 번 누르면 <b>소품</b>, 두 번 누르면 <b>배경</b>(4:3 그림 하나), 세 번 누르면 빼요. 흰 바탕 그림은 불러올 때 바탕을 지우고, 파랑 그림자는 옅은 그림자로 바꿔요(1단계 '그림자를 파랑으로' 칸을 따름).</p>
+   <div id="repoGrid" class="repo-grid"></div>
+   <div id="repoPickBar" class="toolbar hidden"><button id="repoPickGo" class="primary" type="button">고른 그림으로 새 무대 — 소품 손질로</button><span id="repoPickInfo" class="hint"></span></div></div>
+ </div>
 </header>
 <main>
  <nav class="steps" aria-label="제작 단계">
@@ -114,14 +129,14 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <div><label for="sceneGroup">갈래</label><select id="sceneGroup"><option value="nature">자연 (nature)</option><option value="town">마을 (town)</option><option value="school">학교 (school)</option><option value="home">집 (home)</option><option value="public">가게·기관 (public)</option></select></div>
    <div><label for="placePreset">자연 장소 고르기</label><select id="placePreset"><option value="">직접 적기</option></select></div>
   </div>
-  <p class="hint">장소를 고르면 이름·폴더·배경 설명·지평선·소품(판 1·3)·가장자리 큰 것·그곳 동물·블록 소품이 미리 들어가요(media/stage/places.json). 고친 뒤 써도 돼요.</p>
+  <p class="hint">본보기로 차름의 자연 장소 12곳을 고를 수 있어요(이름·배경 설명·지평선·소품·그곳 동물이 미리 들어가요). 다른 곳은 직접 적거나, 아래 'AI에게 맡기기'로 채워요.</p>
   <div id="hidePlan" class="notice hidden"></div>
   <div class="row">
    <div style="flex:1"><label for="sceneSetting">장소와 배경 설명</label><input id="sceneSetting" type="text" placeholder="예: 동네 마당 — 낮은 돌담 너머 집들, 흙 마당"></div>
   </div>
   <div class="prompt-box" id="aiBox"><h3>AI에게 맡기기 (제미나이)</h3>
    <p class="hint">장소를 한국어로 적고(소품도 적으면 그대로, 비워 두면 AI가 그 곳에 어울리는 소품을 골라요) 누르면, AI가 영어 장소 설명·소품 목록(실제 높이)을 채우고 프롬프트까지 만들어요. 아래 '그림풍'에 샘플 그림을 넣었으면 그 그림풍도 글로 옮겨요. 모델: Gemini 3.5 Flash Lite(무료 키로 돼요).</p>
-   <div class="row"><div style="flex:1"><label for="gemKey">제미나이 키 — 이 기기에만 저장(다른 차름 앱과 같은 칸)</label><input id="gemKey" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…"></div></div>
+   <div class="row"><div style="flex:1"><label for="gemKey">제미나이 키 — 이 기기의 브라우저에만 저장(차름 앱들과 같은 칸)</label><input id="gemKey" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…"></div></div>
    <div class="toolbar"><button id="aiFill" class="primary" type="button">AI로 채우기</button><a href="https://www.charum.org/study/doc.html?gemini_guide" target="_blank" rel="noopener">제미나이 키 받는 법 ↗</a><button id="gemKeyClear" class="secondary" type="button">이 기기의 키 지우기</button></div>
    <p id="aiStatus" class="status" role="status"></p>
   </div>
@@ -203,7 +218,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
 
  <section class="panel" data-panel="2">
   <h2>소품 가장자리를 살펴요</h2>
-  <p class="intro">자를 때 흰 바탕·테두리 흰 기·작은 조각은 저절로 정리해요. 남은 흰 점은 바탕을 '배경 땅색'이나 '어두운 색'으로 바꿔 보며 찾고, 흰색만 지우는 붓·흰 틈 지우기로 지워요. 너무 지워진 곳은 원본 색 붓, 뚫린 곳은 구멍 메우기 붓으로 — 선생님이 무대 소품을 손질하던 소품 손질(touchup) 화면과 같은 붓이에요.</p>
+  <p class="intro">자를 때 흰 바탕·테두리 흰 기·작은 조각은 저절로 정리해요. 남은 흰 점은 바탕을 '배경 땅색'이나 '어두운 색'으로 바꿔 보며 찾고, 흰색만 지우는 붓·흰 틈 지우기로 지워요. 너무 지워진 곳은 원본 색 붓, 뚫린 곳은 구멍 메우기 붓으로 채워요.</p>
   <div class="edit-layout">
    <div>
     <div class="canvas-zoom"><span>Ctrl+마우스 휠로 확대·축소</span><button id="resetEditZoom" class="secondary" type="button">확대 초기화</button><output id="editZoomValue">100%</output><span style="margin-left:10px">바탕</span><button class="secondary editBg" data-bg="ground" type="button">배경 땅색</button><button class="secondary editBg" data-bg="dark" type="button">어두운 색</button><button class="secondary editBg" data-bg="checker" type="button">체크무늬</button></div>
@@ -268,9 +283,9 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
    <label><input type="checkbox" class="finalCheck">이 시안과 이름을 최종 자료로 내보낼 준비가 되었어요.</label>
   </div>
   <label for="reviewNotes">검토 메모 (다음 수정이나 만든 사람에게 전할 내용)</label><textarea id="reviewNotes" placeholder="예: 덤불을 조금 더 앞으로, 전나무 밑동은 땅에 붙이기"></textarea>
-  <p class="notice">지금은 새 무대를 <b>베타 자리 `media/stage`</b>에 모아요(기존 무대는 그대로, 2026-11-09). 지원되는 브라우저에서는 `media/stage` 폴더를 골라 직접 저장할 수 있어요. 이미 있는 무대 자료를 바꿀 때는 한 번 더 확인해요. 직접 저장을 지원하지 않는 브라우저에서는 기존 파일을 덮어쓰지 않는 ZIP으로 내보내고, `index-entry.json`을 차림표에 합쳐 주세요.</p>
+  <p class="notice">무대 자료는 <b>무대 폴더</b>(무대들을 모아 두는 폴더 — 차름은 <code>media/stage</code>) 안에 <code>갈래/폴더 이름</code>으로 저장해요. 크롬·엣지에서는 무대 폴더를 골라 바로 저장하고(차림표 index.json이 없으면 새로 만듦, 같은 이름이 있으면 한 번 더 물음), 다른 브라우저에서는 ZIP으로 받아 무대 폴더에 풀어 주세요. <b>저장소에서 불러온 무대</b>는 손질한 소품 그림만 저장해요 — 그때는 저장소 맨 위 폴더를 골라요.</p>
   <p><label style="display:inline;font-weight:400"><input type="checkbox" id="soak" checked> 밑동 스며들기 — 밑동 흙·모래를 그라데이션으로 바닥에 스며들게(가장자리 큰 것은 빼고)</label> · 띠 높이 <input id="soakBand" type="number" min="4" max="40" value="16" style="width:4em">% <span class="hint">(배치 시안에도 보임)</span></p>
-  <div class="toolbar"><button id="directSave" class="secondary hidden">media/stage에 직접 저장</button><button id="confirm" class="primary" disabled>확정 ZIP 받기</button><span id="finalStatus" class="status" role="status"></span></div>
+  <div class="toolbar"><button id="directSave" class="secondary hidden">폴더에 바로 저장</button><button id="confirm" class="primary" disabled>확정 ZIP 받기</button><span id="finalStatus" class="status" role="status"></span></div>
   <p id="viewLinks" class="hint"></p>
   <div class="nav"><button class="secondary back">← 배치 시안</button><span></span></div>
  </section>
@@ -1122,7 +1137,7 @@ canvas{max-width:100%;height:auto;vertical-align:middle}
   if(n===1){renderSheetPicks();renderBigFiles();threshPreview()}
   if(n===2)renderPropCards();
   if(n===3){renderLayoutCards();drawScene();setStatus($('#layoutStatus'),state.props.length?'소품을 눌러 고르거나 시안에서 직접 끌어 옮겨요.':'소품이 없어요. 2단계로 돌아가 소품 판을 불러와 주세요.',!state.props.length);const sr=stretchReport();if(sr)setStatus($('#layoutStatus'),sr,true)}
-  if(n===4){const key=$('#sceneGroup').value+'/'+$('#sceneSlug').value,G='https://shim-sung-hyun.github.io/web_app/media/stage/';$('#viewLinks').innerHTML=`저장해 올린 뒤(1~2분) 보기: <a href="${G}test.html?root=stage#${key}" target="_blank">무대 보기</a> · <a href="${G}hide-test.html?place=${key}" target="_blank">숨기기 시험</a>${state.preset&&!state.preset.hide?' (이 곳은 숨기기 시험이 아직 안 맞을 수 있어요 — 물·하늘·땅속 자리는 다음에)':''}`;const ce=cutEdges(),sr=stretchReport();setStatus($('#finalStatus'),[ce.length?'끝이 세로로 잘린 그림이 있어요: '+ce.join(' · ')+' (통나무처럼 원래 반듯한 것이 아니면 다시 받아 주세요)':'',sr].filter(Boolean).join(' / '),Boolean(ce.length||sr));drawScene($('#finalCanvas'));$('#confirm').disabled=!canConfirm();$('#directSave').disabled=!canConfirm()}
+  if(n===4){const key=$('#sceneGroup').value+'/'+$('#sceneSlug').value,G='https://shim-sung-hyun.github.io/web_app/media/stage/';$('#viewLinks').innerHTML=(state.repoInfo&&!/^shim-sung-hyun\/web_app$/i.test(state.repoInfo.o+'/'+state.repoInfo.r))?'':`저장해 올린 뒤(1~2분) 보기: <a href="${G}test.html?root=stage#${key}" target="_blank">무대 보기</a> · <a href="${G}hide-test.html?place=${key}" target="_blank">숨기기 시험</a>${state.preset&&!state.preset.hide?' (이 곳은 숨기기 시험이 아직 안 맞을 수 있어요 — 물·하늘·땅속 자리는 다음에)':''}`;const ce=cutEdges(),sr=stretchReport();setStatus($('#finalStatus'),[ce.length?'끝이 세로로 잘린 그림이 있어요: '+ce.join(' · ')+' (통나무처럼 원래 반듯한 것이 아니면 다시 받아 주세요)':'',sr].filter(Boolean).join(' / '),Boolean(ce.length||sr));drawScene($('#finalCanvas'));$('#confirm').disabled=!canConfirm();$('#directSave').disabled=!canConfirm()}
  }
  $$('.step').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.step))));
  $$('.next').forEach((b,i)=>b.addEventListener('click',()=>{if(i===0&&$('#prompts').classList.contains('hidden'))$('#makePrompts').click();showStep(i+1)}));
@@ -1641,11 +1656,11 @@ JSON으로만 답하세요.
   try{
    const root=await window.showDirectoryPicker({mode:'readwrite'});
    if(state.fromRepo){const files=await packageFiles();if(!files.length){setStatus($('#finalStatus'),'손질한 소품이 없어요.');return}
-    if(!window.confirm(`저장소 무대 ${state.fromRepo}의 소품 ${files.length}장을 손질한 그림으로 덮어쓸까요? (무대 설정·배경은 그대로)`)){setStatus($('#finalStatus'),'바꾸지 않았어요.');return}
+    if(!window.confirm(`고른 폴더가 저장소 맨 위 폴더인가요? 무대 ${state.fromRepo}의 소품 ${files.length}장을 손질한 그림으로 덮어쓸까요? (무대 설정·배경은 그대로)`)){setStatus($('#finalStatus'),'바꾸지 않았어요.');return}
     let d=root;for(const part of [...state.fromRepo.split('/'),'items'])d=await d.getDirectoryHandle(part);
     for(const f of files)await writeFile(d,f.name.split('/').pop(),f.blob);
-    state.props.forEach(p=>p.dirty=false);setStatus($('#finalStatus'),`소품 ${files.length}장을 저장했어요. 올린 뒤 Claude에게 알려 주면 밑동 자리를 다시 재요.`);return}
-   const indexHandle=await root.getFileHandle('index.json'),indexFile=await indexHandle.getFile(),index=JSON.parse(await indexFile.text()),key=`${state.group}/${state.slug}`;
+    state.props.forEach(p=>p.dirty=false);setStatus($('#finalStatus'),`소품 ${files.length}장을 저장했어요. 올린 뒤 밑동 자리를 다시 재 주세요(차름은 tools/stage-meta.py). 밑동 자리를 다시 재요.`);return}
+   let index={};try{const ih=await root.getFileHandle('index.json');index=JSON.parse(await (await ih.getFile()).text())}catch(err){if(err.name!=='NotFoundError')throw err}const key=`${state.group}/${state.slug}`;   /* 차림표가 없는 새 무대 폴더면 새로 만듦(2026-11-24 누구나) */
    if(!index||typeof index!=='object'||Array.isArray(index))throw new Error('선택한 폴더의 index.json 형식이 맞지 않아요.');
    let existing=false;
    try{const group=await root.getDirectoryHandle(state.group);await group.getDirectoryHandle(state.slug);existing=true}catch(err){if(err.name!=='NotFoundError')throw err}
@@ -1663,32 +1678,71 @@ JSON으로만 답하세요.
   const buttons=[directSave,confirmButton];buttons.forEach(b=>b.disabled=true);setStatus($('#finalStatus'),'확정 파일을 준비하고 있어요…');
   try{
    const files=await packageFiles();
-   if(state.fromRepo&&!files.length){setStatus($('#finalStatus'),'손질한 소품이 없어요.');return}download(await makeZip(files),`${state.slug}-${state.fromRepo?'touchup':'stage'}.zip`);if(state.fromRepo){setStatus($('#finalStatus'),`손질한 소품 ${files.length}장을 ZIP으로 받았어요 — media/stage/에 풀면 items/의 그 파일만 바뀌어요.`);return}setStatus($('#finalStatus'),'확정 묶음을 내려받았어요. ZIP을 풀어 media/stage/에 넣고, index-entry.json 내용을 index.json에 합쳐 주세요.');
+   if(state.fromRepo&&!files.length){setStatus($('#finalStatus'),'손질한 소품이 없어요.');return}download(await makeZip(files),`${state.slug}-${state.fromRepo?'touchup':'stage'}.zip`);if(state.fromRepo){setStatus($('#finalStatus'),`손질한 소품 ${files.length}장을 ZIP으로 받았어요 — 저장소 맨 위 폴더에 풀면 items/의 그 파일만 바뀌어요.`);return}setStatus($('#finalStatus'),'확정 묶음을 내려받았어요. ZIP을 풀어 media/stage/에 넣고, index-entry.json 내용을 index.json에 합쳐 주세요.');
   }catch(err){setStatus($('#finalStatus'),err.message||'파일을 만드는 중 문제가 생겼어요.',true)}finally{buttons.forEach(b=>b.disabled=!canConfirm())}
  });
  /* 내 저장소 그림 열기(2026-11-17 선생님): media/stage의 무대를 불러와 3단계(소품 손질)부터 — 소품 손질(touchup.html)처럼 확정 때 고친 소품 그림만 덮어씀 */
- const STB_REL='./',STB_ABS='https://shim-sung-hyun.github.io/web_app/media/stage/';   /* 2026-11-22 stage-beta를 stage로 합침 */
- let STB_BASE=STB_REL;
- async function stbJson(path){for(const b of [STB_REL,STB_ABS]){try{const r=await fetch(b+path,{cache:'no-cache'});if(r.ok){STB_BASE=b;return await r.json()}}catch(e){}}throw new Error('저장소 무대 목록을 읽지 못했어요.')}
- const urlImage=src=>new Promise((ok,no)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>ok(im);im.onerror=()=>no(new Error('그림을 못 읽었어요: '+src));im.src=src});
+ /* 내 저장소 그림 열기(2026-11-17, 2026-11-24 누구나): GitHub 공개 저장소 주소를 넣으면 그 안의 무대(stage.json이 있는 폴더)와 그림 폴더를 찾아 보여 줌.
+    무대면 배경·소품·자리를 불러와 3단계부터(확정 때 손질한 소품만 덮어씀), 그림만 있으면 골라서 새 무대로. 목록은 GitHub API(키 없이 시간당 60번), 그림은 raw.githubusercontent.com */
+ const IMG_EXT=/\.(png|jpe?g|webp)$/i;
+ const urlImage=src=>new Promise((ok,no)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>ok(im);im.onerror=()=>no(new Error('그림을 못 읽었어요: '+src.split('/').pop()));im.src=src});
  const imgData=im=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0);return x.getImageData(0,0,c.width,c.height)};
- $('#openRepo').addEventListener('click',async()=>{const box=$('#repoBox');box.classList.remove('hidden');if($('#repoPlace').options.length)return;setStatus($('#repoStatus'),'무대 목록을 읽는 중…');
-  try{const ix=await stbJson('index.json');$('#repoPlace').innerHTML=Object.entries(ix).map(([k,v])=>`<option value="${esc(k)}">${esc(v.name||k)} (${esc(k)})</option>`).join('');setStatus($('#repoStatus'),'')}catch(err){setStatus($('#repoStatus'),err.message,true)}});
+ function parseRepo(u){u=String(u||'').trim().replace(/\.git$/,'');let m=u.match(/github\.com\/([^\/\s]+)\/([^\/\s#?]+)(?:\/tree\/([^\/\s#?]+))?/i);if(m)return {o:m[1],r:m[2],b:m[3]||''};m=u.match(/^([\w.-]+)\/([\w.-]+)$/);return m?{o:m[1],r:m[2],b:''}:null}
+ const rawUrl=path=>`https://raw.githubusercontent.com/${state.repoInfo.o}/${state.repoInfo.r}/${encodeURIComponent(state.repoInfo.b)}/${path.split('/').map(encodeURIComponent).join('/')}`;
+ const repoFetch=async path=>{const r=await fetch(rawUrl(path),{cache:'no-cache'});if(!r.ok)throw new Error('파일을 못 읽었어요: '+path);return r.json()};
+ try{$('#repoUrl').value=localStorage.getItem('stageTool.repo')||''}catch(e){}
+ $('#openRepo').addEventListener('click',()=>{$('#repoBox').classList.toggle('hidden');$('#repoUrl').focus()});
  $('#repoCancel').addEventListener('click',()=>$('#repoBox').classList.add('hidden'));
- $('#repoGo').addEventListener('click',async()=>{const key=$('#repoPlace').value;if(!key)return;const btn=$('#repoGo');btn.disabled=true;setStatus($('#repoStatus'),'배경과 소품을 불러오는 중…');
-  try{const st=await stbJson(key+'/stage.json'),dir=STB_BASE+key+'/',ids=Object.keys(st.items||{}).filter(id=>!st.items[id].from);
-   state.bg=await urlImage(dir+'bg.jpg');state.bgName='bg.jpg';
+ let REPO_TREE=[];
+ $('#repoList').addEventListener('click',async()=>{const st=$('#repoStatus'),info=parseRepo($('#repoUrl').value);if(!info){setStatus(st,'저장소 주소를 확인해 주세요. 예: https://github.com/이름/저장소',true);return}
+  const btn=$('#repoList');btn.disabled=true;setStatus(st,'저장소를 읽는 중…');$('#repoStages').classList.add('hidden');$('#repoFolders').classList.add('hidden');$('#repoGrid').innerHTML='';$('#repoPickBar').classList.add('hidden');
+  try{const api=`https://api.github.com/repos/${info.o}/${info.r}`;let b=$('#repoBranch').value.trim()||info.b;
+   if(!b){const r=await fetch(api);if(r.status===404)throw new Error('저장소를 찾지 못했어요. 주소가 맞는지, 공개 저장소인지 확인해 주세요.');if(r.status===403)throw new Error('GitHub 읽기 한도(시간당 60번)를 다 썼어요. 조금 뒤 다시 해 주세요.');b=(await r.json()).default_branch||'main'}
+   const r=await fetch(`${api}/git/trees/${encodeURIComponent(b)}?recursive=1`);if(r.status===404)throw new Error(`가지 '${b}'를 찾지 못했어요.`);if(r.status===403)throw new Error('GitHub 읽기 한도(시간당 60번)를 다 썼어요. 조금 뒤 다시 해 주세요.');if(!r.ok)throw new Error('저장소를 읽지 못했어요('+r.status+').');
+   const j=await r.json();state.repoInfo={...info,b};REPO_TREE=(j.tree||[]).filter(x=>x.type==='blob').map(x=>x.path);try{localStorage.setItem('stageTool.repo',$('#repoUrl').value.trim())}catch(e){}
+   const stages=REPO_TREE.filter(x=>/(^|\/)stage\.json$/.test(x)).map(x=>x.replace(/\/?stage\.json$/,''));
+   const dirs={};for(const x of REPO_TREE)if(IMG_EXT.test(x)){const d=x.includes('/')?x.slice(0,x.lastIndexOf('/')):'(맨 위)';dirs[d]=(dirs[d]||0)+1}
+   $('#repoPlace').innerHTML=stages.map(d=>`<option value="${esc(d)}">${esc(d||'(맨 위)')}</option>`).join('');$('#repoStages').classList.toggle('hidden',!stages.length);
+   const ds=Object.keys(dirs).sort();$('#repoFolder').innerHTML=ds.slice(0,400).map(d=>`<option value="${esc(d)}">${esc(d)} — ${dirs[d]}장</option>`).join('');$('#repoFolders').classList.toggle('hidden',!ds.length);
+   setStatus(st,`${info.o}/${info.r} (${b}) — 무대 ${stages.length}곳 · 그림 폴더 ${ds.length}곳${j.truncated?' · 저장소가 커서 일부만 보여요':''}`,!stages.length&&!ds.length)}
+  catch(err){setStatus(st,err.message||'저장소를 읽지 못했어요.',true)}finally{btn.disabled=false}});
+ $('#repoGo').addEventListener('click',async()=>{const key=$('#repoPlace').value;if(key==null||!state.repoInfo)return;const btn=$('#repoGo');btn.disabled=true;setStatus($('#repoStatus'),'배경과 소품을 불러오는 중…');
+  try{const pre=key?key+'/':'',st=await repoFetch(pre+'stage.json'),ids=Object.keys(st.items||{}).filter(id=>!st.items[id].from&&REPO_TREE.includes(pre+'items/'+id+'.webp'));
+   const bgName=((st.bg&&st.bg[0])||'bg')+'.jpg';state.bg=await urlImage(rawUrl(pre+bgName));state.bgName=bgName;
    const pl=(st.installation&&st.installation.placements)||{},props=[];let n=0;
-   for(const id of ids){const it=st.items[id];let im;try{im=await urlImage(dir+'items/'+id+'.webp')}catch(e){continue}
-    const image=imgData(im);let raw=null;try{const o=await urlImage(dir+'src/'+id+'.jpg');if(o.naturalWidth===im.naturalWidth&&o.naturalHeight===im.naturalHeight)raw=imgData(o)}catch(e){}
+   for(const id of ids){const it=st.items[id];let im;try{im=await urlImage(rawUrl(pre+'items/'+id+'.webp'))}catch(e){continue}
+    const image=imgData(im);let raw=null;if(REPO_TREE.includes(pre+'src/'+id+'.jpg'))try{const o=await urlImage(rawUrl(pre+'src/'+id+'.jpg'));if(o.naturalWidth===im.naturalWidth&&o.naturalHeight===im.naturalHeight)raw=imgData(o)}catch(e){}
     const P=pl[id]||{},k=n++,real=Array.isArray(it.real)?it.real:[.5,1];
     props.push({name:it.name||id,slug:id,kind:it.kind,kindName:it.kindName||it.name,role:it.role,height:[...real],image,source:copyImageData(image),raw,repo:true,dirty:false,shadowed:Boolean(it.ownShadow),
      x:P.x??(.1+(k%6)*.16),y:P.y??(.55+Math.floor(k/6)%4*.13),width:P.width??Math.min(.3,Math.max(.05,real[1]*.03))});setStatus($('#repoStatus'),`소품 ${n}/${ids.length}…`)}
-   state.props=props;state.selected=0;state.fromRepo=key;state.group=key.split('/')[0];state.slug=key.split('/')[1];state.name=st.name||state.slug;state.horizon=st.horizon||state.horizon;
-   $('#sceneName').value=state.name;$('#sceneSlug').value=state.slug;$('#sceneGroup').value=state.group;$('#horizon').value=Math.round(state.horizon*100);$('#bgInfo').textContent=bgDescription(state.bg,'저장소 '+key+'/bg.jpg');
-   $('#repoBox').classList.add('hidden');renderPropCards();renderLayoutCards();showStep(2);
+   const seg=key.split('/');state.props=props;state.selected=0;state.fromRepo=key;state.group=seg.length>1?seg[seg.length-2]:'nature';state.slug=seg[seg.length-1]||'stage';state.name=st.name||state.slug;state.horizon=st.horizon||state.horizon;
+   $('#sceneName').value=state.name;$('#sceneSlug').value=state.slug.toLowerCase().replace(/[^a-z0-9-]/g,'-');if([...$('#sceneGroup').options].some(o=>o.value===state.group))$('#sceneGroup').value=state.group;$('#horizon').value=Math.round(state.horizon*100);$('#bgInfo').textContent=bgDescription(state.bg,key+'/'+bgName);
+   $('#repoBox').classList.add('hidden');setStatus($('#repoStatus'),'');renderPropCards();renderLayoutCards();showStep(2);
    setStatus($('#replaceStatus'),`저장소 무대 '${state.name}'의 소품 ${props.length}장을 불러왔어요${props.some(p=>p.raw)?` (원본 색 붓 ${props.filter(p=>p.raw).length}장)`:''}. 확정 때 손질한 소품만 덮어써요.`)}
   catch(err){setStatus($('#repoStatus'),err.message||'불러오지 못했어요.',true)}finally{btn.disabled=false}});
+ /* 그림만 있는 폴더: 눌러서 소품·배경을 고름 → 새 무대(확정 때 무대 자료 전체를 내보냄) */
+ const PICK=new Map();
+ function pickInfo(){const n=[...PICK.values()].filter(v=>v==='prop').length,bg=[...PICK.values()].includes('bg');$('#repoPickBar').classList.toggle('hidden',!PICK.size);$('#repoPickInfo').textContent=`소품 ${n}장${bg?' · 배경 1장':' · 배경은 아직(2단계에서 불러와도 돼요)'}`}
+ $('#repoShow').addEventListener('click',()=>{const d=$('#repoFolder').value,pre=d==='(맨 위)'?'':d+'/',fs=REPO_TREE.filter(x=>x.startsWith(pre)&&!x.slice(pre.length).includes('/')&&IMG_EXT.test(x)).slice(0,150);PICK.clear();pickInfo();
+  $('#repoGrid').innerHTML=fs.map(x=>`<figure data-p="${esc(x)}"><img loading="lazy" alt="" src="${rawUrl(x)}"><b></b><figcaption>${esc(x.slice(pre.length))}</figcaption></figure>`).join('')||'<p class="hint">이 폴더에는 그림이 없어요.</p>';
+  $$('#repoGrid figure').forEach(f=>f.addEventListener('click',()=>{const k=f.dataset.p,cur=PICK.get(k),next=!cur?'prop':cur==='prop'?'bg':null;
+   if(next==='bg')for(const [k2,v] of PICK)if(v==='bg'){PICK.delete(k2);const o=$$('#repoGrid figure').find(e=>e.dataset.p===k2);if(o){o.className='';o.querySelector('b').textContent=''}}
+   if(next)PICK.set(k,next);else PICK.delete(k);f.className=next||'';f.querySelector('b').textContent=next==='prop'?'소품':next==='bg'?'배경':'';pickInfo()}))});
+ $('#repoPickGo').addEventListener('click',async()=>{const btn=$('#repoPickGo');btn.disabled=true;const st=$('#repoStatus');setStatus(st,'고른 그림을 불러오는 중…');
+  try{const items=[...PICK.entries()],thr=Number($('#threshold').value)||238,neu=Number($('#neutral').value)||32,props=[];let k=0;
+   for(const [path,kind] of items){const im=await urlImage(rawUrl(path)),file=path.split('/').pop();
+    if(kind==='bg'){state.bg=im;state.bgName=file;$('#bgInfo').textContent=bgDescription(im,file);continue}
+    const raw=imgData(im),hasAlpha=raw.data.some((v,i)=>i%4===3&&v<250);let image=imgData(im);let sh=false;
+    if(!hasAlpha){image=removeWhiteBackground(blueShadow(image),thr,neu);sh=shadowFound}
+    const base=file.replace(/\.[^.]+$/,''),slug=base.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||`item-${String(k+1).padStart(2,'0')}`;
+    const pr={name:base,kind:'k'+(k+1),kindName:base,slug,source:copyImageData(image),raw,image,shadowed:sh,width:.18,x:.12+(k%5)*.19,y:.62+Math.floor(k/5)%3*.15,height:[.5,1]};
+    if(!hasAlpha){removeSpecks(pr);defringe(pr,2);fitProp(pr)}props.push(pr);k++}
+   const used=new Set();props.forEach(p=>{let s0=p.slug,i=2;while(used.has(p.slug))p.slug=`${s0}-${i++}`;used.add(p.slug)});
+   state.props=props;state.selected=0;state.fromRepo=null;
+   if(!$('#sceneName').value.trim())$('#sceneName').value=($('#repoFolder').value.split('/').pop()||'새 무대');
+   $('#repoBox').classList.add('hidden');renderPropCards();renderLayoutCards();showStep(2);
+   setStatus($('#replaceStatus'),`저장소 그림 ${props.length}장을 소품으로 불러왔어요${state.bg?'':' — 배경은 2단계에서 불러와 주세요'}. 이름·실제 높이는 카드와 오른쪽 칸에서 고쳐요.`)}
+  catch(err){setStatus(st,err.message||'불러오지 못했어요.',true)}finally{btn.disabled=false}});
  function validProps(){
   const slugs=state.props.map(p=>p.slug);
   return state.props.length>0&&state.props.every(p=>p.name.trim()&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug)&&p.height.every(v=>Number.isFinite(Number(v))&&Number(v)>0)&&Number(p.height[0])<=Number(p.height[1]))&&new Set(slugs).size===slugs.length;

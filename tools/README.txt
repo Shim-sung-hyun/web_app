@@ -54,7 +54,7 @@
   media/voice/voice-maker.html      목소리 만들기(?app=010처럼 앱 고르기) → 받은 zip은 voice-add.py
   media/prompts/copy.html           프롬프트 복사(?f=파일이름, 단추로 복사·복사한 장은 노랗게) — 새 글은 FILES에 한 줄
   media/photos/collect.html         사진 모으기 · snap.html 사진 넣기 · review.html 사진 검토(절차 media/photos/REVIEW.md)
-  media/stage/install.html          무대 설치(장소 고르기부터 — AI로 채우기: 제미나이 키·Gemini 3.5 Flash Lite, 그림풍·AI 고르기, 내 저장소 그림 열기) · arrange.html 배치 고치기 · touchup.html 소품 손질(짝 src-align.py)
+  media/stage/install.html          무대 설치(장소 고르기부터 — AI로 채우기: 제미나이 키·Gemini 3.5 Flash Lite, 그림풍·AI 고르기, 내 저장소 그림 열기 — GitHub 공개 저장소 주소를 넣어 누구나) · arrange.html 배치 고치기 · touchup.html 소품 손질(짝 src-align.py)
   media/stage/prop-room.html        소품실 보기(짝 prop-room.py) · test.html 무대 보기 · hide-test.html 숨기기 시험(?place=) · hide-judge.html 숨기기 평가
   charum.org/charum-api/usage-admin.php  앱 사용 횟수(관리자 로그인, 원본 server/charum-api/usage-admin.php, 2026-11-23)
   tools/promo-pencil.html           홍보 그림 찍기(위 [검사·캡처]) · tools/gemini-model-test.html Gemini 키·모델 연결 시험(사진 분석 시간·빠르기 순위, 1분 넘으면 중지, 표시된 모델 차례로)
