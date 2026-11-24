@@ -70,6 +70,8 @@ header{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;padding:14px 24
 .words{margin-top:22px;padding-top:16px;border-top:1px dashed var(--line);columns:2;column-gap:40px;font-size:17px;line-height:1.75}
 .words p{margin:0 0 12px;break-inside:avoid}
 .words em{font-style:normal;color:var(--pink-d);font-size:14px;display:block}
+.words .orig{break-inside:avoid;color:var(--ink-2);font-size:15px;line-height:1.7}
+.words .orig summary{cursor:pointer;color:var(--pink-d);font-size:14px;margin-bottom:4px}
 
 /* 창 */
 .dlg{position:fixed;inset:0;background:rgba(43,38,34,.35);display:none;align-items:center;justify-content:center;z-index:2147480100;padding:16px}
@@ -110,6 +112,7 @@ header{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;padding:14px 24
   #score .now path{fill:#000!important;stroke:#000}
   #score tspan.now-lyric,#score text.now-lyric{fill:#000;font-weight:400}
   .words{font-size:13px;line-height:1.6}
+  .words .orig{display:none}
 }
 </style>
 </head>
@@ -200,21 +203,29 @@ header{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;padding:14px 24
    기본 곡은 Claude가 선생님이 주신 가사로 지어 넣은 것(줄마다 ABC 글, L:1/8 — 숫자 없는 음 8분음표, 2 = 4분, 4 = 2분, 8 = 온음표, "C" 반주 화음).
    앱에서 짓거나 고친 곡은 그 기기에(localStorage charum013songs), 곡 파일(.json)로 옮김. 새 기본 곡을 넣으면 README 곡 목록에도 한 줄. */
 const BUILTIN=[
+ /* 2026-11-24 다시 지음: 선생님 말씀대로 가사를 박에 맞게 다듬음(두 줄씩 같은 리듬, 낱말 첫 글자가 박에). 학생이 처음 쓴 가사는 original */
  {id:'carol31', title:'3학년 1반 캐럴', lyricist:'3학년 1반', composer:'차름', mood:'bright', meter:4, tempo:100,
+  original:'[1절]\n12월 25일은 크리스마스\n산타 할아버지에게 선물받고 싶어요\n산타가 선물을 줄거야\n난 산타인형 받고 싶어\n착한 친구는 사랑해주고\n심한 말한 어른에겐 선물 없어!\n\n[후렴]\n산타할아버지랑 징글벨 부르고 싶어\n선녀가 뿌린 눈송이 속에\n신나고 행복한 크리스마스',
   blocks:[
    {name:'1절', lines:[
-    ['12월 25일은 크리스마스','"C"G2 E2 G4 | A A G E G4 | "F"F2 A2 "G7"G2 B2 | "C"c6 z2'],
-    ['산타 할아버지에게 선물받고 싶어요','"F"A A A c c2 A2 | "C"G2 E2 G2 G2 | "Dm"F2 E2 D2 F2 | "G7"G6 z2'],
-    ['산타가 선물을 줄거야','"C"E E G2 E E G2 | "G7"B2 A2 G4'],
-    ['난 산타인형 받고 싶어','"C"c2 G G A2 G2 | "G7"F2 E D G4'],
-    ['착한 친구는 사랑해주고','"F"A2 c2 d c A2 | "C"G G E G c4'],
-    ['심한 말한 어른에겐 선물 없어!','"Dm"F F F F A2 F2 | "G7"G G B B d d z2']]},
+    ['십이월 이십오일은','"C"E E G2 A A G E | "G"D6 z2'],
+    ['신나는 크리스마스','"C"G G c2 "G7"B A G F | "C"E6 z2'],
+    ['산타 할아버지께','"F"A2 c2 "C"G A G E | "Dm"F6 z2'],
+    ['선물 받고 싶어요','"G7"G2 B2 d c B G | "C"c6 z2'],
+    ['나는 산타 인형을','"Am"c2 e2 "F"d c A c | "G"B6 z2'],
+    ['정말 받고 싶어요','"F"A2 F2 "G7"G A B d | "C"c6 z2'],
+    ['착한 친구는 사랑해 주고','"F"A A c c "Dm"d2 c A | "G7"B2 A2 G4'],
+    ['심한 말 한 어른은 선물 없어!','"C"e e d d c c G2 | "G7"B B d2 "C"c2 z2']]},
    {name:'후렴', lines:[
-    ['산타할아버지랑 징글벨 부르고 싶어','"C"c c c B A B c2 | "Am"e2 e2 e4 | "F"A2 c2 d4 | "G7"d4 B4'],
-    ['선녀가 뿌린 눈송이 속에','"C"e2 d c d2 c2 | "F"c2 A F "G7"G2 B2'],
-    ['신나고 행복한 크리스마스','"C"c c G2 e e d2 | "F"c c A2 "G7"B2 G2']]},
+    ['산타 할아버지랑','"C"G2 c2 "G"B c d e | "F"c6 z2'],
+    ['징글벨을 불러요','"C"e e e e "Dm"d2 c2 | "G7"d6 z2'],
+    ['선녀가 뿌린','"Am"e d c2 "F"c2 A2'],
+    ['눈송이 속에','"C"G A G2 "G7"B2 d2'],
+    ['신나고 행복한','"C"e e c2 "Dm"d c A2'],
+    ['크리스마스','"G7"G A B c d4']]},
    {name:'끝', lines:[
-    ['신나고 행복한 크리스마스','"C"c c G2 e e d2 | "F"c2 A2 "G7"B2 d2 | "C"c8']]}
+    ['신나고 행복한','"C"e2 e2 c4 | "Dm"d2 c2 A4'],
+    ['크리스마스','"G7"G2 A2 B2 d2 | "C"c8']]}
   ]}
 ];
 const MOODS={
@@ -271,17 +282,6 @@ function sylls(text){
 }
 
 /* ═════════ 작곡(규칙으로, 키 없이) ═════════ */
-/* 마디 안 리듬 꼴: 글자 수 → [길이들](8분음표 단위, 음수 = 쉼표) */
-const CELLS={
- bright:{4:{1:[[8]],2:[[4,4],[6,2]],3:[[2,2,4],[4,2,2],[3,1,4]],4:[[2,2,2,2],[3,1,2,2],[2,1,1,4]],5:[[1,1,2,2,2],[2,2,1,1,2],[2,1,1,2,2]],6:[[1,1,2,1,1,2],[2,1,1,1,1,2],[1,1,1,1,2,2]],7:[[1,1,1,1,1,1,2],[2,1,1,1,1,1,1]],8:[[1,1,1,1,1,1,1,1]]}},
- calm:{4:{1:[[8]],2:[[4,4],[6,2]],3:[[4,2,2],[2,2,4],[3,1,4]],4:[[2,2,2,2],[3,1,2,2],[2,2,3,1]],5:[[2,2,2,1,1],[2,1,1,2,2]],6:[[2,1,1,2,1,1],[1,1,2,1,1,2]]}},
- march:{4:{1:[[8]],2:[[4,4]],3:[[3,1,4],[2,2,4]],4:[[3,1,3,1],[3,1,2,2],[2,2,2,2]],5:[[3,1,2,1,1],[2,2,2,1,1]],6:[[3,1,1,1,1,1],[1,1,2,1,1,2]],7:[[1,1,1,1,1,1,2]],8:[[1,1,1,1,1,1,1,1]]}},
- waltz:{3:{1:[[6]],2:[[4,2],[2,4]],3:[[2,2,2],[4,1,1],[3,1,2]],4:[[2,2,1,1],[2,1,1,2]],5:[[2,1,1,1,1],[1,1,2,1,1]],6:[[1,1,1,1,1,1]]}}
-};
-const ENDS={
- 4:{1:[[8],[6,-2]],2:[[2,6],[2,4,-2]],3:[[2,2,4],[1,1,6]],4:[[1,1,2,4]],5:[[1,1,1,1,4]]},
- 3:{1:[[6]],2:[[2,4]],3:[[1,1,4],[2,1,3]],4:[[1,1,1,3]]}
-};
 const ROMAN={I:'C',ii:'Dm',iii:'Em',IV:'F',V:'G',V7:'G7',vi:'Am'};
 const PROG={
  2:{half:[['I','V'],['IV','V'],['vi','V']], full:[['V7','I'],[['IV','V7'],'I'],[['ii','V7'],'I']]},
@@ -297,40 +297,43 @@ function chordTones(name){
   let root=LET[m[1]]+(m[2]==='#'?1:m[2]==='b'?-1:0);
   return {root:(root+12)%12, iv:CH[m[3]]||CH['']};
 }
-/* 글자 n개를 마디 B개로: 마지막 마디는 1~2글자(길게), 나머지는 고르게 + 마디 첫 글자가 낱말 첫 글자가 되게 살짝 옮김 */
-function splitBars(syl,mood){
-  const M=MOODS[mood], n=syl.length; let best=null;
-  for(const B of [2,4,6,8]){
-    const e=Math.min(n, n>=B*2?2:1), r=n-e, avg=B>1?r/(B-1):r;
-    if(r>0&&Math.ceil(avg)>M.max) continue;
-    const score=Math.abs(avg-M.pref)+(B>4?0.6:0);
-    if(!best||score<best.score) best={B,e,score};
-  }
-  if(!best){ const B=Math.max(2,Math.ceil((n-1)/M.max)+1); best={B:B+(B%2),e:1}; }
-  const {B,e}=best, r=n-e, cnt=[];
-  for(let i=0;i<B-1;i++) cnt.push(Math.floor(r/(B-1))+(i<r%(B-1)?1:0));
-  /* 낱말 경계 맞추기 */
-  let pos=0;
-  for(let i=0;i<B-2;i++){
-    pos+=cnt[i];
-    if(syl[pos]&&!syl[pos].ws){
-      for(const dlt of [-1,1,-2,2]){
-        const a=cnt[i]+dlt, b=cnt[i+1]-dlt;
-        if(a>=1&&b>=1&&a<=M.max&&b<=M.max&&syl[pos+dlt]&&syl[pos+dlt].ws){ cnt[i]=a; cnt[i+1]=b; pos+=dlt; break; }
-      }
+/* 리듬은 낱말(어절) 단위로: 낱말마다 박 첫머리에서 시작하고, 낱말 안 글자 수에 맞는 꼴을 씀.
+   말하듯 붙는 리듬 — 짧은 낱말은 8분음표로 붙이고, 줄 끝 글자는 길게, 남는 박은 줄 가운데 낱말 끝을 늘려 숨 쉴 틈으로. */
+const WPAT={  /* 글자 수 → [빠른 꼴, 느린 꼴(박 하나 더)…] 8분음표 단위, 합은 늘 짝수(박 단위) */
+ bright:{1:[[2],[4]],2:[[1,1],[2,2]],3:[[1,1,2],[2,1,1],[2,2,2]],4:[[1,1,1,1],[1,1,2,2],[2,2,2,2]],5:[[1,1,1,1,2],[2,1,1,2,2]],6:[[1,1,1,1,1,1],[1,1,2,1,1,2]]},
+ calm:  {1:[[2],[4]],2:[[2,2],[2,4]],3:[[2,1,1],[2,2,2],[2,2,4]],4:[[1,1,2,2],[2,2,2,2]],5:[[2,1,1,2,2],[2,2,2,1,1]],6:[[1,1,2,1,1,2],[2,1,1,2,2,2]]},
+ march: {1:[[2],[4]],2:[[1,1],[3,1],[2,2]],3:[[1,1,2],[3,1,2],[3,1,4]],4:[[1,1,1,1],[3,1,1,1],[3,1,2,2]],5:[[1,1,1,1,2],[3,1,1,1,2]],6:[[1,1,1,1,1,1],[3,1,1,1,1,1]]},
+ waltz: {1:[[2],[4]],2:[[1,1],[2,2],[4,2]],3:[[1,1,2],[2,2,2],[4,1,1]],4:[[1,1,1,1],[2,1,1,2],[2,2,1,1]],5:[[1,1,1,1,2],[2,1,1,1,1]],6:[[1,1,1,1,1,1],[2,1,1,1,1,2]]}
+};
+function wordsOf(syl){ const ws=[]; syl.forEach(x=>{ if(x.ws||!ws.length) ws.push(0); ws[ws.length-1]++; }); return ws.flatMap(k=>{ const o=[]; while(k>6){ o.push(4); k-=4; } o.push(k); return o; }); }
+function wordRhythm(syl,mood,meter,r){
+  const bl=meter*2, P=WPAT[mood]||WPAT.bright, ks=wordsOf(syl), W=ks.length;
+  const lv=ks.map(()=>0);
+  const patOf=(k,l)=>{ const a=P[k]||P[6]; return a[Math.min(l,a.length-1)]; };
+  /* 같은 길이의 꼴 가운데 아무거나(잔잔하게는 꼴 자체가 4분음표 위주) — 남는 박이 있으면 아래에서 느린 꼴로 */
+  const choice=ks.map(k=>{ const a=P[k]||P[6]; const s0=a[0].reduce((x,y)=>x+y,0); const same=a.map((p,i)=>i).filter(i=>a[i].reduce((x,y)=>x+y,0)===s0); return same[Math.floor(r()*same.length)]; });
+  const build=()=>{ const out=[]; ks.forEach((k,i)=>{ const base=patOf(k,choice[i]+lv[i]).slice(); out.push(base); }); return out; };
+  let pats=build();
+  const finalMin=4;
+  const sumAll=()=>pats.reduce((a,p)=>a+p.reduce((x,y)=>x+y,0),0)-pats[W-1][pats[W-1].length-1]+finalMin;
+  let total=sumAll(), B=Math.max(2,Math.ceil(total/bl)); if(B%2) B++;
+  /* 남는 박: 줄 가운데에 가까운 낱말부터 한 칸 느린 꼴로(낱말마다 두 번까지) */
+  const order=ks.map((k,i)=>i).filter(i=>i<W-1).sort((a,b)=>Math.abs(a-(W-1)/2)-Math.abs(b-(W-1)/2)+(r()-0.5)*0.6);
+  let slack=B*bl-total, guard=0;
+  while(slack>=2&&guard++<40){
+    let done=false;
+    for(const i of order){
+      const a=P[ks[i]]||P[6], cur=patOf(ks[i],choice[i]+lv[i]), nx=a[choice[i]+lv[i]+1];
+      if(lv[i]<2&&nx&&nx.reduce((x,y)=>x+y,0)-cur.reduce((x,y)=>x+y,0)<=slack){ lv[i]++; pats=build(); total=sumAll(); slack=B*bl-total; done=true; break; }
     }
+    if(!done) break;
   }
-  cnt.push(e);
-  return cnt;
-}
-function cellFor(k,mood,meter,end,r){
-  const bl=meter*2, tb=end?ENDS[meter]:(CELLS[mood][meter]||CELLS.bright[4]);
-  if(k===0) return [-bl];
-  if(tb[k]) return pick(r,tb[k]).slice();
-  /* 표에 없는 글자 수: 8분음표로 채우고 남는 박은 끝 음에 */
-  const out=[]; let left=bl;
-  for(let i=0;i<k;i++){ const d=i===k-1?left:Math.min(1,left-(k-1-i)*0.5); out.push(d); left-=d; }
-  return out;
+  const flat=pats.flat(); flat.pop();
+  if(flat.length&&flat.reduce((x,y)=>x+y,0)%2) flat[flat.length-1]+=1;   /* 끝 글자가 박 첫머리에 오게 그 앞 글자를 조금 늘림 */
+  let fin=B*bl-flat.reduce((x,y)=>x+y,0);            /* 끝 글자 = 남은 박 모두, 너무 길면 끝에 쉼표 */
+  const maxFin=mood==='calm'?8:6; const out=flat.slice();
+  if(fin>maxFin){ out.push(maxFin); out.push(-(fin-maxFin)); } else out.push(fin);
+  return {durs:out,B,key:ks.join(',')+'/'+B};
 }
 /* 음 고르기: 센 박은 화음 음, 가까운 음으로, 줄 가운데가 조금 높게(아치) */
 function choosePitch(r,{prev,chord,strong,pos,mood,lo,hi,force}){
@@ -356,42 +359,34 @@ function choosePitch(r,{prev,chord,strong,pos,mood,lo,hi,force}){
 function composeLine(text,o){
   const syl=sylls(text), mood=o.mood, meter=MOODS[mood].meter, bl=meter*2, r=o.r;
   if(!syl.length) return {text,notes:[{t:0,d:bl,m:null}],chords:[{t:0,name:'C'}],len:bl};
-  const cnt=splitBars(syl,mood), B=cnt.length, key=cnt.join(','), cad=o.cad==='half'?'half':'full';
-  const memo=o.memo&&o.memo[key];
-  let cells, prog;
-  if(memo&&r()<0.85){ cells=memo.cells.slice(); prog=memo.prog.slice(); }
-  else{
-    cells=cnt.map((k,i)=>cellFor(k,mood,meter,i===B-1,r));
-    const pt=PROG[B]||PROG[8]; prog=pick(r,pt[cad]).slice();
-    while(prog.length<B) prog.unshift('I'); prog=prog.slice(-B);
-  }
-  if(memo){ /* 되풀이: 마지막 마디의 마침만 이 줄에 맞게 */
-    const pt=PROG[B]||PROG[8]; const alt=pick(r,pt[cad]); prog[B-1]=alt[alt.length-1]; if(B>=2&&Array.isArray(alt[alt.length-2])) prog[B-2]=alt[alt.length-2];
-  }
-  if(o.memo&&!memo) o.memo[key]={cells,prog};
+  const cad=o.cad==='half'?'half':'full';
+  let rh=wordRhythm(syl,mood,meter,r);
+  const memo=o.memo&&o.memo[rh.key];
+  if(memo&&r()<0.85) rh={...rh,durs:memo.durs.slice()};
+  const B=rh.B, pt=PROG[B]||PROG[8];
+  let prog;
+  if(memo){ prog=memo.prog.slice(); const alt=pick(r,pt[cad]); prog[B-1]=alt[alt.length-1]; if(B>=2) prog[B-2]=alt[alt.length-2]; }
+  else{ prog=pick(r,pt[cad]).slice(); while(prog.length<B) prog.unshift('I'); prog=prog.slice(-B); }
+  if(o.first&&B>1) prog[0]='I';                        /* 곡의 첫 마디는 '도' 화음으로 */
   const notes=[], chords=[]; let t=0;
   /* 한 마디에 화음 둘: 4박자는 반씩, 3박자는 2박+1박 */
   prog.forEach((p,i)=>{ const parts=Array.isArray(p)?p:[p]; parts.forEach((q,j)=>chords.push({t:i*bl+(j?(meter===3?4:bl/2):0),name:ROMAN[q]||'C'})); });
   const chordAt=x=>{ let c='C'; for(const k of chords){ if(k.t<=x) c=k.name; } return c; };
   const total=B*bl; let prev=o.prev??null, si=0;
   const lo=mood==='calm'?60:62, hi=mood==='calm'?74:76;
-  const reuse=memo&&memo.pitches;
-  cells.forEach((cell,bi)=>{
-    cell.forEach(d=>{
-      if(d<0){ notes.push({t,d:-d,m:null}); t+=-d; return; }
-      const isLast=si===syl.length-1, inBar=t%bl;
-      const strong=inBar===0||(meter===4&&inBar===4)||d>=3;
-      let force=null;
-      if(isLast) force=o.cad==='half'?[7,2,11]:o.cad==='final'?[0]:[0,4];
-      let m;
-      if(reuse&&bi<B-1&&reuse[si]!=null) m=reuse[si];
-      else m=choosePitch(r,{prev,chord:chordAt(t),strong,pos:t/total,mood,lo,hi,force});
-      if(isLast&&o.cad==='final'&&m<66) m+=12;
-      notes.push({t,d,m}); prev=m; t+=d; si++;
-    });
-  });
-  if(o.memo&&!memo) o.memo[key].pitches=notes.filter(n=>n.m!==null).map(n=>n.m);
-  o.prevOut=prev;
+  const reuse=memo&&memo.durs.join()===rh.durs.join()?memo.pitches:null;
+  for(const d of rh.durs){
+    if(d<0){ notes.push({t,d:-d,m:null}); t+=-d; continue; }
+    const isLast=si===syl.length-1, inBar=t%bl;
+    const strong=inBar===0||(meter===4&&inBar===4)||d>=3;
+    const force=isLast?(o.cad==='half'?[7,2,11]:o.cad==='final'?[0]:[0,4]):null;
+    let m;
+    if(reuse&&Math.floor(t/bl)<B-1&&reuse[si]!=null) m=reuse[si];
+    else m=choosePitch(r,{prev,chord:chordAt(t),strong,pos:t/total,mood,lo,hi,force});
+    if(isLast&&o.cad==='final'&&m<66) m+=12;
+    notes.push({t,d,m}); prev=m; t+=d; si++;
+  }
+  if(o.memo&&!memo) o.memo[rh.key]={durs:rh.durs.slice(),prog:prog.slice(),pitches:notes.filter(n=>n.m!==null).map(n=>n.m)};
   return {text,notes,chords,len:total};
 }
 /* 2절처럼 같은 가락에 글자 수가 다른 가사: 긴 음을 나누거나 짧은 음을 합쳐 맞춤 */
@@ -434,7 +429,7 @@ function melodyOf(song,bi,li){
   return line;
 }
 function loadBuiltin(b){
-  return {id:b.id,title:b.title,lyricist:b.lyricist,composer:b.composer,mood:b.mood,meter:b.meter,tempo:b.tempo,builtin:true,
+  return {id:b.id,title:b.title,lyricist:b.lyricist,composer:b.composer,mood:b.mood,meter:b.meter,tempo:b.tempo,original:b.original,builtin:true,
     blocks:b.blocks.map(k=>({name:k.name,lines:k.lines.map(([text,abc])=>({text,...parseLine(abc)}))}))};
 }
 /* 가사 글 ↔ 묶음 */
@@ -467,7 +462,7 @@ function applyLyrics(old,txt,o){
       const ol=ob&&ob.lines[li];
       const lastM=ns=>{ for(let i=ns.length-1;i>=0;i--) if(ns[i].m!==null) return ns[i].m; return null; };
       if(ol&&ol.notes&&sounding(ol)===sylls(line.text).length){ Object.assign(line,{notes:ol.notes,chords:ol.chords,len:ol.len}); kept++; prev=lastM(ol.notes); return; }
-      const res=composeLine(line.text,{mood:song.mood,r,cad:cadenceOf(bi,li,song),memo,prev});
+      const res=composeLine(line.text,{mood:song.mood,r,cad:cadenceOf(bi,li,song),memo,prev,first:bi===0&&li===0});
       Object.assign(line,{notes:res.notes,chords:res.chords,len:res.len}); made++; prev=lastM(res.notes);
     });
   });
@@ -693,7 +688,9 @@ function drawScore(){
   window.__abc=abc;
 }
 function drawWords(){
-  $('words').innerHTML=SONG.blocks.map(b=>'<p><em>'+esc(b.name)+'</em>'+b.lines.map(l=>esc(l.text)).join('<br>')+'</p>').join('');
+  let h=SONG.blocks.map(b=>'<p><em>'+esc(b.name)+'</em>'+b.lines.map(l=>esc(l.text)).join('<br>')+'</p>').join('');
+  if(SONG.original&&SONG.original.trim()!==songToText(SONG).trim()) h+='<details class="orig"><summary>처음 쓴 가사</summary>'+esc(SONG.original).replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')+'</details>';
+  $('words').innerHTML=h;
 }
 function drawSongs(){
   const box=$('songs'); box.innerHTML='';
