@@ -106,7 +106,8 @@ const APPS = {
   '009': ['동물 다섯 고개', '수업 한 번 끝'],
   '010': ['무엇으로 만들었을까', '묶음 하나 끝'],
   '011': ['색깔 악보', '노래 한 곡 끝'],
-  '012': ['팝아트 만들기', 'AI 그림 완성']
+  '012': ['팝아트 만들기', 'AI 그림 완성'],
+  '013': ['우리 반 노래', '끝까지 들음·mp3 받음']
 };
 const shift = (d, n) => { const t = new Date(d + 'T00:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
 const ym = d => d.slice(0, 7);
