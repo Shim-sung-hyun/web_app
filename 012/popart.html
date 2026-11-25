@@ -589,6 +589,7 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 
   <div class="hint-tab" id="hint-tab">▼ 여기를 클릭해서 사진 투입</div>
   <div class="tray" id="tabs">
+    <span id="popHist" style="display:contents"></span>
     <button class="card" data-mode="pop" onclick="generate('pop')"><span class="tw"><img alt=""><span>눌러서 만들기</span></span><b>🎨 팝아트</b></button>
     <button class="card" data-mode="filter" onclick="generate('filter')" hidden><span class="tw"><img alt=""><span>눌러서 만들기</span></span><b>▦ 필터</b></button>
     <button class="card" data-mode="comic" onclick="if (results.comic) showResult('comic')"><span class="tw"><img alt=""><span>말풍선을 넣으면 생겨요</span></span><b>💬 만화</b></button>
@@ -829,7 +830,7 @@ function loadPhotoBlob(blob, filename) {
       canvas.getContext('2d').drawImage(preview, 0, 0, w, h);
       const jpeg = canvas.toDataURL('image/jpeg', 0.88);
       b64 = jpeg.split(',')[1];
-      srcImg = preview; setTimeout(updateGuidePrev, 0); subjectBox = null; photoDesc = ''; layoutSeed = (Math.random() * 1e9) | 0; current = null; document.querySelector('.mailbox-btn').classList.add('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
+      srcImg = preview; setTimeout(updateGuidePrev, 0); subjectBox = null; photoDesc = ''; layoutSeed = (Math.random() * 1e9) | 0; current = null; document.querySelector('.mailbox-btn').classList.add('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } clearPopHist(); bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
       mime = 'image/jpeg';
       document.getElementById('thumb').src = url;
       document.getElementById('thumb').style.display='block';
@@ -902,7 +903,7 @@ function reset() {
   document.getElementById('no-file').style.display='block';
   document.getElementById('fname').style.display='none';
   document.getElementById('file-in').value='';
-  setButtons(false); srcImg=null; updateGuidePrev(); subjectBox=null; photoDesc=''; current=null; document.querySelector('.mailbox-btn').classList.remove('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
+  setButtons(false); srcImg=null; updateGuidePrev(); subjectBox=null; photoDesc=''; current=null; document.querySelector('.mailbox-btn').classList.remove('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } clearPopHist(); bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
   show('ph');
   openPanel();
 }
@@ -1416,10 +1417,10 @@ async function generate(mode) {
       try {
         popBase = `data:image/png;base64,${await callCharumAI((obj ? PROMPT_HYBRID_OBJ : PROMPT_HYBRID) + extras(), guide)}`;
         msg('별과 큰 원을 올리는 중…'); await tick();
-        results.pop = await addDecor(popBase);
+        results.pop = await addDecor(popBase); popN++; renderPopHist();
       } catch (e) {                              // AI를 못 쓰면 필터 결과(별·큰 원 포함)로 대신
         popBase = null; window.lastPopError = e;
-        results.pop = renderFilter(srcImg, o, 1000).toDataURL('image/png');
+        results.pop = renderFilter(srcImg, o, 1000).toDataURL('image/png'); popN++; renderPopHist();
         toast(/모두 사용했|소진/.test(String(e.message || e)) ? '오늘 무료 AI 사용량을 모두 사용해서 필터 결과로 만들었어요' : 'AI를 쓰지 못해 필터 결과로 만들었어요');
       }
     } else if (mode === 'color') {              // 색칠 도안 = AI 선화 + 액자 (AI를 못 쓰면 필터로 대신)
@@ -1518,7 +1519,20 @@ async function makeWarhol() {
 }
 // ---------- 팝아트 그리기 도구 ----------
 let popBase = null;   // AI가 그린 그림(별·큰 원을 올리기 전). 🎲 배치·별/큰 원 체크를 바꿀 때 AI를 다시 부르지 않고 이것으로 다시 올립니다.
-function invalidatePop(withColor) { delete results.pop; popBase = null; delete errs.pop; if (withColor) delete results.color; refreshTray(); }
+// 팝아트 비교(2026-11-25): 설정을 바꿔 다시 그리면 앞의 팝아트를 지우지 않고 「팝아트 1」「팝아트 2」로 아래 칸에 남김(최근 2장)
+let popN = 0, popHist = [];
+function keepOldPop() {
+  if (!results.pop || !popN) return;
+  const key = 'pv' + popN; results[key] = results.pop; popHist.push({ key, n: popN });
+  while (popHist.length > 2) { const old = popHist.shift(); delete results[old.key]; if (current === old.key) current = null; }
+}
+function renderPopHist() {
+  const box = document.getElementById('popHist');
+  box.innerHTML = popHist.map(h => `<button class="card" data-mode="${h.key}" onclick="showResult('${h.key}')"><span class="tw"><img alt=""><span></span></span><b>팝아트 ${h.n}</b></button>`).join('');
+  document.querySelector('#tabs .card[data-mode=pop] b').textContent = popN ? `🎨 팝아트 ${popN}` : '🎨 팝아트';
+}
+function clearPopHist() { popHist.forEach(h => delete results[h.key]); popHist = []; popN = 0; renderPopHist(); }
+function invalidatePop(withColor) { keepOldPop(); delete results.pop; popBase = null; delete errs.pop; if (withColor) delete results.color; renderPopHist(); refreshTray(); }
 // AI가 그린 그림 위에 별·큰 원을 올립니다 (얼굴은 피함)
 async function addDecor(baseUrl) {
   const o = filterOpts(), im = new Image(); im.src = baseUrl; await im.decode();
