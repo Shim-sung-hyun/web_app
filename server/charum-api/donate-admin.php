@@ -186,6 +186,7 @@ button:disabled{opacity:.5}
 .it.sel{border-color:var(--pri)}
 .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;align-items:start}   /* minmax(0,…): 큰 세로 사진 옆 '그림 없음' 칸이 사진 칸을 납작하게 밀던 것(2026-11-25) */
 .pair>*{min-width:0}
+.pair.one{grid-template-columns:minmax(0,1fr)}   /* 그림(그림으로 바꾼 것)이 없으면 사진만 크게(2026-11-25) */
 .pv{position:relative} .pv img,.pv svg{width:100%;display:block;border-radius:8px}
 .pv svg{position:absolute;inset:0;height:100%}
 .ph{aspect-ratio:4/3;background:#F2F5F4;border-radius:8px;display:grid;place-items:center;color:var(--sub);font-size:13px}
@@ -228,7 +229,7 @@ async function load(){ say('불러오는 중…'); $('grid').innerHTML=''; ITEMS
   try{ const {list}=await call({a:'list'}); if(!list.length){ say('기다리는 사진이 없어요.','ok'); return; }
     for(const m of list){ const d=await call({a:'get',id:m.id}); ITEMS[d.id]=d;
       const mt=d.meta||{}, sg=mt.suggest||{};
-      const el=document.createElement('div'); el.className='it'; el.innerHTML=`<div class="pair"><div class="pv"><img src="?img=${encodeURIComponent(d.id)}&f=img" alt="${esc(d.title||'사진')}" onerror="this.parentNode.innerHTML='<div class=ph>사진을 못 불러옴</div>'">${overlay(d)}</div>${d.art?`<div class="pv"><img src="?img=${encodeURIComponent(d.id)}&f=art" alt="그림" onerror="this.remove()"></div>`:'<div class="ph">그림 없음</div>'}</div>
+      const el=document.createElement('div'); el.className='it'; el.innerHTML=`<div class="pair${d.art?'':' one'}"><div class="pv"><img src="?img=${encodeURIComponent(d.id)}&f=img" alt="${esc(d.title||'사진')}" onerror="this.parentNode.innerHTML='<div class=ph>사진을 못 불러옴</div>'">${overlay(d)}</div>${d.art?`<div class="pv"><img src="?img=${encodeURIComponent(d.id)}&f=art" alt="그림" onerror="this.remove()"></div>`:''}</div>
         <div class="bar"><span><b>${esc(d.title||'(이름 없음)')}</b><br><small><span class="tag">${d.app==='000'?'제작자 모으기':d.app==='900'?'사진 다리(다른 선생님 앱)':esc(d.app||'001')+' 앱에서'}</span>${mt.place?`<span class="tag">${esc(mt.place)}</span>`:''}${sg.shape?'<span class="tag">도형 찾기</span>':''}${sg.puzzle?'<span class="tag">그림 조각</span>':''}${d.check==='none'?'<span class="tag none">검사 안 함</span>':''}${mt.tags&&mt.tags.length?esc(mt.tags.join(' · '))+' · ':''}${new Date(d.t*1000).toLocaleString('ko-KR')}${mt.note?'<br>'+esc(mt.note):''}${(d.shapes||[]).length?` · 도형 ${d.shapes.length}개 · ${esc([...new Set(d.shapes.map(s=>s.obj))].join(', '))}`:''}</small></span>
         <span class="row"><label><input type="checkbox" data-a="sel"> 고르기</label><button type="button" data-a="del">지우기</button></span></div>`;
       el.querySelector('[data-a=sel]').onchange=e=>{ e.target.checked?SEL.add(d.id):SEL.delete(d.id); el.classList.toggle('sel',e.target.checked); count(); };
