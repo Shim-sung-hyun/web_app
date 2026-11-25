@@ -17,6 +17,7 @@
 
 ■ 파일 보내기 (2026-10-29) — 사진 다리와 따로, 연수 코드 없이 누구나
   file.html         한 페이지에 두 역할: 그냥 열면 받는 쪽(QR·번호 6자리, 받은 파일 열기·내려받기), #c=번호 또는 #send면 보내는 쪽.
+                    받은 사진이 있으면 「🖨 사진 인쇄」: 종이 한 장에 1·2·4·6·9·10장, 사진이 대부분 가로면 종이도 가로(2026-11-25, 012 '다른 기기에서 인쇄'용).
                     → 서버 www.charum.org/study/file.html(불러오기, 원본 server/study/file.html)로 연다.
   서버: server/charum-api/file-relay.php (기록 file-relay-data/). 파일마다 ECDH P-256 → HKDF(salt "charum-file|번호") → AES-GCM,
         이름·크기도 잠금, 1MB씩 나눠 올림, 받는 쪽이 다 풀면(ack) 지움. 영상은 보내는 화면에서 막음(MIME·확장자).
