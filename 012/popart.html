@@ -1932,6 +1932,7 @@ async function autoDetect() {
     const bb = Array.isArray(j.box) ? j.box.map(Number) : [];      // 이상한 상자는 버림
     subjectBox = bb.length === 4 && bb.every(v => v >= 0 && v <= 1) && bb[2] - bb[0] > 0.08 && bb[3] - bb[1] > 0.08 ? bb : null;
     invalidatePop(true);      // 설정이 바뀌었으니 팝아트·도안은 다시 만들도록
+    refilter();               // 필터 그림은 AI를 안 쓰니 바로 다시 그림 (2026-11-25)
     toast('🔍 ' + (j.summary || '설정을 채웠어요'));
   } catch (e) { toast('자동 설정 실패: ' + (e.message || e)); }
   finally { btn.textContent = label; btn.disabled = !srcImg; }
