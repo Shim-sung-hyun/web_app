@@ -40,7 +40,16 @@ a{color:var(--accent)}
 </section>
 
 <section class="panel">
-<h2>Cloudflare 토큰 <span class="muted" style="font-size:13px;font-weight:400">(012 팝아트 등에서 쓰는 Workers AI)</span></h2>
+<h2>2. 시험 사진 <span class="muted" style="font-size:13px;font-weight:400">(Gemini·Cloudflare 함께)</span></h2>
+<label for="photo">테스트 사진</label>
+<input id="photo" type="file" accept="image/*">
+<div id="photoInfo" class="hint">사진을 선택하세요. 이미지 크기가 크면 테스트가 오래 걸릴 수 있습니다.</div>
+<label for="prompt">분석 요청</label>
+<textarea id="prompt">이 사진에 무엇이 보이는지 한국어로 간단히 설명해 주세요.</textarea>
+</section>
+
+<section class="panel">
+<h2>3. Cloudflare 토큰 <span class="muted" style="font-size:13px;font-weight:400">(012 팝아트 등에서 쓰는 Workers AI)</span></h2>
 <div class="row">
 <input class="grow" id="cfAccount" autocomplete="off" placeholder="Account ID (32글자)">
 </div>
@@ -73,18 +82,10 @@ a{color:var(--accent)}
 </article>
 </section>
 
-<section class="panel">
-<h2>2. 시험 사진 <span class="muted" style="font-size:13px;font-weight:400">(Gemini·Cloudflare 함께)</span></h2>
-<label for="photo">테스트 사진</label>
-<input id="photo" type="file" accept="image/*">
-<div id="photoInfo" class="hint">사진을 선택하세요. 이미지 크기가 크면 테스트가 오래 걸릴 수 있습니다.</div>
-<label for="prompt">분석 요청</label>
-<textarea id="prompt">이 사진에 무엇이 보이는지 한국어로 간단히 설명해 주세요.</textarea>
-</section>
 
 <section class="panel">
 <div class="row" style="justify-content:space-between">
-<h2 style="margin:0">3. Gemini 모델</h2>
+<h2 style="margin:0">4. Gemini 모델</h2>
 <span id="modelCount" class="muted">조회 전</span>
 </div>
 <label for="filter">모델 검색</label>
