@@ -1,0 +1,17 @@
+008 세션에 전할 말 — ElevenLabs 출처 표시 고치기 (2026-11-25, 도구 정리 세션에서)
+아래 ▼~▲를 복사해 008 세션 대화에 붙여 주세요. 009도 같은 목소리를 쓰므로 함께 고치라고 적었습니다(009 세션이 따로 있으면 그쪽에 같은 글을).
+
+━━━ 008 세션에 ━━━
+
+■ ElevenLabs 출처 표시 고치기 (008·009·안내 페이지)
+▼
+[선생님 요청 — 도구 정리 세션에서 확인한 것] ElevenLabs Roger 목소리 묶음(media/voice/elevenlabs-roger/)은 무료 요금제로 만든 것이라, ElevenLabs 공식 도움말(help-center "Can I publish the content I generate on the platform?")에 따르면 비영리로만 쓸 수 있고 공개할 때 "elevenlabs.io"(또는 11.ai) 출처 표시가 꼭 필요합니다. 지금 표시는 "목소리: ElevenLabs"라서 조건의 글자와 다릅니다.
+
+고칠 것(표시 글자를 "목소리: elevenlabs.io (ElevenLabs)"로):
+1. 008/animal-home.html — VBUNDLES의 credit:'목소리: ElevenLabs'(1801줄 근처). 베타·release 판이 따로 있으면 같이.
+2. 008/animal-home_manual.html 30줄 근처, 008/animal-home_guide.html 177줄 근처의 "목소리: ElevenLabs".
+3. 009도 같은 묶음을 씀: 009/animal-riddle.html VBUNDLES(1072줄 근처), 009/animal-riddle_manual.html 30줄, 009/animal-riddle_guide.html 137줄. (009를 다른 세션이 고치고 있으면 그쪽에 넘김)
+4. 저장소 맨 위 elevenlabs_guide.html 58줄 근처 — 앱에 쓰면 "목소리: ElevenLabs"를 표시하라는 안내를 "목소리: elevenlabs.io (ElevenLabs)"로, 무료 요금제는 비영리로만 쓸 수 있다는 한 줄도.
+
+화면 글자만 바꾸는 일이라 동작은 그대로입니다. 설정의 목소리 줄이 화면에 실제로 어떻게 보이는지 확인하고, 캡처에 그 줄이 보이면 캡처도 다시. 끝나면 각 앱 README.txt에 한 줄, main에 올려 주세요. 참고: 나눔 결정은 docs/guidelines.md '자료 나눔' 줄(2026-11-25).
+▲
