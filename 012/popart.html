@@ -1135,19 +1135,49 @@ function makeAvoid(Lr, F, o) {
   const { bw, bs, w, h } = Lr, bh = Math.ceil(h / bs), b = o.box;
   const face = (fx, fy) => { const bx = (fx * w / bs) | 0, by = (fy * h / bs) | 0; return bx >= 0 && by >= 0 && bx < bw && by < bh && F[by * bw + bx] === 1; };
   const box = (fx, fy) => !!b && fx >= b[0] && fx <= b[2] && fy >= b[1] && fy <= b[3];
-  return { strong: (fx, fy) => face(fx, fy) || (o.object && box(fx, fy)), all: (fx, fy) => face(fx, fy) || box(fx, fy) };
+  // 진짜 얼굴만(큰 원이 피할 곳): 피부색 덩어리 중 위쪽·가운데의 가장 큰 것 — 팔·목 아래·살구색 물건은 빼고 (2026-11-25)
+  let core = null;
+  if (!o.object) {
+    const lab = new Int32Array(bw * bh); let best = null, id = 0;
+    for (let s0 = 0; s0 < bw * bh; s0++) {
+      if (F[s0] !== 1 || lab[s0]) continue;
+      const st = [s0]; lab[s0] = ++id; let n = 0, x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1;
+      while (st.length) {
+        const k = st.pop(), x = k % bw, y = (k / bw) | 0; n++;
+        if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        for (const j of [x > 0 ? k - 1 : -1, x < bw - 1 ? k + 1 : -1, y > 0 ? k - bw : -1, y < bh - 1 ? k + bw : -1]) if (j >= 0 && F[j] === 1 && !lab[j]) { lab[j] = id; st.push(j); }
+      }
+      const top = y0 / bh; if (top > 0.6 || n < 4) continue;
+      const score = n * (1.2 - Math.abs((x0 + x1 + 1) / 2 / bw - 0.5)) * (1.3 - top);
+      if (!best || score > best.score) best = { score, x0, y0, x1, y1 };
+    }
+    if (best) {
+      const mg = 0.03; core = [best.x0 * bs / w - mg, best.y0 * bs / h - mg, (best.x1 + 1) * bs / w + mg, (best.y1 + 1) * bs / h + mg];
+      core[3] = Math.min(core[3], core[1] + (core[2] - core[0]) * 1.6 * w / h);   // 목·어깨로 길게 이어지면 위쪽만
+      const cw = core[2] - core[0], ch = core[3] - core[1];
+      if (cw > 0.7 || ch > 0.8 || cw * ch > 0.35) core = null;                   // 그림 대부분이 살구색(나무 책장 등)이면 얼굴이 아님
+    }
+  }
+  return { strong: (fx, fy) => face(fx, fy) || (o.object && box(fx, fy)), all: (fx, fy) => face(fx, fy) || box(fx, fy),
+           big: (fx, fy) => o.object ? box(fx, fy) : !!core && ((fx - (core[0] + core[2]) / 2) / ((core[2] - core[0]) / 2)) ** 2 + ((fy - (core[1] + core[3]) / 2) / ((core[3] - core[1]) / 2)) ** 2 <= 1,   // 얼굴은 타원으로
+           pal: o.palName };
 }
 function drawDecor(c, w, h, ly, seed, avoid) {
   const R = rng(seed), inFace = (x, y) => avoid.strong(x / w, y / h), inSubj = (x, y) => avoid.all(x / w, y / h);
   c.lineJoin = 'round'; c.strokeStyle = '#111'; c.lineWidth = Math.max(3, w * 0.006);
-  if (ly.big) {                                          // 큰 점 판: 한 곳만(위 왼쪽·오른쪽, 자리 없으면 아래). 크기는 짧은 변 기준 → 세로·가로 그림 같은 모양
-    const pairs = [['#F7C600', '#A31021'], ['#35B6D8', '#1F4FB0'], ['#E8001C', '#FFFFFF'], ['#1F5FB0', '#7FD6F2']];
-    const m = Math.min(w, h), first = R() < 0.5 ? 0 : 1, leg0 = m * (0.46 + R() * 0.12);
-    const geo = (cx0, cy0, k) => { const a = Math.min(w * 0.62, leg0 * k * 1.15), b = Math.min(h * 0.62, leg0 * k), X = cx0 ? w : 0, Y = cy0 ? h : 0;
-      return { a, b, X, Y, sx: cx0 ? -1 : 1, sy: cy0 ? -1 : 1 }; };
-    const fits = g => { for (let u = 0; u <= 8; u++) for (let v = 0; u + v <= 8; v++) if (inFace(g.X + g.sx * g.a * u / 8, g.Y + g.sy * g.b * v / 8)) return false; return true; };
-    const biggest = (cx0, cy0) => { for (let k = 1; k >= 0.3; k -= 0.05) if (fits(geo(cx0, cy0, k))) return k; return 0; };
-    let pick = null;                                      // 얼굴에 닿지 않는 가장 큰 크기: 위 두 모서리 중 큰 쪽 → 없으면 아래 (2026-11-25)
+  if (ly.big) {                                          // 큰 점 판(2026-11-25): 한 모서리만(위 왼쪽·오른쪽, 자리 없으면 아래). 세로·가로를 따로 재고 진짜 얼굴만 피함
+    const PAIRS = avoid.pal === 'mono' ? [['#FFFFFF', '#111111'], ['#111111', '#FFFFFF']]
+      : avoid.pal === 'warm' ? [['#FFB000', '#E8001C'], ['#FF4F6D', '#FFF4E0'], ['#7A1F5C', '#FF8FB8'], ['#FFF4E0', '#FF4F6D'], ['#FFB000', '#7A1F5C']]
+      : [['#F7C600', '#E8001C'], ['#35B6D8', '#1F4FB0'], ['#E8001C', '#FFFFFF'], ['#1F5FB0', '#7FD6F2'], ['#FF8FB8', '#D6246E'], ['#FFFFFF', '#E8001C'], ['#7ED957', '#1E7A3A'], ['#FFE14D', '#1F5FB0']];
+    const inBig = (x, y) => avoid.big(x / w, y / h), first = R() < 0.5 ? 0 : 1;
+    let A, B;                                            // 목표 크기(두 변): 세로 그림은 너비 기준, 가로 그림은 높이 기준
+    if (h > w * 1.1) { A = w * (0.5 + R() * 0.12); B = Math.min(h * 0.45, w * (0.56 + R() * 0.14)); }
+    else if (w > h * 1.1) { B = h * (0.5 + R() * 0.12); A = Math.min(w * 0.42, h * (0.62 + R() * 0.14)); }
+    else { A = w * (0.46 + R() * 0.1); B = h * (0.46 + R() * 0.1); }
+    const geo = (cx0, cy0, k) => ({ a: A * k, b: B * k, X: cx0 ? w : 0, Y: cy0 ? h : 0, sx: cx0 ? -1 : 1, sy: cy0 ? -1 : 1 });
+    const fits = g => { for (let u = 0; u <= 10; u++) for (let v = 0; u + v <= 10; v++) if (inBig(g.X + g.sx * g.a * u / 10, g.Y + g.sy * g.b * v / 10)) return false; return true; };
+    const biggest = (cx0, cy0) => { for (let k = 1; k >= 0.4; k -= 0.05) if (fits(geo(cx0, cy0, k))) return k; return 0; };
+    let pick = null;
     for (const cy0 of [0, 1]) {
       for (const cx0 of [first, 1 - first]) { const k = biggest(cx0, cy0); if (k && (!pick || k > pick.k + 0.1)) pick = { cx0, cy0, k }; }
       if (pick) break;
@@ -1155,10 +1185,17 @@ function drawDecor(c, w, h, ly, seed, avoid) {
     if (pick) {
       const { a, b, X, Y, sx, sy } = geo(pick.cx0, pick.cy0, pick.k);
       const pts = [[X, Y], [X + sx * a, Y], [X, Y + sy * b]];
-      const [bg, dot] = pairs[(R() * pairs.length) | 0], sp = Math.max(10, Math.min(a, b) * 0.16);
+      // 색: 그 자리 그림의 평균색과 너무 비슷한 바탕은 빼고(묻히지 않게) 남은 것 중 무작위
+      let avg = [128, 128, 128];
+      try { const bx = Math.max(0, Math.round(sx > 0 ? X : X - a)), by = Math.max(0, Math.round(sy > 0 ? Y : Y - b)), bw2 = Math.max(1, Math.round(a)), bh2 = Math.max(1, Math.round(b));
+        const d = c.getImageData(bx, by, Math.min(bw2, w - bx), Math.min(bh2, h - by)).data; let r = 0, g = 0, bb = 0, n = 0;
+        for (let q = 0; q < d.length; q += 4 * 23) { r += d[q]; g += d[q + 1]; bb += d[q + 2]; n++; } if (n) avg = [r / n, g / n, bb / n]; } catch (e) {}
+      const hex = t => [1, 3, 5].map(i => parseInt(t.substr(i, 2), 16)), dist = t => { const q = hex(t); return Math.hypot(q[0] - avg[0], q[1] - avg[1], q[2] - avg[2]); };
+      const ok = PAIRS.filter(pp => dist(pp[0]) > 110), pool = ok.length ? ok : PAIRS;
+      const [bg, dot] = pool[(R() * pool.length) | 0], sp = Math.max(12, Math.min(a, b) * (0.13 + R() * 0.09)), rr = sp * (0.3 + R() * 0.1);
       c.save(); c.beginPath(); pts.forEach((q, i) => c[i ? 'lineTo' : 'moveTo'](q[0], q[1])); c.closePath(); c.fillStyle = bg; c.fill(); c.clip(); c.fillStyle = dot;
-      for (let r = 0, y = -sp; y < h + sp; y += sp * 0.87, r++) for (let x = -sp + (r % 2) * sp / 2; x < w + sp; x += sp) { c.beginPath(); c.arc(x, y, sp * 0.34, 0, 7); c.fill(); }
-      c.restore(); c.save(); c.lineWidth = Math.max(4, m * 0.009); c.beginPath(); c.moveTo(pts[1][0], pts[1][1]); c.lineTo(pts[2][0], pts[2][1]); c.stroke(); c.restore();
+      for (let r = 0, y = -sp; y < h + sp; y += sp * 0.87, r++) for (let x = -sp + (r % 2) * sp / 2; x < w + sp; x += sp) { c.beginPath(); c.arc(x, y, rr, 0, 7); c.fill(); }
+      c.restore(); c.save(); c.lineWidth = Math.max(4, Math.min(w, h) * 0.009); c.beginPath(); c.moveTo(pts[1][0], pts[1][1]); c.lineTo(pts[2][0], pts[2][1]); c.stroke(); c.restore();
     }
   }
   if (ly.star) {                                         // 별 3~4개를 여기저기 (얼굴 위는 피함)
