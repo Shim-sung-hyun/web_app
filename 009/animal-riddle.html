@@ -1069,7 +1069,7 @@ function stopVoice(){ try{speechSynthesis.cancel();}catch(e){}
 /* 내장 목소리: 차름 소리 모음 media/voice/leda-0.92/ (이름 = 문장 조각 SHA-1 앞 16자리) */
 /* 목소리 묶음(2026-11-16 선생님): 말마다 ElevenLabs(media/voice/elevenlabs-roger/)에 있으면 그것, 없으면 Leda(구글), 둘 다 없으면 그 말만 기기 목소리.
    ElevenLabs로 다 바꿀 때까지 잠깐 두 목소리가 섞임(선생님 결정 — 받은 소리 가운데 확실히 맞게 자른 것만 넣었고, 나머지는 나중에 ElevenLabs로 바꿈. 009 README) */
-const VBUNDLES=[{id:'elevenlabs-roger',credit:'목소리: ElevenLabs'},{id:'leda-0.92',credit:''}];
+const VBUNDLES=[{id:'elevenlabs-roger',credit:'목소리: elevenlabs.io (ElevenLabs)'},{id:'leda-0.92',credit:''}];
 let VSETS=[], VSET=null, VCREDIT='';
 const vbaseOf=h=>{ const i=VSETS.findIndex(st=>st.has(h)); return i<0?null:GH+'media/voice/'+VBUNDLES[i].id+'/'; };
 const voiceReady=Promise.all(VBUNDLES.map(b=>fetch(GH+'media/voice/'+b.id+'/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{files:[]}).then(j=>new Set(j.files||[])).catch(()=>new Set())))
