@@ -1137,20 +1137,22 @@ function makeAvoid(Lr, F, o) {
 function drawDecor(c, w, h, ly, seed, avoid) {
   const R = rng(seed), inFace = (x, y) => avoid.strong(x / w, y / h), inSubj = (x, y) => avoid.all(x / w, y / h);
   c.lineJoin = 'round'; c.strokeStyle = '#111'; c.lineWidth = Math.max(3, w * 0.006);
-  if (ly.big) {                                          // 큰 점 판: 무작위 모서리 1~2곳, 얼굴은 피함
+  if (ly.big) {                                          // 큰 점 판: 위 왼쪽이나 오른쪽 한 곳만(2026-11-25). 크기는 짧은 변 기준 → 세로·가로 그림 같은 모양
     const pairs = [['#F7C600', '#A31021'], ['#35B6D8', '#1F4FB0'], ['#E8001C', '#FFFFFF'], ['#1F5FB0', '#7FD6F2']];
-    const corners = [[0, 0], [1, 0], [0, 1], [1, 1]].sort(() => R() - 0.5), want = R() < 0.5 ? 1 : 2; let made = 0;
-    for (const [cx0, cy0] of corners) {
-      if (made >= want) break;
-      const a = w * (0.26 + R() * 0.16), b = h * (0.26 + R() * 0.16), X = cx0 ? w : 0, Y = cy0 ? h : 0, sx = cx0 ? -1 : 1, sy = cy0 ? -1 : 1;
-      const pts = [[X, Y], [X + sx * a, Y], [X, Y + sy * b]], mid = [(pts[1][0] + pts[2][0]) / 2, (pts[1][1] + pts[2][1]) / 2];
-      const probe = [];                                  // 삼각형 안 여러 자리를 살펴 주인공에 닿으면 건너뜀
-      for (let u = 0; u <= 4; u++) for (let v = 0; u + v <= 4; v++) probe.push([X + (pts[1][0] - X) * u / 4 + (pts[2][0] - X) * v / 4, Y + (pts[1][1] - Y) * u / 4 + (pts[2][1] - Y) * v / 4]);
+    const m = Math.min(w, h), first = R() < 0.5 ? 0 : 1, leg0 = m * (0.46 + R() * 0.12);
+    const tries = [];
+    for (const k of [1, 0.8, 0.62]) for (const cx0 of [first, 1 - first]) tries.push([cx0, k]);
+    for (const [cx0, k] of tries) {
+      const a = Math.min(w * 0.62, leg0 * k * 1.15), b = Math.min(h * 0.62, leg0 * k), X = cx0 ? w : 0, sx = cx0 ? -1 : 1;
+      const pts = [[X, 0], [X + sx * a, 0], [X, b]];
+      const probe = [];                                  // 삼각형 안 여러 자리를 살펴 얼굴에 닿으면 다음 자리·작은 크기로
+      for (let u = 0; u <= 4; u++) for (let v = 0; u + v <= 4; v++) probe.push([X + sx * a * u / 4, b * v / 4]);
       if (probe.some(q => inFace(q[0], q[1]))) continue;
-      const [bg, dot] = pairs[(R() * pairs.length) | 0], s = w * (0.055 + R() * 0.03);
+      const [bg, dot] = pairs[(R() * pairs.length) | 0], sp = Math.max(10, Math.min(a, b) * 0.16);
       c.save(); c.beginPath(); pts.forEach((q, i) => c[i ? 'lineTo' : 'moveTo'](q[0], q[1])); c.closePath(); c.fillStyle = bg; c.fill(); c.clip(); c.fillStyle = dot;
-      for (let r = 0, y = -s; y < h + s; y += s * 0.9, r++) for (let x = -s + (r % 2) * s / 2; x < w + s; x += s) { c.beginPath(); c.arc(x, y, s * 0.36, 0, 7); c.fill(); }
-      c.restore(); c.beginPath(); c.moveTo(pts[1][0], pts[1][1]); c.lineTo(pts[2][0], pts[2][1]); c.stroke(); made++;
+      for (let r = 0, y = -sp; y < b + sp; y += sp * 0.87, r++) for (let x = -sp + (r % 2) * sp / 2; x < w + sp; x += sp) { c.beginPath(); c.arc(x, y, sp * 0.34, 0, 7); c.fill(); }
+      c.restore(); c.save(); c.lineWidth = Math.max(4, m * 0.009); c.beginPath(); c.moveTo(pts[1][0], pts[1][1]); c.lineTo(pts[2][0], pts[2][1]); c.stroke(); c.restore();
+      break;
     }
   }
   if (ly.star) {                                         // 별 3~4개를 여기저기 (얼굴 위는 피함)
@@ -1570,15 +1572,86 @@ function drawBubble(x, b) {
   x.textAlign = 'center'; x.textBaseline = 'middle';
   x.lineJoin = 'round'; x.lineWidth = Math.max(4, W * 0.008); x.strokeStyle = '#000';
   if (b.type === 'burst') {
-    x.beginPath();
-    for (let i = 0; i < 28; i++) { const a = Math.PI * i / 14, k = i % 2 ? 0.62 : 1; x[i ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * rx * 1.25 * k, cy + Math.sin(a) * ry * 1.5 * k); }
-    x.closePath(); x.fillStyle = '#FFD700'; x.fill(); x.stroke();
-    x.lineWidth = fs * 0.16; x.strokeText(b.text, cx, cy); x.fillStyle = '#E8001C'; x.fillText(b.text, cx, cy);
+    drawBurst(x, b, fs, cx, cy, rx * 1.25, ry * 1.5);
   } else {
     x.beginPath(); x.moveTo(cx - rx * 0.35, cy + ry * 0.8); x.lineTo(cx - rx * 0.6, cy + ry * 1.9); x.lineTo(cx - rx * 0.05, cy + ry * 0.95); x.closePath(); x.fillStyle = '#fff'; x.fill(); x.stroke();
     x.beginPath(); x.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); x.fill(); x.stroke();
     x.fillStyle = '#000'; x.fillText(b.text, cx, cy);
   }
+}
+// ---------- 효과음 모양 8가지 (2026-11-25) — 넣을 때 무작위로 고르고(b.style), 모양의 들쭉날쭉도 b.seed로 고정 ----------
+const BURST_STYLES = 8;
+function spikyPath(x, cx, cy, RX, RY, n, inner, jit, R) {   // 들쭉날쭉한 터짐 모양(Path2D) — 칠하기·자르기·테두리에 같은 모양을 씀
+  const P = new Path2D();
+  for (let i = 0; i < n * 2; i++) {
+    const a = Math.PI * i / n - Math.PI / 2, k = i % 2 ? inner * (1 + (R() - 0.5) * jit * 0.6) : 1 + (R() - 0.5) * jit;
+    P[i ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * RX * k, cy + Math.sin(a) * RY * k);
+  }
+  P.closePath(); return P;
+}
+function fillStroke(x, P, col, line) { x.fillStyle = col; x.fill(P); if (line !== false) x.stroke(P); }
+function puffs(x, list) {                                  // 동그라미 여러 개를 한 덩어리 연기로: 테두리를 먼저 다 그리고 속을 덮음
+  list.forEach(([px, py, r]) => { x.beginPath(); x.arc(px, py, r, 0, 7); x.stroke(); });
+  x.fillStyle = '#fff'; list.forEach(([px, py, r]) => { x.beginPath(); x.arc(px, py, r, 0, 7); x.fill(); });
+}
+function dotsIn(x, cx, cy, RX, RY, sp, col) {               // 지금 잘린(clip) 칸 안에 반점 무늬
+  x.fillStyle = col;
+  for (let r = 0, y = cy - RY; y < cy + RY; y += sp * 0.87, r++) for (let X = cx - RX + (r % 2) * sp / 2; X < cx + RX; X += sp) { x.beginPath(); x.arc(X, y, sp * 0.3, 0, 7); x.fill(); }
+}
+function popText(x, t, cx, cy, fs, o) {                      // 굵은 검정 테두리 + (입체 그림자) + (흰 속테) + 채움
+  x.save(); x.lineJoin = 'round';
+  if (o.shadow) { const d = fs * 0.045; x.fillStyle = o.shadow; x.strokeStyle = '#000'; x.lineWidth = fs * 0.2; for (let k = 4; k >= 1; k--) { x.strokeText(t, cx + d * k, cy + d * k); x.fillText(t, cx + d * k, cy + d * k); } }
+  x.strokeStyle = '#000'; x.lineWidth = fs * 0.2; x.strokeText(t, cx, cy);
+  if (o.inner) { x.strokeStyle = o.inner; x.lineWidth = fs * 0.075; x.strokeText(t, cx, cy); }
+  x.fillStyle = o.fill; x.fillText(t, cx, cy); x.restore();
+}
+function drawBurst(x, b, fs, cx, cy, RX, RY) {
+  const R = rng(b.seed || 7), st = (b.style || 0) % BURST_STYLES, lw = x.lineWidth;
+  x.save(); x.translate(cx, cy); x.rotate(b.rot != null ? b.rot : 0); x.translate(-cx, -cy);
+  x.strokeStyle = '#000'; x.lineJoin = 'round';
+  const S = (rx, ry, n, inn, jit) => spikyPath(x, cx, cy, RX * rx, RY * ry, n, inn, jit, R), m = Math.min(RX, RY);
+  if (st === 0) {                                          // 노란 별 터짐 · 빨간 글자
+    fillStroke(x, S(1, 1, 13, 0.6, 0.35), '#FFD700');
+    popText(x, b.text, cx, cy, fs, { fill: '#E8001C', inner: '#fff' });
+  } else if (st === 1) {                                   // 빨강 바깥 + 노랑 안쪽 두 겹 · 입체 글자
+    fillStroke(x, S(1.08, 1.08, 16, 0.7, 0.4), '#E8001C');
+    fillStroke(x, S(0.82, 0.82, 12, 0.72, 0.3), '#FFE14D');
+    popText(x, b.text, cx, cy, fs, { fill: '#E8001C', shadow: '#7A0010' });
+  } else if (st === 2) {                                   // 흰 구름 펑 · 노란 글자에 빨간 입체
+    const L = [], n = 10;
+    for (let i = 0; i < n; i++) { const a = Math.PI * 2 * i / n + R() * 0.3; L.push([cx + Math.cos(a) * RX * 0.78, cy + Math.sin(a) * RY * 0.7, m * (0.32 + R() * 0.12)]); }
+    L.push([cx, cy, 0]); puffs(x, L); x.beginPath(); x.ellipse(cx, cy, RX * 0.8, RY * 0.72, 0, 0, 7); x.fillStyle = '#fff'; x.fill();
+    popText(x, b.text, cx, cy, fs, { fill: '#FFD700', shadow: '#E8001C' });
+  } else if (st === 3) {                                   // 집중선 + 흰 별 터짐
+    x.fillStyle = '#111';
+    for (let i = 0; i < 26; i++) { const a = Math.PI * 2 * i / 26 + R() * 0.12, w0 = 0.035 + R() * 0.03, r1 = 1.05, r2 = 1.45 + R() * 0.35;
+      x.beginPath(); x.moveTo(cx + Math.cos(a - w0) * RX * r1, cy + Math.sin(a - w0) * RY * r1); x.lineTo(cx + Math.cos(a) * RX * r2, cy + Math.sin(a) * RY * r2); x.lineTo(cx + Math.cos(a + w0) * RX * r1, cy + Math.sin(a + w0) * RY * r1); x.fill(); }
+    fillStroke(x, S(1, 1, 15, 0.66, 0.4), '#fff');
+    popText(x, b.text, cx, cy, fs, { fill: '#E8001C', shadow: '#FFD700' });
+  } else if (st === 4 || st === 5) {                       // 4 노랑 바탕 주황 반점 · 흰 글자 / 5 하늘색 반점 · 빨간 글자
+    const P = st === 4 ? S(1, 1, 11, 0.62, 0.45) : S(1, 1, 12, 0.7, 0.3);
+    fillStroke(x, P, st === 4 ? '#FFD700' : '#7FD6F2', false);
+    x.save(); x.clip(P); dotsIn(x, cx, cy, RX * 1.3, RY * 1.3, fs * (st === 4 ? 0.32 : 0.3), st === 4 ? '#F28C28' : '#35A3CF'); x.restore(); x.stroke(P);
+    popText(x, b.text, cx, cy, fs, st === 4 ? { fill: '#fff', shadow: '#E8001C' } : { fill: '#E8001C', inner: '#fff' });
+  } else if (st === 6) {                                   // 양옆으로 연기가 뿜어 나오는 주황 터짐
+    const L = [];
+    for (const sd of [-1, 1]) { const a0 = sd < 0 ? Math.PI * (0.85 + R() * 0.2) : Math.PI * (-0.15 + R() * 0.2);
+      for (let k = 0; k < 4; k++) { const a = a0 + (R() - 0.5) * 0.9; L.push([cx + Math.cos(a) * RX * (0.95 + R() * 0.25), cy + Math.sin(a) * RY * (0.9 + R() * 0.2), m * (0.16 + R() * 0.12)]); } }
+    puffs(x, L);
+    fillStroke(x, S(1, 1, 14, 0.62, 0.4), '#FF9F1C');
+    fillStroke(x, S(0.7, 0.7, 10, 0.75, 0.2), '#FFE14D', false);
+    popText(x, b.text, cx, cy, fs, { fill: '#E8001C', inner: '#fff' });
+  } else {                                                 // 검정 테두리 터짐 + 노랑 · 노란 글자 빨간 속테
+    fillStroke(x, S(1.08, 1.08, 18, 0.74, 0.45), '#111', false);
+    fillStroke(x, S(0.86, 0.86, 14, 0.72, 0.3), '#FFD700');
+    popText(x, b.text, cx, cy, fs, { fill: '#FFE14D', inner: '#E8001C', shadow: '#111' });
+  }
+  x.restore(); x.lineWidth = lw;
+}
+let lastBurstStyle = -1;
+function newBurstLook() {                                   // 바로 앞과 같은 모양은 피함
+  let st; do { st = (Math.random() * BURST_STYLES) | 0; } while (st === lastBurstStyle);
+  lastBurstStyle = st; return { style: st, seed: 1 + ((Math.random() * 1e9) | 0), rot: (Math.random() - 0.5) * 0.3 };
 }
 const mctx = document.createElement('canvas').getContext('2d');
 let baseImgCache = { url: null, img: null }, selected = null, drag = null;
@@ -1650,11 +1723,11 @@ function startPlace(type, preset) {
 document.getElementById('result-img').addEventListener('click', async e => {
   if (!placing) return;
   const type = placing, pre = placingText; placing = null; placingText = ''; e.target.style.cursor = '';
-  const r = e.target.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+  const { fx, fy } = ptr(e);                         // 그림이 가운데 놓여도(object-fit) 누른 자리 그대로
   const text = pre || window.prompt(type === 'burst' ? '효과음을 써 주세요 (예: 쾅!)' : '말풍선에 들어갈 말을 써 주세요', type === 'burst' ? '쾅!' : '');
   if (!text) return;
   if (current !== 'comic') { if (comicBase !== current) bubbles = []; comicBase = current; }
-  bubbles.push({ type, text, x: fx, y: fy }); selected = bubbles.length - 1; await redrawComic(); toast('끌어서 옮기고, 두 번 누르면 글을 고칠 수 있어요');
+  bubbles.push(Object.assign({ type, text, x: fx, y: fy }, type === 'burst' ? newBurstLook() : {})); selected = bubbles.length - 1; await redrawComic(); toast('끌어서 옮기고, 두 번 누르면 글을 고칠 수 있어요');
 });
 async function undoBubble() {
   if (current !== 'comic' || !bubbles.length) return;
