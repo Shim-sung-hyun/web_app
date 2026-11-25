@@ -114,6 +114,8 @@ Cloudflare 사용량 아끼기 (2026-11-21 선생님 정함)
   (화면 인쇄 printHTML과 같은 짜임, 퀴즈 자르기는 quizCrop()). PC는 「열기」로 PDF를 열어 인쇄.
 - 키 칸 = 공통 모듈 aiKey(2026-11-25, 001·004·007·010과 같은 모양): 설정판 맨 아래 #keyBox에 AiKey.mount(cloudflare·gemini). 칸은 webapp.cfAccount·cfToken·geminiKey(다른 앱과 같음).
   앱은 loadKeys()로 AiKey.get을 읽어 cloudflareAccountId 등에 넣음(onChange·storage). keyNudge는 그 상자를 펼쳐 Cloudflare 칸을 짚음. 「처음부터」는 키를 지우지 않음.
+  '넣었는데 인식 못함'(2026-11-25): 모듈은 「저장」을 눌러야 기억 → 012는 칸을 다 채우고 다른 곳을 누르면 저절로 저장(change).
+  Account ID는 32자리 영문·숫자만 서버가 받음 → 앞뒤 글자가 붙어도 32자리만 골라 쓰고, 형식이 아니면 키 칸 아래 빨간 글씨. 토큰 앞 'Bearer '는 뗌.
 - 밑그림 미리 보기(2026-11-25): 설정판 '대상' 아래에 AI에게 보내는 윤곽판(makeGuide와 같은 popLayers guide)을 360px로 바로 그려 보여 줌(updateGuidePrev).
   대상·색 조합·선 굵기·디테일·자동 설정·새 사진 때 다시 그림, AI 횟수 안 씀. 누르면 크게. 안경·모자 알림은 AI에게 하는 말이라 미리 못 봄.
 - 팝아트 비교(2026-11-25): 설정을 바꿔 다시 그리면 invalidatePop→keepOldPop이 앞 그림을 results.pvN으로 남기고 아래 칸에 「팝아트 1」「팝아트 2」(최근 2장)

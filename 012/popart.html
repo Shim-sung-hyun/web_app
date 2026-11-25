@@ -771,6 +771,9 @@ function updateAiRouteInfo() {
   if (!info) return;
   const hasAccount = !!cloudflareAccountId;
   const hasToken = !!cloudflareApiToken;
+  if (hasAccount && !/^[a-f0-9]{32}$/i.test(cloudflareAccountId)) {   // 서버(Worker)는 32자리 영문·숫자만 받음
+    info.innerHTML = '<b style="color:#C0001A">Account ID가 맞지 않아요.</b> 32자리 영문·숫자예요(이름·이메일 아님). 「바꾸기」로 다시 붙여 넣어 주세요.'; return;
+  }
   if (hasAccount !== hasToken) {
     info.textContent = 'Cloudflare Account ID와 API Token을 모두 입력해야 개인 계정으로 연결됩니다.';
   } else if (geminiApiKey && hasAccount) {
@@ -798,13 +801,20 @@ function deviceId() {
 // 키는 공통 모듈 aiKey가 받고 기억함(webapp.geminiKey · webapp.cfAccount · webapp.cfToken — 다른 차름 앱과 같은 칸)
 function loadKeys() {
   const cf = AiKey.get('cloudflare') || {};
-  cloudflareAccountId = AiKey.has('cloudflare') ? cf.account : ''; cloudflareApiToken = AiKey.has('cloudflare') ? cf.token : '';
+  const id32 = String(cf.account || '').match(/[a-f0-9]{32}/i);   // 앞뒤에 다른 글자가 붙어 와도 32자리만 골라 씀
+  cloudflareAccountId = AiKey.has('cloudflare') ? (id32 ? id32[0] : String(cf.account).trim()) : ''; cloudflareApiToken = AiKey.has('cloudflare') ? String(cf.token).replace(/^Bearer\s+/i, '').trim() : '';
   geminiApiKey = AiKey.get('gemini') || '';
   updateAiRouteInfo();
 }
 AiKey.mount('#keyBox', { color: '#0057A8', use: [{ svc: 'cloudflare', what: '하루 3회 제한 없이 팝아트' }, { svc: 'gemini', what: '사진 살펴보기 (없어도 됨)' }], onChange: loadKeys });
 document.querySelector('#keyBox .key-hint').after(document.querySelector('#keyBox .kbx'));
 window.addEventListener('storage', e => { if (!e.key || /^webapp\./.test(e.key)) loadKeys(); });
+// 붙여 넣고 「저장」을 안 눌러도: 그 키의 칸을 다 채우고 다른 곳을 누르면 저절로 저장(2026-11-25 — '넣었는데 인식 못함')
+document.getElementById('keyBox').addEventListener('change', e => {
+  const d = e.target.closest('details.kb-svc'); if (!d) return;
+  const ins = [...d.querySelectorAll('input[data-f]')];
+  if (ins.length && ins.every(i => i.value.trim())) { const b = d.querySelector('[data-act=save]'); if (b) b.click(); }
+});
 loadKeys();
 
 const PROMPT_TRACE = `Redraw the input photo as a classic Roy Lichtenstein 1960s comic-book pop-art illustration.
