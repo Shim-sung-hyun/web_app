@@ -35,6 +35,8 @@ POST https://charum-ai.simdoly.workers.dev/cartoon
 
 응답: `{ image, model, analysisModel, usedGuide }`. 012는 `image`만 쓰고, `usedGuide`는 ③이 윤곽(guide)을 반영했는지 확인용입니다. `429`를 받으면 012가 "오늘의 팝아트 변환 한도(3회)…"로 보여 줍니다.
 
+`/agree`(2026-11-25): `{cloudflareAccountId, cloudflareApiToken}`을 받아 그 계정으로 사진 분석 모델에 `prompt:"agree"`를 한 번 보냄(Meta 라이선스 동의) → `{ok:true}`. `tools/gemini-model-test.html`(AI 키 확인)의 동의 단추만 부르고, 저절로는 보내지 않음.
+
 다른 경로는 그대로입니다: `/gemini`(자동 설정·대사 추천 중계), `/tts`, `/image`, `/ping`(텍스트), `/ping/gemini`(모델 점검).
 
 ## 배포할 때

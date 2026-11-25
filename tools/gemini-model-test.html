@@ -64,6 +64,12 @@ a{color:var(--accent)}
 <span class="muted small" id="cfStatus"></span>
 </div>
 <div class="result hidden" id="cfResult"></div>
+<div class="status hidden" id="cfAgree" style="white-space:normal">
+<b>이 계정은 아직 사진 분석 모델 사용 동의를 하지 않았어요.</b>
+차름 앱이 쓰는 사진 분석 모델(Meta Llama 3.2 Vision)은 Meta의 라이선스에 동의해야 쓸 수 있고, 계정마다 처음 한 번만 하면 됩니다.
+동의는 이 계정 주인이 하는 약속입니다 — 내용은 <a href="https://developers.cloudflare.com/workers-ai/models/llama-3.2-11b-vision-instruct/" target="_blank" rel="noopener">모델 안내(라이선스·사용 정책 링크)</a>에서 볼 수 있어요.
+<div class="row" style="margin-top:8px"><button class="primary" id="cfAgreeBtn">Meta 모델 사용에 동의하고 계속</button><span class="small" id="cfAgreeMsg"></span></div>
+</div>
 </article>
 </section>
 
@@ -91,7 +97,7 @@ a{color:var(--accent)}
 <div id="rank" class="rank hidden"></div>
 <div id="modelList" class="muted" style="margin-top:12px">모델 목록을 조회하면 여기에 표시됩니다.</div>
 </section>
-<p class="footer">Cloudflare는 개인 계정으로 처음 쓸 때 모델 사용 동의가 한 번 필요할 수 있습니다(오류에 agree·license가 보이면 Cloudflare 토큰 받는 법의 안내대로). 참고: 목록에 표시된 generateContent 지원 여부는 API 메타데이터입니다. 실제 이미지 입력 지원 및 프로젝트별 사용 가능 여부는 사진 분석 테스트 결과로 확인해야 합니다. 무료 사용량, 결제 설정, 지역 및 모델별 제한에 따라 호출이 거부될 수 있습니다.</p>
+<p class="footer">Cloudflare는 개인 계정으로 처음 쓸 때 사진 분석 모델 사용 동의가 한 번 필요합니다 — 동의가 안 된 계정이면 Cloudflare 칸에 동의 단추가 나옵니다. 참고: 목록에 표시된 generateContent 지원 여부는 API 메타데이터입니다. 실제 이미지 입력 지원 및 프로젝트별 사용 가능 여부는 사진 분석 테스트 결과로 확인해야 합니다. 무료 사용량, 결제 설정, 지역 및 모델별 제한에 따라 호출이 거부될 수 있습니다.</p>
 </main>
 <script>
 (() => {
@@ -105,6 +111,8 @@ a{color:var(--accent)}
   let photoData = null;           // 고른 사진의 base64(한 번만 읽음)
   let stopAll = false;
   const WORKER = 'https://charum-ai.simdoly.workers.dev/analyze';
+  const AGREE = 'https://charum-ai.simdoly.workers.dev/agree';   // 동의 보내기(2026-11-25 워커에 덧붙인 길)
+  const needsAgree = m => /agree|license|acceptable use|라이선스 동의/i.test(String(m || ''));
   const CF = {name:'cloudflare', displayName:'Cloudflare · Llama 3.2 Vision'};
   const cfReady = () => /^[a-f0-9]{32}$/i.test($('cfAccount').value.trim()) && $('cfToken').value.trim().length > 10;
   function cfButton() { $('cfTest').disabled = !(selectedPhoto && cfReady()) || busy; }
@@ -179,6 +187,25 @@ a{color:var(--accent)}
     $('toggleCf').textContent = el.type === 'password' ? '보기' : '숨기기';
   };
   $('clearCf').onclick = () => { $('cfAccount').value = ''; $('cfToken').value = ''; cfButton(); };
+  $('cfAgreeBtn').onclick = async () => {
+    if (!cfReady() || busy) return;
+    const btn = $('cfAgreeBtn'), msg = $('cfAgreeMsg');
+    btn.disabled = true; msg.className = 'small muted'; msg.textContent = '동의를 보내는 중…';
+    try {
+      const response = await fetch(AGREE, {
+        method:'POST', mode:'cors', credentials:'omit',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({cloudflareAccountId: $('cfAccount').value.trim(), cloudflareApiToken: $('cfToken').value.trim()})
+      });
+      const data = await response.json().catch(() => ({}));
+      if (response.status === 404) throw new Error('차름 중간 서버(charum-ai 워커)가 아직 옛 판이라 동의 단추를 받지 못합니다. 워커 코드를 새로 붙여 넣어 배포한 뒤 다시 눌러 주세요.');
+      if (!response.ok) throw new Error(data?.error?.message || `HTTP ${response.status}`);
+      msg.className = 'small success'; msg.textContent = '동의했어요. 사진 분석을 다시 해 봅니다…';
+      await runTest(CF, $('cfTest'), $('cfStatus'), $('cfResult'), askCloudflare, prepCf);
+    } catch (error) {
+      msg.className = 'small error'; msg.textContent = '동의 실패: ' + explainFetchError(error);
+    } finally { btn.disabled = false; }
+  };
   $('cfTest').onclick = () => runTest(CF, $('cfTest'), $('cfStatus'), $('cfResult'), askCloudflare, prepCf);
   async function askCloudflare(signal) {
     const response = await fetch(WORKER, {
@@ -189,7 +216,12 @@ a{color:var(--accent)}
     });
     const data = await response.json().catch(() => ({}));
     if (response.status === 403) throw new Error('이 주소에서는 차름 중간 서버를 쓸 수 없습니다(Worker의 허용 주소 ALLOW 확인).');
-    if (!response.ok) throw new Error(`HTTP ${response.status}\n` + (data?.error?.message || '알 수 없는 오류'));
+    if (!response.ok) {
+      const m = data?.error?.message || '알 수 없는 오류';
+      if (needsAgree(m)) { $('cfAgree').classList.remove('hidden'); $('cfAgreeMsg').textContent = ''; }
+      throw new Error(`HTTP ${response.status}\n` + m);
+    }
+    $('cfAgree').classList.add('hidden');
     const answer = String(data.text || '').trim();
     if (!answer) throw new Error('요청은 성공했지만 답이 비어 있습니다.');
     return answer;

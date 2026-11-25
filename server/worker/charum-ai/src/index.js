@@ -335,6 +335,21 @@ async function analyzeVisionWithUserAccount(accountId, token, image, artDirectio
   return text;
 }
 
+// 개인 계정의 Meta 라이선스 동의(2026-11-25) — 선생님이 'AI 키 확인' 화면에서 단추를 눌렀을 때만 부름(저절로 보내지 않음).
+// Cloudflare 문서대로 그 모델에 prompt "agree"를 한 번 보내면 그 계정에 동의가 남는다.
+async function agreeWithUserAccount(accountId, token) {
+  const r = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${VISION_MODEL}`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: "agree" })
+  });
+  const result = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    throw new Error(result.errors?.[0]?.message || result.error?.message || `Cloudflare 동의 오류 (${r.status})`);
+  }
+  return { ok: true, text: extractVisionText(result) || "" };
+}
+
 // 개발자 Worker의 AI 바인딩으로 사진 분석
 async function analyzeVisionWithWorker(env, image, artDirection, describeOnly, raw) {
   if (!env.AI) {
@@ -810,6 +825,15 @@ export default {
           await addUse(env, "cartoon", who);
           await addUse(env, "cartoonAll");
         }
+
+      } else if (url.pathname === "/agree") {
+        const accountId = String(body.cloudflareAccountId || "").trim();
+        const token = String(body.cloudflareApiToken || "").trim();
+        if (!/^[a-f0-9]{32}$/i.test(accountId) || !token) {
+          return json({ error: { message: "Cloudflare Account ID(32글자)와 API Token을 모두 넣어 주세요." } }, 400, origin);
+        }
+        personal = true;
+        res = { status: 200, data: await agreeWithUserAccount(accountId, token) };
 
       } else if (url.pathname === "/analyze") {
         const hasAccount = !!String(body.cloudflareAccountId || "").trim();

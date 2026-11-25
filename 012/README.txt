@@ -5,7 +5,7 @@
 파일
 - server-loader.html: 정식판 서버 study/012/에 올리는 불러오기 파일(GitHub의 popart.html을 이 주소에서 펼침)
 - popart.html       : 앱 한 파일. 필터는 브라우저에서, AI 해석·변환은 아래 워커/구글에 요청
-- charum-ai-worker.js : **워커 복사용 원본**. 선생님이 Cloudflare에 붙여 넣을 코드(012와 맞춤, 2026-11-19 고침)
+- charum-ai-worker.js : **워커 복사용 원본**. 선생님이 Cloudflare에 붙여 넣을 코드(012와 맞춤, 2026-11-19 고침 · 2026-11-25 /agree 길 덧붙임 — AI 키 확인 화면의 Meta 동의 단추용, 선생님이 다시 붙여 넣어 배포해야 작동)
 - wrangler.jsonc    : 워커 Wrangler 설정. KV 바인딩 이름은 "KV" (코드가 env.KV를 씀)
 - server/worker/charum-ai/ : 위 두 파일의 사본(src/index.js) + 배포 안내(README.md). 원본은 012/ 파일들 — 워커를 고치면 사본도 복사해 맞출 것
 - tools/gemini-model-test.html : 제작자가 해석 모델을 고른 테스트 화면
