@@ -143,3 +143,4 @@
   누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
   눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리도 이제 공통 모듈 adminButton(2026-11-25).
   공통 모듈로 옮김(2026-11-25 총괄): adminButton·reportLink·endLesson·printFit·recordKit·spot(저장 칸 materialSort.resume)·voiceKit·progBar — 정식판·베타 모두. 앱 안 그 칸들은 손으로 고치지 않음(common/ 원본 → tools/sync-modules.py). 이 앱만 다른 것은 endLesson 칸 바로 뒤 한 줄 ReportLink.set·EndLesson.set(게시판 글 주소·영역 색·보일 때).
+  AI 키 칸은 공통 모듈 aiKey(2026-11-25): 베타만: 목소리 줄에 Azure 음성·Google 음성, 사진 받기에 Gemini. 사진 받기의 긴 키 받는 법 안내는 링크 한 줄로. 키는 webapp.* 칸이라 다른 차름 앱과 함께 씀(옛 앱 칸에만 있던 키는 열 때 옮김).

@@ -100,4 +100,5 @@
   누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
   눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리도 이제 공통 모듈 adminButton(2026-11-25).
   공통 모듈로 옮김(2026-11-25 총괄): adminButton(옛 #aqua 버튼을 바꿈)·reportLink·endLesson·printFit·recordKit·spot(멈춘 곳, 저장 칸 wl007b_resume 그대로)·voiceKit·progBar. 앱 안 그 칸들은 손으로 고치지 않음(common/ 원본 → tools/sync-modules.py). 이 앱만 다른 것은 endLesson 칸 바로 뒤 한 줄 ReportLink.set·EndLesson.set(게시판 글 주소·영역 색·보일 때).
+  AI 키 칸은 공통 모듈 aiKey(2026-11-25): Google 음성(설정 → 목소리). 옛 휴대폰 받기·키 받는 법 접기·키 지우기 단추는 모듈 안으로. 키는 webapp.* 칸이라 다른 차름 앱과 함께 씀(옛 앱 칸에만 있던 키는 열 때 옮김).
   관리 메뉴 동안은 왼쪽 아래 '다시 듣기'(.replay)를 숨김 — 수업 끝내기·오류 알리기와 겹치던 것(2026-11-25). 캡처 04~19의 관리 버튼은 새 모양으로 바꿔 넣음.
