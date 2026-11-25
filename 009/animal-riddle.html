@@ -250,27 +250,13 @@ body.admin .dock{display:block}
 #spotTip b{display:block;margin-bottom:2px}
 #spotTip .k{color:var(--muted);font-size:12px;float:right}
 
-/* 교사 버튼 (3초 누르기) — 공통 규격 */
-#adminBtn{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:43px;height:43px;border-radius:50%;
-  z-index:85;touch-action:none;--p:0;padding:0;opacity:.4;transition:opacity .3s;
-  border:1px solid rgba(14,92,170,.55);
-  background:
-    radial-gradient(ellipse 70% 45% at 50% 88%, rgba(170,245,255,.95), rgba(170,245,255,0) 70%),
-    radial-gradient(circle at 50% 40%, #4FC4F5 0%, #1E8BE0 55%, #0D5FB8 100%);
-  box-shadow:inset 0 -4px 10px rgba(150,240,255,.55), inset 0 3px 6px rgba(0,40,100,.45), 0 4px 10px rgba(0,60,130,.35), 0 1px 2px rgba(0,30,70,.4)}
-#adminBtn::before{content:"";position:absolute;left:14%;right:14%;top:5%;height:44%;border-radius:50% 50% 45% 45% / 60% 60% 40% 40%;
-  background:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,.35) 60%, rgba(255,255,255,.05));pointer-events:none}
-#adminBtn::after{content:"";position:absolute;inset:-5px;border-radius:50%;
-  background:conic-gradient(#22AFBC calc(var(--p)*360deg),transparent 0);
-  -webkit-mask:radial-gradient(circle,transparent 22px,#000 23px);mask:radial-gradient(circle,transparent 22px,#000 23px);opacity:.9}
-#adminBtn .ab-label{position:relative;display:block;text-align:center;font-family:var(--f-body);font-weight:700;font-size:8.5px;letter-spacing:.02em;line-height:1;color:#FFFFFF;text-shadow:0 1px 1.5px rgba(0,50,110,.65);pointer-events:none}
-body.admin #adminBtn .ab-label{font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:0;color:#9FF3F5;text-shadow:0 0 6px rgba(63,207,210,.7),0 1px 1px rgba(0,0,0,.6)}
-body.admin #adminBtn{opacity:.6;border-color:rgba(10,20,26,.8);
-  background:
-    radial-gradient(ellipse 70% 45% at 50% 88%, rgba(110,230,240,.85), rgba(110,230,240,0) 70%),
-    radial-gradient(circle at 50% 40%, #3D4F5A 0%, #17242C 60%, #05090C 100%);
-  box-shadow:inset 0 -4px 10px rgba(90,220,235,.45), inset 0 3px 6px rgba(0,0,0,.6), 0 4px 10px rgba(0,0,0,.4), 0 0 0 3px rgba(63,207,210,.35)}
-body.setup #adminBtn{display:none}
+
+
+
+
+
+
+
 @media print{body *{visibility:hidden}#recBox,#recBox *{visibility:visible}#recBox{position:absolute;left:0;top:0;box-shadow:none}#recView{position:static;background:none;padding:0}.noprint{display:none!important}}
 @media (max-width:600px){.title h1{font-size:34px}.title h1 small{font-size:20px}#startBtn{min-width:200px;font-size:24px}}
 
@@ -428,7 +414,82 @@ details.more .card{background:transparent}
 <div id="recView"><div id="recBox"></div></div>
 <div id="printArea"></div>
 <div id="spot"></div><div id="spotTip"></div>
-<button id="adminBtn" type="button" aria-label="교사 모드: 3초 동안 누르기"><span class="ab-label" id="abLabel">charum</span></button>
+<script id="adminButton">
+/* 차름 공통 모듈: 관리 버튼 모양(adminButton) — 원본은 common/adminButton.js. 앱 안의 <script id="adminButton">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   오른쪽 아래 파란 물방울 버튼(닫혀 있으면 "charum", 관리 메뉴가 열리면 검은 바탕에 "심"), 누르는 동안 도는 고리까지 모양을 한곳에(2026-11-25 선생님 —
+   007만 옛 모양이라 글자가 넘치던 것 때문). 다른 모듈과 달리 이것은 모양까지 맡는다(모든 앱이 똑같은 버튼이어야 해서).
+   누르는 동작은 adminHold 모듈: 3초 누르기 앱은 AdminButton.hold({...}), 한 번 누르는 앱(004·005·006)은 AdminButton.tap(fn).
+
+   AdminButton.put({ z, open, hide })   — 버튼을 놓을 자리(body 안)에서 부름. 버튼(#adminBtn)을 돌려줌.
+     z     z-index(없으면 50)
+     open  관리 메뉴가 열려 있는지 () => 참/거짓 (없으면 body에 admin이 붙었을 때) — 열리면 검은 바탕·"심"
+     hide  버튼을 숨길 때 () => 참/거짓 (없으면 body에 setup이 붙었을 때 — 처음 설정 화면에는 필요 없음)
+   AdminButton.hold({isOpen, canOpen, open, close, ms, holding, bubble})  = AdminHold.bind(버튼, …)
+   AdminButton.tap(fn)   한 번 누르면 fn(e) — 눌리는 자리는 AdminHold.pad로 화면 구석까지
+   AdminButton.sync()    열림·숨김을 바로 다시 봄(앱이 메뉴를 열고 닫은 바로 뒤에 부르면 0.25초 기다리지 않음) */
+window.AdminButton = (function () {
+  'use strict';
+  var o = { z: 50, open: null, hide: null }, btn = null;
+  var CSS = '#adminBtn{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:43px;height:43px;border-radius:50%;'
+    + 'z-index:var(--ab-z,50);touch-action:none;--p:0;padding:0;margin:0;opacity:.4;transition:opacity .3s;cursor:pointer;display:flex;align-items:center;justify-content:center;'
+    + '-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;'
+    + 'border:1px solid rgba(14,92,170,.55);'
+    + 'background:radial-gradient(ellipse 70% 45% at 50% 88%,rgba(170,245,255,.95),rgba(170,245,255,0) 70%),radial-gradient(circle at 50% 40%,#4FC4F5 0%,#1E8BE0 55%,#0D5FB8 100%);'
+    + 'box-shadow:inset 0 -4px 10px rgba(150,240,255,.55),inset 0 3px 6px rgba(0,40,100,.45),0 4px 10px rgba(0,60,130,.35),0 1px 2px rgba(0,30,70,.4)}'
+    + '#adminBtn::before{content:"";position:absolute;left:14%;right:14%;top:5%;height:44%;border-radius:50% 50% 45% 45%/60% 60% 40% 40%;'
+    + 'background:linear-gradient(to bottom,rgba(255,255,255,.95),rgba(255,255,255,.35) 60%,rgba(255,255,255,.05));pointer-events:none}'
+    + '#adminBtn::after{content:"";position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(#22AFBC calc(var(--p)*360deg),transparent 0);'
+    + '-webkit-mask:radial-gradient(circle,transparent 22px,#000 23px);mask:radial-gradient(circle,transparent 22px,#000 23px);opacity:.9;pointer-events:none}'
+    + '#adminBtn .ab-label{position:relative;display:block;text-align:center;font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;font-weight:700;font-size:8.5px;'
+    + 'letter-spacing:.02em;line-height:1;color:#fff;text-shadow:0 1px 1.5px rgba(0,50,110,.65);pointer-events:none;white-space:nowrap}'
+    + '#adminBtn.ab-on{opacity:.6;border-color:rgba(10,20,26,.8);'
+    + 'background:radial-gradient(ellipse 70% 45% at 50% 88%,rgba(110,230,240,.85),rgba(110,230,240,0) 70%),radial-gradient(circle at 50% 40%,#3D4F5A 0%,#17242C 60%,#05090C 100%);'
+    + 'box-shadow:inset 0 -4px 10px rgba(90,220,235,.45),inset 0 3px 6px rgba(0,0,0,.6),0 4px 10px rgba(0,0,0,.4),0 0 0 3px rgba(63,207,210,.35)}'
+    + '#adminBtn.ab-on .ab-label{font-family:Jua,"Noto Sans KR",sans-serif;font-weight:400;font-size:17px;letter-spacing:0;color:#9FF3F5;text-shadow:0 0 6px rgba(63,207,210,.7),0 1px 1px rgba(0,0,0,.6)}'
+    + '#adminBtn.ab-hide{display:none}'
+    + '@media print{#adminBtn{display:none!important}}';
+  function isOpen() { try { return o.open ? !!o.open() : document.body.classList.contains('admin'); } catch (e) { return false; } }
+  function isHidden() { try { return o.hide ? !!o.hide() : document.body.classList.contains('setup'); } catch (e) { return false; } }
+  function sync() {
+    if (!btn) return;
+    var on = isOpen();
+    btn.classList.toggle('ab-on', on);
+    btn.classList.toggle('ab-hide', isHidden());
+    var t = on ? '심' : 'charum', l = btn.querySelector('.ab-label');
+    if (l && l.textContent !== t) l.textContent = t;
+  }
+  function put(x) {
+    for (var k in (x || {})) o[k] = x[k];
+    if (!document.getElementById('abStyle')) {
+      var st = document.createElement('style'); st.id = 'abStyle'; st.textContent = CSS; document.head.appendChild(st);
+    }
+    btn = document.getElementById('adminBtn');
+    if (!btn) {
+      btn = document.createElement('button'); btn.id = 'adminBtn'; btn.type = 'button';
+      btn.setAttribute('aria-label', '교사 모드: 3초 동안 누르기');
+      btn.innerHTML = '<span class="ab-label" id="abLabel">charum</span>';
+      var s = document.currentScript;
+      if (s && s.parentNode && s.parentNode !== document.head) s.parentNode.insertBefore(btn, s); else document.body.appendChild(btn);
+    }
+    btn.style.setProperty('--ab-z', o.z);
+    sync(); setInterval(sync, 250);
+    return btn;
+  }
+  function hold(h) {
+    var x = {}; for (var k in h) x[k] = h[k];
+    var oo = x.open, oc = x.close;
+    x.open = function () { var r = oo && oo.apply(this, arguments); sync(); return r; };
+    x.close = function () { var r = oc && oc.apply(this, arguments); sync(); return r; };
+    window.AdminHold.bind(btn, x);
+  }
+  function tap(fn) {
+    btn.setAttribute('aria-label', '관리');
+    window.AdminHold.pad(btn);
+    btn.addEventListener('click', function (e) { fn(e); sync(); });
+  }
+  return { put: put, hold: hold, tap: tap, sync: sync, el: function () { return btn; } };
+})();
+</script><script>AdminButton.put({z:85});</script>
 
 <script id="roster">
 /* 차름 공통 모듈: 학생 명단(roster) — 원본은 common/roster.js. 앱 안의 <script id="roster">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
@@ -549,6 +610,156 @@ details.more .card{background:transparent}
   }
 
   window.Roster = { list: list, nameOf: nameOf, has: has, add: add, remove: remove, kept: kept, purge: purge, mount: mount, KEEP_DAYS: KEEP_DAYS };
+})();
+</script>
+<script id="voiceKit">
+/* 차름 공통 모듈: 말하기 부품(voiceKit) — 원본은 common/voiceKit.js. 앱 안의 <script id="voiceKit">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   앱마다 똑같이 복사해 쓰던 말하기의 밑바탕을 한곳에(2026-11-25). 무엇을 언제 말할지·소리 고르기·끊긴 말 다시 하기는 앱마다(말하는 차례가 앱마다 달라서).
+   VoiceKit.sha16(글)       미리 만든 목소리 파일 이름(문장 조각 SHA-1 앞 16자리 — media/voice/<묶음>/<이름>.mp3). https가 아니어도 됨(sha1Bytes로 셈)
+   VoiceKit.splitSay(글)    문장 조각으로 나눔(. ! ? , 뒤에서)
+   VoiceKit.pickKoVoice()   기기 한국어 목소리 가운데 가장 나은 것(프리미엄·향상·Google·유나 순)
+   VoiceKit.fsAsk()         전체 화면을 청할 때 부름(청하기가 실패하면 fsAsk(0)) — 말 끊김 막기(2026-10-25, 003에서 옮김): 전체 화면으로 바뀌는 동안(기기에 따라 소리가 끊기거나 잠깐 "안 보임")은
+   VoiceKit.fsBusy()        말을 시작하지 않음(청한 뒤 1.5초 안에 아직 안 바뀜, 또는 바뀐 지 0.6초 안이면 true)
+   VoiceKit.afterFull(fn)   바뀜이 끝나면(늦어도 2초) fn */
+window.VoiceKit = (function () {
+  'use strict';
+function sha1Bytes(msg){
+  const l=msg.length, w=[], H=[0x67452301,0xEFCDAB89,0x98BADCFE,0x10325476,0xC3D2E1F0];
+  const m=new Uint8Array(((l+9+63)>>6)<<6); m.set(msg); m[l]=0x80; const bl=l*8; const dv=new DataView(m.buffer); dv.setUint32(m.length-4,bl>>>0); dv.setUint32(m.length-8,Math.floor(bl/4294967296));
+  for(let i=0;i<m.length;i+=64){
+    for(let t=0;t<16;t++) w[t]=dv.getUint32(i+t*4);
+    for(let t=16;t<80;t++){ const x=w[t-3]^w[t-8]^w[t-14]^w[t-16]; w[t]=(x<<1)|(x>>>31); }
+    let [a,b,c,d,e]=H;
+    for(let t=0;t<80;t++){ const f=t<20?(b&c)|(~b&d):t<40?b^c^d:t<60?(b&c)|(b&d)|(c&d):b^c^d, k=t<20?0x5A827999:t<40?0x6ED9EBA1:t<60?0x8F1BBCDC:0xCA62C1D6;
+      const tmp=(((a<<5)|(a>>>27))+f+e+k+w[t])>>>0; e=d; d=c; c=(b<<30)|(b>>>2); b=a; a=tmp; }
+    H[0]=(H[0]+a)>>>0; H[1]=(H[1]+b)>>>0; H[2]=(H[2]+c)>>>0; H[3]=(H[3]+d)>>>0; H[4]=(H[4]+e)>>>0;
+  }
+  const out=new Uint8Array(20); const ov=new DataView(out.buffer); H.forEach((h,i)=>ov.setUint32(i*4,h)); return out;
+}
+async function sha16(t){ const u=new TextEncoder().encode(t); const d=window.crypto&&crypto.subtle?new Uint8Array(await crypto.subtle.digest('SHA-1',u)):sha1Bytes(u); return [...d].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
+function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim()).filter(Boolean); }
+function pickKoVoice(){ const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.replace('_','-').toLowerCase().startsWith('ko')):[];
+  if(!vs.length) return null;
+  const score=v=>(/premium|프리미엄/i.test(v.name)?4:0)+(/enhanced|향상/i.test(v.name)?3:0)+(/google/i.test(v.name)?2:0)+(/yuna|유나/i.test(v.name)?1:0)+(v.localService?0.5:0);
+  return vs.sort((a,b)=>score(b)-score(a))[0]; }
+  var fsAskAt = 0, fsChangeAt = 0;
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (ev) { document.addEventListener(ev, function () { fsChangeAt = performance.now(); }); });
+  function fsAsk(t) { fsAskAt = t == null ? performance.now() : t; }   /* 청하기가 실패하면 fsAsk(0) */
+  function fsBusy() { var now = performance.now(); return (fsAskAt > fsChangeAt && now - fsAskAt < 1500) || (fsChangeAt > 0 && now - fsChangeAt < 600); }
+  function afterFull(fn) { var t0 = performance.now(); var chk = function () { if (performance.now() - t0 > 2000 || !fsBusy()) fn(); else setTimeout(chk, 100); }; chk(); }
+  return { sha1Bytes: sha1Bytes, sha16: sha16, splitSay: splitSay, pickKoVoice: pickKoVoice, fsAsk: fsAsk, fsBusy: fsBusy, afterFull: afterFull };
+})();
+</script>
+<script id="progBar">
+/* 차름 공통 모듈: 진행 표시(progBar) — 원본은 common/progBar.js. 앱 안의 <script id="progBar">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   지침 3절: 학생 화면 맨 위 가운데, 숫자 없이 칸 막대(10칸 넘으면 이어진 막대). 칸·막대를 짜는 일만 여기서, 색·크기·자리는 앱 CSS 그대로(2026-11-25).
+   ProgBar.draw(넣을 곳, 모두, 한 것, 고를 것)
+     모두 ≤ max(10)이면 칸: <i class="d">(한 것) <i class="n">(지금) <i>(남은 것)
+     넘으면 이어진 막대: <b style="width:…%">  — 같은 막대를 다시 그리면 너비만 바꿈(부드럽게 늘어나게)
+   고를 것: tag 칸 태그('i')  done 한 칸 class('d')  now 지금 칸 class('n')  wrap 칸을 감쌀 span class('')
+            max 칸으로 그릴 최대(10, Infinity면 늘 칸)  bar 막대 틀(HTML, 안쪽 너비 줄 자리에 %W — 없으면 '<b style="width:%W%"></b>')
+            pct 막대 너비(없으면 (한 것+next)/모두)  next 지금 칸까지 채움(true/false)  min 막대 최소 너비%(0)
+            cellsClass / barClass  칸·막대일 때 넣을 곳에 붙일 class(주지 않으면 그대로) */
+window.ProgBar = (function () {
+  'use strict';
+  function draw(el, n, k, o) {
+    o = o || {};
+    if (!el) return;
+    var max = o.max == null ? 10 : o.max;
+    if (n <= max) {
+      var tag = o.tag || 'i', dn = o.done == null ? 'd' : o.done, nw = o.now == null ? 'n' : o.now, h = '';
+      for (var i = 0; i < n; i++) h += '<' + tag + (i < k ? ' class="' + dn + '"' : i === k ? ' class="' + nw + '"' : '') + '></' + tag + '>';
+      el.innerHTML = o.wrap ? '<span class="' + o.wrap + '">' + h + '</span>' : h;
+      if (o.cellsClass != null) el.className = o.cellsClass;
+      el.removeAttribute('data-pg');
+      return 'cells';
+    }
+    var p = o.pct != null ? o.pct : (k + (o.next ? 1 : 0)) / Math.max(1, n) * 100;
+    p = Math.max(o.min || 0, Math.min(100, Math.round(p)));
+    var tpl = o.bar || '<b style="width:%W%"></b>';
+    if (o.barClass != null) el.className = o.barClass;
+    if (el.getAttribute('data-pg') === tpl) {
+      var w = el.querySelector('[style*="width"]');
+      if (w) { w.style.width = p + '%'; return 'bar'; }
+    }
+    el.innerHTML = tpl.replace('%W', p);
+    el.setAttribute('data-pg', tpl);
+    return 'bar';
+  }
+  return { draw: draw };
+})();
+</script>
+<script id="recordKit">
+/* 차름 공통 모듈: 기록 저장·CSV(recordKit) — 원본은 common/recordKit.js. 앱 안의 <script id="recordKit">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   기록은 기기에만(localStorage). 무엇을 한 줄에 적을지·요약 꼴은 앱마다, 저장하고 CSV로 내보내고 불러오는 손놀림만 여기서 한곳에(2026-11-25).
+   RecordKit.ls.get(이름) / .set(이름, 글 또는 null=지움)   localStorage를 막아 둔 기기에서도 멈추지 않음(없으면 null)
+   RecordKit.json(이름, 없을 때 값) / RecordKit.save(이름, 값)   JSON으로 읽고 쓰기
+   RecordKit.csv(머리 칸 배열, 줄 배열)   엑셀에서 바로 열리는 CSV 글(한글 깨짐 막는 BOM, 줄 끝 \r\n, 쉼표·따옴표·줄바꿈이 든 칸만 따옴표)
+   RecordKit.download(파일 이름, 글)     CSV 파일로 내려받기
+   RecordKit.parse(글)                    CSV 글 → 줄 배열(맨 앞 BOM은 뗌, 칸이 하나뿐인 빈 줄은 뺌) */
+window.RecordKit = (function () {
+  'use strict';
+  var ls = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
+  };
+  function json(k, d) { try { var v = JSON.parse(ls.get(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function save(k, v) { ls.set(k, v == null ? null : JSON.stringify(v)); }
+  function cell(v) { v = String(v == null ? '' : v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function csv(head, rows) { return '﻿' + [head].concat(rows).map(function (r) { return r.map(cell).join(','); }).join('\r\n'); }
+  function download(name, text) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' })); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  function parse(t) {
+    t = String(t || '').replace(/^﻿/, '');
+    var rows = [], r = [], c = '', q = false;
+    for (var i = 0; i < t.length; i++) {
+      var ch = t[i];
+      if (q) { if (ch === '"') { if (t[i + 1] === '"') { c += '"'; i++; } else q = false; } else c += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === ',') { r.push(c); c = ''; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && t[i + 1] === '\n') i++; r.push(c); rows.push(r); r = []; c = ''; }
+      else c += ch;
+    }
+    if (c || r.length) { r.push(c); rows.push(r); }
+    return rows.filter(function (x) { return x.length > 1 || (x[0] || '').trim() !== ''; });
+  }
+  return { ls: ls, json: json, save: save, cell: cell, csv: csv, download: download, parse: parse };
+})();
+</script>
+<script id="spot">
+/* 차름 공통 모듈: 멈춘 곳(spot) — 원본은 common/spot.js. 앱 안의 <script id="spot">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   학생마다(학생을 고르지 않으면 '_') 하던 자리를 기기에 저장해, 창을 닫아도 그 학생을 고르면 "멈춘 곳: … [이어 하기] [멈춘 곳 지우기]".
+   무엇을 저장할지(묶음·단계·차례)는 앱이 정함. 저장 칸 이름은 앱마다 그대로(옮겨도 예전 멈춘 곳이 이어짐) — 2026-11-25 모듈로.
+   const SP = Spot.open('animalHome.resume')   localStorage 칸 이름
+     SP.all          학생 → 저장한 것(객체, 앱이 바로 고쳐도 됨)      SP.save()     SP.all을 기기에 씀
+     SP.get(누구)    SP.set(누구, 저장할 것)    SP.del(누구)          SP.load()     기기에서 다시 읽음(다른 창에서 바뀌었을 때)
+   Spot.bar(넣을 곳, '멈춘 곳 뒤에 붙일 글(HTML)', 이어 하기 할 일, 지우기 할 일)
+     → <div class="resume">멈춘 곳: … <button class="chip sm on" id="rsGo">이어 하기</button><button class="chip sm" id="rsDel">멈춘 곳 지우기</button></div>
+       모양(.resume·.chip)은 앱 CSS 그대로 */
+window.Spot = (function () {
+  'use strict';
+  function read(k) { try { var v = JSON.parse(localStorage.getItem(k) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  function open(key) {
+    var sp = {
+      all: read(key),
+      load: function () { sp.all = read(key); return sp.all; },
+      save: function () { try { localStorage.setItem(key, JSON.stringify(sp.all)); } catch (e) {} },
+      get: function (who) { return sp.all[who || '_'] || null; },
+      set: function (who, o) { sp.all[who || '_'] = o; sp.save(); },
+      del: function (who) { delete sp.all[who || '_']; sp.save(); }
+    };
+    return sp;
+  }
+  function bar(el, html, go, del) {
+    el.innerHTML = '<div class="resume">멈춘 곳: ' + html + ' <button class="chip sm on" id="rsGo" type="button">이어 하기</button><button class="chip sm" id="rsDel" type="button">멈춘 곳 지우기</button></div>';
+    el.querySelector('#rsGo').onclick = go;
+    el.querySelector('#rsDel').onclick = del;
+  }
+  return { open: open, bar: bar };
 })();
 </script>
 <script id="adminHold">
@@ -798,7 +1009,7 @@ function allLines(){ const L=new Set();
 
 
 /* ================= 저장 ================= */
-const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+const ls=RecordKit.ls;   /* 공통 모듈 recordKit */
 const store={get:k=>ls.get('animalRiddle.'+k),set:(k,v)=>ls.set('animalRiddle.'+k,v)};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -825,8 +1036,9 @@ const saveLog=()=>{ if(LOG.length>12000) LOG=LOG.slice(-12000); store.set('log2'
 { const n=LOG.length; LOG=Roster.purge(LOG); if(LOG.length!==n) saveLog(); }
 if(S.stu&&!Roster.has(S.stu)) S.stu='';
 const nameOf=Roster.nameOf;
-let RESUME={}; try{ RESUME=JSON.parse(store.get('resume2')||'{}')||{}; }catch(e){ RESUME={}; }
-const saveResume=()=>store.set('resume2',JSON.stringify(RESUME));
+const SPOT=Spot.open('animalRiddle.resume2');   /* 공통 모듈 spot — 저장 칸은 예전 그대로 */
+let RESUME=SPOT.all;
+const saveResume=()=>{ SPOT.all=RESUME; SPOT.save(); };
 
 /* ================= 소리: 한 수업은 한 목소리 ================= */
 let lastSay='', speakSeq=0, actx=null, curSrc=null, pdown=false;
@@ -864,21 +1076,9 @@ const voiceReady=Promise.all(VBUNDLES.map(b=>fetch(GH+'media/voice/'+b.id+'/inde
   .then(async sets=>{ VSETS=sets; VSET=new Set(); sets.forEach(st=>st.forEach(h=>VSET.add(h)));
     const hs=await Promise.all(window.__voiceLines().map(sha16)); VCREDIT=hs.some(h=>sets[0].has(h))?VBUNDLES[0].credit:''; })
   .catch(()=>{ VSET=new Set(); });
-function sha1Bytes(msg){
-  const l=msg.length, w=[], H=[0x67452301,0xEFCDAB89,0x98BADCFE,0x10325476,0xC3D2E1F0];
-  const m=new Uint8Array(((l+9+63)>>6)<<6); m.set(msg); m[l]=0x80; const bl=l*8; const dv=new DataView(m.buffer); dv.setUint32(m.length-4,bl>>>0); dv.setUint32(m.length-8,Math.floor(bl/4294967296));
-  for(let i=0;i<m.length;i+=64){
-    for(let t=0;t<16;t++) w[t]=dv.getUint32(i+t*4);
-    for(let t=16;t<80;t++){ const x=w[t-3]^w[t-8]^w[t-14]^w[t-16]; w[t]=(x<<1)|(x>>>31); }
-    let [a,b,c,d,e]=H;
-    for(let t=0;t<80;t++){ const f=t<20?(b&c)|(~b&d):t<40?b^c^d:t<60?(b&c)|(b&d)|(c&d):b^c^d, k=t<20?0x5A827999:t<40?0x6ED9EBA1:t<60?0x8F1BBCDC:0xCA62C1D6;
-      const tmp=(((a<<5)|(a>>>27))+f+e+k+w[t])>>>0; e=d; d=c; c=(b<<30)|(b>>>2); b=a; a=tmp; }
-    H[0]=(H[0]+a)>>>0; H[1]=(H[1]+b)>>>0; H[2]=(H[2]+c)>>>0; H[3]=(H[3]+d)>>>0; H[4]=(H[4]+e)>>>0;
-  }
-  const out=new Uint8Array(20); const ov=new DataView(out.buffer); H.forEach((h,i)=>ov.setUint32(i*4,h)); return out;
-}
-async function sha16(t){ const u=new TextEncoder().encode(t); const d=window.crypto&&crypto.subtle?new Uint8Array(await crypto.subtle.digest('SHA-1',u)):sha1Bytes(u); return [...d].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }
-function splitSay(t){ return String(t||'').split(/(?<=[.!?,])\s+/).map(x=>x.trim()).filter(Boolean); }
+function sha1Bytes(m){ return VoiceKit.sha1Bytes(m); }
+function sha16(t){ return VoiceKit.sha16(t); }   /* 공통 모듈 voiceKit */
+function splitSay(t){ return VoiceKit.splitSay(t); }
 /* 말 목록 뽑기(제작자용): 콘솔에서 __voiceLines() → 008/voice-lines.json 과 같은 목록 */
 window.__voiceLines=()=>{ const parts=[]; allLines().forEach(t=>splitSay(t).forEach(x=>{ if(!parts.includes(x)) parts.push(x); })); return parts; };
 let BUILTIN_OK=false;
@@ -898,10 +1098,7 @@ function getClip(text){
   return CLIPS.get(text);
 }
 let koVoice=null;
-function pickKoVoice(){ const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.replace('_','-').toLowerCase().startsWith('ko')):[];
-  if(!vs.length) return null;
-  const score=v=>(/premium|프리미엄/i.test(v.name)?4:0)+(/enhanced|향상/i.test(v.name)?3:0)+(/google/i.test(v.name)?2:0)+(/yuna|유나/i.test(v.name)?1:0)+(v.localService?0.5:0);
-  return vs.sort((a,b)=>score(b)-score(a))[0]; }
+function pickKoVoice(){ return VoiceKit.pickKoVoice(); }
 if('speechSynthesis' in window){ koVoice=pickKoVoice(); speechSynthesis.addEventListener?.('voiceschanged',()=>{ koVoice=pickKoVoice(); }); }
 function deviceSay(text,id,done){
   if(!('speechSynthesis' in window)){ setTimeout(done,Math.max(900,text.length*130)); return; }
@@ -915,10 +1112,8 @@ function deviceSay(text,id,done){
 }
 /* 말 끊김 막기(2026-10-25, 003에서 옮김): 전체 화면으로 바뀌는 동안(기기에 따라 소리가 끊기거나 잠깐 "안 보임"이 됨)에는
    말을 시작하지 않고 끝난 뒤 0.6초(늦어도 2초) 기다렸다 말함. 안 보임·소리 끊김으로 멈춘 말은 돌아온 뒤 처음부터 다시 */
-let fsAskAt=0, fsChangeAt=0;
-['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{ fsChangeAt=performance.now(); }));
-function fsBusy(){ const now=performance.now(); return (fsAskAt>fsChangeAt&&now-fsAskAt<1500)||(fsChangeAt>0&&now-fsChangeAt<600); }
-function afterFull(fn){ const t0=performance.now(); const chk=()=>{ if(performance.now()-t0>2000||!fsBusy()) fn(); else setTimeout(chk,100); }; chk(); }
+function fsBusy(){ return VoiceKit.fsBusy(); }   /* 공통 모듈 voiceKit */
+function afterFull(fn){ VoiceKit.afterFull(fn); }
 /* 보이지 않는 동안은 말하지 않고, 말하던 중이었으면 돌아온 뒤 그 말을 처음부터 다시(말이 끝나기를 기다리던 다음 할 일도 이어짐) */
 let hiddenSay=null, curSay=null;
 document.addEventListener('visibilitychange',()=>{
@@ -953,7 +1148,7 @@ function speak(text){ return new Promise(resolve=>{
 }); }
 /* ================= 전체 화면 ================= */
 function goFull(){ try{ const d=document.documentElement; if(document.fullscreenElement||document.webkitFullscreenElement) return;
-  fsAskAt=performance.now();
+  VoiceKit.fsAsk();
   if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen(); }catch(e){} }
 document.addEventListener('contextmenu',e=>{ if(!document.body.classList.contains('setup')) e.preventDefault(); });
 
@@ -1010,9 +1205,7 @@ function renderSetup(){
   const rb=$('resumeBox'); rb.innerHTML='';
   const rs=RESUME[S.stu||'_'];
   if(rs&&LV[rs.lv]&&Array.isArray(rs.animals)){
-    rb.innerHTML='<div class="resume">멈춘 곳: '+LV[rs.lv].name+' · '+(STEP_NAME(rs.ph)||'')+' <button class="chip sm on" id="rsGo">이어 하기</button><button class="chip sm" id="rsDel">멈춘 곳 지우기</button></div>';
-    $('rsGo').onclick=()=>{ S.level=rs.lv; saveS(); startLesson(rs); };
-    $('rsDel').onclick=()=>{ delete RESUME[S.stu||'_']; saveResume(); renderSetup(); };
+    Spot.bar(rb,LV[rs.lv].name+' · '+(STEP_NAME(rs.ph)||''),()=>{ S.level=rs.lv; saveS(); startLesson(rs); },()=>{ delete RESUME[S.stu||'_']; saveResume(); renderSetup(); });   /* 공통 모듈 spot */
   }
   const lr=$('lvRow'); lr.innerHTML='';
   Object.keys(LV).forEach(l=>chipBtn(lr,'<b>'+LV[l].name+'</b><span>'+LV[l].desc+'</span>',S.level==l,()=>{ S.level=+l; saveS(); renderSetup(); flash('c3'); },'lv'));
@@ -1077,8 +1270,7 @@ function renderProg(){
   const pr=$('prog'); pr.innerHTML=''; pr.className='';
   if(!RUN||RUN.ending||!RUN.phases.length) return;
   const T=totalItems(), D=doneItems();
-  if(T>10){ pr.className='bar'; pr.innerHTML='<b style="width:'+Math.max(4,Math.round((D+1)/T*100))+'%"></b>'; return; }
-  for(let i=0;i<T;i++){ const c=document.createElement('i'); if(i<D) c.className='d'; else if(i===D) c.className='n'; pr.appendChild(c); }
+  ProgBar.draw(pr,T,D,{next:true,min:4,barClass:'bar',cellsClass:''});   /* 공통 모듈 progBar: 10칸까지 칸, 넘으면 이어진 막대 */
 }
 function saveSpot(){ if(!RUN) return; const ph=RUN.ending?'game':(RUN.phases[RUN.pi]||{}).k; if(!ph||(RUN.ending&&RUN.gameDone)) return;
   RESUME[S.stu||'_']={lv:RUN.lv,animals:RUN.animals,ph,ii:RUN.ending?0:RUN.ii,sub:RUN.sub,t:Date.now()}; saveResume(); }
@@ -1436,12 +1628,12 @@ function drawEnd(tok){
 /* ================= 교사 모드 버튼 =================
    켤 때: 3초 누르기 → 왼쪽 위 작은 점 누르기 / 끌 때: 한 번 → 멈춘 단계 처음부터 */
 /* 3초 누르기 → 왼쪽 위 점 / 열려 있으면 한 번에 닫기 — 동작은 공통 모듈 AdminHold(common/adminHold.js) */
-AdminHold.bind($('adminBtn'),{isOpen:()=>S.admin, open:()=>setAdmin(true), close:()=>closeAdmin()});
+AdminButton.hold({isOpen:()=>S.admin, open:()=>setAdmin(true), close:()=>closeAdmin()});
 let PEND=null;
 function setAdmin(on){
   S.admin=on; document.body.classList.toggle('admin',on);
   $('adminBtn').setAttribute('aria-label', on?'교사 모드 끄기: 한 번 누르기':'교사 모드: 3초 동안 누르기');
-  $('abLabel').textContent=on?'심':'charum';
+  AdminButton.sync();
   if(on){ stopVoice(); speakSeq++; clearTimers(); Ear.stop(); PEND=null; renderDock(); }
   else { $('recView').classList.remove('on'); hideSpot(); }
 }
@@ -1582,8 +1774,7 @@ function renderRecords(){
   const ls_=$('lvSet'); if(ls_) ls_.onclick=()=>{ S.level=+ls_.dataset.l; saveS(); renderSetup(); ls_.textContent='바꿨습니다(설정 화면 ②)'; ls_.disabled=true; };
   $('recCsv').onclick=()=>{ const head=['학생','시각','수준','단계','동물','들은 고개','결과','먼저 고른·말한 것'];
     const lines=[head].concat(rows.map(r=>[ex?'홍길동(예시)':nameOf(r.s),dayOf(r.t)+' '+new Date(r.t).toTimeString().slice(0,8),r.lv,PH_NAME[r.ph],r.a,r.n||'',r.res==='first'?'바로':'도움 받아',r.w]));
-    const csv='﻿'+lines.map(l=>l.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
-    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='동물다섯고개_기록_'+(who||'학생')+'.csv'; a.click(); };
+    RecordKit.download('동물다섯고개_기록_'+(who||'학생')+'.csv',RecordKit.csv(lines[0],lines.slice(1))); };   /* 공통 모듈 recordKit */
   $('recPrint').onclick=()=>{ if(window.PrintFit) PrintFit.page('portrait',12); setTimeout(()=>window.print(),50); };
 }
 $('recView').addEventListener('pointerdown',e=>{ if(e.target.id==='recView') $('recView').classList.remove('on'); });
@@ -1664,19 +1855,50 @@ window.AdminGate = (function () {
 })();
 </script>
 <script id="reportLink">
-/* 오류·의견 알리기(10-26 휴대폰처럼 좁으면 💬 동그라미만): 선생님 화면(설정·관리 메뉴)에서만 왼쪽 아래에 작게. 차름 게시판 이 앱 글의 댓글 칸이 새 탭으로 열림 */
-(function(){
-  var URL='https://www.charum.org/webapp/59934#write';
-  var css=document.createElement('style');
-  css.textContent='#reportBtn{position:fixed;left:12px;bottom:12px;z-index:2147480000;display:none;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid #6A4C9C55;color:#6A4C9C;font:600 13px/1.2 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer}#reportBtn:hover{background:#fff;border-color:#6A4C9C}#reportBtn.on{display:inline-flex}@media (max-width:600px){#reportBtn{width:40px;height:40px;padding:0;justify-content:center;font-size:18px}#reportBtn .rbTxt{display:none}}@media print{#reportBtn{display:none!important}}';
+/* 차름 공통 모듈: 오류·의견 알리기(reportLink) — 원본은 common/reportLink.js. 앱 안의 <script id="reportLink">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   선생님 화면(설정·관리 메뉴)에서만 왼쪽 아래에 작게 "💬 오류·의견 알리기". 누르면 차름 게시판 이 앱 글의 댓글 칸이 새 탭으로(로그인 없이 댓글 가능).
+   휴대폰처럼 좁으면 💬 동그라미만. 수업 끝내기(endLesson)와 같은 왼쪽 아래 묶음(#chCorner)에 들어가 서로 겹치지 않음(맨 아래가 이것).
+   앱이 넘겨 줌: ReportLink.set({ board: 'https://www.charum.org/webapp/59784', color: '#17766F', when: () => 참/거짓 })
+     board  이 앱 게시판 글 주소(없으면 게시판 목록)      color  앱 영역 색(글자·테두리)
+     when   언제 보일지(없으면 body에 setup 또는 admin이 붙었을 때)   2026-10-22 처음, 2026-11-25 모듈로 */
+window.ReportLink = (function () {
+  var o = { board: 'https://www.charum.org/webapp', color: '#4E6A80', when: null };
+  var css = document.createElement('style');
+  css.textContent = '#chCorner{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:2147480001;display:flex;flex-direction:column-reverse;align-items:flex-start;gap:8px;pointer-events:none}'
+    + '#chCorner>*{pointer-events:auto}'
+    + '#reportBtn{display:none;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid var(--rb-c55);color:var(--rb-c);font:600 13px/1.2 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer}'
+    + '#reportBtn:hover{background:#fff;border-color:var(--rb-c)}#reportBtn.on{display:inline-flex}'
+    + '@media (max-width:600px){#reportBtn{width:40px;height:40px;padding:0;justify-content:center;font-size:18px}#reportBtn .rbTxt{display:none}}'
+    + '@media print{#chCorner{display:none!important}}';
   document.head.appendChild(css);
-  function make(){ if(document.getElementById('reportBtn')) return;
-    var a=document.createElement('a'); a.id='reportBtn'; a.href=URL; a.target='_blank'; a.rel='noopener'; a.title='이 앱의 오류나 의견을 게시판 댓글로 남겨요';
-    a.setAttribute('aria-label','오류·의견 알리기'); a.innerHTML='<span aria-hidden="true">💬</span><span class="rbTxt">오류·의견 알리기</span>'; document.body.appendChild(a); }
-  function show(){ try{ return document.body.classList.contains('setup')||document.body.classList.contains('admin'); }catch(e){ return false; } }
-  function tick(){ make(); var a=document.getElementById('reportBtn'); if(a) a.classList.toggle('on',!!show()); }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tick); else tick();
-  setInterval(tick,700);
+  function corner() {
+    var c = document.getElementById('chCorner');
+    if (!c) { c = document.createElement('div'); c.id = 'chCorner'; document.body.appendChild(c); }
+    return c;
+  }
+  function url() { return o.board + (/\/\d+$/.test(o.board) ? '#write' : ''); }
+  function make() {
+    var a = document.getElementById('reportBtn'); if (a) return a;
+    a = document.createElement('a'); a.id = 'reportBtn'; a.target = '_blank'; a.rel = 'noopener'; a.title = '이 앱의 오류나 의견을 게시판 댓글로 남겨요';
+    a.setAttribute('aria-label', '오류·의견 알리기'); a.innerHTML = '<span aria-hidden="true">💬</span><span class="rbTxt">오류·의견 알리기</span>';
+    var c = corner(); c.insertBefore(a, c.firstChild);   /* column-reverse: 첫 자식이 맨 아래 */
+    return a;
+  }
+  function show() {
+    try { if (o.when) return !!o.when(); var c = document.body.classList; return c.contains('setup') || c.contains('admin'); } catch (e) { return false; }
+  }
+  function tick() {
+    if (!document.body) return;
+    var a = make(); a.href = url();
+    a.style.setProperty('--rb-c', o.color); a.style.setProperty('--rb-c55', o.color + '55');
+    a.classList.toggle('on', show());
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tick); else tick();
+  setInterval(tick, 700);
+  return {
+    set: function (x) { for (var k in x) o[k] = x[k]; tick(); },
+    corner: corner
+  };
 })();
 </script>
 <script id="usage">
@@ -1832,53 +2054,76 @@ window.HomeLink = (function () {
 </script>
 <script>HomeLink.setup('#c1');HomeLink.bar('#dockTop');</script>
 <script id="endLesson">
-/* 수업 끝내기: 관리 메뉴를 열면 전체 화면에서 나오고(잠깐 나가기), 관리 메뉴에 있는 동안 왼쪽 아래 "⏻ 수업 끝내기"(두 번 눌러야)로 앱을 아예 끝냄 */
-(function(){
-  var BOARD='https://www.charum.org/webapp/59934';
-  var ctxs=[]; ['AudioContext','webkitAudioContext'].forEach(function(n){ var C=window[n]; if(!C||C.__endWrap) return;
-    var W=function(){ var c=new (Function.prototype.bind.apply(C,[null].concat([].slice.call(arguments))))(); ctxs.push(c); return c; };
-    W.prototype=C.prototype; W.__endWrap=true; try{ window[n]=W; }catch(e){} });
-  var css=document.createElement('style');
-  css.textContent='#endBtn{position:fixed;left:12px;bottom:52px;z-index:2147480001;display:none;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:#fff;border:1.5px solid #B4473B;color:#9A3328;font:700 14px/1.2 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.1);cursor:pointer;touch-action:none}#endBtn.on{display:inline-flex}#endBtn.sure{background:#B4473B;color:#fff}'
-   +'#endCover{position:fixed;inset:0;z-index:2147483600;background:#F3F1EC;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;color:#2B3236}'
-   +'#endCover .c{text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center}#endCover h1{font-family:Jua,"Noto Sans KR",sans-serif;font-weight:400;font-size:44px;margin:0}#endCover p{margin:0;color:#5E676B;font-size:16px}'
-   +'#endCover .r{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}#endCover button,#endCover a{font:700 18px/1 "Noto Sans KR",sans-serif;padding:14px 26px;border-radius:14px;border:1.5px solid #8B979B;background:#fff;color:#2B3236;text-decoration:none;cursor:pointer}#endCover .p{background:#2B3236;color:#fff;border-color:#2B3236}@media print{#endBtn{display:none!important}}';
+/* 차름 공통 모듈: 수업 끝내기(endLesson) — 원본은 common/endLesson.js. 앱 안의 <script id="endLesson">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   전자칠판엔 Esc가 없음 → 관리 메뉴를 열면 전체 화면에서 나오고(잠깐 나가기),
+   관리 메뉴에 있는 동안 왼쪽 아래 "⏻ 수업 끝내기"(두 번 눌러야)로 앱을 아예 끝냄: 소리 멈춤 → 저장 신호 → 전체 화면 나감 → 탭 닫기 → 안 닫히면 "수업을 마쳤어요".
+   오류·의견 알리기(reportLink)와 같은 왼쪽 아래 묶음(#chCorner)에서 그 위에 놓여 서로 겹치지 않음.
+   앱이 넘겨 줌: EndLesson.set({ board: 'https://www.charum.org/webapp/59784', when: () => 참/거짓 })
+     board  "차름 게시판으로" 주소     when  관리 메뉴가 열려 있는지(없으면 body에 admin이 붙었을 때)   2026-10-22 처음, 2026-11-25 모듈로 */
+window.EndLesson = (function () {
+  var o = { board: 'https://www.charum.org/webapp', when: null };
+  var ctxs = []; ['AudioContext', 'webkitAudioContext'].forEach(function (n) {
+    var C = window[n]; if (!C || C.__endWrap) return;
+    var W = function () { var c = new (Function.prototype.bind.apply(C, [null].concat([].slice.call(arguments))))(); ctxs.push(c); return c; };
+    W.prototype = C.prototype; W.__endWrap = true; try { window[n] = W; } catch (e) {}
+  });
+  var css = document.createElement('style');
+  css.textContent = '#endBtn{display:none;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:#fff;border:1.5px solid #B4473B;color:#9A3328;font:700 14px/1.2 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.1);cursor:pointer;touch-action:none}#endBtn.on{display:inline-flex}#endBtn.sure{background:#B4473B;color:#fff}'
+    + '#endCover{position:fixed;inset:0;z-index:2147483600;background:#F3F1EC;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;color:#2B3236}'
+    + '#endCover .c{text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center}#endCover h1{font-family:Jua,"Noto Sans KR",sans-serif;font-weight:400;font-size:44px;margin:0}#endCover p{margin:0;color:#5E676B;font-size:16px}'
+    + '#endCover .r{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}#endCover button,#endCover a{font:700 18px/1 "Noto Sans KR",sans-serif;padding:14px 26px;border-radius:14px;border:1.5px solid #8B979B;background:#fff;color:#2B3236;text-decoration:none;cursor:pointer}#endCover .p{background:#2B3236;color:#fff;border-color:#2B3236}@media print{#endBtn{display:none!important}}';
   document.head.appendChild(css);
-  function admin(){ try{ return document.body.classList.contains('admin'); }catch(e){ return false; } }
-  function exitFull(){ try{ if(document.fullscreenElement) document.exitFullscreen().catch(function(){}); else if(document.webkitFullscreenElement) document.webkitExitFullscreen(); }catch(e){} }
-  function hush(){ try{ speechSynthesis.cancel(); }catch(e){} document.querySelectorAll('audio,video').forEach(function(m){ try{ m.pause(); }catch(e){} }); ctxs.forEach(function(c){ try{ c.suspend(); }catch(e){} }); }
-  function end(){
-    hush(); try{ window.dispatchEvent(new Event('pagehide')); }catch(e){} exitFull();
-    var cv=document.createElement('div'); cv.id='endCover';
-    cv.innerHTML='<div class="c"><h1>수업을 마쳤어요</h1><p>이 창(탭)을 닫아도 됩니다. 하던 것은 이 기기에 저장되어 있습니다.</p><div class="r"><button type="button" class="p" id="endAgain">다시 시작</button><a href="'+BOARD+'">차름 게시판으로</a></div></div>';
+  function admin() { try { return o.when ? !!o.when() : document.body.classList.contains('admin'); } catch (e) { return false; } }
+  function exitFull() { try { if (document.fullscreenElement) document.exitFullscreen().catch(function () {}); else if (document.webkitFullscreenElement) document.webkitExitFullscreen(); } catch (e) {} }
+  function hush() { try { speechSynthesis.cancel(); } catch (e) {} document.querySelectorAll('audio,video').forEach(function (m) { try { m.pause(); } catch (e) {} }); ctxs.forEach(function (c) { try { c.suspend(); } catch (e) {} }); }
+  function end() {
+    hush(); try { window.dispatchEvent(new Event('pagehide')); } catch (e) {} exitFull();
+    var cv = document.createElement('div'); cv.id = 'endCover';
+    cv.innerHTML = '<div class="c"><h1>수업을 마쳤어요</h1><p>이 창(탭)을 닫아도 됩니다. 하던 것은 이 기기에 저장되어 있습니다.</p><div class="r"><button type="button" class="p" id="endAgain">다시 시작</button><a href="' + o.board + '">차름 게시판으로</a></div></div>';
     document.body.appendChild(cv);
-    cv.querySelector('#endAgain').onclick=function(){ location.reload(); };
-    ['pointerdown','click','touchstart','keydown'].forEach(function(t){ cv.addEventListener(t,function(e){ e.stopPropagation(); });   /* 단추가 받은 뒤 막음(잡는 단계에서 막으면 "다시 시작"까지 막힘, 2026-10-26) */ });
-    setTimeout(function(){ try{ window.close(); }catch(e){} },150);
-    setInterval(hush,1000);
+    cv.querySelector('#endAgain').onclick = function () { location.reload(); };
+    ['pointerdown', 'click', 'touchstart', 'keydown'].forEach(function (t) { cv.addEventListener(t, function (e) { e.stopPropagation(); });   /* 단추가 받은 뒤 막음(잡는 단계에서 막으면 "다시 시작"까지 막힘, 2026-10-26) */ });
+    setTimeout(function () { try { window.close(); } catch (e) {} }, 150);
+    setInterval(hush, 1000);   /* 늦게 시작한 소리도 멈춤 */
   }
-  var was=false, sureT=0;
-  function tick(){
-    var b=document.getElementById('endBtn');
-    if(!b){ b=document.createElement('button'); b.id='endBtn'; b.type='button'; b.title='앱을 끝내요(전체 화면에서 나가고 탭을 닫아요)';
-      b.innerHTML='<span aria-hidden="true">⏻</span><span class="t">수업 끝내기</span>';
-      b.addEventListener('pointerdown',function(e){ e.preventDefault(); e.stopPropagation();
-        if(!b.classList.contains('sure')){ b.classList.add('sure'); b.querySelector('.t').textContent='한 번 더 누르면 끝나요'; clearTimeout(sureT);
-          sureT=setTimeout(function(){ b.classList.remove('sure'); b.querySelector('.t').textContent='수업 끝내기'; },3000); return; }
-        end(); });
-      ['click','pointerup'].forEach(function(t){ b.addEventListener(t,function(e){ e.stopPropagation(); }); });
-      document.body.appendChild(b); }
-    var a=admin();
-    b.classList.toggle('on',a);
-    if(a&&!was) exitFull();
-    was=a;
+  function corner() {
+    if (window.ReportLink) return window.ReportLink.corner();
+    var c = document.getElementById('chCorner');
+    if (!c) { c = document.createElement('div'); c.id = 'chCorner'; c.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:2147480001;display:flex;flex-direction:column-reverse;align-items:flex-start;gap:8px'; document.body.appendChild(c); }
+    return c;
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tick); else tick();
-  setInterval(tick,400);
+  var was = false, sureT = 0;
+  function tick() {
+    if (!document.body) return;
+    var b = document.getElementById('endBtn');
+    if (!b) {
+      b = document.createElement('button'); b.id = 'endBtn'; b.type = 'button'; b.title = '앱을 끝내요(전체 화면에서 나가고 탭을 닫아요)';
+      b.innerHTML = '<span aria-hidden="true">⏻</span><span class="t">수업 끝내기</span>';
+      b.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        if (!b.classList.contains('sure')) {
+          b.classList.add('sure'); b.querySelector('.t').textContent = '한 번 더 누르면 끝나요'; clearTimeout(sureT);
+          sureT = setTimeout(function () { b.classList.remove('sure'); b.querySelector('.t').textContent = '수업 끝내기'; }, 3000); return;
+        }
+        end();
+      });
+      ['click', 'pointerup'].forEach(function (t) { b.addEventListener(t, function (e) { e.stopPropagation(); }); });
+      corner().appendChild(b);
+    }
+    var a = admin();
+    b.classList.toggle('on', a);
+    if (a && !was) exitFull();   /* 관리 메뉴를 열면 전체 화면에서 나옴(잠깐 나가기) */
+    was = a;
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tick); else tick();
+  setInterval(tick, 400);
+  return { set: function (x) { for (var k in x) o[k] = x[k]; tick(); } };
 })();
 </script>
+<script>ReportLink.set({board:'https://www.charum.org/webapp/59934',color:'#6A4C9C'});EndLesson.set({board:'https://www.charum.org/webapp/59934'});</script>
 <script id="printFit">
-/* 차름 공통: 출력 — 전체 화면이면 먼저 나간 뒤 인쇄(전체 화면에서 바로 인쇄하면 미리보기가 왼쪽 위에 작게 붙음),
+/* 차름 공통 모듈: 출력(printFit) — 원본은 common/printFit.js. 앱 안의 <script id="printFit">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   전체 화면이면 먼저 나간 뒤 인쇄(전체 화면에서 바로 인쇄하면 미리보기가 왼쪽 위에 작게 붙음),
    PrintFit.page(방향, 여백mm, 덧붙일 인쇄 CSS) 로 이번 한 번의 종이 방향을 정함(인쇄가 끝나면 원래대로) */
 (function(){
   var P=window.print.bind(window);

@@ -199,7 +199,8 @@
 
 관리 버튼(2026-11-11)
   누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
-  눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리는 이 앱 CSS 그대로.
+  눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리도 이제 공통 모듈 adminButton(2026-11-25).
+  공통 모듈로 옮김(2026-11-25 총괄): adminButton·reportLink·endLesson·printFit·recordKit·spot(저장 칸 animalHome.resume)·voiceKit·progBar — 정식판·베타 모두. 앱 안 그 칸들은 손으로 고치지 않음(common/ 원본 → tools/sync-modules.py). 이 앱만 다른 것은 endLesson 칸 바로 뒤 한 줄 ReportLink.set·EndLesson.set(게시판 글 주소·영역 색·보일 때).
 - 2026-11-13(무대 세션): 숲 동물 그림을 빙 연필풍으로 — 곰·호랑이·사슴·산양·멧돼지·부엉이·딱따구리(같은 파일)와 토끼·다람쥐·여우·너구리(OLD 표에서 NEW 표로, media/animals). 모두 머리 왼쪽이라 FACE의 곰·호랑이·딱따구리·토끼·너구리를 L로. 캡처·설명서는 아직 옛 그림 — 다음에 화면을 다시 찍을 때 함께.
 - 2026-11-13(무대 세션): 들판 동물 그림도 빙 연필풍으로 — 개·고양이·닭·돼지·말·달팽이·거미(OLD 표에서 NEW 표로, media/animals. 말은 mal.webp)와 소(같은 파일). FACE의 닭·말을 L로. 캡처·설명서는 아직 옛 그림.
 - 2026-11-14(무대 세션): 갯벌 동물 그림도 빙 연필풍으로 — 칠게·농게·방게·맛조개·갯우렁이·짱뚱어·낙지·갯지렁이·도요새(media/animals 같은 이름)와 조개(OLD 표에서 NEW 표로, media/animals/jogae.webp). FACE의 갯우렁이·도요새·갯지렁이를 L로. 백로는 아직 옛 그림. 캡처·설명서는 아직 옛 그림.

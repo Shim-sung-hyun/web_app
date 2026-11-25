@@ -13,7 +13,7 @@
 - **비밀**: API 키·토큰·`server/charum-api/donate-config.php` 내용을 코드·저장소·대화에 넣지 않는다.
 - 앱은 HTML 한 파일. 그림·소리는 `media/`에서 GitHub 절대 주소(`https://shim-sung-hyun.github.io/web_app/media/...`)로 부른다.
 - **차름 홈페이지 링크**(2026-11-21): 모든 웹앱(새 앱 포함)의 선생님 화면(설정·관리 메뉴) 왼쪽 위에 차름 로고 → charum.org 새 탭. 공통 모듈 `homeLink`(지침 3절).
-- **공통 모듈**: 원본은 `common/이름.js`(`roster.js`, `stagekit.js`, `keyRelay.js`, `photoRelay.js`, `adminHold.js`, `adminGate.js`, `holdBubble.js`, `homeLink.js` — 선생님 화면 왼쪽 위 차름 로고 링크, `usage.js` — 앱 사용 횟수(열림·다 함 합계만 charum.org로, 새 앱도 넣음)). 앱 안의 `<script id="이름">` 칸은 손으로 고치지 말고, 원본을 고친 뒤 `python3 tools/sync-modules.py`.
+- **공통 모듈**: 원본은 `common/이름.js`(`roster.js`, `stagekit.js`, `keyRelay.js`, `photoRelay.js`, `adminHold.js`, `adminGate.js`, `holdBubble.js`, `homeLink.js` — 선생님 화면 왼쪽 위 차름 로고 링크, `adminButton.js` 관리 버튼 모양, `reportLink.js`·`endLesson.js` 오류 알리기·수업 끝내기(앱마다 다른 것은 `ReportLink.set`·`EndLesson.set` 한 줄), `printFit.js`, `recordKit.js` 기록 저장·CSV, `spot.js` 멈춘 곳, `voiceKit.js` 말하기 밑바탕, `progBar.js` 진행 표시 — 2026-11-25, `usage.js` — 앱 사용 횟수(열림·다 함 합계만 charum.org로, 새 앱도 넣음)). 앱 안의 `<script id="이름">` 칸은 손으로 고치지 말고, 원본을 고친 뒤 `python3 tools/sync-modules.py`.
 - 007은 통합본 `007/word-learn.html`이 원본(고친 뒤 `python3 007/tools/split.py`). 편 판은 손으로 고치지 않는다.
 - 안 쓰게 된 파일은 지우지 말고 `python3 tools/trash.py 경로 --why "이유"`로. 그림·사진·소리는 저절로 보관함 `media/archive/`(비우지 않음)로, 나머지는 `_trash/`로(2026-11-22).
 - **자료 찾기 먼저**(2026-11-22): 그림·사진·소리를 새로 구하자고 하거나 프롬프트를 쓰기 전에 `python3 tools/find-media.py 낱말`(프롬프트는 `--prompt 파일`, 목소리는 `--say "문장"`). 나온 그림 모음(`/tmp/charum-find/…jpg`)을 열어 보고 선생님께 보여 드린다. 그림·소리를 넣거나 옮기면 `python3 tools/media-index.py`(전체 목록 `media/catalog.json`), 올리기 전 `python3 tools/check-files.py`가 "목록에 없는 파일 0"인지 본다.
