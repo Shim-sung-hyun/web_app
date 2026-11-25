@@ -1,15 +1,19 @@
-007 · [차름 국어] 낱말 익히기 (word-learn, 예전 이름 "글자 익히기"·"차름 한글", 제목 2026-10-25) · 버전 1 · 지금 1편
+007 · [차름 국어] 낱말 익히기 (word-learn, 예전 이름 "글자 익히기"·"차름 한글", 제목 2026-10-25) · 버전 1 · 지금 1·2편 (2편 공개 2026-11-25)
    편 판: [차름 국어] 낱말 익히기 1편 · 나와 우리 집 (2편부터 "낱말 익히기 2편 · 편 이름") · 통합본은 편 없이
    파일 이름·주소·저장 칸(wl007b_*)은 그대로
    차름은 '처음'이라는 뜻으로 백기완 선생이 즐겨 쓰던 우리말입니다. 글자를 처음 배우는 학생들의 첫걸음이 되기를 바라며 지었습니다.
 
 [파일]
 - word-learn.html          웹앱 (버전 1)
-- word-learn-1.html        편마다 나눈 판: 1편 나와 우리 집만 보임(2026-10-23). 2편부터는 공개할 때 word-learn-2.html …
+- word-learn-1.html        편마다 나눈 판: 1편 나와 우리 집만 보임(2026-10-23).
+- word-learn-2.html        2편 안전하게만 보임(2026-11-25). 3편부터는 공개할 때 word-learn-3.html …
                            통합본(word-learn.html)과 저장 칸이 같아(wl007b_*) 기록·멈춘 곳·마친 묶음이 이어짐.
                            묶음은 통합본과 똑같음(채우는 낱말은 같은 편·앞 편에서만). 어려운 낱말 다시 넣기는 앞 편 낱말도 섞음.
                            만들기: word-learn.html(통합본)을 고친 뒤 python3 007/tools/split.py (OPEN_BOOKS 편마다 만듦)
 - server-loader-1.html     내 도메인 study/007/word-learn-1.html 로 올릴 불러오기 파일(편마다 하나)
+- server-loader-2.html     내 도메인 study/007/word-learn-2.html 로 올릴 것(선생님이 서버에 한 번 올림)
+- word-learn-2_manual.html 2편 게시판 본문, word-learn-2-promo.jpg 2편 홍보 그림, word-learn-2-01·05·17.jpg 2편 캡처(안전과 표지 묶음)
+                           1편 본문(word-learn_manual.html)·캡처 01~20은 그대로. 선생님 메뉴(18)·기록 그림은 두 편이 같이 씀
 - (word-learn-beta.html — 베타 주소에서 넘겨 주던 것, 2026-11-25 지움)
 - word-learn01~20.jpg      화면 캡처 1366×768 (설명서 그림)
 - word-learn_manual.html   게시판 본문용 짧은 설명서 (에디터 소스 모드에 붙여 넣기)
@@ -35,7 +39,8 @@
 그림: https://shim-sung-hyun.github.io/web_app/007/word-learn01.jpg ~ word-learn20.jpg
 
 [게시판]
-- 확장 변수 app_url: https://www.charum.org/study/007/word-learn-1.html (1편 판, 2026-10-23부터. 통합본은 word-learn.html)
+- 확장 변수 app_url: 1편 글 https://www.charum.org/study/007/word-learn-1.html · 2편 글 https://www.charum.org/study/007/word-learn-2.html (통합본은 word-learn.html)
+- 2편 글: 본문 word-learn-2_manual.html, 썸네일 word-learn-2-promo.jpg. 글 번호가 정해지면 오류 알리기 주소를 편마다 나눌 것(지금은 두 편 모두 1편 글 59806)
 - 본문: word-learn_manual.html 내용을 소스 모드에 붙여 넣기
 - 썸네일: word-learn-promo.jpg 한 장
 
@@ -52,7 +57,7 @@
 - 키: wordLearn.cloudKey (+ webapp.cloudKey)
 
 [편 차례 공개]
-- 앱 파일은 하나. word-learn.html 안 OPEN_BOOKS = [1] → 공개한 편(1편판). 다음 판은 [1, 2] → 1_2편판 …
+- 앱 파일은 하나. word-learn.html 안 OPEN_BOOKS = [1, 2](2026-11-25) → 1_2편판. 다음 판은 [1, 2, 3] …
 - 준비 중인 편은 설정 화면에 흐리게 "준비 중"(누를 수 없음), 그 편 낱말은 보기·채우기에도 안 나옴
 - 제작자 미리 보기: word-learn.html?all=1 (모든 편)
 - 공개된 편을 다 마치면 "다음 편은 준비 중이에요"만 알리고, 복습할 묶음은 선생님이 고름
@@ -92,7 +97,8 @@
 - 사용 횟수(2026-11-23): 공통 모듈 usage. 열 때 Usage.open('007'), 다 함 = endScreen(수업 끝, 시연 빼고) — 통합본에 넣고 split.py에서 Usage.done(). 보기: charum.org/charum-api/usage-admin.php
 
 [다음 할 일] (2026-11-04)
-- 2편 공개(OPEN_BOOKS = [1, 2]) — 선생님 확인 뒤
+- (끝남 2026-11-25) 2편 공개. 남은 일: 선생님이 서버에 server-loader-2.html 올리기·게시판 2편 글 쓰기 → 글 번호를 받아 오류 알리기 주소 나누기
+- 3편 학교에서(36낱말) 공개 준비 — 소리·그림 확인부터
 - (끝남 2026-11-04) 공용 그림 옮기기: 007/pics → media/words, 007/game → media/play, 007/fonts → media/fonts.
   007·008·009·010 주소 바꿈, check-files "없는 파일 0". 그림 주소는 이제 늘 GitHub 절대 주소(MEDIA)
 
