@@ -325,6 +325,14 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
 .key-fold[open] { padding-bottom:10px; }
 .key-on { margin-left:6px; padding:1px 7px; border-radius:999px; background:#1b7f3a; color:#fff; font-size:10px; font-weight:800; }
 .key-on[hidden] { display:none; }
+.guide-prev { grid-column:1/-1; display:flex; gap:10px; align-items:center; padding:8px; border:1px dashed #9aa3ad; border-radius:10px; background:#fafafa; }
+.guide-prev[hidden] { display:none; }
+.guide-prev img { width:110px; height:110px; object-fit:contain; background:#fff; border:2px solid #111; border-radius:6px; flex:none; }
+.guide-prev small { font-size:10.5px; line-height:1.5; color:#555; }
+.guide-prev small b { color:#111; font-size:11px; }
+.guide-prev img { cursor:zoom-in; }
+.guide-prev.big { flex-direction:column; align-items:stretch; }
+.guide-prev.big img { width:100%; height:auto; max-height:60vh; cursor:zoom-out; }
 .opts-cap { grid-column:1/-1; margin-top:6px; padding-top:8px; border-top:1px dashed #c9ced4; font-size:11px; font-weight:800; color:#666; }
 .app.settings-open .control-panel > .mode-btns { grid-template-columns:1fr 1fr; gap:8px; }   /* 팝아트 단추 둘 나란히(2026-11-25) */
 .mode-btns .mbtn { padding:7px 9px; gap:1px; }
@@ -525,6 +533,10 @@ html, body { background-color:#FFD700; background-image:radial-gradient(circle, 
     </div>
     <div class="opts">
       <label>대상 <select class="mode-select" id="target"><option value="person">사람</option><option value="object">사물</option></select></label>
+      <div class="guide-prev" id="guidePrev" hidden>
+        <img id="guideImg" alt="AI가 따라 그릴 밑그림" title="눌러서 크게 보기" onclick="this.parentNode.classList.toggle('big')">
+        <small><b>AI가 따라 그릴 밑그림</b> — 대상·색 조합·선 굵기·디테일을 바꾸면 바로 바뀌어요(횟수 안 씀). 최종 그림은 AI가 다시 그려서 조금 달라질 수 있어요.</small>
+      </div>
       <label>색 조합 <select class="mode-select" id="pal"><option value="classic">원색(자연)</option><option value="vivid">강한 원색</option><option value="warm">따뜻한 팝</option><option value="mono">흑백</option></select></label>
       <label>선 굵기 <input type="range" id="line" min="0" max="3" value="0"></label>
       <label>디테일 <input type="range" id="edge" min="3" max="18" value="3"></label>
@@ -817,7 +829,7 @@ function loadPhotoBlob(blob, filename) {
       canvas.getContext('2d').drawImage(preview, 0, 0, w, h);
       const jpeg = canvas.toDataURL('image/jpeg', 0.88);
       b64 = jpeg.split(',')[1];
-      srcImg = preview; subjectBox = null; photoDesc = ''; layoutSeed = (Math.random() * 1e9) | 0; current = null; document.querySelector('.mailbox-btn').classList.add('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
+      srcImg = preview; setTimeout(updateGuidePrev, 0); subjectBox = null; photoDesc = ''; layoutSeed = (Math.random() * 1e9) | 0; current = null; document.querySelector('.mailbox-btn').classList.add('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
       mime = 'image/jpeg';
       document.getElementById('thumb').src = url;
       document.getElementById('thumb').style.display='block';
@@ -890,7 +902,7 @@ function reset() {
   document.getElementById('no-file').style.display='block';
   document.getElementById('fname').style.display='none';
   document.getElementById('file-in').value='';
-  setButtons(false); srcImg=null; subjectBox=null; photoDesc=''; current=null; document.querySelector('.mailbox-btn').classList.remove('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
+  setButtons(false); srcImg=null; updateGuidePrev(); subjectBox=null; photoDesc=''; current=null; document.querySelector('.mailbox-btn').classList.remove('has-photo'); for (const k in results) { delete results[k]; delete errs[k]; } bubbles = []; selected = null; comicBase = null; popBase = null; document.getElementById('sugg').style.display = 'none';
   show('ph');
   openPanel();
 }
@@ -1329,6 +1341,15 @@ function popLayers(img, o, maxSide) {
   return cv;
 }
 // AI가 따라 그릴 윤곽판: 점·별·큰 원 없이 '선 + 평평한 색면'만 (점은 AI에게 무늬로 잘못 읽힘)
+// 밑그림 미리 보기(2026-11-25): AI에게 보내는 윤곽판(makeGuide와 같은 것)을 작게 바로 그려 설정판에 보여 줌 — AI 횟수 안 씀
+let guideTimer;
+function updateGuidePrev() {
+  const box = document.getElementById('guidePrev');
+  if (!srcImg) { box.hidden = true; return; }
+  box.hidden = false; clearTimeout(guideTimer);
+  guideTimer = setTimeout(() => { try { document.getElementById('guideImg').src = popLayers(srcImg, { ...filterOpts(), guide: true, ly: { bg: false, f1: false, f2: false, big: false, star: false } }, 360).toDataURL('image/jpeg', 0.85); } catch (e) { console.warn(e); } }, 180);
+}
+['target', 'pal', 'line', 'edge'].forEach(id => document.getElementById(id).addEventListener('input', updateGuidePrev));
 function makeGuide(o) {
   return popLayers(srcImg, { ...o, guide: true, ly: { bg: false, f1: false, f2: false, big: false, star: false } }, 512).toDataURL('image/jpeg', 0.9).split(',')[1];
 }
@@ -2175,6 +2196,7 @@ async function autoDetect() {
     subjectBox = bb.length === 4 && bb.every(v => v >= 0 && v <= 1) && bb[2] - bb[0] > 0.08 && bb[3] - bb[1] > 0.08 ? bb : null;
     invalidatePop(true);      // 설정이 바뀌었으니 팝아트·도안은 다시 만들도록
     refilter();               // 필터 그림은 AI를 안 쓰니 바로 다시 그림 (2026-11-25)
+    updateGuidePrev();
     toast('🔍 ' + (j.summary || '설정을 채웠어요'));
   } catch (e) { toast('자동 설정 실패: ' + (e.message || e)); }
   finally { btn.textContent = label; btn.disabled = !srcImg; }

@@ -9,7 +9,7 @@
 - wrangler.jsonc    : 워커 Wrangler 설정. KV 바인딩 이름은 "KV" (코드가 env.KV를 씀)
 - server/worker/charum-ai/ : 위 두 파일의 사본(src/index.js) + 배포 안내(README.md). 원본은 012/ 파일들 — 워커를 고치면 사본도 복사해 맞출 것
 - tools/gemini-model-test.html : 제작자가 해석 모델을 고른 테스트 화면
-- popart_manual.html : 게시판 본문(2026-11-21). popart01~05.jpg 캡처(1366×768, 책장 사진, 2026-11-25 다시 찍음: 01 설정판 02 팝아트(AI 대신 필터) 03 워홀 04 색칠 도안(media/photos/bookshelf/line.png를 액자에 넣어 찍음) 05 만화(말풍선+효과음 두 겹 모양)), popart-promo.jpg 홍보 그림.
+- popart_manual.html : 게시판 본문(2026-11-21). popart01~05.jpg 캡처(1366×768, 책장 사진, 2026-11-25 다시 찍음: 01 설정판 02 팝아트(AI 대신 필터) 03 워홀 04 색칠 도안(media/photos/bookshelf/line.png를 액자에 넣어 찍음) 05 만화(말풍선+효과음 두 겹 모양) 06 다른 기기에서 인쇄 창 07 키 칸(설정판 왼쪽만 잘라 냄)). 게시판 글은 🔑 키·🖨 인쇄 두 상자를 강조(2026-11-25), popart-promo.jpg 홍보 그림.
   _guide(자세한 설명)는 아직 없음. 캡처 02·03·05는 AI 대신 필터 결과라, 실제 AI 결과가 마음에 들면 바꿔 찍을 것.
 
 AI 키·할당량 구조 (2026-11-19 선생님 정함, 오늘 작동 확인)
@@ -113,6 +113,9 @@ Cloudflare 사용량 아끼기 (2026-11-21 선생님 정함)
   2단계(2026-11-25): 인쇄 판 그대로 — 한 장·막대 가면·퀴즈(2쪽)·전시판을 printPages()가 A4(150dpi) 쪽 그림으로 그려 pagesToPdf()가 PDF로 묶어 보냄
   (화면 인쇄 printHTML과 같은 짜임, 퀴즈 자르기는 quizCrop()). PC는 「열기」로 PDF를 열어 인쇄.
 - 키 기억(2026-11-25 선생님): Gemini는 다른 앱과 같은 webapp.geminiKey, Cloudflare는 webapp.cfAccount·webapp.cfToken(이 기기·브라우저). '지우기'로 지움. 기억된 키가 있으면 접힌 키 칸 제목에 ✓.
+- 밑그림 미리 보기(2026-11-25): 설정판 '대상' 아래에 AI에게 보내는 윤곽판(makeGuide와 같은 popLayers guide)을 360px로 바로 그려 보여 줌(updateGuidePrev).
+  대상·색 조합·선 굵기·디테일·자동 설정·새 사진 때 다시 그림, AI 횟수 안 씀. 누르면 크게. 안경·모자 알림은 AI에게 하는 말이라 미리 못 봄.
+  (나중에 원하면: 설정을 바꿔 두 번 그린 팝아트를 나란히 남겨 비교 — 아직 안 함)
 
 다음 할 일
 1. (끝남 2026-11-21) 새 워커 배포 확인(/ping에 "그림 모델: klein-4b"). 선생님이 LIMIT_OFF=0으로 바꿔 지금은 "사용자별 제한: 적용 중"(기기당 하루 3회).
