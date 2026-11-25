@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>[차름 놀이] 동물로 변신</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- 014 동물로 변신 (표본, 2026-11-25)
+     내 사진 한 장 + 그 사진을 Gemini로 동물로 바꾼 사진(동물마다 한 장)을 넣으면, 학생이 동물 단추를 누를 때
+     얼굴 가운데부터 동물 사진이 천천히 번져 바뀜. 사진은 이 기기 안에서만 씀(어디로도 보내지 않음, 새로 고치면 지워짐).
+     바뀐 사진 만드는 프롬프트: media/prompts/PROMPTS-014-face-animal.txt (복사 화면) -->
+<style>
+:root{
+  --play:#4E6A80; --play-d:#3B5366; --play-l:#E3EAF0;
+  --ink:#2A2B2D; --soft:#6B6E72; --line:#D8D4CB; --paper:#F3F0E9; --card:#FFFEFB;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit}
+.hidden{display:none!important}
+
+/* ---------- 설정 화면 ---------- */
+#setup{max-width:860px;margin:0 auto;padding:28px 20px 120px}
+.head{margin:0 0 26px}
+.head .kind{font:600 14px/1 "Noto Sans KR",sans-serif;color:var(--play);letter-spacing:.04em}
+.head h1{font:400 40px/1.15 "Jua",sans-serif;margin:6px 0 4px}
+.head p{margin:0;color:var(--soft)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px 20px;margin:0 0 18px}
+.card h2{display:flex;align-items:baseline;gap:10px;margin:0 0 4px;font:700 19px/1.3 "Noto Sans KR",sans-serif}
+.card h2 b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--play);color:#fff;font:400 17px/1 "Jua",sans-serif;flex:none;transform:translateY(2px)}
+.card .sub{margin:0 0 14px 38px;color:var(--soft);font-size:14.5px}
+.card .sub a{color:var(--play-d)}
+
+/* ① 내 사진 */
+.me{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.meBox{position:relative;width:200px;max-width:100%;aspect-ratio:3/4;border:2px dashed #C7C2B6;border-radius:8px;display:grid;place-items:center;background:#FAF8F3;overflow:hidden;cursor:pointer}
+.meBox.has{border:0;background:#222;cursor:crosshair}
+.meBox img{width:100%;height:100%;object-fit:contain;display:block}
+.meBox .empty{text-align:center;color:var(--soft);font-size:15px;padding:12px}
+.meBox .empty strong{display:block;font:400 22px/1.3 "Jua",sans-serif;color:var(--play-d);margin-bottom:4px}
+.faceDot{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1.5px rgba(0,0,0,.45);pointer-events:none}
+.faceDot::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:#fff}
+.meSide{flex:1;min-width:220px;font-size:15px;color:var(--soft)}
+.meSide p{margin:0 0 10px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;border:1px solid var(--play);background:#fff;color:var(--play-d);font-weight:600;cursor:pointer}
+.btn:hover{background:var(--play-l)}
+.btn.small{padding:5px 11px;font-size:14px}
+
+/* ② 바뀐 사진 */
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.slot{position:relative;border:1px solid var(--line);border-radius:8px;background:#FAF8F3;padding:10px;display:flex;flex-direction:column;gap:8px}
+.slot .top{display:flex;align-items:center;gap:8px}
+.slot .top img{width:44px;height:44px;object-fit:contain}
+.slot .top span{font:400 21px/1 "Jua",sans-serif}
+.slot .pic{position:relative;aspect-ratio:1/1;border:2px dashed #CFCABE;border-radius:6px;display:grid;place-items:center;color:var(--soft);font-size:14px;cursor:pointer;overflow:hidden;background:#fff}
+.slot .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.slot.has .pic{border:0}
+.slot .pic.drag,.meBox.drag{outline:3px solid var(--play);outline-offset:2px}
+.slot .del{position:absolute;right:16px;top:62px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:18px;line-height:30px;cursor:pointer;display:none}
+.slot.has .del{display:block}
+@media (max-width:640px){.slots{grid-template-columns:repeat(2,1fr)}.head h1{font-size:34px}}
+
+/* ③ */
+.opts label{display:flex;align-items:center;gap:8px;margin:2px 0 0 38px;cursor:pointer}
+.opts input{width:20px;height:20px;accent-color:var(--play)}
+.startBar{position:sticky;bottom:0;padding:14px 0 calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(rgba(243,240,233,0),var(--paper) 30%)}
+#startBtn{display:block;width:100%;max-width:420px;margin:0 auto;padding:16px;border:0;border-radius:10px;background:var(--play);color:#fff;font:400 26px/1 "Jua",sans-serif;cursor:pointer}
+#startBtn:disabled{background:#B9C3CB;cursor:default}
+#startHint{text-align:center;color:var(--soft);font-size:14px;margin:8px 0 0;min-height:1.4em}
+
+/* ---------- 보여 주기 화면 ---------- */
+#show{position:fixed;inset:0;background:#E9E5DC;display:flex;flex-direction:column;align-items:center;touch-action:none;user-select:none;-webkit-user-select:none}
+#stageWrap{flex:1;width:100%;display:grid;place-items:center;min-height:0;padding:18px 18px 8px}
+#frame{background:#fff;padding:12px 12px 14px;border-radius:3px;box-shadow:0 1px 2px rgba(0,0,0,.12),0 8px 24px rgba(60,50,30,.14)}
+#stage{display:block;touch-action:none;cursor:ew-resize}
+#picks{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:6px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.pick{width:104px;border:2px solid transparent;border-radius:12px;background:#FBFAF6;padding:6px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;touch-action:manipulation}
+.pick img{width:72px;height:72px;object-fit:contain;pointer-events:none}
+.pick .face{width:68px;height:68px;margin:2px;border-radius:50%;background:#ccc center/cover no-repeat}
+.pick span{font:400 21px/1.1 "Jua",sans-serif;pointer-events:none}
+.pick.on{border-color:var(--play);background:#fff}
+body.admin .pick{pointer-events:none}
+@media (max-height:560px){.pick{width:84px}.pick img{width:52px;height:52px}.pick .face{width:50px;height:50px}.pick span{font-size:17px}}
+
+/* 관리 메뉴 */
+#dockTop{position:fixed;left:0;right:0;top:12px;display:none;justify-content:center;gap:8px;z-index:90;padding:0 70px;overflow-x:auto;touch-action:pan-x}
+body.admin #dockTop{display:flex}
+#dockTop button{flex:none;padding:9px 16px;border-radius:8px;border:1px solid var(--play);background:#fff;color:var(--play-d);font-weight:600;cursor:pointer}
+#dockTop button.main{background:var(--play);color:#fff}
+body.admin #show::after{content:"";position:absolute;inset:0;background:rgba(40,40,40,.18);pointer-events:none}
+</style>
+</head>
+<body class="setup">
+
+<div id="setup">
+  <div class="head">
+    <div class="kind">차름 놀이</div>
+    <h1>동물로 변신</h1>
+    <p>내 사진과, 그 사진을 동물로 바꾼 사진을 넣으면 얼굴이 천천히 동물로 바뀌어요.</p>
+  </div>
+
+  <section class="card" id="c1">
+    <h2><b>1</b>내 사진</h2>
+    <p class="sub">얼굴이 잘 보이는 사진 한 장. 휴대폰·태블릿에서는 바로 찍을 수도 있어요.</p>
+    <div class="me">
+      <div class="meBox" id="meBox" tabindex="0" role="button" aria-label="내 사진 넣기">
+        <div class="empty"><strong>사진 넣기</strong>누르거나 여기로 끌어 놓기</div>
+      </div>
+      <div class="meSide">
+        <p id="meTip">사진을 넣은 뒤 <b>얼굴 가운데(코)</b>를 한 번 눌러 주세요. 그 자리부터 동물로 바뀌어요.</p>
+        <button class="btn small hidden" id="meAgain" type="button">다른 사진</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="c2">
+    <h2><b>2</b>동물로 바꾼 사진</h2>
+    <p class="sub">위 사진을 Gemini에 붙이고 동물마다 프롬프트를 보내 받은 그림을 칸에 넣어요. 하나만 넣어도 돼요.
+      <br><a href="https://shim-sung-hyun.github.io/web_app/media/prompts/copy.html?f=PROMPTS-014-face-animal.txt" target="_blank" rel="noopener">프롬프트 복사 화면 열기</a> · <a href="https://www.charum.org/study/doc.html?gemini_guide" target="_blank" rel="noopener">Gemini 쓰는 법</a></p>
+    <div class="slots" id="slots"></div>
+  </section>
+
+  <section class="card opts" id="c3">
+    <h2><b>3</b>오늘 할 것</h2>
+    <label><input type="checkbox" id="optSay" checked> 바뀌면 동물 이름 말하기</label>
+  </section>
+
+  <div class="startBar">
+    <button id="startBtn" type="button" disabled>시작</button>
+    <p id="startHint">내 사진과 바뀐 사진을 하나 넣어 주세요.</p>
+  </div>
+</div>
+
+<div id="show" class="hidden">
+  <div id="stageWrap"><div id="frame"><canvas id="stage"></canvas></div></div>
+  <div id="picks"></div>
+</div>
+
+<div id="dockTop">
+  <button type="button" class="main" id="dkBack">계속하기</button>
+  <button type="button" id="dkSetup">사진 바꾸기</button>
+</div>
+
+<input type="file" id="fileIn" accept="image/*" class="hidden">
+
+<script id="adminButton">
+/* 차름 공통 모듈: 관리 버튼 모양(adminButton) — 원본은 common/adminButton.js. 앱 안의 <script id="adminButton">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   오른쪽 아래 파란 물방울 버튼(닫혀 있으면 "charum", 관리 메뉴가 열리면 검은 바탕에 "심"), 누르는 동안 도는 고리까지 모양을 한곳에(2026-11-25 선생님 —
+   007만 옛 모양이라 글자가 넘치던 것 때문). 다른 모듈과 달리 이것은 모양까지 맡는다(모든 앱이 똑같은 버튼이어야 해서).
+   누르는 동작은 adminHold 모듈: 3초 누르기 앱은 AdminButton.hold({...}), 한 번 누르는 앱(004·005·006)은 AdminButton.tap(fn).
+
+   AdminButton.put({ z, open, hide })   — 버튼을 놓을 자리(body 안)에서 부름. 버튼(#adminBtn)을 돌려줌.
+     z     z-index(없으면 50)
+     open  관리 메뉴가 열려 있는지 () => 참/거짓 (없으면 body에 admin이 붙었을 때) — 열리면 검은 바탕·"심"
+     hide  버튼을 숨길 때 () => 참/거짓 (없으면 body에 setup이 붙었을 때 — 처음 설정 화면에는 필요 없음)
+   AdminButton.hold({isOpen, canOpen, open, close, ms, holding, bubble})  = AdminHold.bind(버튼, …)
+   AdminButton.tap(fn)   한 번 누르면 fn(e) — 눌리는 자리는 AdminHold.pad로 화면 구석까지
+   AdminButton.sync()    열림·숨김을 바로 다시 봄(앱이 메뉴를 열고 닫은 바로 뒤에 부르면 0.25초 기다리지 않음) */
+window.AdminButton = (function () {
+  'use strict';
+  var o = { z: 50, open: null, hide: null }, btn = null;
+  var CSS = '#adminBtn{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:43px;height:43px;border-radius:50%;'
+    + 'z-index:var(--ab-z,50);touch-action:none;--p:0;padding:0;margin:0;opacity:.4;transition:opacity .3s;cursor:pointer;display:flex;align-items:center;justify-content:center;'
+    + '-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;'
+    + 'border:1px solid rgba(14,92,170,.55);'
+    + 'background:radial-gradient(ellipse 70% 45% at 50% 88%,rgba(170,245,255,.95),rgba(170,245,255,0) 70%),radial-gradient(circle at 50% 40%,#4FC4F5 0%,#1E8BE0 55%,#0D5FB8 100%);'
+    + 'box-shadow:inset 0 -4px 10px rgba(150,240,255,.55),inset 0 3px 6px rgba(0,40,100,.45),0 4px 10px rgba(0,60,130,.35),0 1px 2px rgba(0,30,70,.4)}'
+    + '#adminBtn::before{content:"";position:absolute;left:14%;right:14%;top:5%;height:44%;border-radius:50% 50% 45% 45%/60% 60% 40% 40%;'
+    + 'background:linear-gradient(to bottom,rgba(255,255,255,.95),rgba(255,255,255,.35) 60%,rgba(255,255,255,.05));pointer-events:none}'
+    + '#adminBtn::after{content:"";position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(#22AFBC calc(var(--p)*360deg),transparent 0);'
+    + '-webkit-mask:radial-gradient(circle,transparent 22px,#000 23px);mask:radial-gradient(circle,transparent 22px,#000 23px);opacity:.9;pointer-events:none}'
+    + '#adminBtn .ab-label{position:relative;display:block;text-align:center;font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;font-weight:700;font-size:8.5px;'
+    + 'letter-spacing:.02em;line-height:1;color:#fff;text-shadow:0 1px 1.5px rgba(0,50,110,.65);pointer-events:none;white-space:nowrap}'
+    + '#adminBtn.ab-on{opacity:.6;border-color:rgba(10,20,26,.8);'
+    + 'background:radial-gradient(ellipse 70% 45% at 50% 88%,rgba(110,230,240,.85),rgba(110,230,240,0) 70%),radial-gradient(circle at 50% 40%,#3D4F5A 0%,#17242C 60%,#05090C 100%);'
+    + 'box-shadow:inset 0 -4px 10px rgba(90,220,235,.45),inset 0 3px 6px rgba(0,0,0,.6),0 4px 10px rgba(0,0,0,.4),0 0 0 3px rgba(63,207,210,.35)}'
+    + '#adminBtn.ab-on .ab-label{font-family:Jua,"Noto Sans KR",sans-serif;font-weight:400;font-size:17px;letter-spacing:0;color:#9FF3F5;text-shadow:0 0 6px rgba(63,207,210,.7),0 1px 1px rgba(0,0,0,.6)}'
+    + '#adminBtn.ab-hide{display:none}'
+    + '@media print{#adminBtn{display:none!important}}';
+  function isOpen() { try { return o.open ? !!o.open() : document.body.classList.contains('admin'); } catch (e) { return false; } }
+  function isHidden() { try { return o.hide ? !!o.hide() : document.body.classList.contains('setup'); } catch (e) { return false; } }
+  function sync() {
+    if (!btn) return;
+    var on = isOpen();
+    btn.classList.toggle('ab-on', on);
+    btn.classList.toggle('ab-hide', isHidden());
+    var t = on ? '심' : 'charum', l = btn.querySelector('.ab-label');
+    if (l && l.textContent !== t) l.textContent = t;
+  }
+  function put(x) {
+    for (var k in (x || {})) o[k] = x[k];
+    if (!document.getElementById('abStyle')) {
+      var st = document.createElement('style'); st.id = 'abStyle'; st.textContent = CSS; document.head.appendChild(st);
+    }
+    btn = document.getElementById('adminBtn');
+    if (!btn) {
+      btn = document.createElement('button'); btn.id = 'adminBtn'; btn.type = 'button';
+      btn.setAttribute('aria-label', '교사 모드: 3초 동안 누르기');
+      btn.innerHTML = '<span class="ab-label" id="abLabel">charum</span>';
+      var s = document.currentScript;
+      if (s && s.parentNode && s.parentNode !== document.head) s.parentNode.insertBefore(btn, s); else document.body.appendChild(btn);
+    }
+    btn.style.setProperty('--ab-z', o.z);
+    sync(); setInterval(sync, 250);
+    return btn;
+  }
+  function hold(h) {
+    var x = {}; for (var k in h) x[k] = h[k];
+    var oo = x.open, oc = x.close;
+    x.open = function () { var r = oo && oo.apply(this, arguments); sync(); return r; };
+    x.close = function () { var r = oc && oc.apply(this, arguments); sync(); return r; };
+    window.AdminHold.bind(btn, x);
+  }
+  function tap(fn) {
+    btn.setAttribute('aria-label', '관리');
+    window.AdminHold.pad(btn);
+    btn.addEventListener('click', function (e) { fn(e); sync(); });
+  }
+  return { put: put, hold: hold, tap: tap, sync: sync, el: function () { return btn; } };
+})();
+</script><script>AdminButton.put({z:95});</script>
+<script id="adminHold">
+/* 차름 공통 모듈: 관리 버튼 누르기(adminHold) — 원본은 common/adminHold.js. 앱 안의 <script id="adminHold">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   버튼의 모양·색·자리는 앱마다(CSS), 누르는 동작만 여기서 한곳에.
+
+   AdminHold.pad(버튼)
+     눌리는 자리를 넓힘: 버튼에서 화면 구석까지, 안쪽으로도 조금(보이는 것은 그대로).
+     전자칠판은 화면 가장자리의 터치를 조금 어긋나게 잡아서 작은 버튼(43px)이 "눌러도 반응 없음"이 되곤 함(2026-11-11 선생님).
+   AdminHold.bind(버튼, {isOpen, canOpen, open, close, ms, unit, holding, bubble})
+     닫혀 있을 때: ms(3초) 동안 누르면 AdminGate.ask(open) — 왼쪽 위 점을 눌러야 열림.
+     열려 있을 때: 한 번 누르면 close().
+     isOpen()  관리 메뉴가 열려 있는지          canOpen()  지금 열어도 되는지(없으면 늘 됨)
+     unit      고리 진행(--p)을 적는 꼴: ''(0~1) 또는 '%'   holding  누르는 동안 버튼에 붙일 class
+     bubble    true면 이벤트를 위로 흘려보냄(앱이 화면 전체에서 듣는 것이 있을 때)
+     누르는 동안 터치가 아주 잠깐(GRACE) 끊겨도 처음으로 돌아가지 않고 이어짐(칠판이 긴 누름을 잠깐 놓칠 때). */
+window.AdminHold = (function () {
+  'use strict';
+  var GRACE = 250;
+  function pad(btn) {
+    if (!btn || btn.querySelector('.ah-pad')) return;
+    if (!document.getElementById('ahStyle')) {
+      var st = document.createElement('style'); st.id = 'ahStyle';
+      st.textContent = '.ah-pad{position:absolute;left:-16px;top:-16px;right:-60px;bottom:-60px;border-radius:0;background:transparent}';
+      document.head.appendChild(st);
+    }
+    var p = document.createElement('span'); p.className = 'ah-pad'; p.setAttribute('aria-hidden', 'true'); p.style.pointerEvents = 'auto';
+    btn.insertBefore(p, btn.firstChild);
+  }
+  function bind(btn, o) {
+    o = o || {}; pad(btn);
+    var MS = o.ms || 3000, unit = o.unit || '', raf = 0, t0 = 0, on = false, lost = 0, justOpened = false, ignoreUntil = 0;
+    function setP(p) { btn.style.setProperty('--p', unit === '%' ? (p * 100) + '%' : p); }
+    function stop() { on = false; clearTimeout(lost); lost = 0; cancelAnimationFrame(raf); setP(0); if (o.holding) btn.classList.remove(o.holding); }
+    function tick() {
+      if (!on) return;
+      var p = Math.min(1, (performance.now() - t0) / MS); setP(p);
+      if (p >= 1) { stop(); justOpened = true; window.AdminGate.ask(o.open); return; }
+      raf = requestAnimationFrame(tick);
+    }
+    btn.addEventListener('pointerdown', function (e) {
+      e.preventDefault(); if (!o.bubble) e.stopPropagation();
+      if (o.isOpen()) return;                       /* 닫기는 click에서 바로 */
+      if (o.canOpen && !o.canOpen()) return;
+      try { btn.setPointerCapture(e.pointerId); } catch (x) {}
+      if (on && lost) { clearTimeout(lost); lost = 0; return; }   /* 잠깐 끊겼다 다시 닿음 — 이어서 */
+      on = true; t0 = performance.now(); if (o.holding) btn.classList.add(o.holding);
+      cancelAnimationFrame(raf); raf = requestAnimationFrame(tick);
+    });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (ev) {
+      btn.addEventListener(ev, function () {
+        if (justOpened) { justOpened = false; ignoreUntil = performance.now() + 500; }
+        if (on && !lost) lost = setTimeout(stop, GRACE);
+      });
+    });
+    btn.addEventListener('click', function (e) {
+      if (!o.bubble) e.stopPropagation();
+      if (performance.now() < ignoreUntil) return;  /* 3초 눌러 연 직후 손을 뗄 때 생기는 click은 무시 */
+      if (o.isOpen()) o.close();
+    });
+    btn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    return { cancel: stop };
+  }
+  return { pad: pad, bind: bind };
+})();
+</script>
+<script id="holdBubble">
+/* 차름 공통 모듈: 관리 버튼 — 누르는 동안 표시(holdBubble). 원본은 common/holdBubble.js. 앱 안의 <script id="holdBubble">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다. */
+/* 관리 버튼을 3초 누르는 동안: (휴대폰·태블릿을 손가락으로 누를 때만) 버튼 조금 위(손가락에 가리지 않는 곳)에 투명한 아쿠아 원이 1초에 한 번씩 부드럽게 세 번 깜빡. 전자칠판·PC는 버튼 둘레 고리만. 손을 떼면 바로 사라짐 */
+(function(){
+  const btn = document.querySelector('#adminBtn, #aqua'); if (!btn) return;
+  const st = document.createElement('style');
+  st.textContent = '.hb-dot{position:fixed;width:40px;height:40px;border-radius:50%;pointer-events:none;z-index:2147483000;opacity:0;'
+    + 'background:radial-gradient(circle at 50% 40%,rgba(200,250,252,.75),rgba(120,225,232,.35) 60%,rgba(80,200,210,.2));'
+    + 'border:1.5px solid rgba(70,185,200,.55);box-shadow:0 0 10px rgba(130,230,238,.55)}';
+  document.head.appendChild(st);
+  const dot = document.createElement('div'); dot.className = 'hb-dot'; document.body.appendChild(dot);
+  let down = false, raf = 0, useDot = false;
+  const mobileOS = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const prog = () => { const v = getComputedStyle(btn).getPropertyValue('--p').trim(); const n = parseFloat(v) || 0; return /%$/.test(v) ? n / 100 : n; };
+  const hide = () => { dot.style.opacity = 0; btn.style.opacity = ''; };
+  const loop = () => {
+    const p = prog();
+    if (down && p > 0.01 && p < 1) {
+      const r = btn.getBoundingClientRect(), S = 40;
+      dot.style.left = Math.max(4, Math.min(innerWidth - S - 4, r.left + r.width / 2 - S / 2)) + 'px';
+      dot.style.top = Math.max(4, r.top - S - 34) + 'px';
+      btn.style.opacity = '.75';
+      if (!useDot) return void (raf = requestAnimationFrame(loop));
+      dot.style.opacity = (0.9 * Math.sin(Math.PI * ((p * 3) % 1))).toFixed(3);   /* 1초마다 한 번: 천천히 나타났다 사라짐 */
+    } else hide();
+    if (down) raf = requestAnimationFrame(loop); else hide();
+  };
+  btn.addEventListener('pointerdown', e => { useDot = e.pointerType !== 'mouse' && (mobileOS || Math.min(screen.width, screen.height) < 1040); down = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); }, true);
+  const up = () => { down = false; cancelAnimationFrame(raf); hide(); };
+  ['pointerup', 'pointercancel', 'blur'].forEach(t => addEventListener(t, up, true));
+})();
+</script>
+<script id="adminGate">
+/* 차름 공통 모듈: 관리 버튼 — 왼쪽 위 점(adminGate). 원본은 common/adminGate.js. 앱 안의 <script id="adminGate">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다. */
+/* 관리 메뉴 열기 2단계: 관리 버튼을 3초 누른 뒤, 왼쪽 위에 3초 동안 나타나는 작은 점을 눌러야 열림(학생이 보고 따라 하기 어렵게) */
+window.AdminGate = (function () {
+  const st = document.createElement('style');
+  st.textContent = '#agDot{position:fixed;left:18px;top:18px;width:62px;height:62px;border-radius:50%;z-index:2147483600;display:none;cursor:pointer;touch-action:none;'
+    + 'background:radial-gradient(circle at 50% 38%,rgba(210,252,253,.9),rgba(120,225,232,.55) 60%,rgba(70,190,205,.4));border:2px solid rgba(34,175,188,.75);box-shadow:0 0 10px rgba(120,225,232,.6)}'
+    + '#agDot svg{position:absolute;left:50%;top:50%;width:74px;height:74px;transform:translate(-50%,-50%) rotate(-90deg);pointer-events:none}'
+    + '#agDot circle{fill:none;stroke:#22AFBC;stroke-width:4;stroke-linecap:round}';
+  document.head.appendChild(st);
+  const dot = document.createElement('div'); dot.id = 'agDot'; dot.setAttribute('aria-label', '관리 열기');
+  dot.innerHTML = '<svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="34"/></svg>';
+  document.body.appendChild(dot);
+  const ring = dot.querySelector('circle'), L = 2 * Math.PI * 34;
+  ring.style.strokeDasharray = L;
+  let cb = null, t0 = 0, raf = 0, WAIT = 3000;
+  const hide = () => { dot.style.display = 'none'; cancelAnimationFrame(raf); cb = null; };
+  const tick = () => { const p = (performance.now() - t0) / WAIT; if (p >= 1 || !cb) return hide(); ring.style.strokeDashoffset = L * p; raf = requestAnimationFrame(tick); };
+  let armed = false;
+  dot.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (!cb) return; armed = true; cancelAnimationFrame(raf); try { dot.setPointerCapture(e.pointerId); } catch (x) {} });
+  const done = e => { e.preventDefault(); e.stopPropagation(); if (!armed) return; armed = false; const f = cb; cb = null; setTimeout(() => { dot.style.display = 'none'; }, 60); if (f) f(); };
+  dot.addEventListener('pointerup', done); dot.addEventListener('pointercancel', done);   /* 전자칠판은 손을 뗄 때 pointercancel이 오기도 함 */
+  dot.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); });
+  return { ask(fn) { cb = fn; t0 = performance.now(); ring.style.strokeDashoffset = 0; dot.style.display = 'block'; cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); }, cancel: hide };
+})();
+</script>
+<script id="reportLink">
+/* 차름 공통 모듈: 오류·의견 알리기(reportLink) — 원본은 common/reportLink.js. 앱 안의 <script id="reportLink">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   선생님 화면(설정·관리 메뉴)에서만 왼쪽 아래에 작게 "💬 오류·의견 알리기". 누르면 차름 게시판 이 앱 글의 댓글 칸이 새 탭으로(로그인 없이 댓글 가능).
+   휴대폰처럼 좁으면 💬 동그라미만. 수업 끝내기(endLesson)와 같은 왼쪽 아래 묶음(#chCorner)에 들어가 서로 겹치지 않음(맨 아래가 이것).
+   앱이 넘겨 줌: ReportLink.set({ board: 'https://www.charum.org/webapp/59784', color: '#17766F', when: () => 참/거짓 })
+     board  이 앱 게시판 글 주소(없으면 게시판 목록)      color  앱 영역 색(글자·테두리)
+     when   언제 보일지(없으면 body에 setup 또는 admin이 붙었을 때)   2026-10-22 처음, 2026-11-25 모듈로 */
+window.ReportLink = (function () {
+  var o = { board: 'https://www.charum.org/webapp', color: '#4E6A80', when: null };
+  var css = document.createElement('style');
+  css.textContent = '#chCorner{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:2147480001;display:flex;flex-direction:column-reverse;align-items:flex-start;gap:8px;pointer-events:none}'
+    + '#chCorner>*{pointer-events:auto}'
+    + '#reportBtn{display:none;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid var(--rb-c55);color:var(--rb-c);font:600 13px/1.2 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer}'
+    + '#reportBtn:hover{background:#fff;border-color:var(--rb-c)}#reportBtn.on{display:inline-flex}'
+    + '@media (max-width:600px){#reportBtn{width:40px;height:40px;padding:0;justify-content:center;font-size:18px}#reportBtn .rbTxt{display:none}}'
+    + '@media print{#chCorner{display:none!important}}';
+  document.head.appendChild(css);
+  function corner() {
+    var c = document.getElementById('chCorner');
+    if (!c) { c = document.createElement('div'); c.id = 'chCorner'; document.body.appendChild(c); }
+    return c;
+  }
+  function url() { return o.board + (/\/\d+$/.test(o.board) ? '#write' : ''); }
+  function make() {
+    var a = document.getElementById('reportBtn'); if (a) return a;
+    a = document.createElement('a'); a.id = 'reportBtn'; a.target = '_blank'; a.rel = 'noopener'; a.title = '이 앱의 오류나 의견을 게시판 댓글로 남겨요';
+    a.setAttribute('aria-label', '오류·의견 알리기'); a.innerHTML = '<span aria-hidden="true">💬</span><span class="rbTxt">오류·의견 알리기</span>';
+    var c = corner(); c.insertBefore(a, c.firstChild);   /* column-reverse: 첫 자식이 맨 아래 */
+    return a;
+  }
+  function show() {
+    try { if (o.when) return !!o.when(); var c = document.body.classList; return c.contains('setup') || c.contains('admin'); } catch (e) { return false; }
+  }
+  function tick() {
+    if (!document.body) return;
+    var a = make(); a.href = url();
+    a.style.setProperty('--rb-c', o.color); a.style.setProperty('--rb-c55', o.color + '55');
+    a.classList.toggle('on', show());
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tick); else tick();
+  setInterval(tick, 700);
+  return {
+    set: function (x) { for (var k in x) o[k] = x[k]; tick(); },
+    corner: corner
+  };
+})();
+</script>
+<script id="endLesson">
+/* 차름 공통 모듈: 수업 끝내기(endLesson) — 원본은 common/endLesson.js. 앱 안의 <script id="endLesson">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   전자칠판엔 Esc가 없음 → 관리 메뉴를 열면 전체 화면에서 나오고(잠깐 나가기),
+   관리 메뉴에 있는 동안 왼쪽 아래 "⏻ 수업 끝내기"(두 번 눌러야)로 앱을 아예 끝냄: 소리 멈춤 → 저장 신호 → 전체 화면 나감 → 탭 닫기 → 안 닫히면 "수업을 마쳤어요".
+   오류·의견 알리기(reportLink)와 같은 왼쪽 아래 묶음(#chCorner)에서 그 위에 놓여 서로 겹치지 않음.
+   앱이 넘겨 줌: EndLesson.set({ board: 'https://www.charum.org/webapp/59784', when: () => 참/거짓 })
+     board  "차름 게시판으로" 주소     when  관리 메뉴가 열려 있는지(없으면 body에 admin이 붙었을 때)   2026-10-22 처음, 2026-11-25 모듈로 */
+window.EndLesson = (function () {
+  var o = { board: 'https://www.charum.org/webapp', when: null };
+  var ctxs = []; ['AudioContext', 'webkitAudioContext'].forEach(function (n) {
+    var C = window[n]; if (!C || C.__endWrap) return;
+    var W = function () { var c = new (Function.prototype.bind.apply(C, [null].concat([].slice.call(arguments))))(); ctxs.push(c); return c; };
+    W.prototype = C.prototype; W.__endWrap = true; try { window[n] = W; } catch (e) {}
+  });
+  var css = document.createElement('style');
+  css.textContent = '#endBtn{display:none;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:#fff;border:1.5px solid #B4473B;color:#9A3328;font:700 14px/1.2 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.1);cursor:pointer;touch-action:none}#endBtn.on{display:inline-flex}#endBtn.sure{background:#B4473B;color:#fff}'
+    + '#endCover{position:fixed;inset:0;z-index:2147483600;background:#F3F1EC;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;color:#2B3236}'
+    + '#endCover .c{text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center}#endCover h1{font-family:Jua,"Noto Sans KR",sans-serif;font-weight:400;font-size:44px;margin:0}#endCover p{margin:0;color:#5E676B;font-size:16px}'
+    + '#endCover .r{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}#endCover button,#endCover a{font:700 18px/1 "Noto Sans KR",sans-serif;padding:14px 26px;border-radius:14px;border:1.5px solid #8B979B;background:#fff;color:#2B3236;text-decoration:none;cursor:pointer}#endCover .p{background:#2B3236;color:#fff;border-color:#2B3236}@media print{#endBtn{display:none!important}}';
+  document.head.appendChild(css);
+  function admin() { try { return o.when ? !!o.when() : document.body.classList.contains('admin'); } catch (e) { return false; } }
+  function exitFull() { try { if (document.fullscreenElement) document.exitFullscreen().catch(function () {}); else if (document.webkitFullscreenElement) document.webkitExitFullscreen(); } catch (e) {} }
+  function hush() { try { speechSynthesis.cancel(); } catch (e) {} document.querySelectorAll('audio,video').forEach(function (m) { try { m.pause(); } catch (e) {} }); ctxs.forEach(function (c) { try { c.suspend(); } catch (e) {} }); }
+  function end() {
+    hush(); try { window.dispatchEvent(new Event('pagehide')); } catch (e) {} exitFull();
+    var cv = document.createElement('div'); cv.id = 'endCover';
+    cv.innerHTML = '<div class="c"><h1>수업을 마쳤어요</h1><p>이 창(탭)을 닫아도 됩니다. 하던 것은 이 기기에 저장되어 있습니다.</p><div class="r"><button type="button" class="p" id="endAgain">다시 시작</button><a href="' + o.board + '">차름 게시판으로</a></div></div>';
+    document.body.appendChild(cv);
+    cv.querySelector('#endAgain').onclick = function () { location.reload(); };
+    ['pointerdown', 'click', 'touchstart', 'keydown'].forEach(function (t) { cv.addEventListener(t, function (e) { e.stopPropagation(); });   /* 단추가 받은 뒤 막음(잡는 단계에서 막으면 "다시 시작"까지 막힘, 2026-10-26) */ });
+    setTimeout(function () { try { window.close(); } catch (e) {} }, 150);
+    setInterval(hush, 1000);   /* 늦게 시작한 소리도 멈춤 */
+  }
+  function corner() {
+    if (window.ReportLink) return window.ReportLink.corner();
+    var c = document.getElementById('chCorner');
+    if (!c) { c = document.createElement('div'); c.id = 'chCorner'; c.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:2147480001;display:flex;flex-direction:column-reverse;align-items:flex-start;gap:8px'; document.body.appendChild(c); }
+    return c;
+  }
+  var was = false, sureT = 0;
+  function tick() {
+    if (!document.body) return;
+    var b = document.getElementById('endBtn');
+    if (!b) {
+      b = document.createElement('button'); b.id = 'endBtn'; b.type = 'button'; b.title = '앱을 끝내요(전체 화면에서 나가고 탭을 닫아요)';
+      b.innerHTML = '<span aria-hidden="true">⏻</span><span class="t">수업 끝내기</span>';
+      b.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        if (!b.classList.contains('sure')) {
+          b.classList.add('sure'); b.querySelector('.t').textContent = '한 번 더 누르면 끝나요'; clearTimeout(sureT);
+          sureT = setTimeout(function () { b.classList.remove('sure'); b.querySelector('.t').textContent = '수업 끝내기'; }, 3000); return;
+        }
+        end();
+      });
+      ['click', 'pointerup'].forEach(function (t) { b.addEventListener(t, function (e) { e.stopPropagation(); }); });
+      corner().appendChild(b);
+    }
+    var a = admin();
+    b.classList.toggle('on', a);
+    if (a && !was) exitFull();   /* 관리 메뉴를 열면 전체 화면에서 나옴(잠깐 나가기) */
+    was = a;
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tick); else tick();
+  setInterval(tick, 400);
+  return { set: function (x) { for (var k in x) o[k] = x[k]; tick(); } };
+})();
+</script>
+<script id="homeLink">
+/* 차름 공통 모듈: 차름 홈페이지 링크(homeLink) — 원본은 common/homeLink.js. 앱 안의 <script id="homeLink">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   선생님 화면(처음 설정 화면·학습 중 관리 메뉴)에서만 차름 로고를 두고, 누르면 charum.org가 새 탭으로 열림(수업 화면은 그대로).
+   - 처음 설정 화면: HomeLink.setup('첫 카드 선택자') — 첫 카드(①)의 왼쪽 위 모서리 바로 위에 붙음(제목 아래 줄과 같은 높이).
+     그 자리에 글자(설명 줄)가 겹치면(휴대폰처럼 좁을 때) 로고가 한 줄을 차지하고 카드가 그만큼 내려감.
+   - 학습 중 관리 메뉴: 화면 왼쪽 위에 고정. HomeLink.bar('위 메뉴 줄 선택자', …) — 그 줄이 로고와 겹치면(좁은 화면) 로고가 맨 위,
+     메뉴 줄은 로고 아래로 내려감(아래쪽에서 수업 끝내기·오류 알리기가 맨 아래, 메뉴가 그 위로 올라가는 것과 같은 짜임).
+   - 언제 보일지는 앱이 정함: HomeLink.when(() => 참/거짓). 정하지 않으면 body에 setup 또는 admin이 붙었을 때.
+     setup() 카드가 보이는 동안에는 고정 로고 대신 카드 위 로고가 나옴.
+   - 고정 로고 자리를 옮길 앱만 HomeLink.at(왼쪽px, 위px)(004·006: 왼쪽 끝까지 닿는 위 메뉴 줄 아래). 2026-11-21 */
+window.HomeLink = (function () {
+  var URL = 'https://www.charum.org/';
+  /* 로고(2026-11-22): 저장소 사본(media/brand/charum-logo.png)을 먼저, 없으면 charum.org 원본 — 서버 주소가 바뀌어도 깨지지 않게 */
+  var LOGO = 'https://shim-sung-hyun.github.io/web_app/media/brand/charum-logo.png';
+  var LOGO2 = 'https://www.charum.org/files/attach/images/59600/cdff757386e72b62ba5fb17ea83df99e.png';
+  var st = document.createElement('style');
+  st.textContent = '.chHomeA{display:inline-flex;align-items:center;line-height:0;padding:4px;border-radius:8px;text-decoration:none;opacity:.9;transition:opacity .15s}'
+    + '.chHomeA:hover,.chHomeA:focus-visible{opacity:1}.chHomeA:focus-visible{outline:2px solid currentColor;outline-offset:2px}'
+    + '.chHomeA img{height:30px;width:auto;display:block}'
+    + '.chHomeA .hlTxt{display:none;font:700 14px/1 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;color:#555;letter-spacing:.02em}'
+    + '.chHomeA.noimg img{display:none}.chHomeA.noimg .hlTxt{display:inline;line-height:22px}'
+    + '#chHome{position:fixed;left:var(--hl-left,14px);top:var(--hl-top,12px);z-index:2147480000;display:none}#chHome.on{display:inline-flex}'
+    + '.chHomeSlot{position:relative;height:0;margin:0}.chHomeSlot .chHomeA{position:absolute;left:-4px;bottom:6px}'
+    + '.chHomeSlot.flow{height:auto;margin:0 0 6px}.chHomeSlot.flow .chHomeA{position:static;margin-left:-4px}'
+    + '@media (max-width:600px){.chHomeA img{height:24px}}@media print{#chHome,.chHomeSlot{display:none!important}}';
+  document.head.appendChild(st);
+  var show = function () { var c = document.body.classList; return c.contains('setup') || c.contains('admin'); };
+  var setupSel = null, bars = [];
+  function link(id) {
+    var a = document.createElement('a'); if (id) a.id = id; a.className = 'chHomeA'; a.href = URL; a.target = '_blank'; a.rel = 'noopener';
+    a.title = '차름 홈페이지(charum.org) — 새 탭으로 열려요'; a.setAttribute('aria-label', '차름 홈페이지 charum.org');
+    var img = new Image(); img.alt = ''; img.src = LOGO; img.onerror = function () { if (img.src !== LOGO2) { img.src = LOGO2; return; } a.classList.add('noimg'); };
+    img.onload = function () { tick(); };
+    var t = document.createElement('span'); t.className = 'hlTxt'; t.textContent = 'charum.org';
+    a.appendChild(img); a.appendChild(t); return a;
+  }
+  function make() { if (!document.getElementById('chHome')) document.body.appendChild(link('chHome')); }
+  function visible(el) { if (!el || !el.isConnected) return false; var r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden'; }
+  function hit(a, b) { return a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom; }
+  /* 처음 설정 화면: 첫 카드 바로 위에 로고 자리(높이 0)를 두고, 글자와 겹치면 한 줄을 차지하게 */
+  function placeSetup() {
+    var card = setupSel && document.querySelector(setupSel);
+    var on = false; try { on = !!show(); } catch (e) {}
+    var slot = document.querySelector('.chHomeSlot');
+    if (!card || !visible(card) || !on) { if (slot) slot.style.display = 'none'; return false; }
+    if (!slot || slot.nextElementSibling !== card) {
+      if (slot) slot.remove();
+      slot = document.createElement('div'); slot.className = 'chHomeSlot'; slot.appendChild(link());
+      card.parentNode.insertBefore(slot, card);
+    }
+    slot.style.display = '';
+    slot.classList.remove('flow');
+    var a = slot.firstChild, ar = a.getBoundingClientRect(), pad = { left: ar.left - 2, right: ar.right + 2, top: ar.top - 2, bottom: ar.bottom + 2 };
+    /* 카드 앞에 있는 글자·그림만 봄(글 상자 전체가 아니라 실제 글줄) */
+    var box = card.parentNode, over = false, rg = document.createRange(), n;
+    var before = function (x) { return !!(x.compareDocumentPosition(slot) & 4); };
+    var tw = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+    while (!over && (n = tw.nextNode())) {
+      if (!before(n)) break;
+      if (!n.nodeValue.trim()) continue;
+      rg.selectNodeContents(n); var rs = rg.getClientRects();
+      for (var i = 0; i < rs.length && !over; i++) if (rs[i].width > 1 && hit(pad, rs[i])) over = true;
+    }
+    if (!over) box.querySelectorAll('img,svg,canvas,button,input,select').forEach(function (x) { if (!over && before(x) && !x.closest('.chHomeSlot') && hit(pad, x.getBoundingClientRect())) over = true; });
+    if (!over && ar.top < 0) over = true;
+    slot.classList.toggle('flow', over);
+    return true;
+  }
+  /* 관리 메뉴: 위 메뉴 줄이 고정 로고와 겹치면 로고 아래로 내림 */
+  function pushBars(a, on) {
+    var lr = on ? a.getBoundingClientRect() : null;
+    bars.forEach(function (sel) {
+      document.querySelectorAll(sel).forEach(function (el) {
+        var fixed = /fixed|absolute|sticky/.test(getComputedStyle(el).position), was = +(el.dataset.hlPush || 0), need = 0;
+        if (lr && visible(el)) {
+          var r = el.getBoundingClientRect(), top = r.top - (fixed ? was : 0), bot = r.bottom - (fixed ? was : 0);
+          if (r.left < lr.right + 6 && r.right > lr.left && top < lr.bottom + 4 && bot > lr.top) need = Math.ceil(lr.bottom + 6 - top);
+        }
+        if (need === was) return;
+        if (fixed) el.style.translate = need ? '0 ' + need + 'px' : '';
+        else el.style.marginTop = need ? need + 'px' : '';
+        if (need) el.dataset.hlPush = need; else delete el.dataset.hlPush;
+      });
+    });
+  }
+  function tick() {
+    make(); var a = document.getElementById('chHome'); if (!a) return;
+    var on = false; try { on = !!show(); } catch (e) {}
+    var inSetup = placeSetup();
+    on = on && !inSetup;
+    a.classList.toggle('on', on);
+    pushBars(a, on);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tick); else tick();
+  setInterval(tick, 400);
+  addEventListener('resize', tick);
+  return {
+    when: function (fn) { show = fn; tick(); },
+    setup: function (sel) { setupSel = sel; tick(); },
+    bar: function () { bars = bars.concat([].slice.call(arguments)); tick(); },
+    keepTop: function () {},
+    at: function (left, top) { var r = document.documentElement.style; if (left != null) r.setProperty('--hl-left', left + 'px'); if (top != null) r.setProperty('--hl-top', top + 'px'); }
+  };
+})();
+</script>
+<script>
+ReportLink.set({board:'https://www.charum.org/webapp',color:'#4E6A80'});
+EndLesson.set({board:'https://www.charum.org/webapp'});
+HomeLink.setup('#c1');
+</script>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const GH='https://shim-sung-hyun.github.io/web_app/media/';
+/* 동물: 그림은 media/animals, 이름 소리는 voice/leda-0.90 (낱말 SHA-1 앞 16자리, 곰은 "곰.") */
+const ANIMALS=[
+  {id:'cat',   name:'고양이', img:'goyangi', say:'a132a94fadc35584'},
+  {id:'dog',   name:'강아지', img:'gae',     say:'160b19e801099218'},
+  {id:'rabbit',name:'토끼',   img:'tokki',   say:'7830e5d54679d439'},
+  {id:'lion',  name:'사자',   img:'saja',    say:'97a7500406253fd1'},
+  {id:'bear',  name:'곰',     img:'gom',     say:'c56b10881204f00e'},
+  {id:'tiger', name:'호랑이', img:'horangi', say:'a89afe959fcf40d4'},
+];
+const MAXSIDE=1600;               /* 큰 사진은 이 길이로 줄여 씀(전자칠판에서도 부드럽게) */
+const S={me:null, center:{x:.5,y:.4}, conv:{}, cur:'me', admin:false, mode:'setup'};
+
+/* ---------- 사진 읽기 ---------- */
+function loadFile(file){
+  return new Promise((ok,no)=>{
+    if(!file||!/^image\//.test(file.type)) return no(new Error('그림 파일이 아니에요'));
+    const url=URL.createObjectURL(file), im=new Image();
+    im.onload=()=>{ URL.revokeObjectURL(url); ok(im); };
+    im.onerror=()=>{ URL.revokeObjectURL(url); no(new Error('사진을 열 수 없어요')); };
+    im.src=url;
+  });
+}
+function toCanvas(_,w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
+function shrink(im){
+  const k=Math.min(1,MAXSIDE/Math.max(im.naturalWidth,im.naturalHeight));
+  const c=toCanvas(im,Math.round(im.naturalWidth*k),Math.round(im.naturalHeight*k));
+  c.getContext('2d').drawImage(im,0,0,c.width,c.height); return c;
+}
+/* 바뀐 사진은 내 사진과 같은 크기로 맞춤(비율이 다르면 가운데를 잘라 채움) */
+function fitTo(src,W,H){
+  const c=toCanvas(null,W,H), g=c.getContext('2d');
+  const sw=src.naturalWidth||src.width, sh=src.naturalHeight||src.height;
+  const k=Math.max(W/sw,H/sh), dw=sw*k, dh=sh*k;
+  g.drawImage(src,(W-dw)/2,(H-dh)/2,dw,dh); return c;
+}
+
+/* 파일 고르기 — 같은 input 하나를 칸마다 돌려 씀 */
+let fileTarget=null;
+function pickFile(target){ fileTarget=target; $('fileIn').value=''; $('fileIn').click(); }
+$('fileIn').addEventListener('change',e=>{ const f=e.target.files[0]; if(f&&fileTarget) take(fileTarget,f); });
+function dropZone(el,target){
+  el.addEventListener('dragover',e=>{ e.preventDefault(); el.classList.add('drag'); });
+  el.addEventListener('dragleave',()=>el.classList.remove('drag'));
+  el.addEventListener('drop',e=>{ e.preventDefault(); el.classList.remove('drag'); const f=e.dataTransfer.files[0]; if(f) take(target,f); });
+}
+async function take(target,file){
+  let im; try{ im=await loadFile(file); }catch(err){ alert(err.message); return; }
+  if(target==='me'){
+    S.me=shrink(im); S.center={x:.5,y:.4};
+    reconv();
+  }else{
+    S.conv[target]={src:im};
+    reconv();
+  }
+  renderSetup();
+}
+/* 바뀐 사진을 지금 내 사진 크기에 다시 맞춤(원본 그림은 src에 남겨 둠) */
+function reconv(){
+  for(const id in S.conv){
+    const o=S.conv[id], src=o.src;
+    o.fit=S.me&&src?fitTo(src,S.me.width,S.me.height):null;
+  }
+}
+
+/* ---------- 설정 화면 그리기 ---------- */
+function thumbURL(c){ try{ return c.toDataURL('image/jpeg',.82); }catch(e){ return ''; } }
+function renderSetup(){
+  const box=$('meBox');
+  box.querySelectorAll('img,.faceDot').forEach(n=>n.remove());
+  const empty=box.querySelector('.empty');
+  if(S.me){
+    box.classList.add('has'); empty.classList.add('hidden');
+    box.style.aspectRatio=S.me.width+'/'+S.me.height;
+    const img=new Image(); img.src=thumbURL(S.me); img.alt='내 사진'; box.appendChild(img);
+    const d=document.createElement('div'); d.className='faceDot'; box.appendChild(d); placeDot();
+    $('meAgain').classList.remove('hidden');
+  }else{
+    box.classList.remove('has'); empty.classList.remove('hidden'); box.style.aspectRatio='';
+    $('meAgain').classList.add('hidden');
+  }
+  const wrap=$('slots'); wrap.innerHTML='';
+  ANIMALS.forEach(a=>{
+    const o=S.conv[a.id], has=!!(o&&o.src);
+    const el=document.createElement('div'); el.className='slot'+(has?' has':'');
+    el.innerHTML='<div class="top"><img alt="" src="'+GH+'animals/'+a.img+'.webp"><span>'+a.name+'</span></div>'
+      +'<div class="pic" tabindex="0" role="button" aria-label="'+a.name+' 사진 넣기">'+(has?'':'사진 넣기')+'</div>'
+      +'<button class="del" type="button" aria-label="'+a.name+' 사진 빼기">×</button>';
+    const pic=el.querySelector('.pic');
+    if(has){
+      const img=new Image(); img.alt=a.name+'로 바꾼 사진';
+      img.src=o.fit?thumbURL(o.fit):o.src.src; pic.appendChild(img);
+    }
+    pic.addEventListener('click',()=>pickFile(a.id));
+    pic.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pickFile(a.id);} });
+    dropZone(pic,a.id);
+    el.querySelector('.del').addEventListener('click',()=>{ delete S.conv[a.id]; renderSetup(); });
+    wrap.appendChild(el);
+  });
+  const n=ready().length;
+  $('startBtn').disabled=!(S.me&&n);
+  $('startHint').textContent=!S.me?'내 사진을 먼저 넣어 주세요.':!n?'동물로 바꾼 사진을 하나 넣어 주세요.':'동물 '+n+'마리로 시작해요.';
+}
+const ready=()=>ANIMALS.filter(a=>S.conv[a.id]&&S.conv[a.id].fit);
+function placeDot(){
+  const d=$('meBox').querySelector('.faceDot'); if(!d) return;
+  d.style.left=(S.center.x*100)+'%'; d.style.top=(S.center.y*100)+'%';
+}
+$('meBox').addEventListener('click',e=>{
+  if(!S.me){ pickFile('me'); return; }
+  const r=$('meBox').getBoundingClientRect();
+  S.center={x:Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)), y:Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))};
+  placeDot();
+});
+$('meBox').addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ')&&!S.me){ e.preventDefault(); pickFile('me'); } });
+$('meAgain').addEventListener('click',()=>pickFile('me'));
+dropZone($('meBox'),'me');
+
+/* ---------- 보여 주기 ---------- */
+const cv=$('stage'), g=cv.getContext('2d');
+const off=document.createElement('canvas'), og=off.getContext('2d');
+let anim=null, split=null, raf=0;
+const DUR=1700;                    /* 바뀌는 시간(ms) — 갑작스럽지 않게 */
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const imgOf=k=>k==='me'?S.me:S.conv[k].fit;
+
+function layout(){
+  const wrap=$('stageWrap'), r=wrap.getBoundingClientRect();
+  const aw=Math.max(100,r.width-36-24), ah=Math.max(100,r.height-26-26);
+  const k=Math.min(aw/S.me.width,ah/S.me.height);
+  const w=Math.round(S.me.width*k), h=Math.round(S.me.height*k), dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.style.width=w+'px'; cv.style.height=h+'px';
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  off.width=cv.width; off.height=cv.height;
+  draw();
+}
+function draw(){
+  const W=cv.width,H=cv.height;
+  g.clearRect(0,0,W,H);
+  if(split){
+    const other=split.with, x=Math.round(split.x*W);
+    g.drawImage(S.me,0,0,W,H);
+    g.save(); g.beginPath(); g.rect(x,0,W-x,H); g.clip(); g.drawImage(imgOf(other),0,0,W,H); g.restore();
+    g.fillStyle='rgba(255,255,255,.95)'; g.fillRect(x-1.5*dprK(),0,3*dprK(),H);
+    g.beginPath(); g.arc(x,H/2,16*dprK(),0,Math.PI*2); g.fill();
+    g.fillStyle='#4E6A80'; g.font=(14*dprK())+'px sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText('◀ ▶',x,H/2+1);
+    return;
+  }
+  if(!anim){ g.drawImage(imgOf(S.cur),0,0,W,H); return; }
+  const p=ease(Math.min(1,(performance.now()-anim.t0)/DUR));
+  g.drawImage(imgOf(anim.from),0,0,W,H);
+  /* 얼굴 가운데에서 부드러운 가장자리로 번지는 원 */
+  const cx=S.center.x*W, cy=S.center.y*H;
+  const far=Math.max(Math.hypot(cx,cy),Math.hypot(W-cx,cy),Math.hypot(cx,H-cy),Math.hypot(W-cx,H-cy));
+  const feather=Math.max(W,H)*.22, r=p*(far+feather);
+  og.globalCompositeOperation='source-over'; og.clearRect(0,0,W,H); og.drawImage(imgOf(anim.to),0,0,W,H);
+  og.globalCompositeOperation='destination-in';
+  const gr=og.createRadialGradient(cx,cy,Math.max(0,r-feather),cx,cy,Math.max(.1,r));
+  gr.addColorStop(0,'rgba(0,0,0,1)'); gr.addColorStop(1,'rgba(0,0,0,0)');
+  og.fillStyle=gr; og.fillRect(0,0,W,H);
+  g.drawImage(off,0,0);
+}
+const dprK=()=>cv.width/parseFloat(cv.style.width||cv.width);
+function tick(){
+  draw();
+  if(anim&&performance.now()-anim.t0>=DUR){ const done=anim; anim=null; draw(); afterChange(done.to); }
+  if(anim) raf=requestAnimationFrame(tick); else raf=0;
+}
+function change(to){
+  if(S.admin||to===S.cur&&!anim) return;
+  const from=anim?anim.to:S.cur;     /* 바뀌는 중에 또 누르면 거기서부터 이어서 */
+  if(to===from) return;
+  stopVoice();
+  S.cur=to; anim={from, to, t0:performance.now()}; markPick();
+  if(!raf) raf=requestAnimationFrame(tick);
+}
+let voice=null;
+function stopVoice(){ if(voice){ try{ voice.pause(); }catch(e){} voice=null; } }
+function afterChange(to){
+  if(to!=='me') lastAnimal=to;     /* 나로 돌아와서 끌어 견줄 때 씀 */
+  if(to==='me'||!$('optSay').checked) return;
+  const a=ANIMALS.find(x=>x.id===to); if(!a) return;
+  voice=new Audio(GH+'voice/leda-0.90/'+a.say+'.mp3'); voice.play().catch(()=>{});
+}
+
+/* 학생 단추: 60px 안에서 떼거나 pointercancel이어도 누름 */
+function press(el,fn){
+  let id=null,sx=0,sy=0;
+  el.addEventListener('pointerdown',e=>{ id=e.pointerId; sx=e.clientX; sy=e.clientY; });
+  el.addEventListener('pointerup',e=>{ if(id!==e.pointerId) return; id=null; if(Math.hypot(e.clientX-sx,e.clientY-sy)<=60) fn(); });
+  el.addEventListener('pointercancel',e=>{ if(id===e.pointerId){ id=null; fn(); } });
+  el.addEventListener('click',e=>{ if(e.detail===0) fn(); });   /* 키보드 */
+}
+function renderPicks(){
+  const wrap=$('picks'); wrap.innerHTML='';
+  const me=document.createElement('button'); me.type='button'; me.className='pick'; me.dataset.k='me';
+  const face=document.createElement('div'); face.className='face';
+  face.style.backgroundImage='url('+faceThumb()+')'; me.appendChild(face);
+  me.insertAdjacentHTML('beforeend','<span>나</span>'); press(me,()=>change('me')); wrap.appendChild(me);
+  ready().forEach(a=>{
+    const b=document.createElement('button'); b.type='button'; b.className='pick'; b.dataset.k=a.id;
+    b.innerHTML='<img alt="" src="'+GH+'animals/'+a.img+'.webp"><span>'+a.name+'</span>';
+    press(b,()=>change(a.id)); wrap.appendChild(b);
+  });
+  markPick();
+}
+function markPick(){ $('picks').querySelectorAll('.pick').forEach(b=>b.classList.toggle('on',b.dataset.k===S.cur)); }
+/* "나" 단추: 얼굴 가운데를 동그랗게 */
+function faceThumb(){
+  const s=Math.min(S.me.width,S.me.height)*.42, c=toCanvas(null,160,160);
+  const x=Math.min(S.me.width-s,Math.max(0,S.center.x*S.me.width-s/2)), y=Math.min(S.me.height-s,Math.max(0,S.center.y*S.me.height-s/2));
+  c.getContext('2d').drawImage(S.me,x,y,s,s,0,0,160,160); return c.toDataURL('image/jpeg',.85);
+}
+
+/* 사진 위를 옆으로 끌면 반씩 견주어 보기(왼쪽 나, 오른쪽 동물) — 손을 떼면 돌아감 */
+let drag=null;
+cv.addEventListener('pointerdown',e=>{ if(S.admin) return; drag={id:e.pointerId,x:e.clientX,on:false}; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove',e=>{
+  if(!drag||drag.id!==e.pointerId) return;
+  if(!drag.on&&Math.abs(e.clientX-drag.x)<14) return;
+  const other=S.cur!=='me'?S.cur:(lastAnimal||(ready()[0]||{}).id);
+  if(!other) return;
+  drag.on=true; anim=null;
+  const r=cv.getBoundingClientRect();
+  split={with:other,x:Math.min(1,Math.max(0,(e.clientX-r.left)/r.width))}; draw();
+});
+const endDrag=e=>{ if(!drag||drag.id!==e.pointerId) return; drag=null; if(split){ split=null; draw(); } };
+cv.addEventListener('pointerup',endDrag); cv.addEventListener('pointercancel',endDrag);
+let lastAnimal=null;
+
+/* ---------- 화면 오가기 ---------- */
+function goFull(){ const d=document.documentElement; if(!document.fullscreenElement&&d.requestFullscreen) d.requestFullscreen().catch(()=>{}); }
+function exitFull(){ if(document.fullscreenElement&&document.exitFullscreen) document.exitFullscreen().catch(()=>{}); }
+$('startBtn').addEventListener('click',()=>{
+  if($('startBtn').disabled) return;
+  S.mode='show'; S.cur='me'; anim=null; split=null; lastAnimal=null;
+  document.body.classList.remove('setup');
+  $('setup').classList.add('hidden'); $('show').classList.remove('hidden');
+  renderPicks(); goFull(); requestAnimationFrame(layout);
+});
+addEventListener('resize',()=>{ if(S.mode==='show') layout(); });
+document.addEventListener('fullscreenchange',()=>{ if(S.mode==='show') setTimeout(layout,60); });
+
+function setAdmin(on){
+  S.admin=on; document.body.classList.toggle('admin',on);
+  AdminButton.sync();
+  if(on){ stopVoice(); exitFull(); }
+}
+AdminButton.hold({isOpen:()=>S.admin, canOpen:()=>S.mode==='show', open:()=>setAdmin(true), close:()=>{ setAdmin(false); goFull(); }});
+$('dkBack').addEventListener('click',()=>{ setAdmin(false); goFull(); });
+$('dkSetup').addEventListener('click',()=>{
+  setAdmin(false); S.mode='setup'; anim=null; stopVoice();
+  document.body.classList.add('setup');
+  $('show').classList.add('hidden'); $('setup').classList.remove('hidden');
+  renderSetup(); AdminButton.sync();
+});
+renderSetup();
+</script>
+</body>
+</html>
