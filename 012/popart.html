@@ -831,13 +831,7 @@ window.AiKey = (function () {
 const WORKER_URL = 'https://charum-ai.simdoly.workers.dev/cartoon';
 const GEMINI_DIRECT_IMAGE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent';
 // 사진 분석·자동 설정용 모델(012만의 차례). 고르기·기억은 공통 모듈 AiKey.gemini가 함(2026-11-25).
-const GEMINI_TEXT_MODELS = [
-  'gemma-4-26b-a4b-it',
-  'gemma-4-31b-it',
-  'gemini-3.1-flash-lite-preview',
-  'gemini-3.5-flash-lite',
-  'gemini-flash-lite-latest'
-];
+const GEMINI_TEXT_MODELS = AiKey.GEMINI_TEXT;   // 공용 목록(2026-11-25 선생님: Gemma는 들쑥날쑥·하루 종일 불통이라 뺌)
 const GEMINI_PROXY_URL = WORKER_URL.replace(/\/cartoon$/, '/gemini');
 // 키는 이 기기·이 브라우저에 기억(2026-11-25 선생님): Gemini는 다른 앱과 같은 칸 webapp.geminiKey, Cloudflare는 webapp.cfAccount·webapp.cfToken. '지우기'로 지움.
 let cloudflareAccountId = '';
