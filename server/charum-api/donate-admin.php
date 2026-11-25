@@ -1,6 +1,6 @@
 <?php
 /* =====================================================================
-   차름 기증 사진 — 관리자 화면 (donate-admin.php) — 2026-10-25 판
+   차름 기증 사진 — 관리자 화면 (donate-admin.php) — 2026-11-25 판(썸네일을 보통 그림 주소로)
    charum.org에 "관리자"로 로그인한 사람만 열린다(확인 글자 필요 없음).
    - 서버 맨 위의 charum-api/ 폴더에 donate.php와 함께 둔다(2026-10-25 옮김). 기증 사진은 donate.php가 쌓은 donate-data/ 를 그대로 읽는다.
    - 회원 메뉴의 "기증 사진" 탭은 애드온 addons/charum_donate 가 붙인다(관리자에게만, 기다리는 장 수 표시).
@@ -48,6 +48,29 @@ function ghReady() { global $GITHUB_TOKEN; return strlen($GITHUB_TOKEN) > 20 && 
 
 /* 기다리는 장 수(관리자만) */
 if (isset($_GET['count'])) jout(['n' => $isAdmin ? pending($DIR) : null]);
+
+/* 사진을 보통 그림 주소로 내줌(관리자만, 2026-11-25) — 화면이 data: 글자 덩어리로 그리면 사이트 보안 설정에 막혀 썸네일이 안 보였음.
+   ?img=기증번호&f=img|art  → donate-data의 사진·그림 / ?fimg=다시볼번호&f=photo.jpg|fixed.jpg|art.jpg → 비공개 저장소 flagged/ */
+function jpegOut($bin) {
+  header('Content-Type: image/jpeg'); header('Cache-Control: private, max-age=600'); header('X-Content-Type-Options: nosniff');
+  header('Content-Length: ' . strlen($bin)); echo $bin; exit;
+}
+if (isset($_GET['img']) || isset($_GET['fimg'])) {
+  if (!$isAdmin) { http_response_code(403); exit; }
+  if (isset($_GET['img'])) {
+    $id = (string)$_GET['img']; $f = ($_GET['f'] ?? 'img') === 'art' ? 'art' : 'img';
+    if (!idok($id) || !is_file($DIR . '/d_' . $id . '.json')) { http_response_code(404); exit; }
+    $d = json_decode((string)file_get_contents($DIR . '/d_' . $id . '.json'), true);
+    $bin = base64_decode((string)($d[$f] ?? ''), true);
+    if (!$bin) { http_response_code(404); exit; }
+    jpegOut($bin);
+  }
+  $sid = (string)$_GET['fimg']; $fn = (string)($_GET['f'] ?? 'photo.jpg');
+  if (!ghReady() || !sidok($sid) || !in_array($fn, ['photo.jpg', 'fixed.jpg', 'art.jpg'], true)) { http_response_code(404); exit; }
+  [$c, $bin] = gh('GET', 'flagged/' . $sid . '/' . $fn, null, true);
+  if ($c !== 200 || !$bin) { http_response_code(404); exit; }
+  jpegOut($bin);
+}
 
 /* 목록·사진·지우기(관리자만, 같은 주소에서 연 화면만) */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -204,7 +227,7 @@ async function load(){ say('불러오는 중…'); $('grid').innerHTML=''; ITEMS
   try{ const {list}=await call({a:'list'}); if(!list.length){ say('기다리는 사진이 없어요.','ok'); return; }
     for(const m of list){ const d=await call({a:'get',id:m.id}); ITEMS[d.id]=d;
       const mt=d.meta||{}, sg=mt.suggest||{};
-      const el=document.createElement('div'); el.className='it'; el.innerHTML=`<div class="pair"><div class="pv"><img src="data:image/jpeg;base64,${d.img}" alt="">${overlay(d)}</div>${d.art?`<div class="pv"><img src="data:image/jpeg;base64,${d.art}" alt=""></div>`:'<div class="ph">그림 없음</div>'}</div>
+      const el=document.createElement('div'); el.className='it'; el.innerHTML=`<div class="pair"><div class="pv"><img src="?img=${encodeURIComponent(d.id)}&f=img" alt="${esc(d.title||'사진')}" onerror="this.parentNode.innerHTML='<div class=ph>사진을 못 불러옴</div>'">${overlay(d)}</div>${d.art?`<div class="pv"><img src="?img=${encodeURIComponent(d.id)}&f=art" alt="그림" onerror="this.remove()"></div>`:'<div class="ph">그림 없음</div>'}</div>
         <div class="bar"><span><b>${esc(d.title||'(이름 없음)')}</b><br><small><span class="tag">${d.app==='000'?'제작자 모으기':d.app==='900'?'사진 다리(다른 선생님 앱)':esc(d.app||'001')+' 앱에서'}</span>${mt.place?`<span class="tag">${esc(mt.place)}</span>`:''}${sg.shape?'<span class="tag">도형 찾기</span>':''}${sg.puzzle?'<span class="tag">그림 조각</span>':''}${d.check==='none'?'<span class="tag none">검사 안 함</span>':''}${mt.tags&&mt.tags.length?esc(mt.tags.join(' · '))+' · ':''}${new Date(d.t*1000).toLocaleString('ko-KR')}${mt.note?'<br>'+esc(mt.note):''}${(d.shapes||[]).length?` · 도형 ${d.shapes.length}개 · ${esc([...new Set(d.shapes.map(s=>s.obj))].join(', '))}`:''}</small></span>
         <span class="row"><label><input type="checkbox" data-a="sel"> 고르기</label><button type="button" data-a="del">지우기</button></span></div>`;
       el.querySelector('[data-a=sel]').onchange=e=>{ e.target.checked?SEL.add(d.id):SEL.delete(d.id); el.classList.toggle('sel',e.target.checked); count(); };
@@ -248,8 +271,9 @@ async function loadFlagged(){
       try{ await call({a:'decide',sid:x.sid,d:b.dataset.d}); b.parentNode.innerHTML=`<span class="tag">정함(${DEC[b.dataset.d]}) — 다음 정리 때 반영</span>`; }catch(e){ alert('저장하지 못했어요: '+e.message); } });
     g.appendChild(el);
     const pv=el.querySelectorAll('.pv');
-    call({a:'fimg',sid:x.sid,f:'photo.jpg'}).then(j=>{ pv[0].innerHTML=`<img src="data:image/jpeg;base64,${j.b64}" alt="">`; }).catch(()=>{ pv[0].innerHTML='<div class="ph">그림 없음</div>'; });
-    if(rv.fixed) call({a:'fimg',sid:x.sid,f:'fixed.jpg'}).then(j=>{ pv[1].innerHTML=`<img src="data:image/jpeg;base64,${j.b64}" alt=""><small class="note">고친 사진</small>`; }).catch(()=>{});
+    /* 그림은 보통 주소로(2026-11-25 — data: 그림이 보안 설정에 막혀 안 보였음) */
+    pv[0].innerHTML=`<img src="?fimg=${encodeURIComponent(x.sid)}&f=photo.jpg" alt="사진" onerror="this.parentNode.innerHTML='<div class=ph>사진을 못 불러옴</div>'">`;
+    if(rv.fixed) pv[1].innerHTML=`<img src="?fimg=${encodeURIComponent(x.sid)}&f=fixed.jpg" alt="고친 사진" onerror="this.remove()"><small class="note">고친 사진</small>`;
   } }
 loadFlagged();
 load();
