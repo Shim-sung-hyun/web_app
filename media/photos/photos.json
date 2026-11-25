@@ -4093,6 +4093,144 @@
     },
     "puzzle": true
    }
+  },
+  {
+   "id": "glasses",
+   "title": "안경",
+   "category": "생활용품",
+   "objects": [
+    "안경",
+    "카펫"
+   ],
+   "place": "집",
+   "colors": [
+    "검정",
+    "남색",
+    "회색"
+   ],
+   "shapes": [
+    "원"
+   ],
+   "tags": [
+    "집",
+    "생활용품",
+    "눈"
+   ],
+   "source": "donated",
+   "added": "2026-11-25",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "기증",
+    "consent": "휴대폰 받기 기증 동의(CC BY-NC)",
+    "review": "2026-11-25 Claude 검토",
+    "status": "ok",
+    "notes": "사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "glasses/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   },
+   "from": "d26102512512301ce5343"
+  },
+  {
+   "id": "watch-charger",
+   "title": "충전기",
+   "category": "가전·전자기기",
+   "objects": [
+    "충전기",
+    "전선",
+    "카펫"
+   ],
+   "place": "집",
+   "colors": [
+    "검정",
+    "회색"
+   ],
+   "shapes": [
+    "원"
+   ],
+   "tags": [
+    "집",
+    "전자기기",
+    "충전"
+   ],
+   "source": "donated",
+   "added": "2026-11-25",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "기증",
+    "consent": "휴대폰 받기 기증 동의(CC BY-NC)",
+    "review": "2026-11-25 Claude 검토",
+    "status": "ok",
+    "notes": "충전기 위 작은 무늬(로고)만 작게 보임. 사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "watch-charger/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   },
+   "from": "d261025141847067812f1"
+  },
+  {
+   "id": "tangerine",
+   "title": "귤",
+   "category": "음식",
+   "objects": [
+    "귤",
+    "식탁",
+    "그릇 건조대",
+    "컵"
+   ],
+   "place": "집",
+   "colors": [
+    "주황",
+    "갈색",
+    "흰색"
+   ],
+   "shapes": [
+    "원"
+   ],
+   "tags": [
+    "집",
+    "음식",
+    "과일",
+    "부엌"
+   ],
+   "source": "donated",
+   "added": "2026-11-25",
+   "privacy": "maker-checked",
+   "check": "none",
+   "rights": {
+    "owner": "기증",
+    "consent": "휴대폰 받기 기증 동의(CC BY-NC)",
+    "review": "2026-11-25 Claude 검토",
+    "status": "ok",
+    "notes": "사람·글자·번호 없음"
+   },
+   "files": {
+    "photo": "tangerine/photo.jpg"
+   },
+   "uses": {
+    "shape": {
+     "ok": false,
+     "shapes": []
+    },
+    "puzzle": false
+   },
+   "from": "d261025230538dba2c9ed"
   }
  ]
 }
