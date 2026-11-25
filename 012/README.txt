@@ -112,7 +112,8 @@ Cloudflare 사용량 아끼기 (2026-11-21 선생님 정함)
   PC 화면의 「🖨 사진 인쇄」에서 종이 한 장에 1·2·4·6·9·10장.
   2단계(2026-11-25): 인쇄 판 그대로 — 한 장·막대 가면·퀴즈(2쪽)·전시판을 printPages()가 A4(150dpi) 쪽 그림으로 그려 pagesToPdf()가 PDF로 묶어 보냄
   (화면 인쇄 printHTML과 같은 짜임, 퀴즈 자르기는 quizCrop()). PC는 「열기」로 PDF를 열어 인쇄.
-- 키 기억(2026-11-25 선생님): Gemini는 다른 앱과 같은 webapp.geminiKey, Cloudflare는 webapp.cfAccount·webapp.cfToken(이 기기·브라우저). '지우기'로 지움. 기억된 키가 있으면 접힌 키 칸 제목에 ✓.
+- 키 칸 = 공통 모듈 aiKey(2026-11-25, 001·004·007·010과 같은 모양): 설정판 맨 아래 #keyBox에 AiKey.mount(cloudflare·gemini). 칸은 webapp.cfAccount·cfToken·geminiKey(다른 앱과 같음).
+  앱은 loadKeys()로 AiKey.get을 읽어 cloudflareAccountId 등에 넣음(onChange·storage). keyNudge는 그 상자를 펼쳐 Cloudflare 칸을 짚음. 「처음부터」는 키를 지우지 않음.
 - 밑그림 미리 보기(2026-11-25): 설정판 '대상' 아래에 AI에게 보내는 윤곽판(makeGuide와 같은 popLayers guide)을 360px로 바로 그려 보여 줌(updateGuidePrev).
   대상·색 조합·선 굵기·디테일·자동 설정·새 사진 때 다시 그림, AI 횟수 안 씀. 누르면 크게. 안경·모자 알림은 AI에게 하는 말이라 미리 못 봄.
 - 팝아트 비교(2026-11-25): 설정을 바꿔 다시 그리면 invalidatePop→keepOldPop이 앞 그림을 results.pvN으로 남기고 아래 칸에 「팝아트 1」「팝아트 2」(최근 2장)
