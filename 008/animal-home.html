@@ -374,7 +374,7 @@ details.more summary:hover{color:var(--sci-d)}
   </div>
 
   <div class="card" id="cSp"><h2><span class="num">★</span>스페셜 · 숨은 동물 많이 찾기</h2>
-    <p class="tip">한 곳에 숨은 동물 6~10마리를 모두 찾아요. 가장 어렵게 숨어 있고, 이름 글자를 보며 찾아요. 걸린 시간으로 순위를 매기고, 수업 기록에는 남지 않아요.</p>
+    <p class="tip">한 곳에 숨은 동물 6마리를 모두 찾아요. 가장 어렵게 숨어 있고, 이름 글자를 보며 찾아요. 걸린 시간으로 순위를 매기고, 수업 기록에는 남지 않아요.</p>
     <div id="spBox" style="margin-top:12px"></div>
   </div>
 
@@ -3082,7 +3082,7 @@ async function spLoad(p,box,key){ if(!box) return; key=key||spKey(p);
 function renderSpecial(){
   const box=$('spBox'); if(!box) return; const ps=spPlaces(), k=spWho();
   box.innerHTML='<div class="row"><button class="chip on" id="spGo"'+(ps.length?'':' disabled')+'>★ 스페셜 시작 (아무 곳이나)</button><button class="chip sm" id="spRk">🏆 순위 보기</button></div>'
-    +'<p class="pickNote">나오는 곳: '+ps.map(p=>PL[p].label+' '+spCount(p)+'마리').join(' · ')+'</p>'
+    +'<p class="pickNote">나오는 곳: '+ps.map(p=>PL[p].label).join(' · ')+' — 곳마다 6마리(새 무대 마릿수, 2026-11-25)</p>'
     +'<div class="spNick"><b>순위표 별명</b> <small>— '+(k==='_'?'연습':esc(nameOf(k)))+'</small> <input id="spNickIn" maxlength="8" placeholder="예: 번개손" value="'+esc(NICK[k]||'')+'" autocomplete="off"><button class="chip sm" id="spNickOk">저장</button><button class="chip sm" id="spNickDel">지우기</button> <span id="spNickMsg" class="pickNote"></span>'
     +'<p class="pickNote">별명을 정하면 기록이 모든 학교 순위표에 올라가요. 보내는 것은 별명·곳·시간뿐이고 학생 이름·학교는 보내지 않아요. 실명이나 학교를 알 수 있는 별명은 쓰지 않아요.</p></div>';
   $('spGo').onclick=()=>startSpecial();
