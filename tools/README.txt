@@ -53,6 +53,8 @@
   tools/index.html                  도구 모음 한 장(선생님이 열어 보는 곳, https://shim-sung-hyun.github.io/web_app/tools/) — 아래 화면을 새로 만들거나 바꾸면 여기도 함께 고침
   media/voice/voice-maker.html      목소리 만들기(?app=010처럼 앱 고르기) → 받은 zip은 voice-add.py
   media/prompts/copy.html           프롬프트 복사(?f=파일이름, 단추로 복사·복사한 장은 노랗게) — 새 글은 FILES에 한 줄
+  media/library.html                자료실 — 다른 선생님도 그림·배경·소품·사진(승인한 것만)을 찾아 보고 받기·zip, 목소리는 문장으로 찾아 듣고 받기. 나누는 범위 media/share.json(2026-11-25)
+  media/photos/share-review.html    사진 나눔 승인 — 고른 사진의 "승인 줄"을 Claude에게 → Claude가 media/share.json의 photos를 고침
   media/photos/collect.html         사진 모으기 · snap.html 사진 넣기 · review.html 사진 검토(절차 media/photos/REVIEW.md)
   media/stage/install.html          무대 설치(장소 고르기부터 — AI로 채우기: 제미나이 키·Gemini 3.5 Flash Lite, 그림풍·AI 고르기, 내 저장소 그림 열기 — GitHub 공개 저장소 주소를 넣어 누구나) · arrange.html 배치 고치기 · touchup.html 소품 손질(짝 src-align.py)
   media/stage/prop-room.html        소품실 보기(짝 prop-room.py) · test.html 무대 보기 · hide-test.html 숨기기 시험(?place=) · hide-judge.html 숨기기 평가

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>차름 자료실</title>
+<!-- 차름 자료실(2026-11-25 선생님: 내 그림·소리를 다른 선생님도 받아 쓰게).
+     목록 = catalog.json(tools/media-index.py가 만듦) − share.json의 빼는 것. 사진은 share.json photos(선생님이 photos/share-review.html에서 승인한 것)만.
+     목소리는 문장을 넣으면 문장 SHA-1 앞 16자리로 묶음마다 찾아 들려줌(목록에 문장이 없어서). 받기: 하나씩·골라서 zip(JSZip). -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root { --ink:#2b2a27; --soft:#6f6a60; --line:#d9d3c4; --paper:#f6f2e8; --card:#fffdf8; --pick:#ffe98a; --pickLine:#c9a52a; --link:#24527a; --btn:#34495e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 "Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:24px 16px 90px; }
+  h1 { font-size:24px; margin:0 0 4px; }
+  .lead { color:var(--soft); margin:0 0 14px; font-size:15px; }
+  .terms { font-size:14px; border-left:3px solid var(--line); padding:4px 0 4px 10px; color:var(--soft); margin:0 0 18px; }
+  h2 { font-size:17px; margin:30px 0 8px; padding-top:12px; border-top:2px solid var(--ink); }
+  .bar { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; }
+  input[type=search], input[type=text], select { font:inherit; padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:#fff; color:var(--ink); }
+  input[type=search] { flex:1 1 220px; min-width:0; }
+  .kinds { display:flex; flex-wrap:wrap; gap:4px 14px; font-size:15px; margin:10px 0 4px; }
+  .kinds label { cursor:pointer; white-space:nowrap; }
+  #count { color:var(--soft); font-size:14px; margin:8px 0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
+  .it { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:6px; cursor:pointer; position:relative; }
+  .it.on { background:var(--pick); border-color:var(--pickLine); }
+  .it .im { height:120px; display:flex; align-items:center; justify-content:center; background:
+      repeating-conic-gradient(#efe9dc 0% 25%, #faf7f0 0% 50%) 0 0/16px 16px; border-radius:4px; overflow:hidden; }
+  .it img { max-width:100%; max-height:120px; object-fit:contain; }
+  .it .nm { font-size:14px; font-weight:700; margin-top:4px; overflow-wrap:anywhere; }
+  .it .st { font-size:12px; color:var(--soft); overflow-wrap:anywhere; }
+  .it .acts { display:flex; gap:10px; font-size:13px; margin-top:2px; }
+  .it .acts a, .it .acts button { color:var(--link); background:none; border:0; padding:0; font:inherit; cursor:pointer; text-decoration:underline; }
+  button.main { font:inherit; font-weight:700; color:#fff; background:var(--btn); border:0; border-radius:8px; padding:10px 16px; cursor:pointer; }
+  button.main:disabled { opacity:.45; cursor:default; }
+  button.plain { font:inherit; font-size:14px; background:none; border:0; color:var(--soft); text-decoration:underline; cursor:pointer; padding:4px; }
+  #more { display:block; margin:14px auto 0; }
+  #more[hidden] { display:none; }
+  .tray { position:sticky; bottom:0; background:var(--paper); border-top:1px solid var(--line); padding:10px 0; margin-top:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  #zipMsg { font-size:14px; color:var(--soft); }
+  .vrow { padding:10px 0; border-bottom:1px dashed var(--line); }
+  .vrow b { display:block; }
+  .vrow small { color:var(--soft); display:block; }
+  .vrow audio { width:100%; max-width:420px; height:36px; margin-top:4px; }
+  .muted { color:var(--soft); font-size:14px; }
+  code { font:13px ui-monospace,Menlo,Consolas,monospace; background:rgba(255,255,255,.6); padding:1px 4px; border-radius:3px; }
+</style>
+</head>
+<body>
+<main>
+<h1>차름 자료실</h1>
+<p class="lead">차름 웹앱을 만들며 쓴 그림·배경·소품·사진·목소리입니다. 찾아서 보고, 하나씩 받거나 여러 개 골라 zip으로 받습니다.</p>
+<p class="terms" id="terms">쓰는 조건: 비영리(수업·연수 등)로만, 쓸 때 출처 "차름(charum.org)"을 적어 주세요(CC BY-NC 4.0). 받아서 내 저장소에 넣어 쓰기를 권합니다 — 이 주소를 바로 가져다 쓰면 나중에 파일이 옮겨질 때 깨질 수 있어요.</p>
+
+<h2>그림·사진</h2>
+<div class="bar">
+  <input type="search" id="q" placeholder="찾을 낱말 (예: 고양이, 바위, 사막)">
+  <select id="style"><option value="">모든 그림풍</option></select>
+</div>
+<div class="kinds" id="kinds"></div>
+<div id="count">목록을 불러오는 중…</div>
+<div class="grid" id="grid"></div>
+<button class="plain" id="more" hidden>더 보기</button>
+<div class="tray">
+  <button class="main" id="zip" disabled>고른 것 zip으로 받기</button>
+  <button class="plain" id="clear">고른 것 비우기</button>
+  <span id="zipMsg"></span>
+</div>
+
+<h2>목소리</h2>
+<p class="muted">목소리 파일은 문장으로 찾습니다. 문장을 넣으면 그 문장을 읽은 목소리가 있는지 묶음마다 찾아 들려 드려요(마침표까지 똑같이 — 예: <code>고양이는 땅에 살아요.</code>).</p>
+<div class="bar"><input type="text" id="say" placeholder="문장 (여러 개면 줄 대신 / 로 나눔)" style="flex:1 1 280px;min-width:0"><button class="main" id="sayGo">찾기</button></div>
+<div id="voices"></div>
+</main>
+
+<script>
+(async () => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const PAGE = 120;
+  let all = [], shown = [], limit = PAGE, share = {}, picked = new Map();
+  const IMG = /\.(webp|png|jpe?g|gif|svg)$/i;
+  try {
+    const [c, s] = await Promise.all([fetch('catalog.json', {cache:'no-cache'}).then(r => r.json()), fetch('share.json', {cache:'no-cache'}).then(r => r.json())]);
+    share = s;
+    const ex = s.exclude || {}, okPhotos = new Set(s.photos || []);
+    all = (c.items || []).filter(i => {
+      if (!i.path || i.path.startsWith('code:') || i.path.endsWith('/')) return false;
+      if ((ex.kinds || []).includes(i.kind) || (ex.groups || []).includes(i.group)) return false;
+      if (!IMG.test(i.path)) return false;                              // 그림·사진만(보관함 소리 등은 뺌)
+      if (i.group === 'photos') return okPhotos.has(i.path.split('/')[1]);   // 사진은 승인한 것만(사진·그림·도안 모두)
+      return true;
+    });
+  } catch (e) { $('count').textContent = '목록을 불러오지 못했어요: ' + e.message; return; }
+
+  const kinds = [...new Set(all.map(i => i.kind))];
+  $('kinds').innerHTML = kinds.map(k => `<label><input type="checkbox" value="${esc(k)}" checked> ${esc(k)} <span class="muted">${all.filter(i => i.kind === k).length}</span></label>`).join('');
+  const styles = [...new Set(all.map(i => i.style).filter(Boolean))].sort();
+  $('style').innerHTML += styles.map(s => `<option>${esc(s)}</option>`).join('');
+  const name = i => (i.names || []).find(n => /[가-힣]/.test(n)) || (i.names || [])[0] || i.path.split('/').pop();
+
+  function filter() {
+    const q = $('q').value.trim().toLowerCase(), st = $('style').value;
+    const on = new Set([...$('kinds').querySelectorAll('input:checked')].map(x => x.value));
+    shown = all.filter(i => on.has(i.kind) && (!st || i.style === st) &&
+      (!q || (i.names || []).concat(i.place || [], i.path).join(' ').toLowerCase().includes(q)));
+    limit = PAGE; draw();
+  }
+  function draw() {
+    $('count').textContent = `${shown.length.toLocaleString()}개` + (shown.length > limit ? ` 가운데 ${limit}개 보임` : '');
+    $('grid').innerHTML = shown.slice(0, limit).map((i, n) => `
+      <div class="it${picked.has(i.path) ? ' on' : ''}" data-n="${n}" title="눌러서 고르기">
+        <div class="im"><img loading="lazy" src="${esc(i.path)}" alt="${esc(name(i))}"></div>
+        <div class="nm">${esc(name(i))}</div>
+        <div class="st">${esc(i.kind)} · ${esc(i.style || '')}${i.place ? ' · ' + esc(i.place) : ''}</div>
+        <div class="acts"><a href="${esc(i.path)}" download>받기</a><button data-copy="${n}">주소 복사</button></div>
+      </div>`).join('');
+    $('more').hidden = shown.length <= limit;
+  }
+  $('grid').onclick = e => {
+    const copy = e.target.closest('[data-copy]');
+    if (copy) { const i = shown[+copy.dataset.copy]; navigator.clipboard?.writeText(new URL(i.path, location.href).href); copy.textContent = '복사함'; return; }
+    if (e.target.closest('a')) return;
+    const box = e.target.closest('.it'); if (!box) return;
+    const i = shown[+box.dataset.n];
+    picked.has(i.path) ? picked.delete(i.path) : picked.set(i.path, i);
+    box.classList.toggle('on'); tray();
+  };
+  function tray() { $('zip').disabled = !picked.size; $('zipMsg').textContent = picked.size ? `${picked.size}개 고름` : ''; }
+  $('more').onclick = () => { limit += PAGE; draw(); };
+  $('q').oninput = filter; $('style').onchange = filter; $('kinds').onchange = filter;
+  $('clear').onclick = () => { picked.clear(); draw(); tray(); };
+  $('zip').onclick = async () => {
+    const z = new JSZip(), list = [...picked.values()]; let n = 0;
+    $('zip').disabled = true;
+    const lic = share.license || {};
+    const lines = [`차름 자료실에서 받은 자료 (${new Date().toISOString().slice(0,10)})`, `쓰는 조건: ${lic.name || 'CC BY-NC 4.0'} — 비영리로만, 출처 "${lic.credit || '차름(charum.org)'}" 표시`, lic.url || '', '', '파일 — 이름 · 종류 · 그림풍'];
+    for (const i of list) {
+      $('zipMsg').textContent = `받는 중 ${++n}/${list.length}…`;
+      try { const b = await (await fetch(i.path)).blob(); z.file(i.path, b); lines.push(`${i.path} — ${name(i)} · ${i.kind} · ${i.style || ''}`); }
+      catch (e) { lines.push(`${i.path} — 받지 못함`); }
+    }
+    z.file('README-charum.txt', lines.join('\r\n'));   // 이름은 영어로(어느 컴퓨터에서 풀어도 안 깨지게), 안은 한국어
+    const blob = await z.generateAsync({type:'blob'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'charum-media.zip'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    $('zipMsg').textContent = `${list.length}개를 zip으로 받았어요(안에 README-charum.txt — 출처와 조건).`; $('zip').disabled = false;
+  };
+  filter();
+
+  // 목소리: 문장 → SHA-1 앞 16자리 → 묶음마다 있는지
+  const packs = Object.keys(share.voices || {});
+  const idx = {};
+  async function pack(p) { if (!idx[p]) { try { idx[p] = new Set((await (await fetch(`voice/${p}/index.json`, {cache:'no-cache'})).json()).files || []); } catch (e) { idx[p] = new Set(); } } return idx[p]; }
+  async function sha16(t) { const b = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('').slice(0, 16); }
+  $('sayGo').onclick = async () => {
+    const lines = $('say').value.split('/').map(s => s.trim()).filter(Boolean);
+    if (!lines.length) return;
+    $('voices').innerHTML = '<p class="muted">찾는 중…</p>';
+    let html = '';
+    for (const t of lines) {
+      const h = await sha16(t); let found = 0;
+      for (const p of packs) {
+        if (!(await pack(p)).has(h)) continue;
+        found++;
+        const v = share.voices[p], src = `voice/${p}/${h}.mp3`;
+        html += `<div class="vrow"><b>${esc(t)}</b><small>${esc(v.credit || p)}${v.terms ? ' — ' + esc(v.terms) : ''}</small>
+          <audio controls preload="none" src="${src}"></audio> <a href="${src}" download="${esc(t.replace(/[\\/:*?"<>|]/g, ''))}.mp3">받기</a></div>`;
+      }
+      if (!found) html += `<div class="vrow"><b>${esc(t)}</b><small>이 문장을 읽은 목소리가 없어요(마침표·띄어쓰기까지 같아야 찾음).</small></div>`;
+    }
+    $('voices').innerHTML = html;
+  };
+  $('say').onkeydown = e => { if (e.key === 'Enter') $('sayGo').click(); };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사진 나눔 승인</title>
+<!-- 사진 나눔 승인(2026-11-25 선생님: 확인하고 내가 승인한 사진만 자료실에서 나누기).
+     photos.json의 사진을 보며 나눔/안 나눔을 고르고 '승인 줄 복사' → Claude 대화에 붙이면 Claude가 media/share.json의 photos를 고침.
+     지금 승인된 것은 share.json에서 읽어 미리 켜 둠. 이 화면은 저장소를 바꾸지 않음(고른 것은 이 브라우저에 잠시 기억). -->
+<style>
+  :root { --ink:#2b2a27; --soft:#6f6a60; --line:#d9d3c4; --paper:#f6f2e8; --card:#fffdf8; --ok:#e3efd9; --okLine:#7aa05a; --btn:#34495e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 "Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif; }
+  main { max-width:1000px; margin:0 auto; padding:24px 16px 110px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .lead { color:var(--soft); font-size:15px; margin:0 0 6px; }
+  .check { font-size:14px; color:var(--soft); margin:0 0 16px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+  .ph { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:8px; }
+  .ph.on { background:var(--ok); border-color:var(--okLine); }
+  .ph img { width:100%; height:170px; object-fit:cover; border-radius:4px; cursor:zoom-in; display:block; }
+  .ph .t { font-weight:700; margin-top:6px; }
+  .ph .m { font-size:13px; color:var(--soft); }
+  .ph label { display:flex; gap:8px; align-items:center; margin-top:6px; font-weight:700; cursor:pointer; }
+  .ph input { width:20px; height:20px; }
+  .bar { position:fixed; left:0; right:0; bottom:0; background:var(--paper); border-top:1px solid var(--line); padding:10px 16px; }
+  .bar div { max-width:1000px; margin:0 auto; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  button.main { font:inherit; font-weight:700; color:#fff; background:var(--btn); border:0; border-radius:8px; padding:10px 16px; cursor:pointer; }
+  button.plain { font:inherit; font-size:14px; background:none; border:0; color:var(--soft); text-decoration:underline; cursor:pointer; }
+  #msg { font-size:14px; color:var(--soft); }
+  dialog { border:0; padding:0; background:transparent; max-width:96vw; }
+  dialog img { max-width:96vw; max-height:90vh; display:block; }
+  dialog::backdrop { background:rgba(0,0,0,.8); }
+</style>
+</head>
+<body>
+<main>
+<h1>사진 나눔 승인</h1>
+<p class="lead">차름 자료실에서 다른 선생님이 받을 수 있게 할 사진을 고릅니다. 고른 뒤 아래 <b>승인 줄 복사</b>를 눌러 Claude 대화에 붙여 주세요.</p>
+<p class="check">사진을 눌러 크게 보며 확인: 사람 얼굴·몸, 이름표·번호, 학교 이름, 학생 작품이 보이지 않는지. 승인한 사진은 사진·그림으로 바꾼 것·색칠 도안이 함께 나뉘고, 조건은 CC BY-NC 4.0(출처 표시·비영리)입니다.</p>
+<div class="grid" id="grid">불러오는 중…</div>
+</main>
+<div class="bar"><div>
+  <button class="main" id="copy">승인 줄 복사</button>
+  <button class="plain" id="all">모두 고르기</button>
+  <button class="plain" id="none">모두 빼기</button>
+  <span id="msg"></span>
+</div></div>
+<dialog id="big"><img id="bigImg" alt=""></dialog>
+<script>
+(async () => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const KEY = 'charum.shareReview';
+  let photos = [], on = new Set();
+  try {
+    const [p, s] = await Promise.all([fetch('photos.json', {cache:'no-cache'}).then(r => r.json()), fetch('../share.json', {cache:'no-cache'}).then(r => r.json())]);
+    photos = p.photos || [];
+    let saved = null; try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+    on = new Set(saved || s.photos || []);
+  } catch (e) { $('grid').textContent = '목록을 불러오지 못했어요: ' + e.message; return; }
+  const keep = () => { try { localStorage.setItem(KEY, JSON.stringify([...on])); } catch (e) {} };
+  function draw() {
+    $('grid').innerHTML = photos.map((p, n) => `
+      <div class="ph${on.has(p.id) ? ' on' : ''}" data-n="${n}">
+        <img loading="lazy" src="${esc((p.files || {}).photo || p.id + '/photo.jpg')}" alt="${esc(p.title)}">
+        <div class="t">${esc(p.title || p.id)}</div>
+        <div class="m">${esc(p.category || '')}${p.place ? ' · ' + esc(p.place) : ''} · ${esc(p.source === 'maker' ? '제작자 사진' : '기증 사진')}</div>
+        <label><input type="checkbox" ${on.has(p.id) ? 'checked' : ''}> 나눔</label>
+      </div>`).join('');
+    $('msg').textContent = `${on.size} / ${photos.length}장 고름`;
+  }
+  $('grid').onclick = e => {
+    const box = e.target.closest('.ph'); if (!box) return;
+    const p = photos[+box.dataset.n];
+    if (e.target.tagName === 'IMG') { $('bigImg').src = e.target.src; $('big').showModal(); return; }
+    if (e.target.tagName !== 'INPUT') return;
+    e.target.checked ? on.add(p.id) : on.delete(p.id); keep(); draw();
+  };
+  $('big').onclick = () => $('big').close();
+  $('all').onclick = () => { photos.forEach(p => on.add(p.id)); keep(); draw(); };
+  $('none').onclick = () => { on.clear(); keep(); draw(); };
+  $('copy').onclick = async () => {
+    const ids = photos.map(p => p.id).filter(id => on.has(id));
+    const line = `사진 나눔 승인(${new Date().toISOString().slice(0,10)}): ${ids.length ? ids.join(', ') : '없음'} — media/share.json의 photos를 이것으로 바꿔 줘`;
+    try { await navigator.clipboard.writeText(line); $('msg').textContent = `복사했어요(${ids.length}장). Claude 대화에 붙여 주세요.`; }
+    catch (e) { prompt('아래 줄을 복사해 Claude 대화에 붙여 주세요', line); }
+  };
+  draw();
+})();
+</script>
+</body>
+</html>
