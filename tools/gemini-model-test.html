@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gemini API 모델 연결 테스트</title>
+<title>AI 키 확인</title>
 <style>
 :root{color-scheme:light dark;--bg:#f5f6f8;--card:#fff;--text:#202124;--muted:#687078;--line:#d9dde2;--accent:#2463eb;--soft:#eef3ff}
 @media(prefers-color-scheme:dark){:root{--bg:#17191d;--card:#22262c;--text:#edf0f3;--muted:#aeb6c0;--line:#3c434c;--soft:#252f44}}
@@ -21,11 +21,11 @@ a{color:var(--accent)}
 </head>
 <body>
 <main>
-<h1>Gemini API 모델 연결 테스트</h1>
-<p class="intro">API 키로 사용할 수 있는 모델을 조회하고, 각 모델이 사진을 실제로 분석하는지와 얼마나 빨리 답하는지 확인합니다. 1분이 넘으면 중지합니다(분석 못 하는 것과 같음).</p>
+<h1>AI 키 확인 <span class="muted" style="font-size:16px;font-weight:400">Gemini · Cloudflare</span></h1>
+<p class="intro">Gemini 키·Cloudflare 토큰이 잘 돌아가는지, 각 모델이 사진을 실제로 분석하는지와 얼마나 빨리 답하는지 확인합니다. 1분이 넘으면 중지합니다(분석 못 하는 것과 같음).</p>
 
 <section class="panel">
-<h2>1. API 키</h2>
+<h2>1. Gemini 키</h2>
 <div class="row">
 <input class="grow" id="apiKey" type="password" autocomplete="off" placeholder="Google AI Studio API 키를 붙여 넣으세요">
 <button id="toggleKey">보기</button>
@@ -40,7 +40,35 @@ a{color:var(--accent)}
 </section>
 
 <section class="panel">
-<h2>2. 사진 분석 테스트</h2>
+<h2>Cloudflare 토큰 <span class="muted" style="font-size:13px;font-weight:400">(012 팝아트 등에서 쓰는 Workers AI)</span></h2>
+<div class="row">
+<input class="grow" id="cfAccount" autocomplete="off" placeholder="Account ID (32글자)">
+</div>
+<div class="row" style="margin-top:8px">
+<input class="grow" id="cfToken" type="password" autocomplete="off" placeholder="API Token 붙여넣기">
+<button id="toggleCf">보기</button>
+<button id="clearCf">지우기</button>
+<a href="https://shim-sung-hyun.github.io/web_app/cloudflare_guide.html" target="_blank" rel="noopener">Cloudflare 토큰 받는 법</a>
+</div>
+<p class="hint">브라우저가 Cloudflare를 바로 부를 수 없어서 차름 중간 서버(charum-ai Worker)를 거쳐 내 계정으로 사진을 분석합니다. 토큰은 저장하지 않고, 이 시험에만 씁니다.</p>
+<article class="model">
+<div class="modelhead">
+<div>
+<div class="modelname">Cloudflare · Llama 3.2 Vision</div>
+<div class="muted small">@cf/meta/llama-3.2-11b-vision-instruct (차름 앱이 사진 분석에 쓰는 모델)</div>
+</div>
+<span class="tag">내 계정</span>
+</div>
+<div class="row" style="margin-top:8px">
+<button class="primary" id="cfTest" disabled>이 토큰으로 사진 분석</button>
+<span class="muted small" id="cfStatus"></span>
+</div>
+<div class="result hidden" id="cfResult"></div>
+</article>
+</section>
+
+<section class="panel">
+<h2>2. 시험 사진 <span class="muted" style="font-size:13px;font-weight:400">(Gemini·Cloudflare 함께)</span></h2>
 <label for="photo">테스트 사진</label>
 <input id="photo" type="file" accept="image/*">
 <div id="photoInfo" class="hint">사진을 선택하세요. 이미지 크기가 크면 테스트가 오래 걸릴 수 있습니다.</div>
@@ -50,7 +78,7 @@ a{color:var(--accent)}
 
 <section class="panel">
 <div class="row" style="justify-content:space-between">
-<h2 style="margin:0">3. 사용 가능한 모델</h2>
+<h2 style="margin:0">3. Gemini 모델</h2>
 <span id="modelCount" class="muted">조회 전</span>
 </div>
 <label for="filter">모델 검색</label>
@@ -58,12 +86,12 @@ a{color:var(--accent)}
 <div class="row" style="margin-top:10px">
 <button class="primary" id="testAll" disabled>표시된 모델 모두 차례로 분석</button>
 <button id="stopAll" class="hidden">멈추기</button>
-<span class="muted small">모델마다 한 번씩 요청하므로 무료 사용량을 그만큼 씁니다. 검색으로 줄인 뒤 돌리면 좋습니다.</span>
+<span class="muted small">모델마다 한 번씩 요청하므로 무료 사용량을 그만큼 씁니다. 검색으로 줄인 뒤 돌리면 좋습니다. Cloudflare 칸이 채워져 있으면 그것도 맨 먼저 함께 잽니다.</span>
 </div>
 <div id="rank" class="rank hidden"></div>
 <div id="modelList" class="muted" style="margin-top:12px">모델 목록을 조회하면 여기에 표시됩니다.</div>
 </section>
-<p class="footer">참고: 목록에 표시된 generateContent 지원 여부는 API 메타데이터입니다. 실제 이미지 입력 지원 및 프로젝트별 사용 가능 여부는 사진 분석 테스트 결과로 확인해야 합니다. 무료 사용량, 결제 설정, 지역 및 모델별 제한에 따라 호출이 거부될 수 있습니다.</p>
+<p class="footer">Cloudflare는 개인 계정으로 처음 쓸 때 모델 사용 동의가 한 번 필요할 수 있습니다(오류에 agree·license가 보이면 Cloudflare 토큰 받는 법의 안내대로). 참고: 목록에 표시된 generateContent 지원 여부는 API 메타데이터입니다. 실제 이미지 입력 지원 및 프로젝트별 사용 가능 여부는 사진 분석 테스트 결과로 확인해야 합니다. 무료 사용량, 결제 설정, 지역 및 모델별 제한에 따라 호출이 거부될 수 있습니다.</p>
 </main>
 <script>
 (() => {
@@ -76,6 +104,18 @@ a{color:var(--accent)}
   const results = {};             // 모델 이름 → {ok, ms, why}
   let photoData = null;           // 고른 사진의 base64(한 번만 읽음)
   let stopAll = false;
+  const WORKER = 'https://charum-ai.simdoly.workers.dev/analyze';
+  const CF = {name:'cloudflare', displayName:'Cloudflare · Llama 3.2 Vision'};
+  const cfReady = () => /^[a-f0-9]{32}$/i.test($('cfAccount').value.trim()) && $('cfToken').value.trim().length > 10;
+  function cfButton() { $('cfTest').disabled = !(selectedPhoto && cfReady()) || busy; }
+  async function jpegBase64() {   // Worker는 jpeg로 받음 — 긴 쪽 1024로 줄여 jpeg로(사진이 커도 6MB 한도 안)
+    const img = await createImageBitmap(selectedPhoto);
+    const k = Math.min(1, 1024 / Math.max(img.width, img.height));
+    const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', .9).split(',')[1];
+  }
+  let cfData = null;
 
   function setStatus(message, type='') {
     $('mainStatus').className = 'status ' + type;
@@ -123,7 +163,8 @@ a{color:var(--accent)}
   };
   $('photo').onchange = () => {
     selectedPhoto = $('photo').files?.[0] || null;
-    photoData = null;
+    photoData = null; cfData = null;
+    cfButton();
     for (const k of Object.keys(results)) delete results[k];   // 사진이 바뀌면 시간도 새로
     renderRank();
     $('photoInfo').textContent = selectedPhoto
@@ -132,6 +173,27 @@ a{color:var(--accent)}
     renderModels();
   };
   $('filter').oninput = renderModels;
+  $('cfAccount').oninput = $('cfToken').oninput = cfButton;
+  $('toggleCf').onclick = () => {
+    const el = $('cfToken'); el.type = el.type === 'password' ? 'text' : 'password';
+    $('toggleCf').textContent = el.type === 'password' ? '보기' : '숨기기';
+  };
+  $('clearCf').onclick = () => { $('cfAccount').value = ''; $('cfToken').value = ''; cfButton(); };
+  $('cfTest').onclick = () => runTest(CF, $('cfTest'), $('cfStatus'), $('cfResult'), askCloudflare, prepCf);
+  async function askCloudflare(signal) {
+    const response = await fetch(WORKER, {
+      method:'POST', mode:'cors', credentials:'omit', signal,
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({image: cfData, prompt: $('prompt').value.trim() || '이 사진을 설명해 주세요.',
+        cloudflareAccountId: $('cfAccount').value.trim(), cloudflareApiToken: $('cfToken').value.trim()})
+    });
+    const data = await response.json().catch(() => ({}));
+    if (response.status === 403) throw new Error('이 주소에서는 차름 중간 서버를 쓸 수 없습니다(Worker의 허용 주소 ALLOW 확인).');
+    if (!response.ok) throw new Error(`HTTP ${response.status}\n` + (data?.error?.message || '알 수 없는 오류'));
+    const answer = String(data.text || '').trim();
+    if (!answer) throw new Error('요청은 성공했지만 답이 비어 있습니다.');
+    return answer;
+  }
 
   $('loadModels').onclick = async () => {
     apiKey = $('apiKey').value.trim();
@@ -164,6 +226,8 @@ a{color:var(--accent)}
     } finally {
       busy = false;
       $('loadModels').disabled = false;
+      $('testAll').disabled = !(selectedPhoto && shown().length);   // 사진을 먼저 골랐어도 켜지게
+      cfButton();
     }
   };
 
@@ -212,7 +276,7 @@ a{color:var(--accent)}
     const ok = names.filter(n => results[n].ok).sort((a,b) => results[a].ms - results[b].ms);
     const late = names.filter(n => results[n].why === 'timeout');
     const bad = names.filter(n => !results[n].ok && results[n].why !== 'timeout');
-    const nm = n => safe((models.find(m => m.name === n)?.displayName) || n);
+    const nm = n => safe(n === CF.name ? CF.displayName : (models.find(m => m.name === n)?.displayName) || n);
     $('rank').classList.remove('hidden');
     $('rank').innerHTML = '<b>빠르기 순위</b> <span class="muted small">(이 사진 기준 · 요청을 보낸 때부터 답이 올 때까지)</span>'
       + (ok.length ? '<ol>' + ok.map(n => `<li>${nm(n)} — <span class="time">${sec(results[n].ms)}</span></li>`).join('') + '</ol>' : '<div class="muted small">아직 성공한 모델이 없습니다.</div>')
@@ -224,6 +288,7 @@ a{color:var(--accent)}
     if (!list.length || !selectedPhoto || busy) return;
     stopAll = false;
     $('testAll').disabled = true; $('stopAll').classList.remove('hidden');
+    if (cfReady()) await runTest(CF, $('cfTest'), $('cfStatus'), $('cfResult'), askCloudflare, prepCf);
     for (let i = 0; i < list.length && !stopAll; i++) {
       const button = $('modelList').querySelector(`.testModel[data-index="${i}"]`);
       if (!button) break;
@@ -236,15 +301,45 @@ a{color:var(--accent)}
   };
   $('stopAll').onclick = () => { stopAll = true; $('stopAll').classList.add('hidden'); };
 
-  async function testModel(model, button) {
-    if (!apiKey || !selectedPhoto) return;
-    if (busy) return;
+  function testModel(model, button) {
+    if (!apiKey) return;
+    const index = Number(button.dataset.index);
+    return runTest(model, button, $('testStatus' + index), $('testResult' + index), signal => askGemini(model, signal), prepGemini);
+  }
+  async function prepGemini() {   // 사진 읽기는 시간 재기 전에(한 번만)
+    if (selectedPhoto.size > 15 * 1024 * 1024) throw new Error('테스트 사진은 15MB 이하로 선택해 주세요.');
+    photoData = photoData || await new Promise((resolve,reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1]);
+      reader.onerror = () => reject(new Error('사진 파일을 읽지 못했습니다.'));
+      reader.readAsDataURL(selectedPhoto);
+    });
+  }
+  async function prepCf() { cfData = cfData || await jpegBase64(); }
+  async function askGemini(model, signal) {
+    const base64 = photoData;
+    const response = await fetch(apiUrl(model.name + ':generateContent'), {
+      method:'POST', mode:'cors', credentials:'omit', signal,
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{parts:[
+          {text:$('prompt').value.trim() || '이 사진을 설명해 주세요.'},
+          {inlineData:{mimeType:selectedPhoto.type, data:base64}}
+        ]}],
+        generationConfig:{maxOutputTokens:400}
+      })
+    });
+    const data = await readResponse(response);
+    const answer = (data.candidates || []).flatMap(c => c.content?.parts || [])
+      .map(p => p.text || '').filter(Boolean).join('\n').trim();
+    if (!answer) throw new Error('요청은 성공했지만 텍스트 응답이 없습니다. 응답 JSON을 확인하세요.\n' + JSON.stringify(data).slice(0,2500));
+    return answer;
+  }
+  async function runTest(model, button, status, output, ask, prep) {
+    if (!selectedPhoto || busy) return;
     busy = true;
     button.disabled = true;
     button.textContent = '분석 중…';
-    const index = Number(button.dataset.index);
-    const status = $('testStatus' + index);
-    const output = $('testResult' + index);
     output.classList.remove('hidden');
     output.textContent = '사진 분석 요청 중…';
     status.textContent = '';
@@ -253,36 +348,12 @@ a{color:var(--accent)}
     let t0 = 0, tick = null, stopper = null;
     try {
       if (!selectedPhoto.type.startsWith('image/')) throw new Error('지원되는 이미지 파일을 선택하세요.');
-      if (selectedPhoto.size > 15 * 1024 * 1024) throw new Error('테스트 사진은 15MB 이하로 선택해 주세요.');
-      const base64 = photoData || (photoData = await new Promise((resolve,reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result).split(',')[1]);
-        reader.onerror = () => reject(new Error('사진 파일을 읽지 못했습니다.'));
-        reader.readAsDataURL(selectedPhoto);
-      }));
-      const url = apiUrl(model.name + ':generateContent');
-      t0 = performance.now();   // 시간은 요청을 보낸 때부터 답을 다 받을 때까지(사진 읽기는 뺌)
+      await prep();
+      t0 = performance.now();   // 시간은 요청을 보낸 때부터 답을 다 받을 때까지(사진 읽기·줄이기는 빼고)
       tick = setInterval(() => { status.textContent = '분석 중… ' + sec(performance.now() - t0); }, 100);
       stopper = setTimeout(() => ctrl.abort(), LIMIT);
-      const response = await fetch(url, {
-        method:'POST',
-        mode:'cors',
-        credentials:'omit',
-        signal:ctrl.signal,
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          contents:[{parts:[
-            {text:$('prompt').value.trim() || '이 사진을 설명해 주세요.'},
-            {inlineData:{mimeType:selectedPhoto.type, data:base64}}
-          ]}],
-          generationConfig:{maxOutputTokens:400}
-        })
-      });
-      const data = await readResponse(response);
+      const answer = await ask(ctrl.signal);
       const ms = performance.now() - t0;
-      const answer = (data.candidates || []).flatMap(c => c.content?.parts || [])
-        .map(p => p.text || '').filter(Boolean).join('\n').trim();
-      if (!answer) throw new Error('요청은 성공했지만 텍스트 응답이 없습니다. 응답 JSON을 확인하세요.\n' + JSON.stringify(data).slice(0,2500));
       results[model.name] = {ok:true, ms};
       status.textContent = label(results[model.name]);
       status.className = 'success small time';
@@ -299,6 +370,7 @@ a{color:var(--accent)}
       busy = false;
       button.disabled = !selectedPhoto;
       button.textContent = '다시 테스트';
+      cfButton();
       if ($('stopAll').classList.contains('hidden')) $('testAll').disabled = !selectedPhoto;
     }
   }
