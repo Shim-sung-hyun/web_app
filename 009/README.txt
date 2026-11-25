@@ -88,3 +88,4 @@
   눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리도 이제 공통 모듈 adminButton(2026-11-25).
   공통 모듈로 옮김(2026-11-25 총괄): adminButton·reportLink·endLesson·printFit·recordKit·spot(저장 칸 animalRiddle.resume2)·voiceKit·progBar. 앱 안 그 칸들은 손으로 고치지 않음(common/ 원본 → tools/sync-modules.py). 이 앱만 다른 것은 endLesson 칸 바로 뒤 한 줄 ReportLink.set·EndLesson.set(게시판 글 주소·영역 색·보일 때).
 - 2026-11-25 목소리 출처 표시를 "목소리: elevenlabs.io (ElevenLabs)"로(선생님 — ElevenLabs 무료 요금제는 비영리로만, 공개할 때 elevenlabs.io 표시가 조건): 앱 설정의 목소리 줄(VBUNDLES credit)·게시판 본문·자세한 설명. 캡처는 목소리 줄이 접힌 "더 정하기" 안이라 그대로. (선생님) 게시판 59934 본문을 다시 붙여 넣기
+- 2026-11-25 설정 화면 끝(선생님: "더 정하기"가 시작 띠에 가려 안 눌리고, 아래로 더 내려야 하는지 모름): 시작 띠는 단추만 눌리고 흐린 부분은 눌림이 지나감, 아래에 더 있으면 띠 왼쪽에 "▾ 아래에 더 있어요"(끝까지 내리면 사라짐), "더 정하기" 글자를 다른 선택지처럼 또렷하게. 다른 앱도 같은 꼴이면 같이 고칠 것(총괄)
