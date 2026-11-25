@@ -10,7 +10,7 @@
                            묶음은 통합본과 똑같음(채우는 낱말은 같은 편·앞 편에서만). 어려운 낱말 다시 넣기는 앞 편 낱말도 섞음.
                            만들기: word-learn.html(통합본)을 고친 뒤 python3 007/tools/split.py (OPEN_BOOKS 편마다 만듦)
 - server-loader-1.html     내 도메인 study/007/word-learn-1.html 로 올릴 불러오기 파일(편마다 하나)
-- word-learn-beta.html     베타 주소로 들어오면 word-learn.html로 넘겨 줌 (2026-10-21 진행 막대·견본 테두리를 정식판에 합침)
+- (word-learn-beta.html — 베타 주소에서 넘겨 주던 것, 2026-11-25 지움)
 - word-learn01~20.jpg      화면 캡처 1366×768 (설명서 그림)
 - word-learn_manual.html   게시판 본문용 짧은 설명서 (에디터 소스 모드에 붙여 넣기)
                            앞쪽 두 문단(차름 뜻 · 노란 안내)은 선생님이 쓴 문장(2026-10-25). 고칠 때도 이 문장을 그대로 두고, 편이 바뀌면 편 이름·낱말 수만 바꿈

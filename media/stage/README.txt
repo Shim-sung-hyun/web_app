@@ -286,7 +286,7 @@ stage.json 꼴(장소마다)
 - 마음에 안 드는 그림은 저장소에 넣지 않는다. 안 쓰게 된 것은 python3 tools/trash.py 경로 --why "이유" (3개월 뒤 비움).
 
 ■ 기존 무대(media/stage/nature, 2026-11-04~06)와 008
-- 12곳 bg·items·front·far와 덮개(skirt, 폐기된 방식)가 있음. 008 정식판은 무대 이전으로 되돌렸고, 008 베타(animal-home-beta.html)에 옛 무대 연결이 남아 있음.
+- 12곳 bg·items·front·far와 덮개(skirt, 폐기된 방식)가 있음. 008 정식판은 무대 이전으로 되돌렸고, 옛 무대 연결이 남아 있던 008 베타(animal-home-beta.html)는 2026-11-25 지움(_trash).
 - 그때 찾은 것(새 무대에서 지킴): 008 가림 소품은 원근을 따르지 않아 먼 곳의 작은 소품이 거인처럼 보였음 · 같은 소품 여러 번 · 가림 소품에 먼 것 흐림 없음.
 - 008을 새로 짤 때: 숨기기 규칙(보이는 넓이·ZONE·FACE)은 008 것을 참고하고, 놓는 자리·크기·깊이는 무대에 맡김. 다 옮기면 media/habitats/props·game 장면은 _trash로.
 

@@ -8,9 +8,8 @@
 파일
 - animal-home.html      : 정식판(study/008/animal-home.html = server-loader.html). 2026-11-16 연필풍·새 무대·ElevenLabs 베타를 통째로 옮김. 예전 2026-11-02에도 베타를 합침(교과서 구성·수준 3 곳마다 3·4마리·스페셜·Azure 목소리·새 그림).
                           2026-11-04 무대를 합쳤다가 같은 날 되돌림(물 안·밖이 뒤섞이고 물풀이 떠다니는 등 장면이 말이 안 됨 — 선생님). 지금은 옛 장면·소품.
-- animal-home-beta.html : 베타(study/008/animal-home-beta.html = server-loader-beta.html). 2026-11-16 정식판으로 옮김(정식판 = 베타, 제목만 다름). 숨은 동물 찾기는 새 무대 엔진 위에서 짬(2026-11-15, 아래 '새 무대 숨은 동물 찾기').
-                          베타를 정식판에 합칠 때는 선생님께 여쭙고, 합치면 제목의 "(베타)"만 빼고 통째로 복사(cp) + voice-lines.json도 맞춤
-- voice-lines.json · voice-lines-beta.json : 앱이 쓰는 말 목록(콘솔 __voiceLines(), 스페셜 이름 포함) 260문장 — 모두 media/voice/azure-sunhi-0.92에 있음
+- (animal-home-beta.html · server-loader-beta.html · voice-lines-beta.json — 2026-11-16에 정식판으로 옮긴 베타, 2026-11-25 선생님 말씀으로 지움(_trash/2026-11-25). 이제 정식판 하나만)
+- voice-lines.json : 앱이 쓰는 말 목록(콘솔 __voiceLines(), 스페셜 이름 포함) 260문장 — 모두 media/voice/azure-sunhi-0.92에 있음
 - server-loader.html    : 서버 study/008/에 animal-home.html 이름으로 올리는 불러오기 파일(열 때마다 GitHub 판을 받아 옴 — 합쳐도 서버는 그대로)
 - animal-home_manual.html(게시판 59860 본문) · animal-home_guide.html(자세한 설명, study/doc.html?008/animal-home_guide) · animal-home01~16.jpg(캡처) · animal-home-promo.jpg
   캡처 01 설정 02 보기 03 동물 보고 곳 04 곳 보고 동물 05 정리하기 06 놀이 첫 화면 07 보통(초원) 08 어려움(산) 09 끝 장면 10 선생님 메뉴 11 도감 12 기록 예시
@@ -110,7 +109,7 @@
 - 곳 동물 = 수준 3의 그 곳 동물 + SP_EXTRA. 지금(2026-11-02 그림 판 3·4·5, 24마리 넣음): 산 9 · 초원 10 · 사막 10 · 극지방 10 · 강·호수 10 · 바다 10 · 갯벌 10
   새 동물(스페셜에만): 코뿔소 치타 하이에나 타조 가젤 물소 / 북극여우 바다코끼리 순록 흰올빼미 북극토끼 사향소 북극늑대 / 방울뱀 사막쥐 쇠똥구리 오릭스 / 멧돼지 / 바다거북 돌고래(ZONE big·mid) / 갯우렁이 맛조개 도요새 방게.
   NEW·REAL·BB·FACE에 적음(정면인 흰올빼미·맛조개·방게는 FACE 없음). 주문서 media/prompts/PROMPTS-2026-11-special.txt
-- 목소리: 새 이름 24개("코뿔소." 등)는 voice-lines-beta.json 끝에 더함(260문장). 아직 만들지 않아 그 이름이 나오는 판은 기기 목소리.
+- 목소리: 새 이름 24개("코뿔소." 등)는 voice-lines.json 끝에 더함(260문장, 옛 베타 목록은 2026-11-25 지움). 아직 만들지 않아 그 이름이 나오는 판은 기기 목소리.
   수업의 내장 목소리 확인(BUILTIN_OK)은 수업 말(lessonParts)만 보므로 수업은 그대로 Azure
 
 크게 보이는 동물 다시 그림(2026-11-02)
@@ -200,7 +199,7 @@
 관리 버튼(2026-11-11)
   누르는 동작은 공통 모듈 adminHold(원본 common/adminHold.js, 앱 안 <script id="adminHold"> — 손으로 고치지 않음, tools/sync-modules.py).
   눌리는 자리가 버튼에서 화면 오른쪽 아래 구석까지 넓어짐(전자칠판에서 잘 안 눌리던 것 때문). 버튼 모양·색·자리도 이제 공통 모듈 adminButton(2026-11-25).
-  공통 모듈로 옮김(2026-11-25 총괄): adminButton·reportLink·endLesson·printFit·recordKit·spot(저장 칸 animalHome.resume)·voiceKit·progBar — 정식판·베타 모두. 앱 안 그 칸들은 손으로 고치지 않음(common/ 원본 → tools/sync-modules.py). 이 앱만 다른 것은 endLesson 칸 바로 뒤 한 줄 ReportLink.set·EndLesson.set(게시판 글 주소·영역 색·보일 때).
+  공통 모듈로 옮김(2026-11-25 총괄): adminButton·reportLink·endLesson·printFit·recordKit·spot(저장 칸 animalHome.resume)·voiceKit·progBar. 앱 안 그 칸들은 손으로 고치지 않음(common/ 원본 → tools/sync-modules.py). 이 앱만 다른 것은 endLesson 칸 바로 뒤 한 줄 ReportLink.set·EndLesson.set(게시판 글 주소·영역 색·보일 때).
 - 2026-11-13(무대 세션): 숲 동물 그림을 빙 연필풍으로 — 곰·호랑이·사슴·산양·멧돼지·부엉이·딱따구리(같은 파일)와 토끼·다람쥐·여우·너구리(OLD 표에서 NEW 표로, media/animals). 모두 머리 왼쪽이라 FACE의 곰·호랑이·딱따구리·토끼·너구리를 L로. 캡처·설명서는 아직 옛 그림 — 다음에 화면을 다시 찍을 때 함께.
 - 2026-11-13(무대 세션): 들판 동물 그림도 빙 연필풍으로 — 개·고양이·닭·돼지·말·달팽이·거미(OLD 표에서 NEW 표로, media/animals. 말은 mal.webp)와 소(같은 파일). FACE의 닭·말을 L로. 캡처·설명서는 아직 옛 그림.
 - 2026-11-14(무대 세션): 갯벌 동물 그림도 빙 연필풍으로 — 칠게·농게·방게·맛조개·갯우렁이·짱뚱어·낙지·갯지렁이·도요새(media/animals 같은 이름)와 조개(OLD 표에서 NEW 표로, media/animals/jogae.webp). FACE의 갯우렁이·도요새·갯지렁이를 L로. 백로는 아직 옛 그림. 캡처·설명서는 아직 옛 그림.

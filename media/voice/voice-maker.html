@@ -54,7 +54,7 @@ audio{height:28px;vertical-align:middle;margin-left:6px}
 <h2><b>2</b>만들 문장</h2>
 <label for="lines">한 줄에 한 문장. 앱의 말 목록(voice-lines.json) 주소를 넣고 불러와도 됩니다.</label>
 <p class="note">발음이 이상한 문장은 <b>문장 = 읽는 법</b>으로 씁니다. 예: <code>쇠똥구리. = 쐬똥구리.</code> — 파일은 앞 문장 이름으로, 소리는 뒤의 읽는 법으로 만들고, 이미 있는 문장이어도 다시 만듭니다(넣으면 바뀜). 들어 보고 이상하면 읽는 법을 고쳐 다시 만들기.</p>
-<div class="row" style="margin-bottom:8px"><input id="url" value="https://shim-sung-hyun.github.io/web_app/008/voice-lines-beta.json"><button class="ghost" id="loadUrl" style="flex:0 0 auto">불러오기</button></div>
+<div class="row" style="margin-bottom:8px"><input id="url" value="https://shim-sung-hyun.github.io/web_app/008/voice-lines.json"><button class="ghost" id="loadUrl" style="flex:0 0 auto">불러오기</button></div>
 <textarea id="lines" placeholder="고양이는 땅에 살아요.&#10;고양이."></textarea>
 <div class="row" style="margin-top:10px"><button id="check" style="flex:0 0 auto">없는 문장 찾기</button></div>
 <p class="note" id="checkNote"></p>
@@ -96,7 +96,7 @@ function syncSvc(){ const az=$('svc').value==='azure'; $('azRegionBox').hidden=!
 $('svc').onchange=syncSvc;
 function syncPack(){ const az=$('pack').value.startsWith('azure-'); $('svc').value=az?'azure':'google'; $('svc').disabled=true; if(az) $('azVoice').value='ko-KR-SunHiNeural'; $('azVoice').disabled=az; syncSvc(); }
 /* 주소로 바로 채우기(2026-11-22): voice-maker.html?app=010 → 그 앱의 말 목록·묶음. ?pack=·?url=로 따로 정해도 됨 */
-{ const q=new URLSearchParams(location.search), APPS={'010':{pack:'azure-sunhi-0.92',url:'https://shim-sung-hyun.github.io/web_app/010/voice-lines-beta.json'},'008':{pack:'azure-sunhi-0.92',url:'https://shim-sung-hyun.github.io/web_app/008/voice-lines-beta.json'}};
+{ const q=new URLSearchParams(location.search), APPS={'010':{pack:'azure-sunhi-0.92',url:'https://shim-sung-hyun.github.io/web_app/010/voice-lines-beta.json'},'008':{pack:'azure-sunhi-0.92',url:'https://shim-sung-hyun.github.io/web_app/008/voice-lines.json'}};
   const a=q.get('app'), d=APPS[a]||{}; if(a&&/^\d{3}$/.test(a)) $('app').value=a;
   const pk=q.get('pack')||d.pack; if(pk&&[...$('pack').options].some(o=>o.value===pk)) $('pack').value=pk;
   const u=q.get('url')||d.url; if(u&&/^https:\/\/shim-sung-hyun\.github\.io\//.test(u)) $('url').value=u; }

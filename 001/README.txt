@@ -3,7 +3,7 @@
 앱 주소(학생·선생님):  https://www.charum.org/study/001/shape-finder.html
 GitHub 원본:           https://shim-sung-hyun.github.io/web_app/001/shape-finder.html
   서버 study/001/ 에는 server-loader.html 을 shape-finder.html 이름으로 한 번만 올려 둔다.
-  shape-finder-beta.html 은 정식판으로 넘겨 주는 페이지.
+  (shape-finder-beta.html — 정식판으로 넘겨 주던 옛 베타 주소, 2026-11-25 지움)
 
 [게시판 글]  차름 갤러리
   - app_url: 위 앱 주소

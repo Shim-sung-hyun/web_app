@@ -47,5 +47,5 @@ LAYOUT: one square image, an invisible 3×3 grid — NO grid lines, NO frames. P
   · 동물 판 5: 오릭스 oriks  멧돼지 metdwaeji  바다거북 badageobuk  돌고래 dolgorae  갯우렁이 gaeturengi  맛조개 matjogae  도요새 doyosae  방게 bangge
 
 넣을 때 할 일(Claude): 자르기·흰 테두리 지우기(tools/clean-edges.py) → 008 NEW 표·BB(몸 상자)·REAL(실제 크기)·FACE(머리 쪽)에 적기 → tools/props-index.py(모양 표)
-  → SP_EXTRA(스페셜 곳 동물)에 더함 → 이름 목소리('코뿔소.' 등)를 voice-lines-beta.json에 더해 선생님이 목소리 도구로 만듦(없으면 그 곳 스페셜은 기기 목소리)
+  → SP_EXTRA(스페셜 곳 동물)에 더함 → 이름 목소리('코뿔소.' 등)를 voice-lines.json에 더해(008 베타는 2026-11-25 지움) 선생님이 목소리 도구로 만듦(없으면 그 곳 스페셜은 기기 목소리)
   · 순위표는 곳·마릿수마다 따로라, 동물이 늘면 새 순위표가 시작됨
