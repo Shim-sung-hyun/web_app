@@ -1140,22 +1140,25 @@ function makeAvoid(Lr, F, o) {
 function drawDecor(c, w, h, ly, seed, avoid) {
   const R = rng(seed), inFace = (x, y) => avoid.strong(x / w, y / h), inSubj = (x, y) => avoid.all(x / w, y / h);
   c.lineJoin = 'round'; c.strokeStyle = '#111'; c.lineWidth = Math.max(3, w * 0.006);
-  if (ly.big) {                                          // 큰 점 판: 위 왼쪽이나 오른쪽 한 곳만(2026-11-25). 크기는 짧은 변 기준 → 세로·가로 그림 같은 모양
+  if (ly.big) {                                          // 큰 점 판: 한 곳만(위 왼쪽·오른쪽, 자리 없으면 아래). 크기는 짧은 변 기준 → 세로·가로 그림 같은 모양
     const pairs = [['#F7C600', '#A31021'], ['#35B6D8', '#1F4FB0'], ['#E8001C', '#FFFFFF'], ['#1F5FB0', '#7FD6F2']];
     const m = Math.min(w, h), first = R() < 0.5 ? 0 : 1, leg0 = m * (0.46 + R() * 0.12);
-    const tries = [];
-    for (const k of [1, 0.8, 0.62]) for (const cx0 of [first, 1 - first]) tries.push([cx0, k]);
-    for (const [cx0, k] of tries) {
-      const a = Math.min(w * 0.62, leg0 * k * 1.15), b = Math.min(h * 0.62, leg0 * k), X = cx0 ? w : 0, sx = cx0 ? -1 : 1;
-      const pts = [[X, 0], [X + sx * a, 0], [X, b]];
-      const probe = [];                                  // 삼각형 안 여러 자리를 살펴 얼굴에 닿으면 다음 자리·작은 크기로
-      for (let u = 0; u <= 4; u++) for (let v = 0; u + v <= 4; v++) probe.push([X + sx * a * u / 4, b * v / 4]);
-      if (probe.some(q => inFace(q[0], q[1]))) continue;
+    const geo = (cx0, cy0, k) => { const a = Math.min(w * 0.62, leg0 * k * 1.15), b = Math.min(h * 0.62, leg0 * k), X = cx0 ? w : 0, Y = cy0 ? h : 0;
+      return { a, b, X, Y, sx: cx0 ? -1 : 1, sy: cy0 ? -1 : 1 }; };
+    const fits = g => { for (let u = 0; u <= 8; u++) for (let v = 0; u + v <= 8; v++) if (inFace(g.X + g.sx * g.a * u / 8, g.Y + g.sy * g.b * v / 8)) return false; return true; };
+    const biggest = (cx0, cy0) => { for (let k = 1; k >= 0.3; k -= 0.05) if (fits(geo(cx0, cy0, k))) return k; return 0; };
+    let pick = null;                                      // 얼굴에 닿지 않는 가장 큰 크기: 위 두 모서리 중 큰 쪽 → 없으면 아래 (2026-11-25)
+    for (const cy0 of [0, 1]) {
+      for (const cx0 of [first, 1 - first]) { const k = biggest(cx0, cy0); if (k && (!pick || k > pick.k + 0.1)) pick = { cx0, cy0, k }; }
+      if (pick) break;
+    }
+    if (pick) {
+      const { a, b, X, Y, sx, sy } = geo(pick.cx0, pick.cy0, pick.k);
+      const pts = [[X, Y], [X + sx * a, Y], [X, Y + sy * b]];
       const [bg, dot] = pairs[(R() * pairs.length) | 0], sp = Math.max(10, Math.min(a, b) * 0.16);
       c.save(); c.beginPath(); pts.forEach((q, i) => c[i ? 'lineTo' : 'moveTo'](q[0], q[1])); c.closePath(); c.fillStyle = bg; c.fill(); c.clip(); c.fillStyle = dot;
-      for (let r = 0, y = -sp; y < b + sp; y += sp * 0.87, r++) for (let x = -sp + (r % 2) * sp / 2; x < w + sp; x += sp) { c.beginPath(); c.arc(x, y, sp * 0.34, 0, 7); c.fill(); }
+      for (let r = 0, y = -sp; y < h + sp; y += sp * 0.87, r++) for (let x = -sp + (r % 2) * sp / 2; x < w + sp; x += sp) { c.beginPath(); c.arc(x, y, sp * 0.34, 0, 7); c.fill(); }
       c.restore(); c.save(); c.lineWidth = Math.max(4, m * 0.009); c.beginPath(); c.moveTo(pts[1][0], pts[1][1]); c.lineTo(pts[2][0], pts[2][1]); c.stroke(); c.restore();
-      break;
     }
   }
   if (ly.star) {                                         // 별 3~4개를 여기저기 (얼굴 위는 피함)
