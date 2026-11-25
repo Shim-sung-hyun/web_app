@@ -1165,11 +1165,11 @@ function makeAvoid(Lr, F, o) {
 function drawDecor(c, w, h, ly, seed, avoid) {
   const R = rng(seed), inFace = (x, y) => avoid.strong(x / w, y / h), inSubj = (x, y) => avoid.all(x / w, y / h);
   c.lineJoin = 'round'; c.strokeStyle = '#111'; c.lineWidth = Math.max(3, w * 0.006);
-  if (ly.big) {                                          // 큰 점 판(2026-11-25): 한 모서리만(위 왼쪽·오른쪽, 자리 없으면 아래). 세로·가로를 따로 재고 진짜 얼굴만 피함
+  if (ly.big) {                                          // 큰 점 판(2026-11-25): 네 모서리 중 무작위 한 곳. 세로·가로를 따로 재고 진짜 얼굴만 피함
     const PAIRS = avoid.pal === 'mono' ? [['#FFFFFF', '#111111'], ['#111111', '#FFFFFF']]
       : avoid.pal === 'warm' ? [['#FFB000', '#E8001C'], ['#FF4F6D', '#FFF4E0'], ['#7A1F5C', '#FF8FB8'], ['#FFF4E0', '#FF4F6D'], ['#FFB000', '#7A1F5C']]
       : [['#F7C600', '#E8001C'], ['#35B6D8', '#1F4FB0'], ['#E8001C', '#FFFFFF'], ['#1F5FB0', '#7FD6F2'], ['#FF8FB8', '#D6246E'], ['#FFFFFF', '#E8001C'], ['#7ED957', '#1E7A3A'], ['#FFE14D', '#1F5FB0']];
-    const inBig = (x, y) => avoid.big(x / w, y / h), first = R() < 0.5 ? 0 : 1;
+    const inBig = (x, y) => avoid.big(x / w, y / h);
     let A, B;                                            // 목표 크기(두 변): 세로 그림은 너비 기준, 가로 그림은 높이 기준
     if (h > w * 1.1) { A = w * (0.5 + R() * 0.12); B = Math.min(h * 0.45, w * (0.56 + R() * 0.14)); }
     else if (w > h * 1.1) { B = h * (0.5 + R() * 0.12); A = Math.min(w * 0.42, h * (0.62 + R() * 0.14)); }
@@ -1177,10 +1177,13 @@ function drawDecor(c, w, h, ly, seed, avoid) {
     const geo = (cx0, cy0, k) => ({ a: A * k, b: B * k, X: cx0 ? w : 0, Y: cy0 ? h : 0, sx: cx0 ? -1 : 1, sy: cy0 ? -1 : 1 });
     const fits = g => { for (let u = 0; u <= 10; u++) for (let v = 0; u + v <= 10; v++) if (inBig(g.X + g.sx * g.a * u / 10, g.Y + g.sy * g.b * v / 10)) return false; return true; };
     const biggest = (cx0, cy0) => { for (let k = 1; k >= 0.4; k -= 0.05) if (fits(geo(cx0, cy0, k))) return k; return 0; };
-    let pick = null;
-    for (const cy0 of [0, 1]) {
-      for (const cx0 of [first, 1 - first]) { const k = biggest(cx0, cy0); if (k && (!pick || k > pick.k + 0.1)) pick = { cx0, cy0, k }; }
-      if (pick) break;
+    let pick = null;                                      // 네 모서리를 무작위 차례로: 넉넉히(0.7 이상) 들어가는 첫 곳, 없으면 가장 크게 들어가는 곳 (2026-11-25)
+    const order = [[0, 0], [1, 0], [0, 1], [1, 1]], R2 = rng((seed ^ 0x5bd1e995) >>> 0);   // 모서리 차례는 따로 섞음(고르게)
+    for (let i = 3; i > 0; i--) { const j = (R2() * (i + 1)) | 0; [order[i], order[j]] = [order[j], order[i]]; }
+    for (const [cx0, cy0] of order) {
+      const k = biggest(cx0, cy0); if (!k) continue;
+      if (k >= 0.7) { pick = { cx0, cy0, k }; break; }
+      if (!pick || k > pick.k) pick = { cx0, cy0, k };
     }
     if (pick) {
       const { a, b, X, Y, sx, sy } = geo(pick.cx0, pick.cy0, pick.k);
