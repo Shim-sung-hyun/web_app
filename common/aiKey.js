@@ -12,7 +12,15 @@
      open: 처음부터 펼쳐 둘지   color: 앱 영역 색(제목·저장 단추·링크)   onChange: 저장·지울 때(값은 칸이 하나면 글, 둘 이상이면 {이름: 글}, 지우면 '')
    AiKey.get('gemini') → 글('' = 없음) · AiKey.get('azure') → {key, region} · AiKey.has('gtts') → 참/거짓
    AiKey.set('gtts', 글 또는 {…}) / AiKey.clear('gtts')   앱이 다른 길(키 확인 창 등)로 받은 키도 같은 칸에
-   AiKey.refresh()   다시 그림(앱이 키를 바꾼 뒤) — 다른 창에서 바뀐 것은 저절로 */
+   AiKey.refresh()   다시 그림(앱이 키를 바꾼 뒤) — 다른 창에서 바뀐 것은 저절로
+
+   Gemini 모델 고르기(2026-11-25 선생님: 잘 되는 모델을 먼저 잡아 두고 시작) — 무료 키로 글·사진 분석을 하는 앱은 모두 이것으로 보낸다.
+   AiKey.gemini(body, { models, keep, onModel }) → { model, data, text }   body는 generateContent에 보내는 그대로
+     models: 시도할 차례(없으면 AiKey.GEMINI_TEXT — 공용 목록, 모델이 바뀌면 여기 한 곳만 고침. 개인 정보 검사는 AiKey.GEMINI_CAREFUL)   keep: 선생님이 고른 모델이라 차례를 바꾸지 않음   key: 다른 칸에 둔 키를 쓸 때(없으면 webapp.geminiKey)
+     ① 키가 있으면 페이지를 열 때 Google 모델 목록을 받아 둠(하루 몫을 쓰지 않음, 하루 한 번) → 없어진 모델은 빼고 시도
+     ② 마지막으로 잘 된 모델(webapp.geminiGood, 목록마다)부터 ③ 오늘 한도가 찬(429)·없는(404) 모델은 그날(미국 서부 날짜, 한도가 그때 새로 참) 맨 뒤로
+     키 문제(401·403·400 키)는 다른 모델도 같으므로 바로 오류. 다 안 되면 마지막 오류(e.status, e.tried=[모델: 까닭…])
+   AiKey.geminiOrder(models) → 지금 시도할 차례(화면에 보여 줄 때) */
 window.AiKey = (function () {
   'use strict';
   var GUIDE = 'https://www.charum.org/study/doc.html?';
@@ -138,5 +146,75 @@ window.AiKey = (function () {
   }
   function refresh() { boxes = boxes.filter(function (b) { return b.el.isConnected; }); boxes.forEach(function (b) { if (b.root && !b.root.querySelector('input:focus')) render(b); }); }
   window.addEventListener('storage', function (e) { if (!e.key || /^webapp\./.test(e.key)) refresh(); });
-  return { mount: mount, get: get, has: has, set: set, clear: clear, refresh: refresh, services: SVC };
+
+  /* ---- Gemini 모델 고르기 ---- */
+  var GEMINI_TEXT = ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-flash-lite-latest', 'gemini-3.1-flash-lite-preview', 'gemini-3.5-flash', 'gemini-flash-latest'];
+  var GEMINI_CAREFUL = ['gemini-3.5-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-flash-lite-latest'];   /* 개인 정보 검사처럼 놓치면 안 되는 일: lite가 아닌 것부터 */
+  var GAPI = 'https://generativelanguage.googleapis.com/v1beta/models';
+  function pday() { try { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' }); } catch (e) { return new Date().toISOString().slice(0, 10); } }
+  function jrd(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+  function jwr(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function ktag(key) { return String(key || '').slice(-6); }
+  var listing = null;
+  function geminiList(force, key) {   /* 이 키로 쓸 수 있는 모델 이름들(못 받으면 null — 그때는 거르지 않음) */
+    key = (key || rd('webapp.geminiKey')).trim(); if (!key) return Promise.resolve(null);
+    var c = jrd('webapp.geminiAvail');
+    if (!force && c && c.day === pday() && c.k === ktag(key) && c.names && c.names.length) return Promise.resolve(c.names);
+    if (listing) return listing;
+    listing = fetch(GAPI + '?pageSize=1000', { headers: { 'x-goog-api-key': key } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        var names = j && (j.models || []).filter(function (m) { return (m.supportedGenerationMethods || []).indexOf('generateContent') >= 0; }).map(function (m) { return m.name.replace(/^models\//, ''); });
+        if (names && names.length) { jwr('webapp.geminiAvail', { day: pday(), k: ktag(key), names: names }); return names; }
+        return null;
+      })
+      .catch(function () { return null; })
+      .then(function (v) { listing = null; return v; });
+    return listing;
+  }
+  function busyMap() { var b = jrd('webapp.geminiBusy') || {}; var d = pday(), o = {}; Object.keys(b).forEach(function (m) { if (b[m] === d) o[m] = d; }); return o; }
+  function geminiOrder(models, keep, key) {
+    var want = (models && models.length ? models : GEMINI_TEXT).slice();
+    return geminiList(false, key).then(function (names) {
+      var list = names ? want.filter(function (m) { return names.indexOf(m) >= 0; }) : want;
+      if (!list.length) list = want;   /* 목록과 하나도 안 맞으면(이름 바뀜 등) 그대로 시도 */
+      if (keep) return list;
+      var good = (jrd('webapp.geminiGood') || {})[want[0]], busy = busyMap();   /* 잘 된 모델은 목록마다(맨 앞 모델 이름으로) 따로 기억 */
+      if (good && list.indexOf(good) > 0) { list.splice(list.indexOf(good), 1); list.unshift(good); }
+      return list.filter(function (m) { return !busy[m]; }).concat(list.filter(function (m) { return busy[m]; }));
+    });
+  }
+  function gemini(body, o) {
+    o = o || {};
+    var key = (o.key || rd('webapp.geminiKey')).trim();
+    if (!key) return Promise.reject(Object.assign(new Error('Gemini 키가 없어요.'), { status: 401, needKey: true }));
+    var gk = (o.models && o.models.length ? o.models : GEMINI_TEXT)[0];
+    return geminiOrder(o.models, o.keep, key).then(function (list) {
+      var tried = [], last = null, i = 0;
+      function next() {
+        if (i >= list.length) { var e = last || new Error('분석하지 못했어요.'); e.tried = tried; return Promise.reject(e); }
+        var m = list[i++];
+        return fetch(GAPI + '/' + encodeURIComponent(m) + ':generateContent', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body) })
+          .then(function (r) {
+            return r.json().catch(function () { return {}; }).then(function (j) {
+              if (!r.ok) {
+                var msg = (j.error && j.error.message) || ('HTTP ' + r.status), err = Object.assign(new Error(msg), { status: r.status, model: m });
+                if (r.status === 401 || r.status === 403 || (r.status === 400 && /api.?key/i.test(msg))) { err.tried = tried.concat(m + ': ' + msg); err.needKey = true; throw err; }
+                if (r.status === 429 || r.status === 404) { var b = busyMap(); b[m] = pday(); jwr('webapp.geminiBusy', b); }
+                tried.push(m + ': ' + msg); last = err; return next();
+              }
+              var text = ((j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || []).map(function (p) { return p.text || ''; }).join('');
+              if (!text.trim() && !((j.candidates || [])[0] || {}).content) { tried.push(m + ': 빈 응답'); last = Object.assign(new Error('빈 응답'), { status: 0, model: m }); return next(); }
+              var g = jrd('webapp.geminiGood'); if (!g || typeof g !== 'object') g = {}; g[gk] = m; jwr('webapp.geminiGood', g);
+              if (o.onModel) { try { o.onModel(m); } catch (e) {} }
+              return { model: m, data: j, text: text };
+            });
+          }, function (e) { tried.push(m + ': ' + (e && e.message || '연결 안 됨')); last = e; return next(); });
+      }
+      return next();
+    });
+  }
+  setTimeout(function () { if (rd('webapp.geminiKey')) geminiList(); }, 1500);   /* 페이지를 열면 미리(조용히) */
+
+  return { mount: mount, get: get, has: has, set: set, clear: clear, refresh: refresh, services: SVC, gemini: gemini, geminiOrder: geminiOrder, geminiList: geminiList, GEMINI_TEXT: GEMINI_TEXT, GEMINI_CAREFUL: GEMINI_CAREFUL };
 })();

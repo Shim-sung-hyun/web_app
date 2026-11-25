@@ -19,6 +19,7 @@ AI 키·할당량 구조 (2026-11-19 선생님 정함, 오늘 작동 확인)
   1. Gemini 이미지 생성(gemini-3.1-flash-image)으로 먼저 그려 본다.
   2. 한도·오류로 막히면 사진 해석 모델을 순서대로 시도한다:
      GEMINI_TEXT_MODELS = [gemma-4-26b-a4b-it(1순위), gemma-4-31b-it, gemini-3.1-flash-lite-preview, gemini-3.5-flash-lite, gemini-flash-lite-latest].
+     고르기는 공통 모듈 AiKey.gemini(2026-11-25): 없어진 모델은 빼고, 잘 된 모델부터, 오늘 한도가 찬 모델은 뒤로(askGemini도 같음).
      해석글이 위 프롬프트에 붙고, 최종 그림은 Cloudflare AI가 만든다.
   3. **해석 모델이 다 막히면 useCloudflareVision:true를 보내 Cloudflare 비전이 사진을 해석**한 뒤 그림을 만든다(2026-11-19 보완).
 - Gemini 키가 없을 때: useCloudflareVision:true로 워커에 보내 Cloudflare가 해석 → Cloudflare가 변환.

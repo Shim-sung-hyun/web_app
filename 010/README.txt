@@ -50,7 +50,7 @@
 - 사진 받기는 선생님 개인 Gemini API 키가 있어야 함 — 설정에 늘 안내(받는 법 세 줄 + '키 받는 법 자세히' = doc.html?gemini_guide(2026-11-23 하나로, 010/gemini-key.html은 넘겨 줌) — 001용 gemini-key.html을 010에 맞춤). 키가 없으면 자료실 사진으로
 - 사진 받기: 휴대폰(PhotoRelay, 키도 함께) 또는 이 기기 파일 → 1280px로 줄여 이 기기에만 8장(materialSort.recv) → Gemini 분석 → 확인 화면(물체마다 부분 줄: 이름·물질·안 보임·지우기, 물체를 누른 뒤 끌면 부분 더하기, 고르지 않고 끌면 새 물체,
   이름에 물질 낱말이 있으면 표시, 물체마다 수준 표시) → '확인했어요'한 사진만 수업에. 늘 화면에 "학생 얼굴 사진은 보내지 마세요"(무료 API는 Google이 개선에 쓸 수 있음)
-- Gemini: 키 webapp.geminiKey(001과 같은 칸), 모델 GEM_MODELS 차례(3.1-flash-lite 추천 → flash-lite-latest → 3.5-flash-lite → 3.5-flash, 안 되면 다음 것), 정해진 꼴(JSON: 물체 name·box_2d · parts[name·material·box_2d·hidden])
+- Gemini: 키 webapp.geminiKey(001과 같은 칸), 모델은 공통 모듈 AiKey.gemini가 고름(2026-11-25: 공용 목록 앞 4개, 없어진 모델 빼고·잘 된 모델부터·오늘 한도 찬 모델은 뒤로, 선생님이 칩으로 고르면 그 모델부터), 정해진 꼴(JSON: 물체 name·box_2d · parts[name·material·box_2d·hidden])
   — 실제 Gemini로는 아직 시험 못 함(작업 공간에서 Google 접속이 막힘, 가짜 답으로 흐름만 확인)
 - 놀이(2026-11-22 선생님): 수업 속 놀이(문질러 찾기·물질 공장·두드려 보기, 묶음 끝 놀이 설정)는 뺌(S.game=0, 옛 코드는 남아 있으나 안 부름).
   놀이는 따로 「물질 징검다리」 — 수업을 다 마치면(혼자 모드는 묶음을 다 하면) "놀이할까요? 네/아니요", 설정 화면 시작 옆 ★ 놀이로 바로도.
