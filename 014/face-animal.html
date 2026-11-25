@@ -54,12 +54,29 @@ button{font:inherit;color:inherit}
 .slot .top{display:flex;align-items:center;gap:8px}
 .slot .top img{width:44px;height:44px;object-fit:contain}
 .slot .top span{font:400 21px/1 "Jua",sans-serif}
-.slot .pic{position:relative;aspect-ratio:1/1;border:2px dashed #CFCABE;border-radius:6px;display:grid;place-items:center;color:var(--soft);font-size:14px;cursor:pointer;overflow:hidden;background:#fff}
-.slot .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.slot .pic{position:relative;aspect-ratio:var(--ar,3/4);max-height:300px;border:2px dashed #CFCABE;border-radius:6px;display:grid;place-items:center;color:var(--soft);font-size:14px;cursor:pointer;overflow:hidden;background:#fff}
+.slot .pic img{width:100%;height:100%;object-fit:contain;display:block}
 .slot.has .pic{border:0}
 .slot .pic.drag,.meBox.drag{outline:3px solid var(--play);outline-offset:2px}
 .slot .del{position:absolute;right:16px;top:62px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:18px;line-height:30px;cursor:pointer;display:none}
 .slot.has .del{display:block}
+/* 맞추기 */
+.slot .fitRow{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:13px;color:var(--soft);min-height:30px}
+.slot .fitRow .warn,.slot .err{color:#A2541B;font-weight:600}
+.slot .err{font-size:13px;line-height:1.35;word-break:keep-all}
+.slot .pic .busy{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--play-d);font-weight:600}
+.slot .pic .busy i{width:26px;height:26px;border-radius:50%;border:3px solid var(--play-l);border-top-color:var(--play);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.aiRow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px 38px;font-size:14px;color:var(--soft)}
+#keyBox{margin:0 0 12px 38px}
+#fitBox{position:fixed;inset:0;z-index:2147480500;background:rgba(30,30,30,.72);display:flex;align-items:center;justify-content:center;padding:16px}
+#fitPanel{background:var(--card);border-radius:10px;padding:14px 16px 16px;max-width:100%;max-height:100%;display:flex;flex-direction:column;gap:10px;overflow:auto}
+#fitPanel h3{margin:0;font:700 17px/1.3 "Noto Sans KR",sans-serif}
+#fitPanel p{margin:0;color:var(--soft);font-size:14px}
+#fitCv{display:block;margin:0 auto;background:#222;touch-action:none;cursor:move}
+#fitPanel .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}
+#fitPanel input[type=range]{flex:1;min-width:140px;accent-color:var(--play)}
+#fitPanel .btns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 @media (max-width:640px){.slots{grid-template-columns:repeat(2,1fr)}.head h1{font-size:34px}}
 
 /* ③ */
@@ -117,8 +134,10 @@ body.admin #show::after{content:"";position:absolute;inset:0;background:rgba(40,
 
   <section class="card" id="c2">
     <h2><b>2</b>동물로 바꾼 사진</h2>
-    <p class="sub">위 사진을 Gemini에 붙이고 동물마다 프롬프트를 보내 받은 그림을 칸에 넣어요. 하나만 넣어도 돼요.
-      <br><a href="https://shim-sung-hyun.github.io/web_app/media/prompts/copy.html?f=PROMPTS-014-face-animal.txt" target="_blank" rel="noopener">프롬프트 복사 화면 열기</a> · <a href="https://www.charum.org/study/doc.html?gemini_guide" target="_blank" rel="noopener">Gemini 쓰는 법</a></p>
+    <p class="sub">Gemini 키가 있으면 칸마다 <b>AI로 만들기</b>를 눌러요. 키가 없으면 Gemini 누리집에서 직접 만들어 칸에 넣어도 돼요
+      (<a href="https://shim-sung-hyun.github.io/web_app/media/prompts/copy.html?f=PROMPTS-014-face-animal.txt" target="_blank" rel="noopener">프롬프트 복사 화면</a>). 하나만 있어도 시작할 수 있어요.</p>
+    <div id="keyBox"></div>
+    <div class="aiRow" id="aiRow"><button class="btn small" type="button" id="makeAll">빈 칸 모두 AI로 만들기</button><span>사진이 Google(Gemini)로 보내져요. 학생 사진은 동의받은 것만 써 주세요.</span></div>
     <div class="slots" id="slots"></div>
   </section>
 
@@ -141,6 +160,17 @@ body.admin #show::after{content:"";position:absolute;inset:0;background:rgba(40,
 <div id="dockTop">
   <button type="button" class="main" id="dkBack">계속하기</button>
   <button type="button" id="dkSetup">사진 바꾸기</button>
+</div>
+
+<div id="fitBox" class="hidden" role="dialog" aria-label="사진 맞추기">
+  <div id="fitPanel">
+    <h3 id="fitTitle">맞추기</h3>
+    <p>바뀐 사진을 끌어 옮기고 크기를 바꿔 내 사진에 겹쳐 맞춰요. 배경(벽·창문·옷)이 겹치면 맞은 거예요.</p>
+    <canvas id="fitCv"></canvas>
+    <div class="row">크기 <input type="range" id="fitK" min="-35" max="35" step="0.5" value="0"></div>
+    <div class="row">겹쳐 보기 <span>내 사진</span><input type="range" id="fitOp" min="0" max="100" value="50"><span>바뀐 사진</span></div>
+    <div class="btns"><button class="btn" type="button" id="fitAuto">자동으로 다시</button><button class="btn" type="button" id="fitOk" style="background:var(--play);color:#fff">다 됐어요</button></div>
+  </div>
 </div>
 
 <input type="file" id="fileIn" accept="image/*" class="hidden">
@@ -562,6 +592,150 @@ window.HomeLink = (function () {
   };
 })();
 </script>
+<script id="aiKey">
+/* 차름 공통 모듈: AI 키 칸(aiKey) — 원본은 common/aiKey.js. 앱 안의 <script id="aiKey">는 tools/sync-modules.py가 복사해 넣은 것이라 손으로 고치지 않는다.
+   키를 쓰는 앱(001·004·007·010 베타·012)의 설정에 같은 모양으로(2026-11-25 선생님, 시안 A 고친 판):
+   - 접으면 한 줄 "▶ AI 키 넣기 (선택)" (+ "1개 기억됨" / 다 넣었으면 "AI 키 · 모두 기억됨")
+   - 펼치면 위에 '기억된 키'(접힌 줄, 누르면 앞뒤 몇 글자 + 바꾸기·지우기), 아래에 '넣을 키'(첫 것은 펼쳐 둠).
+     하나도 없으면 아래만, 다 넣었으면 위만.
+   - 키 받는 법은 서비스 이름이 든 링크 한 줄(서비스마다 안내 페이지 하나, charum.org/study/doc.html?이름_guide)
+   - 휴대폰으로 받기(keyRelay 모듈)는 Gemini·Google 음성만(중계 서버가 그 둘만 받음)
+   키는 이 기기·이 브라우저의 localStorage 같은 칸(webapp.geminiKey 등)에 — 다른 차름 앱이 저절로 불러 씀.
+
+   AiKey.mount(넣을 곳, { use: [{ svc: 'gemini', what: '내 사진에서 물건 찾기' }, …], open: false, onChange: (svc, 값) => {} })
+     svc: 'gemini' | 'gtts'(Google 음성) | 'azure'(키+지역) | 'cloudflare'(Account ID+토큰)
+     open: 처음부터 펼쳐 둘지   color: 앱 영역 색(제목·저장 단추·링크)   onChange: 저장·지울 때(값은 칸이 하나면 글, 둘 이상이면 {이름: 글}, 지우면 '')
+   AiKey.get('gemini') → 글('' = 없음) · AiKey.get('azure') → {key, region} · AiKey.has('gtts') → 참/거짓
+   AiKey.set('gtts', 글 또는 {…}) / AiKey.clear('gtts')   앱이 다른 길(키 확인 창 등)로 받은 키도 같은 칸에
+   AiKey.refresh()   다시 그림(앱이 키를 바꾼 뒤) — 다른 창에서 바뀐 것은 저절로 */
+window.AiKey = (function () {
+  'use strict';
+  var GUIDE = 'https://www.charum.org/study/doc.html?';
+  var SVC = {
+    gemini: { name: 'Gemini', guide: 'gemini_guide', relay: 'gemini', f: [{ n: 'key', k: 'webapp.geminiKey', ph: 'Gemini 키 붙여넣기 (AIza… 또는 AQ.…)', secret: true, test: /^(AIza|AQ\.)/ }] },
+    gtts: { name: 'Google 음성', guide: 'google-tts_guide', relay: 'cloud', f: [{ n: 'key', k: 'webapp.cloudKey', ph: 'Google 음성 키 붙여넣기', secret: true }] },
+    azure: { name: 'Azure 음성', guide: 'azure_guide', f: [{ n: 'key', k: 'webapp.azureKey', ph: 'Azure 음성 키 붙여넣기', secret: true }, { n: 'region', k: 'webapp.azureRegion', ph: '지역 (예: koreacentral)', test: /^[a-z0-9]+$/ }] },
+    cloudflare: { name: 'Cloudflare AI', guide: 'cloudflare_guide', f: [{ n: 'account', k: 'webapp.cfAccount', ph: 'Account ID' }, { n: 'token', k: 'webapp.cfToken', ph: 'API Token 붙여넣기', secret: true }] }
+  };
+  var boxes = [];
+  function rd(k) { try { return (localStorage.getItem(k) || '').trim(); } catch (e) { return ''; } }
+  function wr(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
+  function get(svc) {
+    var s = SVC[svc]; if (!s) return '';
+    if (s.f.length === 1) return rd(s.f[0].k);
+    var o = {}; s.f.forEach(function (f) { o[f.n] = rd(f.k); }); return o;
+  }
+  function has(svc) { var s = SVC[svc]; return !!s && s.f.every(function (f) { return !!rd(f.k); }); }
+  function set(svc, v) {
+    var s = SVC[svc]; if (!s) return;
+    if (s.f.length === 1) wr(s.f[0].k, typeof v === 'string' ? v.trim() : '');
+    else s.f.forEach(function (f) { wr(f.k, v && v[f.n] ? String(v[f.n]).trim() : ''); });
+    refresh();
+  }
+  function clear(svc) {
+    var s = SVC[svc]; if (!s) return;
+    s.f.forEach(function (f) { if (f.secret || s.f.length === 1) wr(f.k, ''); });   /* 지역·ID처럼 비밀이 아닌 칸은 남김(다시 넣을 때 편하게) */
+    refresh();
+  }
+  function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function tail(v) { v = String(v || ''); return v.length > 10 ? esc(v.slice(0, 4)) + '••••••••' + esc(v.slice(-4)) : '••••' + esc(v.slice(-2)); }
+
+  var CSS = '.kbx{font-size:14px;line-height:1.5}.kbx summary{list-style:none;cursor:pointer}.kbx summary::-webkit-details-marker{display:none}'
+    + '.kbx .kb-tri::before{content:"";display:inline-block;border-style:solid;border-width:5px 0 5px 7px;border-color:transparent transparent transparent currentColor;margin-right:7px;vertical-align:1px;transition:transform .15s}'
+    + '.kbx details[open]>summary.kb-tri::before,.kbx[open]>summary.kb-tri::before{transform:rotate(90deg)}'
+    + '.kbx>summary.kb-tri{color:var(--kb-ac,#17766F);font-weight:700;font-size:13.5px;padding:4px 0}'
+    + '.kbx .kb-pill{margin-left:6px;padding:1px 8px;border-radius:999px;background:#E6F2EA;color:#1B7F3A;font-size:11px;font-weight:700}'
+    + '.kbx .kb-lead{font-size:12px;color:#6B7478;margin:2px 0 4px}'
+    + '.kbx .kb-grp{font-size:11.5px;color:#6B7478;margin:10px 0 0;font-weight:600}'
+    + '.kbx .kb-svc{border-top:1px solid #E2DDD3;padding:7px 0 5px}'
+    + '.kbx .kb-svc>summary{font-weight:600;font-size:13px;display:flex;align-items:baseline;gap:8px;color:inherit}'
+    + '.kbx .kb-what{flex:1;font-weight:400;color:#6B7478;font-size:12px}'
+    + '.kbx .kb-ok{color:#1B7F3A;font-size:12px;font-weight:700;white-space:nowrap}'
+    + '.kbx .kb-in{padding:4px 0 2px 14px}'
+    + '.kbx .kb-how{font-size:12px;color:#6B7478;margin-bottom:5px}'
+    + '.kbx .kb-how a{color:var(--kb-ac,#17766F);text-decoration:none;border-bottom:1px dotted currentColor;white-space:nowrap}'
+    + '.kbx input{display:block;width:100%;box-sizing:border-box;font:inherit;font-size:13px;padding:7px 9px;border:1px solid #CFC9BD;border-radius:8px;background:#fff;color:inherit;margin-top:5px}'
+    + '.kbx input:first-of-type{margin-top:0}.kbx input.kb-bad{border-color:#C0473B}'
+    + '.kbx .kb-btns{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}'
+    /* 단추는 앱의 단추 CSS(#dockMore button 같은 것)에 덮이지 않게 !important */
+    + '.kbx .kb-b{font:inherit!important;font-size:12.5px!important;font-weight:600!important;padding:5px 10px!important;margin:0!important;border-radius:8px!important;border:1px solid #CFC9BD!important;background:#fff!important;color:#2B3236!important;cursor:pointer;box-shadow:none!important;min-height:0!important;height:auto!important}'
+    + '.kbx .kb-b.kb-p{background:var(--kb-ac,#17766F)!important;border-color:var(--kb-ac,#17766F)!important;color:#fff!important}'
+    + '.kbx .kb-b.kb-x{color:#9A3328!important;border-color:#E3C2BD!important}'
+    + '.kbx .kb-mask{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:#6B7478;word-break:break-all}';
+  function css() { if (document.getElementById('kbxCss')) return; var s = document.createElement('style'); s.id = 'kbxCss'; s.textContent = CSS; document.head.appendChild(s); }
+
+  function render(b) {
+    var use = b.o.use.filter(function (u) { return SVC[u.svc]; });
+    var done = use.filter(function (u) { return has(u.svc); }), todo = use.filter(function (u) { return !has(u.svc); });
+    var wasOpen = b.root ? b.root.open : !!b.o.open;
+    var openSvc = {}; if (b.root && !b.reset) b.root.querySelectorAll('details.kb-svc[open]').forEach(function (d) { openSvc[d.dataset.svc] = 1; });
+    b.reset = false;   /* 저장·지운 뒤에는 처음 꼴로: 기억된 키는 접고, 넣을 키는 첫 것만 펼침 */
+    var all = use.length && !todo.length;
+    var h = '<summary class="kb-tri">' + (all ? 'AI 키 (선택)' : 'AI 키 넣기 (선택)')
+      + (done.length ? ' <span class="kb-pill">' + (all ? '모두 기억됨' : done.length + '개 기억됨') + '</span>' : '') + '</summary>';
+    h += '<div class="kb-lead">' + (done.length ? '' : '없어도 앱은 그대로 돼요. ') + '넣은 키는 이 기기·이 브라우저의 다른 차름 앱에서도 저절로 쓰여요.</div>';
+    function row(u, isDone, first) {
+      var s = SVC[u.svc], op = openSvc[u.svc] ? 1 : b.edit[u.svc] ? 1 : (!isDone && first && !Object.keys(openSvc).length);
+      var r = '<details class="kb-svc" data-svc="' + u.svc + '"' + (op ? ' open' : '') + '><summary class="kb-tri">' + esc(s.name)
+        + (u.what ? ' <span class="kb-what">' + esc(u.what) + '</span>' : '<span class="kb-what"></span>') + (isDone ? '<span class="kb-ok">✓ 기억됨</span>' : '') + '</summary><div class="kb-in">';
+      if (isDone && !b.edit[u.svc]) {
+        r += s.f.filter(function (f) { return f.secret; }).map(function (f) { return '<div class="kb-mask">' + tail(rd(f.k)) + '</div>'; }).join('')
+          + '<div class="kb-btns"><button type="button" class="kb-b" data-act="edit">바꾸기</button><button type="button" class="kb-b kb-x" data-act="del">지우기</button></div>';
+      } else {
+        r += '<div class="kb-how">키가 없으면 → <a href="' + GUIDE + s.guide + '" target="_blank" rel="noopener">' + esc(s.name) + ' 키 받는 법 ↗</a></div>'
+          + s.f.map(function (f) { return '<input data-f="' + f.n + '" type="' + (f.secret ? 'password' : 'text') + '" autocomplete="off" spellcheck="false" placeholder="' + esc(f.ph) + '" value="' + (f.secret ? '' : esc(rd(f.k))) + '">'; }).join('')
+          + '<div class="kb-btns"><button type="button" class="kb-b kb-p" data-act="save">저장</button>'
+          + (s.relay && window.KeyRelay ? '<button type="button" class="kb-b" data-act="phone">휴대폰으로 받기</button>' : '')
+          + (isDone ? '<button type="button" class="kb-b" data-act="cancel">그대로 두기</button>' : '') + '</div>';
+      }
+      return r + '</div></details>';
+    }
+    if (done.length) h += '<div class="kb-grp">기억된 키</div>' + done.map(function (u) { return row(u, true); }).join('');
+    if (todo.length) h += '<div class="kb-grp">넣을 키</div>' + todo.map(function (u, i) { return row(u, false, i === 0); }).join('');
+    if (!b.root) { b.root = document.createElement('details'); b.root.className = 'kbx'; b.el.appendChild(b.root); }
+    b.root.innerHTML = h; b.root.open = wasOpen;
+  }
+  function fire(b, svc) { b.reset = true; refresh(); if (b.o.onChange) { try { b.o.onChange(svc, has(svc) ? get(svc) : ''); } catch (e) { console.error(e); } } }
+  function act(b, e) {
+    var t = e.target.closest('[data-act]'); if (!t || !b.root.contains(t)) return;
+    e.preventDefault(); e.stopPropagation();
+    var d = t.closest('.kb-svc'), svc = d.dataset.svc, s = SVC[svc], a = t.dataset.act;
+    if (a === 'edit') { b.edit[svc] = 1; render(b); return; }
+    if (a === 'cancel') { delete b.edit[svc]; render(b); return; }
+    if (a === 'del') { clear(svc); fire(b, svc); return; }
+    if (a === 'phone') {
+      var want = {}; want[s.relay] = 1;
+      window.KeyRelay.receive({ want: [s.relay], onKeys: function (g) { var v = g && g[s.relay]; if (v) { delete b.edit[svc]; set(svc, String(v).trim()); fire(b, svc); } } });
+      return;
+    }
+    if (a === 'save') {
+      var ok = true, v = {};
+      s.f.forEach(function (f) {
+        var inp = d.querySelector('input[data-f="' + f.n + '"]'), x = inp.value.trim();
+        if (f.n === 'region') x = x.toLowerCase();
+        var bad = !x || (f.test && !f.test.test(x)); inp.classList.toggle('kb-bad', bad); if (bad) ok = false; v[f.n] = x;
+      });
+      if (!ok) return;
+      delete b.edit[svc]; set(svc, s.f.length === 1 ? v[s.f[0].n] : v); fire(b, svc);
+    }
+  }
+  function mount(el, o) {
+    if (typeof el === 'string') el = document.querySelector(el);
+    if (!el) return null;
+    css();
+    var b = { el: el, o: o || { use: [] }, root: null, edit: {} };
+    boxes.push(b); render(b);
+    if (b.o.color) b.root.style.setProperty('--kb-ac', b.o.color);
+    b.root.addEventListener('click', function (e) { act(b, e); });
+    b.root.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target.tagName === 'INPUT') { var s = e.target.closest('.kb-svc').querySelector('[data-act="save"]'); if (s) s.click(); } });
+    ['pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(function (t) { b.root.addEventListener(t, function (e) { e.stopPropagation(); }); });
+    return b.root;
+  }
+  function refresh() { boxes = boxes.filter(function (b) { return b.el.isConnected; }); boxes.forEach(function (b) { if (b.root && !b.root.querySelector('input:focus')) render(b); }); }
+  window.addEventListener('storage', function (e) { if (!e.key || /^webapp\./.test(e.key)) refresh(); });
+  return { mount: mount, get: get, has: has, set: set, clear: clear, refresh: refresh, services: SVC };
+})();
+</script>
 <script>
 ReportLink.set({board:'https://www.charum.org/webapp',color:'#4E6A80'});
 EndLesson.set({board:'https://www.charum.org/webapp'});
@@ -574,12 +748,12 @@ const $=id=>document.getElementById(id);
 const GH='https://shim-sung-hyun.github.io/web_app/media/';
 /* 동물: 그림은 media/animals, 이름 소리는 voice/leda-0.90 (낱말 SHA-1 앞 16자리, 곰은 "곰.") */
 const ANIMALS=[
-  {id:'cat',   name:'고양이', img:'goyangi', say:'a132a94fadc35584'},
-  {id:'dog',   name:'강아지', img:'gae',     say:'160b19e801099218'},
-  {id:'rabbit',name:'토끼',   img:'tokki',   say:'7830e5d54679d439'},
-  {id:'lion',  name:'사자',   img:'saja',    say:'97a7500406253fd1'},
-  {id:'bear',  name:'곰',     img:'gom',     say:'c56b10881204f00e'},
-  {id:'tiger', name:'호랑이', img:'horangi', say:'a89afe959fcf40d4'},
+  {id:'cat',   name:'고양이', img:'goyangi', say:'a132a94fadc35584', en:'cat',    desc:'a friendly house cat (short soft fur, small pointed ears, pink nose, whiskers)'},
+  {id:'dog',   name:'강아지', img:'gae',     say:'160b19e801099218', en:'dog',    desc:'a friendly puppy (soft fur, floppy ears, round dark nose)'},
+  {id:'rabbit',name:'토끼',   img:'tokki',   say:'7830e5d54679d439', en:'rabbit', desc:'a friendly rabbit (long upright ears, soft white-and-gray fur, small pink nose)'},
+  {id:'lion',  name:'사자',   img:'saja',    say:'97a7500406253fd1', en:'lion',   desc:'a friendly young lion (golden fur, full soft mane around the face)'},
+  {id:'bear',  name:'곰',     img:'gom',     say:'c56b10881204f00e', en:'bear',   desc:'a friendly brown bear (round ears, thick brown fur, broad muzzle)'},
+  {id:'tiger', name:'호랑이', img:'horangi', say:'a89afe959fcf40d4', en:'tiger',  desc:'a friendly tiger (orange fur with black stripes, white cheeks)'},
 ];
 const MAXSIDE=1600;               /* 큰 사진은 이 길이로 줄여 씀(전자칠판에서도 부드럽게) */
 const S={me:null, center:{x:.5,y:.4}, conv:{}, cur:'me', admin:false, mode:'setup'};
@@ -600,12 +774,60 @@ function shrink(im){
   const c=toCanvas(im,Math.round(im.naturalWidth*k),Math.round(im.naturalHeight*k));
   c.getContext('2d').drawImage(im,0,0,c.width,c.height); return c;
 }
-/* 바뀐 사진은 내 사진과 같은 크기로 맞춤(비율이 다르면 가운데를 잘라 채움) */
-function fitTo(src,W,H){
-  const c=toCanvas(null,W,H), g=c.getContext('2d');
-  const sw=src.naturalWidth||src.width, sh=src.naturalHeight||src.height;
-  const k=Math.max(W/sw,H/sh), dw=sw*k, dh=sh*k;
-  g.drawImage(src,(W-dw)/2,(H-dh)/2,dw,dh); return c;
+/* ---------- 바뀐 사진을 내 사진에 맞추기 ----------
+   Gemini는 비율·크기를 바꿔 돌려주는 일이 많다(정사각형으로, 조금 당겨서, 위아래를 잘라서…).
+   그래서 두 사진의 윤곽(밝기가 바뀌는 곳)을 작게 줄여 견주어, 배경이 가장 잘 겹치는 크기·자리를 찾는다.
+   결과는 언제나 내 사진과 같은 크기·같은 비율. 바뀐 사진이 덮지 못한 가장자리는 내 사진으로 채운다. */
+const dims=im=>[im.naturalWidth||im.width, im.naturalHeight||im.height];
+function edges(src,w,h){
+  const c=toCanvas(null,w,h), x=c.getContext('2d',{willReadFrequently:true});
+  x.drawImage(src,0,0,w,h);
+  const d=x.getImageData(0,0,w,h).data, n=w*h, gr=new Float32Array(n), e=new Float32Array(n);
+  for(let i=0;i<n;i++) gr[i]=.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2];
+  for(let y=1;y<h-1;y++) for(let x2=1;x2<w-1;x2++){ const i=y*w+x2; e[i]=Math.abs(gr[i+1]-gr[i-1])+Math.abs(gr[i+w]-gr[i-w]); }
+  return e;
+}
+/* A(W×H) 위에 B(w×h)를 (ox,oy)에 놓았을 때 겹친 곳의 상관(−1~1). 겹친 넓이가 둘 중 작은 것의 60%가 안 되면 −2 */
+function ncc(A,W,H,B,w,h,ox,oy){
+  const x0=Math.max(1,ox), x1=Math.min(W-1,ox+w-1), y0=Math.max(1,oy), y1=Math.min(H-1,oy+h-1);
+  if(x1<=x0||y1<=y0||(x1-x0)*(y1-y0)<Math.min(W*H,w*h)*.6) return -2;
+  let n=0,sa=0,sb=0,saa=0,sbb=0,sab=0;
+  for(let y=y0;y<y1;y++){ const ra=y*W, rb=(y-oy)*w-ox;
+    for(let x=x0;x<x1;x++){ const a=A[ra+x], b=B[rb+x]; sa+=a; sb+=b; saa+=a*a; sbb+=b*b; sab+=a*b; n++; } }
+  const va=saa-sa*sa/n, vb=sbb-sb*sb/n; if(va<=0||vb<=0) return -2;
+  return (sab-sa*sb/n)/Math.sqrt(va*vb);
+}
+function autoAlign(me,src){
+  const W=me.width,H=me.height,[sw,sh]=dims(src);
+  const kIn=Math.min(W/sw,H/sh), kOut=Math.max(W/sw,H/sh);
+  let best={r:-3,k:kOut,ox:(W-sw*kOut)/2,oy:(H-sh*kOut)/2};
+  /* 1) 거칠게: 가로 64칸, 크기 20가지, 자리 1칸씩 */
+  let fw=64, fh=Math.max(8,Math.round(64*H/W)), f=fw/W, A=edges(me,fw,fh);
+  const lo=kIn*.8, hi=kOut*1.25;
+  for(let i=0;i<20;i++){
+    const k=lo*Math.pow(hi/lo,i/19), w=Math.round(sw*k*f), h=Math.round(sh*k*f); if(w<8||h<8) continue;
+    const B=edges(src,w,h), mx=Math.round(fw*.15), my=Math.round(fh*.15);
+    for(let oy=Math.min(0,fh-h)-my; oy<=Math.max(0,fh-h)+my; oy++)
+      for(let ox=Math.min(0,fw-w)-mx; ox<=Math.max(0,fw-w)+mx; ox++){
+        const r=ncc(A,fw,fh,B,w,h,ox,oy); if(r>best.r) best={r,k,ox:ox/f,oy:oy/f};
+      }
+  }
+  /* 2) 곱게: 가로 200칸, 크기 ±4%, 자리 ±4칸 */
+  fw=200; fh=Math.max(8,Math.round(200*H/W)); f=fw/W; A=edges(me,fw,fh);
+  const c0=best; let fine={...c0,r:-3};
+  for(let i=-4;i<=4;i++){
+    const k=c0.k*(1+i*.01), w=Math.round(sw*k*f), h=Math.round(sh*k*f), B=edges(src,w,h);
+    const bx=Math.round(c0.ox*f), by=Math.round(c0.oy*f);
+    for(let dy=-4;dy<=4;dy++) for(let dx=-4;dx<=4;dx++){
+      const r=ncc(A,fw,fh,B,w,h,bx+dx,by+dy); if(r>fine.r) fine={r,k,ox:(bx+dx)/f,oy:(by+dy)/f};
+    }
+  }
+  return fine.r>-2?fine:best;
+}
+/* 맞춘 자리대로 내 사진 크기의 그림을 만듦 */
+function placed(o){
+  const W=S.me.width,H=S.me.height,[sw,sh]=dims(o.src), c=toCanvas(null,W,H), x=c.getContext('2d');
+  x.drawImage(S.me,0,0); x.drawImage(o.src,o.place.ox,o.place.oy,sw*o.place.k,sh*o.place.k); return c;
 }
 
 /* 파일 고르기 — 같은 input 하나를 칸마다 돌려 씀 */
@@ -619,21 +841,21 @@ function dropZone(el,target){
 }
 async function take(target,file){
   let im; try{ im=await loadFile(file); }catch(err){ alert(err.message); return; }
-  if(target==='me'){
-    S.me=shrink(im); S.center={x:.5,y:.4};
-    reconv();
-  }else{
-    S.conv[target]={src:im};
-    reconv();
-  }
-  renderSetup();
+  if(target==='me'){ S.me=shrink(im); S.center={x:.5,y:.4}; for(const id in S.conv) S.conv[id].place=null; }
+  else S.conv[target]={src:shrink(im)};
+  renderSetup(); realign();
 }
-/* 바뀐 사진을 지금 내 사진 크기에 다시 맞춤(원본 그림은 src에 남겨 둠) */
-function reconv(){
-  for(const id in S.conv){
-    const o=S.conv[id], src=o.src;
-    o.fit=S.me&&src?fitTo(src,S.me.width,S.me.height):null;
-  }
+/* 아직 맞추지 않은 바뀐 사진을 하나씩 맞춤(맞추는 동안 칸에 "맞추는 중") */
+let aligning=false;
+function realign(){
+  if(aligning||!S.me) return;
+  const id=Object.keys(S.conv).find(k=>!S.conv[k].place); if(!id) return;
+  aligning=true; const o=S.conv[id]; o.busy=true; renderSetup();
+  setTimeout(()=>{
+    try{ o.place=autoAlign(S.me,o.src); o.fit=placed(o); }
+    catch(e){ const [sw,sh]=dims(o.src), k=Math.max(S.me.width/sw,S.me.height/sh); o.place={k,ox:(S.me.width-sw*k)/2,oy:(S.me.height-sh*k)/2,r:0}; o.fit=placed(o); }
+    o.busy=false; aligning=false; renderSetup(); realign();
+  },30);
 }
 
 /* ---------- 설정 화면 그리기 ---------- */
@@ -652,17 +874,30 @@ function renderSetup(){
     box.classList.remove('has'); empty.classList.remove('hidden'); box.style.aspectRatio='';
     $('meAgain').classList.add('hidden');
   }
+  if(S.me) $('slots').style.setProperty('--ar',S.me.width+'/'+S.me.height);
   const wrap=$('slots'); wrap.innerHTML='';
   ANIMALS.forEach(a=>{
     const o=S.conv[a.id], has=!!(o&&o.src);
     const el=document.createElement('div'); el.className='slot'+(has?' has':'');
     el.innerHTML='<div class="top"><img alt="" src="'+GH+'animals/'+a.img+'.webp"><span>'+a.name+'</span></div>'
       +'<div class="pic" tabindex="0" role="button" aria-label="'+a.name+' 사진 넣기">'+(has?'':'사진 넣기')+'</div>'
+      +(has?'<div class="fitRow"><span class="st"></span><span><button class="btn small fitBtn" type="button">맞추기</button> <button class="btn small aiBtn" type="button">AI로 다시</button></span></div>'
+           :'<div class="fitRow"><span></span><button class="btn small aiBtn" type="button">AI로 만들기</button></div>')
+      +(AI.err[a.id]?'<div class="err">'+esc(AI.err[a.id])+'</div>':'')
       +'<button class="del" type="button" aria-label="'+a.name+' 사진 빼기">×</button>';
-    const pic=el.querySelector('.pic');
-    if(has){
+    const pic=el.querySelector('.pic'), ab=el.querySelector('.aiBtn');
+    ab.disabled=!S.me||!AiKey.has('gemini')||!!AI.busy[a.id];
+    ab.title=!AiKey.has('gemini')?'위에서 Gemini 키를 넣어 주세요':!S.me?'내 사진을 먼저 넣어 주세요':'';
+    ab.addEventListener('click',()=>makeAI(a));
+    if(AI.busy[a.id]){ pic.innerHTML='<div class="busy"><i></i>만드는 중…</div>'; }
+    if(has&&!AI.busy[a.id]){
       const img=new Image(); img.alt=a.name+'로 바꾼 사진';
-      img.src=o.fit?thumbURL(o.fit):o.src.src; pic.appendChild(img);
+      img.src=thumbURL(o.fit||o.src); pic.appendChild(img);
+      const st=el.querySelector('.st'), fb=el.querySelector('.fitBtn');
+      if(o.busy||!o.place){ st.textContent='맞추는 중…'; fb.disabled=true; }
+      else if(o.place.r<.25){ st.innerHTML='<span class="warn">자리를 확인해 주세요</span>'; }
+      else st.textContent=o.place.hand?'손으로 맞춤':'자동으로 맞춤';
+      fb.addEventListener('click',()=>openFit(a));
     }
     pic.addEventListener('click',()=>pickFile(a.id));
     pic.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pickFile(a.id);} });
@@ -671,10 +906,13 @@ function renderSetup(){
     wrap.appendChild(el);
   });
   const n=ready().length;
-  $('startBtn').disabled=!(S.me&&n);
+  $('makeAll').disabled=!S.me||!AiKey.has('gemini')||AI.queue.length>0||ANIMALS.every(a=>S.conv[a.id]);
+  const busy=Object.values(S.conv).some(o=>o.busy||!o.place)||Object.keys(AI.busy).length>0;
+  $('startBtn').disabled=!(S.me&&n)||busy;
+  if(busy&&S.me){ $('startHint').textContent=Object.keys(AI.busy).length?'AI가 그림을 만드는 중이에요…':'바뀐 사진을 내 사진에 맞추는 중이에요…'; return; }
   $('startHint').textContent=!S.me?'내 사진을 먼저 넣어 주세요.':!n?'동물로 바꾼 사진을 하나 넣어 주세요.':'동물 '+n+'마리로 시작해요.';
 }
-const ready=()=>ANIMALS.filter(a=>S.conv[a.id]&&S.conv[a.id].fit);
+const ready=()=>ANIMALS.filter(a=>S.conv[a.id]&&S.conv[a.id].fit&&!S.conv[a.id].busy);
 function placeDot(){
   const d=$('meBox').querySelector('.faceDot'); if(!d) return;
   d.style.left=(S.center.x*100)+'%'; d.style.top=(S.center.y*100)+'%';
@@ -827,6 +1065,129 @@ $('dkSetup').addEventListener('click',()=>{
   $('show').classList.add('hidden'); $('setup').classList.remove('hidden');
   renderSetup(); AdminButton.sync();
 });
+/* ---------- AI로 만들기 (Gemini, 선생님 키) ----------
+   키는 공통 모듈 aiKey 칸(webapp.geminiKey, 이 기기에만). 사진은 Google로 바로 보내고 차름 서버는 거치지 않는다.
+   그림 모델은 이 키로 쓸 수 있는 것 가운데 싼 것부터(012와 같은 방법). 비율은 내 사진에 가장 가까운 것을 달라고 하고,
+   그래도 다르게 오면 위의 autoAlign이 내 사진과 같은 크기·비율로 맞춘다. */
+const AI={busy:{}, err:{}, queue:[], models:null};
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const RATIOS=['1:1','2:3','3:2','3:4','4:3','4:5','5:4','9:16','16:9'];
+function nearRatio(W,H){ let b='1:1',d=9; RATIOS.forEach(r=>{ const [a,c]=r.split(':').map(Number), e=Math.abs(Math.log(a/c)-Math.log(W/H)); if(e<d){d=e;b=r;} }); return b; }
+function promptFor(a){
+  return 'Transform the person in the attached photo so that their head and face become '+a.desc+'.\n'
+   +'Keep everything else exactly the same: the same pose, head angle, body, clothes, hands, background, lighting, camera angle and framing. Do not crop, zoom, rotate or move anything, and keep exactly the same aspect ratio as the attached photo ('+S.me.width+':'+S.me.height+').\n'
+   +'The '+a.en+"'s face should sit exactly where the person's face is, at the same size, looking the same direction, with a similar expression (if the person smiles, the "+a.en+' smiles; if the mouth is open, keep it open).\n'
+   +'Make it look like a natural, photo-realistic portrait, as if the animal were really sitting there. Gentle and warm, never scary: no sharp teeth, no blood, no wounds, no distorted or half-human features, no extra eyes or limbs.\n'
+   +'Not babyish: it should also suit teenagers. Do not add text, letters, numbers, logos, frames or stickers.';
+}
+function meJpeg(){
+  const k=Math.min(1,1024/Math.max(S.me.width,S.me.height)), c=toCanvas(null,Math.round(S.me.width*k),Math.round(S.me.height*k));
+  c.getContext('2d').drawImage(S.me,0,0,c.width,c.height); return c.toDataURL('image/jpeg',.9).split(',')[1];
+}
+const imgCost=n=>/pro/.test(n)?9:/lite/.test(n)?1:/flash|nano-banana/.test(n)?2:5;
+async function imageModels(key){
+  if(AI.models) return AI.models;
+  try{
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':key}});
+    const j=r.ok?await r.json():{};
+    AI.models=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace(/^models\//,''))
+      .filter(n=>(/^gemini.*image/.test(n)||/nano-banana/.test(n))&&!/imagen/.test(n)).sort((a,b)=>imgCost(a)-imgCost(b));
+  }catch(e){ AI.models=[]; }
+  if(!AI.models.length) AI.models=['gemini-3.1-flash-image'];
+  return AI.models;
+}
+async function geminiImage(a){
+  const key=AiKey.get('gemini'); if(!key) throw new Error('Gemini 키가 없어요.');
+  const parts=[{inline_data:{mime_type:'image/jpeg',data:meJpeg()}},{text:promptFor(a)}];
+  const fails=[];
+  for(const model of await imageModels(key)){
+    for(const withRatio of [true,false]){
+      const gc={responseModalities:['TEXT','IMAGE']}; if(withRatio) gc.imageConfig={aspectRatio:nearRatio(S.me.width,S.me.height)};
+      try{
+        const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',
+          {method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{parts}],generationConfig:gc})});
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok){ const m=(data.error&&data.error.message)||('HTTP '+res.status);
+          if(withRatio&&/imageConfig|aspect/i.test(m)) continue;      /* 비율 지정을 모르는 모델이면 빼고 한 번 더 */
+          throw new Error(m); }
+        const part=((data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts)||[]).find(p=>(p.inlineData||p.inline_data));
+        if(!part){ fails.push(model+': 그림이 안 왔어요'); break; }
+        const d=part.inlineData||part.inline_data;
+        return 'data:'+(d.mimeType||d.mime_type||'image/png')+';base64,'+d.data;
+      }catch(e){ const m=String(e.message||e); fails.push(model+': '+m); if(/API key|permission|401|403/i.test(m)) throw new Error(friendly(m)); break; }
+    }
+  }
+  throw new Error(friendly(fails.join(' / ')));
+}
+function friendly(m){
+  if(/API key not valid|API_KEY_INVALID/i.test(m)) return '키가 맞지 않아요. 키를 다시 확인해 주세요.';
+  if(/quota|limit: ?0|RESOURCE_EXHAUSTED|429/i.test(m)) return '오늘 쓸 수 있는 그림 수를 다 썼거나, 이 키(무료)로는 그림 만들기가 막혀 있어요. 나중에 다시 하거나 Gemini 누리집에서 만들어 넣어 주세요.';
+  if(/safety|blocked|PROHIBITED/i.test(m)) return 'AI가 이 사진으로는 만들지 않았어요. 다른 사진으로 해 보세요.';
+  return '그림을 만들지 못했어요. ('+m.slice(0,140)+')';
+}
+async function makeAI(a){
+  if(AI.busy[a.id]||!S.me) return;
+  AI.busy[a.id]=true; delete AI.err[a.id]; renderSetup();
+  try{
+    const url=await geminiImage(a);
+    const im=await new Promise((ok,no)=>{ const i=new Image(); i.onload=()=>ok(i); i.onerror=()=>no(new Error('받은 그림을 열 수 없어요')); i.src=url; });
+    S.conv[a.id]={src:shrink(im), ai:true};
+  }catch(e){ AI.err[a.id]=e.message||String(e); }
+  delete AI.busy[a.id]; renderSetup(); realign();
+}
+/* 빈 칸 모두: 한 번에 하나씩(키 한도를 한꺼번에 쓰지 않게) */
+$('makeAll').addEventListener('click',async()=>{
+  AI.queue=ANIMALS.filter(a=>!S.conv[a.id]); renderSetup();
+  while(AI.queue.length){ const a=AI.queue[0]; await makeAI(a); AI.queue.shift();
+    if(AI.err[a.id]&&/키가|다 썼|막혀/.test(AI.err[a.id])){ AI.queue=[]; } }
+  renderSetup();
+});
+AiKey.mount($('keyBox'),{color:'#4E6A80',use:[{svc:'gemini',what:'내 사진을 동물로 바꾼 그림 만들기'}],open:!AiKey.has('gemini'),onChange:()=>{ AI.models=null; renderSetup(); }});
+
+/* ---------- 손으로 맞추기 ---------- */
+const fc=$('fitCv'), fg=fc.getContext('2d');
+let F=null;   /* {a, o, base(k), place, scale} */
+function openFit(a){
+  const o=S.conv[a.id]; if(!o||!o.place) return;
+  F={a,o,place:{...o.place},base:o.place.k};
+  $('fitTitle').textContent=a.name+' 사진 맞추기';
+  $('fitK').value=0; $('fitOp').value=50;
+  $('fitBox').classList.remove('hidden'); sizeFit();
+}
+function sizeFit(){
+  const W=S.me.width,H=S.me.height, aw=Math.min(innerWidth-64,820), ah=innerHeight-260;
+  const k=Math.max(.05,Math.min(aw/W,ah/H)); F.scale=k;
+  fc.style.width=Math.round(W*k)+'px'; fc.style.height=Math.round(H*k)+'px';
+  const d=Math.min(2,devicePixelRatio||1); fc.width=Math.round(W*k*d); fc.height=Math.round(H*k*d); drawFit();
+}
+function drawFit(){
+  const z=fc.width/S.me.width, [sw,sh]=dims(F.o.src), p=F.place;
+  fg.globalAlpha=1; fg.drawImage(S.me,0,0,fc.width,fc.height);
+  fg.globalAlpha=$('fitOp').value/100; fg.drawImage(F.o.src,p.ox*z,p.oy*z,sw*p.k*z,sh*p.k*z); fg.globalAlpha=1;
+}
+/* 크기를 바꿀 때는 그림 가운데를 붙잡고 */
+$('fitK').addEventListener('input',()=>{
+  const [sw,sh]=dims(F.o.src), p=F.place, cx=p.ox+sw*p.k/2, cy=p.oy+sh*p.k/2;
+  p.k=F.base*(1+$('fitK').value/100); p.ox=cx-sw*p.k/2; p.oy=cy-sh*p.k/2; drawFit();
+});
+$('fitOp').addEventListener('input',drawFit);
+let fd=null;
+fc.addEventListener('pointerdown',e=>{ fd={id:e.pointerId,x:e.clientX,y:e.clientY}; fc.setPointerCapture(e.pointerId); });
+fc.addEventListener('pointermove',e=>{ if(!fd||fd.id!==e.pointerId) return;
+  F.place.ox+=(e.clientX-fd.x)/F.scale; F.place.oy+=(e.clientY-fd.y)/F.scale; fd.x=e.clientX; fd.y=e.clientY; drawFit(); });
+const fUp=e=>{ if(fd&&fd.id===e.pointerId) fd=null; };
+fc.addEventListener('pointerup',fUp); fc.addEventListener('pointercancel',fUp);
+$('fitAuto').addEventListener('click',()=>{
+  $('fitAuto').disabled=true;
+  setTimeout(()=>{ F.place=autoAlign(S.me,F.o.src); F.base=F.place.k; $('fitK').value=0; drawFit(); $('fitAuto').disabled=false; },30);
+});
+$('fitOk').addEventListener('click',()=>{
+  const moved=['k','ox','oy'].some(k=>Math.abs(F.place[k]-F.o.place[k])>1e-6);
+  F.o.place={...F.place, r:moved?1:F.place.r, hand:moved||F.o.place.hand};
+  F.o.fit=placed(F.o); $('fitBox').classList.add('hidden'); F=null; renderSetup();
+});
+addEventListener('resize',()=>{ if(F) sizeFit(); });
+
 renderSetup();
 </script>
 </body>
