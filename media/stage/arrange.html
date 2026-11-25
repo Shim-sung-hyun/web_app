@@ -708,7 +708,18 @@
        발 쪽이 그 종류 소품의 칠해진 곳에 가려진 자리만 — 나무 꼭대기·지붕·가지에 앉은 것처럼. 같은 이름이라도 그림(src)이 다르면(나는 그림) 묶이지 않음 */
     const BH = (a.behind || ((pl.animals || []).find(x => x.name === a.name && x.behind && (a.src || '').endsWith(x.src)) || {}).behind), BHs = BH && BH.length ? new Set(BH) : null;
     /* 최소 크기는 깊이를 따름(2026-11-13 선생님: 사막쥐·사막여우·거북이 앞에 있어도 너무 작음 — 키운 동물이 어디서나 같은 크기였음): 멀면 minLong×0.6, 바로 앞이면 ×1.6 */
-    const minAt = y => minLong * (.6 + Math.max(0, Math.min(1, (y - pl.horizon) / (1 - pl.horizon))));
+    /* 쉬움·보통(opt.minFlat, 2026-11-25 선생님: 보통인데 고양이가 탁 트인 먼 곳에 작게 — '멀리 작은 것 찾기'는 다른 과제): 멀어도 minLong 아래로 안 줄임 */
+    const minAt = y => minLong * (opt.minFlat ? Math.max(1, .6 + Math.max(0, Math.min(1, (y - pl.horizon) / (1 - pl.horizon)))) : (.6 + Math.max(0, Math.min(1, (y - pl.horizon) / (1 - pl.horizon)))));
+    /* 쉬움·보통은 제 크기로 minLong이 되는 깊이에만(멀리 놓고 키우지 않음) — 바로 앞에서도 못 미치는 아주 작은 동물(달팽이·거미)만 키움 */
+    const tinyA = opt.minFlat && a.real * perM(pl, .98, bed) < minLong * .85;
+    /* 쉬움은 은폐 소품 바로 근처(opt.nearCover), 보통은 소품에 조금이라도 가려지게(opt.needCover) — 둘 다 점수 벌점 .6(단계 벗어남 .5보다 크게) */
+    const coverPen = (A, v) => { let pen = 0;
+      if (opt.nearCover) { const ab = [A.x - A.w / 2, A.y - A.h * A.base, A.x + A.w / 2, A.y - A.h * A.base + A.h]; let g = 9;
+        for (const o of lay) { if (o === A || o.animal || !(o.src || o.img) || o.h < A.h * .5) continue;   /* 숨을 만한 크기(동물 키의 절반 넘는) 소품만 */ const ob = [o.x - o.w / 2, o.y - o.h * (o.base ?? 1), o.x + o.w / 2, o.y - o.h * (o.base ?? 1) + o.h];
+          g = Math.min(g, Math.hypot(Math.max(0, ob[0] - ab[2], ab[0] - ob[2]), Math.max(0, ob[1] - ab[3], ab[1] - ob[3]) * .75)); }
+        if (g > Math.max(A.w, A.h * .75) * .5) pen += .6; }
+      if (opt.needCover && 1 - v - (A.off || 0) < .08) pen += .6;
+      return pen; };
     const make = (x, y, flip) => {   // 그 깊이의 크기로 동물 놓기: 몸의 가장 긴 쪽 = real × 1m (가로는 4:3 장면이라 0.75)
       const m1 = perM(pl, y, bed), real0 = a.real * m1, bodyLong = opt.grow === false ? real0 : Math.max(real0, minAt(y)), Mw = M.w / Math.max(M.w, M.h), Mh = M.h / Math.max(M.w, M.h);
       const bodyW = bw * Mw, bodyH = bh * Mh, k = bodyLong / Math.max(bodyW * .75, bodyH), h = k * Mh, w = k * Mw * .75;
@@ -721,7 +732,7 @@
     };
     let best = null;
     const covers = lay.filter(o => o.rootX && o.img);   // 큰 줄기 = 배경처럼(원리 19)
-    const tryAt0 = (x, y, flip, extra) => { const g0 = minAt(y) / (a.real * perM(pl, y, bed)); if (g0 > 1 && (opt.grow === false || !SF.size || g0 > (opt.growMax ?? pl.growMax ?? 5))) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
+    const tryAt0 = (x, y, flip, extra) => { if (opt.minFlat && !tinyA && a.real * perM(pl, y, bed) < minLong * .85) return; const g0 = minAt(y) / (a.real * perM(pl, y, bed)); if (g0 > 1 && (opt.grow === false || !SF.size || g0 > (opt.growMax ?? pl.growMax ?? 5))) return; const A = make(x, y, flip); if (A.x + A.w / 2 < 0 || A.x - A.w / 2 > 1) return;
       /* 너무 큰 동물은 앞에 안 옴(2026-11-14 바닷속: 12m 고래가 맨 앞에서 화면을 덮음): 그림의 긴 쪽이 장면 높이의 stage.json maxLong을 넘는 깊이는 버림 — 멀리(작게)만 */
       const mL = opt.maxLong ?? pl.maxLong; if (mL && Math.max(A.w / .75, A.h) > mL) return;
       if (A.swimLift && A.y - A.h * A.base < .02) return;   // 떠 있는 동물이 화면 위로 나가지 않게
@@ -780,6 +791,7 @@
         sc = (opt.ease ? Math.abs(Math.log(ez / eMid)) / Math.log(opt.ease[1] / opt.ease[0]) * .15 + (ez < opt.ease[0] || ez > opt.ease[1] ? .5 : 0) : Math.abs(v - mid))
           + (v < want[0] || v > want[1] ? .5 : 0) + (edge2 ? EDGE2_PEN : E.off > EDGE ? EDGE_PEN : 0);
       }
+      if (opt.nearCover || opt.needCover) sc += coverPen(A, v);
       if (best && sc >= best.sc) { lay.pop(); if (extra) lay.pop(); return; }   // 빠르게(2026-11-12): 지금 가장 좋은 자리보다 못하면 아래 검사는 안 해도 결과가 같음
       /* 얼굴(2026-11-09): 상·스페셜(opt.face 'hide')은 얼굴이 대부분 가려지고 등·꼬리·귀 같은 단서만, 하('show')는 얼굴이 잘 보이게 — 얼굴 = 머리 쪽(008 FACE) 앞 40%·위 65% */
       if (opt.face && a.face) { const fv = visOf(P, a.face === 'R' ? [.6, 1, 0, .65] : [0, .4, 0, .65]); if ((opt.face === 'hide' && fv > .35) || (opt.face === 'show' && fv < .6)) { if (tell) tell('face', {cr, se, fv, ease: ez}); lay.pop(); if (extra) lay.pop(); return; } }
@@ -863,8 +875,8 @@
   const levelPos = (v, e, pl) => { const K = cutOf(pl); return K.wv * lerpDown(v, K.v) + (1 - K.wv) * lerpDown(Math.log(Math.max(e, 1e-3)), K.e.map(Math.log)); }, levelAt = (v, e, pl) => Math.min(4, Math.max(1, Math.floor(levelPos(v, e, pl) + .5)));
   /* 숨기기 단계(2026-11-13 선생님 판단 236장): 하 더 드러냄·중·상(노출 더)·스페셜(노출 적고 색이 바탕과 비슷) — visible 보이는 몫, ease 찾기 쉬움 점수 */
   const LEVELS = {   // visible = 보이는 몫의 안전 범위(바닥·가릴 소품 크기에도 씀) — 단계는 CUT(levelAt)로 정함
-    1: {name: '하', visible: [.6, 1], face: 'show', offMax: .5, minLong: .10, count: 3},
-    2: {name: '중', visible: [.25, .8], offMax: .7, minLong: .07, count: 3},
+    1: {name: '하', visible: [.6, 1], face: 'show', offMax: .5, minLong: .10, count: 3, minFlat: true, nearCover: true},   // 2026-11-25: 멀어도 장면 높이 10% 아래로 안 줄이고 소품 바로 근처
+    2: {name: '중', visible: [.25, .8], offMax: .7, minLong: .10, count: 3, minFlat: true, needCover: true},   // 2026-11-25: 최소 크기 .07 → .10, 소품에 조금이라도 가려지게
     3: {name: '상', visible: [.06, .4], face: 'hide', offMax: .8, minLong: .05, count: 3},
     4: {name: '스페셜', visible: [.03, .12], face: 'hide', offMax: .9, minLong: .05, count: 6}};
   /* 단계 섞기(2026-11-13 선생님): 상이라도 상 80%·중 10%·스페셜 10%, 스페셜은 스페셜 80%·상 20%, 중은 중 80%·상 20%, 하는 하만 — 동물마다 이 비율로 뽑음 */
@@ -872,13 +884,13 @@
   const MIX = {1: [[1, 1]], 2: [[1, .4], [2, .6]], 3: [[2, .4], [3, .6]], 4: [[3, .2], [4, .8]]};
   /* 단계 값도 무대마다(같은 날): stage.json "levels": {"4": {"visible": [.045, .15]}} — 숲 스페셜(안 됨 3장이 모두 '조금만 더 노출'·'특징이 조금이라도', 4~10% 보임).
      "featFree": 한 판에서 특징이 안 보여도 되는 동물의 몫(기본 .4, 숲 .2) */
-  const levelOpt = (lv, pl) => { const L = Object.assign({}, LEVELS[lv], pl && pl.levels && pl.levels[lv]); if (lv >= 3) L.visible = L.visible.map(x => Math.min(1, x * EASE)); return {visible: L.visible, cut: true, face: L.face, offMax: L.offMax, minLong: L.minLong, levelNo: lv}; };
+  const levelOpt = (lv, pl) => { const L = Object.assign({}, LEVELS[lv], pl && pl.levels && pl.levels[lv]); if (lv >= 3) L.visible = L.visible.map(x => Math.min(1, x * EASE)); return {visible: L.visible, cut: true, face: L.face, offMax: L.offMax, minLong: L.minLong, levelNo: lv, minFlat: L.minFlat, nearCover: L.nearCover, needCover: L.needCover}; };
   function hideLevel(pl, animals, lv, opt = {}) {   // 판 단계 lv로 여러 마리 — 동물마다 MIX 비율로 단계를 뽑아 숨김(A.level에 그 단계)
     /* 무대마다 마릿수(2026-11-13 선생님): stage.json "counts": {"4": [5, 4]} = 스페셜은 5마리, 못 채우면 4마리. 숫자 하나만 써도 됨. 없으면 LEVELS의 count */
     const pc = [].concat(opt.count ?? (pl.counts && pl.counts[lv]) ?? LEVELS[lv].count), n = pc[0], min = pc[1];
     const extra = opt.hide || {}, seed = opt.seed ?? Math.floor(Math.random() * 1e9), R = rnd(seed ^ 0x5bd1e995);
     const plan = Array.from({length: n}, () => { let r = R(); for (const [l, p] of MIX[lv]) { if (r < p) return l; r -= p; } return lv; });   // 자리별 단계 계획 — 판을 다시 짜도 그대로
-    return (opt.async ? hideManyAsync : hideMany)(pl, animals, n, Object.assign({featFree: pl.featFree ?? .4, min}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv, pl), extra)}));
+    return (opt.async ? hideManyAsync : hideMany)(pl, animals, n, Object.assign({featFree: pl.featFree ?? .4, min}, opt, {seed, hide: (R2, k) => Object.assign(levelOpt(plan[k] ?? lv, pl), lv >= 2 ? {needCover: true} : {}, extra)   /* 보통 이상 판은 하로 뽑힌 동물도 조금은 가려지게(2026-11-25 선생님) */}));
   }
   /* 미리 재기(2026-11-15 008): 처음 숨길 때 소품마다 모양·색 지도를 재느라 1~2초 멈추던 것을, 무대를 불러온 뒤 소품 하나씩 쉬어 가며 미리 잼(결과는 같음, 지도는 그림마다 한 번) */
   async function warm(pl) { const rest = () => new Promise(ok => setTimeout(ok, 0));

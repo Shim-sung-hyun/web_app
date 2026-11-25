@@ -317,3 +317,4 @@ stage.json 꼴(장소마다)
 - 상·스페셜 10%쯤 쉽게: cutOf가 중|상·상|스 경계(v·e)를, levelOpt가 상·스페셜 visible을 EASE(1.2)배 — 008 측정 상 보이는 몫 .187→.206, 스페셜 .064→.070.
 - 008 흔들기(11-16, 11-23 되살림): 흔드는 순간 동물을 덮은 맨 위 소품(topCover)을 화면 거리(윗부분 24점×세기)로. 소품 transform이 'none'이면 뒤에 붙이지 않음(잘못된 값 → 무시됐음).
 - 학습용 장면(2026-11-16, 008): nature/<곳>/learn.jpg — tools/learn-scene.js가 Stage.compose(clusters 5·thickets 3, avoid=동물 서는 앞 땅)로 짜서 찍음, seed는 learn-scene.json. 소품을 바꾸면 다시 돌릴 것.
+- 쉬움·보통 숨는 자리(2026-11-25 선생님, 008 세션): LEVELS 하·중에 minFlat(멀어도 minLong 아래로 안 줄임, 제 크기로 minLong이 되는 깊이에만 — 아주 작은 동물만 키움), 하 nearCover(숨을 만한 소품 바로 근처), 보통 이상 판 needCover(소품에 8% 넘게 가려짐) — 점수 벌점 .6. 중 minLong .07→.10

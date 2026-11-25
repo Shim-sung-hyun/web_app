@@ -368,12 +368,10 @@ details.more .card{background:transparent}
 .fc .front{background:var(--paper2);border:0;border-radius:10px 14px 11px 15px;box-shadow:0 2px 8px rgba(50,40,25,.12)}
 .fc.got .front{box-shadow:0 0 0 3px rgba(62,142,99,.45)}
 .title .mark2{height:150px;margin-bottom:-30px}
-/* 설정 화면 끝(2026-11-16 선생님: '더 정하기'가 시작 띠에 가려 안 눌리고, 아래로 더 내려야 하는지 모름) — 띠는 단추만 눌리고 흐린 부분은 눌림이 지나감,
-   아래에 더 있으면 띠 왼쪽에 '▾ 아래에 더 있어요'(끝까지 내리면 사라짐 = 끝 표시), '더 정하기'는 다른 선택지처럼 또렷하게 */
+/* 설정 화면 끝(2026-11-25 선생님: '더 정하기'가 시작 띠에 가려 안 눌림) — 띠는 단추만 눌리고 흐린 부분은 눌림이 지나감, '더 정하기'는 다른 선택지처럼 또렷하게.
+   '아래에 더 있어요' 안내는 끝까지 내려도 남아 헷갈려서 뺌(같은 날 선생님) */
 .startBar{pointer-events:none;position:sticky}
 .startBar button{pointer-events:auto}
-.startBar .moreHint{position:absolute;left:0;bottom:30px;font-size:14px;color:var(--muted);opacity:0;transition:opacity .3s;pointer-events:none}
-.startBar.below .moreHint{opacity:1}
 details.more summary{color:var(--ink);font-size:16px;padding:10px 4px}
 details.more summary:hover{color:var(--sci-d)}
 </style>
@@ -2153,13 +2151,6 @@ window.EndLesson = (function () {
   };
   window.addEventListener('afterprint',function(){ var s=document.getElementById('printPage'); if(s) s.textContent=''; });
 })();
-</script>
-<script>
-/* 설정 화면: 아래에 더 있으면 '▾ 아래에 더 있어요'(2026-11-16) — 끝까지 내리면 사라짐 */
-(function(){ const bar=document.querySelector('.startBar'); if(!bar) return; const h=document.createElement('span'); h.className='moreHint'; h.textContent='▾ 아래에 더 있어요'; bar.appendChild(h);
-  const chk=()=>{ const de=document.scrollingElement||document.documentElement, se=de.scrollHeight>de.clientHeight+2?de:document.body;
-    bar.classList.toggle('below',document.body.classList.contains('setup')&&se.scrollTop+se.clientHeight<se.scrollHeight-12); };
-  addEventListener('scroll',chk,true); addEventListener('resize',chk); document.addEventListener('toggle',()=>setTimeout(chk,50),true); new MutationObserver(()=>setTimeout(chk,50)).observe(document.getElementById('setupView'),{childList:true,subtree:true}); setTimeout(chk,500); })();
 </script>
 </body>
 </html>
