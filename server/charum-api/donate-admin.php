@@ -184,7 +184,8 @@ button:disabled{opacity:.5}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
 .it{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px}
 .it.sel{border-color:var(--pri)}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;align-items:start}   /* minmax(0,…): 큰 세로 사진 옆 '그림 없음' 칸이 사진 칸을 납작하게 밀던 것(2026-11-25) */
+.pair>*{min-width:0}
 .pv{position:relative} .pv img,.pv svg{width:100%;display:block;border-radius:8px}
 .pv svg{position:absolute;inset:0;height:100%}
 .ph{aspect-ratio:4/3;background:#F2F5F4;border-radius:8px;display:grid;place-items:center;color:var(--sub);font-size:13px}
