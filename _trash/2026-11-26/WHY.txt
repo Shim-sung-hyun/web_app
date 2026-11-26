@@ -1,0 +1,2 @@
+media/photos/review.html — 도구 모음을 여러 사람에게 열면서 잠금(2026-11-26) — 관리자 로그인 화면 charum.org/charum-api/donate-admin.php가 같은 일을 함, 이 자리는 넘겨 주기만
+media/photos/share-review.html — 잠금(2026-11-26) — 관리자 로그인 화면 charum.org/charum-api/share-review.php로 옮김(원본 server/charum-api/share-review.php), 이 자리는 넘겨 주기만

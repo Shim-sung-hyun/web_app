@@ -31,6 +31,7 @@
   .say q { font-weight:700; quotes:"“" "”"; }
   .say span { display:block; color:var(--soft); font-size:14px; }
   code { font:13px/1.4 ui-monospace,Menlo,Consolas,monospace; background:rgba(255,255,255,.6); padding:1px 4px; border-radius:3px; overflow-wrap:anywhere; }
+  .lock { font-weight:400; font-size:12px; color:var(--soft); border:1px solid var(--line); border-radius:3px; padding:0 5px; margin-left:4px; }
   footer { margin-top:40px; color:var(--soft); font-size:13px; }
 </style>
 </head>
@@ -62,8 +63,8 @@
   <dt><a href="../media/library.html">차름 자료실</a></dt>
   <dd>그림·배경·소품·사진을 낱말로 찾아 보고, 하나씩 받거나 골라서 zip으로 받습니다. 목소리는 문장으로 찾아 듣고 받습니다. <b>자료 보내기</b> 탭으로 다른 선생님이 그림·소리를 보낼 수 있고, 기증 사진·자료 화면(관리)의 "새로 온 자료"에서 보고 골라 보낸 뒤 Claude에게 "자료 정리해 줘"라고 하면 자료실에 올라갑니다. 다른 선생님께는 이 주소를 드리면 됩니다.
     <span class="then">조건: 비영리·출처 "차름(charum.org)" 표시(CC BY-NC 4.0). ElevenLabs 목소리는 'elevenlabs.io' 표시도</span></dd>
-  <dt><a href="../media/photos/share-review.html">사진 나눔 승인</a></dt>
-  <dd>자료실에 올릴 사진을 크게 보며 고릅니다. 승인한 사진만 나뉩니다.
+  <dt><a href="https://www.charum.org/charum-api/share-review.php" target="_blank" rel="noopener">사진 나눔 승인</a> <small class="lock">관리자 로그인</small></dt>
+  <dd>자료실에 올릴 사진을 크게 보며 고릅니다. 승인한 사진만 나뉩니다. charum.org에 관리자로 로그인해야 열립니다.
     <span class="then">'승인 줄 복사'를 눌러 Claude 대화에 붙이기</span></dd>
 </dl>
 
@@ -73,9 +74,9 @@
   <dd>찍어 둔 사진을 여러 장 올리면 Gemini가 사진마다 이름·장소·쓸 앱을 골라 주고, 사람·얼굴·이름·번호가 보이는 사진은 막습니다.</dd>
   <dt><a href="../media/photos/snap.html">사진 넣기</a></dt>
   <dd>휴대폰에서 찍은 사진을 저장소로 바로 보냅니다. 처음 한 번만 GitHub 열쇠를 넣습니다(열쇠는 그 휴대폰에만 남음).</dd>
-  <dt><a href="../media/photos/review.html">기증 사진 확인</a></dt>
-  <dd>선생님들이 기증한 사진을 한곳에서 보고 고릅니다. 얼굴·이름·번호판·학교 이름이 보이면 지웁니다.
-    <span class="then">고른 것 zip을 Claude 세션에 올리기 (절차는 <code>media/photos/REVIEW.md</code>)</span></dd>
+  <dt><a href="https://www.charum.org/charum-api/donate-admin.php" target="_blank" rel="noopener">기증 사진·자료 확인</a> <small class="lock">관리자 로그인</small></dt>
+  <dd>선생님들이 기증한 사진과 자료실로 보낸 그림·소리를 한곳에서 보고 고릅니다. 얼굴·이름·번호판·학교 이름이 보이면 지웁니다.
+    <span class="then">고른 것 보내기 → Claude에게 "기증 사진 정리해 줘" / "자료 정리해 줘"</span></dd>
 </dl>
 
 <h2 id="stage">무대 <small>숨은 동물 찾기 등의 장면</small></h2>
@@ -110,7 +111,7 @@
 
 <h2 id="admin">관리</h2>
 <dl>
-  <dt><a href="https://www.charum.org/charum-api/usage-admin.php" target="_blank" rel="noopener">앱 사용 횟수</a></dt>
+  <dt><a href="https://www.charum.org/charum-api/usage-admin.php" target="_blank" rel="noopener">앱 사용 횟수</a> <small class="lock">관리자 로그인</small></dt>
   <dd>앱마다 날짜별로 몇 번 열렸는지(같은 기기·같은 날은 한 번), 한 판을 끝까지 마친 수가 얼마인지 봅니다. charum.org에 관리자로 로그인해야 열립니다.</dd>
 </dl>
 
