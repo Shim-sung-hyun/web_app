@@ -1,6 +1,6 @@
 <?php
 /* =====================================================================
-   차름 사진 기증함 (donate.php) — 2026-10-23 판
+   차름 사진 기증함 (donate.php) — 2026-11-26 판(그림·소리 자료 기증 give-media 더함)
    선생님이 사진을 기증하면 여기 대기함에 쌓이고,
    제작자가 확인 화면(media/photos/review.html)에서 보고 골라 차름 사진 모음(media/photos)에 올린다.
    - 어느 앱에서든 보냄: 001 "내 사진" 기증(도형 분석 함께), 휴대폰 "폰에서 받기" 기증(사진만),
@@ -23,6 +23,11 @@ $PER_IP_DAY    = 20;                // 한 곳(IP)에서 하루 기증 최대
 $PER_IP_DAY_RELAY = 200;            // 사진 다리(app 900)는 하루 최대 — 연수장은 여러 선생님이 IP 하나를 함께 씀(따로 셈)
 $PER_IP_DAY_COLLECT = 60;           // 제작자 "사진 모으기"(app 000)는 하루 최대
 $MAX_PENDING   = 1000;              // 대기함 최대 개수
+/* 자료 기증(2026-11-26 — 차름 자료실 '자료 보내기': 그림·소리를 다른 선생님이 보냄 → donate-admin '새로 온 자료' → 비공개 저장소 inbox-media/ → Claude 정리 → 자료실) */
+$MAX_MEDIA_IMG = 3 * 1024 * 1024;   // 그림 하나 최대(바이트)
+$MAX_MEDIA_MP3 = 1024 * 1024;       // 소리 하나 최대(바이트)
+$PER_IP_DAY_MEDIA = 30;             // 한 곳(IP)에서 하루 자료 기증 최대
+$MAX_PENDING_MEDIA = 500;           // 자료 대기함 최대 개수
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -44,7 +49,7 @@ if (!is_dir($DIR)) {
   @file_put_contents($DIR . '/index.html', '');
 }
 /* 주소창에서 열면 점검: token_set 이 true 여야 확인 화면이 열림 */
-if ($_SERVER['REQUEST_METHOD'] === 'GET') out(['ok' => true, 'name' => 'charum donate', 'version' => '2026-10-23', 'pending' => count(glob($DIR . '/d_*.json') ?: []), 'token_set' => strlen($REVIEW_TOKEN) >= 20, 'data_dir' => is_writable($DIR) ? 'ok' : 'cannot write']);
+if ($_SERVER['REQUEST_METHOD'] === 'GET') out(['ok' => true, 'name' => 'charum donate', 'version' => '2026-11-26', 'pending' => count(glob($DIR . '/d_*.json') ?: []), 'media' => count(glob($DIR . '/m_*.json') ?: []), 'token_set' => strlen($REVIEW_TOKEN) >= 20, 'data_dir' => is_writable($DIR) ? 'ok' : 'cannot write']);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') out(['error' => 'method']);
 if (!$origin || !in_array($origin, $ALLOW_ORIGINS, true)) out(['error' => 'origin']);
 
@@ -105,6 +110,45 @@ if ($a === 'give') {
   if (@file_put_contents($DIR . '/d_' . $id . '.json', json_encode($d, JSON_UNESCAPED_UNICODE), LOCK_EX) === false) out(['error' => 'storage']);
   @file_put_contents($rf, (string)($n + 1), LOCK_EX);
   foreach (glob($DIR . '/r_*') ?: [] as $f) { if (@filemtime($f) < time() - 2 * 86400) @unlink($f); }
+  out(['ok' => true]);
+}
+
+/* ---------- 자료 기증(그림·소리) — 차름 자료실 '자료 보내기' ---------- */
+/* 파일 속 첫 바이트로 종류를 봄(이름·확장자는 믿지 않음) */
+function mediaType($bin) {
+  if (substr($bin, 0, 8) === "\x89PNG\r\n\x1a\n") return ['image/png', 'png'];
+  if (substr($bin, 0, 3) === "\xFF\xD8\xFF") return ['image/jpeg', 'jpg'];
+  if (substr($bin, 0, 4) === 'RIFF' && substr($bin, 8, 4) === 'WEBP') return ['image/webp', 'webp'];
+  if (substr($bin, 0, 3) === 'ID3' || (strlen($bin) > 1 && ord($bin[0]) === 0xFF && (ord($bin[1]) & 0xE0) === 0xE0)) return ['audio/mpeg', 'mp3'];
+  return null;
+}
+if ($a === 'give-media') {
+  if (count(glob($DIR . '/m_*.json') ?: []) >= $MAX_PENDING_MEDIA) out(['error' => 'full']);
+  $ag = $in['agree'] ?? null;   /* 세 가지 모두 체크: 권리 · CC BY-NC 나눔 · 사람 얼굴·개인 정보·학생 작품 없음 */
+  if (!is_array($ag) || ($ag['rights'] ?? null) !== true || ($ag['license'] ?? null) !== true || ($ag['privacy'] ?? null) !== true) out(['error' => 'agree']);
+  $ip = $_SERVER['REMOTE_ADDR'] ?? '0'; $day = gmdate('Y-m-d', time() + 9 * 3600);
+  $rf = $DIR . '/r_' . substr(hash('sha256', $ip . '|' . $day . '|charum|media'), 0, 24);
+  $n = is_file($rf) ? (int)@file_get_contents($rf) : 0;
+  if ($n >= $PER_IP_DAY_MEDIA) out(['error' => 'busy']);
+  $b64 = $in['file'] ?? '';
+  if (!is_string($b64) || $b64 === '' || strlen($b64) > (int)(($MAX_MEDIA_IMG * 4) / 3) + 8 || !preg_match('/^[A-Za-z0-9+\/=]+$/', $b64)) out(['error' => 'file']);
+  $bin = base64_decode($b64, true); if ($bin === false || strlen($bin) < 500) out(['error' => 'file']);
+  $t = mediaType($bin); if (!$t) out(['error' => 'type']);
+  $isSound = $t[0] === 'audio/mpeg';
+  if (strlen($bin) > ($isSound ? $MAX_MEDIA_MP3 : $MAX_MEDIA_IMG)) out(['error' => 'toolarge']);
+  if (!$isSound && function_exists('getimagesizefromstring')) { $sz = @getimagesizefromstring($bin); if (!$sz || $sz[0] > 4000 || $sz[1] > 4000 || $sz[0] < 32 || $sz[1] < 32) out(['error' => 'file']); }
+  $kinds = ['그림', '배경', '소품', '사진', '소리'];
+  $kind = in_array($in['kind'] ?? '', $kinds, true) ? $in['kind'] : ($isSound ? '소리' : '그림');
+  if ($isSound !== ($kind === '소리')) out(['error' => 'kind']);
+  $name = clean($in['name'] ?? '', 30); if ($name === '') out(['error' => 'name']);
+  $made = in_array($in['made'] ?? '', ['직접 그림', 'AI', '사진', '목소리 서비스', '녹음'], true) ? $in['made'] : '';
+  $m = ['kind' => $kind, 'name' => $name, 'style' => clean($in['style'] ?? '', 30), 'made' => $made, 'tool' => clean($in['tool'] ?? '', 30),
+        'say' => $isSound ? clean($in['say'] ?? '', 120) : '', 'note' => clean($in['note'] ?? '', 120),
+        'by' => clean($in['by'] ?? '', 20), 'showBy' => !empty($in['showBy']) && clean($in['by'] ?? '', 20) !== ''];
+  $id = gmdate('ymdHis') . bin2hex(random_bytes(4));
+  $d = ['id' => $id, 't' => time(), 'mime' => $t[0], 'ext' => $t[1], 'size' => strlen($bin), 'file' => $b64, 'meta' => $m];
+  if (@file_put_contents($DIR . '/m_' . $id . '.json', json_encode($d, JSON_UNESCAPED_UNICODE), LOCK_EX) === false) out(['error' => 'storage']);
+  @file_put_contents($rf, (string)($n + 1), LOCK_EX);
   out(['ok' => true]);
 }
 

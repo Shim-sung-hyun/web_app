@@ -111,6 +111,10 @@ STYLE = {  # 폴더마다 그림풍(목록이 없는 곳)
     'photos/': ('사진', '실제 사진'), 'fonts/': ('글꼴', ''), 'brand/': ('그림', '차름 로고'), 'prompts/': ('그림', '빙에 같이 붙이는 그림풍 견본'),
     'words/': ('그림', '낱말 그림체(만화풍)'),
 }
+# 선생님들이 보낸 자료(2026-11-26 자료 기증) — media/contrib/list.json: [{file, names, kind, style, by(표시할 이름, 없으면 ''), made, tool, say, added}]
+for e in (J('contrib/list.json', []) or []):
+    ex = {k: e[k] for k in ('by', 'made', 'tool', 'say', 'added') if e.get(k)}
+    put('contrib/' + e['file'], e.get('names', []), e.get('kind', '그림'), e.get('style', ''), 'contrib', ex)
 # 남은 파일 — 폴더 그림풍 + 파일 이름
 for r, ds, fs in os.walk(M):
     rel_r = os.path.relpath(r, M).replace(os.sep, '/')

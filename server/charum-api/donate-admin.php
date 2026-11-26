@@ -21,7 +21,7 @@ $DIR = __DIR__ . '/donate-data';
 
 function jout($a) { header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store'); echo json_encode($a, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); exit; }
 function idok($id) { return is_string($id) && preg_match('/^[a-z0-9]{8,40}$/', $id); }
-function pending($DIR) { return count(glob($DIR . '/d_*.json') ?: []); }
+function pending($DIR) { return count(glob($DIR . '/d_*.json') ?: []) + count(glob($DIR . '/m_*.json') ?: []); }   /* 사진 + 자료(2026-11-26) */
 function sidok($s) { return is_string($s) && preg_match('/^[a-z0-9-]{3,48}$/', $s); }
 
 /* ---------- 비공개 저장소(GitHub) ---------- */
@@ -53,6 +53,17 @@ if (isset($_GET['count'])) jout(['n' => $isAdmin ? pending($DIR) : null]);
    ?img=기증번호&f=img|art  → donate-data의 사진·그림 / ?fimg=다시볼번호&f=photo.jpg|fixed.jpg|art.jpg → 비공개 저장소 flagged/ */
 function jpegOut($bin) {
   header('Content-Type: image/jpeg'); header('Cache-Control: private, max-age=600'); header('X-Content-Type-Options: nosniff');
+  header('Content-Length: ' . strlen($bin)); echo $bin; exit;
+}
+/* 새로 온 자료(그림·소리) 파일 그대로 — ?mfile=번호 (관리자만, 2026-11-26) */
+if (isset($_GET['mfile'])) {
+  if (!$isAdmin) { http_response_code(403); exit; }
+  $id = (string)$_GET['mfile'];
+  if (!idok($id) || !is_file($DIR . '/m_' . $id . '.json')) { http_response_code(404); exit; }
+  $d = json_decode((string)file_get_contents($DIR . '/m_' . $id . '.json'), true);
+  $bin = base64_decode((string)($d['file'] ?? ''), true); $mime = (string)($d['mime'] ?? '');
+  if (!$bin || !in_array($mime, ['image/png', 'image/jpeg', 'image/webp', 'audio/mpeg'], true)) { http_response_code(404); exit; }
+  header('Content-Type: ' . $mime); header('Cache-Control: private, max-age=600'); header('X-Content-Type-Options: nosniff');
   header('Content-Length: ' . strlen($bin)); echo $bin; exit;
 }
 if (isset($_GET['img']) || isset($_GET['fimg'])) {
@@ -107,6 +118,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($ok) $ok = ghPut('inbox/' . $sid . '/meta.json', base64_encode(json_encode($meta, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)), $msg);
     if (!$ok) jout(['error' => 'github']);
     @unlink($DIR . '/d_' . $id . '.json');
+    jout(['ok' => true, 'sid' => $sid]);
+  }
+  /* ---------- 새로 온 자료(그림·소리, 2026-11-26) ---------- */
+  if ($a === 'mlist') {
+    $list = [];
+    foreach (glob($DIR . '/m_*.json') ?: [] as $f) { $d = json_decode((string)@file_get_contents($f), true); if (!$d) continue;
+      $list[] = ['id' => $d['id'], 't' => $d['t'], 'mime' => $d['mime'], 'size' => $d['size'] ?? 0, 'meta' => $d['meta'] ?? []]; }
+    usort($list, function ($x, $y) { return $x['t'] <=> $y['t']; });
+    jout(['list' => $list]);
+  }
+  if ($a === 'mdel') { $id = $in['id'] ?? ''; if (idok($id)) @unlink($DIR . '/m_' . $id . '.json'); jout(['ok' => true]); }
+  if ($a === 'msend') {   /* 비공개 저장소 inbox-media/<sid>/ (file.확장자 · meta.json) → Claude가 "자료 정리"(media/contrib/CONTRIB.md 절차) */
+    if (!ghReady()) jout(['error' => 'nogh']);
+    $id = $in['id'] ?? ''; if (!idok($id) || !is_file($DIR . '/m_' . $id . '.json')) jout(['error' => 'nofile']);
+    $d = json_decode((string)file_get_contents($DIR . '/m_' . $id . '.json'), true);
+    $sid = 'm' . $id; $msg = '기증 자료 ' . $sid . ' (' . (($d['meta']['name'] ?? '')) . ')';
+    $meta = $d['meta'] ?? []; $meta['mime'] = $d['mime']; $meta['received'] = gmdate('Y-m-d\TH:i:s\Z', (int)$d['t']); $meta['sent'] = gmdate('Y-m-d\TH:i:s\Z'); $meta['sid'] = $sid;
+    $ok = ghPut('inbox-media/' . $sid . '/file.' . preg_replace('/[^a-z0-9]/', '', (string)$d['ext']), $d['file'], $msg);
+    if ($ok) $ok = ghPut('inbox-media/' . $sid . '/meta.json', base64_encode(json_encode($meta, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)), $msg);
+    if (!$ok) jout(['error' => 'github']);
+    @unlink($DIR . '/m_' . $id . '.json');
     jout(['ok' => true, 'sid' => $sid]);
   }
   /* Claude가 다시 봐 달라고 한 사진(flagged/) 목록 + 이미 정한 것(decisions/) */
@@ -195,11 +227,18 @@ button:disabled{opacity:.5}
 .note{font-size:13px;color:var(--sub);line-height:1.6}
 .tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--sub);margin-right:4px}
 .tag.none{border-color:#E0A100;color:#8A5A00;background:#FFF6DA}
+.mpv{height:180px;display:grid;place-items:center;border-radius:8px;overflow:hidden;background:repeating-conic-gradient(#e6ecea 0% 25%,#f8faf9 0% 50%) 0 0/16px 16px}
+.mpv img{max-width:100%;max-height:180px;object-fit:contain}
+.mpv audio{width:92%}
+.minfo{font-size:13px;color:var(--sub);margin-top:4px;overflow-wrap:anywhere}
+#mgrid .bar{gap:8px}
+#mgrid .bar>span:first-child{flex:1;min-width:0}
+#mgrid .bar .row{flex:none;white-space:nowrap;flex-direction:column;align-items:flex-end}
 </style>
 </head>
 <body>
 <main>
-<div class="top"><h1>기증 사진 <span style="font-size:20px;color:var(--sub)"><?= $n ?>장 기다림</span></h1><a href="/index.php?act=dispMemberInfo">← 회원 정보로</a></div>
+<div class="top"><h1>기증 사진·자료 <span style="font-size:20px;color:var(--sub)"><?= $n ?>장 기다림</span></h1><a href="/index.php?act=dispMemberInfo">← 회원 정보로</a></div>
 <p class="lead">쓸 사진을 골라 <b>"고른 것 보내기"</b>를 누르면 비공개 저장소로 가요. Claude가 저작권·초상권·개인 정보를 한 번 더 보고, 괜찮은 것은 분류해서 <b>차름 사진 모음</b>에 넣어요. 걸리는 것만 아래 <b>"다시 볼 사진"</b>에 이유와 함께 돌아오니, 저장할지 뺄지 골라 주세요.</p>
 <section id="flagBox" class="card" hidden>
   <h2 style="margin:0 0 4px;font-size:18px">다시 볼 사진 <span id="flagN" class="note"></span></h2>
@@ -213,6 +252,14 @@ button:disabled{opacity:.5}
   <p id="state"></p>
 </div>
 <div class="grid" id="grid"></div>
+
+<h2 style="margin:24px 0 8px;font-size:18px">새로 온 자료 <span class="note">— 차름 자료실 '자료 보내기'로 온 그림·소리</span></h2>
+<div class="card">
+  <p class="note" style="margin-top:0">유명 캐릭터·남의 그림, 사람 얼굴·이름·학생 작품이 보이거나 소리에 개인 정보가 있으면 <b>지우기</b>. 고른 것을 보내면 Claude가 다듬어(흰 테두리 정리 등) 자료실에 올려요. 보낸 분 이름은 표시를 원한 것만 자료실에 나와요.</p>
+  <div class="row"><button id="msend" type="button" disabled style="background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700">고른 것 보내기</button><button id="mdelSel" type="button" disabled>고른 것 서버에서 지우기</button><button id="mall" type="button">모두 고르기</button><span id="mcnt" class="note"></span></div>
+  <p id="mstate"></p>
+</div>
+<div class="grid" id="mgrid"></div>
 </main>
 <script>
 const API='/charum-api/donate-admin.php';
@@ -279,6 +326,30 @@ async function loadFlagged(){
   } }
 loadFlagged();
 load();
+/* ---------- 새로 온 자료(2026-11-26) ---------- */
+const msay=(t,c)=>{ $('mstate').textContent=t; $('mstate').className=c||''; };
+let MSEL=new Set(), MN=0;
+function mcount(){ $('mcnt').textContent=MN?`고름 ${MSEL.size} / ${MN}`:''; $('msend').disabled=$('mdelSel').disabled=!MSEL.size; }
+async function mload(){ $('mgrid').innerHTML=''; MSEL.clear(); MN=0; mcount();
+  let r; try{ r=await call({a:'mlist'}); }catch(e){ msay('불러오지 못했어요: '+e.message,'err'); return; }
+  MN=r.list.length; if(!MN){ msay('기다리는 자료가 없어요.','ok'); mcount(); return; }
+  for(const x of r.list){ const m=x.meta||{}, src=`?mfile=${encodeURIComponent(x.id)}`, snd=x.mime==='audio/mpeg';
+    const el=document.createElement('div'); el.className='it';
+    el.innerHTML=`<div class="mpv">${snd?`<audio controls preload="none" src="${src}"></audio>`:`<img src="${src}" alt="${esc(m.name||'')}" onerror="this.parentNode.textContent='그림을 못 불러옴'">`}</div>
+      <div class="bar"><span><b>${esc(m.name||'(이름 없음)')}</b> <span class="tag">${esc(m.kind||'')}</span><br>
+        <span class="minfo">${[m.style, m.made&&('만든 방법: '+m.made+(m.tool?' · '+m.tool:'')), m.say&&('문장: '+m.say), m.note&&('메모: '+m.note), m.by&&('보낸 분: '+m.by+(m.showBy?' (자료실에 표시)':' (표시 안 함)')), new Date(x.t*1000).toLocaleString('ko-KR'), Math.round((x.size||0)/1024)+'KB'].filter(Boolean).map(esc).join(' · ')}</span></span>
+      <span class="row"><label><input type="checkbox" data-a="msel"> 고르기</label><button type="button" data-a="mdel">지우기</button></span></div>`;
+    el.querySelector('[data-a=msel]').onchange=e=>{ e.target.checked?MSEL.add(x.id):MSEL.delete(x.id); el.classList.toggle('sel',e.target.checked); mcount(); };
+    el.querySelector('[data-a=mdel]').onclick=async()=>{ if(!confirm('이 자료를 서버에서 지울까요? 되살릴 수 없어요.')) return; await call({a:'mdel',id:x.id}); mload(); };
+    $('mgrid').appendChild(el); }
+  msay(`${MN}개를 불러왔어요.`,'ok'); mcount(); }
+$('mall').onclick=()=>{ document.querySelectorAll('[data-a=msel]').forEach(c=>{ if(!c.checked){ c.checked=true; c.dispatchEvent(new Event('change')); } }); };
+$('mdelSel').onclick=async()=>{ if(!confirm(`고른 ${MSEL.size}개를 서버에서 지울까요?`)) return; for(const id of [...MSEL]) await call({a:'mdel',id}); mload(); };
+$('msend').onclick=async()=>{ const ids=[...MSEL]; let ok=0;
+  for(const id of ids){ msay(`보내는 중… ${ok+1} / ${ids.length}`);
+    try{ await call({a:'msend',id}); ok++; }catch(e){ msay(e.message==='nogh'?'서버에 GitHub 열쇠(donate-config.php)가 아직 없어요.':'보내지 못했어요: '+e.message,'err'); return; } }
+  await mload(); msay(`${ok}개를 보냈어요. Claude에게 "자료 정리해 줘"라고 하면 다듬어 자료실에 올려요.`,'ok'); };
+mload();
 </script>
 </body>
 </html>

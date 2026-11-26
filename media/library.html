@@ -51,17 +51,31 @@
   .tabs button[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--ink); }
   .tabs button:focus-visible { outline:2px solid var(--link); outline-offset:2px; }
   [role=tabpanel][hidden] { display:none; }
+  .give { max-width:720px; }
+  .give .f { display:block; margin:10px 0; font-weight:700; font-size:15px; }
+  .give .f small { font-weight:400; color:var(--soft); }
+  .give .f input, .give .f select { display:block; width:100%; margin-top:4px; font-weight:400; }
+  .give .two { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:0 14px; }
+  .give .chk { display:flex; gap:8px; align-items:flex-start; margin:6px 0; font-size:15px; cursor:pointer; }
+  .give .chk input { margin-top:5px; }
+  .give .agree { border:1px solid var(--line); border-radius:6px; padding:6px 12px 8px; margin:14px 0; }
+  .give .agree legend { font-weight:700; font-size:15px; padding:0 4px; }
+  .gprev { margin:6px 0 4px; padding:8px; border:1px solid var(--line); border-radius:6px; background:repeating-conic-gradient(#efe9dc 0% 25%, #faf7f0 0% 50%) 0 0/16px 16px; }
+  .gprev img { max-width:100%; max-height:220px; display:block; margin:0 auto; }
+  .gprev audio { width:100%; }
+  .by { color:var(--mark,#8a5a2b); }
 </style>
 </head>
 <body>
 <main>
 <h1>차름 자료실</h1>
-<p class="lead">차름 웹앱을 만들며 쓴 그림·배경·소품·사진·목소리입니다. 찾아서 보고, 하나씩 받거나 여러 개 골라 zip으로 받습니다.</p>
+<p class="lead">차름 웹앱을 만들며 쓴 그림·배경·소품·사진·목소리와 선생님들이 보내 주신 자료입니다. 찾아서 보고, 하나씩 받거나 여러 개 골라 zip으로 받습니다. 내 자료를 보내 함께 채울 수도 있어요(자료 보내기).</p>
 <p class="terms" id="terms">쓰는 조건: 비영리(수업·연수 등)로만, 쓸 때 출처 "차름(charum.org)"을 적어 주세요(CC BY-NC 4.0). 받아서 내 저장소에 넣어 쓰기를 권합니다 — 이 주소를 바로 가져다 쓰면 나중에 파일이 옮겨질 때 깨질 수 있어요.</p>
 
 <div class="tabs" role="tablist">
   <button role="tab" id="tabPic" aria-controls="panelPic" aria-selected="true">그림·사진</button>
   <button role="tab" id="tabVoice" aria-controls="panelVoice" aria-selected="false">목소리</button>
+  <button role="tab" id="tabGive" aria-controls="panelGive" aria-selected="false">자료 보내기</button>
 </div>
 
 <section role="tabpanel" id="panelPic" aria-labelledby="tabPic">
@@ -84,13 +98,44 @@
 <p class="muted">목소리 파일은 문장으로 찾습니다. 문장을 넣으면 그 문장을 읽은 목소리가 있는지 묶음마다 찾아 들려 드려요(마침표까지 똑같이 — 예: <code>고양이는 땅에 살아요.</code>).</p>
 <div class="bar"><input type="text" id="say" placeholder="문장 (여러 개면 줄 대신 / 로 나눔)" style="flex:1 1 280px;min-width:0"><button class="main" id="sayGo">찾기</button></div>
 <div id="voices"></div>
+<div id="giftSounds"></div>
+</section>
+
+<section role="tabpanel" id="panelGive" aria-labelledby="tabGive" hidden>
+<p class="muted">내가 만든 그림·소리를 보내 주시면 차름 제작자가 살펴보고 다듬어 이 자료실에 올립니다. 모두가 함께 쓰는 자료가 됩니다(조건은 위와 같이 CC BY-NC 4.0). 한 번에 하나씩 보냅니다.</p>
+<form id="give" class="give" autocomplete="off">
+  <label class="f">파일 <small>그림 png·webp·jpg(3MB까지), 소리 mp3(1MB까지)</small>
+    <input type="file" id="gFile" accept="image/png,image/webp,image/jpeg,audio/mpeg,.mp3" required></label>
+  <div id="gPrev" class="gprev" hidden></div>
+  <div class="two">
+    <label class="f">이름(낱말) <input type="text" id="gName" maxlength="30" placeholder="예: 고양이, 칫솔, 바닷가 배경" required></label>
+    <label class="f">종류 <select id="gKind"><option>그림</option><option>배경</option><option>소품</option><option>사진</option><option>소리</option></select></label>
+  </div>
+  <div class="two">
+    <label class="f">그림풍·목소리 <input type="text" id="gStyle" maxlength="30" placeholder="예: 연필풍, 수채화, 만화풍 / 밝은 여자 목소리"></label>
+    <label class="f">만든 방법 <select id="gMade"><option>직접 그림</option><option>AI</option><option>사진</option><option>목소리 서비스</option><option>녹음</option></select></label>
+  </div>
+  <label class="f" id="gToolBox">쓴 도구·서비스 <input type="text" id="gTool" maxlength="30" placeholder="예: 빙 이미지 크리에이터, Gemini, Azure 선희"></label>
+  <label class="f" id="gSayBox" hidden>소리가 읽는 문장 <input type="text" id="gSay" maxlength="120" placeholder="예: 고양이는 땅에 살아요."></label>
+  <label class="f">메모(선택) <input type="text" id="gNote" maxlength="120" placeholder="어디에 쓰면 좋은지 등"></label>
+  <div class="two">
+    <label class="f">보낸 분 이름(선택) <input type="text" id="gBy" maxlength="20" placeholder="예: 김○○ 선생님"></label>
+    <label class="chk" style="align-self:end"><input type="checkbox" id="gShowBy" checked> 자료실에 이름 표시</label>
+  </div>
+  <fieldset class="agree"><legend>보내기 전에 확인해 주세요</legend>
+    <label class="chk"><input type="checkbox" id="aRights" required> 내가 만들었거나 쓸 권리가 있어요(유명 캐릭터·남의 그림이 아니에요)</label>
+    <label class="chk"><input type="checkbox" id="aLicense" required> 비영리·출처 표시(CC BY-NC 4.0)로 모두와 나누는 데 동의해요</label>
+    <label class="chk"><input type="checkbox" id="aPrivacy" required> 사람 얼굴·이름·전화번호 같은 개인 정보, 학생 작품이 없어요</label>
+  </fieldset>
+  <button class="main" id="gSend" type="submit">보내기</button> <span id="gMsg" class="muted"></span>
+</form>
 </section>
 </main>
 
 <script>
 /* 탭(2026-11-26 선생님: 목소리가 한참 아래라 찾기 어려움) — 주소 끝 #voice 면 목소리 탭으로 열림 */
 (() => {
-  const tabs = [['tabPic', 'panelPic', ''], ['tabVoice', 'panelVoice', 'voice']];
+  const tabs = [['tabPic', 'panelPic', ''], ['tabVoice', 'panelVoice', 'voice'], ['tabGive', 'panelGive', 'give']];
   function show(id, push) {
     for (const [t, p, h] of tabs) {
       const on = t === id;
@@ -102,6 +147,7 @@
   }
   for (const [t] of tabs) document.getElementById(t).onclick = () => show(t, true);
   if (location.hash === '#voice') show('tabVoice');
+  if (location.hash === '#give') show('tabGive');
 })();
 (async () => {
   const $ = id => document.getElementById(id);
@@ -113,6 +159,7 @@
     const [c, s] = await Promise.all([fetch('catalog.json', {cache:'no-cache'}).then(r => r.json()), fetch('share.json', {cache:'no-cache'}).then(r => r.json())]);
     share = s;
     const ex = s.exclude || {}, okPhotos = new Set(s.photos || []);
+    window.__gifts = (c.items || []).filter(i => i.group === 'contrib' && i.kind === '소리');
     all = (c.items || []).filter(i => {
       if (!i.path || i.path.startsWith('code:') || i.path.endsWith('/')) return false;
       if ((ex.kinds || []).includes(i.kind) || (ex.groups || []).includes(i.group)) return false;
@@ -141,7 +188,7 @@
       <div class="it${picked.has(i.path) ? ' on' : ''}" data-n="${n}" title="눌러서 고르기">
         <div class="im"><img loading="lazy" src="${esc(i.path)}" alt="${esc(name(i))}"></div>
         <div class="nm">${esc(name(i))}</div>
-        <div class="st">${esc(i.kind)} · ${esc(i.style || '')}${i.place ? ' · ' + esc(i.place) : ''}</div>
+        <div class="st">${esc(i.kind)} · ${esc(i.style || '')}${i.place ? ' · ' + esc(i.place) : ''}${i.by ? ` · <span class="by">보낸 분: ${esc(i.by)}</span>` : ''}</div>
         <div class="acts"><a href="${esc(i.path)}" download>받기</a><button data-copy="${n}">주소 복사</button></div>
       </div>`).join('');
     $('more').hidden = shown.length <= limit;
@@ -166,7 +213,7 @@
     const lines = [`차름 자료실에서 받은 자료 (${new Date().toISOString().slice(0,10)})`, `쓰는 조건: ${lic.name || 'CC BY-NC 4.0'} — 비영리로만, 출처 "${lic.credit || '차름(charum.org)'}" 표시`, lic.url || '', '', '파일 — 이름 · 종류 · 그림풍'];
     for (const i of list) {
       $('zipMsg').textContent = `받는 중 ${++n}/${list.length}…`;
-      try { const b = await (await fetch(i.path)).blob(); z.file(i.path, b); lines.push(`${i.path} — ${name(i)} · ${i.kind} · ${i.style || ''}`); }
+      try { const b = await (await fetch(i.path)).blob(); z.file(i.path, b); lines.push(`${i.path} — ${name(i)} · ${i.kind} · ${i.style || ''}${i.by ? ' · 보낸 분: ' + i.by : ''}`); }
       catch (e) { lines.push(`${i.path} — 받지 못함`); }
     }
     z.file('README-charum.txt', lines.join('\r\n'));   // 이름은 영어로(어느 컴퓨터에서 풀어도 안 깨지게), 안은 한국어
@@ -201,6 +248,51 @@
     $('voices').innerHTML = html;
   };
   $('say').onkeydown = e => { if (e.key === 'Enter') $('sayGo').click(); };
+
+  // 선생님들이 보낸 소리(자료 기증으로 들어온 것) — 이름으로 함께 보여 줌
+  const gifts = window.__gifts || [];
+  if (gifts.length) $('giftSounds').innerHTML = '<h3 style="font-size:16px;margin:24px 0 4px">선생님들이 보낸 소리</h3>' + gifts.map(i => `<div class="vrow"><b>${esc(name(i))}</b><small>${esc(i.say || '')}${i.by ? ' · 보낸 분: ' + esc(i.by) : ''}${i.style ? ' · ' + esc(i.style) : ''}</small>
+    <audio controls preload="none" src="${esc(i.path)}"></audio> <a href="${esc(i.path)}" download>받기</a></div>`).join('');
+
+  // 자료 보내기(2026-11-26) — charum.org 기증함(donate.php give-media)으로. 제작자가 기증 화면에서 보고 골라 자료실에 올림
+  const DONATE = 'https://www.charum.org/charum-api/donate.php';
+  const g = id => document.getElementById(id);
+  let gData = null, gMime = '';
+  try { g('gBy').value = localStorage.getItem('charum.giveBy') || ''; } catch (e) {}
+  function kindSync() { const snd = g('gKind').value === '소리'; g('gSayBox').hidden = !snd; }
+  g('gKind').onchange = kindSync;
+  g('gFile').onchange = async () => {
+    const f = g('gFile').files[0]; gData = null; g('gPrev').hidden = true; g('gMsg').textContent = '';
+    if (!f) return;
+    const snd = /audio|\.mp3$/i.test(f.type + f.name), lim = snd ? 1 : 3;
+    if (f.size > lim * 1024 * 1024) { g('gMsg').textContent = `파일이 너무 커요(${snd ? '소리 1MB' : '그림 3MB'}까지).`; g('gFile').value = ''; return; }
+    gMime = snd ? 'audio/mpeg' : f.type;
+    gData = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = no; r.readAsDataURL(f); });
+    const url = URL.createObjectURL(f);
+    g('gPrev').innerHTML = snd ? `<audio controls src="${url}"></audio>` : `<img src="${url}" alt="">`; g('gPrev').hidden = false;
+    if (snd) { g('gKind').value = '소리'; if (!/목소리|녹음/.test(g('gMade').value)) g('gMade').value = '목소리 서비스'; }
+    else if (g('gKind').value === '소리') g('gKind').value = '그림';
+    if (!g('gName').value) g('gName').value = f.name.replace(/\.[^.]+$/, '').slice(0, 30);
+    kindSync();
+  };
+  const ERR = {agree:'확인 칸 세 개를 모두 눌러 주세요.', busy:'오늘 보낼 수 있는 개수(30개)를 넘었어요. 내일 다시 보내 주세요.', type:'그림(png·webp·jpg)이나 소리(mp3)만 받아요.', toolarge:'파일이 너무 커요.', file:'파일을 읽지 못했어요(그림은 32~4000점 크기).', kind:'종류가 파일과 맞지 않아요(소리 파일은 종류를 소리로).', name:'이름을 적어 주세요.', full:'지금은 기다리는 자료가 너무 많아요. 나중에 다시 보내 주세요.', origin:'이 주소에서는 보낼 수 없어요.'};
+  g('give').onsubmit = async e => {
+    e.preventDefault();
+    if (!gData) { g('gMsg').textContent = '파일을 골라 주세요.'; return; }
+    g('gSend').disabled = true; g('gMsg').textContent = '보내는 중…';
+    try { localStorage.setItem('charum.giveBy', g('gBy').value.trim()); } catch (e) {}
+    try {
+      const r = await fetch(DONATE, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ a:'give-media', file:gData,
+        kind:g('gKind').value, name:g('gName').value.trim(), style:g('gStyle').value.trim(), made:g('gMade').value, tool:g('gTool').value.trim(),
+        say:g('gSay').value.trim(), note:g('gNote').value.trim(), by:g('gBy').value.trim(), showBy:g('gShowBy').checked,
+        agree:{ rights:g('aRights').checked, license:g('aLicense').checked, privacy:g('aPrivacy').checked } }) });
+      const j = await r.json().catch(() => ({}));
+      if (!j.ok) throw new Error(ERR[j.error] || ('보내지 못했어요(' + (j.error || r.status) + ')'));
+      g('gMsg').textContent = '보냈어요. 고맙습니다! 제작자가 살펴본 뒤 자료실에 올립니다.';
+      g('gFile').value = ''; gData = null; g('gPrev').hidden = true; g('gName').value = ''; g('gSay').value = ''; g('gNote').value = ''; g('gStyle').value = ''; g('gTool').value = '';   // 보낸 분 이름은 남김
+    } catch (err) { g('gMsg').textContent = err.message === 'Failed to fetch' ? '서버에 닿지 못했어요. 인터넷을 확인하고 다시 보내 주세요.' : err.message; }
+    finally { g('gSend').disabled = false; }
+  };
 })();
 </script>
 </body>
