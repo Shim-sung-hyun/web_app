@@ -46,6 +46,11 @@
   .vrow audio { width:100%; max-width:420px; height:36px; margin-top:4px; }
   .muted { color:var(--soft); font-size:14px; }
   code { font:13px ui-monospace,Menlo,Consolas,monospace; background:rgba(255,255,255,.6); padding:1px 4px; border-radius:3px; }
+  .tabs { display:flex; gap:4px; border-bottom:2px solid var(--ink); margin:22px 0 14px; }
+  .tabs button { font:inherit; font-size:17px; font-weight:700; color:var(--soft); background:none; border:0; border-bottom:4px solid transparent; margin-bottom:-2px; padding:8px 16px 6px; cursor:pointer; }
+  .tabs button[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--ink); }
+  .tabs button:focus-visible { outline:2px solid var(--link); outline-offset:2px; }
+  [role=tabpanel][hidden] { display:none; }
 </style>
 </head>
 <body>
@@ -54,7 +59,12 @@
 <p class="lead">차름 웹앱을 만들며 쓴 그림·배경·소품·사진·목소리입니다. 찾아서 보고, 하나씩 받거나 여러 개 골라 zip으로 받습니다.</p>
 <p class="terms" id="terms">쓰는 조건: 비영리(수업·연수 등)로만, 쓸 때 출처 "차름(charum.org)"을 적어 주세요(CC BY-NC 4.0). 받아서 내 저장소에 넣어 쓰기를 권합니다 — 이 주소를 바로 가져다 쓰면 나중에 파일이 옮겨질 때 깨질 수 있어요.</p>
 
-<h2>그림·사진</h2>
+<div class="tabs" role="tablist">
+  <button role="tab" id="tabPic" aria-controls="panelPic" aria-selected="true">그림·사진</button>
+  <button role="tab" id="tabVoice" aria-controls="panelVoice" aria-selected="false">목소리</button>
+</div>
+
+<section role="tabpanel" id="panelPic" aria-labelledby="tabPic">
 <div class="bar">
   <input type="search" id="q" placeholder="찾을 낱말 (예: 고양이, 바위, 사막)">
   <select id="style"><option value="">모든 그림풍</option></select>
@@ -68,14 +78,31 @@
   <button class="plain" id="clear">고른 것 비우기</button>
   <span id="zipMsg"></span>
 </div>
+</section>
 
-<h2>목소리</h2>
+<section role="tabpanel" id="panelVoice" aria-labelledby="tabVoice" hidden>
 <p class="muted">목소리 파일은 문장으로 찾습니다. 문장을 넣으면 그 문장을 읽은 목소리가 있는지 묶음마다 찾아 들려 드려요(마침표까지 똑같이 — 예: <code>고양이는 땅에 살아요.</code>).</p>
 <div class="bar"><input type="text" id="say" placeholder="문장 (여러 개면 줄 대신 / 로 나눔)" style="flex:1 1 280px;min-width:0"><button class="main" id="sayGo">찾기</button></div>
 <div id="voices"></div>
+</section>
 </main>
 
 <script>
+/* 탭(2026-11-26 선생님: 목소리가 한참 아래라 찾기 어려움) — 주소 끝 #voice 면 목소리 탭으로 열림 */
+(() => {
+  const tabs = [['tabPic', 'panelPic', ''], ['tabVoice', 'panelVoice', 'voice']];
+  function show(id, push) {
+    for (const [t, p, h] of tabs) {
+      const on = t === id;
+      document.getElementById(t).setAttribute('aria-selected', on);
+      document.getElementById(p).hidden = !on;
+      if (on && push) history.replaceState(null, '', h ? '#' + h : location.pathname + location.search);
+    }
+    if (id === 'tabVoice') document.getElementById('say').focus();
+  }
+  for (const [t] of tabs) document.getElementById(t).onclick = () => show(t, true);
+  if (location.hash === '#voice') show('tabVoice');
+})();
 (async () => {
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
