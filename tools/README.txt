@@ -44,7 +44,6 @@
   shot.js          앱을 네 크기로 캡처 · hide-check.js 008 숨은 동물이 너무 가려지는지
   learn-scene.js   학습용 장면 learn.jpg(무대 소품을 채운 한 장, 동물 서는 앞 땅은 비움 — 008 학습 장면) · 곳 이름과 --seed로 다시, 고른 seed는 media/stage/learn-scene.json
   webp-slim.py     다 만든 소품·동물 webp를 마지막에 가볍게 — 색 품질 80, 알파·가로세로 그대로(밑동·모양 지도·touchup 원본 붓이 그대로 맞음), 8% 넘게 줄 때만. stage-intake가 부름, touchup 손질 뒤에도
-  promo-pencil.html 연필풍 앱(008·009)의 홍보 그림 — ?app=009(캡처 폴더 cap=008/release, 대신 쓸 캡처 shots=03,05,09,11)를 1366×768로 찍어 앱-promo.jpg
  [공통 모듈·자료]
   sync-modules.py  common/의 모듈 원본을 앱마다 넣기 · voice-add.py 목소리 zip을 mp3로 넣기 · trash.py 버릴 파일(그림·사진·소리는 저절로 media/archive 보관함 — 비우지 않음)·버린 도구 보관함
   (007/tools/split.py 는 007 편 판 만들기 — 007 README)
@@ -60,7 +59,7 @@
   media/stage/install.html          무대 설치(장소 고르기부터 — AI로 채우기: 제미나이 키·Gemini 3.5 Flash Lite, 그림풍·AI 고르기, 내 저장소 그림 열기 — GitHub 공개 저장소 주소를 넣어 누구나) · arrange.html 배치 고치기 · touchup.html 소품 손질(짝 src-align.py)
   media/stage/prop-room.html        소품실 보기(짝 prop-room.py) · test.html 무대 보기 · hide-test.html 숨기기 시험(?place=) · hide-judge.html 숨기기 평가
   charum.org/charum-api/usage-admin.php  앱 사용 횟수(관리자 로그인, 원본 server/charum-api/usage-admin.php, 2026-11-23)
-  tools/promo-pencil.html           홍보 그림 찍기(위 [검사·캡처]) · tools/gemini-model-test.html AI 키 확인 — Gemini 키·Cloudflare 토큰(charum-ai Worker /analyze로 내 계정 사진 분석)을 같은 사진으로, 시간·빠르기 순위, 1분 넘으면 중지, 표시된 모델 차례로(2026-11-25 Cloudflare 합침) · 동의 안 된 Cloudflare 계정은 "Meta 모델 사용에 동의하고 계속" 단추(워커 /agree, 누를 때만)
+  tools/gemini-model-test.html      AI 키 확인 — Gemini 키·Cloudflare 토큰(charum-ai Worker /analyze로 내 계정 사진 분석)을 같은 사진으로, 시간·빠르기 순위, 1분 넘으면 중지, 표시된 모델 차례로(2026-11-25 Cloudflare 합침) · 동의 안 된 Cloudflare 계정은 "Meta 모델 사용에 동의하고 계속" 단추(워커 /agree, 누를 때만)
   gemini_guide · google-tts_guide · cloudflare_guide · azure_guide · elevenlabs_guide · bing_guide .html  키·서비스 받는 법(서비스마다 하나, 저장소 맨 위) — 필요한 곳은 여기에 링크만(2026-11-23)
   (relay/·server/study/의 화면은 수업용 사진 다리 — 앱의 일부라 여기 넣지 않음)
 
