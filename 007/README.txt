@@ -6,7 +6,8 @@
 [파일]
 - word-learn.html          웹앱 (버전 1)
 - word-learn-1.html        편마다 나눈 판: 1편 나와 우리 집만 보임(2026-10-23).
-- word-learn-2.html        2편 안전하게만 보임(2026-11-25). 3편부터는 공개할 때 word-learn-3.html …
+- word-learn-2.html        2편 안전하게만 보임(2026-11-25). 나눈 판은 열면 늘 그 편으로 시작(2026-11-26, 전에는 공개한 첫 편=1편으로 열렸음).
+                           "편" 줄에 공개한 다른 편은 점선 단추 "N편 … 열기 →"(같은 폴더의 word-learn-N.html로 감, 기록은 이어짐). 3편부터는 공개할 때 word-learn-3.html …
                            통합본(word-learn.html)과 저장 칸이 같아(wl007b_*) 기록·멈춘 곳·마친 묶음이 이어짐.
                            묶음은 통합본과 똑같음(채우는 낱말은 같은 편·앞 편에서만). 어려운 낱말 다시 넣기는 앞 편 낱말도 섞음.
                            만들기: word-learn.html(통합본)을 고친 뒤 python3 007/tools/split.py (OPEN_BOOKS 편마다 만듦)

@@ -377,6 +377,8 @@ body.tmode .replay{visibility:hidden}   /* 관리 메뉴 동안(수업 멈춤)�
 .rosterpanel .addline{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 /* 편 차례 공개 */
 #bookSeg button.closed{opacity:.45;cursor:default;background:#F1EEE8}
+#bookSeg button.jump{border-style:dashed;background:transparent;color:#4A5A78}
+#bookSeg button.jump .go{font-size:.78em;color:#3D6FB6;margin-left:2px}
 #bookSeg button.closed .soon{font-size:.78em;color:#8A7F6E;margin-left:2px}
 .setup-head{align-items:center}
 .setup-head h1 small{display:block;color:#3D6FB6;letter-spacing:.01em;line-height:1.2}
@@ -4588,17 +4590,28 @@ function autoPick() {
   const fresh = pool.filter(w => !Rec.mastered(w)), n = LEVELS[curLevel()].size;
   S.chosen = (fresh.length >= Math.min(n, pool.length) ? fresh : pool).slice(0, n);
 }
+/* 묶음대로 고를 때: 이 편에서 이 수준의 아직 마치지 않은 첫 묶음으로 */
+function firstTodo() {
+  if (S.mode !== 'bundle' || S.mi < 0) return;
+  const lv = curLevel(), k = BOOK.findIndex((x, mi) => x.p === S.book && bundlesOf(mi, lv).some((_, bi) => !Prog.isDone(mi, lv, bi)));
+  if (k >= 0) { S.mi = k; S.bi = Math.max(0, bundlesOf(k, lv).findIndex((_, bi) => !Prog.isDone(k, lv, bi))); }
+}
 function paintBook() {
-  if (S.book === 6 && !S.mine.length) S.book = 1;
-  if (!isOpenBook(S.book)) { S.book = OPEN_BOOKS[0] || 1; const m = madangs(S.book)[0]; S.mi = m ? m.i : 0; S.bi = 0; saveSel(); }
+  /* 처음 고를 편: 나눈 판은 그 편(2편 판이 1편으로 열리던 것 고침, 2026-11-26), 통합본은 공개한 첫 편 */
+  const first = ONLY_BOOK || OPEN_BOOKS[0] || 1;
+  if (S.book === 6 && !S.mine.length) S.book = first;
+  if (!isOpenBook(S.book)) { S.book = first; S.mi = madangs(first)[0] ? madangs(first)[0].i : 0; S.bi = 0; firstTodo(); saveSel(); }
   { const n = $('#bookNote'); if (n) { const c = CLOSED_BOOKS; n.textContent = c.length ? (c.length > 1 && c[c.length - 1] - c[0] === c.length - 1 ? c[0] + '~' + c[c.length - 1] : c.join('·')) + '편은 준비하고 있어요. 차례로 열려요.' : ''; n.classList.toggle('hidden', !c.length); } }
   $$('#bookSeg button').forEach(b => {
     const v = +b.dataset.v;
     b.classList.toggle('on', v === S.book);
-    b.classList.toggle('hidden', (v === 6 && !S.mine.length) || (ONLY_BOOK > 0 && v !== 6 && v !== ONLY_BOOK));   /* 나눈 판은 그 편만 */
+    /* 나눈 판은 그 편만 고름. 공개한 다른 편은 그 편 주소로 가는 단추(같은 기기·주소라 기록이 이어짐) */
+    const jump = ONLY_BOOK > 0 && v !== 6 && v !== ONLY_BOOK && OPEN_BOOKS.includes(v);
+    b.classList.toggle('hidden', (v === 6 && !S.mine.length) || (ONLY_BOOK > 0 && v !== 6 && v !== ONLY_BOOK && !jump));
     if (!b.dataset.label) b.dataset.label = b.innerHTML;
-    const shut = v !== 6 && !isOpenBook(v); b.classList.toggle('closed', shut); b.disabled = shut;
-    b.innerHTML = b.dataset.label + (shut ? ' <small class="soon">준비 중</small>' : ' <small style="opacity:.7">' + bookWords(v).length + '</small>');
+    b.classList.toggle('jump', jump); if (jump) b.dataset.jump = 'word-learn-' + v + '.html'; else delete b.dataset.jump;
+    const shut = v !== 6 && !isOpenBook(v) && !jump; b.classList.toggle('closed', shut); b.disabled = shut;
+    b.innerHTML = b.dataset.label + (jump ? ' <small class="go">열기 →</small>' : shut ? ' <small class="soon">준비 중</small>' : ' <small style="opacity:.7">' + bookWords(v).length + '</small>');
   });
   paintSeg('#modeSeg', 'mode');
   $('#bundleBox').classList.toggle('hidden', S.mode !== 'bundle');
@@ -4728,6 +4741,7 @@ function renderAll() {
 }
 $('#bookSeg').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.jump) { location.href = b.dataset.jump; return; }   /* 다른 편 판으로(주소 폴더가 같아 charum.org·GitHub 어디서든) */
   S.book = +b.dataset.v; S.mi = madangs(S.book)[0].i; S.bi = 0;
   if (S.mode === 'bundle' && S.mi >= 0) { const lv = curLevel(), k = BOOK.findIndex((x, mi) => x.p === S.book && bundlesOf(mi, lv).some((_, bi) => !Prog.isDone(mi, lv, bi))); if (k >= 0) { S.mi = k; S.bi = Math.max(0, bundlesOf(k, lv).findIndex((_, bi) => !Prog.isDone(k, lv, bi))); } }
   saveSel(); renderAll();
